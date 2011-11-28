@@ -639,6 +639,7 @@ class tthemeparser extends tevents {
         'tag' => '$prev',
         'replace' => ''
         ),
+
                 'head.post.next' => array(
         'tag' => '$next',
         'replace' => ''
@@ -646,6 +647,11 @@ class tthemeparser extends tevents {
         
         'head.post.rss' => array(
         'tag' => '$rss',
+        'replace' => ''
+        ),
+
+        'head.tags' => array(
+        'tag' => '$tags',
         'replace' => ''
         ),
                 

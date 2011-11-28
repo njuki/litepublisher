@@ -83,6 +83,7 @@ class tposttransform  {
   }
   
   public function __get($name) {
+if ('head' == $name) return $this->post->data['head'];
     if (method_exists($this, $get = "get$name")) return $this->$get();
     if (in_array($name, self::$arrayprops))  return implode(',', $this->post->$name);
     if (in_array($name, self::$boolprops))  return $this->post->$name ? 1 : 0;

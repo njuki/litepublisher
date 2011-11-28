@@ -30,7 +30,6 @@ if (count($posts->items) < 100) {
 foreach ($posts->items as $id => $item) {
 $post = tpost::i($id);
 $post->data['head'] = '';
-$post->data['
 $post->save();
 }
 }
