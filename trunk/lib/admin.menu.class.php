@@ -120,6 +120,7 @@ class tadminmenumanager extends tadminmenu {
       if (!isset($type) || ($type != 'fake')) {
         $menuitem->keywords = $keywords;
         $menuitem->description = $description;
+        $menuitem->head = $head;
       }
     }
     if ($id == 0) {

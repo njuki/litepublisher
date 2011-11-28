@@ -41,7 +41,8 @@ class tajaxtageditor extends tajaxposteditor  {
       'icon' => 0,
       'url' => '',
       'keywords' => '',
-      'description' => ''
+      'description' => '',
+'head' => ''
       );
     } else {
       $item = $tags->getitem($id);
@@ -58,11 +59,12 @@ class tajaxtageditor extends tajaxposteditor  {
         $args->url = '';
         $args->keywords = '';
         $args->description = '';
+        $args->head = '';
       } else {
         $args->add($tags->contents->getitem($id));
         $args->url = $tags->items[$id]['url'];
       }
-      $result = $html->parsearg('[text=url] [text=description] [text=keywords]', $args);
+      $result = $html->parsearg('[text=url] [text=description] [text=keywords] [text=head]', $args);
       break;
       
       case 'text':

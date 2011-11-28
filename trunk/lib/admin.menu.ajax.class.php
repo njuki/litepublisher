@@ -44,7 +44,8 @@ class tajaxmenueditor extends tajaxposteditor  {
       $args->url = $menu->url;
       $args->keywords = $menu->keywords;
       $args->description = $menu->description;
-      $result = $html->parsearg('[text=url] [text=description] [text=keywords]', $args);
+      $args->head = $menu->data['head'];
+      $result = $html->parsearg('[text=url] [text=description] [text=keywords] [text=head]', $args);
       break;
       
       default:
