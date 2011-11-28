@@ -366,6 +366,7 @@ class tmenu extends titem implements  itemplate {
     'rawcontent' => '',
     'keywords' => '',
     'description' => '',
+'head' => '',
     'password' => '',
     'idview' => 1,
     //owner props
@@ -433,7 +434,9 @@ class tmenu extends titem implements  itemplate {
     return $this->owner->onprocessform($this->id);
   }
   
-public function gethead() {}
+public function gethead() {
+    return $this->data['head'];
+}
   
   public function gettitle() {
     return $this->__get('title');

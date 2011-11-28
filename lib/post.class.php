@@ -82,6 +82,7 @@ class tpost extends titem implements  itemplate {
     'rawcontent' => dbversion ? false : '',
     'keywords' => '',
     'description' => '',
+'head' => '',
     'moretitle' => '',
     'categories' => array(),
     'tags' => array(),

@@ -124,6 +124,7 @@ class tadmintags extends tadminmenu {
       if (isset($keywords)) {
         $item['keywords'] = $keywords;
         $item['description'] = $description;
+        $item['head'] = $head;
       }
       $tags->contents->setitem($id, $item);
     }

@@ -332,8 +332,9 @@ class tcommontags extends titems implements  itemplate {
   }
   
   public function gethead() {
-    return sprintf('<link rel="alternate" type="application/rss+xml" title="%s" href="$site.url/rss/%s/%d.xml" />',
-    $this->gettitle(), $this->PostPropname, $this->id);
+    $result = $this->contents->getvalue($this->id, 'head');
+$result .= tview::getview($this)->theme->templates['head.tags'];
+return $result;
   }
   
   public function getkeywords() {
@@ -464,6 +465,7 @@ class ttagcontent extends tdata {
     $item = array(
     'description' => '',
     'keywords' => '',
+'head' => '',
     'content' => '',
     'rawcontent' => ''
     );
@@ -488,14 +490,15 @@ class ttagcontent extends tdata {
     }
   }
   
-  public function edit($id, $content, $description, $keywords) {
+  public function edit($id, $content, $description, $keywords, $head) {
     $item = $this->getitem($id);
     $filter = tcontentfilter::i();
     $item =array(
     'content' => $filter->filter($content),
     'rawcontent' => $content,
     'description' => $description,
-    'keywords' => $keywords
+    'keywords' => $keywords,
+'head' => $head
     );
     $this->setitem($id, $item);
   }
@@ -538,6 +541,10 @@ class ttagcontent extends tdata {
   
   public function getkeywords($id) {
     return $this->getvalue($id, 'keywords');
+  }
+
+  public function gethead($id) {
+    return $this->getvalue($id, 'head');
   }
   
 }//class

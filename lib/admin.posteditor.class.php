@@ -145,6 +145,7 @@ class tposteditor extends tadminmenu {
       $post->title2 = $title2;
       $post->keywords = $keywords;
       $post->description = $description;
+      $post->head = $head;
     }
     
     $post->content = $raw;
