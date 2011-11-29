@@ -42,7 +42,7 @@ class tajaxtageditor extends tajaxposteditor  {
       'url' => '',
       'keywords' => '',
       'description' => '',
-'head' => ''
+      'head' => ''
       );
     } else {
       $item = $tags->getitem($id);

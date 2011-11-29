@@ -73,11 +73,13 @@ class tuserpages extends titems implements itemplate {
     $this->setvalue($this->id, 'idveiw');
   }
   
-public function gethead() {}
+  public function gethead() {
+    return $this->getvalue($this->id, 'head');
+  }
   
   public function getcont() {
     $item =$this->getitem($this->id);
-    $theme = ttheme::i();
+    $theme = tview::getview($this)->theme;
     $result = empty($item['content']) ? '' : $theme->simple($item['content']);
     $perpage = $this->lite ? 1000 : litepublisher::$options->perpage;
     $posts = litepublisher::$classes->posts;
@@ -138,7 +140,8 @@ public function gethead() {}
     'content' => '',
     'rawcontent' => '',
     'keywords' => '',
-    'description' => ''
+    'description' => '',
+    'head' => ''
     );
     
     if ($this->createpage) {

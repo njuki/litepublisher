@@ -20,9 +20,9 @@ public function save() {}
     $urlmap = turlmap::i();
     $idpost = (int) $idpost;
     $post = tpost::i($idpost);
-
+    
     //if ($post->haspages && ($post->commentpages < $urlmap->page)) return $post->getcommentslink();
-
+    
     $lang = tlocal::i('comment');
     $comments = tcomments::i($idpost);
     $list = $comments->getcontent();

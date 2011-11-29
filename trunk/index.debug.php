@@ -83,7 +83,6 @@ tstorage::loaddata();
   litepublisher::$classes = tclasses::i();
   litepublisher::$options = toptions::i();
   litepublisher::$site = tsite::i();
-
   if (!litepublisher::$options->installed) require_once(litepublisher::$paths->lib .'install' . DIRECTORY_SEPARATOR . 'install.php');
   //if (dbversion) litepublisher::$db = tdatabase::i();
 if (dbversion) litepublisher::$db = new tdatabase();

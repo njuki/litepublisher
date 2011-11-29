@@ -109,6 +109,7 @@ class Tadminoptions extends tadminmenu {
       $args->autolinks = $filter->autolinks;
       $args->commentautolinks = $filter->commentautolinks;
       $args->icondisabled = $options->icondisabled;
+      $args->hidefilesonpage = $options->hidefilesonpage;
       
       $themeparser = tthemeparser::i();
       $args->replacelang = $themeparser->replacelang;
@@ -159,6 +160,7 @@ class Tadminoptions extends tadminmenu {
       $args->usersenabled = $options->usersenabled;
       $args->reguser = $options->reguser;
       $args->parsepost = $options->parsepost;
+      
       $args->xxxcheck = $auth->xxxcheck;
       $filter = tcontentfilter::i();
       $args->phpcode = $filter->phpcode;
@@ -224,6 +226,7 @@ class Tadminoptions extends tadminmenu {
       case 'view':
       $options->icondisabled = isset($icondisabled);
       if (!empty($perpage)) $options->perpage = (int) $perpage;
+      $options->hidefilesonpage = isset($hidefilesonpage);
       $filter = tcontentfilter::i();
       $filter->usefilter = isset($usefilter);
       $filter->automore = isset($automore);
@@ -304,6 +307,7 @@ class Tadminoptions extends tadminmenu {
         $options->reguser = isset($reguser);
         $this->usersenabled = isset($usersenabled);
         $options->parsepost = isset($parsepost);
+        
         $auth = tauthdigest::i();
         $auth->xxxcheck = isset($xxxcheck);
         $auth->save();

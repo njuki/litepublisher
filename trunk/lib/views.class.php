@@ -200,10 +200,10 @@ class titems_itemplate extends titems {
     $this->data['head'] = '';
   }
   
-public function gethead() {
+  public function gethead() {
     return $this->data['head'];
-}
-
+  }
+  
   public function getkeywords() {
     return $this->data['keywords'];
   }

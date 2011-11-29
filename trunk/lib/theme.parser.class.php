@@ -623,8 +623,8 @@ class tthemeparser extends tevents {
         'tag' => '$submenu',
         'replace' => '$submenu'
         ),
-
-
+        
+        
         'head' => array(
         'tag' => '$template.head',
         'replace' => '$template.head'
@@ -639,8 +639,8 @@ class tthemeparser extends tevents {
         'tag' => '$prev',
         'replace' => ''
         ),
-
-                'head.post.next' => array(
+        
+        'head.post.next' => array(
         'tag' => '$next',
         'replace' => ''
         ),
@@ -649,12 +649,12 @@ class tthemeparser extends tevents {
         'tag' => '$rss',
         'replace' => ''
         ),
-
+        
         'head.tags' => array(
         'tag' => '$tags',
         'replace' => ''
         ),
-                
+        
         'content' => array(
         'tag' => '$template.content',
         'replace' => '$template.content'

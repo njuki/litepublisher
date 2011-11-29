@@ -189,8 +189,15 @@ class tcomments extends titems {
     $result = '';
     $post = tpost::i($this->pid);
     if ($status == 'approved') {
-      $from = litepublisher::$options->commentpages  ? (litepublisher::$urlmap->page - 1) * litepublisher::$options->commentsperpage : 0;
-      $count = litepublisher::$options->commentpages  ? litepublisher::$options->commentsperpage : $post->commentscount;
+      if (litepublisher::$options->commentpages ) {
+        $page = litepublisher::$urlmap->page;
+        if (litepublisher::$options->comments_invert_order) $page = max(0, $post->commentpages  - $page) + 1;
+        $count = litepublisher::$options->commentsperpage;
+        $from = ($page - 1) * $count;
+      } else {
+        $from = 0;
+        $count = $post->commentscount;
+      }
     } else {
       $from = 0;
       $count = litepublisher::$options->commentsperpage;
@@ -1138,16 +1145,17 @@ public function save() {}
     $urlmap = turlmap::i();
     $idpost = (int) $idpost;
     $post = tpost::i($idpost);
-    //    if (($post->commentscount == 0) && !$post->commentsenabled) return '';
-    if ($post->haspages && ($post->commentpages < $urlmap->page)) return $post->getcommentslink();
+    
+    //if ($post->haspages && ($post->commentpages < $urlmap->page)) return $post->getcommentslink();
+    
     $lang = tlocal::i('comment');
     $comments = tcomments::i($idpost);
     $list = $comments->getcontent();
     
-    $theme = ttheme::i();
+    $theme = $post->theme;
     $args = targs::i();
     $args->count = $post->cmtcount;
-    $result .= $post->theme->parsearg($post->theme->templates['content.post.templatecomments.comments.count'], $args);
+    $result .= $theme->parsearg($theme->templates['content.post.templatecomments.comments.count'], $args);
     $result .= $list;
     
     if (($urlmap->page == 1) && ($post->pingbackscount > 0))  {

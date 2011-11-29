@@ -281,6 +281,7 @@ class tpost extends titem implements  itemplate {
     'rawcontent' => dbversion ? false : '',
     'keywords' => '',
     'description' => '',
+    'head' => '',
     'moretitle' => '',
     'categories' => array(),
     'tags' => array(),
@@ -649,20 +650,27 @@ class tpost extends titem implements  itemplate {
   }
   
   public function gethead() {
-    $result = '';
-    $options = litepublisher::$options;
-    $template = ttemplate::i();
-    $template->ltoptions['idpost'] = $this->id;
+    // backward compatably with file version
+    $result = isset($this->data['head']) ? $this->data['head'] : '';
+    ttemplate::i()->ltoptions['idpost'] = $this->id;
+    $theme = $this->theme;
+    $result .= $theme->templates['head.post'];
+    if ($prev = $this->prev) {
+      ttheme::$vars['prev'] = $prev;
+      $result .= $theme->templates['head.post.prev'];
+    }
     
-    if ($prev = $this->prev) $result .= "<link rel=\"prev\" title=\"$prev->title\" href=\"$prev->link\" />\n";
-    if ($next = $this->next) $result .= "<link rel=\"next\" title=\"$next->title\" href=\"$next->link\" />\n";
+    if ($next = $this->next) {
+      ttheme::$vars['next'] = $next;
+      $result .= $theme->templates['head.post.next'];
+    }
     
     if ($this->commentsenabled && ($this->commentscount > 0) ) {
       $lang = tlocal::i('comment');
-      $result .= "<link rel=\"alternate\" type=\"application/rss+xml\" title=\"$lang->onpost $this->title\" href=\"$this->rsscomments\" />\n";
+      $result .= $theme->templates['head.post.rss'];
     }
     
-    return $result;
+    return $theme->parse($result);
   }
   
   public function getkeywords() {
@@ -715,7 +723,7 @@ class tpost extends titem implements  itemplate {
   }
   
   public function getfilelist() {
-    if (count($this->files) == 0) return '';
+    if ((count($this->files) == 0) || ((litepublisher::$urlmap->page > 1) &&   litepublisher::$options->hidefilesonpage)) return '';
     $files = tfiles::i();
     return $files->getfilelist($this->files, false);
   }
@@ -777,10 +785,20 @@ class tpost extends titem implements  itemplate {
   }
   
   public function  gettemplatecomments() {
-    if (($this->commentscount == 0) && !$this->commentsenabled && ($this->pingbackscount ==0)) return '';
-    if ($this->haspages && ($this->commentpages < $urlmap->page)) return $this->getcommentslink();
-    $tc = ttemplatecomments::i();
-    return $tc->getcomments($this->id);
+    $result = '';
+    $page = litepublisher::$urlmap->page;
+    $countpages = $this->countpages;
+    if ($countpages > 1) $result .= $this->theme->getpages($this->url, $page, $countpages);
+    
+    if (($this->commentscount > 0) || $this->commentsenabled || ($this->pingbackscount > 0)) {
+      if (($countpages > 1) && ($this->commentpages < $page)) {
+        $result .= $this->getcommentslink();
+      } else {
+        $result .= ttemplatecomments::i()->getcomments($this->id);
+      }
+    }
+    
+    return $result;
   }
   
   public function get_excerpt() {
@@ -831,15 +849,11 @@ class tpost extends titem implements  itemplate {
     } elseif ($s = $this->getpage($page - 1)) {
       $result .= $s;
     } elseif ($page <= $this->commentpages) {
-      //$result .= '';
     } else {
       $lang = tlocal::i();
       $result .= $lang->notfound;
     }
     
-    if ($this->haspages) {
-      $result .= $this->theme->getpages($this->url, $page, $this->countpages);
-    }
     return $result;
   }
   
@@ -1449,7 +1463,7 @@ class tposttransform  {
   public static $props = array('id', 'idurl', 'parent', 'author', 'revision', 'class',
   //'created', 'modified',
   'posted',
-  'title', 'title2', 'filtered', 'excerpt', 'rss', 'keywords', 'description', 'moretitle',
+  'title', 'title2', 'filtered', 'excerpt', 'rss', 'keywords', 'description', 'head', 'moretitle',
   'categories', 'tags', 'files',
   'password', 'idview', 'icon',
   'status', 'commentsenabled', 'pingenabled',
@@ -1518,6 +1532,7 @@ class tposttransform  {
   }
   
   public function __get($name) {
+    if ('head' == $name) return $this->post->data['head'];
     if (method_exists($this, $get = "get$name")) return $this->$get();
     if (in_array($name, self::$arrayprops))  return implode(',', $this->post->$name);
     if (in_array($name, self::$boolprops))  return $this->post->$name ? 1 : 0;
@@ -1653,7 +1668,7 @@ class tcommontags extends titems implements  itemplate {
   public $contents;
   public $itemsposts;
   public $PermalinkIndex;
-  public $PostPropname;
+  public $postpropname;
   public $id;
   private $newtitle;
   private $all_loaded;
@@ -1666,7 +1681,7 @@ class tcommontags extends titems implements  itemplate {
     $this->data['includechilds'] = false;
     $this->data['includeparents'] = false;
     $this->PermalinkIndex = 'category';
-    $this->PostPropname = 'categories';
+    $this->postpropname = 'categories';
     $this->contents = new ttagcontent($this);
     if (!$this->dbversion)  $this->data['itemsposts'] = array();
     $this->itemsposts = new titemspostsowner ($this);
@@ -1746,7 +1761,7 @@ class tcommontags extends titems implements  itemplate {
   public function postedited($idpost) {
     $post = $this->getpost((int) $idpost);
     $this->lock();
-  $changed = $this->itemsposts->setitems($idpost, $post->{$this->PostPropname});
+  $changed = $this->itemsposts->setitems($idpost, $post->{$this->postpropname});
     $this->updatecount($changed);
     $this->unlock();
   }
@@ -1880,7 +1895,7 @@ class tcommontags extends titems implements  itemplate {
     $this->itemsposts->deleteitem($id);
     parent::delete($id);
     $this->unlock();
-    $this->itemsposts->updateposts($list, $this->PostPropname);
+    $this->itemsposts->updateposts($list, $this->postpropname);
     $this->changed();
     $urlmap->clearcache();
   }
@@ -1975,8 +1990,9 @@ class tcommontags extends titems implements  itemplate {
   }
   
   public function gethead() {
-    return sprintf('<link rel="alternate" type="application/rss+xml" title="%s" href="$site.url/rss/%s/%d.xml" />',
-    $this->gettitle(), $this->PostPropname, $this->id);
+    $result = $this->contents->getvalue($this->id, 'head');
+    $result .= tview::getview($this)->theme->templates['head.tags'];
+    return $result;
   }
   
   public function getkeywords() {
@@ -2107,6 +2123,7 @@ class ttagcontent extends tdata {
     $item = array(
     'description' => '',
     'keywords' => '',
+    'head' => '',
     'content' => '',
     'rawcontent' => ''
     );
@@ -2131,14 +2148,15 @@ class ttagcontent extends tdata {
     }
   }
   
-  public function edit($id, $content, $description, $keywords) {
+  public function edit($id, $content, $description, $keywords, $head) {
     $item = $this->getitem($id);
     $filter = tcontentfilter::i();
     $item =array(
     'content' => $filter->filter($content),
     'rawcontent' => $content,
     'description' => $description,
-    'keywords' => $keywords
+    'keywords' => $keywords,
+    'head' => $head
     );
     $this->setitem($id, $item);
   }
@@ -2181,6 +2199,10 @@ class ttagcontent extends tdata {
   
   public function getkeywords($id) {
     return $this->getvalue($id, 'keywords');
+  }
+  
+  public function gethead($id) {
+    return $this->getvalue($id, 'head');
   }
   
 }//class
@@ -2279,7 +2301,7 @@ class ttags extends tcommontags {
     $this->table = 'tags';
     $this->basename = 'tags';
     $this->PermalinkIndex = 'tag';
-    $this->PostPropname = 'tags';
+    $this->postpropname = 'tags';
     $this->contents->table = 'tagscontent';
     $this->itemsposts->table = $this->table . 'items';
   }
