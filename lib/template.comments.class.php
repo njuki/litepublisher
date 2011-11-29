@@ -20,16 +20,17 @@ public function save() {}
     $urlmap = turlmap::i();
     $idpost = (int) $idpost;
     $post = tpost::i($idpost);
-    //    if (($post->commentscount == 0) && !$post->commentsenabled) return '';
-    if ($post->haspages && ($post->commentpages < $urlmap->page)) return $post->getcommentslink();
+
+    //if ($post->haspages && ($post->commentpages < $urlmap->page)) return $post->getcommentslink();
+
     $lang = tlocal::i('comment');
     $comments = tcomments::i($idpost);
     $list = $comments->getcontent();
     
-    $theme = ttheme::i();
+    $theme = $post->theme;
     $args = targs::i();
     $args->count = $post->cmtcount;
-    $result .= $post->theme->parsearg($post->theme->templates['content.post.templatecomments.comments.count'], $args);
+    $result .= $theme->parsearg($theme->templates['content.post.templatecomments.comments.count'], $args);
     $result .= $list;
     
     if (($urlmap->page == 1) && ($post->pingbackscount > 0))  {

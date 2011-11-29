@@ -586,10 +586,20 @@ return $theme->parse($result);
   }
   
   public function  gettemplatecomments() {
-    if (($this->commentscount == 0) && !$this->commentsenabled && ($this->pingbackscount ==0)) return '';
-    if ($this->haspages && ($this->commentpages < $urlmap->page)) return $this->getcommentslink();
-    $tc = ttemplatecomments::i();
-    return $tc->getcomments($this->id);
+$result = '';
+$page = litepublisher::$urlmap->page);
+$countpages = $this->countpages;
+    if ($countpages > 1) $result .= $this->theme->getpages($this->url, $page, $countpages);
+
+    if (($this->commentscount > 0) || $this->commentsenabled || ($this->pingbackscount > 0)) {
+    if (($countpages > 1) && ($this->commentpages < $page)) {
+$result .= $this->getcommentslink();
+} else {
+    $result .= ttemplatecomments::i()->getcomments($this->id);
+}
+}
+
+return $result;
   }
   
   public function get_excerpt() {
@@ -640,15 +650,11 @@ return $theme->parse($result);
     } elseif ($s = $this->getpage($page - 1)) {
       $result .= $s;
     } elseif ($page <= $this->commentpages) {
-      //$result .= '';
     } else {
       $lang = tlocal::i();
       $result .= $lang->notfound;
     }
     
-    if ($this->haspages) {
-      $result .= $this->theme->getpages($this->url, $page, $this->countpages);
-    }
     return $result;
   }
   
