@@ -189,8 +189,15 @@ class tcomments extends titems {
     $result = '';
     $post = tpost::i($this->pid);
     if ($status == 'approved') {
-      $from = litepublisher::$options->commentpages  ? (litepublisher::$urlmap->page - 1) * litepublisher::$options->commentsperpage : 0;
-      $count = litepublisher::$options->commentpages  ? litepublisher::$options->commentsperpage : $post->commentscount;
+if (litepublisher::$options->commentpages ) {
+$page = litepublisher::$urlmap->page;
+if (litepublisher::$options->comments_invert_order) $page = max(0, $post->commentpages  - $page) + 1;
+      $count = litepublisher::$options->commentsperpage;
+      $from = ($page - 1) * $count;
+} else {
+      $from = 0;
+      $count = $post->commentscount;
+}
     } else {
       $from = 0;
       $count = litepublisher::$options->commentsperpage;
