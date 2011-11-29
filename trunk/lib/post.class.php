@@ -468,7 +468,7 @@ $result .= $theme->templates['head.post.next'];
     
     if ($this->commentsenabled && ($this->commentscount > 0) ) {
       $lang = tlocal::i('comment');
-      $result .= $thme->templates['head.post.rss'];
+      $result .= $theme->templates['head.post.rss'];
     }
 
 return $theme->parse($result);    
@@ -587,7 +587,7 @@ return $theme->parse($result);
   
   public function  gettemplatecomments() {
 $result = '';
-$page = litepublisher::$urlmap->page);
+$page = litepublisher::$urlmap->page;
 $countpages = $this->countpages;
     if ($countpages > 1) $result .= $this->theme->getpages($this->url, $page, $countpages);
 

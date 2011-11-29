@@ -1,6 +1,8 @@
 <?php
 
 function update506() {
+litepublisher::$options->comments_invert_order = false;
+
 $menus = tmenus::i();
 foreach ($menus->items as $id => $item) {
 $menu = tmenu::i($id);
