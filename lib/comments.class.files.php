@@ -232,8 +232,8 @@ class tcomments extends titems {
     $items = array_keys($this->items);
     if (!$hold) {
       if (litepublisher::$options->commentpages ) {
-$page = min(litepublisher::$urlmap->page, $post->commentpages );
-if (litepublisher::$options->comments_invert_order) $page = max(0, $post->commentpages  - $page) + 1;
+        $page = min(litepublisher::$urlmap->page, $post->commentpages );
+        if (litepublisher::$options->comments_invert_order) $page = max(0, $post->commentpages  - $page) + 1;
         $from = ($page - 1) * litepublisher::$options->commentsperpage;
         $items = array_slice($items, $from, litepublisher::$options->commentsperpage, true);
       }

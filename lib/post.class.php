@@ -82,7 +82,7 @@ class tpost extends titem implements  itemplate {
     'rawcontent' => dbversion ? false : '',
     'keywords' => '',
     'description' => '',
-'head' => '',
+    'head' => '',
     'moretitle' => '',
     'categories' => array(),
     'tags' => array(),
@@ -451,27 +451,27 @@ class tpost extends titem implements  itemplate {
   }
   
   public function gethead() {
-// backward compatably with file version
-$result = isset($this->data['head']) ? $this->data['head'] : '';
-ttemplate::i()->ltoptions['idpost'] = $this->id;
-$theme = $this->theme;
+    // backward compatably with file version
+    $result = isset($this->data['head']) ? $this->data['head'] : '';
+    ttemplate::i()->ltoptions['idpost'] = $this->id;
+    $theme = $this->theme;
     $result .= $theme->templates['head.post'];
     if ($prev = $this->prev) {
-ttheme::$vars['prev'] = $prev;
-$result .= $theme->templates['head.post.prev'];
-}
-
+      ttheme::$vars['prev'] = $prev;
+      $result .= $theme->templates['head.post.prev'];
+    }
+    
     if ($next = $this->next) {
-ttheme::$vars['next'] = $next;
-$result .= $theme->templates['head.post.next'];
-}
+      ttheme::$vars['next'] = $next;
+      $result .= $theme->templates['head.post.next'];
+    }
     
     if ($this->commentsenabled && ($this->commentscount > 0) ) {
       $lang = tlocal::i('comment');
       $result .= $theme->templates['head.post.rss'];
     }
-
-return $theme->parse($result);    
+    
+    return $theme->parse($result);
   }
   
   public function getkeywords() {
@@ -524,7 +524,7 @@ return $theme->parse($result);
   }
   
   public function getfilelist() {
-    if (count($this->files) == 0) return '';
+    if ((count($this->files) == 0) || ((litepublisher::$urlmap->page > 1) &&   litepublisher::$options->hidefilesonpage)) return '';
     $files = tfiles::i();
     return $files->getfilelist($this->files, false);
   }
@@ -586,20 +586,20 @@ return $theme->parse($result);
   }
   
   public function  gettemplatecomments() {
-$result = '';
-$page = litepublisher::$urlmap->page;
-$countpages = $this->countpages;
+    $result = '';
+    $page = litepublisher::$urlmap->page;
+    $countpages = $this->countpages;
     if ($countpages > 1) $result .= $this->theme->getpages($this->url, $page, $countpages);
-
+    
     if (($this->commentscount > 0) || $this->commentsenabled || ($this->pingbackscount > 0)) {
-    if (($countpages > 1) && ($this->commentpages < $page)) {
-$result .= $this->getcommentslink();
-} else {
-    $result .= ttemplatecomments::i()->getcomments($this->id);
-}
-}
-
-return $result;
+      if (($countpages > 1) && ($this->commentpages < $page)) {
+        $result .= $this->getcommentslink();
+      } else {
+        $result .= ttemplatecomments::i()->getcomments($this->id);
+      }
+    }
+    
+    return $result;
   }
   
   public function get_excerpt() {
@@ -671,7 +671,7 @@ return $result;
     $posts->aftercontent($this, $result);
     return $result;
   }
-
+  
   public function setcontent($s) {
     if (!is_string($s)) $this->error('Error! Post content must be string');
     if ($s != $this->rawcontent) {

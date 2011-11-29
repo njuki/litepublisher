@@ -1060,6 +1060,7 @@ class tajaxposteditor  extends tevents {
       $form = new tautoform($post, 'editor', 'editor');
       $form->add($form->url, $form->title2, $form->keywords, $form->description);
       $result = $form->getcontent();
+      $result .= tadminhtml::i()->getedit('head', $post->data['head'], tlocal::i()->head);
       break;
       
       case 'files':
@@ -1355,6 +1356,7 @@ class tposteditor extends tadminmenu {
       $post->title2 = $title2;
       $post->keywords = $keywords;
       $post->description = $description;
+      $post->head = $head;
     }
     
     $post->content = $raw;

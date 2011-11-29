@@ -111,7 +111,8 @@ class tadminusers extends tadminmenu {
       'content' => '',
       'rawcontent' => '',
       'keywords' => '',
-      'description' => ''
+      'description' => '',
+      'head' => ''
       );
       
       $args->add($item);

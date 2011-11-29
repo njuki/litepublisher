@@ -11,5 +11,6 @@
   `rawcontent` text NOT NULL,
   `keywords` text NOT NULL,
   `description` text NOT NULL,
+  `head` text NOT NULL,
 
   KEY `id` (`id`)
