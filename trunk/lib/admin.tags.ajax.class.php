@@ -64,7 +64,7 @@ class tajaxtageditor extends tajaxposteditor  {
         $args->add($tags->contents->getitem($id));
         $args->url = $tags->items[$id]['url'];
       }
-      $result = $html->parsearg('[text=url] [text=description] [text=keywords] [text=head]', $args);
+      $result = $html->parsearg('[text=url] [text=description] [text=keywords] [editor=head]', $args);
       break;
       
       case 'text':
