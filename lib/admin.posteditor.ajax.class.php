@@ -174,7 +174,7 @@ class tajaxposteditor  extends tevents {
       $form = new tautoform($post, 'editor', 'editor');
       $form->add($form->url, $form->title2, $form->keywords, $form->description);
       $result = $form->getcontent();
-      $result .= tadminhtml::i()->getedit('head', $post->data['head'], tlocal::i()->head);
+      $result .= tadminhtml::i()->getinput('editor', 'head', $post->data['head'], tlocal::i()->head);
       break;
       
       case 'files':
