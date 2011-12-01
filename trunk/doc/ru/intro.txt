@@ -32,7 +32,7 @@ LitePublisher - это система управления контентом (CMS), сделанная на PHP с испол
 
 <ul class="basefeatures">$home.basefeatures </ul>
 
-<h2>Обзор сайта litepublisher.ru</h2>
+<h4>Обзор сайта litepublisher.ru</h4>
 
 Первое, что вам захочется - это подобрать на свой сайт красивую тему. Загляните в раздел <a href="http://litepublisher.ru/downloads.htm">Скачать</a>, где в подменю <a href="http://litepublisher.ru/downloads/themes.htm">Темы</a> вы можете просмотреть и скачать прямо на сайт существующие темы. Не нашли подходящей темы? Не беда, на сайте есть <a href="http://litepublisher.ru/theme-generator.htm">Генератор тем</a>, где вы сможете за пару минут сконструировать себе тему. 
 В генераторе есть 3 исходные темы, такие как с <a href="http://litepublisher.ru/theme-generator.htm?type=left">левым сайдбаром</a> или с <a href="http://litepublisher.ru/theme-generator.htm?type=right">правым сайдбаром</a>. Также в разделе <a href="http://litepublisher.ru/downloads/plugins.htm">Плагины</a> можете скачать плагины не входящие в состав дистрибутива, например популярные визуальные редакторы CKeditor и Tiny_mce.
