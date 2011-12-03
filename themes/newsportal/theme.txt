@@ -95,7 +95,7 @@ $template.content.post.templatecomments.confirmform = [<h2>$lang.formhead</h2>
 $template.content.post.templatecomments.comments.count = [<h3 id="comments">$count $lang.topost &#8220;$post.title&#8221;</h3>]
 
 $template.content.post.templatecomments.comments = [<a name="comments"></a>
-	<ol class="commentlist" id="commentlist" start="0">
+	<ol class="commentlist" id="commentlist" start="$from">
 $comment
  </ol>]
 
