@@ -309,7 +309,6 @@ class tthemegenerator extends tmenu {
       }
       
       imagepng($dest, $realfilename);
-      
       imagedestroy($dest);
       imagedestroy($source);
       
