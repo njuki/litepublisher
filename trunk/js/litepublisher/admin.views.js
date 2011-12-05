@@ -55,31 +55,21 @@ function widget_clicked() {
   $("#widgetoptions_" + a[1] + "_" + a[2]).show();
 }
 
-function init_views() {
-  if (window.jqloader ===  undefined) {
-    _init_views();
-  } else {
-    var script = jqloader.load(ltoptions.files + '/js/litepublisher/admin.' + $.fn.jquery + '.min.js');
-    script.done(_init_views);
-  }
-}
-
 function _init_views() {
   $(document).ready(function() {
     $("div[rel='tabs']").each(function() {
       var idview = $(this).attr("id").split("_").pop();
-      if (idview == 1) {
+      if (idview == "1") {
         $("#customsidebar_1").attr("disabled", "disabled");
         $("#disableajax_1").attr("disabled", "disabled");
         $("#delete_1").attr("disabled", "disabled");
         var disabled = [];
       } else {
-        var checked = $(this).attr("checked");
+        var checked = $("#customsidebar_" + idview).attr("checked");
         var disabled = checked ? [] : [0];
-        //$("#disableajax_" + idview).attr("disabled", checked ? "disabled" : "");
-        $("#disableajax_" + idview).attr("disabled", checked);
+        $("#disableajax_" + idview).attr("disabled", checked ? "disabled" : false);
       }
-      
+
       $(this).tabs({
         cache: true,
         disabled: disabled,
@@ -183,3 +173,10 @@ function _init_views() {
       
   });   });
 }
+
+  if (window.jqloader ===  undefined) {
+    _init_views();
+  } else {
+    var script = window.jqloader.load(ltoptions.files + '/js/litepublisher/admin.' + $.fn.jquery + '.min.js');
+    script.done(_init_views);
+  }
