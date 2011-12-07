@@ -24,8 +24,9 @@ $(id + ' .uploadedpercent').text(value + ' %');
 
 function fileDialogComplete(numFilesSelected, numFilesQueued) {
 set_progress(0, this.customSettings.progress);
-  //var url = ltoptions.uploadurl == undefined ? ltoptions.url: ltoptions.uploadurl;
-  //ltoptions.swfu .setUploadURL(url + "/admin/ajaxposteditor.htm?get=upload&id=" + ltoptions.idpost + '&random=' + Math.random());
+  var url = window.location.toString();
+url = url + (url.indexOf("?") == -1 ? "?" : "&");
+this.setUploadURL(url + 'random=' + Math.random());
   this.startUpload();
 }
 
@@ -62,7 +63,7 @@ function createswfu (type) {
     file_size_limit : type ? "4 MB" : "1 MB",
     file_types : type ? "*.jpg;*.png;*.gif" : "*.png",
     file_types_description : "Images",
-    file_upload_limit : 1,
+    file_upload_limit : 100,
     file_queue_limit : 1,
     //debug: true,
     

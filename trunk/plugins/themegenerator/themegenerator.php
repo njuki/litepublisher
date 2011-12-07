@@ -32,6 +32,7 @@ class tthemegenerator extends tmenu {
   }
   
   public function deleteold($filename) {
+    $filename = litepublisher::$paths->files . 'themegen' . DIRECTORY_SEPARATOR . $filename;
     if (@filectime ($filename) + 24*3600 < time()) unlink($filename);
   }
   

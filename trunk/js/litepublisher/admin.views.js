@@ -69,7 +69,7 @@ function _init_views() {
         var disabled = checked ? [] : [0];
         $("#disableajax_" + idview).attr("disabled", checked ? "disabled" : false);
       }
-
+      
       $(this).tabs({
         cache: true,
         disabled: disabled,
@@ -174,9 +174,9 @@ function _init_views() {
   });   });
 }
 
-  if (window.jqloader ===  undefined) {
-    _init_views();
-  } else {
-    var script = window.jqloader.load(ltoptions.files + '/js/litepublisher/admin.' + $.fn.jquery + '.min.js');
-    script.done(_init_views);
-  }
+if (window.jqloader ===  undefined) {
+  _init_views();
+} else {
+  var script = window.jqloader.load(ltoptions.files + '/js/litepublisher/admin.' + $.fn.jquery + '.min.js');
+  script.done(_init_views);
+}
