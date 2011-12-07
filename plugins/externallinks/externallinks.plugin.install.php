@@ -32,6 +32,7 @@ function texternallinksInstall($self) {
   
   $robot = trobotstxt::i();
   $robot->AddDisallow('/externallink.htm');
+  tposts::i()->addrevision();
 }
 
 function texternallinksUninstall($self) {
@@ -46,8 +47,6 @@ function texternallinksUninstall($self) {
   if (dbversion) {
     $manager = tdbmanager::i();
     $manager->deletetable($self->table);
-    
-    $posts = tposts::i();
-    $posts->addrevision();
   }
+  tposts::i()->addrevision();
 }

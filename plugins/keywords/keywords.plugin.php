@@ -55,6 +55,7 @@ class tkeywordsplugin  extends tplugin {
     
     $keywords = trim($keywords);
     if (empty($keywords)) return;
+    if (strlen($keywords) <= 5) return;
     foreach (array('site:', 'inurl:', 'link:', '%', '@', '<', '>', 'intext:', 'http:', 'ftp:', '\\') as $k) {
       if (false !== strpos($keywords, $k)) return;
     }
