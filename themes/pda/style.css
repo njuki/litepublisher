@@ -53,6 +53,8 @@ a{
 	margin:0px;
 	border-bottom: 1px solid #3C6A91;
 }
+
+#nav li{float: left; list-style: none;}
 #header h1{
 	font-size: 2em;
 	padding:0px;

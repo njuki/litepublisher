@@ -29,24 +29,12 @@ class tmobiletemplate extends ttemplate {
     return getinstance(__class__);
   }
 
-  public function request($context) {
-    $this->context = $context;
-    ttheme::$vars['context'] = $context;
-    ttheme::$vars['template'] = $this;
-    $this->itemplate = $context instanceof itemplate;
-    $this->view = $this->itemplate ? tview::getview($context) : tview::i();
-    $theme = ttheme::getinstance('pda');
-    litepublisher::$classes->instances[get_class($theme)] = $theme;
-    $this->path = litepublisher::$paths->themes . $theme->name . DIRECTORY_SEPARATOR ;
-    $this->url = litepublisher::$site->files . '/themes/' . $theme->name;
-    $this->hover = $this->hovermenu && ($theme->templates['menu.hover'] == 'true');
-    $this->ltoptions['themename'] = $theme->name;
-    $result = $this->httpheader();
-    $result  .= $theme->gethtml($context);
-    unset(ttheme::$vars['context'], ttheme::$vars['template']);
-    return $result;
-  }
-  
+protected function get_view($context) {
+    $views = tviews::i();
+    $idview = isset($views->defaults['mobile']) ? $views->defaults['mobile'] : 1;
+return tview::i($idview);
+}
+
 }//class
 
 litepublisher::$site = tmobilesite::i();
