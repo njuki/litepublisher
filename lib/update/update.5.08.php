@@ -12,6 +12,7 @@ if (!isset($views->defaults['mobile'])) {
 $view = tview::i($idview);
 if ($view->themename != 'pda') {
 $view->themename = 'pda';
+$view->disableajax = true;
 $view->save();
 }
     

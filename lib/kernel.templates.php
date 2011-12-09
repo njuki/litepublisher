@@ -390,18 +390,24 @@ class ttemplate extends tevents_storage {
     return parent::__get($name);
   }
   
+  protected function get_view($context) {
+    return $this->itemplate ? tview::getview($context) : tview::i();
+  }
+  
   public function request($context) {
     $this->context = $context;
     ttheme::$vars['context'] = $context;
     ttheme::$vars['template'] = $this;
     $this->itemplate = $context instanceof itemplate;
-    $this->view = $this->itemplate ? tview::getview($context) : tview::i();
+    $this->view = $this->get_view($context);
+    //$this->itemplate ? tview::getview($context) : tview::i();
     $theme = $this->view->theme;
+    $this->ltoptions['themename'] = $theme->name;
     litepublisher::$classes->instances[get_class($theme)] = $theme;
     $this->path = litepublisher::$paths->themes . $theme->name . DIRECTORY_SEPARATOR ;
     $this->url = litepublisher::$site->files . '/themes/' . $theme->name;
     $this->hover = $this->view->hovermenu && ($theme->templates['menu.hover'] == 'true');
-    $this->ltoptions['themename'] = $theme->name;
+    
     $result = $this->httpheader();
     $result  .= $theme->gethtml($context);
     unset(ttheme::$vars['context'], ttheme::$vars['template']);
