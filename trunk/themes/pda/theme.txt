@@ -60,18 +60,12 @@ content.post.templatecomments.comments.count = [
 $template.content.post.templatecomments.comments.comment = [
 <li $class id="comment-$comment.id">
  <span id="comment-$comment.id"></span>
-$moderate
 			<cite>$comment.authorlink</cite> $lang.says: <br />
 			<small class="commentmetadata"><a href="#comment-$comment.id" title="">$comment.date $lang.attime $comment.time</a></small>
-			<span class="replyquotebuttons">
-<input type="button" value="$lang.reply" onclick="replycomment($comment.id,'$comment.name');" />
-<input type="button" value="$lang.quote" onclick="quotecomment($comment.id,'$comment.name');" />
-</span>
   <div class="commentcontent" id="commentcontent-$comment.id" >$comment.content</div>		</li>
 ]
 
 content.post.templatecomments.form = [
-		<script type="text/javascript" src="$site.files$template.jsmerger_comments"></script>
 								<form action="$options.url/send-comment.php" method="post" id="commentform">
 									<p><input type="text" name="name" id="name" value="$name" size="22" />
 									<label for="name"><small>$lang.name</small></label></p>
