@@ -18,7 +18,11 @@ class tmobilesite extends tsite {
   public function geturl() {
 return parent::geturl() . '/mobile';
   }
-  
+
+  public function getcanonicalurl() {
+return parent::geturl();
+  }
+
 public function install() {}
 public function uninstall() {}
 }//class
