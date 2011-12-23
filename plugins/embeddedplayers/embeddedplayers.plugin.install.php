@@ -18,8 +18,8 @@ function tembeddedplayersInstall($self) {
   </li>';
   
   $self->video = '<li>
-  <object type="application/x-shockwave-flash" data="$site.files/js/flowplayer/flowplayer-3.2.5.swf" width="251" height="200" id="videoplayer-$id" name="videoplayer-$id">
-  <param name="movie" value="$site.files/js/flowplayer/flowplayer-3.2.5.swf" />
+  <object type="application/x-shockwave-flash" data="$site.files/js/flowplayer/flowplayer-3.2.7.swf" width="251" height="200" id="videoplayer-$id" name="videoplayer-$id">
+  <param name="movie" value="$site.files/js/flowplayer/flowplayer-3.2.7.swf" />
   <param name="allowfullscreen" value="true" />
   <param name="allowscriptaccess" value="always" />
 <param name="flashvars" value=\'config={"clip":{"url":"$link"},"canvas":{"backgroundColor":"#112233"}}\' />
