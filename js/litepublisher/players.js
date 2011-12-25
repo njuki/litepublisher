@@ -24,15 +24,39 @@ function playaudiofile(id, filename) {
   }
 }
 
+/*
 function playvideofile(q, filename) {
-  if (ltoptions.videomutex == undefined) {
-    ltoptions.videomutex = 'loading';
-    $.load_script(ltoptions.files + '/js/flowplayer/flowplayer-3.2.6.min.js', function() {
-      ltoptions.videomutex = 'loaded';
-      playvideofile(q, filename);
-    });
-  } else if (ltoptions.videomutex == 'loaded') {
+if (ltoptions.videomutex == 'loaded') {
+$(q).off("click");
     $(q).flowplayer(ltoptions.files + '/js/flowplayer/flowplayer-3.2.7.swf', filename);
     $(q).flowplayer(0).load();
-  }
+  } else if (ltoptions.videomutex == "loading") {
+  if (ltoptions.videomutex == undefined) {
+return;
+} else {
+    ltoptions.videomutex = 'loading';
+    $.load_script(ltoptions.files + '/js/flowplayer/flowplayer-3.2.6.min.js', function() {
+      playvideofile(q, filename);
+      ltoptions.videomutex = "loaded";
+    });
 }
+}
+
+function play_video_clicked() }{
+//  if (ltoptions.videomutex == "loading") return false;
+var parent = $(this).parent();
+//playvideofile(parent, parent.data("link"));
+return false;
+}
+*/
+$(document).ready(function() {
+$(".videofile").one("click", function() {
+  var comment = widget_findcomment(this, false);
+if (comment) {
+var content = comment.nodeValue;
+$(comment).remove();
+  $(this).replaceWith(content);
+}
+return false;
+});
+});

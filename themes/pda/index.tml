@@ -5,17 +5,20 @@
 	<title>$template.title</title>
 <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no" />
 	<link rel="stylesheet" href="$template.url/style.css" type="text/css" media="all" />
+<link rel="canonical" href="$site.canonicalurl$urlmap.url"/>
 	$template.head
 </head>
 <body>
+<!--pda:header-->
 <div id="header">
 	<h1><a href="$site.url/">$site.name</a></h1>
 	<div class="description">$site.description</div>
 </div>
+<!--pda:menu-->
 	<div id="topmenu">
 	 $template.menu
 </div>
-
+<!--pda:content-->
 <div id="content">
 		$template.content
 </div>
