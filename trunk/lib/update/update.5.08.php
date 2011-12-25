@@ -15,6 +15,7 @@ $view->themename = 'pda';
 $view->disableajax = true;
 $view->save();
 }
-    
+ 
+echo '<strong>Please update file /mobile/index.php for your mobile site</strong><br>';   
 }
 }

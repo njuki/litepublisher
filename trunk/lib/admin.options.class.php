@@ -119,6 +119,9 @@ class Tadminoptions extends tadminmenu {
       $args->ratio = $parser->ratio;
       $args->previewwidth = $parser->previewwidth;
       $args->previewheight = $parser->previewheight;
+
+$args->video_width = litepublisher::$site->video_width;
+$args->video_height = litepublisher::$site->video_height;
       break;
       
       case 'links':
@@ -248,6 +251,9 @@ class Tadminoptions extends tadminmenu {
       $parser->previewwidth = $previewwidth;
       $parser->previewheight = $previewheight;
       $parser->save();
+
+litepublisher::$site->video_width = $video_width;
+litepublisher::$site->video_height = $video_height;
       break;
       
       case 'links':

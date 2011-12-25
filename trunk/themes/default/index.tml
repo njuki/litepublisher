@@ -15,11 +15,14 @@ $(document).ready(function() {
 	<![endif]--> 
 </head>
 <body>
+<!--default:header-->
 	<div id="header"><div id="logo"><span class="name"><a href="$site.url/">$site.name</a></span><span class="slogan">$site.description</span>
 </div></div>
+<!--default:menu-->
 	<div id="topmenu">
 	 $template.menu
 </div>
+<!--default:content-->
 <div id="out">
 <div id="middle">
 	<div id="content">

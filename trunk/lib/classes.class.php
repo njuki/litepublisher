@@ -135,8 +135,8 @@ class tclasses extends titems {
       if (file_exists($filename))  return $filename;
       //may be is subdir?
       if (file_exists(litepublisher::$paths->plugins . $filename)) return litepublisher::$paths->plugins . $filename;
-      if (file_exists(litepublisher::$paths->themes . $filename)) return litepublisher::$paths->themes . $result;
-      if  (file_exists(litepublisher::$paths->home . $filename)) return  litepublisher::$paths->home . $result;
+      if (file_exists(litepublisher::$paths->themes . $filename)) return litepublisher::$paths->themes . $filename;
+      if  (file_exists(litepublisher::$paths->home . $filename)) return  litepublisher::$paths->home . $filename;
     }
     if (isset($this->interfaces[$class])) return litepublisher::$paths->lib . $this->interfaces[$class];
     return false;
