@@ -32,16 +32,25 @@ class tthemeparser extends tevents {
   
   private function createpathmap() {
     $result = array();
-    $post = 'content.post.';
-    $excerpt = 'content.excerpts.excerpt.';
+    $post = 'content.post.filelist.';
+    $excerpt = 'content.excerpts.excerpt.filelist.';
     foreach(array('file', 'image',  'audio', 'video') as $name) {
-      $key = $post . 'filelist.' . $name;
+      $key = $post . $name;
       $result[$key . "s.$name"] = $key;
-      $keyexcerpt = $excerpt . 'filelist.' . $name;
+      $keyexcerpt = $excerpt . $name;
       $result[$keyexcerpt . "s.$name"] = $keyexcerpt;
-      $result[$post . 'filelist.images.preview'] = $post . 'filelist.preview';
-      $result[$excerpt . 'filelist.images.preview'] = $excerpt . 'filelist.preview';
-    }
+}
+
+      $result[$post . 'images.preview'] = $post . 'preview';
+      $result[$excerpt . 'images.preview'] = $excerpt . 'preview';
+
+    foreach(array('audio', 'video') as $name) {
+$val = $post . $name . '.player';
+$key = $post . $name;
+      $result[$key . 's.player'] = $val;
+      $result[$key . "s.$name.player"] = $val;
+}
+
     return $result;
   }
   
@@ -455,51 +464,33 @@ class tthemeparser extends tevents {
         foreach(array('file', 'image',  'audio', 'video') as $name) {
           $key = $post . 'filelist.' . $name;
           $itemkey = $key . "s.$name";
-          /*
-          if (isset($templates[$itemkey])) {
-            $templates[$key] = $templates[$itemkey];
-            unset($templates[$itemkey]);
-          }
-          */
           if (!isset($templates[$key . 's'])) $templates[$key . 's'] = '$' . $name;
           //excerpt
           $keyexcerpt = $excerpt . 'filelist.' . $name;
           $itemkeyexcerpt = $keyexcerpt . "s.$name";
-          /*
-          if (isset($templates[$itemkeyexcerpt])) {
-            $templates[$keyexcerpt] = $templates[$itemkeyexcerpt];
-            unset($templates[$itemkeyexcerpt]);
-          } else {
-            $templates[$keyexcerpt] = $templates[$key];
-          }
-          */
           if (!isset($templates[$keyexcerpt])) $templates[$keyexcerpt] = $templates[$key];
           if (!isset($templates[$keyexcerpt . 's'])) $templates[$keyexcerpt . 's'] = $templates[$key . 's'];
         }
         
         //fix preview
         $key = $post . 'filelist.preview';
-        $itemkey = $post . 'filelist.images.preview';
-        /*
-        if (isset($templates[$itemkey])) {
-          $templates[$key] = $templates[$itemkey];
-          unset($templates[$itemkey]);
-        }
-        */
         $keyexcerpt = $excerpt . 'filelist.preview';
-        $itemkeyexcerpt = $excerpt . 'filelist.images.preview';
-        /*
-        if (isset($templates[$itemkeyexcerpt])) {
-          $templates[$keyexcerpt] = $templates[$itemkeyexcerpt];
-          unset($templates[$itemkeyexcerpt]);
-        } else
-        */
-        if ( !isset($templates[$keyexcerpt])) {
-          $templates[$keyexcerpt] = $templates[$key];
-        }
-        
+        if ( !isset($templates[$keyexcerpt])) $templates[$keyexcerpt] = $templates[$key];
+
+//replace player
+$key = $post . 'filelist.audio';
+$templates[$key] = str_replace('$player', $templates[$key . '.player'], $templates[$key]);
+$ekey = $excerpt . 'filelist.audio';
+if (isset($templates[$ekey])) $templates[$ekey] = str_replace('$player', $templates[$key . '.player'], $templates[$ekey]);
+
+$key = $post . 'filelist.video';
+$templates[$key] = str_replace('$player', $templates[$key . '.player'], $templates[$key]);
+$ekey = $excerpt . 'filelist.video';
+if (isset($templates[$ekey])) $templates[$ekey] = str_replace('$player', $templates[$key . '.player'], $templates[$ekey]);
+
         foreach (array('date',
         'filelist', 'filelist.file', 'filelist.image', 'filelist.preview', 'filelist.audio', 'filelist.video',
+//'filelist.audio.player', 'filelist.video.player',
         'filelist.files', 'filelist.images', 'filelist.audios', 'filelist.videos',
         'catlinks',         'catlinks.item', 'catlinks.divider',
         'taglinks',         'taglinks.item', 'taglinks.divider') as $name) {
@@ -744,6 +735,11 @@ class tthemeparser extends tevents {
         'tag' => '$audio',
         'replace' => ''
         ),
+
+        'content.post.filelist.audio.player' => array(
+        'tag' => '$player',
+        'replace' => '$player'
+        ),
         
         'content.post.filelist.audios.audio' => array(
         'tag' => '$audio',
@@ -758,6 +754,11 @@ class tthemeparser extends tevents {
         'content.post.filelist.video' => array(
         'tag' => '$video',
         'replace' => ''
+        ),
+
+        'content.post.filelist.video.player' => array(
+        'tag' => '$player',
+        'replace' => '$player'
         ),
         
         'content.post.filelist.videos' => array(
