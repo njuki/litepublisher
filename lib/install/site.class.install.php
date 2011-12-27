@@ -20,8 +20,8 @@ function tsiteInstall($self) {
   $site->jquery_version = '1.7.1';
   $site->jqueryui_version = '1.8.14';
   $site->author = 'Admin';
-$site->video_width =251;
-$site->video_height = 200;
+$site->video_width =450;
+$site->video_height = 300;
   $site->unlock();
 }
 
