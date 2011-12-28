@@ -39,18 +39,18 @@ class tthemeparser extends tevents {
       $result[$key . "s.$name"] = $key;
       $keyexcerpt = $excerpt . $name;
       $result[$keyexcerpt . "s.$name"] = $keyexcerpt;
-}
-
-      $result[$post . 'images.preview'] = $post . 'preview';
-      $result[$excerpt . 'images.preview'] = $excerpt . 'preview';
-
+    }
+    
+    $result[$post . 'images.preview'] = $post . 'preview';
+    $result[$excerpt . 'images.preview'] = $excerpt . 'preview';
+    
     foreach(array('audio', 'video') as $name) {
-$val = $post . $name . '.player';
-$key = $post . $name;
+      $val = $post . $name . '.player';
+      $key = $post . $name;
       $result[$key . 's.player'] = $val;
       $result[$key . "s.$name.player"] = $val;
-}
-
+    }
+    
     return $result;
   }
   
@@ -476,21 +476,29 @@ $key = $post . $name;
         $key = $post . 'filelist.preview';
         $keyexcerpt = $excerpt . 'filelist.preview';
         if ( !isset($templates[$keyexcerpt])) $templates[$keyexcerpt] = $templates[$key];
-
-//replace player
-$key = $post . 'filelist.audio';
-$templates[$key] = str_replace('$player', $templates[$key . '.player'], $templates[$key]);
-$ekey = $excerpt . 'filelist.audio';
-if (isset($templates[$ekey])) $templates[$ekey] = str_replace('$player', $templates[$key . '.player'], $templates[$ekey]);
-
-$key = $post . 'filelist.video';
-$templates[$key] = str_replace('$player', $templates[$key . '.player'], $templates[$key]);
-$ekey = $excerpt . 'filelist.video';
-if (isset($templates[$ekey])) $templates[$ekey] = str_replace('$player', $templates[$key . '.player'], $templates[$ekey]);
-
+        
+        //replace player
+        $key = $post . 'filelist.audio';
+        if (strpos($templates[$key], 'playaudiofile(')) $templates[$key] = str_replace('</a>', '</a><!--$player-->', $templates[$key]);
+        $templates[$key] = str_replace('$player', $templates[$key . '.player'], $templates[$key]);
+        $ekey = $excerpt . 'filelist.audio';
+        if (isset($templates[$ekey])) {
+          if (strpos($templates[$ekey], 'playaudiofile(')) $templates[$ekey] = str_replace('</a>', '</a><!--$player-->', $templates[$ekey]);
+          $templates[$ekey] = str_replace('$player', $templates[$key . '.player'], $templates[$ekey]);
+        }
+        
+        $key = $post . 'filelist.video';
+        if (strpos($templates[$key], 'playvideofile(')) $templates[$key] = str_replace('</a>', '</a><!--$player-->', $templates[$key]);
+        $templates[$key] = str_replace('$player', $templates[$key . '.player'], $templates[$key]);
+        $ekey = $excerpt . 'filelist.video';
+        if (isset($templates[$ekey])) {
+          if (strpos($templates[$ekey], 'playvideofile(')) $templates[$ekey] = str_replace('</a>', '</a><!--$player-->', $templates[$ekey]);
+          $templates[$ekey] = str_replace('$player', $templates[$key . '.player'], $templates[$ekey]);
+        }
+        
         foreach (array('date',
         'filelist', 'filelist.file', 'filelist.image', 'filelist.preview', 'filelist.audio', 'filelist.video',
-//'filelist.audio.player', 'filelist.video.player',
+        //'filelist.audio.player', 'filelist.video.player',
         'filelist.files', 'filelist.images', 'filelist.audios', 'filelist.videos',
         'catlinks',         'catlinks.item', 'catlinks.divider',
         'taglinks',         'taglinks.item', 'taglinks.divider') as $name) {
@@ -735,7 +743,7 @@ if (isset($templates[$ekey])) $templates[$ekey] = str_replace('$player', $templa
         'tag' => '$audio',
         'replace' => ''
         ),
-
+        
         'content.post.filelist.audio.player' => array(
         'tag' => '$player',
         'replace' => '$player'
@@ -755,7 +763,7 @@ if (isset($templates[$ekey])) $templates[$ekey] = str_replace('$player', $templa
         'tag' => '$video',
         'replace' => ''
         ),
-
+        
         'content.post.filelist.video.player' => array(
         'tag' => '$player',
         'replace' => '$player'
