@@ -1,7 +1,7 @@
 <?php
 /**
 * Lite Publisher
-* Copyright (C) 2010, 2011 Vladimir Yushko http://litepublisher.com/
+* Copyright (C) 2010, 2012 Vladimir Yushko http://litepublisher.com/
 * Dual licensed under the MIT (mit.txt)
 * and GPL (gpl.txt) licenses.
 **/
@@ -11,7 +11,7 @@ class tmailer {
   
   protected static function  send($from, $to, $subj, $body) {
     $options =     litepublisher::$options;
-    $subj =  '=?utf-8?B?'.@base64_encode($subj). '?=';
+    $subj = $subj == '' ? '' : '=?utf-8?B?'.@base64_encode($subj). '?=';
     $date = date('r');
     if (litepublisher::$debug) {
       $dir = litepublisher::$paths->data . 'logs' . DIRECTORY_SEPARATOR ;
@@ -69,7 +69,7 @@ class tmailer {
   }
   
   public static function  sendattachment($fromname, $fromemail, $toname, $toemail, $subj, $body, $filename, $attachment) {
-    $subj =  '=?utf-8?B?'.@base64_encode($subj). '?=';
+    $subj = $subj == '' ? '' : '=?utf-8?B?'.@base64_encode($subj). '?=';
     $date = date('r');
     $from = self::CreateEmail($fromname, $fromemail);
     $to =  self::CreateEmail($toname, $toemail);
@@ -123,7 +123,7 @@ class TSMTPMailer extends tevents {
       $smtp->Hello($_SERVER['SERVER_NAME']);
       if ($smtp->Authenticate($this->login, $this->password)) {
         if ($smtp->Mail($this->login) && $smtp->Recipient($toemail)) {
-          $subj =  '=?utf-8?B?'.@base64_encode($subj). '?=';
+          $subj = $subj == '' ? '' : '=?utf-8?B?'.@base64_encode($subj). '?=';
           $date = date('r');
           $from = tmailer::CreateEmail($fromname, $fromemail);
           $to = tmailer::CreateEmail($toname, $toemail);
