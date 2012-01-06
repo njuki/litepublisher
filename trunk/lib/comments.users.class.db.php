@@ -20,6 +20,7 @@ class tcomusers extends titems {
   }
   
   public function add($name, $email, $url, $ip) {
+$email = strtolower(trim($email));
     if ($id = $this->find($name, $email, $url)) {
       $this->db->setvalue($id, 'ip', $ip);
       return $id;

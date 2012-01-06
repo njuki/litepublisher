@@ -67,6 +67,25 @@ class tsubscribers extends titemsposts {
       }
     }
   }
+
+  public function setlocklist($value) {
+$value = strtolower(trim($value));
+    if (dbversion) {
+$list = strtoarray($value);
+$dblist = array();
+foreach ($list as $email) {
+if ($s == '') continue;
+$dblist[] = dbquote($s);
+}
+if (count($dblist) > 0) {
+$db = $this->db;
+$db->delete("item in (select id from $db->comusers where email in (" . implode(',', $dblist) . '))');
+}
+} 
+
+$this->data['locklist'] = trim($value);
+$this->save();
+}
   
   public function sendmail($id, $idpost) {
     if (!$this->enabled) return;
