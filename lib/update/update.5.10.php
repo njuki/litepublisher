@@ -6,10 +6,9 @@ $t->footer = str_replace('2011', '2012', $t->footer);
 $t->save();
 
 $subscribers =tsubscribers::i();
-$subscribers->data['blacklist'] = strtoarray(strtolower(trim($subscribers->data['locklist']))));
+$subscribers->data['blacklist'] = strtoarray(strtolower(trim($subscribers->data['locklist'])));
 unset($subscribers->data['locklist']);
 $subscribers->save();
-
 
 if (dbversion) {
 $comusers = tcomusers::i();
