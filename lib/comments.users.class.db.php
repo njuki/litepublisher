@@ -55,7 +55,7 @@ $email = strtolower(trim($email));
     $this->db->UpdateAssoc(array(
     'id' => $id,
     'name' => $name,
-    'email' => $email,
+    'email' => strtolower(trim($email)),
     'url' => $url,
     'ip' => $ip
     ));

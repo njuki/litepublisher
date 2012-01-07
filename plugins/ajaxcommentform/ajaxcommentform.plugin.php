@@ -57,7 +57,7 @@ class tajaxcommentformplugin extends tplugin {
         );
         
         $subscribers = tsubscribers::i();
-        $data['subscribe'] = $subscribers->subscribed($idpost, $user['id']);
+        $data['subscribe'] = $subscribers->exists($idpost, $user['id']);
         
         return turlmap::htmlheader(false) . json_encode($data);
       } else

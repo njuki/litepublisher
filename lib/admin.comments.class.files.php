@@ -336,7 +336,7 @@ class tadminmoderator extends tadmincommoncomments  {
     $post = tpost::i($idpost);
     $args->title = $post->title;
     $args->url = $post->url;
-    $args->subscribed = $subscribers->subscribed($idpost, $authorid);
+    $args->subscribed = $subscribers->exists($idpost, $authorid);
     return $this->html->subscribeitem($args);
   }
   

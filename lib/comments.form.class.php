@@ -127,7 +127,7 @@ class tcommentform extends tevents {
       $args->email = $user['email'];
       $args->url = $user['url'];
       $subscribers = tsubscribers::i();
-      $args->subscribe = $subscribers->subscribed($postid, $user['id']);
+      $args->subscribe = $subscribers->exists($postid, $user['id']);
       
       $comments = tcomments::i($postid);
       if ($hold = $comments->getholdcontent($user['id'])) {
