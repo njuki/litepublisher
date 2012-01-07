@@ -442,7 +442,12 @@ class tpost extends titem implements  itemplate {
   //ITemplate
   public function request($id) {
     parent::request((int) $id);
-    if ($this->status != 'published') return 404;
+    if ($this->status != 'published') {
+    $groupname = litepublisher::$options->group;
+    if (($groupname == 'admin') || ($groupname == 'editor')) return;
+        if ($this->author == litepublisher::$options->user) return;
+return 404;
+}
   }
   
   public function gettitle() {

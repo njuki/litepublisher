@@ -73,7 +73,7 @@ return implode("\n", $this->blacklist);
 }
 
 public function setlocklist($s) {
-$this->setblacklist(explode("\n", strtolower(trim($s)));
+$this->setblacklist(explode("\n", strtolower(trim($s))));
 }
 
   public function setblacklist(array $a) {
@@ -84,7 +84,7 @@ $this->save();
 
     if (dbversion) {
 $dblist = array();
-foreach ($list as $email) {
+foreach ($a as $s) {
 if ($s == '') continue;
 $dblist[] = dbquote($s);
 }
