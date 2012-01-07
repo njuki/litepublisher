@@ -18,22 +18,9 @@ class tshortcode extends titems {
     $this->basename = 'shortcodes';
   }
   
-  public function getcodes() {
-    $result = '';
-    foreach ($this->items as $name => $value) {
-      $result .= "$name = $value\n";
-    }
-    return $result;
-    
-  }
-  
-  public function setcodes($s) {
-    $this->items  = tini2array::parsesection($s);
-    $this->save();
-  }
-  
   public function filter(&$content) {
     foreach ($this->items as $code => $tml) {
+          $content = str_replace("[$code]", $value, $content);
       if (preg_match_all("/\[$code\=(.*?)\]/", $content, $m, PREG_SET_ORDER)) {
         foreach ($m as $item) {
           $value =         str_replace('$value', $item[1], $tml);
@@ -43,17 +30,4 @@ class tshortcode extends titems {
     }
   }
   
-  public function install() {
-    $filter = tcontentfilter::i();
-    $filter->lock();
-    $filter->beforefilter = $this->filter;
-    $filter->oncomment = $this->filter;
-    $filter->unlock();
-  }
-  
-  public function uninstall() {
-    $filter = tcontentfilter::i();
-    $filter->unbind($this);
-  }
-  
-}//class
+}
