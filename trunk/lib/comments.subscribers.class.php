@@ -7,7 +7,7 @@
 **/
 
 class tsubscribers extends titemsposts {
-public $blacklist;
+  public $blacklist;
   
   public static function i() {
     return getinstance(__class__);
@@ -36,20 +36,20 @@ public $blacklist;
     if ($subscribed == $this->exists($pid, $uid)) return;
     if (dbversion) {
       $this->remove($pid, $uid);
-$user = tcomusers::i()->getitem($uid);
-if (in_array($user['email'], $this->blacklist)) return;
+      $user = tcomusers::i()->getitem($uid);
+      if (in_array($user['email'], $this->blacklist)) return;
       if ($subscribed) $this->add($pid, $uid);
     } else {
-if ($subscribed) {
-$user = tcomusers::i($pid)->getitem($uid);
-$subscribed = !in_array($user['email'], $this->blacklist);
-}
-if ($subscribed) {
-      $this->add($pid, $uid);
-    } else {
-      $this->remove($pid, $uid);
+      if ($subscribed) {
+        $user = tcomusers::i($pid)->getitem($uid);
+        $subscribed = !in_array($user['email'], $this->blacklist);
+      }
+      if ($subscribed) {
+        $this->add($pid, $uid);
+      } else {
+        $this->remove($pid, $uid);
+      }
     }
-}
   }
   
   public function setenabled($value) {
@@ -67,33 +67,33 @@ if ($subscribed) {
       }
     }
   }
-
-public function getlocklist() {
-return implode("\n", $this->blacklist);
-}
-
-public function setlocklist($s) {
-$this->setblacklist(explode("\n", strtolower(trim($s))));
-}
-
+  
+  public function getlocklist() {
+    return implode("\n", $this->blacklist);
+  }
+  
+  public function setlocklist($s) {
+    $this->setblacklist(explode("\n", strtolower(trim($s))));
+  }
+  
   public function setblacklist(array $a) {
-$a = array_unique($a);
-array_delete_value($a, '');
-$this->data['blacklist'] = $a;
-$this->save();
-
+    $a = array_unique($a);
+    array_delete_value($a, '');
+    $this->data['blacklist'] = $a;
+    $this->save();
+    
     if (dbversion) {
-$dblist = array();
-foreach ($a as $s) {
-if ($s == '') continue;
-$dblist[] = dbquote($s);
-}
-if (count($dblist) > 0) {
-$db = $this->db;
-$db->delete("item in (select id from $db->comusers where email in (" . implode(',', $dblist) . '))');
-}
-} 
-}
+      $dblist = array();
+      foreach ($a as $s) {
+        if ($s == '') continue;
+        $dblist[] = dbquote($s);
+      }
+      if (count($dblist) > 0) {
+        $db = $this->db;
+        $db->delete("item in (select id from $db->comusers where email in (" . implode(',', $dblist) . '))');
+      }
+    }
+  }
   
   public function sendmail($id, $idpost) {
     if (!$this->enabled) return;
@@ -128,7 +128,7 @@ $db->delete("item in (select id from $db->comusers where email in (" . implode('
     $body .= sprintf("\n%s/admin/subscribers/%suserid=", litepublisher::$site->url, litepublisher::$site->q);
     
     $comusers = tcomusers::i();
-$comusers->loaditems($subscribers);
+    $comusers->loaditems($subscribers);
     foreach ($subscribers as $uid) {
       $user = $comusers->getitem($uid);
       if (empty($user['email'])) continue;

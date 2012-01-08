@@ -1,6 +1,8 @@
 <?php
 
 function update510() {
+litepublisher::$options->show_draft_post = false;
+
 $t = ttemplate::i();
 $t->footer = str_replace('2011', '2012', $t->footer);
 $t->save();

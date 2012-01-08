@@ -20,7 +20,7 @@ class tshortcode extends titems {
   
   public function filter(&$content) {
     foreach ($this->items as $code => $tml) {
-          $content = str_replace("[$code]", $value, $content);
+      $content = str_replace("[$code]", $value, $content);
       if (preg_match_all("/\[$code\=(.*?)\]/", $content, $m, PREG_SET_ORDER)) {
         foreach ($m as $item) {
           $value =         str_replace('$value', $item[1], $tml);

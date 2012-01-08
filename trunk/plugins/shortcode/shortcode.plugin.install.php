@@ -7,14 +7,13 @@
 **/
 
 function tshortcodeInstall($self) {
-    $filter = tcontentfilter::i();
-    $filter->lock();
-    $filter->beforefilter = $self->filter;
-    $filter->oncomment = $self->filter;
-    $filter->unlock();
-  }
-  
-function tshortcodeUninstall$self() {
-tcontentfilter::i()->unbind($self);
-  }
-  
+  $filter = tcontentfilter::i();
+  $filter->lock();
+  $filter->beforefilter = $self->filter;
+  $filter->oncomment = $self->filter;
+  $filter->unlock();
+}
+
+function tshortcodeUninstall($self) {
+  tcontentfilter::i()->unbind($self);
+}
