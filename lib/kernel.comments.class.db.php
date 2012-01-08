@@ -1,7 +1,7 @@
 <?php
 /**
 * Lite Publisher
-* Copyright (C) 2010, 2012 Vladimir Yushko http://litepublisher.com/
+* Copyright (C) 2010, 2011 Vladimir Yushko http://litepublisher.com/
 * Dual licensed under the MIT (mit.txt)
 * and GPL (gpl.txt) licenses.
 **/
@@ -733,7 +733,7 @@ class tcommentform extends tevents {
       $args->email = $user['email'];
       $args->url = $user['url'];
       $subscribers = tsubscribers::i();
-      $args->subscribe = $subscribers->subscribed($postid, $user['id']);
+      $args->subscribe = $subscribers->exists($postid, $user['id']);
       
       $comments = tcomments::i($postid);
       if ($hold = $comments->getholdcontent($user['id'])) {
@@ -936,6 +936,7 @@ class tspamfilter extends tevents {
 
 //comments.subscribers.class.php
 class tsubscribers extends titemsposts {
+  public $blacklist;
   
   public static function i() {
     return getinstance(__class__);
@@ -948,7 +949,7 @@ class tsubscribers extends titemsposts {
     $this->basename = 'subscribers';
     $this->data['fromemail'] = '';
     $this->data['enabled'] = true;
-    $this->data['locklist'] = '';
+    $this->addmap('blacklist', array());
   }
   
   public function load() {
@@ -961,23 +962,22 @@ class tsubscribers extends titemsposts {
   }
   
   public function update($pid, $uid, $subscribed) {
-    if ($subscribed == $this->subscribed($pid, $uid)) return;
+    if ($subscribed == $this->exists($pid, $uid)) return;
     if (dbversion) {
       $this->remove($pid, $uid);
+      $user = tcomusers::i()->getitem($uid);
+      if (in_array($user['email'], $this->blacklist)) return;
       if ($subscribed) $this->add($pid, $uid);
-    } elseif ($subscribed) {
-      $this->items[$pid][] =$uid;
-      $this->save();
     } else {
-      $this->remove($pid, $uid);
-    }
-  }
-  
-  public function subscribed($pid, $uid) {
-    if (dbversion) {
-      return $this->db->exists("post = $pid and item = $uid");
-    } else {
-      return isset($this->items[$pid]) && in_array($uid, $this->items[$pid]);
+      if ($subscribed) {
+        $user = tcomusers::i($pid)->getitem($uid);
+        $subscribed = !in_array($user['email'], $this->blacklist);
+      }
+      if ($subscribed) {
+        $this->add($pid, $uid);
+      } else {
+        $this->remove($pid, $uid);
+      }
     }
   }
   
@@ -993,6 +993,33 @@ class tsubscribers extends titemsposts {
         $manager->unlock();
       } else {
         $manager->unbind($this);
+      }
+    }
+  }
+  
+  public function getlocklist() {
+    return implode("\n", $this->blacklist);
+  }
+  
+  public function setlocklist($s) {
+    $this->setblacklist(explode("\n", strtolower(trim($s))));
+  }
+  
+  public function setblacklist(array $a) {
+    $a = array_unique($a);
+    array_delete_value($a, '');
+    $this->data['blacklist'] = $a;
+    $this->save();
+    
+    if (dbversion) {
+      $dblist = array();
+      foreach ($a as $s) {
+        if ($s == '') continue;
+        $dblist[] = dbquote($s);
+      }
+      if (count($dblist) > 0) {
+        $db = $this->db;
+        $db->delete("item in (select id from $db->comusers where email in (" . implode(',', $dblist) . '))');
       }
     }
   }
@@ -1030,11 +1057,12 @@ class tsubscribers extends titemsposts {
     $body .= sprintf("\n%s/admin/subscribers/%suserid=", litepublisher::$site->url, litepublisher::$site->q);
     
     $comusers = tcomusers::i();
+    $comusers->loaditems($subscribers);
     foreach ($subscribers as $uid) {
       $user = $comusers->getitem($uid);
       if (empty($user['email'])) continue;
       if ($user['email'] == $comment->email) continue;
-      if (strpos($this->locklist, $user['email']) !== false) continue;
+      if (in_array($user['email'], $this->blacklist)) continue;
       tmailer::sendmail(litepublisher::$site->name, $this->fromemail,  $user['name'], $user['email'],
       $subject, $body . rawurlencode($user['cookie']));
     }
@@ -1057,6 +1085,7 @@ class tcomusers extends titems {
   }
   
   public function add($name, $email, $url, $ip) {
+    $email = strtolower(trim($email));
     if ($id = $this->find($name, $email, $url)) {
       $this->db->setvalue($id, 'ip', $ip);
       return $id;
@@ -1091,7 +1120,7 @@ class tcomusers extends titems {
     $this->db->UpdateAssoc(array(
     'id' => $id,
     'name' => $name,
-    'email' => $email,
+    'email' => strtolower(trim($email)),
     'url' => $url,
     'ip' => $ip
     ));

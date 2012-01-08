@@ -1,7 +1,7 @@
 <?php
 /**
 * Lite Publisher
-* Copyright (C) 2010, 2012 Vladimir Yushko http://litepublisher.com/
+* Copyright (C) 2010, 2011 Vladimir Yushko http://litepublisher.com/
 * Dual licensed under the MIT (mit.txt)
 * and GPL (gpl.txt) licenses.
 **/
@@ -641,7 +641,12 @@ class tpost extends titem implements  itemplate {
   //ITemplate
   public function request($id) {
     parent::request((int) $id);
-    if ($this->status != 'published') return 404;
+    if (($this->status != 'published') && litepublisher::$options->show_draft_post) {
+      $groupname = litepublisher::$options->group;
+      if (($groupname == 'admin') || ($groupname == 'editor')) return;
+      if ($this->author == litepublisher::$options->user) return;
+      return 404;
+    }
   }
   
   public function gettitle() {

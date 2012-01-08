@@ -73,6 +73,7 @@ function installoptions($language) {
   $options->echoexception = true;
   $options->parsepost = true;
   $options->hidefilesonpage = false;
+  $options->show_draft_post = false;
   $options->usersenabled = false;
   $options->reguser = false;
   $options->icondisabled = false;

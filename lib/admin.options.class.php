@@ -163,6 +163,7 @@ class Tadminoptions extends tadminmenu {
       $args->usersenabled = $options->usersenabled;
       $args->reguser = $options->reguser;
       $args->parsepost = $options->parsepost;
+      $args->show_draft_post = $options->show_draft_post ;
       
       $args->xxxcheck = $auth->xxxcheck;
       $filter = tcontentfilter::i();
@@ -313,6 +314,7 @@ class Tadminoptions extends tadminmenu {
         $options->reguser = isset($reguser);
         $this->usersenabled = isset($usersenabled);
         $options->parsepost = isset($parsepost);
+        $options->show_draft_post  = isset($show_draft_post);
         
         $auth = tauthdigest::i();
         $auth->xxxcheck = isset($xxxcheck);

@@ -16,12 +16,12 @@ class tadminshortcodeplugin {
     $plugin = tshortcode::i();
     $about = tplugins::getabout(tplugins::getname(__file__));
     $args = targs::i();
-
+    
     $s = '';
     foreach ($plugin->items as $name => $value) {
       $s .= "$name = $value\n";
     }
-
+    
     $args->codes = $s;
     $args->formtitle = $about['formtitle'];
     $args->data['$lang.codes'] = $about['codes'];
@@ -33,8 +33,8 @@ class tadminshortcodeplugin {
   public function processform() {
     $plugin = tshortcode::i();
     //$plugin->setcodes($_POST['codes']);
-$plugin->items  = tini2array::parsesection($_POST['codes']);
-$plugin->save();
+    $plugin->items  = tini2array::parsesection($_POST['codes']);
+    $plugin->save();
   }
   
 }//class
