@@ -111,17 +111,17 @@ class twprssimporter extends timporter {
     $tags = $type == 'tag' ? ttags::i() : tcategories::i();
     if (!is_array($values)) {
       if ($type == 'tag') return $result;
-      $result[] = $tags->add($values);
+      $result[] = $tags->add(0, $values);
       return $result;
     }
     
     foreach ($values as $item) {
       if (is_array($item)) {
         if (!isset($item['attributes']['domain']) || ($item['attributes']['domain'] != $type)) continue;
-        $id = $tags->add($item[0]);
+        $id = $tags->add(0, $item[0]);
       } else {
         if ($type == 'tag') continue;
-        $id = $tags->add($item);
+        $id = $tags->add(0, $item);
       }
       if (!in_array($id, $result)) $result[] = $id;
     }
