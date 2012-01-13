@@ -378,8 +378,7 @@ class tpost extends titem implements  itemplate {
       }
       $list[] = $theme->parsearg($tmlitem,  $args);
     }
-    
-    return str_replace('$items', implode($theme->templates[$tmlpath . '.divider'] . ' ', $list), $theme->parse($theme->templates[$tmlpath]));
+    return str_replace('$items', ' ' . implode($theme->templates[$tmlpath . '.divider'] , $list), $theme->parse($theme->templates[$tmlpath]));
   }
   
   public function getdate() {
