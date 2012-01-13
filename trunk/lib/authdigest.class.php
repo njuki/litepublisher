@@ -92,12 +92,11 @@ class tauthdigest extends tevents {
     if ( ('HTTP/1.1' != $protocol) && ('HTTP/1.0' != $protocol) ) $protocol = 'HTTP/1.0';
     $stale = $this->stale ? 'true' : 'false';
     
-    $result = "<?php
-    @header('WWW-Authenticate: Digest realm=\"litepublisher::$options->realm\", nonce=\"$this->nonce\", stale=\"$stale\"');
+return '<?php
+    @header(\'WWW-Authenticate: Digest realm="' . litepublisher::$options->realm . "\", nonce=\"$this->nonce\", stale=\"$stale\"');
     @header('$protocol 401 Unauthorized', true, 401);
     echo '401 Unauthorized';
     ?>";
-    return $result;
   }
   
   public function isattack() {
