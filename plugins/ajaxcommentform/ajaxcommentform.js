@@ -57,6 +57,13 @@ set_cookie("comuser_unsubscribed", this.unsubscribed.join(","));
 },
 
 init: function() {
+//ctrl+enter
+$('#comment').keydown(function (e) {
+  if (e.ctrlKey && ((e.keyCode == 13) || (e.keyCode == 10))) {
+$("#commentform").submit();
+}
+});
+
 $("#commentform").submit(commentform.submit);
 if (commentform.init_field("name")) {
 commentform.init_field("email");

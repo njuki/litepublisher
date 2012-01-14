@@ -80,31 +80,31 @@ class tauthdigest extends tevents {
       $users = tusers::i();
       if (!(litepublisher::$options->user  =$users->loginexists($hdr['username']))) return false;
       litepublisher::$options->updategroup();
-//convert to 32 length md5
-//      $a1 = strtolower(litepublisher::$options->password);
-     $a1 = $this->bin2md5(base64_decode(litepublisher::$options->password));
-//echo strlen($a1), "<br>", $a1, "<br>";
+      //convert to 32 length md5
+      //      $a1 = strtolower(litepublisher::$options->password);
+      $a1 = $this->bin2md5(base64_decode(litepublisher::$options->password));
+      //echo strlen($a1), "<br>", $a1, "<br>";
       $a2 = md5($_SERVER['REQUEST_METHOD'] .':' . $hdr['uri']);
       return $hdr['response'] == md5("$a1:$this->nonce:$a2");
     }
     return false;
   }
-
-public function bin2md5($s) {
-$result ='';
-for($i=0; $i<= 15; $i++){
-$h = dechex (ord($s[$i]));
-$result .= strlen($h) == 2 ? $h : '0' . $h;
-}
-return $result;
-}
+  
+  public function bin2md5($s) {
+    $result ='';
+    for($i=0; $i<= 15; $i++){
+      $h = dechex (ord($s[$i]));
+      $result .= strlen($h) == 2 ? $h : '0' . $h;
+    }
+    return $result;
+  }
   
   public function Headers() {
     $protocol = $_SERVER["SERVER_PROTOCOL"];
     if ( ('HTTP/1.1' != $protocol) && ('HTTP/1.0' != $protocol) ) $protocol = 'HTTP/1.0';
     $stale = $this->stale ? 'true' : 'false';
     
-return '<?php
+    return '<?php
     @header(\'WWW-Authenticate: Digest realm="' . litepublisher::$options->realm . "\", nonce=\"$this->nonce\", stale=\"$stale\"');
     @header('$protocol 401 Unauthorized', true, 401);
     echo '401 Unauthorized';

@@ -751,9 +751,9 @@ class tpost extends titem implements  itemplate {
   
   public function getlastcommenturl() {
     $c = $this->commentpages;
-$url = $this->url;
-if (($c > 1) && !litepublisher::$options->comments_invert_order) $url = rtrim($url, '/') . "/page/$c/";
-return $url;
+    $url = $this->url;
+    if (($c > 1) && !litepublisher::$options->comments_invert_order) $url = rtrim($url, '/') . "/page/$c/";
+    return $url;
   }
   
   public function setcommentsenabled($value) {
