@@ -528,16 +528,16 @@ class tthemeparser extends tevents {
             $sidebar['meta.classes'] = self::getmetaclasses($sidebar['meta.classes']);
           }
         }
-
-//add spaces
-foreach (array(
-'content.excerpts.excerpt.taglinks.divider',
-'content.post.taglinks.divider',
-'content.excerpts.excerpt.catlinks.divider',
-'content.post.catlinks.divider'
-) as $k) {
-if (substr($templates[$k], -1) != ' ') $templates[$k] .= ' ';
-}
+        
+        //add spaces
+        foreach (array(
+        'content.excerpts.excerpt.taglinks.divider',
+        'content.post.taglinks.divider',
+        'content.excerpts.excerpt.catlinks.divider',
+        'content.post.catlinks.divider'
+        ) as $k) {
+          if (substr($templates[$k], -1) != ' ') $templates[$k] .= ' ';
+        }
       }
       
       public static function getmetaclasses($s) {
