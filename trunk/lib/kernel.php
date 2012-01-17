@@ -2165,8 +2165,9 @@ class turlmap extends titems {
     }
   }
   
-  public static function redir301($to) {
-    self::redir(litepublisher::$site->url . $to);
+  public static function redir301($url) {
+if (!strbegin($url, 'http://')) $url = litepublisher::$site->url . $url;
+    self::redir($url);
   }
   
   public static function redir($url) {
