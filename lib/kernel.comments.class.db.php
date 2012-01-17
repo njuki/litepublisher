@@ -285,6 +285,7 @@ class tcomment extends tdata {
     if ($url == '')  return $name;
     $manager = tcommentmanager::i();
     if ($manager->hidelink || ($this->trust <= $manager->trustlevel)) return $name;
+if (!strbegin($url, 'http://')) $url = 'http://' . $url;
     $rel = $manager->nofollow ? 'rel="nofollow"' : '';
     if ($manager->redir) {
       return sprintf('<a %s href="%s/comusers.htm%sid=%d">%s</a>',$rel,

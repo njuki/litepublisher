@@ -290,6 +290,7 @@ class tcomment extends tdata {
       return sprintf('<a %s href="%s/comusers.htm%sid=%d">%s</a>',$rel,
       litepublisher::$site->url, litepublisher::$site->q, $this->author, $name);
     } else {
+if (!strbegin($url, 'http://')) $url = 'http://' . $url;
       return sprintf('<a class="url fn" %s href="%s">%s</a>',
       $rel,$url, $name);
     }
