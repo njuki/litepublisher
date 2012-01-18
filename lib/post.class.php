@@ -540,7 +540,12 @@ class tpost extends titem implements  itemplate {
   }
   
   public function getcont() {
-    return $this->parsetml('content.post');
+if ($this->password == '') return $this->parsetml('content.post');
+
+$result = tpostpassword::i()->getform($this);
+$result .= $this->parsetml('content.post');
+$result .= '<?php } ?>';
+return $result;
   }
   
   public function getrsslink() {
@@ -666,7 +671,6 @@ class tpost extends titem implements  itemplate {
     $result = '';
     $posts = tposts::i();
     $posts->beforecontent($this, $result);
-    //$posts->addrevision();
     if ($this->revision < $posts->revision) $this->setrevision($posts->revision);
     $result .= $this->getcontentpage(litepublisher::$urlmap->page);
     if (litepublisher::$options->parsepost) {
@@ -815,5 +819,9 @@ class tpost extends titem implements  itemplate {
       return sprintf('<a href="%s%s" title="%3$s" rel="author"><%3$s</a>', litepublisher::$site->url, $item['url'], $item['name']);
     }
   }
-  
+
+protected function getpasswordcookie() {
+return basemd5('post_' . $this->id .litepublisher::$secret . $this->password);
+}
+
 }//class
