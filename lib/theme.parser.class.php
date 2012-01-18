@@ -833,8 +833,13 @@ class tthemeparser extends tevents {
         'tag' => '$next',
         'replace' => '$next'
         ),
+
+        'content.post.passwordform' => array(
+        'tag' => '$passwordform',
+        'replace' => ''
+        ),
         
-        'content.post.templatecomments' => array(
+                'content.post.templatecomments' => array(
         'tag' => '$post.templatecomments',
         'replace' => '$post.templatecomments'
         ),
