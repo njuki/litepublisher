@@ -250,7 +250,7 @@ class tcommentmanager extends tevents {
       $db->posts.status = 'published'
       order by $db->comments.posted desc limit $count"));
       
-      if (litepublisher::$options->commentpages) {
+      if (litepublisher::$options->commentpages && !litepublisher::$options->comments_invert_order) {
         foreach ($result as $i => $item) {
           $page = ceil($item['commentscount'] / litepublisher::$options->commentsperpage);
           if ($page > 1) $result[$i]['posturl']= rtrim($item['posturl'], '/') . "/page/$page/";
