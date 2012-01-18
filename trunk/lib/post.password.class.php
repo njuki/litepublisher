@@ -38,12 +38,15 @@ public function gettitle() {}
   }
 
 
-public function getpasswordform() {
+public function getform(tpost $post) {
 $result = '<?php
+if (litepublisher::$options->group != \'admin\') {
 $cookie = isset($_COOKIE[\'post_password\']) ? $_COOKIE[\'post_password\'] : '';
 if ($cookie != \'' . $this->getpasswordcookie() . '\') {';
+
 //$result .= form
-$result .= '} else { ?>';
+
+$result .= '} } else { ?>';
 return $result;
 }
   
