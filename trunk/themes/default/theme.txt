@@ -423,7 +423,23 @@ content.post.filelist.video.player = [
 Для многих список файлов в теме является очень важным вопросом, поэтому за дополнительной информацией обращайтесь в тикет систему по адресу:
 http://litepublisher.ru/
 
-После шаблона списка файлов переходим к шаблону списка комментариев  content.post.templatecomments, который включает в себя множество шаблонов, а именно:
+Контент поста можно защитить паролем, а чтобы запросить пароль у пользователя нужен шаблон формы, который опишим:
+
+content.post.passwordform = [
+								<form action="$site.url/send-post-password.php" method="post" id="postpassword">
+<p>$lang.postpassword</p>
+									<p><input type="password" name="password" id="password" value="" size="22" />
+									<label for="password">$lang.password</label></p>
+
+<p>
+									<input type="hidden" name="idpost" value="$context.id" />
+									<input type="hidden" name="antispam" value="$antispam" />
+
+									<input name="submitbutton" type="submit" id="submitbutton" value="$lang.send" /></p>
+								</form>
+]
+
+Переходим к шаблону списка комментариев  content.post.templatecomments, который включает в себя множество шаблонов, а именно:
 
 $closed - шаблон сообщения о закрытом комментировании
 $form - форма отправки комментария
@@ -441,7 +457,7 @@ content.post.templatecomments.closed = [<p class="nocomments">$lang.closed</p>]
 content.post.templatecomments.form = [
 		<script type="text/javascript" src="$site.files$template.jsmerger_comments"></script>
 								<p id="respond">$lang.leavereply</p>
-								<form action="$options.url/send-comment.php" method="post" id="commentform">
+								<form action="$site.url/send-comment.php" method="post" id="commentform">
 									<p><input type="text" name="name" id="name" value="$name" size="22" />
 									<label for="name">$lang.name</label></p>
 

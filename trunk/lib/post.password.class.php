@@ -16,9 +16,38 @@ class tpostpassword extends tevents_itemplate implements itemplate {
     parent::create();
     $this->basename = 'post.password';
   }
-  
-public function request($arg) {
 
+  private function checkspam($s) {
+    if  (!($s = @base64_decode($s))) return false;
+    $sign = 'megaspamer';
+    if (!strbegin($s, $sign)) return false;
+    $timekey = (int) substr($s, strlen($sign));
+    return time() < $timekey;
+  }
+  
+  public function request($arg) {
+    if (litepublisher::$options->commentsdisabled) return 404;
+    if ( 'POST' != $_SERVER['REQUEST_METHOD'] ) {
+      return "<?php
+      @header('Allow: POST');
+      @header('HTTP/1.1 405 Method Not Allowed', true, 405);
+      @header('Content-Type: text/plain');
+      ?>";
+    }
+    
+    if (get_magic_quotes_gpc()) {
+      foreach ($_POST as $name => $value) {
+        $_POST[$name] = stripslashes($_POST[$name]);
+      }
+    }
+
+    'postid' => $postid,
+    'antispam' => isset($values['antispam']) ? $values['antispam'] : ''
+
+    if (!$this->checkspam($values['antispam']))          {
+      return $this->htmlhelper->geterrorcontent($lang->spamdetected);
+    }
+    
 }
 
 public function gettitle() {}
@@ -37,8 +66,13 @@ public function gettitle() {}
     }
   }
 
-
 public function getform(tpost $post) {
+$args = new targs();
+    $args->idpost = $post->id;
+    $args->antispam = base64_encode('megaspamer' . strtotime ("+1 hour"));
+    
+    $result .= $theme->parsearg($theme->templates['content.post.passwordform'], $args);
+
 $result = '<?php
 if (litepublisher::$options->group != \'admin\') {
 $cookie = isset($_COOKIE[\'post_password\']) ? $_COOKIE[\'post_password\'] : '';
