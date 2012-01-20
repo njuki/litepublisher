@@ -85,11 +85,20 @@ class ttemplate extends tevents_storage {
   }
   
   protected function  httpheader() {
-    if (method_exists($this->context, 'httpheader')) {
-      $result= $this->context->httpheader();
+$ctx = $this->context;
+    if (method_exists($ctx, 'httpheader')) {
+      $result= $ctx->httpheader();
       if (!empty($result)) return $result;
     }
-    return turlmap::htmlheader($this->context->cache);
+
+if (isset($ctx->idprem)) {
+$perm =tperm::i($ctx->idperm);
+if ($result = $perm->getheader($ctx)) {
+return $result . turlmap::htmlheader($ctx->cache);
+}
+}
+
+    return turlmap::htmlheader($ctx->cache);
   }
   
   //html tags

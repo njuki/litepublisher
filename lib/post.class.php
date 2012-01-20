@@ -70,6 +70,7 @@ class tpost extends titem implements  itemplate {
     'author' => 0,
     'revision' => 0,
     'icon' => 0,
+'idperm' => 0,
     'class' => __class__,
     'posted' => 0,
     'modified' => 0,
@@ -439,6 +440,7 @@ class tpost extends titem implements  itemplate {
   }
   
   //ITemplate
+
   public function request($id) {
     parent::request((int) $id);
     if (($this->status != 'published') && litepublisher::$options->show_draft_post) {
@@ -540,12 +542,7 @@ class tpost extends titem implements  itemplate {
   }
   
   public function getcont() {
-if ($this->password == '') return $this->parsetml('content.post');
-
-$result = tpostpassword::i()->getform($this);
-$result .= $this->parsetml('content.post');
-$result .= '<?php } ?>';
-return $result;
+return $this->parsetml('content.post');
   }
   
   public function getrsslink() {
