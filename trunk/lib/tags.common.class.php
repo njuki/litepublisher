@@ -162,6 +162,7 @@ class tcommontags extends titems implements  itemplate {
       'parent' => $parent,
       'title' => $title,
       'idview' => $idview,
+'idperm' => 0,
       'icon' => 0,
       'itemscount' => 0
       ));
@@ -182,6 +183,7 @@ class tcommontags extends titems implements  itemplate {
     'title' => $title,
     'icon' => 0,
     'idview' => $idview,
+'idperm' => 0,
     'itemscount' => 0
     );
     $this->unlock();
@@ -359,8 +361,13 @@ class tcommontags extends titems implements  itemplate {
       $this->setvalue($this->id, 'idview', $id);
     }
   }
-  
-  public function getcont() {
+
+  public function getidperm() {
+    $item = $this->getitem($this->id);
+    return $item['idperm'];
+  }
+
+    public function getcont() {
     $result = '';
     $theme = ttheme::i();
     if ($this->id == 0) {

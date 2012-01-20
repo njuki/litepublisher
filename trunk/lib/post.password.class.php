@@ -6,6 +6,10 @@
 * and GPL (gpl.txt) licenses.
 **/
 
+class tsinglepassword extends tright {
+
+}
+
 class tpostpassword extends tevents_itemplate implements itemplate {
   
   public static function i() {
