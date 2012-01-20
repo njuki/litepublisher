@@ -91,8 +91,8 @@ $ctx = $this->context;
       if (!empty($result)) return $result;
     }
 
-if (isset($ctx->idprem)) {
-$perm =tperm::i($ctx->idperm);
+if (isset($ctx->idprem) && ($idprem = $ctx->idperm)) {
+$perm =tperm::i($idperm);
 if ($result = $perm->getheader($ctx)) {
 return $result . turlmap::htmlheader($ctx->cache);
 }

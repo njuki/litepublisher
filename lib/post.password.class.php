@@ -6,9 +6,29 @@
 * and GPL (gpl.txt) licenses.
 **/
 
-class tsinglepassword extends tright {
+class tsinglepassword extends tperm {
+
+public function getheader($obj) {
+if (isset($obj->password) && ($p = $obj->password)) {
+
+return sprintf('<?php %s::auth(\'%s\'); ?>', __class__, $this->getauthkey($p));
+}
+}
+
+public function getauthkey($p) {
 
 }
+
+protected function getpasswordcookie() {
+return basemd5('post_' . $this->id .litepublisher::$secret . $this->password);
+}
+
+public static function auth($authkey) {
+if (litepublisher::$options->group == 'admin') return;
+$cookie = isset($_COOKIE[\'post_password\']) ? $_COOKIE[\'post_password\'] : '';
+}
+
+}//class
 
 class tpostpassword extends tevents_itemplate implements itemplate {
   
@@ -78,13 +98,11 @@ $args = new targs();
     $result .= $theme->parsearg($theme->templates['content.post.passwordform'], $args);
 
 $result = '<?php
-if (litepublisher::$options->group != \'admin\') {
-$cookie = isset($_COOKIE[\'post_password\']) ? $_COOKIE[\'post_password\'] : '';
 if ($cookie != \'' . $this->getpasswordcookie() . '\') {';
 
-//$result .= form
 
-$result .= '} } else { ?>';
+
+
 return $result;
 }
   

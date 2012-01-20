@@ -364,7 +364,7 @@ class tcommontags extends titems implements  itemplate {
 
   public function getidperm() {
     $item = $this->getitem($this->id);
-    return $item['idperm'];
+    return isset($item['idperm']) ? (int) $item['idperm'] : 0;
   }
 
     public function getcont() {
