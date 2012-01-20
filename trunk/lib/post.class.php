@@ -817,8 +817,4 @@ return $this->parsetml('content.post');
     }
   }
 
-protected function getpasswordcookie() {
-return basemd5('post_' . $this->id .litepublisher::$secret . $this->password);
-}
-
 }//class
