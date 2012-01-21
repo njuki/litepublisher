@@ -247,7 +247,8 @@ class tcommentmanager extends tevents {
       $db->comusers.id = $db->comments.author and
       $db->posts.id = $db->comments.post and
       $db->urlmap.id = $db->posts.idurl and
-      $db->posts.status = 'published'
+      $db->posts.status = 'published' and
+      $db->posts.idperm = 0
       order by $db->comments.posted desc limit $count"));
       
       if (litepublisher::$options->commentpages && !litepublisher::$options->comments_invert_order) {
