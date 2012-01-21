@@ -63,6 +63,7 @@ $this->tables = array('posts', 'tags', 'categories');
     $this->lock();
     $id = ++$this->autoid;
     $perm->id = $id;
+$perm->data['class'] = get_class($perm);
     $this->items[$id] = &$perm->data;
     $this->unlock();
     return $id;
