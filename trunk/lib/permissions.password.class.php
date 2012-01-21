@@ -69,31 +69,29 @@ class tpostpassword extends tevents_itemplate implements itemplate {
   }
   
   public function request($arg) {
-    if (litepublisher::$options->commentsdisabled) return 404;
-    if ( 'POST' != $_SERVER['REQUEST_METHOD'] ) {
-      return "<?php
-      @header('Allow: POST');
-      @header('HTTP/1.1 405 Method Not Allowed', true, 405);
-      @header('Content-Type: text/plain');
-      ?>";
-    }
-    
+$this->cache = false;    
+    if (isset($_POST) && (count($_POST) > 0)) {
     if (get_magic_quotes_gpc()) {
       foreach ($_POST as $name => $value) {
         $_POST[$name] = stripslashes($_POST[$name]);
       }
     }
 
-    'postid' => $postid,
-    'antispam' => isset($values['antispam']) ? $values['antispam'] : ''
-
-    if (!$this->checkspam($values['antispam']))          {
+    $antispam = isset($_POST['antispam']) ? $_POST['antispam'] : '';
+    if (!$this->checkspam($antispam))          {
       return $this->htmlhelper->geterrorcontent($lang->spamdetected);
     }
-    
+$password = isset($_POST['password']) ? trim($_POST['password']) : '';
+if ($password == '') return;
+$type = isset($_GET['type']) ? $_GET['type'] : 'grouppass';
+
+$backurl = isset($_GET['backurl']) ? $_GET['backurl'] : '/';
+}
 }
 
-public function gettitle() {}
+public function gettitle() {
+
+}
   
   public function getcont() {
     $this->cache = false;
@@ -115,6 +113,22 @@ $args = new targs();
     $args->antispam = base64_encode('megaspamer' . strtotime ("+1 hour"));
     
     $result .= $theme->parsearg($theme->templates['content.post.passwordform'], $args);
+
+
+
+								<form action="$site.url/send-post-password.php" method="post" id="postpassword">
+<p>$lang.postpassword</p>
+									<p><input type="password" name="password" id="password" value="" size="22" />
+									<label for="password">$lang.password</label></p>
+
+<p>
+									<input type="hidden" name="idpost" value="$context.id" />
+									<input type="hidden" name="antispam" value="$antispam" />
+
+									<input name="submitbutton" type="submit" id="submitbutton" value="$lang.send" /></p>
+								</form>
+]
+
 
 $result = '<?php
 if ($cookie != \'' . $this->getpasswordcookie() . '\') {';

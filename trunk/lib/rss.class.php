@@ -34,18 +34,16 @@ class trss extends tevents {
     if (($arg == 'posts') && ($this->feedburner  != '')) {
       $result .= "<?php
       if (!preg_match('/feedburner|feedvalidator/i', \$_SERVER['HTTP_USER_AGENT'])) {
-        if (function_exists('status_header')) status_header( 307 );
-        header('Location:$this->feedburner');
         header('HTTP/1.1 307 Temporary Redirect');
+        header('Location:$this->feedburner');
         return;
       }
       ?>";
     }elseif (($arg == 'comments') && ($this->feedburnercomments  != '')) {
       $result .= "<?php
       if (!preg_match('/feedburner|feedvalidator/i', \$_SERVER['HTTP_USER_AGENT'])) {
-        if (function_exists('status_header')) status_header( 307 );
-        header('Location:$this->feedburnercomments');
         header('HTTP/1.1 307 Temporary Redirect');
+        header('Location:$this->feedburnercomments');
         return;
       }
       ?>";
@@ -68,6 +66,13 @@ class trss extends tevents {
       $id = (int) $match[1];
       $tags = $arg == 'categories' ? tcategories::i() : ttags::i();
       if (!$tags->itemexists($id)) return 404;
+$tags->id =$id;
+if (isset($tags->idperm) && ($idperm = $tags->idperm)) {
+$perm =tperm::i($idperm);
+if ($header = $perm->getheader($tags)) {
+$result = $header . $result;
+}
+}
       $this->gettagrss($tags, $id);
       break;
       
@@ -78,6 +83,13 @@ class trss extends tevents {
       if (!$posts->itemexists($idpost)) return 404;
       $post = tpost::i($idpost);
       if ($post->status != 'published') return 404;
+if (isset($post->idperm) && ($post->idperm > 0)) {
+$perm =tperm::i($post->idperm);
+if ($header = $perm->getheader($post)) {
+$result = $header . $result;
+}
+}
+
       $this->GetRSSPostComments($idpost);
     }
     
