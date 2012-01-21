@@ -16,7 +16,7 @@ return sprintf('<?php %s::auth(\'%s\'); ?>', __class__, $this->getauthkey($p));
 }
 
 public function getauthkey($p) {
-
+return md5(litepublisher::$urlmap->url . litepublisher::$secret . $p);
 }
 
 protected function getpasswordcookie() {
