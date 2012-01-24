@@ -27,7 +27,7 @@ class tpasswordpage extends tevents_itemplate implements itemplate {
   
   public function request($arg) {
 $this->cache = false;    
-    if (isset($_POST) && (count($_POST) > 0)) {
+    if (!isset($_POST) || (count($_POST) == 0)) return;
     if (get_magic_quotes_gpc()) {
       foreach ($_POST as $name => $value) {
         $_POST[$name] = stripslashes($_POST[$name]);
@@ -35,14 +35,20 @@ $this->cache = false;
     }
 
     $antispam = isset($_POST['antispam']) ? $_POST['antispam'] : '';
-    if (!$this->checkspam($antispam))          {
-      return $this->htmlhelper->geterrorcontent($lang->spamdetected);
-    }
+    if (!$this->checkspam($antispam))          return 403;
 $password = isset($_POST['password']) ? trim($_POST['password']) : '';
 if ($password == '') return;
-$type = isset($_GET['type']) ? $_GET['type'] : 'grouppass';
+if (!isset($this->perm)) {
+$idperm = isset($_GET['idperm']) ? (int) $_GET['idperm'] : 0;
+$perms = tperms::i();
+if (!$perms->itemexists($idperm)) return 403;
+$this->perm = tperm::i($idperm);
+}
 
-$backurl = isset($_GET['backurl']) ? $_GET['backurl'] : '/';
+$backurl = isset($_GET['backurl']) ? $_GET['backurl'] : '';
+
+if ($this->perm->checkpassword($password)) {
+if ($backurl != '') turlmap::redir301($backurl);
 }
 }
 
