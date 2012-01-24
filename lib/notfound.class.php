@@ -34,7 +34,7 @@ public function gettitle() {}
     if ($this->basename == 'forbidden') {
       return $theme->simple(sprintf('<h1>%s</h1>', $lang->forbidden));
     } else {
-      return $theme->parse($theme->content->notfound);
+      return $theme->parse($theme->templates['content.notfound']);
     }
   }
   
