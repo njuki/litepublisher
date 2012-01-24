@@ -7,6 +7,8 @@
 **/
 
 class tpasswordpage extends tevents_itemplate implements itemplate {
+public $perm;
+private $formresult;
   
   public static function i() {
     return getinstance(__class__);
@@ -14,7 +16,8 @@ class tpasswordpage extends tevents_itemplate implements itemplate {
   
   protected function create() {
     parent::create();
-    $this->basename = 'post.password';
+    $this->basename = 'passwordpage';
+$this->formresult = '';
   }
 
   private function checkspam($s) {
@@ -49,30 +52,21 @@ $backurl = isset($_GET['backurl']) ? $_GET['backurl'] : '';
 
 if ($this->perm->checkpassword($password)) {
 if ($backurl != '') turlmap::redir301($backurl);
+} else {
+$this->formresult = tlocal::i()->invalidpassword;
 }
 }
 
 public function gettitle() {
-
+return tlocal::i()->reqpassword;
 }
   
   public function getcont() {
-    $this->cache = false;
+$result = $this->formresult;    
     $view = tview::getview($this);
     $theme = $view->theme;
-    if ($this->text != '') return $theme->simple($this->text);
-    
-    $lang = tlocal::i('default');
-    if ($this->basename == 'forbidden') {
-      return $theme->simple(sprintf('<h1>%s</h1>', $lang->forbidden));
-    } else {
-      return $theme->parse($theme->content->notfound);
-    }
-  }
 
-public function getform(tpost $post) {
 $args = new targs();
-    $args->idpost = $post->id;
     $args->antispam = base64_encode('megaspamer' . strtotime ("+1 hour"));
     
     $result .= $theme->parsearg($theme->templates['content.post.passwordform'], $args);
@@ -90,12 +84,6 @@ $args = new targs();
 
 									<input name="submitbutton" type="submit" id="submitbutton" value="$lang.send" /></p>
 								</form>
-]
-
-
-$result = '<?php
-if ($cookie != \'' . $this->getpasswordcookie() . '\') {';
-
 
 
 
