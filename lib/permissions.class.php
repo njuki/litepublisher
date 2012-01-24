@@ -46,6 +46,7 @@ public function getheader($obj) {
 }//class
 
 class tperms extends titems_storage {
+public $classes;
 public $tables;
 
   public static function i() {
@@ -56,6 +57,7 @@ public $tables;
     $this->dbversion = false;
     parent::create();
     $this->basename = 'perms';
+$this->addmap('classes', array());
 $this->tables = array('posts', 'tags', 'categories');
   }
   
@@ -71,6 +73,7 @@ if ($perm->name == 'permission') $perm->name .= $id;
   }
   
   public function delete($id) {
+if ($id == 1) return false;
 if (!isset($this->items[$id])) return false;
 if (dbversion) {
 $db = litepublisher::$db;

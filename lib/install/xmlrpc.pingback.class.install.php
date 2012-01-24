@@ -6,9 +6,7 @@
 * and GPL (gpl.txt) licenses.
 **/
 
-function TXMLRPCPingbackInstall(&$self) {
+function TXMLRPCPingbackInstall($self) {
   $Caller = TXMLRPC::i();
   $Caller->Add('pingback.ping', 'ping', get_class($self));
 }
-
-?>
