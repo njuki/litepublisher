@@ -117,6 +117,22 @@ class tpost extends titem implements  itemplate {
       if (method_exists($this, $get = 'get' . $name))   return $this->$get();
       if (array_key_exists($name, $this->childdata)) return $this->childdata[$name];
     }
+
+// tags and categories theme tag
+switch ($name) {
+case 'catlinks':
+    return $this->get_taglinks('categories', false);
+
+case 'taglinks':
+    return $this->get_taglinks('tags', false);
+
+case 'excerptcatlinks':
+    return $this->get_taglinks('categories', true);
+
+case 'excerpttaglinks':
+    return $this->get_taglinks('tags', true);
+}
+
     return parent::__get($name);
   }
   
@@ -338,33 +354,28 @@ class tpost extends titem implements  itemplate {
   }
   
   //template
-  public function getexcerptcatlinks() {
-    return $this->getcommontagslinks('categories', true);
-  }
-  
-  public function getexcerpttaglinks() {
-    return $this->getcommontagslinks('tags', true);
-  }
-  
-  public function getcatlinks() {
-    return $this->getcommontagslinks('categories', false);
-  }
-  
-  public function Gettaglinks() {
-    return $this->getcommontagslinks('tags', false);
-  }
-  
-  private function getcommontagslinks($names, $excerpt) {
-    if (count($this->$names) == 0) return '';
+
+public function getitags($name) {
+$class = 'tag' == substr($name, 0, 3) ? 'ttags' : 'tcategories';
+return litepublisher::$classes->getinstance($class);
+}
+
+  private function get_taglinks($name, $excerpt) {
+$items = $this->$name;
+    if (count($items) == 0) return '';
+
     $theme = $this->theme;
     $tmlpath= $excerpt ? 'content.excerpts.excerpt' : 'content.post';
-    $tmlpath .= $names == 'tags' ? '.taglinks' : '.catlinks';
+    $tmlpath .= $name == 'tags' ? '.taglinks' : '.catlinks';
     $tmlitem = $theme->templates[$tmlpath . '.item'];
-    $tags= litepublisher::$classes->$names;
-    $tags->loaditems($this->$names);
+
+    $tags= $this->getitags($name);
+    $tags->loaditems($items);
+
     $args = targs::i();
     $list = array();
-    foreach ($this->$names as $id) {
+
+    foreach ($items as $id) {
       $item = $tags->getitem($id);
       $args->add($item);
       if (($item['icon'] == 0) || litepublisher::$options->icondisabled) {
@@ -379,6 +390,7 @@ class tpost extends titem implements  itemplate {
       }
       $list[] = $theme->parsearg($tmlitem,  $args);
     }
+
     return str_replace('$items', ' ' . implode($theme->templates[$tmlpath . '.divider'] , $list), $theme->parse($theme->templates[$tmlpath]));
   }
   

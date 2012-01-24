@@ -22,8 +22,8 @@ $class = $perms->itemexists($id) ? $perms->items[$id]['class'] : __class__;
     parent::create();
     $this->data = array(
     'id' => 0,
-'class' => __class__,
-    'name' => 'default'
+'class' => get_class($this),
+    'name' => 'permission'
     );
   }
   
@@ -64,6 +64,7 @@ $this->tables = array('posts', 'tags', 'categories');
     $id = ++$this->autoid;
     $perm->id = $id;
 $perm->data['class'] = get_class($perm);
+if ($perm->name == 'permission') $perm->name .= $id;
     $this->items[$id] = &$perm->data;
     $this->unlock();
     return $id;
