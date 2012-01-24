@@ -62,32 +62,24 @@ return tlocal::i()->reqpassword;
 }
   
   public function getcont() {
-$result = $this->formresult;    
-    $view = tview::getview($this);
-    $theme = $view->theme;
+    $theme = tview::getview($this)->theme;
+$items = strtr($theme->templates['content.admin.password'], array(
+    '$lang.$name' => $lang->password,
+    '$name' => 'password',
+    '$value' => '',
+    );
+
+$items .= strtr($theme->templates['content.admin.hidden'], array(
+    '$name' => 'antispam',
+    '$value' => '',
+    );
 
 $args = new targs();
+$args->formtitle = $this->formresult . ' ' . $lang->pwdcontent;
     $args->antispam = base64_encode('megaspamer' . strtotime ("+1 hour"));
-    
-    $result .= $theme->parsearg($theme->templates['content.post.passwordform'], $args);
+$args->items = $items;
 
-
-
-								<form action="$site.url/send-post-password.php" method="post" id="postpassword">
-<p>$lang.postpassword</p>
-									<p><input type="password" name="password" id="password" value="" size="22" />
-									<label for="password">$lang.password</label></p>
-
-<p>
-									<input type="hidden" name="idpost" value="$context.id" />
-									<input type="hidden" name="antispam" value="$antispam" />
-
-									<input name="submitbutton" type="submit" id="submitbutton" value="$lang.send" /></p>
-								</form>
-
-
-
-return $result;
+return $theme->parsearg($theme->templates['content.admin.form'], $args);
 }
   
 }//class  
