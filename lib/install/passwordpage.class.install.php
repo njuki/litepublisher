@@ -7,7 +7,7 @@
 **/
 
 function tpasswordpageInstall($self) {
-litepublisher::$urlmap->add('/check-password.php', get_class($self), null);
+litepublisher::$urlmap->addget('/check-password.php', get_class($self));
 }
 
 function tpasswordpageUninstall($self) {
