@@ -20,7 +20,7 @@ function tdownloadcounterInstall($self) {
   $urlmap->add('/downloadcounter/', get_class($self), null, 'get');
 }
 
-function tdownloadcounterUninstall(&$self) {
+function tdownloadcounterUninstall($self) {
   turlmap::unsub($self);
   $files = tfiles::i();
   $files->unbind($self);

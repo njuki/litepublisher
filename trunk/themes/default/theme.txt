@@ -229,7 +229,7 @@ $post.iconurl - адрес иконки, если она есть
 $post.idurl - уникальный id адреса поста, в шаблонах неиспользуется
 $post.parent - уникальный id родительского поста, по умолчанию = 0, нигде не используется, может быть пригодится в будущем
 $post.revision - номер ревизии, в шаблонах неиспользуется, нужен для автообновления фильтрованного контента
-$post.password - пароль записи, сейчас не используется
+$post.password - пароль записи, используется если способ доступавыбран как "оодиночный пароль"
 $post.teaser - текст после анонса, если нет тега more внутри записи, то пустая строка
 $post.contentpage - текст записи на текущей странице при многостраничном контенте
 $post.pagescount - количество страниц текста в записи, имеет смысл если текст был разбит тегом<!--nextpage-->
@@ -422,22 +422,6 @@ content.post.filelist.video.player = [
 
 Для многих список файлов в теме является очень важным вопросом, поэтому за дополнительной информацией обращайтесь в тикет систему по адресу:
 http://litepublisher.ru/
-
-Контент поста можно защитить паролем, а чтобы запросить пароль у пользователя нужен шаблон формы, который опишим:
-
-content.post.passwordform = [
-								<form action="$site.url/send-post-password.php" method="post" id="postpassword">
-<p>$lang.postpassword</p>
-									<p><input type="password" name="password" id="password" value="" size="22" />
-									<label for="password">$lang.password</label></p>
-
-<p>
-									<input type="hidden" name="idpost" value="$context.id" />
-									<input type="hidden" name="antispam" value="$antispam" />
-
-									<input name="submitbutton" type="submit" id="submitbutton" value="$lang.send" /></p>
-								</form>
-]
 
 Переходим к шаблону списка комментариев  content.post.templatecomments, который включает в себя множество шаблонов, а именно:
 

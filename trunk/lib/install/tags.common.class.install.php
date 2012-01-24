@@ -33,12 +33,10 @@ function tcommontagsInstall($self) {
   
 }
 
-function tcommontagsUninstall(&$self) {
+function tcommontagsUninstall($self) {
   tposts::unsub($self);
   turlmap::unsub($self);
   
   $widgets = twidgets::i();
   $widgets->deleteclass(get_class($self));
 }
-
-?>

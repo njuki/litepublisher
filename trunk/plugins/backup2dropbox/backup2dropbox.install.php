@@ -12,7 +12,6 @@ function tbackup2dropboxInstall($self) {
   $self->save();
 }
 
-function tbackup2dropboxUninstall(&$self) {
-  $cron = tcron::i();
-  $cron->delete($self->idcron);
+function tbackup2dropboxUninstall($self) {
+tcron::i()->delete($self->idcron);
 }

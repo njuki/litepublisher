@@ -26,7 +26,7 @@ function tsubscribersInstall($self) {
   $manager->unlock();
 }
 
-function tsubscribersUninstall(&$self) {
+function tsubscribersUninstall($self) {
   litepublisher::$classes->commentmanager->unbind($self);
   litepublisher::$classes->posts->unbind($self);
 }
