@@ -42,7 +42,7 @@ $cookiename = self::getcookiename();
 $cookie = isset($_COOKIE[$cookiename]) ? $_COOKIE[$cookiename] : '';
 if (($cookie != '') && strpos($cookie, '.')) {
 list($login, $password) = explode('.', $cookie);
-if ($password == md5($login . litepublisher::$secret . $p)) return ttrue;
+if ($password == md5($login . litepublisher::$secret . $p)) return true;
 }
 
 $self = self::i($id);
