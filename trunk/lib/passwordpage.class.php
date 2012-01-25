@@ -18,6 +18,8 @@ private $formresult;
     parent::create();
     $this->basename = 'passwordpage';
 $this->formresult = '';
+$this->data['form'] = '';
+$this->data['title'] = '';
   }
 
   private function checkspam($s) {
@@ -58,29 +60,16 @@ $this->formresult = tlocal::i()->invalidpassword;
 }
 
 public function gettitle() {
-return tlocal::i()->reqpassword;
+return $this->data['title'];
 }
   
   public function getcont() {
-    $theme = tview::getview($this)->theme;
-$items = strtr($theme->templates['content.admin.password'], array(
-    '$lang.$name' => $lang->password,
-    '$name' => 'password',
-    '$value' => '',
-    );
-
-$items .= strtr($theme->templates['content.admin.hidden'], array(
-    '$name' => 'antispam',
-    '$value' => '',
-    );
-
+$result = $this->formresult == '' ? '' : sprintf('<h4>%s</h4>', $this->formresult);
 $args = new targs();
-$args->formtitle = $this->formresult . ' ' . $lang->pwdcontent;
     $args->antispam = base64_encode('megaspamer' . strtotime ("+1 hour"));
-$args->items = $items;
-
-return $theme->parsearg($theme->templates['content.admin.form'], $args);
+    $args->remember = isset($_POST['remember']);
+$result .= $this->view->theme->parsearg($this->form, $args);
+return $result;
 }
-  
-}//class  
-}//class
+
+}// class
