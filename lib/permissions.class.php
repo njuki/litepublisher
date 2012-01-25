@@ -60,6 +60,11 @@ public $tables;
 $this->addmap('classes', array());
 $this->tables = array('posts', 'tags', 'categories');
   }
+
+  public function addclass(tperm $perm) {
+$this->classes[get_class($perm)] = $perm->name;
+$this->save();
+}
   
   public function add(tperm $perm) {
     $this->lock();

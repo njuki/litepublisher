@@ -179,7 +179,7 @@ class tdbmanager  {
         while ($row = $this->fetchnum($res)) {
           $values= array();
           foreach($row as $v){
-            $values[] = is_null($v) ? 'NULL' : dbquote($v);
+            $values[] = is_null($v) ? 'NULL' : $this->quote($v);
           }
           $sql .= $sql ? ',(' : '(';
           $sql .= implode(', ', $values);

@@ -34,7 +34,7 @@ class trss extends tevents {
     if (($arg == 'posts') && ($this->feedburner  != '')) {
       $result .= "<?php
       if (!preg_match('/feedburner|feedvalidator/i', \$_SERVER['HTTP_USER_AGENT'])) {
-        header('HTTP/1.1 307 Temporary Redirect');
+        header('HTTP/1.1 307 Temporary Redirect', true, 307);
         header('Location:$this->feedburner');
         return;
       }
@@ -42,7 +42,7 @@ class trss extends tevents {
     }elseif (($arg == 'comments') && ($this->feedburnercomments  != '')) {
       $result .= "<?php
       if (!preg_match('/feedburner|feedvalidator/i', \$_SERVER['HTTP_USER_AGENT'])) {
-        header('HTTP/1.1 307 Temporary Redirect');
+        header('HTTP/1.1 307 Temporary Redirect', true, 307);
         header('Location:$this->feedburnercomments');
         return;
       }
