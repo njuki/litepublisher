@@ -8,43 +8,59 @@
 
 class tpermpassword extends tperm {
 
+protected function create() {
+parent::create();
+$this->data['password'] = '';
+$this->data['login'] = '';
+}
+
 public function getheader($obj) {
-if (isset($obj->password) && ($p = $obj->password)) {
-return sprintf('<?php if (!%s::auth(\'%s\')) return; ?>', get_class($this), $this->encryptpassword($p));
-}
+return sprintf('<?php %s::i(%d)->auth(); ?>', get_class($this), $this->id));
 }
 
-public function encryptpassword($p) {
-return md5(litepublisher::$urlmap->url . litepublisher::$secret . $p);
+public function getcookiename() {
+return 'permpassword_' .$this->id;
 }
 
-protected function getpasswordcookie() {
-return basemd5('post_' . $this->id .litepublisher::$secret . $this->password);
+public function setpassword($p) {
+$p = trim($p);
+if ($p == '') return false;;
+$this->data['login'] = md5uniq();
+$this->data['password'] = md5($this->login . litepublisher::$secret . $p);
+$this->save();
 }
 
-public static function auth($p) {
-if (litepublisher::$options->group == 'admin') return;
-$cookiename = 'singlepwd_' . litepublisher::$urlmap->itemrequested['id'];
+public function checkpassword($p) {
+if ($this->password != md5($this->login . litepublisher::$secret . $p)) return false;
+    $login = md5(mt_rand() . litepublisher::$secret. microtime());
+$password = md5($login . litepublisher::$secret . $this->password);
+$cookie = $login . '.' . $password;
+    $expired = isset($_POST['remember']) ? time() + 1210000 : time() + 8*3600;
+
+    setcookie($this->getcookiename(), $cookie, $expired, litepublisher::$site->subdir . '/', false);
+return true;
+}
+
+public function auth($id) {
+if (litepublisher::$options->group == 'admin') return true;
+$cookiename = $this->getcookiename();
 $cookie = isset($_COOKIE[$cookiename]) ? $_COOKIE[$cookiename] : '';
-if ($cookie != '') {
+if (($cookie == '') || strpos($cookie, '.')) return $this->redir();
 list($login, $password) = explode('.', $cookie);
-if ($password == md5($login . litepublisher::$secret . $p)) return;
-}
-return self::redir('type=single&backurl=' . urlencode(litepublisher::$urlmap->url));
+if ($password == md5($login . litepublisher::$secret . $this->password)) return true;
+
+return $this->redir();
 }
 
-public static function redir($params) {
+public function redir() {
+$url = litepublisher::$site->url . '/check-password.php' . litepublisher::$site->q;
+$url .= "idperm=$this->id&backurl=" . urlencode(litepublisher::$urlmap->url);
     litepublisher::$options->savemodified();
-$url = litepublisher::$site->url . '/send-post-password.php' . litepublisher::$site->q . $params;
-    if ( php_sapi_name() != 'cgi-fcgi' ) {
-      $protocol = $_SERVER["SERVER_PROTOCOL"];
-      if ( ('HTTP/1.1' != $protocol) && ('HTTP/1.0' != $protocol) ) $protocol = 'HTTP/1.0';
-      header( "$protocol 307 Temporary Redirect", true, 307);
-    }
-    
+        header('HTTP/1.1 307 Temporary Redirect', true, 307);
     header('Location: ' . $url);
+
     if (ob_get_level()) ob_end_flush ();
     exit();
-  }
-  
+}
+
 }//class

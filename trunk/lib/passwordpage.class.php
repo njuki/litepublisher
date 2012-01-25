@@ -55,7 +55,7 @@ $backurl = isset($_GET['backurl']) ? $_GET['backurl'] : '';
 if ($this->perm->checkpassword($password)) {
 if ($backurl != '') turlmap::redir301($backurl);
 } else {
-$this->formresult = tlocal::i()->invalidpassword;
+$this->formresult = $this->invalidpassword;
 }
 }
 
