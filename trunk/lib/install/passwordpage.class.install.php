@@ -30,6 +30,8 @@ $self->form =ttheme::i()->parsearg($form, $arg);
 $self->data['title'] = $lang->reqpassword;
 $self->data['invalidpassword'] = $lang->invalidpassword;
 $self->save();
+
+trobotstxt ::i()->add('/check-password.php');
 }
 
 function tpasswordpageUninstall($self) {
