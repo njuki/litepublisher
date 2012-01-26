@@ -48,8 +48,30 @@ class tadminperms extends tadminmenu {
     $html = $this->html;
     $lang = tlocal::i('perms');
     $args = targs::i();
-    switch ($this->name) {
+if (!($action = $this->action)) $action = 'perms';
+    switch ($action) {
       case 'perms':
+$args->editurl = $this->link . litepublisher::$site->q . 'action=edit&id';
+foreach ($perms->items as $id => $item) {
+if ($id == 1) continue;
+$args->add($item);
+$result .= $html->item($args);
+}
+
+$result = $html->
+$html->gettable($html->tablehead, $result);
+
+
+foreach ($perms->classes as $class => $name) {
+$args->class = $class;
+$args->name = $name;
+$result .= 
+}
+
+}
+
+return
+}
 
   public function processform() {
     $result = '';
