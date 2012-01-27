@@ -58,9 +58,11 @@ $args->add($item);
 $result .= $html->item($args);
 }
 
-$result = $html->
-$html->gettable($html->tablehead, $result);
-
+$result = '<form name="deleteform" method="post" action="">' .
+$html->gettable($html->tablehead, $result) .
+'<p>'.
+$html->getsubmit('delete').
+'</p></form>';
 
 foreach ($perms->classes as $class => $name) {
 $args->class = $class;
