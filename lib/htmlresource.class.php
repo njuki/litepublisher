@@ -195,6 +195,13 @@ class tadminhtml {
     '$value' => $value
     ));
   }
+
+  public function getsubmit($name) {
+    return strtr(ttheme::i()->templates['content.admin.submit'], array(
+    '$lang.$name' => tlocal::i()->$name,
+    '$name' => $name,
+    ));
+  }
   
   public function getedit($name, $value, $title) {
     return $this->getinput('text', $name, $value, $title);
