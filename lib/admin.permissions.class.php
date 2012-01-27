@@ -52,29 +52,129 @@ if (!($action = $this->action)) $action = 'perms';
     switch ($action) {
       case 'perms':
 $args->editurl = $this->link . litepublisher::$site->q . 'action=edit&id';
+$items = '';
 foreach ($perms->items as $id => $item) {
 if ($id == 1) continue;
 $args->add($item);
-$result .= $html->item($args);
+$items .= $html->item($args);
 }
 
-$result = '<form name="deleteform" method="post" action="">' .
-$html->gettable($html->tablehead, $result) .
-'<p>'.
-$html->getsubmit('delete').
-'</p></form>';
+$result = strtr(ttheme::i()->templates['content.admin.form'], array(
+'$formtitle' => $this->lang->formtitle,
+'$items' => $html->gettable($html->tablehead, $items),
+'$lang.update' => $this->lang->delete
+));
 
+$items = '';
 foreach ($perms->classes as $class => $name) {
 $args->class = $class;
 $args->name = $name;
-$result .= 
+$items .= $html->newitem($args);
 }
 
+$args->items = $items;
+$result .= $html->newitems($args);
+return $result;
+
+case 'edit':
+$id = $this->idget;
+if (!$perms->itemexists($id)) return $this->notfound();
+$perm = tperm::i($id);
+return $perm->admin->getcont();
+
+case 'add':
+$class = tadminhtml::getparam('class', '');
+if (!isset($perms->classes[$class])) return $this->notfound();
+$perm = new $class();
+return $perm->admin->getcont();
 }
 
-return
 }
 
   public function processform() {
-    $result = '';
-    switch ($this->name) {
+$perms = tperms::i();
+if (!($action = $this->action)) $action = 'perms';
+    switch ($action) {
+      case 'perms':
+$perms->lock();
+foreach ($_POST as $name => $val) {
+if (strbegin($name, 'checkbox-')) {
+$perms->delete((int) $val);
+}
+}
+$perms->unlock();
+return;
+
+case 'edit':
+$id = $this->idget;
+if (!$perms->itemexists($id)) return $this->notfound();
+$perm = tperm::i($id);
+return $perm->admin->processform();
+}
+}
+
+}//class
+
+class tadminperm {
+public $perm;
+
+public function getcont() {
+$html = tadminhtml::i();
+$lang = tlocal::i('perms');
+$args = new targs();
+$args->add($this->perm->data);
+$args->formtitle = $lang->editperm;
+$form = 'text=name] [hidden=id]';
+$form .= $this->getform($args);
+return $html->adminform($tml, $args);
+}
+
+public function getform(targs $args) {
+return '';
+}
+
+public function processform() {
+$name = trim($_POST['name']);
+if ($name != '') $this->perm->name = $name;
+$this->perm->save();
+}
+
+class tadminpermpassword extends tadminperm {
+
+public function getform(targs $args) {
+$args->password = '';
+return '[password=password]';
+}
+
+public function processform() {
+$this->perm->password = $_POST['password'];
+parent::processfform();
+}
+
+}//class
+
+class tadminpermgroups extends tadminperm {
+
+public function getform(targs $args) {
+
+return '[password=password]';
+}
+
+public function processform() {
+
+if (is_string($a)) $a = explode(',', $a);
+$g = array('admin');
+foreach ($a as $name) {
+$name = trim($name);
+if ($name == '') continue;
+$g[] = $name;
+}
+
+$this->data['groups'] = array_unique($g);
+$this->save();
+
+$this->perm->password = $_POST['password'];
+parent::processfform();
+}
+
+}//class

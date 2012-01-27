@@ -10,11 +10,13 @@ class tpermpassword extends tperm {
 
 protected function create() {
 parent::create();
+$this->adminclass = 'tadminpermpassword';
 $this->data['password'] = '';
 $this->data['login'] = '';
 }
 
 public function getheader($obj) {
+if ($this->password == '') return '';
 return sprintf('<?php %s::i(%d)->auth(); ?>', get_class($this), $this->id));
 }
 
@@ -24,7 +26,7 @@ return 'permpassword_' .$this->id;
 
 public function setpassword($p) {
 $p = trim($p);
-if ($p == '') return false;;
+if ($p == '') return false;
 $this->data['login'] = md5uniq();
 $this->data['password'] = md5($this->login . litepublisher::$secret . $p);
 $this->save();

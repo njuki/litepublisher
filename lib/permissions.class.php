@@ -7,6 +7,8 @@
 **/
 
 class tperm extends titem {
+protected $_admin;
+protected $adminclass;
 
   public static function i($id = 0) {
 $perms = tperms::i();
@@ -26,6 +28,15 @@ $class = $perms->itemexists($id) ? $perms->items[$id]['class'] : __class__;
     'name' => 'permission'
     );
   }
+
+public function getadmin() {
+if (!isset($this_admin) {
+$class = $this->adminclass;
+$this->_admin = new $class();
+$this->_admin->perm = $this;
+}
+return$this->_admin;
+}
   
   public function load() {
     $perms = tperms::i();
