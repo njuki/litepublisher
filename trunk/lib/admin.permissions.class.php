@@ -156,24 +156,28 @@ parent::processfform();
 class tadminpermgroups extends tadminperm {
 
 public function getform(targs $args) {
-
-return '[password=password]';
+$g = $this->perm->groups;
+$groups = tusergroups::i();
+$html = tadminhtml::i();
+$result = '';
+foreach ($groups->items as $id => $item) {
+$name = $item['name'];
+$checked = in_array($name, $g) ? 'checked="checked"' : '';
+$checked .= sprintf(' value="%s" ', $name);
+$result .= $html->getinput('checkbox', "permgroup-$id",  $checked, $name);
+}
+return $result;
 }
 
 public function processform() {
-
-if (is_string($a)) $a = explode(',', $a);
 $g = array('admin');
-foreach ($a as $name) {
-$name = trim($name);
-if ($name == '') continue;
-$g[] = $name;
+foreach ($_POST as $name => $val) {
+if (strbegin($name, 'permgroup-')) {
+$g[] = $val;
+}
 }
 
 $this->data['groups'] = array_unique($g);
-$this->save();
-
-$this->perm->password = $_POST['password'];
 parent::processfform();
 }
 
