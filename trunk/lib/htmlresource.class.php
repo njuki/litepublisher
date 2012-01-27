@@ -165,7 +165,7 @@ class tadminhtml {
   
   public function adminform($tml, targs $args) {
     $args->items = $this->parsearg($tml, $args);
-    return $this->parsearg(ttheme::i()->content->admin->form, $args);
+    return $this->parsearg(ttheme::i()->templates['content.admin.form'], $args);
   }
   
   public function getcheckbox($name, $value) {
