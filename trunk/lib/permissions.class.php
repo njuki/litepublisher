@@ -61,13 +61,20 @@ class tpermgroups extends tperm {
 protected function create() {
 parent::create();
 $this->adminclass = 'tadminpermgroups';
+$this->data['author'] = false;
 $this->data['groups'] = array();
 }
 
 public function getheader($obj) {
-if (count($this->groups) == 0) return '';
-$groups = implode("', '", $this->groups);
-return sprintf('<?php if (!in_array(litepublisher::$options->group, array(\'%s\')) return litepublisher::$urlmap->forbidden(); ?>',  $groups);
+$g = $this->groups;
+if (!$this->author  && (count($g) == 0)) return '';
+$groups = implode("', '", $g);
+$author = '';
+if ($this->author && isset($obj->author) && ($obj->author > 1)) {
+$author = sprintf('  || (litepublisher::$options->user != %d)', $obj->author);
+}
+
+return sprintf('<?php if (!in_array(litepublisher::$options->group, array(\'%s\')%s) return litepublisher::$urlmap->forbidden(); ?>',  $groups, $author);
 }
 
 //class

@@ -100,7 +100,7 @@ class toptions extends tevents_storage {
       if ($iduser = $users->findcookie($cookie)){
         $item = $users->getitem($iduser);
         if (strtotime($item['expired']) <= time()) return false;
-        $this->user = $iduser;
+        $this->user = (int) $iduser;
       } else {
         return false;
       }
