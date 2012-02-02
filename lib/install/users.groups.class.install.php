@@ -7,15 +7,15 @@
 **/
 
 function tusergroupsInstall($self) {
+tlocal::usefile('install');
+$lang = tlocal::i('initgroups');
   $self->lock();
-  $self->add('admin', 'admin');
-  $self->add('editor', '/admin/posts/');
-  $self->add('subeditor', '/admin/posts/');
-  $self->add('author', '/admin/posts/');
-  $self->add('moderator', '/admin/comments/');
-  $self->add('subscriber', '/admin/subscribers/');
-  $self->add('nobody', '/admin/');
+  $self->add('admin', $lang->admin, '/admin/');
+  $self->add('editor', $lang->editor, '/admin/posts/');
+  $self->add('subeditor', $lang->subeditor, '/admin/posts/');
+  $self->add('author', $lang->author, '/admin/posts/');
+  $self->add('moderator', $lang->moderator, '/admin/comments/');
+  $self->add('subscriber', $lang->subscriber, '/admin/subscribers/');
+  $self->add('nobody', $lang->nobody, '/admin/');
   $self->unlock();
 }
-
-?>

@@ -31,7 +31,7 @@ class tadminusers extends tadminmenu {
     
     $a = array();
     foreach ($groups->items as $id => $item) {
-    $a[$id] = $lang->{$item['name']};
+    $a[$id] = $item['title'];
     }
     
     $statuses = array();
@@ -44,7 +44,7 @@ class tadminusers extends tadminmenu {
       $args->lite = $pages->lite;
       $g = array();
       foreach ($groups->items as $id => $item) {
-      $g[$item['name']]  = $lang->{$item['name']};
+      $g[$item['name']]  = $item['title'];
       }
       
       $args->defaultgroup =tadminhtml::array2combo($g, $groups->defaultgroup);

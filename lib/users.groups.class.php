@@ -19,10 +19,11 @@ class tusergroups extends titems {
     $this->addevents('onhasright');
   }
   
-  public function add($name, $home = '/ADMIN/') {
+  public function add($name, $title, $home) {
     if ($id = $this->groupid($name)) return $id;
     $this->items[++$this->autoid] = array(
     'name' => $name,
+'title' => $title,
     'home' => $home
     );
     $this->save();

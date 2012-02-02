@@ -31,6 +31,14 @@ unset($u->items[$id]['gid']);
 $u->save();
 }
 
+tlocal::usefile('install');
+$lang = tlocal::i('initgroups');
+$groups = tusergroups::i();
+foreach ($groups->items as $id => $item) {
+$groups->items[$id]['title'] = $lang->{$item['name']};
+}
+$groups->save();
+
 litepublisher::$classes->items[tadminperms'] = array('admin.permissions.class.php', '');
 litepublisher::$classes->items['tadminperm'] = array('admin.permissions.class.php', '');
 litepublisher::$classes->items['tadminpermpassword'] = array('admin.permissions.class.php', '');

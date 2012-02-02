@@ -112,13 +112,19 @@ protected function setgroups($id, array $idgroups) {
 $this->items[$id]['idgroups'] = $idgroups;
 if ($this->dbversion) {
 $db = $this->getdb($this->grouptable)
-$db->delete("id = $id");
+$db->delete("iduser = $id");
 foreach ($idgroups as $idgroup) {
 $db->add(array(
 'iduser' => $id,
 'idgroup' => $idgroup
 ));
 }
+}
+
+public function delete($id) {
+if ($this->dbversion)         $this->getdb($this->grouptable)->delete('iduser = ' .(int)$id));
+tuserpages::i()->delete($id);
+return parent::delete($id);
 }
   
   public function loginexists($login) {
@@ -215,7 +221,7 @@ $db->add(array(
   public function getgroupname($id) {
     $item = $this->getitem($id);
     $groups = tusergroups::i();
-    return $groups->items[$item['gid']]['name'];
+    return $groups->items[$item['idgroups'][0]]['name'];
   }
   
   public function clearcookie($id) {
@@ -248,6 +254,7 @@ $db->add(array(
       $delete = $this->db->idselect("status = 'wait' and id in (select id from $pagetable where registered < '$time')");
       if (count($delete) > 0) {
         $this->db->delete(sprintf('id in (%s)', implode(',', $delete)));
+        $this->getdb($this->grouptable)->delete(sprintf('iduser in (%s)', implode(',', $delete)));
         $pages = tuserpages::i();
         foreach ($delete as $id) {
           $pages->delete($id);
