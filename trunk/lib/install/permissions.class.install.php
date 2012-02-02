@@ -8,7 +8,7 @@
 
 function tpermsInstall($self) {
 tlocal::usefile('install');
-$lang = tlocal::i('initperms');
+$lang = tlocal::i('initgroups');
 
 $self->lock();
 $single = new tsingleperm();
