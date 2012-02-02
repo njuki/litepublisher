@@ -39,6 +39,7 @@ $groups->items[$id]['title'] = $lang->{$item['name']};
 }
 $groups->save();
 
+litepublisher::$classes->items['tadminusergroups'] = array('admin.usergroups.class.php', '');
 litepublisher::$classes->items[tadminperms'] = array('admin.permissions.class.php', '');
 litepublisher::$classes->items['tadminperm'] = array('admin.permissions.class.php', '');
 litepublisher::$classes->items['tadminpermpassword'] = array('admin.permissions.class.php', '');
