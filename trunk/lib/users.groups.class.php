@@ -30,11 +30,41 @@ class tusergroups extends titems {
   }
   
   public function groupid($name) {
-    foreach ($this->items as $id => $item) {
-      if ($name == $item['name']) return $id;
-    }
-    return false;
+return $this->IndexOf('name', trim($name));
   }
+
+public function cleangroup($v) {
+if (is_string($v)) $v = trim($v);
+    if (is_numeric($v)) {
+      $id = (int) $v;
+      if ($this->itemexists($id)) return $id;
+} else {
+return $this->groupid($v);
+}
+return false;
+}
+
+public function cleangroups($v) {
+if (is_array($v)) return $this->checkgroups(array_unique($v));
+
+if(is_string($v)) {
+$v = trim($v);
+if (strpos($v, ',')) {
+return $this->checkgroups(explode(',', $v));
+}
+}
+if ($id = $this->cleangroup($v)) return array($id);
+
+}
+
+protected function checkgroups(array $a) {
+$result = array();
+foreach ($a as $val) {
+if ($id = $this->cleangroup($val)) $result[] = $id;
+}
+
+return array_unique($result);
+}
   
   public function hasright($who, $group) {
     if ($who == $group) return  true;

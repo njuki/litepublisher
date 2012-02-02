@@ -12,6 +12,7 @@ function tusersInstall($self) {
     $dir = dirname(__file__) . DIRECTORY_SEPARATOR;
     $manager->CreateTable($self->table, file_get_contents($dir .'users.sql'));
     $manager->setautoincrement($self->table, 2);
+    $manager->CreateTable($self->grouptable, file_get_contents($dir .'usersgroups.sql'));
   }
   
   $cron = tcron::i();
