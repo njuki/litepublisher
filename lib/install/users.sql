@@ -4,6 +4,7 @@
   `cookie` char(22) NOT NULL,
   `expired` datetime NOT NULL default '2010-01-01 10:01:01',
   `gid` int unsigned NOT NULL default '0',
+  `idgroups` text NOT NULL,
   `trust` int unsigned NOT NULL default '0',
   `status` enum('approved','hold','lock','wait') default 'wait',
 

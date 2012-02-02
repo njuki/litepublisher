@@ -437,5 +437,3 @@ function dumpvar(&$v) {
   var_dump($v);
   echo "</pre>\n";
 }
-
-?>

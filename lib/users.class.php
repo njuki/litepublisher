@@ -7,6 +7,7 @@
 **/
 
 class tusers extends titems {
+public $grouptable;
   
   public static function i() {
     return getinstance(__class__);
@@ -17,36 +18,54 @@ class tusers extends titems {
     parent::create();
     $this->basename = 'users';
     $this->table = 'users';
+    $this->grouptable = 'usergroup';
     $this->autoid = 1;
   }
+
+  public function res2items($res) {
+    if (!$res) return array();
+    $result = array();
+$db = litepublisher::$db;
+    while ($item = $db->fetchassoc($res)) {
+      $id = (int) $item['id'];
+$item['idgroups'] = tdatabase::str2array($item['idgroups']);
+      $result[] = $id;
+      $this->items[$id] = $item;
+    }
+    return $result;
+  }
   
-  public function add($group, $login,$password, $name, $email, $website) {
+  // $group, $login,$password, $name, $email, $website) {
+  public function add(array $values) {
+$login = trim($values['login']);
     if ($this->loginexists($login)) return false;
     $groups = tusergroups::i();
-    if (is_numeric($group)) {
-      $gid = (int) $group;
-      if (!$groups->itemexists($gid)) return false;
-    } else {
-      if (!($gid = $groups->groupid($group))) return false;
-    }
-    if ($password == '') $password = md5uniq();
+$idgroups = $groups->cleangroups($values['idgroups']);
+
+$password = empty($values['password']) ? md5uniq() : $values['password'];
     $password = basemd5(sprintf('%s:%s:%s', $login,  litepublisher::$options->realm, $password));
-    
+
     $item = array(
     'login' => $login,
     'password' => $password,
-    'cookie' =>  md5uniq(),
+    'cookie' =>  md5uniq()
     'expired' => sqldate(),
-    'gid' => $gid,
+    'idgroups' => implode(',', $idgroups),
     'trust' => 0,
     'status' => 'wait'
     );
     
     $id = $this->dbversion ? $this->db->add($item) : ++$this->autoid;
+$item['idgroups'] = $idgroups;
     $this->items[$id] = $item;
-    if ($this->dbversion) $this->save();
+    if ($this->dbversion) {
+$this->setgroups($id, $item['idgroups']);
+} else {
+$this->save();
+}
+
     $pages = tuserpages::i();
-    $pages->add($id, $name, $email, $website);
+    $pages->add($id, $values['name'], $values['email'], $values['website']);
     $this->added($id);
     return $id;
   }
@@ -54,14 +73,6 @@ class tusers extends titems {
   public function edit($id, array $values) {
     if (!$this->itemexists($id)) return false;
     $item = $this->getitem($id);
-    $groups = tusergroups::i();
-    $group = isset($values['gid']) ? $values['gid'] :
-    (isset($values['group']) ? $values['group'] : '');
-    $gid = is_numeric($group) ?       (int) $group : $groups->groupid($group);
-    if (!$groups->itemexists($gid)) return false;
-    
-    $item['gid'] = $gid;
-    
     foreach ($item as $k => $v) {
       if (!isset($values[$k])) continue;
       switch ($k) {
@@ -70,7 +81,13 @@ class tusers extends titems {
           $item['password'] = basemd5(sprintf('%s:%s:%s', $values['login'],  litepublisher::$options->realm, $values['password']));
         }
         break;
-        
+
+
+case 'idgroups':
+    $groups = tusergroups::i();
+    $item['idgroups'] = $groups->cleangroups($values['idgroups']);
+break;        
+
         default:
         $item[$k] = trim($values[$k]);
       }
@@ -79,6 +96,8 @@ class tusers extends titems {
     $this->items[$id] = $item;
     $item['id'] = $id;
     if ($this->dbversion) {
+$this->setgroups($id, $item['idgroups']);
+$item['idgroups'] = implode(',', $item['idgroups']);
       $this->db->updateassoc($item);
     } else {
       $this->save();
@@ -88,6 +107,19 @@ class tusers extends titems {
     $pages->edit($id, $values);
     return true;
   }
+
+protected function setgroups($id, array $idgroups) {
+$this->items[$id]['idgroups'] = $idgroups;
+if ($this->dbversion) {
+$db = $this->getdb($this->grouptable)
+$db->delete("id = $id");
+foreach ($idgroups as $idgroup) {
+$db->add(array(
+'iduser' => $id,
+'idgroup' => $idgroup
+));
+}
+}
   
   public function loginexists($login) {
     if ($login == litepublisher::$options->login) return 1;
