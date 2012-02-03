@@ -29,6 +29,29 @@ class tusergroups extends titems {
     $this->save();
     return $this->autoid;
   }
+
+public function delete($id) {
+if (!isset($this->items[$id])) return false;
+unset($this->items[$id]);
+$this->save();
+
+$users = tusers::i();
+if (dbversion) {
+$db = $users->db;
+$items = $db->res2assoc($users->getdb($users->grouptable)->select("idgroup = $id"));
+$users->getdb($users->grouptable)->delete("idgroup = $id");
+foreach ($items as $item) {
+$iduser = $item['iduser'];
+$idgroups = $db->res2id($db->query("select idgroup from $db->prefix$users->grouptable where iduser = $iduser"));
+$users->db->setvalue($iduser, 'idgroups', implode(',', $idgroups));
+}
+} else {
+foreach ($users->items as &$item) {
+array_delete_value($item['idgroups'], $id);
+}
+$users->save();
+}
+}
   
   public function groupid($name) {
 return $this->IndexOf('name', trim($name));

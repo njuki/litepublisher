@@ -18,22 +18,46 @@ class tadminusergroups extends tadminmenu {
     $html = $this->html;
     $lang = tlocal::i('users');
     $args = targs::i();
+$adminurl = $this->adminurl;
+$id = $this->idget();
 
 switch ($this->action) {
 case 'add':
+$args->name = '';
+$args->title = '';
+$args->action = 'add';
+$args->formtitle = $lang->editgroup;
+$result .= $html->adminform('[text=name] [text=title] [hidden=action]', $args);
 break;
 
 case 'edit':
+$args->add($groups->items[$id]);
+$args->id = $id;
+$args->action = 'edit';
+$args->formtitle = $lang->editgroup;
+$result .= $html->adminform('[text=name] [text=title] [hidden=id] [hidden=action]', $args);
 break;
 
-'delete':
+case 'delete':
+if ($groups->itemexists($id)) {
+      if  (!$this->confirmed) {
+        $args->adminurl = $adminurl;
+        $args->id = $id;
+        $args->action = 'delete';
+        $args->confirm = sprintf($lang->deletegroup, $groups->items[$id]['title']);
+        $result .= $html->confirmform($args);
+      } else {
+        $groups->delete($id);
+      }
+}
 break;
 }
 
+$result .= $html->h4->grouptable;
 $result .= $html->buildtable($groups->items, array(
-    array('center', '+', '<input type="checkbox" name="checkbox_$id" id="checkbox_$id" value="$from" />'),
-    array('left', $lang->name, '<a href="$site.url$from" title="$from">$from</a>'),
-    array('left', $lang->from, '<a href="$site.url$from" title="$from">$from</a>'),
+    array('left', $lang->name, '<a href="' . $adminurl . '=$id&action=edit" title="$title">$title</a>'),
+    array('left', $lang->users, '<a href="' . litepublisher::$site->url . '/admin/users/' . litepublisher::$site->q . 'idgroup=$id">' . $lang->users . '</a>'),
+    array('left', $lang->delete, '<a href="' . $adminurl . '=$id&action=delete">' $lang->delete . '</a>')
 ));
 return $result;
 }
