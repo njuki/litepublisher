@@ -48,4 +48,10 @@ litepublisher::$classes->save();
 
 
 litepublisher::$classes->add('tpostpassword', 'post.password.class.php');
+
+if (litepublisher::$options->usersenabled) {
+$adminoptions = Tadminoptions::i();
+$adminoptions->setusersenabled(false);
+$adminoptions->setusersenabled(true);
+}
 }

@@ -25,9 +25,10 @@ switch ($this->action) {
 case 'add':
 $args->name = '';
 $args->title = '';
+$args->home = '';
 $args->action = 'add';
 $args->formtitle = $lang->editgroup;
-$result .= $html->adminform('[text=name] [text=title] [hidden=action]', $args);
+$result .= $html->adminform('[text=name] [text=title] [text=home] [hidden=action]', $args);
 break;
 
 case 'edit':
@@ -35,7 +36,7 @@ $args->add($groups->items[$id]);
 $args->id = $id;
 $args->action = 'edit';
 $args->formtitle = $lang->editgroup;
-$result .= $html->adminform('[text=name] [text=title] [hidden=id] [hidden=action]', $args);
+$result .= $html->adminform('[text=name] [text=title] [text=home] [hidden=id] [hidden=action]', $args);
 break;
 
 case 'delete':
@@ -63,7 +64,27 @@ return $result;
 }
     
   public function processform() {
+    extract($_POST, EXTR_SKIP);
     $groups = tusergroups::i();
+switch ($this->action) {
+case 'add':
+$id = $groups->add($name, $title, $home);
+$_POST['id'] = $id;
+$_GET['id'] = $id;
+$_GET['action'] = 'edit';
+break;
+
+case 'edit':
+if ($groups->itemexists($id)) {
+$groups->items[$id] = array(
+'name' => $name,
+'title' => $title,
+'home' => $home
+);
+$groups->save();
+}
+break;
+}
 }
 
 }//class
