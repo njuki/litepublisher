@@ -353,10 +353,10 @@ class Tadminoptions extends tadminmenu {
     $menus->lock();
     if ($value) {
       $id = $menus->createitem(0, 'users', 'author', 'tadminusers');
+      $menus->createitem($id, 'groups', 'admin', 'tadminusergroups');
       $menus->createitem($id, 'options', 'admin', 'tadminusers');
     } else {
-      $menus->deleteurl('/admin/users/options/');
-      $menus->deleteurl('/admin/users/');
+      $menus->deletetree($menus->url2id('/admin/users/'));
     }
     $menus->unlock();
   }
