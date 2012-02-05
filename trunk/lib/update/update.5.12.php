@@ -1,6 +1,28 @@
 <?php
 
 function update512() {
+tlocal::usefile('install');
+$lang = tlocal::i('initgroups');
+$groups = tusergroups::i();
+foreach ($groups->items as $id => $item) {
+$groups->items[$id]['title'] = $lang->{$item['name']};
+}
+$groups->save();
+
+litepublisher::$classes->add('tadminusergroups', 'admin.usergroups.class.php');
+litepublisher::$classes->add('tadminuseroptions', 'admin.useroptions.class.php');
+litepublisher::$classes->items[tadminperms'] = array('admin.permissions.class.php', '');
+litepublisher::$classes->items['tadminperm'] = array('admin.permissions.class.php', '');
+litepublisher::$classes->items['tadminpermpassword'] = array('admin.permissions.class.php', '');
+litepublisher::$classes->items['tadminpermgroups'] = array('admin.permissions.class.php');
+litepublisher::$classes->save();
+
+if (litepublisher::$options->usersenabled) {
+$adminoptions = Tadminoptions::i();
+$adminoptions->setusersenabled(false);
+$adminoptions->setusersenabled(true);
+}
+
 if (dbversion) {
 $man = tdbmanager::i();
 $man->alter('posts', "add   `idperm` int unsigned NOT NULL default '0' after author");
@@ -31,27 +53,4 @@ unset($u->items[$id]['gid']);
 $u->save();
 }
 
-tlocal::usefile('install');
-$lang = tlocal::i('initgroups');
-$groups = tusergroups::i();
-foreach ($groups->items as $id => $item) {
-$groups->items[$id]['title'] = $lang->{$item['name']};
-}
-$groups->save();
-
-litepublisher::$classes->items['tadminusergroups'] = array('admin.usergroups.class.php', '');
-litepublisher::$classes->items[tadminperms'] = array('admin.permissions.class.php', '');
-litepublisher::$classes->items['tadminperm'] = array('admin.permissions.class.php', '');
-litepublisher::$classes->items['tadminpermpassword'] = array('admin.permissions.class.php', '');
-litepublisher::$classes->items['tadminpermgroups'] = array('admin.permissions.class.php');
-litepublisher::$classes->save();
-
-
-litepublisher::$classes->add('tpostpassword', 'post.password.class.php');
-
-if (litepublisher::$options->usersenabled) {
-$adminoptions = Tadminoptions::i();
-$adminoptions->setusersenabled(false);
-$adminoptions->setusersenabled(true);
-}
 }
