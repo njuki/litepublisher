@@ -23,7 +23,6 @@ class tadminusers extends tadminmenu {
     $result = '';
     $users = tusers::i();
     $groups = tusergroups::i();
-    $pages = tuserpages::i();
     
     $html = $this->html;
     $lang = tlocal::i('users');
@@ -37,27 +36,6 @@ class tadminusers extends tadminmenu {
     $statuses = array();
     foreach (array('approved', 'hold', 'lock', 'wait')as $name) {
       $statuses[$name] = $lang->$name;
-    }
-    
-    if ($this->name == 'options') {
-      $args->createpage = $pages->createpage;
-      $args->lite = $pages->lite;
-      $g = array();
-      foreach ($groups->items as $id => $item) {
-      $g[$item['name']]  = $item['title'];
-      }
-      
-      $args->defaultgroup =tadminhtml::array2combo($g, $groups->defaultgroup);
-      $linkgen = tlinkgenerator::i();
-      $args->linkschema = $linkgen->data['user'];
-      
-      $args->formtitle = $lang->useroptions;
-      return $html->adminform(
-      '[combo=defaultgroup]
-      [checkbox=createpage]
-      [checkbox=lite]
-      [text=linkschema]',
-      $args);
     }
     
     if (!$groups->hasright(litepublisher::$options->group, 'admin')) {
@@ -167,20 +145,6 @@ class tadminusers extends tadminmenu {
       ));
       
       litepublisher::$urlmap->setexpired($pages->getvalue(litepublisher::$options->user, 'idurl'));
-      return;
-    }
-    
-    if ($this->name == 'options') {
-      $pages->createpage = isset($_POST['createpage']);
-      $pages->lite = isset($_POST['lite']);
-      $pages->save();
-      
-      $groups->defaultgroup = $_POST['defaultgroup'];
-      $groups->save();
-      
-      $linkgen = tlinkgenerator::i();
-      $linkgen->data['user'] = $_POST['linkschema'];
-      $linkgen->save();
       return;
     }
     
