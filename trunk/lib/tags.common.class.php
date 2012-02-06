@@ -7,6 +7,7 @@
 **/
 
 class tcommontags extends titems implements  itemplate {
+public $factory;
   public $contents;
   public $itemsposts;
   public $PermalinkIndex;
@@ -19,6 +20,7 @@ class tcommontags extends titems implements  itemplate {
     $this->dbversion = dbversion;
     parent::create();
     $this->addevents('changed', 'onlite');
+$this->factory = litepublisher::$classes->getfactory($this);
     $this->data['lite'] = false;
     $this->data['includechilds'] = false;
     $this->data['includeparents'] = false;
@@ -28,10 +30,6 @@ class tcommontags extends titems implements  itemplate {
     if (!$this->dbversion)  $this->data['itemsposts'] = array();
     $this->itemsposts = new titemspostsowner ($this);
     $this->all_loaded = false;
-  }
-  
-  protected function getpost($id) {
-    return tpost::i($id);
   }
   
   public function loadall() {
@@ -101,7 +99,7 @@ class tcommontags extends titems implements  itemplate {
   }
   
   public function postedited($idpost) {
-    $post = $this->getpost((int) $idpost);
+    $post = $this->factory->getpost((int) $idpost);
     $this->lock();
   $changed = $this->itemsposts->setitems($idpost, $post->{$this->postpropname});
     $this->updatecount($changed);
@@ -603,7 +601,7 @@ class tcategories extends tcommontags {
   
   public function setdefaultid($id) {
     if (($id != $this->defaultid) && $this->itemexists($id)) {
-      $thisdata['defaultid'] = $id;
+      $this->data['defaultid'] = $id;
       $this->save();
     }
   }
@@ -687,3 +685,20 @@ class ttagswidget extends tcommontagswidget {
   }
   
 }//class
+
+class ttagfactory extends tdata {
+  
+  public static function i() {
+    return getinstance(__class__);
+  }
+
+public function getposts() {
+return tposts::i();
+}
+
+public function getpost($id) {
+return tpost::i($id);
+}
+
+//class
+

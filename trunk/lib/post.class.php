@@ -9,6 +9,7 @@
 class tpost extends titem implements  itemplate {
   public $childdata;
   public $childtable;
+public $factory;
   private $aprev;
   private $anext;
   private $_meta;
@@ -99,7 +100,8 @@ class tpost extends titem implements  itemplate {
     'pages' => array()
     );
     
-    $posts = tposts::i();
+$this->factory = litepublisher::$classes->getfactory($this);
+    $posts = $this->factory->posts;
     foreach ($posts->itemcoclasses as $class) {
       $coinstance = litepublisher::$classes->newinstance($class);
       $coinstance->post = $this;
@@ -193,7 +195,7 @@ case 'excerpttaglinks':
   }
   
   public function setassoc(array $a) {
-    $trans = tposttransform::i($this);
+    $trans = $this->factory->gettransform($this);;
     $trans->setassoc($a);
     if ($this->childtable) {
       if ($a = $this->getdb($this->childtable)->getitem($this->id)) {
@@ -209,7 +211,7 @@ case 'excerpttaglinks':
   }
   
   protected function SaveToDB() {
-    tposttransform ::i($this)->save();
+$this->factory->gettransform($this)->save($this);
     if ($this->childtable) {
       $this->beforedb();
       $this->childdata['id'] = $this->id;
@@ -218,7 +220,7 @@ case 'excerpttaglinks':
   }
   
   public function addtodb() {
-    $id = tposttransform ::add($this);
+    $id = $this->factory->add($this);
     $this->setid($id);
     if ($this->childtable) {
       $this->beforedb();
@@ -262,11 +264,11 @@ case 'excerpttaglinks':
   }
   
   public function getcomments() {
-    return tcomments::i($this->id);
+    return $this->factory->getcomments($this->id);
   }
   
   public function getpingbacks() {
-    return tpingbacks::i($this->id);
+    return $this->factory->getpingbacks($this->id);
   }
   
   public function getprev() {
@@ -277,7 +279,7 @@ case 'excerpttaglinks':
         $this->aprev = self::i($id);
       }
     } else {
-      $posts = tposts::i();
+      $posts = $this->factory->posts;
       $keys = array_keys($posts->archives);
       $i = array_search($this->id, $keys);
       if ($i < count($keys) -1) $this->aprev = self::i($keys[$i + 1]);
@@ -293,7 +295,7 @@ case 'excerpttaglinks':
         $this->anext = self::i($id);
       }
     } else {
-      $posts = tposts::i();
+      $posts = $this->factory->posts;
       $keys = array_keys($posts->archives);
       $i = array_search($this->id, $keys);
       if ($i > 0 ) $this->anext = self::i($keys[$i - 1]);
@@ -303,7 +305,7 @@ case 'excerpttaglinks':
   }
   
   public function getmeta() {
-    if (!isset($this->_meta)) $this->_meta = tmetapost::i($this->id);
+    if (!isset($this->_meta)) $this->_meta = $this->factory->getmeta($this->id);
     return $this->_meta;
   }
   
@@ -372,7 +374,7 @@ $items = $this->$name;
     $tags= $this->getitags($name);
     $tags->loaditems($items);
 
-    $args = targs::i();
+    $args = new targs();
     $list = array();
 
     foreach ($items as $id) {
@@ -381,7 +383,7 @@ $items = $this->$name;
       if (($item['icon'] == 0) || litepublisher::$options->icondisabled) {
         $args->icon = '';
       } else {
-        $files = tfiles::i();
+        $files = $this->factory->files;
         if ($files->itemexists($item['icon'])) {
           $args->icon = $files->geticon($item['icon']);
         } else {
@@ -421,23 +423,23 @@ $items = $this->$name;
   
   public function gettagnames() {
     if (count($this->tags) == 0) return '';
-    $tags = ttags::i();
+    $tags = $this->factory->tags;
     return implode(', ', $tags->getnames($this->tags));
   }
   
   public function settagnames($names) {
-    $tags = ttags::i();
+    $tags = $this->factory->tags;
     $this->tags=  $tags->createnames($names);
   }
   
   public function getcatnames() {
     if (count($this->categories) == 0)  return '';
-    $categories = tcategories::i();
+    $categories = $this->factory->categories;
     return implode(', ', $categories->getnames($this->categories));
   }
   
   public function setcatnames($names) {
-    $categories = tcategories::i();
+    $categories = $this->factory->categories;
     $this->categories = $categories->createnames($names);
     if (count($this->categories ) == 0) {
       $defaultid = $categories->defaultid;
@@ -447,7 +449,7 @@ $items = $this->$name;
   
   public function getcategory() {
     if (count($this->categories) == 0) return '';
-    $cats = tcategories::i();
+    $cats = $this->factory->categories;
     return $cats->getname($this->categories[0]);
   }
   
@@ -521,7 +523,7 @@ $items = $this->$name;
   
   public function geticonurl() {
     if ($this->icon == 0) return '';
-    $files = tfiles::i();
+    $files = $this->factory->files;
     if ($files->itemexists($this->icon)) return $files->geturl($this->icon);
     $this->icon = 0;
     $this->save();
@@ -530,7 +532,7 @@ $items = $this->$name;
   
   public function geticonlink() {
     if (($this->icon == 0) || litepublisher::$options->icondisabled) return '';
-    $files = tfiles::i();
+    $files = $this->factory->files;
     if ($files->itemexists($this->icon)) return $files->geticon($this->icon);
     $this->icon = 0;
     $this->save();
@@ -543,13 +545,13 @@ $items = $this->$name;
   
   public function getfilelist() {
     if ((count($this->files) == 0) || ((litepublisher::$urlmap->page > 1) &&   litepublisher::$options->hidefilesonpage)) return '';
-    $files = tfiles::i();
+    $files = $this->factory->files;
     return $files->getfilelist($this->files, false);
   }
   
   public function getexcerptfilelist() {
     if (count($this->files) == 0) return '';
-    $files = tfiles::i();
+    $files = $this->factory->files;
     return $files->getfilelist($this->files, true);
   }
   
@@ -625,7 +627,7 @@ return $this->parsetml('content.post');
   }
   
   public function getexcerptcontent() {
-    $posts = tposts::i();
+      $posts = $this->factory->posts;
     if ($this->revision < $posts->revision) $this->setrevision($posts->revision);
     $result = $this->get_excerpt();
     $posts->beforeexcerpt($this, $result);
@@ -678,7 +680,7 @@ return $this->parsetml('content.post');
   
   public function getcontent() {
     $result = '';
-    $posts = tposts::i();
+      $posts = $this->factory->posts;
     $posts->beforecontent($this, $result);
     if ($this->revision < $posts->revision) $this->setrevision($posts->revision);
     $result .= $this->getcontentpage(litepublisher::$urlmap->page);
@@ -701,7 +703,7 @@ return $this->parsetml('content.post');
   public function setrevision($value) {
     if ($value != $this->data['revision']) {
       $this->updatefiltered();
-      $posts = tposts::i();
+      $posts = $this->factory->posts;
       $this->data['revision'] = (int) $posts->revision;
       if ($this->id > 0) $this->save();
     }
@@ -828,5 +830,53 @@ return $this->parsetml('content.post');
       return sprintf('<a href="%s%s" title="%3$s" rel="author"><%3$s</a>', litepublisher::$site->url, $item['url'], $item['name']);
     }
   }
+
+}//class
+
+class tpostfactory extends tdata {
+
+public function i() {
+return getinstance(__class__);
+}
+
+public function getposts() {
+return tposts::i();
+}
+
+public function getfiles() {
+return tfiles::i();
+}
+
+public function gettags() {
+return ttags::i();
+}
+
+public function getcats () {
+return tcategories::i();
+}
+
+public function getcategories() {
+return tcategories::i();
+}
+
+  public function getcomments($id) {
+return tcomments::i($id);::i($this);
+}
+
+  public function getpingbacks($id) {
+    return tpingbacks::i($id);
+  }
+
+public function getmeta($id) {
+return tmetapost::i($id);
+}
+
+public function gettransform(tpost $post) {
+return tposttransform::i($post);
+}
+
+public function add(tpost $post) {
+return tposttransform ::add($post);
+}
 
 }//class

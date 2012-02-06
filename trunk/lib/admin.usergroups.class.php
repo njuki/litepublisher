@@ -11,6 +11,23 @@ class tadminusergroups extends tadminmenu {
   public static function i($id = 0) {
     return parent::iteminstance(__class__, $id);
   }
+
+public static function getgroups(array $idgroups) {
+$result = '';
+$groups = tgroups::i();
+$html = tadminhtml::i();
+$tml = $html->ini['editor']['category'];
+$args = new targs();
+      $args->subcount = '';
+      $args->subitems = '';
+foreach ($groups->items as $id => $item) {
+$args->checked = in_array($id, $idgroups);
+      $result .= $theme->parsearg($tml, $args);
+    }
+    
+    if ($result != '') $result = sprintf($html->categories(), $result);
+return $result;
+}
   
   public function getcontent() {
     $result = '';
