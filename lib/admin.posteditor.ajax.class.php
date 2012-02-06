@@ -141,7 +141,7 @@ class tajaxposteditor  extends tevents {
       $lang->section = 'editor';
       $result .= $html->h4->addtags;
       $items = array();
-      $tags = ttags::i();
+      $tags = $post->factory->tags;
       $list = $tags->getsorted(-1, 'name', 0);
       foreach ($list as $id ) {
         $items[] = '<a href="" rel="tagtopost">' . $tags->items[$id]['title'] . "</a>";

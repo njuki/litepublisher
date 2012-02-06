@@ -23,6 +23,8 @@ $groups->save();
 
 litepublisher::$classes->add('tadminusergroups', 'admin.usergroups.class.php');
 litepublisher::$classes->add('tadminuseroptions', 'admin.useroptions.class.php');
+litepublisher::$classes->add('tadminuserpages', 'admin.userpages.class.php');
+
 litepublisher::$classes->items[tadminperms'] = array('admin.permissions.class.php', '');
 litepublisher::$classes->items['tadminperm'] = array('admin.permissions.class.php', '');
 litepublisher::$classes->items['tadminpermpassword'] = array('admin.permissions.class.php', '');

@@ -357,11 +357,6 @@ $this->factory->gettransform($this)->save($this);
   
   //template
 
-public function getitags($name) {
-$class = 'tag' == substr($name, 0, 3) ? 'ttags' : 'tcategories';
-return litepublisher::$classes->getinstance($class);
-}
-
   private function get_taglinks($name, $excerpt) {
 $items = $this->$name;
     if (count($items) == 0) return '';
@@ -371,7 +366,7 @@ $items = $this->$name;
     $tmlpath .= $name == 'tags' ? '.taglinks' : '.catlinks';
     $tmlitem = $theme->templates[$tmlpath . '.item'];
 
-    $tags= $this->getitags($name);
+    $tags= strbegin($name, 'tag') ? $this->factory->tags : $this->factory->categories;
     $tags->loaditems($items);
 
     $args = new targs();

@@ -352,7 +352,8 @@ class Tadminoptions extends tadminmenu {
     $menus = tadminmenus::i();
     $menus->lock();
     if ($value) {
-      $id = $menus->createitem(0, 'users', 'author', 'tadminusers');
+      $id = $menus->createitem(0, 'users', 'admin', 'tadminusers');
+      $menus->createitem($id, 'pages', 'author', 'tadminuserpages');
       $menus->createitem($id, 'groups', 'admin', 'tadminusergroups');
       $menus->createitem($id, 'options', 'admin', 'tadminuseroptions');
     } else {
