@@ -38,13 +38,6 @@ class tadminusers extends tadminmenu {
       $statuses[$name] = $lang->$name;
     }
     
-    if (!$groups->hasright(litepublisher::$options->group, 'admin')) {
-      $item = $users->getitem(litepublisher::$options->user);
-      $args->add($item);
-      $args->add($pages->getitem(litepublisher::$options->user));
-      return $html->userform($args);
-    }
-    
     $id = $this->idget();
     if ($users->itemexists($id)) {
       $item = $users->getitem($id);
@@ -112,11 +105,10 @@ class tadminusers extends tadminmenu {
     
     $args->adminurl = $this->adminurl;
     $result .= $html->tableheader ();
-    $pages = tuserpages::i();
+
     foreach ($items as $id) {
       $item = $users->getitem($id);
       $args->add($item);
-      $args->add($pages->getitem($id));
       $args->id = $id;
       $args->group = $a[$item['gid']];
       $args->status = $statuses[$item['status']];
@@ -132,21 +124,8 @@ class tadminusers extends tadminmenu {
   
   public function processform() {
     $users = tusers::i();
-    $pages = tuserpages::i();
     $groups = tusergroups::i();
     
-    if (!$groups->hasright(litepublisher::$options->group, 'admin')) {
-      extract($_POST, EXTR_SKIP);
-      $pages->edit(litepublisher::$options->user, array(
-      'name' => $name,
-      'website' => $website,
-      'rawcontent' => trim($rawcontent),
-      'content' => tcontentfilter::i()->filter($rawcontent),
-      ));
-      
-      litepublisher::$urlmap->setexpired($pages->getvalue(litepublisher::$options->user, 'idurl'));
-      return;
-    }
     
     if (isset($_POST['table'])) {
       $users->lock();
