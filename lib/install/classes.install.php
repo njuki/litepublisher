@@ -51,6 +51,7 @@ function ParseClassesIni() {
   
   $classes->classes = $ini['classes'];
   $classes->interfaces = $ini['interfaces'];
+  $classes->factories = $ini['factories'];
   $classes->Save();
   
   //forward create folders

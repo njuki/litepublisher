@@ -16,6 +16,7 @@ class tclasses extends titems {
   public $classes;
   public $interfaces;
   public $remap;
+public $factories;
   public $instances;
   
   public static function i() {
@@ -39,6 +40,7 @@ class tclasses extends titems {
     $this->addmap('classes', array());
     $this->addmap('interfaces', array());
     $this->addmap('remap', array());
+    $this->addmap('factories', array());
     $this->instances = array();
     if (function_exists('spl_autoload_register')) spl_autoload_register(array($this, '_autoload'));
   }
@@ -144,6 +146,12 @@ class tclasses extends titems {
   public function exists($class) {
     return isset($this->items[$class]);
   }
+
+public function getfactory($instance) {
+foreach ($this->factories as $classname => $factory) {
+if (@is_a($instance, $classname)) return $this->getinstance($factory);
+}
+}
   
 }//class
 

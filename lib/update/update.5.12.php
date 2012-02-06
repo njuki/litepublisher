@@ -1,6 +1,18 @@
 <?php
 
 function update512() {
+litepublisher::$classes->items['titem_storage'] = array('item.class.php', '');
+litepublisher::$classes->items['tpostfactory'] = array('kernel.posts.php', '', 'post.class.php');
+litepublisher::$classes->items['ttagfactory'] = array('kernel.posts.php', '', 'tags.common.class.php');
+
+litepublisher::$classes->data['factories'] = array(
+'tpost' => 'tpostfactory',
+'ttags' => 'ttagfactory',
+'tcategories' => 'ttagfactory'
+);
+
+litepublisher::$classes->factories = &litepublisher::$classes->data['factories'];
+litepublisher::$classes->savemodified();
 tlocal::usefile('install');
 $lang = tlocal::i('initgroups');
 $groups = tusergroups::i();

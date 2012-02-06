@@ -6,7 +6,7 @@
 * and GPL (gpl.txt) licenses.
 **/
 
-class tview extends titem {
+class tview extends titem_storage {
   public $sidebars;
   private $themeinstance;
   
@@ -50,19 +50,17 @@ class tview extends titem {
     unset($this->themeinstance);
     parent::__destruct();
   }
-  
-  public function load() {
-    $views = tviews::i();
-    if ($views->itemexists($this->id)) {
-      $this->data = &$views->items[$this->id];
-      $this->sidebars = &$this->data['sidebars'];
+
+public function getowner() {
+return tviews::i() ;
+}
+
+    public function load() {
+if (parent::load()) }
+$this->sidebars = &$this->data['sidebars'];
       return true;
     }
     return false;
-  }
-  
-  public function save() {
-    return tviews::i()->save();
   }
   
   public function setthemename($name) {

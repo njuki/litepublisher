@@ -6,7 +6,7 @@
 * and GPL (gpl.txt) licenses.
 **/
 
-class tperm extends titem {
+class tperm extends titem_storage {
 protected $_admin;
 protected $adminclass;
 
@@ -29,6 +29,10 @@ $class = $perms->itemexists($id) ? $perms->items[$id]['class'] : __class__;
     );
   }
 
+public function getowner() {
+return tperms::i();
+}
+
 public function getadmin() {
 if (!isset($this_admin) {
 $class = $this->adminclass;
@@ -38,19 +42,6 @@ $this->_admin->perm = $this;
 return$this->_admin;
 }
   
-  public function load() {
-    $perms = tperms::i();
-    if ($perms->itemexists($this->id)) {
-      $this->data = &$perms->items[$this->id];
-      return true;
-    }
-    return false;
-  }
-  
-  public function save() {
-    return tperms::i()->save();
-  }
-
 public function getheader($obj) {
 }  
 
