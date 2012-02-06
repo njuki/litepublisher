@@ -12,51 +12,48 @@ class tadminuserpages extends tadminmenu {
     return parent::iteminstance(__class__, $id);
   }
   
-  public function gethead() {
-    $result = parent::gethead();
-    $template = ttemplate::i();
-  $result .= $template->getready('$("#tabs").tabs({ cache: true });');
-    return $result;
-  }
-  
+public function getiduser() {
+    if (tusergroups::i()->hasright(litepublisher::$options->group, 'admin')) {
+    $id = $this->idget();
+} else {
+$id = litepublisher::$options->user;
+}
+
+if (tusers::i()->itemexists($id)) return $id;
+return false;
+}  
+
   public function getcontent() {
     $result = '';
-    $users = tusers::i();
-$pages = tuserpages::i();
-   
     $html = $this->html;
     $lang = tlocal::i('users');
     $args = targs::i();
     
-    if (!$groups->hasright(litepublisher::$options->group, 'admin')) {
+if (!($id= $this->getiduser())) return $this->notfound();
+$pages = tuserpages::i();
       $item = $users->getitem(litepublisher::$options->user);
       $args->add($item);
-      $args->add($pages->getitem(litepublisher::$options->user));
-      return $html->userform($args);
-
-    
-    $id = $this->idget();
-    if ($users->itemexists($id)) {
-      $item = $users->getitem($id);
-      $args->add($item);
       $args->add($pages->getitem($id));
-
+$args->formtitle = sprintf('<a href="$site.url%s">%s</a>', $item['url'], $item['name']);
+      return $html->adminform(
+'[text=name]
+[text=website]
+[editor=rawcontent]', 
+$args);
 }
 
   public function processform() {
-    $users = tusers::i();
+      extract($_POST, EXTR_SKIP);
+if (!($id= $this->getiduser())) return;
     $pages = tuserpages::i();
 
-    
-    if (!$groups->hasright(litepublisher::$options->group, 'admin')) {
-      extract($_POST, EXTR_SKIP);
-      $pages->edit(litepublisher::$options->user, array(
+
+      $pages->edit($id, array(
       'name' => $name,
       'website' => $website,
       'rawcontent' => trim($rawcontent),
       'content' => tcontentfilter::i()->filter($rawcontent),
       ));
-      
-}
+      }
 
 }//class      
