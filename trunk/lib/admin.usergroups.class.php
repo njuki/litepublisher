@@ -15,18 +15,18 @@ class tadmingroups extends tadminmenu {
 public static function getgroups(array $idgroups) {
 $result = '';
 $groups = tgroups::i();
-$html = tadminhtml::i();
-$tml = $html->ini['editor']['category'];
+$tml = '<li><input type="checkbox" name="idgroup-$id" id="checkbox-idgroup-$id" $value="$id" $checked />
+<label for="checkbox-idgroup-$id"><strong>$title</strong></label></li>';
+$theme = ttheme::i();
 $args = new targs();
-      $args->subcount = '';
-      $args->subitems = '';
 foreach ($groups->items as $id => $item) {
+$args->add($item);
+$args->id = $id;
 $args->checked = in_array($id, $idgroups);
       $result .= $theme->parsearg($tml, $args);
     }
     
-    if ($result != '') $result = sprintf($html->categories(), $result);
-return $result;
+return sprintf('<ul>%s</ul>', $result);
 }
   
   public function getcontent() {

@@ -24,36 +24,21 @@ class tadminusers extends tadminmenu {
     $html = $this->html;
     $lang = tlocal::i('users');
     $args = targs::i();
-    
-    $a = array();
-    foreach ($groups->items as $id => $item) {
-    $a[$id] = $item['title'];
-    }
-    
+
+    $id = $this->idget();
+switch ($this->action) {
+case 'edit':
+    if (!$users->itemexists($id)) {
+$result .= $this->notfound();
+} else {
     $statuses = array();
     foreach (array('approved', 'hold', 'lock', 'wait')as $name) {
       $statuses[$name] = $lang->$name;
     }
     
-    $id = $this->idget();
-    if ($users->itemexists($id)) {
       $item = $users->getitem($id);
       $args->add($item);
-
-      if (isset($_GET['action']) &&($_GET['action'] == 'delete'))  {
-        if  ($this->confirmed) {
-          $users->delete($id);
-          $result .= $html->h2->successdeleted;
-        } else {
-          $args->id = $id;
-          $args->adminurl = $this->adminurl;
-          $args->action = 'delete';
-          $args->confirm = $this->lang->confirmdelete;
-          $result .=$html->confirmform($args);
-        }
-      } else {
 $args->formtitle = $item['login'];
-        $args->group = tadminhtml::array2combo($a, $item['gid']);
         $args->status = tadminhtml::array2combo($statuses, $item['status']);
 
     $tabs = new tuitabs();
@@ -64,14 +49,38 @@ $tabs->add('Cookie', '[text=cookie] [text=expired] [text=registered] [text=trust
 
         $result .= $html->adminform($tabs->get(), $args);
       }
-      
-    } else {
+break;
+
+case 'delete':
+    if (!$users->itemexists($id)) {
+$result .= $this->notfound();
+} else {
+        if  ($this->confirmed) {
+          $users->delete($id);
+          $result .= $html->h4->successdeleted;
+        } else {
+          $args->id = $id;
+          $args->adminurl = $this->adminurl;
+          $args->action = 'delete';
+          $args->confirm = $lang->confirmdelete;
+          $result .=$html->confirmform($args);
+        }
+}
+break;
+
+default:
+$args->formtitle = $lang->newuser;
       $args->group = tadminhtml::array2combo($a, $item['gid']);
 $args->login = '';
 $args->email = '';
-      $result .= $html->adminform('[text=login] [text=email]' . tadmingroups::getgroups(arrray()), $args);
-    }
-    
+$args->action = 'add';
+      $result .= $html->adminform(
+'[text=login]
+ [text=email]
+[hidden=action]' . 
+tadmingroups::getgroups(array()), $args);
+}
+
     //table
     $perpage = 20;
     $count = $users->count;
@@ -105,9 +114,23 @@ $args->email = '';
   public function processform() {
     $users = tusers::i();
     $groups = tusergroups::i();
-    
-    
-    if (isset($_POST['table'])) {
+switch ($this->action) {    
+case 'add':
+$_POST['idgroups'] = tadminhtml::check2array('idgroup-');
+      if ($id = $users->add($_POST)) {
+turlmap::redir("$this->adminurl=$id&action=edit");
+} else {
+return $this->html->h2->invalidregdata;
+}
+break;
+
+case 'edit':
+    $id = $this->idget();
+if (!$users->itemexists($id)) return;
+      if (!$users->edit($id, $_POST))return $this->notfound;
+break;
+
+default:
       $users->lock();
       foreach ($_POST as $key => $value) {
         if (!is_numeric($value)) continue;
@@ -116,19 +139,7 @@ $args->email = '';
       }
       $users->unlock();
       return $this->html->h2->successdeleted;
-    }
-    
-    $id = $this->idget();
-    if ($id == 0) {
-      extract($_POST, EXTR_SKIP);
-      $id = $users->add($group, $login,$password, $name, $email, $website);
-      if (!$id) return $this->html->h2->invalidregdata;
-    } else {
-      if (!$users->edit($id, $_POST))return $this->notfound;
-    }
+}
   }
   
 }//class
-
-
-?>
