@@ -66,25 +66,10 @@ $tabs->add('Cookie', '[text=cookie] [text=expired] [text=registered] [text=trust
       }
       
     } else {
-      $item = array(
-      'login' => '',
-      'password' => '',
-      'cookie' =>  '',
-      'expired' => sqldate(),
-      'registered' => sqldate(),
-      'gid' => 'nobody',
-      'status' => 'hold',
-      'trust' => 0,
-      'name' => '',
-      'email' => '',
-      'ip' => '',
-      'avatar' => 0,
-      );
-      
-      $args->add($item);
       $args->group = tadminhtml::array2combo($a, $item['gid']);
-      $args->status = tadminhtml::array2combo($statuses, $item['status']);
-      $result .= $html->form($args);
+$args->login = '';
+$args->email = '';
+      $result .= $html->adminform('[text=login] [text=email]' . tadmingroups::getgroups(arrray()), $args);
     }
     
     //table

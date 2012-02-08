@@ -42,7 +42,10 @@ $args->formtitle = sprintf('<a href="$site.url%s">%s</a>', $item['url'], $item['
 
     $tabs = new tuitabs();
 $tabs->add($lang->title, '[text=name] [text=website]');
-$tabs->add('SEO', '[text=url] [text=keywords] [text=description] [text=head]');
+if ('admin' == litepublisher::$options->group) {
+$tabs->add($lang->view, tadminviews::getcomboview($item['idview']));
+$tabs->add('SEO', '[text=url] [text=keywords] [text=description] [editor=head]');
+}
 $tabs->add($lang->text, '[editor=rawcontent]');
 
       return $html->adminform($tabs->get(), $args);
@@ -51,19 +54,23 @@ $tabs->add($lang->text, '[editor=rawcontent]');
   public function processform() {
       extract($_POST, EXTR_SKIP);
 if (!($id= $this->getiduser())) return;
-    $pages = tuserpages::i();
-
-      $pages->edit($id, array(
+$item = array(
       'name' => $name,
       'website' => $website,
       'rawcontent' => trim($rawcontent),
-      'content' => tcontentfilter::i()->filter($rawcontent),
-'idview' => (int) $idview,
-'url' => $url,
-'head' => $head,
-'keywords => $keywords,
-'description' => $description
-      ));
+      'content' => tcontentfilter::i()->filter($rawcontent)
+);
+
+if ('admin' == litepublisher::$options->group) {
+$item['idview'] = (int) $idview;
+$item['url'] = $url;
+$item['head'] = $head;
+$item['keywords'] = $keywords;
+$item['description'] = $description;
+}
+
+    $pages = tuserpages::i();
+      $pages->edit($id, $item);
       }
 
 }//class      
