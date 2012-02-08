@@ -507,8 +507,7 @@ class tuitabs {
   }
   
   public static function gethead() {
-    $template = ttemplate::i();
-    return $template->getready('$($("div[rel=\'tabs\']").get().reverse()).tabs()');
+    return ttemplate::i()->getready('$($("div[rel=\'tabs\']").get().reverse()).tabs()');
   }
   
 }//class
