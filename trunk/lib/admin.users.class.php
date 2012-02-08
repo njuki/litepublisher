@@ -12,11 +12,8 @@ class tadminusers extends tadminmenu {
     return parent::iteminstance(__class__, $id);
   }
   
-  public function gethead() {
-    $result = parent::gethead();
-    $template = ttemplate::i();
-  $result .= $template->getready('$("#tabs").tabs({ cache: true });');
-    return $result;
+  public function  gethead() {
+    return parent::gethead() . tuitabs::gethead();
   }
   
   public function getcontent() {
@@ -42,8 +39,7 @@ class tadminusers extends tadminmenu {
     if ($users->itemexists($id)) {
       $item = $users->getitem($id);
       $args->add($item);
-      $args->add($pages->getitem($id));
-      
+
       if (isset($_GET['action']) &&($_GET['action'] == 'delete'))  {
         if  ($this->confirmed) {
           $users->delete($id);
@@ -56,9 +52,17 @@ class tadminusers extends tadminmenu {
           $result .=$html->confirmform($args);
         }
       } else {
+$args->formtitle = $item['login'];
         $args->group = tadminhtml::array2combo($a, $item['gid']);
         $args->status = tadminhtml::array2combo($statuses, $item['status']);
-        $result .= $html->form($args);
+
+    $tabs = new tuitabs();
+$tabs->add($lang->login, '[text=login] [password=password] [text=email]');
+$tabs->add($lang->rights, '[combo=status]' . 
+tadmingroups::getgroups($item['idgroups']);
+$tabs->add('Cookie', '[text=cookie] [text=expired] [text=registered] [text=trust]');
+
+        $result .= $html->adminform($tabs->get(), $args);
       }
       
     } else {
@@ -71,19 +75,10 @@ class tadminusers extends tadminmenu {
       'gid' => 'nobody',
       'status' => 'hold',
       'trust' => 0,
-      'idurl' => 0,
-      'idview' => 1,
       'name' => '',
       'email' => '',
-      'website' => '',
-      'url' => '',
       'ip' => '',
       'avatar' => 0,
-      'content' => '',
-      'rawcontent' => '',
-      'keywords' => '',
-      'description' => '',
-      'head' => ''
       );
       
       $args->add($item);

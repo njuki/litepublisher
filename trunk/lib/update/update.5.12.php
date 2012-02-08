@@ -21,7 +21,7 @@ $groups->items[$id]['title'] = $lang->{$item['name']};
 }
 $groups->save();
 
-litepublisher::$classes->add('tadminusergroups', 'admin.usergroups.class.php');
+litepublisher::$classes->add('tadmingroups', 'admin.usergroups.class.php');
 litepublisher::$classes->add('tadminuseroptions', 'admin.useroptions.class.php');
 litepublisher::$classes->add('tadminuserpages', 'admin.userpages.class.php');
 
