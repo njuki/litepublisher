@@ -56,7 +56,7 @@ return tviews::i() ;
 }
 
     public function load() {
-if (parent::load()) }
+if (parent::load()) {
 $this->sidebars = &$this->data['sidebars'];
       return true;
     }

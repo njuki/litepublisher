@@ -38,13 +38,14 @@ $result .= $this->notfound();
     
       $item = $users->getitem($id);
       $args->add($item);
+$args->email = tuserpages::i()->getvalue($id, 'email');
 $args->formtitle = $item['login'];
         $args->status = tadminhtml::array2combo($statuses, $item['status']);
 
     $tabs = new tuitabs();
 $tabs->add($lang->login, '[text=login] [password=password] [text=email]');
 $tabs->add($lang->rights, '[combo=status]' . 
-tadmingroups::getgroups($item['idgroups']);
+tadmingroups::getgroups($item['idgroups']));
 $tabs->add('Cookie', '[text=cookie] [text=expired] [text=registered] [text=trust]');
 
         $result .= $html->adminform($tabs->get(), $args);
@@ -70,7 +71,6 @@ break;
 
 default:
 $args->formtitle = $lang->newuser;
-      $args->group = tadminhtml::array2combo($a, $item['gid']);
 $args->login = '';
 $args->email = '';
 $args->action = 'add';
@@ -98,7 +98,7 @@ $where = $groups->itemexists($idgroup) ? "'$users->thistable.id in (select iduse
     $args->adminurl = $this->adminurl;
 $args->formtitle = $lang->userstable;
 $args->table = $html->items2table($users, $items, array(
-$html->get_table_checkbox('user),
+$html->get_table_checkbox('user'),
 $html->get_table_item('login'),
 $html->get_table_item('email'),
 $html->get_table_item('status'),
@@ -131,11 +131,13 @@ break;
 case 'edit':
     $id = $this->idget();
 if (!$users->itemexists($id)) return;
+$_POST['idgroups'] = tadminhtml::check2array('idgroup-');
       if (!$users->edit($id, $_POST))return $this->notfound;
 break;
 
 default:
       $users->lock();
+dumpvar($_POST);
       foreach ($_POST as $key => $value) {
         if (!is_numeric($value)) continue;
         $id = (int) $value;

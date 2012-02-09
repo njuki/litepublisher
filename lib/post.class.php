@@ -830,7 +830,7 @@ return $this->parsetml('content.post');
 
 class tpostfactory extends tdata {
 
-public function i() {
+public static function i() {
 return getinstance(__class__);
 }
 
@@ -855,7 +855,7 @@ return tcategories::i();
 }
 
   public function getcomments($id) {
-return tcomments::i($id);::i($this);
+return tcomments::i($id);
 }
 
   public function getpingbacks($id) {
