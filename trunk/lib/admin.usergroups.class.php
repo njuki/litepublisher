@@ -23,7 +23,7 @@ foreach ($groups->items as $id => $item) {
 $args->add($item);
 $args->id = $id;
 $args->checked = in_array($id, $idgroups);
-      $result .= $theme->parsearg($tml, $args);
+      $result .= strtr ($s, $args->data);
     }
     
 return sprintf('<ul>%s</ul>', $result);
