@@ -143,7 +143,7 @@ class tadminhtml {
   }
   
   public static function idparam() {
-    return (int) tadminhtml::getparam('id', 0);
+    return (int) self::getparam('id', 0);
   }
   
   public static function getadminlink($path, $params) {
@@ -238,6 +238,45 @@ class tadminhtml {
     $args->tablebody = $body;
     return $theme->parsearg($this->ini['common']['table'], $args);
   }
+
+  public function items2table($owner, array $items, array $struct) {
+    $head = '';
+    $body = '';
+    $tml = '<tr>';
+    foreach ($struct as $elem) {
+      $head .= sprintf('<th align="%s">%s</th>', $elem[0], $elem[1]);
+      $tml .= sprintf('<td align="%s">%s</td>', $elem[0], $elem[2]);
+    }
+    $tml .= '</tr>';
+    
+    $theme = ttheme::i();
+    $args = new targs();
+    foreach ($items as $id) {
+$item = $owner->getitem($id);
+      $args->add($item);
+$args->id = $id;
+      $body .= $theme->parsearg($tml, $args);
+    }
+    $args->tablehead  = $head;
+    $args->tablebody = $body;
+    return $theme->parsearg($this->ini['common']['table'], $args);
+  }
+
+public function get_table_checkbox($name) {
+return array('center', $this->th_invert, str_replace('$checkboxname', $name, $this->td_checkbox));
+}
+
+
+public function get_table_item($name) {
+return array('left', tlocal::i()->$name, "<td>\$$name</td>");
+}
+
+public function get_table_link($action) {
+return array('left', tlocal::i()->$action, strtr($this->td_link, array(
+'action' => $action,
+'$lang.$action' => tlocal::i()->$action
+)));
+}
   
   public function confirmdelete($id, $adminurl, $mesg) {
     $args = targs::i();

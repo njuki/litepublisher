@@ -86,31 +86,35 @@ tadmingroups::getgroups(array()), $args);
     $count = $users->count;
     $from = $this->getfrom($perpage, $count);
     if ($users->dbversion) {
-      $items = $users->select('', " order by id desc limit $from, $perpage");
+$idgroup = (int) $this->getparam('idgroup', 0);
+$grouptable = litepublisher::$db->prefix . $users->grouptable;
+$where = $groups->itemexists($idgroup) ? "'$users->thistable.id in (select iduser from $grouptable where idgroup = $idgroup)" : '';
+      $items = $users->select($where, " order by id desc limit $from, $perpage");
       if (!$items) $items = array();
     } else {
       $items = array_slice(array_keys($users->items), $from, $perpage);
     }
     
     $args->adminurl = $this->adminurl;
-    $result .= $html->tableheader ();
+$args->formtitle = $lang->userstable;
+$args->table = $html->items2table($users, $items, array(
+$html->get_table_checkbox('user),
+$html->get_table_item('login'),
+$html->get_table_item('email'),
+$html->get_table_item('status'),
+$html->get_table_link('edit'),
+array('left', $lang->page, sprintf('<td><a href="%s">%s</a></td>', tadminhtml::getadminlink('/admin/users/pages/', 'id=$id'), $lang->page)),
+$html->get_table_link('delete')
+));
 
-    foreach ($items as $id) {
-      $item = $users->getitem($id);
-      $args->add($item);
-      $args->id = $id;
-      $args->group = $a[$item['gid']];
-      $args->status = $statuses[$item['status']];
-      $result .= $html->item($args);
-    }
-    $result .= $html->tablefooter();
+$result .= $html->deletetable($args);
     $result = $html->fixquote($result);
     
     $theme = ttheme::i();
     $result .= $theme->getpages($this->url, litepublisher::$urlmap->page, ceil($count/$perpage));
     return $result;
   }
-  
+
   public function processform() {
     $users = tusers::i();
     $groups = tusergroups::i();
