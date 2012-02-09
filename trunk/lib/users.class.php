@@ -48,7 +48,7 @@ $password = empty($values['password']) ? md5uniq() : $values['password'];
     $item = array(
     'login' => $login,
     'password' => $password,
-    'cookie' =>  md5uniq()
+    'cookie' =>  md5uniq(),
     'expired' => sqldate(),
     'idgroups' => implode(',', $idgroups),
     'trust' => 0,
@@ -65,7 +65,7 @@ $this->save();
 }
 
     $pages = tuserpages::i();
-    $pages->add($id, $values['name'], $values['email'], $values['website']);
+    $pages->add($id, isset($values['name']) ? trim($values['name']) : '', $values['email'], isset($values['website']) ? trim($values['website']) : '');
     $this->added($id);
     return $id;
   }
@@ -81,7 +81,6 @@ $this->save();
           $item['password'] = basemd5(sprintf('%s:%s:%s', $values['login'],  litepublisher::$options->realm, $values['password']));
         }
         break;
-
 
 case 'idgroups':
     $groups = tusergroups::i();
@@ -111,7 +110,7 @@ $item['idgroups'] = implode(',', $item['idgroups']);
 protected function setgroups($id, array $idgroups) {
 $this->items[$id]['idgroups'] = $idgroups;
 if ($this->dbversion) {
-$db = $this->getdb($this->grouptable)
+$db = $this->getdb($this->grouptable);
 $db->delete("iduser = $id");
 foreach ($idgroups as $idgroup) {
 $db->add(array(
@@ -120,9 +119,10 @@ $db->add(array(
 ));
 }
 }
+}
 
 public function delete($id) {
-if ($this->dbversion)         $this->getdb($this->grouptable)->delete('iduser = ' .(int)$id));
+if ($this->dbversion) $this->getdb($this->grouptable)->delete('iduser = ' .(int)$id);
 tuserpages::i()->delete($id);
 return parent::delete($id);
 }

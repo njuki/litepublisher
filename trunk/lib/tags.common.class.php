@@ -700,5 +700,4 @@ public function getpost($id) {
 return tpost::i($id);
 }
 
-//class
-
+}//class

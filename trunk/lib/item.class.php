@@ -79,7 +79,7 @@ class titem extends tdata {
 class titem_storage extends titem {
 
 public function getowner() {
-$this->error(sprintf('The "%s" hasnt owner', get_class($this));
+$this->error(sprintf('The "%s" no have owner', get_class($this)));
 }
 
   public function load() {

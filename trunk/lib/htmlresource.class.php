@@ -263,16 +263,15 @@ $args->id = $id;
   }
 
 public function get_table_checkbox($name) {
-return array('center', $this->th_invert, str_replace('$checkboxname', $name, $this->td_checkbox));
+return array('center', $this->invertcheckbox, str_replace('$checkboxname', $name, $this->checkbox));
 }
-
 
 public function get_table_item($name) {
 return array('left', tlocal::i()->$name, "<td>\$$name</td>");
 }
 
 public function get_table_link($action) {
-return array('left', tlocal::i()->$action, strtr($this->td_link, array(
+return array('left', tlocal::i()->$action, strtr($this->actionlink , array(
 'action' => $action,
 '$lang.$action' => tlocal::i()->$action
 )));

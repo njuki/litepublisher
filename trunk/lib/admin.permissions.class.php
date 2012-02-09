@@ -139,6 +139,8 @@ if ($name != '') $this->perm->name = $name;
 $this->perm->save();
 }
 
+}//class
+
 class tadminpermpassword extends tadminperm {
 
 public function getform(targs $args) {

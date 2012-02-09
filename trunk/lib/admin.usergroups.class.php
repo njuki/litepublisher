@@ -14,8 +14,8 @@ class tadmingroups extends tadminmenu {
 
 public static function getgroups(array $idgroups) {
 $result = '';
-$groups = tgroups::i();
-$tml = '<li><input type="checkbox" name="idgroup-$id" id="checkbox-idgroup-$id" $value="$id" $checked />
+$groups = tusergroups::i();
+$tml = '<li><input type="checkbox" name="idgroup-$id" id="checkbox-idgroup-$id" value="$id" $checked />
 <label for="checkbox-idgroup-$id"><strong>$title</strong></label></li>';
 $theme = ttheme::i();
 $args = new targs();
@@ -23,9 +23,9 @@ foreach ($groups->items as $id => $item) {
 $args->add($item);
 $args->id = $id;
 $args->checked = in_array($id, $idgroups);
-      $result .= strtr ($s, $args->data);
+      $result .= strtr ($tml, $args->data);
     }
-    
+//    dumpstr($result);
 return sprintf('<ul>%s</ul>', $result);
 }
   
@@ -74,8 +74,8 @@ break;
 $result .= $html->h4->grouptable;
 $result .= $html->buildtable($groups->items, array(
     array('left', $lang->name, '<a href="' . $adminurl . '=$id&action=edit" title="$title">$title</a>'),
-    array('left', $lang->users, '<a href="' . litepublisher::$site->url . '/admin/users/' . litepublisher::$site->q . 'idgroup=$id">' . $lang->users . '</a>'),
-    array('left', $lang->delete, '<a href="' . $adminurl . '=$id&action=delete">' $lang->delete . '</a>')
+    array('left', $lang->users, sprintf('<a href="%s">%s</a>', tadminhtml::getadminlink('/admin/users/', 'idgroup=$id'), $lang->users)),
+$html->get_table_link('delete')
 ));
 return $result;
 }
