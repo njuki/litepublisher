@@ -44,7 +44,7 @@ $args->formtitle = $item['login'];
 
     $tabs = new tuitabs();
 $tabs->add($lang->login, '[text=login] [password=password] [text=email]');
-$tabs->add($lang->rights, '[combo=status]' . 
+$tabs->add($lang->groups, '[combo=status]' . 
 tadmingroups::getgroups($item['idgroups']));
 $tabs->add('Cookie', '[text=cookie] [text=expired] [text=registered] [text=trust]');
 
@@ -101,9 +101,8 @@ $where = $groups->itemexists($idgroup) ? "'$users->thistable.id in (select iduse
 $args->formtitle = $lang->userstable;
 $args->table = $html->items2table($users, $items, array(
 $html->get_table_checkbox('user'),
-$html->get_table_item('login'),
+array('left', $lang->edit, sprintf('<a href="%s=$id&action=edit">$login</a>', $this->adminurl)),
 $html->get_table_item('status'),
-$html->get_table_link('edit'),
 array('left', $lang->page, sprintf('<a href="%s">%s</a>', tadminhtml::getadminlink('/admin/users/pages/', 'id=$id'), $lang->page)),
 $html->get_table_link('delete')
 ));
