@@ -74,11 +74,13 @@ $args->formtitle = $lang->newuser;
 $args->login = '';
 $args->email = '';
 $args->action = 'add';
-      $result .= $html->adminform(
-'[text=login]
- [text=email]
-[hidden=action]' . 
-tadmingroups::getgroups(array()), $args);
+
+    $tabs = new tuitabs();
+$tabs->add($lang->login, '[text=login] [password=password] [text=name] [text=email] [hidden=action]');
+$tabs->add($lang->groups, tadmingroups::getgroups(array()));
+
+      $result .= $html->adminform($tabs->get(), $args);
+
 }
 
     //table
@@ -100,10 +102,9 @@ $args->formtitle = $lang->userstable;
 $args->table = $html->items2table($users, $items, array(
 $html->get_table_checkbox('user'),
 $html->get_table_item('login'),
-$html->get_table_item('email'),
 $html->get_table_item('status'),
 $html->get_table_link('edit'),
-array('left', $lang->page, sprintf('<td><a href="%s">%s</a></td>', tadminhtml::getadminlink('/admin/users/pages/', 'id=$id'), $lang->page)),
+array('left', $lang->page, sprintf('<a href="%s">%s</a>', tadminhtml::getadminlink('/admin/users/pages/', 'id=$id'), $lang->page)),
 $html->get_table_link('delete')
 ));
 
@@ -118,6 +119,17 @@ $result .= $html->deletetable($args);
   public function processform() {
     $users = tusers::i();
     $groups = tusergroups::i();
+
+if (isset($_POST['delete'])) {
+      $users->lock();
+      foreach ($_POST as $key => $value) {
+        if (!is_numeric($value)) continue;
+        $id = (int) $value;
+        $users->delete($id);
+      }
+      $users->unlock();
+return;
+}
 switch ($this->action) {    
 case 'add':
 $_POST['idgroups'] = tadminhtml::check2array('idgroup-');
@@ -134,17 +146,6 @@ if (!$users->itemexists($id)) return;
 $_POST['idgroups'] = tadminhtml::check2array('idgroup-');
       if (!$users->edit($id, $_POST))return $this->notfound;
 break;
-
-default:
-      $users->lock();
-dumpvar($_POST);
-      foreach ($_POST as $key => $value) {
-        if (!is_numeric($value)) continue;
-        $id = (int) $value;
-        $users->delete($id);
-      }
-      $users->unlock();
-      return $this->html->h2->successdeleted;
 }
   }
   
