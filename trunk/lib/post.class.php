@@ -354,7 +354,17 @@ $this->factory->gettransform($this)->save($this);
   public function getsqldate() {
     return sqldate($this->posted);
   }
-  
+
+public function getimage() {
+    if (count($this->files) == 0) return false;
+    $files = $this->factory->files;
+    foreach ($this->files as $id) {
+      $item = $files->getitem($id);
+      if ('image' == $item['media']) return $files->geturl($id);
+    }
+    return false;
+  }
+
   //template
 
   private function get_taglinks($name, $excerpt) {
