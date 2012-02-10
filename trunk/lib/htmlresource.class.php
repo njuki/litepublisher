@@ -267,13 +267,13 @@ return array('center', $this->invertcheckbox, str_replace('$checkboxname', $name
 }
 
 public function get_table_item($name) {
-return array('left', tlocal::i()->$name, "<td>\$$name</td>");
+return array('left', tlocal::i()->$name, "\$$name");
 }
 
 public function get_table_link($action) {
 return array('left', tlocal::i()->$action, strtr($this->actionlink , array(
-'action' => $action,
-'$lang.$action' => tlocal::i()->$action
+'$action' => $action,
+'$lang.action' => tlocal::i()->$action
 )));
 }
   
