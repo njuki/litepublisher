@@ -225,7 +225,7 @@ class tcommentform extends tevents {
       }
     }
     
-    $posturl = $post->haspages ? rtrim($post->url, '/') . "/page/$post->commentpages/" : $post->url;
+    $posturl = $post->lastcommenturl;
     $users = tcomusers::i($postid);
     $uid = $users->add($values['name'], $values['email'], $values['url'], $values['ip']);
     if (!litepublisher::$classes->spamfilter->canadd( $uid)) {
