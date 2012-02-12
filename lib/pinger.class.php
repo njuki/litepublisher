@@ -182,7 +182,7 @@ class tpinger extends tevents {
   
   public function pingservices($url) {
     $m = microtime(true);
-    $client = new IXR_Client();
+    $client = new IXR_Client(litepublisher::$site->url);
     $client->timeout = 3;
     $client->useragent .= ' -- Lite Publisher/'.litepublisher::$options->version;
     $client->debug = false;
@@ -197,7 +197,7 @@ class tpinger extends tevents {
       $client->path = isset($bits['path']) ? $bits['path'] : '/';
       if (!$client->path) $client->path = '/';
       
-      if ( !$client->query('weblogUpdates.extendedPing', litepublisher::$site->name, $home, $url, litepublisher::$site->url . "/rss/") )
+      if ( !$client->query('weblogUpdates.extendedPing', litepublisher::$site->name, $home, $url, litepublisher::$site->url . '/rss.xml') )
       $client->query('weblogUpdates.ping', litepublisher::$site->name, $url);
       
       if ((microtime(true) - $m) > 180) break;
