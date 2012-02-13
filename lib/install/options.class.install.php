@@ -38,16 +38,16 @@ function installoptions($language) {
   $options->language = $language;
   
   $options->dateformat = '';
-  $options->login = "admin";
-  $options->password = "";
-  $options->realm = "Admin panel";
+  $options->login = 'admin';
+  $options->password = '';
+  $options->realm = 'Admin panel';
   $password = md5uniq();
   $options->changepassword($password);
   $options->cookieenabled = true;
   $options->cookie = '';
   $options->cookieexpired = 0;
   
-  $options->email = "yarrowsoft@gmail.com";
+  $options->email = 'yarrowsoft@gmail.com';
   $options->mailer = '';
   $options->data['cache'] = true;
   $options->expiredcache= 3600;
@@ -57,7 +57,7 @@ function installoptions($language) {
   $options->filetime_offset = tfiler::get_filetime_offset();
   $options->data['perpage'] = 10;
   $options->filtercommentstatus = true;
-  $options->DefaultCommentStatus = "approved";
+  $options->DefaultCommentStatus = 'approved';
   $options->commentsdisabled = false;
   $options->commentsenabled = true;
   $options->pingenabled = true;

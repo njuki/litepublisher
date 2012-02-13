@@ -34,8 +34,20 @@ $item['idgroups'] = tdatabase::str2array($item['idgroups']);
     }
     return $result;
   }
+
+public function getitem($id) {
+if ($id == 1) return array(
+'login' =>litepublisher::$options->login,
+'password' => litepublisher::$options->password,
+'cookie' => litepublisher::$options->cookie,
+    'expired' => sqldate(litepublisher::$options->cookieexpired ),
+'status' => 'approved',
+'idgroups' => array(1)
+);
+
+return parent::getitem($id);
+}
   
-  // $group, $login,$password, $name, $email, $website) {
   public function add(array $values) {
 $login = trim($values['login']);
     if ($this->loginexists($login)) return false;

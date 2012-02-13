@@ -53,7 +53,7 @@ $users->save();
 }
 }
   
-  public function groupid($name) {
+  public function getidgroup($name) {
 return $this->IndexOf('name', trim($name));
   }
 
@@ -63,7 +63,7 @@ if (is_string($v)) $v = trim($v);
       $id = (int) $v;
       if ($this->itemexists($id)) return $id;
 } else {
-return $this->groupid($v);
+return $this->getidgroup($v);
 }
 return false;
 }
@@ -78,7 +78,6 @@ return $this->checkgroups(explode(',', $v));
 }
 }
 if ($id = $this->cleangroup($v)) return array($id);
-
 }
 
 protected function checkgroups(array $a) {
@@ -88,6 +87,21 @@ if ($id = $this->cleangroup($val)) $result[] = $id;
 }
 
 return array_unique($result);
+}
+
+public function ingroup($iduser, $groupname) {
+$idgroup = $this->getidgroup($groupname);
+$item = tusers::i()->getitem($iduser);
+return in_array($idgroup, $item['idgroups']);
+}
+
+// $iduser, $groupname1, $groupname2...
+public function ingroups() {
+    $args= func_get_args();
+$iduser = array_shift ($args);
+$item = tusers::i()->getitem($iduser);
+$groups = $this->checkgroups($args);
+return count(array_intersect($item['idgroups'], $groups)) > 0;
 }
   
   public function hasright($who, $group) {
@@ -112,7 +126,7 @@ return array_unique($result);
   }
   
   public function gethome($name) {
-    if ($id = $this->groupid($name)) {
+    if ($id = $this->getidgroup($name)) {
       return isset($this->items[$id]['home']) ? $this->items[$id]['home'] : '/admin/';
     }
     return '/admin/';

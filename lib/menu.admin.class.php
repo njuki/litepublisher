@@ -214,7 +214,7 @@ public function canrequest() { }
   }
   
   public function getnotfound() {
-    return $this->html->h2->notfound;
+    return $this->html->h4->notfound;
   }
   
   public function getadminurl() {

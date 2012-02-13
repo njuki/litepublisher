@@ -1,0 +1,13 @@
+
+
+
+		<?php if ( 'div' != $r['style'] ) : ?>
+		</div>
+		<?php endif; ?>
+<?php
+	}
+
+
+comment_approved 
+		<em><?php _e('Your comment is awaiting moderation.') ?></em>
+		<br />
