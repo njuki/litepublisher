@@ -110,20 +110,23 @@ class tuserpages extends titems implements itemplate {
   public function addpage($id) {
     $item = $this->getitem($id);
     if ($item['idurl'] > 0) return $item['idurl'];
-    $this->addurl($item);
+    $item = $this->addurl($item);
     $this->items = $item;
-    $this->save();
+    if (dbversion) {
     unset($item['url']);
     $item['id'] = $id;
-    if (dbversion) $this->db->updateassoc($item);
+$this->db->updateassoc($item);
+} else {
+    $this->save();
+}
   }
   
-  private function addurl(array &$item) {
+  private function addurl(array $item) {
     $item['url'] = '';
     $linkgen = tlinkgenerator::i();
     $item['url'] = $linkgen->addurl(new tarray2prop ($item), 'user');
     $item['idurl'] = litepublisher::$urlmap->add($item['url'], get_class($this), $item['id']);
-    return $item['idurl'];
+    return $item;
   }
   
   public function add($id, $name, $email, $website) {
