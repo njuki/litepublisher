@@ -64,7 +64,7 @@ $password = empty($values['password']) ? md5uniq() : $values['password'];
     'expired' => sqldate(),
     'idgroups' => implode(',', $idgroups),
     'trust' => 0,
-    'status' => 'wait'
+    'status' => $groups->ingroup(litepublisher::$options->user, 'admin) ? 'approved' : 'wait'
     );
     
     $id = $this->dbversion ? $this->db->add($item) : ++$this->autoid;
