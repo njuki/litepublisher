@@ -17,7 +17,7 @@ class tadminuserpages extends tadminmenu {
   }
   
 public function getiduser() {
-    if (tusergroups::i()->hasright(litepublisher::$options->group, 'admin')) {
+    if (tusergroups::i()->ingroup(litepublisher::$options->user, 'admin')) {
     $id = $this->idget();
 } else {
 $id = litepublisher::$options->user;
@@ -29,17 +29,20 @@ return false;
 
   public function getcontent() {
     $result = '';
-    $html = $this->html;
-    $lang = tlocal::i('users');
+$users = tusers::i();
+    $html = $this->gethtml('users');
+    $lang = tlocal::admin('users');
     $args = targs::i();
     
-if (!($id= $this->getiduser())) return $this->notfound();
+if (!($id= $this->getiduser())) return $this->notfound;
 $pages = tuserpages::i();
-      $item = $users->getitem(litepublisher::$options->user);
+      $item = $pages->getitem($id);
+if (!isset($item['url'])) {
+$item['url'] = $item['idurl'] ? litepublisher::$urlmap->getidurl($item['idurl']) : '';
+}
       $args->add($item);
       $args->add($pages->getitem($id));
 $args->formtitle = sprintf('<a href="$site.url%s">%s</a>', $item['url'], $item['name']);
-
     $tabs = new tuitabs();
 $tabs->add($lang->title, '[text=name] [text=website]');
 if ('admin' == litepublisher::$options->group) {
@@ -47,7 +50,6 @@ $tabs->add($lang->view, tadminviews::getcomboview($item['idview']));
 $tabs->add('SEO', '[text=url] [text=keywords] [text=description] [editor=head]');
 }
 $tabs->add($lang->text, '[editor=rawcontent]');
-
       return $html->adminform($tabs->get(), $args);
 }
 
