@@ -62,8 +62,15 @@ class tadminreguser extends tadminform {
     $password = md5uniq();
     $groups = tusergroups::i();
     
-    $id = $users->add($groups->defaultgroup, $login,$password, $name, $email, $website);
-    if (!$id) return $this->html->h2->invalidregdata;
+    $id = $users->add(array(
+'idgroups' => array($groups->defaultgroup),
+ 'login' => $login,$
+'password' => $password, 
+'name' => $name, 
+'email' => $email, 
+'website' => $website
+));
+    if (!$id) return $this->html->h4->invalidregdata;
     
     $args = targs::i();
     $args->add($users->getitem($id));
@@ -80,7 +87,7 @@ class tadminreguser extends tadminform {
     tmailer::sendmail(litepublisher::$site->name, litepublisher::$options->fromemail,
     $name, $email, $subject, $body);
     $this->registered = true;
-    return $this->html->h2->successreg;
+    return $this->html->h4->successreg;
   }
   
 }//class
