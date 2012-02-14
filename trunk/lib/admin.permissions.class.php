@@ -56,25 +56,21 @@ $lang->section = $section;
     public function getcontent() {
     $result = '';
     $perms = tperms::i();
-    $html = $this->html;
+    $html = $this->gethtml('perms');
     $lang = tlocal::i('perms');
     $args = targs::i();
 if (!($action = $this->action)) $action = 'perms';
     switch ($action) {
       case 'perms':
-$args->editurl = $this->link . litepublisher::$site->q . 'action=edit&id';
-$items = '';
-foreach ($perms->items as $id => $item) {
-if ($id == 1) continue;
-$args->add($item);
-$items .= $html->item($args);
-}
-
-$result = strtr(ttheme::i()->templates['content.admin.form'], array(
-'$formtitle' => $this->lang->formtitle,
-'$items' => $html->gettable($html->tablehead, $items),
-'$lang.update' => $this->lang->delete
+$args->formtitle = $lang->table;
+$items = array_keys($perms->items);
+array_shift($items);
+$args->table = $html->items2table($perms, $items, array(
+$html->get_table_checkbox('perm'),
+array('left', $lang->edit, sprintf('<a href="%s=$id&action=edit">$name</a>', $this->adminurl)),
+$html->get_table_link('delete', $this->adminurl)
 ));
+$result .= $html->deletetable($args);
 
 $items = '';
 foreach ($perms->classes as $class => $name) {
@@ -85,7 +81,7 @@ $items .= $html->newitem($args);
 
 $args->items = $items;
 $result .= $html->newitems($args);
-return $result;
+return $html->fixquote($result);
 
 case 'edit':
 $id = $this->idget;
