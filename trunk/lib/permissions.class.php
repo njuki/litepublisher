@@ -34,9 +34,9 @@ return tperms::i();
 }
 
 public function getadmin() {
-if (!isset($this_admin) {
+if (!isset($this->_admin)) {
 $class = $this->adminclass;
-$this->_admin = new $class();
+$this->_admin = litepublisher::$classes->newinstance($class);
 $this->_admin->perm = $this;
 }
 return$this->_admin;
@@ -65,10 +65,10 @@ if ($this->author && isset($obj->author) && ($obj->author > 1)) {
 $author = sprintf('  || (litepublisher::$options->user != %d)', $obj->author);
 }
 
-return sprintf('<?php if (!in_array(litepublisher::$options->group, array(\'%s\')%s) return litepublisher::$urlmap->forbidden(); ?>',  $groups, $author);
+return sprintf('<?php if ((0 == count(array_intersect(litepublisher::$options->idgroups, array(\'%s\'))%s) return litepublisher::$urlmap->forbidden(); ?>',  $groups, $author);
 }
 
-//class
+}//class
 
 class tperms extends titems_storage {
 public $classes;

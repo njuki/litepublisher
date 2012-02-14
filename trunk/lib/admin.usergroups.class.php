@@ -25,7 +25,6 @@ $args->id = $id;
 $args->checked = in_array($id, $idgroups);
       $result .= strtr ($tml, $args->data);
     }
-//    dumpstr($result);
 return sprintf('<ul>%s</ul>', $result);
 }
   

@@ -12,24 +12,35 @@ class tadminperms extends tadminmenu {
     return parent::iteminstance(__class__, $id);
   }
   
-  public static function getpermform($url) {
+  public static function getform($url) {
     $html = tadminhtml ::i();
+$hsection = $html->section;
     $html->section = 'perms';
-    $lang = tlocal::i('perms');
+    $lang = tlocal::admin();
+$section = $lang->section;
+$lang->section = 'perms';
     $args = targs::i();
     $args->url = litepublisher::$site->url . $url;
     $args->items = self::getcombo(tadminhtml::getparam('idperm', 1));
-    return $html->comboform($args);
+$result = $html->comboform($args);
+$lang->section = $section;
+$html->section = $hsection;
+    return $result;
   }
   
   public static function getcomboperm($idperm, $name = 'idperm') {
-    $lang = tlocal::i('perms');
+    $lang = tlocal::admin();
+$section = $lang->section;
+$lang->section = 'perms';
     $theme = ttheme::i();
-    return strtr($theme->templates['content.admin.combo'], array(
+    $result = strtr($theme->templates['content.admin.combo'], array(
     '$lang.$name' => $lang->perm,
     '$name' => $name,
     '$value' => self::getcombo($idperm)
     ));
+
+$lang->section = $section;
+    return $result;
   }
   
   public static function getcombo($idperm) {

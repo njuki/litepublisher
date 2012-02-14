@@ -11,7 +11,7 @@ tlocal::usefile('install');
 $lang = tlocal::i('initgroups');
 
 $self->lock();
-$single = new tsingleperm();
+$single = new tsinglepassword();
 $single->name = $lang->single;
 $self->add($single);
 $self->addclass($single);

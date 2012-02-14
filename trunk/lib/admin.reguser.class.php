@@ -64,7 +64,7 @@ class tadminreguser extends tadminform {
     
     $id = $users->add(array(
 'idgroups' => array($groups->defaultgroup),
- 'login' => $login,$
+ 'login' => $login,
 'password' => $password, 
 'name' => $name, 
 'email' => $email, 
