@@ -20,7 +20,7 @@ class tusergroups extends titems {
   }
   
   public function add($name, $title, $home) {
-    if ($id = $this->groupid($name)) return $id;
+    if ($id = $this->getidgroup($name)) return $id;
     $this->items[++$this->autoid] = array(
     'name' => $name,
 'title' => $title,

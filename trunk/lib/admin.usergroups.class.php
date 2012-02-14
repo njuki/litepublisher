@@ -30,30 +30,32 @@ return sprintf('<ul>%s</ul>', $result);
 }
   
   public function getcontent() {
-    $result = '';
     $groups = tusergroups::i();
     $html = $this->html;
     $lang = tlocal::i('users');
     $args = targs::i();
 $adminurl = $this->adminurl;
+$result = "<h4><a href='$adminurl=0&action=add'>$lang->addgroup</a></h4>";
 $id = $this->idget();
 
 switch ($this->action) {
 case 'add':
+$result .= $html->p->notegroup;
 $args->name = '';
 $args->title = '';
 $args->home = '';
 $args->action = 'add';
 $args->formtitle = $lang->editgroup;
-$result .= $html->adminform('[text=name] [text=title] [text=home] [hidden=action]', $args);
+$result .= $html->adminform('[text=title] [text=name] [text=home] [hidden=action]', $args);
 break;
 
 case 'edit':
+$result .= $html->p->notegroup;
 $args->add($groups->items[$id]);
 $args->id = $id;
 $args->action = 'edit';
 $args->formtitle = $lang->editgroup;
-$result .= $html->adminform('[text=name] [text=title] [text=home] [hidden=id] [hidden=action]', $args);
+$result .= $html->adminform('[text=title] [text=name] [text=home] [hidden=id] [hidden=action]', $args);
 break;
 
 case 'delete':
@@ -75,7 +77,7 @@ $result .= $html->h4->grouptable;
 $result .= $html->buildtable($groups->items, array(
     array('left', $lang->name, '<a href="' . $adminurl . '=$id&action=edit" title="$title">$title</a>'),
     array('left', $lang->users, sprintf('<a href="%s">%s</a>', tadminhtml::getadminlink('/admin/users/', 'idgroup=$id'), $lang->users)),
-$html->get_table_link('delete')
+$html->get_table_link('delete', $adminurl)
 ));
 return $result;
 }
