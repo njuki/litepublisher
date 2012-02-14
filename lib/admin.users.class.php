@@ -39,6 +39,7 @@ $result .= $this->notfound();
       $item = $users->getitem($id);
       $args->add($item);
 $args->email = tuserpages::i()->getvalue($id, 'email');
+$args->registered = tuserpages::i()->getvalue($id, 'registered');
 $args->formtitle = $item['login'];
         $args->status = tadminhtml::array2combo($statuses, $item['status']);
 
@@ -88,9 +89,9 @@ $tabs->add($lang->groups, tadmingroups::getgroups(array()));
     $count = $users->count;
     $from = $this->getfrom($perpage, $count);
     if ($users->dbversion) {
-$idgroup = (int) $this->getparam('idgroup', 0);
+$idgroup = (int) tadminhtml::getparam('idgroup', 0);
 $grouptable = litepublisher::$db->prefix . $users->grouptable;
-$where = $groups->itemexists($idgroup) ? "'$users->thistable.id in (select iduser from $grouptable where idgroup = $idgroup)" : '';
+$where = $groups->itemexists($idgroup) ? "$users->thistable.id in (select iduser from $grouptable where idgroup = $idgroup)" : '';
       $items = $users->select($where, " order by id desc limit $from, $perpage");
       if (!$items) $items = array();
     } else {
@@ -104,7 +105,7 @@ $html->get_table_checkbox('user'),
 array('left', $lang->edit, sprintf('<a href="%s=$id&action=edit">$login</a>', $this->adminurl)),
 $html->get_table_item('status'),
 array('left', $lang->page, sprintf('<a href="%s">%s</a>', tadminhtml::getadminlink('/admin/users/pages/', 'id=$id'), $lang->page)),
-$html->get_table_link('delete')
+$html->get_table_link('delete', $this->adminurl)
 ));
 
 $result .= $html->deletetable($args);

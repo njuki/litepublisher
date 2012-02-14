@@ -462,7 +462,8 @@ $items = $this->$name;
 
   public function request($id) {
     parent::request((int) $id);
-    if (($this->status != 'published') && litepublisher::$options->show_draft_post) {
+    if ($this->status != 'published') {
+if (!litepublisher::$options->show_draft_post) return 404;
       $groupname = litepublisher::$options->group;
       if (($groupname == 'admin') || ($groupname == 'editor')) return;
       if ($this->author == litepublisher::$options->user) return;

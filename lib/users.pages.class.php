@@ -33,6 +33,15 @@ class tuserpages extends titems implements itemplate {
     $where $limit");
     return $this->res2items($res);
   }
+
+public function getitem($id) {
+$item = parent::getitem($id);
+if (!isset($item['url'])) {
+$item['url'] = $item['idurl'] == 0 ? '' : litepublisher::$urlmap->getidurl($item['idurl']);
+$this->items[$id]['url'] = $item['url'];
+}
+return $item;
+}
   
   public function request($id) {
     if ($id == 'url') {
@@ -92,9 +101,9 @@ class tuserpages extends titems implements itemplate {
       $result .= $theme->getposts($items, $this->lite);
     } else {
       $items = array();
-      foreach ($posts->items as $id => $item) {
-        if (isset($item['status']) || !isset($item['author'])) continue;
-        if ($this->id == $item['author']) $items[] = $id;
+      foreach ($posts->items as $id => $postitem) {
+        if (isset($postitem['status']) || !isset($postitem['author'])) continue;
+        if ($this->id == $postitem['author']) $items[] = $id;
       }
       
       $items = $posts->sortbyposted($items);
@@ -102,7 +111,6 @@ class tuserpages extends titems implements itemplate {
       $list = array_slice($items, (litepublisher::$urlmap->page - 1) * $perpage, $perpage);
       $result .= $theme->getposts($list, $this->lite);
     }
-    
     $result .=$theme->getpages($item['url'], litepublisher::$urlmap->page, ceil($count / $perpage));
     return $result;
   }
@@ -149,7 +157,7 @@ $this->db->updateassoc($item);
     
     if ($this->createpage) {
       $users = tusers::i();
-      if ('approved' == $users->getvalue($id, 'status')) $this->addurl($item);
+      if ('approved' == $users->getvalue($id, 'status'))  $item = $this->addurl($item);
     }
     $this->items[$id] = $item;
     unset($item['url']);
@@ -179,7 +187,9 @@ $this->db->updateassoc($item);
         litepublisher::$urlmap->addredir($item['url'], $url);
         litepublisher::$urlmap->setidurl($item['idurl'], $url);
       }
+$item['url'] = $url;
     }
+
     $this->items[$id] = $item;
     if ($this->dbversion) {
       unset($item['url']);

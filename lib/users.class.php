@@ -53,6 +53,7 @@ $login = trim($values['login']);
     if ($this->loginexists($login)) return false;
     $groups = tusergroups::i();
 $idgroups = $groups->cleangroups($values['idgroups']);
+if (count($idgroups) == 0) $idgroups = array($groups->getidgroup($groups->defaultgroup));
 
 $password = empty($values['password']) ? md5uniq() : $values['password'];
     $password = basemd5(sprintf('%s:%s:%s', $login,  litepublisher::$options->realm, $password));
@@ -64,7 +65,7 @@ $password = empty($values['password']) ? md5uniq() : $values['password'];
     'expired' => sqldate(),
     'idgroups' => implode(',', $idgroups),
     'trust' => 0,
-    'status' => $groups->ingroup(litepublisher::$options->user, 'admin) ? 'approved' : 'wait'
+    'status' => $groups->ingroup(litepublisher::$options->user, 'admin') ? 'approved' : 'wait'
     );
     
     $id = $this->dbversion ? $this->db->add($item) : ++$this->autoid;
