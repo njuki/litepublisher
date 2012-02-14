@@ -356,6 +356,7 @@ class Tadminoptions extends tadminmenu {
       $menus->createitem($id, 'pages', 'author', 'tadminuserpages');
       $menus->createitem($id, 'groups', 'admin', 'tadmingroups');
       $menus->createitem($id, 'options', 'admin', 'tadminuseroptions');
+      $menus->createitem($id, 'perms', 'admin', 'tadminperms');
     } else {
       $menus->deletetree($menus->url2id('/admin/users/'));
     }

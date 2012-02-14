@@ -76,7 +76,7 @@ function doinstallclasses() {
   
   foreach(litepublisher::$classes->items as $class => $item) {
     //echo "$class<br>\n";
-    if (preg_match('/^(titem|titemspostsowner|tcomment|IXR_Client|IXR_Server|tautoform|tchildpost|tchildposts)$/', $class)) continue;
+    if (preg_match('/^(titem|titem_storage|titemspostsowner|tcomment|IXR_Client|IXR_Server|tautoform|tchildpost|tchildposts)$/', $class)) continue;
     $obj = getinstance($class);
     if (method_exists($obj, 'install')) $obj->install();
   }

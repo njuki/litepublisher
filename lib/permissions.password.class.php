@@ -17,7 +17,7 @@ $this->data['login'] = '';
 
 public function getheader($obj) {
 if ($this->password == '') return '';
-return sprintf('<?php %s::i(%d)->auth(); ?>', get_class($this), $this->id));
+return sprintf('<?php %s::i(%d)->auth(); ?>', get_class($this), $this->id);
 }
 
 public function getcookiename() {

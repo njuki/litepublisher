@@ -7,8 +7,6 @@
 **/
 
 function tpasswordpageInstall($self) {
-litepublisher::$urlmap->addget('/check-password.php', get_class($self));
-
 tlocal::usefile('install');
   $lang = tlocal::i('passwordpage');
 
@@ -26,12 +24,14 @@ $form = '<h3>$lang.formtitle</h3>
 </p>
 </form>';
 
-$self->form =ttheme::i()->parsearg($form, $arg);
+$self->form =ttheme::i()->parse($form);
 $self->data['title'] = $lang->reqpassword;
 $self->data['invalidpassword'] = $lang->invalidpassword;
 $self->save();
 
 trobotstxt ::i()->add('/check-password.php');
+
+litepublisher::$urlmap->addget('/check-password.php', get_class($self));
 }
 
 function tpasswordpageUninstall($self) {

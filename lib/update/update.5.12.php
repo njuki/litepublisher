@@ -25,6 +25,14 @@ litepublisher::$classes->add('tadmingroups', 'admin.usergroups.class.php');
 litepublisher::$classes->add('tadminuseroptions', 'admin.useroptions.class.php');
 litepublisher::$classes->add('tadminuserpages', 'admin.userpages.class.php');
 
+litepublisher::$classes->add('tperm', 'permissions.class.php');
+litepublisher::$classes->add('tpermgroups', 'permissions.class.php');
+litepublisher::$classes->add('tpermpassword', 'permissions.password.class.php');
+litepublisher::$classes->add('tsinglepassword', 'permissions.singlepassword.php');
+litepublisher::$classes->add('tpasswordpage', 'passwordpage.class.php');
+litepublisher::$classes->add('tperms', 'permissions.class.php');
+
+litepublisher::$classes->add('tadminperms', 'admin.permissions.class.php');
 litepublisher::$classes->add('tadminperms', 'admin.permissions.class.php');
 litepublisher::$classes->add('tadminperm', 'admin.permissions.class.php');
 litepublisher::$classes->add('tadminpermpassword', 'admin.permissions.class.php');
