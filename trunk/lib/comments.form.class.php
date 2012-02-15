@@ -171,16 +171,6 @@ class tcommentform extends tevents {
       $values = $_POST;
       $values['date'] = time();
       $values['ip'] = preg_replace( '/[^0-9., ]/', '',$_SERVER['REMOTE_ADDR']);
-      $confirmid  = $kept->add($values);
-      //return tsimplecontent::html($this->getconfirmform($confirmid));
-      return $this->htmlhelper->confirm($confirmid);
-    }
-    
-    $confirmid = $_POST['confirmid'];
-    $lang = tlocal::i('commentform');
-    if (!($values = $kept->getitem($confirmid))) {
-      return $this->htmlhelper->geterrorcontent($lang->notfound);
-    }
     $postid = isset($values['postid']) ? (int) $values['postid'] : 0;
     $posts = litepublisher::$classes->posts;
     if(!$posts->itemexists($postid)) {
@@ -188,6 +178,48 @@ class tcommentform extends tevents {
     }
     
     $post = tpost::i($postid);
+    if ($post->status != 'published')  {
+      return $this->htmlhelper->geterrorcontent($lang->commentondraft);
+    }
+
+    if (!$post->commentsenabled)       {
+      return $this->htmlhelper->geterrorcontent($lang->commentsdisabled);
+    }
+
+$header = '';
+    if ($post->idperm != 0) {
+$url = litepublisher::$urlmap->url;
+litepublisher::$urlmap->url = $post->url;
+$item = litepublisher::$urlmap->itemrequested;
+litepublisher::$urlmap->itemrequested = dbversion ? litepublisher::$urlmap->getitem($post->idurl) : litepublisher::$urlmap->items[$post->url];
+litepublisher::$urlmap->itemrequested['id'] = $post->idurl;
+$perm = tperm::i($post->idperm);
+$header = $perm->getheader($post);
+// not restore values because perm will be used this values
+//litepublisher::$urlmap->itemrequested = $item;
+//litepublisher::$urlmap->url = $url;
+}
+
+      $confirmid  = $kept->add($values);
+      return $header . $this->htmlhelper->confirm($confirmid);
+    }
+    
+    $confirmid = $_POST['confirmid'];
+    $lang = tlocal::i('commentform');
+    if (!($values = $kept->getitem($confirmid))) {
+      return $this->htmlhelper->geterrorcontent($lang->notfound);
+    }
+
+    $postid = isset($values['postid']) ? (int) $values['postid'] : 0;
+    $posts = litepublisher::$classes->posts;
+    if(!$posts->itemexists($postid)) {
+      return $this->htmlhelper->geterrorcontent($lang->postnotfound);
+    }
+    
+    $post = tpost::i($postid);
+    if ($post->status != 'published')  {
+      return $this->htmlhelper->geterrorcontent($lang->commentondraft);
+    }
     
     $values = array(
     'name' => isset($values['name']) ? tcontentfilter::escape($values['name']) : '',
@@ -215,23 +247,12 @@ class tcommentform extends tevents {
       return $this->htmlhelper->geterrorcontent($lang->commentsdisabled);
     }
     
-    if ($post->status != 'published')  {
-      return $this->htmlhelper->geterrorcontent($lang->commentondraft);
-    }
-    
     if (litepublisher::$options->checkduplicate) {
       if (litepublisher::$classes->spamfilter->checkduplicate($postid, $values['content']) ) {
         return $this->htmlhelper->geterrorcontent($lang->duplicate);
       }
     }
 
-    if ($post->idperm == 0) {
-$result = '';
-} else }
-$perm = tperm::i($post->idperm);
-}
-
-    
     $posturl = $post->lastcommenturl;
     $users = tcomusers::i($postid);
     $uid = $users->add($values['name'], $values['email'], $values['url'], $values['ip']);
@@ -260,8 +281,7 @@ $perm = tperm::i($post->idperm);
     
     if (!dbversion) $cookies['idpost'] = $post->id;
 
-$result .= $this->htmlhelper->sendcookies($cookies, litepublisher::$site->url . $posturl);
-    return $result;
+return $this->htmlhelper->sendcookies($cookies, litepublisher::$site->url . $posturl);
   }
   
   private function getconfirmform($confirmid) {
