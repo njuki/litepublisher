@@ -152,28 +152,13 @@ public function getform(targs $args) {
 $result = '[checkbox=author] 
 <h4>$lang.groups</h4>';
 $args->author = $this->perm->author;
-$g = $this->perm->groups;
-$groups = tusergroups::i();
-$html = tadminhtml::i();
-foreach ($groups->items as $id => $item) {
-$name = $item['name'];
-$checked = in_array($name, $g) ? 'checked="checked"' : '';
-$checked .= sprintf(' value="%s" ', $name);
-$result .= $html->getinput('checkbox', "permgroup-$id",  $checked, $name);
-}
+$result .= tadmingroups::getgroups($this->perm->groups);
 return $result;
 }
 
 public function processform() {
 $this->perm->author = isset($_POST['author']);
-$g = array('admin');
-foreach ($_POST as $name => $val) {
-if (strbegin($name, 'permgroup-')) {
-$g[] = $val;
-}
-}
-
-$this->perm->groups = array_unique($g);
+$this->perm->groups = array_unique(tadminhtml::check2array('idgroup-'));
 parent::processform();
 }
 
