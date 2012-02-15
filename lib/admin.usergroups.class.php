@@ -58,17 +58,7 @@ $result .= $html->adminform('[text=title] [text=name] [text=home] [hidden=id] [h
 break;
 
 case 'delete':
-if ($groups->itemexists($id)) {
-      if  (!$this->confirmed) {
-        $args->adminurl = $adminurl;
-        $args->id = $id;
-        $args->action = 'delete';
-        $args->confirm = sprintf($lang->deletegroup, $groups->items[$id]['title']);
-        $result .= $html->confirmform($args);
-      } else {
-        $groups->delete($id);
-      }
-}
+$result .= $html->confirm_delete($groups, $this->adminurl);
 break;
 }
 

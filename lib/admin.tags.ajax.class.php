@@ -38,6 +38,7 @@ class tajaxtageditor extends tajaxposteditor  {
       $item = array(
       'title' => '',
       'idview' => isset($views->defaults[$name]) ? $views->defaults[$name] : 1,
+'idperm' => 0,
       'icon' => 0,
       'url' => '',
       'keywords' => '',
@@ -51,6 +52,7 @@ class tajaxtageditor extends tajaxposteditor  {
     switch ($_GET['get']) {
       case 'view':
       $result = $this->getviewicon($item['idview'], $item['icon']);
+$result .= tadminperms::getcombo($item['idperm']);
       break;
       
       case 'seo':

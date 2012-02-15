@@ -54,20 +54,7 @@ $tabs->add('Cookie', '[text=cookie] [text=expired] [text=registered] [text=trust
 break;
 
 case 'delete':
-    if (!$users->itemexists($id)) {
-$result .= $this->notfound();
-} else {
-        if  ($this->confirmed) {
-          $users->delete($id);
-          $result .= $html->h4->successdeleted;
-        } else {
-          $args->id = $id;
-          $args->adminurl = $this->adminurl;
-          $args->action = 'delete';
-          $args->confirm = $lang->confirmdelete;
-          $result .=$html->confirmform($args);
-        }
-}
+$result .= $html->confirm_delete($users, $this->adminurl);
 break;
 
 default:

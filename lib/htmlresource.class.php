@@ -286,6 +286,22 @@ return array('left', tlocal::i()->$action, strtr($this->actionlink , array(
     $args->confirm = $mesg;
     return $this->confirmform($args);
   }
+
+public function confirm_delete($owner, $adminurl) {
+$id = (int) self::getparam('id', 0);
+if (!$owner->itemexists($id)) return $this->h4->notfound;
+        if  (isset($_REQUEST['confirm']) && ($_REQUEST['confirm'] == 1)) {
+          $owner->delete($id);
+return $this->h4->successdeleted;
+        } else {
+$args = new targs();
+          $args->id = $id;
+          $args->adminurl = $adminurl;
+          $args->action = 'delete';
+          $args->confirm = tlocal::i()->confirmdelete;
+return $this->confirmform($args);
+        }
+}
   
   public static function check2array($prefix) {
     $result = array();

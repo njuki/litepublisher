@@ -110,7 +110,7 @@ if (dbversion) {
 $db = litepublisher::$db;
 foreach ($this->tables as $table) {
 $db->table = $table;
-$db->update('idperm = 0', "where idperm = $id");
+$db->update('idperm = 0', "idperm = $id");
 }
 }
     return parent::delete($id);
