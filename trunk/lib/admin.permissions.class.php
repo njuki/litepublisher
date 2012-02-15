@@ -57,7 +57,9 @@ $html->get_table_link('delete', $this->adminurl)
 $result .= $html->deletetable($args);
 
 $items = '';
+$args->addurl = tadminhtml::getadminlink($this->url, 'action=add&class');
 foreach ($perms->classes as $class => $name) {
+if ($class == 'tsinglepassword') continue;
 $args->class = $class;
 $args->name = $name;
 $items .= $html->newitem($args);
@@ -67,17 +69,21 @@ $args->items = $items;
 $result .= $html->newitems($args);
 return $html->fixquote($result);
 
+case 'add':
+$class = tadminhtml::getparam('class', '');
+if (!isset($perms->classes[$class])) return $this->notfound();
+$perm = new $class();
+return $perm->admin->getcont();
+
+
 case 'edit':
 $id = $this->idget();
 if (!$perms->itemexists($id)) return $this->notfound();
 $perm = tperm::i($id);
 return $perm->admin->getcont();
 
-case 'add':
-$class = tadminhtml::getparam('class', '');
-if (!isset($perms->classes[$class])) return $this->notfound();
-$perm = new $class();
-return $perm->admin->getcont();
+case 'delete':
+return $html->confirm_delete($perms, $this->adminurl);
 }
 
 }
@@ -101,6 +107,15 @@ $id = $this->idget();
 if (!$perms->itemexists($id)) return $this->notfound();
 $perm = tperm::i($id);
 return $perm->admin->processform();
+
+case 'add':
+$class = tadminhtml::getparam('class', '');
+if (isset($perms->classes[$class])) {
+$perm = new $class();
+$id = tperms::i()->add($perm);
+$perm->admin->processform();
+return turlmap::redir301(tadminhtml::getadminlink($this->url, 'action=edit&id=' . $id));
+}
 }
 }
 

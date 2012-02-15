@@ -100,6 +100,7 @@ class tadmintags extends tadminmenu {
       if (isset($order)) $tags->setvalue($id, 'customorder', (int) $order);
       if (isset($url)) $tags->edit($id, $title, $url);
       if (isset($idview)) $tags->setvalue($id, 'idview', (int) $idview);
+      if (isset($idperm)) $tags->setvalue($id, 'idperm', (int) $idperm);
       if (isset($icon)) $tags->setvalue($id, 'icon', (int) $icon);
     } else {
       $item = $tags->getitem($id);
@@ -107,11 +108,15 @@ class tadmintags extends tadminmenu {
       if (isset($parent)) $item['parent'] = (int) $parent;
       if (isset($order)) $item['customorder'] = (int) $order;
       if (isset($idview)) $item['idview'] = (int) $idview;
+      if (isset($idperm)) $item['idperm'] = (int) $idperm;
       if (isset($icon)) $item['icon'] = (int) $icon;
       $tags->items[$id] = $item;
       if (!empty($url) && ($url != $item['url'])) $tags->edit($id, $title, $url);
+$tags->items[$id] = $item;
+     if (dbversion) {
       unset($item['url']);
-      if (dbversion) $tags->db->updateassoc($item);
+$tags->db->updateassoc($item);
+}
     }
     
     if (isset($raw) || isset($keywords)) {
