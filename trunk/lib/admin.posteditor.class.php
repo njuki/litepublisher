@@ -139,6 +139,7 @@ class tposteditor extends tadminmenu {
       $post->commentsenabled = isset($commentsenabled);
       $post->pingenabled = isset($pingenabled);
 $post->idperm = (int) $idperm;
+if ($password != '') $post->password = $password;
     }
     
     if (isset($url)) {

@@ -224,6 +224,13 @@ class tcommentform extends tevents {
         return $this->htmlhelper->geterrorcontent($lang->duplicate);
       }
     }
+
+    if ($post->idperm == 0) {
+$result = '';
+} else }
+$perm = tperm::i($post->idperm);
+}
+
     
     $posturl = $post->lastcommenturl;
     $users = tcomusers::i($postid);
@@ -252,7 +259,9 @@ class tcommentform extends tevents {
     }
     
     if (!dbversion) $cookies['idpost'] = $post->id;
-    return $this->htmlhelper->sendcookies($cookies, litepublisher::$site->url . $posturl);
+
+$result .= $this->htmlhelper->sendcookies($cookies, litepublisher::$site->url . $posturl);
+    return $result;
   }
   
   private function getconfirmform($confirmid) {
