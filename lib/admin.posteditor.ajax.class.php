@@ -164,6 +164,7 @@ class tajaxposteditor  extends tevents {
       'draft' => $lang->draft
       )));
       $result = $form->getcontent();
+$result .= tadminperms::getcombo($post->idperm);
       break;
       
       case 'view':

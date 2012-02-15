@@ -43,14 +43,13 @@ $cookie = $login . '.' . $password;
 return true;
 }
 
-public function auth($id) {
+public function auth() {
 if (litepublisher::$options->group == 'admin') return true;
 $cookiename = $this->getcookiename();
 $cookie = isset($_COOKIE[$cookiename]) ? $_COOKIE[$cookiename] : '';
-if (($cookie == '') || strpos($cookie, '.')) return $this->redir();
+if (($cookie == '') || !strpos($cookie, '.')) return $this->redir();
 list($login, $password) = explode('.', $cookie);
 if ($password == md5($login . litepublisher::$secret . $this->password)) return true;
-
 return $this->redir();
 }
 

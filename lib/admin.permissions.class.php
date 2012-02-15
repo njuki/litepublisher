@@ -12,23 +12,7 @@ class tadminperms extends tadminmenu {
     return parent::iteminstance(__class__, $id);
   }
   
-  public static function getform($url) {
-    $html = tadminhtml ::i();
-$hsection = $html->section;
-    $html->section = 'perms';
-    $lang = tlocal::admin();
-$section = $lang->section;
-$lang->section = 'perms';
-    $args = targs::i();
-    $args->url = litepublisher::$site->url . $url;
-    $args->items = self::getcombo(tadminhtml::getparam('idperm', 1));
-$result = $html->comboform($args);
-$lang->section = $section;
-$html->section = $hsection;
-    return $result;
-  }
-  
-  public static function getcomboperm($idperm, $name = 'idperm') {
+  public static function getcombo($idperm, $name = 'idperm') {
     $lang = tlocal::admin();
 $section = $lang->section;
 $lang->section = 'perms';
@@ -36,14 +20,14 @@ $lang->section = 'perms';
     $result = strtr($theme->templates['content.admin.combo'], array(
     '$lang.$name' => $lang->perm,
     '$name' => $name,
-    '$value' => self::getcombo($idperm)
+    '$value' => self::getcomboitems($idperm)
     ));
 
 $lang->section = $section;
     return $result;
   }
   
-  public static function getcombo($idperm) {
+  public static function getcomboitems($idperm) {
       $result = sprintf('<option value="0" %s>%s</option>', $idperm == 0 ? 'selected="selected"' : '', tlocal::get('perms', 'nolimits'));
     $perms = tperms::i();
     foreach ($perms->items as $id => $item) {
@@ -84,7 +68,7 @@ $result .= $html->newitems($args);
 return $html->fixquote($result);
 
 case 'edit':
-$id = $this->idget;
+$id = $this->idget();
 if (!$perms->itemexists($id)) return $this->notfound();
 $perm = tperm::i($id);
 return $perm->admin->getcont();
@@ -105,15 +89,15 @@ if (!($action = $this->action)) $action = 'perms';
       case 'perms':
 $perms->lock();
 foreach ($_POST as $name => $val) {
-if (strbegin($name, 'checkbox-')) {
-$perms->delete((int) $val);
-}
+        if (!is_numeric($value)) continue;
+        $id = (int) $val;
+$perms->delete($id);
 }
 $perms->unlock();
 return;
 
 case 'edit':
-$id = $this->idget;
+$id = $this->idget();
 if (!$perms->itemexists($id)) return $this->notfound();
 $perm = tperm::i($id);
 return $perm->admin->processform();
@@ -131,9 +115,9 @@ $lang = tlocal::i('perms');
 $args = new targs();
 $args->add($this->perm->data);
 $args->formtitle = $lang->editperm;
-$form = 'text=name] [hidden=id]';
+$form = '[text=name] [hidden=id]';
 $form .= $this->getform($args);
-return $html->adminform($tml, $args);
+return $html->adminform($form, $args);
 }
 
 public function getform(targs $args) {
