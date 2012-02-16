@@ -31,7 +31,7 @@ class toptions extends tevents_storage {
     $this->errorlog = '';
     $this->admincookie = false;
     $this->group = '';
-$this->idgroups = array();
+    $this->idgroups = array();
   }
   
   public function afterload() {
@@ -130,10 +130,10 @@ $this->idgroups = array();
   public function updategroup() {
     if ($this->user == 1) {
       $this->group = 'admin';
-$this->idgroups = array(1);
+      $this->idgroups = array(1);
     } else {
       $user = tusers::i()->getitem($this->user);
-$this->idgroups = $user['idgroups'];
+      $this->idgroups = $user['idgroups'];
       $this->group = tusergroups::i()->items[$user['idgroups'][0]]['name'];
     }
   }

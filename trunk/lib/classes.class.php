@@ -16,7 +16,7 @@ class tclasses extends titems {
   public $classes;
   public $interfaces;
   public $remap;
-public $factories;
+  public $factories;
   public $instances;
   
   public static function i() {
@@ -146,12 +146,12 @@ public $factories;
   public function exists($class) {
     return isset($this->items[$class]);
   }
-
-public function getfactory($instance) {
-foreach ($this->factories as $classname => $factory) {
-if (@is_a($instance, $classname)) return $this->getinstance($factory);
-}
-}
+  
+  public function getfactory($instance) {
+    foreach ($this->factories as $classname => $factory) {
+      if (@is_a($instance, $classname)) return $this->getinstance($factory);
+    }
+  }
   
 }//class
 

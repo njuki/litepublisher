@@ -23,86 +23,86 @@ class tusergroups extends titems {
     if ($id = $this->getidgroup($name)) return $id;
     $this->items[++$this->autoid] = array(
     'name' => $name,
-'title' => $title,
+    'title' => $title,
     'home' => $home
     );
     $this->save();
     return $this->autoid;
   }
-
-public function delete($id) {
-if (!isset($this->items[$id])) return false;
-unset($this->items[$id]);
-$this->save();
-
-$users = tusers::i();
-if (dbversion) {
-$db = $users->db;
-$items = $db->res2assoc($users->getdb($users->grouptable)->select("idgroup = $id"));
-$users->getdb($users->grouptable)->delete("idgroup = $id");
-foreach ($items as $item) {
-$iduser = $item['iduser'];
-$idgroups = $db->res2id($db->query("select idgroup from $db->prefix$users->grouptable where iduser = $iduser"));
-$users->db->setvalue($iduser, 'idgroups', implode(',', $idgroups));
-}
-} else {
-foreach ($users->items as &$item) {
-array_delete_value($item['idgroups'], $id);
-}
-$users->save();
-}
-}
+  
+  public function delete($id) {
+    if (!isset($this->items[$id])) return false;
+    unset($this->items[$id]);
+    $this->save();
+    
+    $users = tusers::i();
+    if (dbversion) {
+      $db = $users->db;
+      $items = $db->res2assoc($users->getdb($users->grouptable)->select("idgroup = $id"));
+      $users->getdb($users->grouptable)->delete("idgroup = $id");
+      foreach ($items as $item) {
+        $iduser = $item['iduser'];
+        $idgroups = $db->res2id($db->query("select idgroup from $db->prefix$users->grouptable where iduser = $iduser"));
+        $users->db->setvalue($iduser, 'idgroups', implode(',', $idgroups));
+      }
+    } else {
+      foreach ($users->items as &$item) {
+        array_delete_value($item['idgroups'], $id);
+      }
+      $users->save();
+    }
+  }
   
   public function getidgroup($name) {
-return $this->IndexOf('name', trim($name));
+    return $this->IndexOf('name', trim($name));
   }
-
-public function cleangroup($v) {
-if (is_string($v)) $v = trim($v);
+  
+  public function cleangroup($v) {
+    if (is_string($v)) $v = trim($v);
     if (is_numeric($v)) {
       $id = (int) $v;
       if ($this->itemexists($id)) return $id;
-} else {
-return $this->getidgroup($v);
-}
-return false;
-}
-
-public function cleangroups($v) {
-if (is_array($v)) return $this->checkgroups(array_unique($v));
-
-if(is_string($v)) {
-$v = trim($v);
-if (strpos($v, ',')) {
-return $this->checkgroups(explode(',', $v));
-}
-}
-if ($id = $this->cleangroup($v)) return array($id);
-}
-
-protected function checkgroups(array $a) {
-$result = array();
-foreach ($a as $val) {
-if ($id = $this->cleangroup($val)) $result[] = $id;
-}
-
-return array_unique($result);
-}
-
-public function ingroup($iduser, $groupname) {
-$idgroup = $this->getidgroup($groupname);
-$item = tusers::i()->getitem($iduser);
-return in_array($idgroup, $item['idgroups']);
-}
-
-// $iduser, $groupname1, $groupname2...
-public function ingroups() {
+    } else {
+      return $this->getidgroup($v);
+    }
+    return false;
+  }
+  
+  public function cleangroups($v) {
+    if (is_array($v)) return $this->checkgroups(array_unique($v));
+    
+    if(is_string($v)) {
+      $v = trim($v);
+      if (strpos($v, ',')) {
+        return $this->checkgroups(explode(',', $v));
+      }
+    }
+    if ($id = $this->cleangroup($v)) return array($id);
+  }
+  
+  protected function checkgroups(array $a) {
+    $result = array();
+    foreach ($a as $val) {
+      if ($id = $this->cleangroup($val)) $result[] = $id;
+    }
+    
+    return array_unique($result);
+  }
+  
+  public function ingroup($iduser, $groupname) {
+    $idgroup = $this->getidgroup($groupname);
+    $item = tusers::i()->getitem($iduser);
+    return in_array($idgroup, $item['idgroups']);
+  }
+  
+  // $iduser, $groupname1, $groupname2...
+  public function ingroups() {
     $args= func_get_args();
-$iduser = array_shift ($args);
-$item = tusers::i()->getitem($iduser);
-$groups = $this->checkgroups($args);
-return count(array_intersect($item['idgroups'], $groups)) > 0;
-}
+    $iduser = array_shift ($args);
+    $item = tusers::i()->getitem($iduser);
+    $groups = $this->checkgroups($args);
+    return count(array_intersect($item['idgroups'], $groups)) > 0;
+  }
   
   public function hasright($who, $group) {
     if ($who == $group) return  true;

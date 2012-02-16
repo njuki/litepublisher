@@ -7,7 +7,7 @@
 **/
 
 class tusers extends titems {
-public $grouptable;
+  public $grouptable;
   
   public static function i() {
     return getinstance(__class__);
@@ -21,43 +21,43 @@ public $grouptable;
     $this->grouptable = 'usergroup';
     $this->autoid = 1;
   }
-
+  
   public function res2items($res) {
     if (!$res) return array();
     $result = array();
-$db = litepublisher::$db;
+    $db = litepublisher::$db;
     while ($item = $db->fetchassoc($res)) {
       $id = (int) $item['id'];
-$item['idgroups'] = tdatabase::str2array($item['idgroups']);
+      $item['idgroups'] = tdatabase::str2array($item['idgroups']);
       $result[] = $id;
       $this->items[$id] = $item;
     }
     return $result;
   }
-
-public function getitem($id) {
-if ($id == 1) return array(
-'login' =>litepublisher::$options->login,
-'password' => litepublisher::$options->password,
-'cookie' => litepublisher::$options->cookie,
+  
+  public function getitem($id) {
+    if ($id == 1) return array(
+    'login' =>litepublisher::$options->login,
+    'password' => litepublisher::$options->password,
+    'cookie' => litepublisher::$options->cookie,
     'expired' => sqldate(litepublisher::$options->cookieexpired ),
-'status' => 'approved',
-'idgroups' => array(1)
-);
-
-return parent::getitem($id);
-}
+    'status' => 'approved',
+    'idgroups' => array(1)
+    );
+    
+    return parent::getitem($id);
+  }
   
   public function add(array $values) {
-$login = trim($values['login']);
+    $login = trim($values['login']);
     if ($this->loginexists($login)) return false;
     $groups = tusergroups::i();
-$idgroups = $groups->cleangroups($values['idgroups']);
-if (count($idgroups) == 0) $idgroups = array($groups->getidgroup($groups->defaultgroup));
-
-$password = empty($values['password']) ? md5uniq() : $values['password'];
+    $idgroups = $groups->cleangroups($values['idgroups']);
+    if (count($idgroups) == 0) $idgroups = array($groups->getidgroup($groups->defaultgroup));
+    
+    $password = empty($values['password']) ? md5uniq() : $values['password'];
     $password = basemd5(sprintf('%s:%s:%s', $login,  litepublisher::$options->realm, $password));
-
+    
     $item = array(
     'login' => $login,
     'password' => $password,
@@ -69,14 +69,14 @@ $password = empty($values['password']) ? md5uniq() : $values['password'];
     );
     
     $id = $this->dbversion ? $this->db->add($item) : ++$this->autoid;
-$item['idgroups'] = $idgroups;
+    $item['idgroups'] = $idgroups;
     $this->items[$id] = $item;
     if ($this->dbversion) {
-$this->setgroups($id, $item['idgroups']);
-} else {
-$this->save();
-}
-
+      $this->setgroups($id, $item['idgroups']);
+    } else {
+      $this->save();
+    }
+    
     $pages = tuserpages::i();
     $pages->add($id, isset($values['name']) ? trim($values['name']) : '', $values['email'], isset($values['website']) ? trim($values['website']) : '');
     $this->added($id);
@@ -94,12 +94,12 @@ $this->save();
           $item['password'] = basemd5(sprintf('%s:%s:%s', $values['login'],  litepublisher::$options->realm, $values['password']));
         }
         break;
-
-case 'idgroups':
-    $groups = tusergroups::i();
-    $item['idgroups'] = $groups->cleangroups($values['idgroups']);
-break;        
-
+        
+        case 'idgroups':
+        $groups = tusergroups::i();
+        $item['idgroups'] = $groups->cleangroups($values['idgroups']);
+        break;
+        
         default:
         $item[$k] = trim($values[$k]);
       }
@@ -108,8 +108,8 @@ break;
     $this->items[$id] = $item;
     $item['id'] = $id;
     if ($this->dbversion) {
-$this->setgroups($id, $item['idgroups']);
-$item['idgroups'] = implode(',', $item['idgroups']);
+      $this->setgroups($id, $item['idgroups']);
+      $item['idgroups'] = implode(',', $item['idgroups']);
       $this->db->updateassoc($item);
     } else {
       $this->save();
@@ -119,26 +119,26 @@ $item['idgroups'] = implode(',', $item['idgroups']);
     $pages->edit($id, $values);
     return true;
   }
-
-protected function setgroups($id, array $idgroups) {
-$this->items[$id]['idgroups'] = $idgroups;
-if ($this->dbversion) {
-$db = $this->getdb($this->grouptable);
-$db->delete("iduser = $id");
-foreach ($idgroups as $idgroup) {
-$db->add(array(
-'iduser' => $id,
-'idgroup' => $idgroup
-));
-}
-}
-}
-
-public function delete($id) {
-if ($this->dbversion) $this->getdb($this->grouptable)->delete('iduser = ' .(int)$id);
-tuserpages::i()->delete($id);
-return parent::delete($id);
-}
+  
+  protected function setgroups($id, array $idgroups) {
+    $this->items[$id]['idgroups'] = $idgroups;
+    if ($this->dbversion) {
+      $db = $this->getdb($this->grouptable);
+      $db->delete("iduser = $id");
+      foreach ($idgroups as $idgroup) {
+        $db->add(array(
+        'iduser' => $id,
+        'idgroup' => $idgroup
+        ));
+      }
+    }
+  }
+  
+  public function delete($id) {
+    if ($this->dbversion) $this->getdb($this->grouptable)->delete('iduser = ' .(int)$id);
+    tuserpages::i()->delete($id);
+    return parent::delete($id);
+  }
   
   public function loginexists($login) {
     if ($login == litepublisher::$options->login) return 1;

@@ -157,25 +157,25 @@ class tajaxposteditor  extends tevents {
       break;
       
       case 'status':
-$args = new targs();
-$args->commentsenabled = $post->commentsenabled;
-$args->pingenabled = $post->pingenabled;
+      $args = new targs();
+      $args->commentsenabled = $post->commentsenabled;
+      $args->pingenabled = $post->pingenabled;
       $args->status= tadminhtml::array2combo(array(
       'published' => $lang->published,
       'draft' => $lang->draft
       ), $post->status);
-
-$args->perms = tadminperms::getcombo($post->idperm);
-$args->password = $post->password;
+      
+      $args->perms = tadminperms::getcombo($post->idperm);
+      $args->password = $post->password;
       $result = $html->parsearg(
-'[checkbox=commentsenabled]
- [checkbox=pingenabled]
-[combo=status]
-$perms
-[password=password]
-<p>$lang.notepassword</p>', 
-$args);
-
+      '[checkbox=commentsenabled]
+      [checkbox=pingenabled]
+      [combo=status]
+      $perms
+      [password=password]
+      <p>$lang.notepassword</p>',
+      $args);
+      
       break;
       
       case 'view':

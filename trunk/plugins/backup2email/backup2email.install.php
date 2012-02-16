@@ -13,5 +13,5 @@ function tbackup2emailInstall($self) {
 }
 
 function tbackup2emailUninstall($self) {
-tcron::i()->deleteclass($self);
+  tcron::i()->deleteclass($self);
 }

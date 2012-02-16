@@ -27,7 +27,8 @@ public static $site;
     $storage = $home . 'storage' . DIRECTORY_SEPARATOR;
     self::$_paths = array(
     'home' => $home,
-    'lib' => $home .'lib'. DIRECTORY_SEPARATOR,
+   'lib' => $home .'lib'. DIRECTORY_SEPARATOR,
+//    'lib' => 'F:\web3\home\start.ru\www\lib\\',
     'libinclude' => $home .'lib'. DIRECTORY_SEPARATOR . 'include'. DIRECTORY_SEPARATOR,
     'languages' => $home .'lib'. DIRECTORY_SEPARATOR . 'languages'. DIRECTORY_SEPARATOR,
     'storage' => $storage,
@@ -94,7 +95,7 @@ if (dbversion) litepublisher::$db = new tdatabase();
 tlocal::clearcache();
 //require('lib/update/update.4.81.php');
 //tjsmerger::i()->onupdated();
-//tupdater::i()->run(5.10);
+//tupdater::i()->run(5.12);
 //litepublisher::$classes->delete('tcategoriesmenu');
 //litepublisher::$classes->add('tajaxmenueditor', 'admin.menu.ajax.class.php');
 //tfiler::log(var_export($_SERVER, true));

@@ -833,8 +833,8 @@ class tthemeparser extends tevents {
         'tag' => '$next',
         'replace' => '$next'
         ),
-
-                'content.post.templatecomments' => array(
+        
+        'content.post.templatecomments' => array(
         'tag' => '$post.templatecomments',
         'replace' => '$post.templatecomments'
         ),
@@ -1138,7 +1138,7 @@ class tthemeparser extends tevents {
         'tag' => '$submit',
         'replace' => ''
         ),
-
+        
         'content.admin.form' => array(
         'tag' => '$form',
         'replace' => ''

@@ -7,8 +7,8 @@
 **/
 
 function tusergroupsInstall($self) {
-tlocal::usefile('install');
-$lang = tlocal::i('initgroups');
+  tlocal::usefile('install');
+  $lang = tlocal::i('initgroups');
   $self->lock();
   $self->add('admin', $lang->admin, '/admin/');
   $self->add('editor', $lang->editor, '/admin/posts/');

@@ -214,7 +214,7 @@ public function canrequest() { }
   }
   
   public function getnotfound() {
-    return $this->html->h2->notfound;
+    return $this->html->h4->notfound;
   }
   
   public function getadminurl() {
@@ -539,7 +539,7 @@ class tadminhtml {
   }
   
   public static function idparam() {
-    return (int) tadminhtml::getparam('id', 0);
+    return (int) self::getparam('id', 0);
   }
   
   public static function getadminlink($path, $params) {
@@ -561,7 +561,7 @@ class tadminhtml {
   
   public function adminform($tml, targs $args) {
     $args->items = $this->parsearg($tml, $args);
-    return $this->parsearg(ttheme::i()->content->admin->form, $args);
+    return $this->parsearg(ttheme::i()->templates['content.admin.form'], $args);
   }
   
   public function getcheckbox($name, $value) {
@@ -589,6 +589,13 @@ class tadminhtml {
     '$lang.$name' => $title,
     '$name' => $name,
     '$value' => $value
+    ));
+  }
+  
+  public function getsubmit($name) {
+    return strtr(ttheme::i()->templates['content.admin.submit'], array(
+    '$lang.$name' => tlocal::i()->$name,
+    '$name' => $name,
     ));
   }
   
@@ -628,6 +635,45 @@ class tadminhtml {
     return $theme->parsearg($this->ini['common']['table'], $args);
   }
   
+  public function items2table($owner, array $items, array $struct) {
+    $head = '';
+    $body = '';
+    $tml = '<tr>';
+    foreach ($struct as $elem) {
+      $head .= sprintf('<th align="%s">%s</th>', $elem[0], $elem[1]);
+      $tml .= sprintf('<td align="%s">%s</td>', $elem[0], $elem[2]);
+    }
+    $tml .= '</tr>';
+    
+    $theme = ttheme::i();
+    $args = new targs();
+    foreach ($items as $id) {
+      $item = $owner->getitem($id);
+      $args->add($item);
+      $args->id = $id;
+      $body .= $theme->parsearg($tml, $args);
+    }
+    $args->tablehead  = $head;
+    $args->tablebody = $body;
+    return $theme->parsearg($this->ini['common']['table'], $args);
+  }
+  
+  public function get_table_checkbox($name) {
+    return array('center', $this->invertcheckbox, str_replace('$checkboxname', $name, $this->checkbox));
+  }
+  
+  public function get_table_item($name) {
+    return array('left', tlocal::i()->$name, "\$$name");
+  }
+  
+  public function get_table_link($action, $adminurl) {
+    return array('left', tlocal::i()->$action, strtr($this->actionlink , array(
+    '$action' => $action,
+    '$lang.action' => tlocal::i()->$action,
+    '$adminurl' => $adminurl
+    )));
+  }
+  
   public function confirmdelete($id, $adminurl, $mesg) {
     $args = targs::i();
     $args->id = $id;
@@ -635,6 +681,22 @@ class tadminhtml {
     $args->adminurl = $adminurl;
     $args->confirm = $mesg;
     return $this->confirmform($args);
+  }
+  
+  public function confirm_delete($owner, $adminurl) {
+    $id = (int) self::getparam('id', 0);
+    if (!$owner->itemexists($id)) return $this->h4->notfound;
+    if  (isset($_REQUEST['confirm']) && ($_REQUEST['confirm'] == 1)) {
+      $owner->delete($id);
+      return $this->h4->successdeleted;
+    } else {
+      $args = new targs();
+      $args->id = $id;
+      $args->adminurl = $adminurl;
+      $args->action = 'delete';
+      $args->confirm = tlocal::i()->confirmdelete;
+      return $this->confirmform($args);
+    }
   }
   
   public static function check2array($prefix) {
@@ -896,8 +958,7 @@ class tuitabs {
   }
   
   public static function gethead() {
-    $template = ttemplate::i();
-    return $template->getready('$($("div[rel=\'tabs\']").get().reverse()).tabs()');
+    return ttemplate::i()->getready('$($("div[rel=\'tabs\']").get().reverse()).tabs()');
   }
   
 }//class
@@ -1038,7 +1099,7 @@ class tajaxposteditor  extends tevents {
       $lang->section = 'editor';
       $result .= $html->h4->addtags;
       $items = array();
-      $tags = ttags::i();
+      $tags = $post->factory->tags;
       $list = $tags->getsorted(-1, 'name', 0);
       foreach ($list as $id ) {
         $items[] = '<a href="" rel="tagtopost">' . $tags->items[$id]['title'] . "</a>";
@@ -1054,13 +1115,25 @@ class tajaxposteditor  extends tevents {
       break;
       
       case 'status':
-      $form = new tautoform($post, 'editor', 'editor');
-      $form->add($form->commentsenabled, $form->pingenabled,
-      $form->status('combo', array(
+      $args = new targs();
+      $args->commentsenabled = $post->commentsenabled;
+      $args->pingenabled = $post->pingenabled;
+      $args->status= tadminhtml::array2combo(array(
       'published' => $lang->published,
       'draft' => $lang->draft
-      )));
-      $result = $form->getcontent();
+      ), $post->status);
+      
+      $args->perms = tadminperms::getcombo($post->idperm);
+      $args->password = $post->password;
+      $result = $html->parsearg(
+      '[checkbox=commentsenabled]
+      [checkbox=pingenabled]
+      [combo=status]
+      $perms
+      [password=password]
+      <p>$lang.notepassword</p>',
+      $args);
+      
       break;
       
       case 'view':
@@ -1360,6 +1433,8 @@ class tposteditor extends tadminmenu {
       $post->status = $status == 'draft' ? 'draft' : 'published';
       $post->commentsenabled = isset($commentsenabled);
       $post->pingenabled = isset($pingenabled);
+      $post->idperm = (int) $idperm;
+      if ($password != '') $post->password = $password;
     }
     
     if (isset($url)) {
@@ -1410,6 +1485,7 @@ class tposteditor extends tadminmenu {
 
 //users.class.php
 class tusers extends titems {
+  public $grouptable;
   
   public static function i() {
     return getinstance(__class__);
@@ -1420,19 +1496,44 @@ class tusers extends titems {
     parent::create();
     $this->basename = 'users';
     $this->table = 'users';
+    $this->grouptable = 'usergroup';
     $this->autoid = 1;
   }
   
-  public function add($group, $login,$password, $name, $email, $website) {
+  public function res2items($res) {
+    if (!$res) return array();
+    $result = array();
+    $db = litepublisher::$db;
+    while ($item = $db->fetchassoc($res)) {
+      $id = (int) $item['id'];
+      $item['idgroups'] = tdatabase::str2array($item['idgroups']);
+      $result[] = $id;
+      $this->items[$id] = $item;
+    }
+    return $result;
+  }
+  
+  public function getitem($id) {
+    if ($id == 1) return array(
+    'login' =>litepublisher::$options->login,
+    'password' => litepublisher::$options->password,
+    'cookie' => litepublisher::$options->cookie,
+    'expired' => sqldate(litepublisher::$options->cookieexpired ),
+    'status' => 'approved',
+    'idgroups' => array(1)
+    );
+    
+    return parent::getitem($id);
+  }
+  
+  public function add(array $values) {
+    $login = trim($values['login']);
     if ($this->loginexists($login)) return false;
     $groups = tusergroups::i();
-    if (is_numeric($group)) {
-      $gid = (int) $group;
-      if (!$groups->itemexists($gid)) return false;
-    } else {
-      if (!($gid = $groups->groupid($group))) return false;
-    }
-    if ($password == '') $password = md5uniq();
+    $idgroups = $groups->cleangroups($values['idgroups']);
+    if (count($idgroups) == 0) $idgroups = array($groups->getidgroup($groups->defaultgroup));
+    
+    $password = empty($values['password']) ? md5uniq() : $values['password'];
     $password = basemd5(sprintf('%s:%s:%s', $login,  litepublisher::$options->realm, $password));
     
     $item = array(
@@ -1440,16 +1541,22 @@ class tusers extends titems {
     'password' => $password,
     'cookie' =>  md5uniq(),
     'expired' => sqldate(),
-    'gid' => $gid,
+    'idgroups' => implode(',', $idgroups),
     'trust' => 0,
-    'status' => 'wait'
+    'status' => $groups->ingroup(litepublisher::$options->user, 'admin') ? 'approved' : 'wait'
     );
     
     $id = $this->dbversion ? $this->db->add($item) : ++$this->autoid;
+    $item['idgroups'] = $idgroups;
     $this->items[$id] = $item;
-    if ($this->dbversion) $this->save();
+    if ($this->dbversion) {
+      $this->setgroups($id, $item['idgroups']);
+    } else {
+      $this->save();
+    }
+    
     $pages = tuserpages::i();
-    $pages->add($id, $name, $email, $website);
+    $pages->add($id, isset($values['name']) ? trim($values['name']) : '', $values['email'], isset($values['website']) ? trim($values['website']) : '');
     $this->added($id);
     return $id;
   }
@@ -1457,14 +1564,6 @@ class tusers extends titems {
   public function edit($id, array $values) {
     if (!$this->itemexists($id)) return false;
     $item = $this->getitem($id);
-    $groups = tusergroups::i();
-    $group = isset($values['gid']) ? $values['gid'] :
-    (isset($values['group']) ? $values['group'] : '');
-    $gid = is_numeric($group) ?       (int) $group : $groups->groupid($group);
-    if (!$groups->itemexists($gid)) return false;
-    
-    $item['gid'] = $gid;
-    
     foreach ($item as $k => $v) {
       if (!isset($values[$k])) continue;
       switch ($k) {
@@ -1472,6 +1571,11 @@ class tusers extends titems {
         if ($values['password'] != '') {
           $item['password'] = basemd5(sprintf('%s:%s:%s', $values['login'],  litepublisher::$options->realm, $values['password']));
         }
+        break;
+        
+        case 'idgroups':
+        $groups = tusergroups::i();
+        $item['idgroups'] = $groups->cleangroups($values['idgroups']);
         break;
         
         default:
@@ -1482,6 +1586,8 @@ class tusers extends titems {
     $this->items[$id] = $item;
     $item['id'] = $id;
     if ($this->dbversion) {
+      $this->setgroups($id, $item['idgroups']);
+      $item['idgroups'] = implode(',', $item['idgroups']);
       $this->db->updateassoc($item);
     } else {
       $this->save();
@@ -1490,6 +1596,26 @@ class tusers extends titems {
     $pages = tuserpages::i();
     $pages->edit($id, $values);
     return true;
+  }
+  
+  protected function setgroups($id, array $idgroups) {
+    $this->items[$id]['idgroups'] = $idgroups;
+    if ($this->dbversion) {
+      $db = $this->getdb($this->grouptable);
+      $db->delete("iduser = $id");
+      foreach ($idgroups as $idgroup) {
+        $db->add(array(
+        'iduser' => $id,
+        'idgroup' => $idgroup
+        ));
+      }
+    }
+  }
+  
+  public function delete($id) {
+    if ($this->dbversion) $this->getdb($this->grouptable)->delete('iduser = ' .(int)$id);
+    tuserpages::i()->delete($id);
+    return parent::delete($id);
   }
   
   public function loginexists($login) {
@@ -1586,7 +1712,7 @@ class tusers extends titems {
   public function getgroupname($id) {
     $item = $this->getitem($id);
     $groups = tusergroups::i();
-    return $groups->items[$item['gid']]['name'];
+    return $groups->items[$item['idgroups'][0]]['name'];
   }
   
   public function clearcookie($id) {
@@ -1619,6 +1745,7 @@ class tusers extends titems {
       $delete = $this->db->idselect("status = 'wait' and id in (select id from $pagetable where registered < '$time')");
       if (count($delete) > 0) {
         $this->db->delete(sprintf('id in (%s)', implode(',', $delete)));
+        $this->getdb($this->grouptable)->delete(sprintf('iduser in (%s)', implode(',', $delete)));
         $pages = tuserpages::i();
         foreach ($delete as $id) {
           $pages->delete($id);
@@ -1657,21 +1784,89 @@ class tusergroups extends titems {
     $this->addevents('onhasright');
   }
   
-  function add($name, $home = '/ADMIN/') {
-    if ($id = $this->groupid($name)) return $id;
+  public function add($name, $title, $home) {
+    if ($id = $this->getidgroup($name)) return $id;
     $this->items[++$this->autoid] = array(
     'name' => $name,
+    'title' => $title,
     'home' => $home
     );
     $this->save();
     return $this->autoid;
   }
   
-  public function groupid($name) {
-    foreach ($this->items as $id => $item) {
-      if ($name == $item['name']) return $id;
+  public function delete($id) {
+    if (!isset($this->items[$id])) return false;
+    unset($this->items[$id]);
+    $this->save();
+    
+    $users = tusers::i();
+    if (dbversion) {
+      $db = $users->db;
+      $items = $db->res2assoc($users->getdb($users->grouptable)->select("idgroup = $id"));
+      $users->getdb($users->grouptable)->delete("idgroup = $id");
+      foreach ($items as $item) {
+        $iduser = $item['iduser'];
+        $idgroups = $db->res2id($db->query("select idgroup from $db->prefix$users->grouptable where iduser = $iduser"));
+        $users->db->setvalue($iduser, 'idgroups', implode(',', $idgroups));
+      }
+    } else {
+      foreach ($users->items as &$item) {
+        array_delete_value($item['idgroups'], $id);
+      }
+      $users->save();
+    }
+  }
+  
+  public function getidgroup($name) {
+    return $this->IndexOf('name', trim($name));
+  }
+  
+  public function cleangroup($v) {
+    if (is_string($v)) $v = trim($v);
+    if (is_numeric($v)) {
+      $id = (int) $v;
+      if ($this->itemexists($id)) return $id;
+    } else {
+      return $this->getidgroup($v);
     }
     return false;
+  }
+  
+  public function cleangroups($v) {
+    if (is_array($v)) return $this->checkgroups(array_unique($v));
+    
+    if(is_string($v)) {
+      $v = trim($v);
+      if (strpos($v, ',')) {
+        return $this->checkgroups(explode(',', $v));
+      }
+    }
+    if ($id = $this->cleangroup($v)) return array($id);
+  }
+  
+  protected function checkgroups(array $a) {
+    $result = array();
+    foreach ($a as $val) {
+      if ($id = $this->cleangroup($val)) $result[] = $id;
+    }
+    
+    return array_unique($result);
+  }
+  
+  public function ingroup($iduser, $groupname) {
+    $idgroup = $this->getidgroup($groupname);
+    $item = tusers::i()->getitem($iduser);
+    return in_array($idgroup, $item['idgroups']);
+  }
+  
+  // $iduser, $groupname1, $groupname2...
+  public function ingroups() {
+    $args= func_get_args();
+    $iduser = array_shift ($args);
+    $item = tusers::i()->getitem($iduser);
+    $groups = $this->checkgroups($args);
+    return count(array_intersect($item['idgroups'], $groups)) > 0;
   }
   
   public function hasright($who, $group) {
@@ -1696,7 +1891,7 @@ class tusergroups extends titems {
   }
   
   public function gethome($name) {
-    if ($id = $this->groupid($name)) {
+    if ($id = $this->getidgroup($name)) {
       return isset($this->items[$id]['home']) ? $this->items[$id]['home'] : '/admin/';
     }
     return '/admin/';

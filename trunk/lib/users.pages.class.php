@@ -33,15 +33,15 @@ class tuserpages extends titems implements itemplate {
     $where $limit");
     return $this->res2items($res);
   }
-
-public function getitem($id) {
-$item = parent::getitem($id);
-if (!isset($item['url'])) {
-$item['url'] = $item['idurl'] == 0 ? '' : litepublisher::$urlmap->getidurl($item['idurl']);
-$this->items[$id]['url'] = $item['url'];
-}
-return $item;
-}
+  
+  public function getitem($id) {
+    $item = parent::getitem($id);
+    if (!isset($item['url'])) {
+      $item['url'] = $item['idurl'] == 0 ? '' : litepublisher::$urlmap->getidurl($item['idurl']);
+      $this->items[$id]['url'] = $item['url'];
+    }
+    return $item;
+  }
   
   public function request($id) {
     if ($id == 'url') {
@@ -121,12 +121,12 @@ return $item;
     $item = $this->addurl($item);
     $this->items = $item;
     if (dbversion) {
-    unset($item['url']);
-    $item['id'] = $id;
-$this->db->updateassoc($item);
-} else {
-    $this->save();
-}
+      unset($item['url']);
+      $item['id'] = $id;
+      $this->db->updateassoc($item);
+    } else {
+      $this->save();
+    }
   }
   
   private function addurl(array $item) {
@@ -187,9 +187,9 @@ $this->db->updateassoc($item);
         litepublisher::$urlmap->addredir($item['url'], $url);
         litepublisher::$urlmap->setidurl($item['idurl'], $url);
       }
-$item['url'] = $url;
+      $item['url'] = $url;
     }
-
+    
     $this->items[$id] = $item;
     if ($this->dbversion) {
       unset($item['url']);

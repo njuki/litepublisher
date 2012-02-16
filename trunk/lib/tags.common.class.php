@@ -7,7 +7,7 @@
 **/
 
 class tcommontags extends titems implements  itemplate {
-public $factory;
+  public $factory;
   public $contents;
   public $itemsposts;
   public $PermalinkIndex;
@@ -20,7 +20,7 @@ public $factory;
     $this->dbversion = dbversion;
     parent::create();
     $this->addevents('changed', 'onlite');
-$this->factory = litepublisher::$classes->getfactory($this);
+    $this->factory = litepublisher::$classes->getfactory($this);
     $this->data['lite'] = false;
     $this->data['includechilds'] = false;
     $this->data['includeparents'] = false;
@@ -160,7 +160,7 @@ $this->factory = litepublisher::$classes->getfactory($this);
       'parent' => $parent,
       'title' => $title,
       'idview' => $idview,
-'idperm' => 0,
+      'idperm' => 0,
       'icon' => 0,
       'itemscount' => 0
       ));
@@ -181,7 +181,7 @@ $this->factory = litepublisher::$classes->getfactory($this);
     'title' => $title,
     'icon' => 0,
     'idview' => $idview,
-'idperm' => 0,
+    'idperm' => 0,
     'itemscount' => 0
     );
     $this->unlock();
@@ -359,13 +359,13 @@ $this->factory = litepublisher::$classes->getfactory($this);
       $this->setvalue($this->id, 'idview', $id);
     }
   }
-
+  
   public function getidperm() {
     $item = $this->getitem($this->id);
     return isset($item['idperm']) ? (int) $item['idperm'] : 0;
   }
-
-    public function getcont() {
+  
+  public function getcont() {
     $result = '';
     $theme = ttheme::i();
     if ($this->id == 0) {
@@ -691,13 +691,13 @@ class ttagfactory extends tdata {
   public static function i() {
     return getinstance(__class__);
   }
-
-public function getposts() {
-return tposts::i();
-}
-
-public function getpost($id) {
-return tpost::i($id);
-}
-
+  
+  public function getposts() {
+    return tposts::i();
+  }
+  
+  public function getpost($id) {
+    return tpost::i($id);
+  }
+  
 }//class

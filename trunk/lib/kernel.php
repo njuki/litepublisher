@@ -1117,7 +1117,8 @@ class titems extends tevents {
   public function res2items($res) {
     if (!$res) return array();
     $result = array();
-    while ($item = litepublisher::$db->fetchassoc($res)) {
+    $db = litepublisher::$db;
+    while ($item = $db->fetchassoc($res)) {
       $id = $item['id'];
       $result[] = $id;
       $this->items[$id] = $item;
@@ -1308,6 +1309,27 @@ class titem extends tdata {
   
 }
 
+class titem_storage extends titem {
+  
+  public function getowner() {
+    $this->error(sprintf('The "%s" no have owner', get_class($this)));
+  }
+  
+  public function load() {
+    $owner = $this->owner;
+    if ($owner->itemexists($this->id)) {
+      $this->data = &$owner->items[$this->id];
+      return true;
+    }
+    return false;
+  }
+  
+  public function save() {
+    return $this->owner->save();
+  }
+  
+}//class
+
 //classes.class.php
 if (!function_exists( 'spl_autoload_register' ) ) {
   function __autoload($class) {
@@ -1319,6 +1341,7 @@ class tclasses extends titems {
   public $classes;
   public $interfaces;
   public $remap;
+  public $factories;
   public $instances;
   
   public static function i() {
@@ -1342,6 +1365,7 @@ class tclasses extends titems {
     $this->addmap('classes', array());
     $this->addmap('interfaces', array());
     $this->addmap('remap', array());
+    $this->addmap('factories', array());
     $this->instances = array();
     if (function_exists('spl_autoload_register')) spl_autoload_register(array($this, '_autoload'));
   }
@@ -1390,7 +1414,6 @@ class tclasses extends titems {
     if (!isset($this->items[$class]) ||
     ($this->items[$class][0] != $filename) || ($this->items[$class][1] != $path)) {
       $this->items[$class] = array($filename, $path);
-      //$this->save();
       $instance = $this->getinstance($class);
       if (method_exists($instance, 'install')) $instance->install();
     }
@@ -1449,6 +1472,12 @@ class tclasses extends titems {
     return isset($this->items[$class]);
   }
   
+  public function getfactory($instance) {
+    foreach ($this->factories as $classname => $factory) {
+      if (@is_a($instance, $classname)) return $this->getinstance($factory);
+    }
+  }
+  
 }//class
 
 function getinstance($class) {
@@ -1459,6 +1488,7 @@ function getinstance($class) {
 class toptions extends tevents_storage {
   public $user;
   public $group;
+  public $idgroups;
   public $admincookie;
   public $gmt;
   public $errorlog;
@@ -1480,6 +1510,7 @@ class toptions extends tevents_storage {
     $this->errorlog = '';
     $this->admincookie = false;
     $this->group = '';
+    $this->idgroups = array();
   }
   
   public function afterload() {
@@ -1550,7 +1581,7 @@ class toptions extends tevents_storage {
       if ($iduser = $users->findcookie($cookie)){
         $item = $users->getitem($iduser);
         if (strtotime($item['expired']) <= time()) return false;
-        $this->user = $iduser;
+        $this->user = (int) $iduser;
       } else {
         return false;
       }
@@ -1578,9 +1609,11 @@ class toptions extends tevents_storage {
   public function updategroup() {
     if ($this->user == 1) {
       $this->group = 'admin';
+      $this->idgroups = array(1);
     } else {
-      $users = tusers::i();
-      $this->group = $users->getgroupname($this->user);
+      $user = tusers::i()->getitem($this->user);
+      $this->idgroups = $user['idgroups'];
+      $this->group = tusergroups::i()->items[$user['idgroups'][0]]['name'];
     }
   }
   
@@ -1922,6 +1955,7 @@ class turlmap extends titems {
       $template = ttemplate::i();
       $s = $template->request($this->context);
     }
+    //dumpstr($s);
     eval('?>'. $s);
     if (litepublisher::$options->cache && $this->context->cache &&!litepublisher::$options->admincookie) {
       $cachefile = $this->getcachefile($item);
@@ -2166,7 +2200,7 @@ class turlmap extends titems {
   }
   
   public static function redir301($url) {
-if (!strbegin($url, 'http://')) $url = litepublisher::$site->url . $url;
+    if (!strbegin($url, 'http://')) $url = litepublisher::$site->url . $url;
     self::redir($url);
   }
   

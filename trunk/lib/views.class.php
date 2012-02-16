@@ -50,14 +50,14 @@ class tview extends titem_storage {
     unset($this->themeinstance);
     parent::__destruct();
   }
-
-public function getowner() {
-return tviews::i() ;
-}
-
-    public function load() {
-if (parent::load()) {
-$this->sidebars = &$this->data['sidebars'];
+  
+  public function getowner() {
+    return tviews::i() ;
+  }
+  
+  public function load() {
+    if (parent::load()) {
+      $this->sidebars = &$this->data['sidebars'];
       return true;
     }
     return false;

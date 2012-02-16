@@ -7,8 +7,8 @@
 **/
 
 class tpasswordpage extends tevents_itemplate implements itemplate {
-public $perm;
-private $formresult;
+  public $perm;
+  private $formresult;
   
   public static function i() {
     return getinstance(__class__);
@@ -17,11 +17,11 @@ private $formresult;
   protected function create() {
     parent::create();
     $this->basename = 'passwordpage';
-$this->formresult = '';
-$this->data['form'] = '';
-$this->data['title'] = '';
+    $this->formresult = '';
+    $this->data['form'] = '';
+    $this->data['title'] = '';
   }
-
+  
   private function checkspam($s) {
     if  (!($s = @base64_decode($s))) return false;
     $sign = 'megaspamer';
@@ -31,45 +31,45 @@ $this->data['title'] = '';
   }
   
   public function request($arg) {
-$this->cache = false;    
+    $this->cache = false;
     if (!isset($_POST) || (count($_POST) == 0)) return;
     if (get_magic_quotes_gpc()) {
       foreach ($_POST as $name => $value) {
         $_POST[$name] = stripslashes($_POST[$name]);
       }
     }
-
+    
     $antispam = isset($_POST['antispam']) ? $_POST['antispam'] : '';
     if (!$this->checkspam($antispam))          return 403;
-$password = isset($_POST['password']) ? trim($_POST['password']) : '';
-if ($password == '') return;
-if (!isset($this->perm)) {
-$idperm = isset($_GET['idperm']) ? (int) $_GET['idperm'] : 0;
-$perms = tperms::i();
-if (!$perms->itemexists($idperm)) return 403;
-$this->perm = tperm::i($idperm);
-}
-
-$backurl = isset($_GET['backurl']) ? $_GET['backurl'] : '';
-
-if ($this->perm->checkpassword($password)) {
-if ($backurl != '') turlmap::redir301($backurl);
-} else {
-$this->formresult = $this->invalidpassword;
-}
-}
-
-public function gettitle() {
-return $this->data['title'];
-}
+    $password = isset($_POST['password']) ? trim($_POST['password']) : '';
+    if ($password == '') return;
+    if (!isset($this->perm)) {
+      $idperm = isset($_GET['idperm']) ? (int) $_GET['idperm'] : 0;
+      $perms = tperms::i();
+      if (!$perms->itemexists($idperm)) return 403;
+      $this->perm = tperm::i($idperm);
+    }
+    
+    $backurl = isset($_GET['backurl']) ? $_GET['backurl'] : '';
+    
+    if ($this->perm->checkpassword($password)) {
+      if ($backurl != '') turlmap::redir301($backurl);
+    } else {
+      $this->formresult = $this->invalidpassword;
+    }
+  }
+  
+  public function gettitle() {
+    return $this->data['title'];
+  }
   
   public function getcont() {
-$result = $this->formresult == '' ? '' : sprintf('<h4>%s</h4>', $this->formresult);
-$args = new targs();
+    $result = $this->formresult == '' ? '' : sprintf('<h4>%s</h4>', $this->formresult);
+    $args = new targs();
     $args->antispam = base64_encode('megaspamer' . strtotime ("+1 hour"));
     $args->remember = isset($_POST['remember']);
-$result .= $this->view->theme->parsearg($this->form, $args);
-return $result;
-}
-
+    $result .= $this->view->theme->parsearg($this->form, $args);
+    return $result;
+  }
+  
 }// class
