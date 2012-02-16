@@ -7,6 +7,7 @@
 **/
 
 function tpasswordpageInstall($self) {
+  litepublisher::$urlmap->delete('/check-password.php');
   tlocal::usefile('install');
   $lang = tlocal::i('passwordpage');
   

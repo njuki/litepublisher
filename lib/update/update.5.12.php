@@ -11,8 +11,9 @@ litepublisher::$classes->data['factories'] = array(
 'tcategories' => 'ttagfactory'
 );
 
-litepublisher::$classes->factories = &litepublisher::$classes->data['factories'];
-litepublisher::$options->savemodified();
+
+//litepublisher::$options->savemodified();
+
 tlocal::usefile('install');
 $lang = tlocal::admin('initgroups');
 $groups = tusergroups::i();
@@ -38,9 +39,10 @@ litepublisher::$classes->add('tadminperm', 'admin.permissions.class.php');
 litepublisher::$classes->add('tadminpermpassword', 'admin.permissions.class.php');
 litepublisher::$classes->add('tadminpermgroups', 'admin.permissions.class.php');
 litepublisher::$classes->save();
+litepublisher::$options->savemodified();
 
 if (litepublisher::$options->usersenabled) {
-$adminoptions = Tadminoptions::i();
+$adminoptions = tadminoptions::i();
 $adminoptions->setusersenabled(false);
 $adminoptions->setusersenabled(true);
 }
