@@ -618,21 +618,35 @@ class tbackuper extends tevents {
       //$this->__filer = $filer;
       return $result;
     }
-    
-    private function _savebackup($s) {
-      $filename = litepublisher::$paths->backup . litepublisher::$domain . date('-Y-m-d');
-      $filename .= $this->archtype == 'zip' ? '.zip' : '.tar.gz';
+
+public function getfilename($ext) {
+$filename = litepublisher::$paths->backup . litepublisher::$domain . date('-Y-m-d');
+$result = $filename . $ext;
+$i = 2;
+while (!file_exists($result)) {
+$result = $filename  . '_' . $i++ . $ext;
+}
+return $result;
+}
+
+        private function _savebackup($s) {
+      $filename = $this->getfilename($this->archtype == 'zip' ? '.zip' : '.tar.gz');
       file_put_contents($filename, $s);
       @chmod($filename, 0666);
       return $filename;
     }
+
+public function getshellfilename() {
+$result = $this->getfilename('.tar.gz');
+return substr(substr($filename, 0, strlen($filename) - strlen('.tar.gz')), strrpos($filename, '/') + 1);
+}
     
     public function createshellbackup(){
       $dbconfig = litepublisher::$options->dbconfig;
       $cmd = array();
       $cmd[] = 'cd ' . litepublisher::$paths->backup;
       $cmd[] = sprintf('mysqldump -u%s -p%s %s>dump.sql', $dbconfig['login'], str_rot13(base64_decode($dbconfig['password'])), $dbconfig['dbname']);
-      $filename = litepublisher::$domain . date('-Y-m-d');
+      $filename = $this->getshellfilename();
       $cmd[] = sprintf('tar --exclude="*.bak.php" --exclude="*.lok" --exclude="*.log" -cf %s.tar ../../storage/data/* dump.sql', $filename);
       $cmd[] ='rm dump.sql';
       $cmd[] = "gzip $filename.tar";
@@ -648,7 +662,7 @@ class tbackuper extends tevents {
       $cmd = array();
       $cmd[] = 'cd ' . litepublisher::$paths->backup;
       $cmd[] = sprintf('mysqldump -u%s -p%s %s>dump.sql', $dbconfig['login'], str_rot13(base64_decode($dbconfig['password'])), $dbconfig['dbname']);
-      $filename = litepublisher::$domain . date('-Y-m-d');
+      $filename = $this->getshellfilename();
       $cmd[] = sprintf('tar --exclude="*.bak.php" --exclude="*.lok" --exclude="*.log" -cf %s.tar ../../storage/data/* dump.sql ../../lib/* ../../plugins/* ../../themes/* ../../js/* ../../index.php "../../.htaccess"', $filename);
       $cmd[] ='rm dump.sql';
       $cmd[] = "gzip $filename.tar";
