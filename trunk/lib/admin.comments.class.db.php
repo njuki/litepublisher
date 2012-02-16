@@ -154,7 +154,7 @@ class tadminmoderator extends tadmincommoncomments {
     $from = $this->getfrom($perpage, $total);
     $list = $comments->select("$comments->thistable.status = '$status'", "order by $comments->thistable.posted desc limit $from, $perpage");
     $html = $this->html;
-    $result .= sprintf($html->h2->listhead, $from, $from + count($list), $total);
+    $result .= sprintf($html->h4->listhead, $from, $from + count($list), $total);
     $table = $this->createtable();
     
     $args = targs::i();
@@ -278,7 +278,7 @@ class tadminmoderator extends tadmincommoncomments {
     $perpage = 20;
     $total = $comusers->count;
     $from = $this->getfrom($perpage, $total);
-    $res = $comusers->db->query("select * from $comusers->thistable limit $from, $perpage");
+    $res = $comusers->db->query("select * from $comusers->thistable order by id desc limit $from, $perpage");
     $items = litepublisher::$db->res2assoc($res);
     $html = $this->html;
     $result = sprintf($html->h2->authorlisthead, $from, $from + count($items), $total);

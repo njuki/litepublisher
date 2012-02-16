@@ -254,7 +254,7 @@ return $r;
         $inputs = self::getcomboview($obj->idview, "idview-$classname");
         if (isset($obj->data['keywords'])) $inputs .= $html->getedit("keywords-$classname", $obj->keywords, $lang->keywords);
         if (isset($obj->data['description'])) $inputs .= $html->getedit("description-$classname", $obj->description, $lang->description);
-        if (isset($obj->data['head'])) $inputs .= $html->getedit("head-$classname", $obj->head, $lang->description);
+        if (isset($obj->data['head'])) $inputs .= $html->getinput('editor', "head-$classname", tadminhtml::specchars($obj->head), $lang->head);
         $args->inputs = $inputs;
         $items .= $html->spectab($args);
         $content .=$html->specform($args);

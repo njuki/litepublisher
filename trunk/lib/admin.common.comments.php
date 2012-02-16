@@ -38,7 +38,7 @@ class tadmincommoncomments extends tadminmenu {
     $lang = tlocal::admin('comments');
     $table = new ttablecolumns();
     $table->index = 1;
-    $table->checkboxes[]  = "<h4>$lang->showcolumns</h4><p>$lang->author: ";
+    $table->checkboxes[]  = $this->html->tablecolumns();
     $table->add(
     '$id',
     'ID',
@@ -129,7 +129,7 @@ class tadmincommoncomments extends tadminmenu {
     <td align ="center"><input type="checkbox" name="checkbox-item-$id" id="checkbox-item-$id" value="$id" $onhold /></td>' .
     $table->body . '</tr>';
     
-    $table->checkboxes[]  = '</p>';
+    $table->checkboxes[]  = '</p>-->';
     if (isset($_POST['changed_hidden'])) $this->saveshowcolumns();
     return $table;
   }

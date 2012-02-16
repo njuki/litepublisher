@@ -66,6 +66,7 @@ $combobox
     <input type="submit" name="changelang" value="Change language" /></p>
 </form>
 
+<p>$lang->hosting</p>
 <p>$lang->formhead</p>
     <form method="post" action="" name="form" class="install">
     <br clear="all" />
@@ -80,14 +81,6 @@ $combobox
     <br clear="all" />
 	<p>$checkrewrite </p>
     
-<p><label>
-<input id="dbversion" name="dbversion" type="radio" value="1" onclick="changedbversion(1);" checked="checked"/>
-$lang->dbversion</label></p>
-
-<p><label>
-<input id="fileversion" name="dbversion" type="radio" value="0" onclick="changedbversion(0);" />
-$lang->fileversion</label></p>
-
 <div id="dbform">
     <p>$lang->dbname:</p>
     <input name="dbname" type="text" id="dbname" value="" />
@@ -115,6 +108,7 @@ $lang->fileversion</label></p>
     <input name="dbport" type="text" id="dbport" />
     <br clear="all" />
 
+<input id="_dbversion" name="dbversion" type="hidden" value="1" />
 <input type="hidden" name="usehost" id="usehost" value="0" />
 </div>
 </div>
