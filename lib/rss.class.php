@@ -66,13 +66,13 @@ class trss extends tevents {
       $id = (int) $match[1];
       $tags = $arg == 'categories' ? tcategories::i() : ttags::i();
       if (!$tags->itemexists($id)) return 404;
-$tags->id =$id;
-if (isset($tags->idperm) && ($idperm = $tags->idperm)) {
-$perm =tperm::i($idperm);
-if ($header = $perm->getheader($tags)) {
-$result = $header . $result;
-}
-}
+      $tags->id =$id;
+      if (isset($tags->idperm) && ($idperm = $tags->idperm)) {
+        $perm =tperm::i($idperm);
+        if ($header = $perm->getheader($tags)) {
+          $result = $header . $result;
+        }
+      }
       $this->gettagrss($tags, $id);
       break;
       
@@ -83,13 +83,13 @@ $result = $header . $result;
       if (!$posts->itemexists($idpost)) return 404;
       $post = tpost::i($idpost);
       if ($post->status != 'published') return 404;
-if (isset($post->idperm) && ($post->idperm > 0)) {
-$perm =tperm::i($post->idperm);
-if ($header = $perm->getheader($post)) {
-$result = $header . $result;
-}
-}
-
+      if (isset($post->idperm) && ($post->idperm > 0)) {
+        $perm =tperm::i($post->idperm);
+        if ($header = $perm->getheader($post)) {
+          $result = $header . $result;
+        }
+      }
+      
       $this->GetRSSPostComments($idpost);
     }
     

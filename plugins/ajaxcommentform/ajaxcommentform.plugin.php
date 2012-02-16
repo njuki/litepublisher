@@ -12,37 +12,6 @@ class tajaxcommentformplugin extends tplugin {
     return getinstance(__class__);
   }
   
-  public function install() {
-    litepublisher::$options->autocmtform = false;
-    litepublisher::$urlmap->addget('/ajaxcommentform.htm', get_class($this));
-    
-    $jsmerger = tjsmerger::i();
-    $jsmerger->lock();
-    $jsmerger->add('comments', '/plugins/' . basename(dirname(__file__)) . '/ajaxcommentform.min.js');
-    $jsmerger->addtext('comments', 'ajaxform', $this->getjs());
-    $jsmerger->unlock();
-  }
-  
-  public function uninstall() {
-    litepublisher::$options->autocmtform = true;
-    turlmap::unsub($this);
-    
-    $jsmerger = tjsmerger::i();
-    $jsmerger->lock();
-    $jsmerger->deletefile('comments', '/plugins/' . basename(dirname(__file__)) . '/ajaxcommentform.min.js');
-    $jsmerger->deletetext('comments', 'ajaxform');
-    $jsmerger->unlock();
-  }
-  
-  public function getjs() {
-    $name = basename(dirname(__file__));
-    $lang = tlocal::i('comments');
-    $ls = array(
-    'error_title' => $lang->error
-    );
-    return sprintf('ltoptions.commentform = %s;', json_encode($ls));
-  }
-  
   public function request($arg) {
     $this->cache = false;
     if (!empty($_GET['getuser'])) {

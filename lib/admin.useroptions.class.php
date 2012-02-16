@@ -17,44 +17,44 @@ class tadminuseroptions extends tadminmenu {
     $html = $this->html;
     $lang = tlocal::i('users');
     $args = targs::i();
-      $args->formtitle = $lang->useroptions;
-
+    $args->formtitle = $lang->useroptions;
+    
     $pages = tuserpages::i();
-      $args->createpage = $pages->createpage;
-      $args->lite = $pages->lite;
-
+    $args->createpage = $pages->createpage;
+    $args->lite = $pages->lite;
+    
     $groups = tusergroups::i();
-      $g = array();
-      foreach ($groups->items as $id => $item) {
+    $g = array();
+    foreach ($groups->items as $id => $item) {
       $g[$item['name']]  = $item['title'];
-      }
-      
-      $args->defaultgroup =tadminhtml::array2combo($g, $groups->defaultgroup);
-
-      $linkgen = tlinkgenerator::i();
-      $args->linkschema = $linkgen->data['user'];
-      
-      return $html->adminform(
-      '[combo=defaultgroup]
-      [checkbox=createpage]
-      [checkbox=lite]
-      [text=linkschema]',
-      $args);
     }
     
+    $args->defaultgroup =tadminhtml::array2combo($g, $groups->defaultgroup);
+    
+    $linkgen = tlinkgenerator::i();
+    $args->linkschema = $linkgen->data['user'];
+    
+    return $html->adminform(
+    '[combo=defaultgroup]
+    [checkbox=createpage]
+    [checkbox=lite]
+    [text=linkschema]',
+    $args);
+  }
+  
   public function processform() {
     $pages = tuserpages::i();
-      $pages->createpage = isset($_POST['createpage']);
-      $pages->lite = isset($_POST['lite']);
-      $pages->save();
-
-    $groups = tusergroups::i();      
-      $groups->defaultgroup = $_POST['defaultgroup'];
-      $groups->save();
-      
-      $linkgen = tlinkgenerator::i();
-      $linkgen->data['user'] = $_POST['linkschema'];
-      $linkgen->save();
-    }
+    $pages->createpage = isset($_POST['createpage']);
+    $pages->lite = isset($_POST['lite']);
+    $pages->save();
     
+    $groups = tusergroups::i();
+    $groups->defaultgroup = $_POST['defaultgroup'];
+    $groups->save();
+    
+    $linkgen = tlinkgenerator::i();
+    $linkgen->data['user'] = $_POST['linkschema'];
+    $linkgen->save();
+  }
+  
 }//class

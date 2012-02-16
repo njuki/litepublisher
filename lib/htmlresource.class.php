@@ -195,7 +195,7 @@ class tadminhtml {
     '$value' => $value
     ));
   }
-
+  
   public function getsubmit($name) {
     return strtr(ttheme::i()->templates['content.admin.submit'], array(
     '$lang.$name' => tlocal::i()->$name,
@@ -238,7 +238,7 @@ class tadminhtml {
     $args->tablebody = $body;
     return $theme->parsearg($this->ini['common']['table'], $args);
   }
-
+  
   public function items2table($owner, array $items, array $struct) {
     $head = '';
     $body = '';
@@ -252,31 +252,31 @@ class tadminhtml {
     $theme = ttheme::i();
     $args = new targs();
     foreach ($items as $id) {
-$item = $owner->getitem($id);
+      $item = $owner->getitem($id);
       $args->add($item);
-$args->id = $id;
+      $args->id = $id;
       $body .= $theme->parsearg($tml, $args);
     }
     $args->tablehead  = $head;
     $args->tablebody = $body;
     return $theme->parsearg($this->ini['common']['table'], $args);
   }
-
-public function get_table_checkbox($name) {
-return array('center', $this->invertcheckbox, str_replace('$checkboxname', $name, $this->checkbox));
-}
-
-public function get_table_item($name) {
-return array('left', tlocal::i()->$name, "\$$name");
-}
-
-public function get_table_link($action, $adminurl) {
-return array('left', tlocal::i()->$action, strtr($this->actionlink , array(
-'$action' => $action,
-'$lang.action' => tlocal::i()->$action,
-'$adminurl' => $adminurl
-)));
-}
+  
+  public function get_table_checkbox($name) {
+    return array('center', $this->invertcheckbox, str_replace('$checkboxname', $name, $this->checkbox));
+  }
+  
+  public function get_table_item($name) {
+    return array('left', tlocal::i()->$name, "\$$name");
+  }
+  
+  public function get_table_link($action, $adminurl) {
+    return array('left', tlocal::i()->$action, strtr($this->actionlink , array(
+    '$action' => $action,
+    '$lang.action' => tlocal::i()->$action,
+    '$adminurl' => $adminurl
+    )));
+  }
   
   public function confirmdelete($id, $adminurl, $mesg) {
     $args = targs::i();
@@ -286,22 +286,22 @@ return array('left', tlocal::i()->$action, strtr($this->actionlink , array(
     $args->confirm = $mesg;
     return $this->confirmform($args);
   }
-
-public function confirm_delete($owner, $adminurl) {
-$id = (int) self::getparam('id', 0);
-if (!$owner->itemexists($id)) return $this->h4->notfound;
-        if  (isset($_REQUEST['confirm']) && ($_REQUEST['confirm'] == 1)) {
-          $owner->delete($id);
-return $this->h4->successdeleted;
-        } else {
-$args = new targs();
-          $args->id = $id;
-          $args->adminurl = $adminurl;
-          $args->action = 'delete';
-          $args->confirm = tlocal::i()->confirmdelete;
-return $this->confirmform($args);
-        }
-}
+  
+  public function confirm_delete($owner, $adminurl) {
+    $id = (int) self::getparam('id', 0);
+    if (!$owner->itemexists($id)) return $this->h4->notfound;
+    if  (isset($_REQUEST['confirm']) && ($_REQUEST['confirm'] == 1)) {
+      $owner->delete($id);
+      return $this->h4->successdeleted;
+    } else {
+      $args = new targs();
+      $args->id = $id;
+      $args->adminurl = $adminurl;
+      $args->action = 'delete';
+      $args->confirm = tlocal::i()->confirmdelete;
+      return $this->confirmform($args);
+    }
+  }
   
   public static function check2array($prefix) {
     $result = array();

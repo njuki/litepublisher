@@ -25,7 +25,7 @@ class tadminblackip {
     $tabs->add('IP', '[combo=ipstatus] [editor=ip]');
     $tabs->add($lang->wordtitle, '[combo=wordstatus] [editor=words]');
     
-    $args->formtitle = $about['formtitle'];
+    $args->formtitle = $lang->formtitle;
     $html = tadminhtml::i();
     return tuitabs::gethead() . $html->adminform($tabs->get(), $args);
   }

@@ -9,7 +9,7 @@
 class tpost extends titem implements  itemplate {
   public $childdata;
   public $childtable;
-public $factory;
+  public $factory;
   private $aprev;
   private $anext;
   private $_meta;
@@ -71,7 +71,7 @@ public $factory;
     'author' => 0,
     'revision' => 0,
     'icon' => 0,
-'idperm' => 0,
+    'idperm' => 0,
     'class' => __class__,
     'posted' => 0,
     'modified' => 0,
@@ -100,7 +100,7 @@ public $factory;
     'pages' => array()
     );
     
-$this->factory = litepublisher::$classes->getfactory($this);
+    $this->factory = litepublisher::$classes->getfactory($this);
     $posts = $this->factory->posts;
     foreach ($posts->itemcoclasses as $class) {
       $coinstance = litepublisher::$classes->newinstance($class);
@@ -119,22 +119,22 @@ $this->factory = litepublisher::$classes->getfactory($this);
       if (method_exists($this, $get = 'get' . $name))   return $this->$get();
       if (array_key_exists($name, $this->childdata)) return $this->childdata[$name];
     }
-
-// tags and categories theme tag
-switch ($name) {
-case 'catlinks':
-    return $this->get_taglinks('categories', false);
-
-case 'taglinks':
-    return $this->get_taglinks('tags', false);
-
-case 'excerptcatlinks':
-    return $this->get_taglinks('categories', true);
-
-case 'excerpttaglinks':
-    return $this->get_taglinks('tags', true);
-}
-
+    
+    // tags and categories theme tag
+    switch ($name) {
+      case 'catlinks':
+      return $this->get_taglinks('categories', false);
+      
+      case 'taglinks':
+      return $this->get_taglinks('tags', false);
+      
+      case 'excerptcatlinks':
+      return $this->get_taglinks('categories', true);
+      
+      case 'excerpttaglinks':
+      return $this->get_taglinks('tags', true);
+    }
+    
     return parent::__get($name);
   }
   
@@ -211,7 +211,7 @@ case 'excerpttaglinks':
   }
   
   protected function SaveToDB() {
-$this->factory->gettransform($this)->save($this);
+    $this->factory->gettransform($this)->save($this);
     if ($this->childtable) {
       $this->beforedb();
       $this->childdata['id'] = $this->id;
@@ -354,8 +354,8 @@ $this->factory->gettransform($this)->save($this);
   public function getsqldate() {
     return sqldate($this->posted);
   }
-
-public function getimage() {
+  
+  public function getimage() {
     if (count($this->files) == 0) return false;
     $files = $this->factory->files;
     foreach ($this->files as $id) {
@@ -364,24 +364,24 @@ public function getimage() {
     }
     return false;
   }
-
+  
   //template
-
+  
   private function get_taglinks($name, $excerpt) {
-$items = $this->$name;
+    $items = $this->$name;
     if (count($items) == 0) return '';
-
+    
     $theme = $this->theme;
     $tmlpath= $excerpt ? 'content.excerpts.excerpt' : 'content.post';
     $tmlpath .= $name == 'tags' ? '.taglinks' : '.catlinks';
     $tmlitem = $theme->templates[$tmlpath . '.item'];
-
+    
     $tags= strbegin($name, 'tag') ? $this->factory->tags : $this->factory->categories;
     $tags->loaditems($items);
-
+    
     $args = new targs();
     $list = array();
-
+    
     foreach ($items as $id) {
       $item = $tags->getitem($id);
       $args->add($item);
@@ -397,7 +397,7 @@ $items = $this->$name;
       }
       $list[] = $theme->parsearg($tmlitem,  $args);
     }
-
+    
     return str_replace('$items', ' ' . implode($theme->templates[$tmlpath . '.divider'] , $list), $theme->parse($theme->templates[$tmlpath]));
   }
   
@@ -459,11 +459,11 @@ $items = $this->$name;
   }
   
   //ITemplate
-
+  
   public function request($id) {
     parent::request((int) $id);
     if ($this->status != 'published') {
-if (!litepublisher::$options->show_draft_post) return 404;
+      if (!litepublisher::$options->show_draft_post) return 404;
       $groupname = litepublisher::$options->group;
       if (($groupname == 'admin') || ($groupname == 'editor')) return;
       if ($this->author == litepublisher::$options->user) return;
@@ -562,7 +562,7 @@ if (!litepublisher::$options->show_draft_post) return 404;
   }
   
   public function getcont() {
-return $this->parsetml('content.post');
+    return $this->parsetml('content.post');
   }
   
   public function getrsslink() {
@@ -633,7 +633,7 @@ return $this->parsetml('content.post');
   }
   
   public function getexcerptcontent() {
-      $posts = $this->factory->posts;
+    $posts = $this->factory->posts;
     if ($this->revision < $posts->revision) $this->setrevision($posts->revision);
     $result = $this->get_excerpt();
     $posts->beforeexcerpt($this, $result);
@@ -686,7 +686,7 @@ return $this->parsetml('content.post');
   
   public function getcontent() {
     $result = '';
-      $posts = $this->factory->posts;
+    $posts = $this->factory->posts;
     $posts->beforecontent($this, $result);
     if ($this->revision < $posts->revision) $this->setrevision($posts->revision);
     $result .= $this->getcontentpage(litepublisher::$urlmap->page);
@@ -836,53 +836,53 @@ return $this->parsetml('content.post');
       return sprintf('<a href="%s%s" title="%3$s" rel="author"><%3$s</a>', litepublisher::$site->url, $item['url'], $item['name']);
     }
   }
-
+  
 }//class
 
 class tpostfactory extends tdata {
-
-public static function i() {
-return getinstance(__class__);
-}
-
-public function getposts() {
-return tposts::i();
-}
-
-public function getfiles() {
-return tfiles::i();
-}
-
-public function gettags() {
-return ttags::i();
-}
-
-public function getcats () {
-return tcategories::i();
-}
-
-public function getcategories() {
-return tcategories::i();
-}
-
+  
+  public static function i() {
+    return getinstance(__class__);
+  }
+  
+  public function getposts() {
+    return tposts::i();
+  }
+  
+  public function getfiles() {
+    return tfiles::i();
+  }
+  
+  public function gettags() {
+    return ttags::i();
+  }
+  
+  public function getcats () {
+    return tcategories::i();
+  }
+  
+  public function getcategories() {
+    return tcategories::i();
+  }
+  
   public function getcomments($id) {
-return tcomments::i($id);
-}
-
+    return tcomments::i($id);
+  }
+  
   public function getpingbacks($id) {
     return tpingbacks::i($id);
   }
-
-public function getmeta($id) {
-return tmetapost::i($id);
-}
-
-public function gettransform(tpost $post) {
-return tposttransform::i($post);
-}
-
-public function add(tpost $post) {
-return tposttransform ::add($post);
-}
-
+  
+  public function getmeta($id) {
+    return tmetapost::i($id);
+  }
+  
+  public function gettransform(tpost $post) {
+    return tposttransform::i($post);
+  }
+  
+  public function add(tpost $post) {
+    return tposttransform ::add($post);
+  }
+  
 }//class

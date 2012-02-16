@@ -7,9 +7,9 @@
 **/
 
 function tblackipInstall($self) {
-tspamfilter::i()->onstatus = $self->filter;
+  tspamfilter::i()->onstatus = $self->filter;
 }
 
 function tblackipUninstall($self) {
-tspamfilter::i()->unbind($self);
+  tspamfilter::i()->unbind($self);
 }

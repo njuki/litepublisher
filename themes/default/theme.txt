@@ -730,7 +730,7 @@ $editor = [<p><label for="editor-$name"><strong>$lang.$name:</strong></label><br
 $text = [<p><input type="text" name="$name" id="text-$name" value="$value" size="22" />
 <label for="text-$name"><strong>$lang.$name</strong></label></p>]
 
-$password = [<p><input type="password" name="$name" id="password-$name" value="$value" size='22' />
+$password = [<p><input type="password" name="$name" id="password-$name" value="$value" size="22" />
 <label for="password-$name"><strong>$lang.$name</strong></label></p>]
 
 $checkbox= [<p><input type="checkbox" name="$name" id="checkbox-$name" $value />
@@ -744,6 +744,7 @@ radioitem = [<p><label><input type="radio" name="$name" id="radio_$name_$index" 
 $radio = [<div><h4>$lang.$name:</h4>$value</div>]
 
 $hidden = [<input type="hidden" name="$name" id="hidden-$name" value="$value" />]
+$submit =   [<input type="submit" name="submit-$name" id="submitbutton-$name" value="$lang.$name" />]
 
 $form = [
 <h3>$formtitle</h3>
@@ -751,6 +752,7 @@ $form = [
 $items
   <p><input type="submit" name="submitbutton" id="submitbutton" value="$lang.update" /></p>
 </form>]
+
 ]
 
 Шаблон admin предназначен длягенерации форм в админке. Перечислим их

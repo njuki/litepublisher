@@ -63,13 +63,13 @@ class tadminreguser extends tadminform {
     $groups = tusergroups::i();
     
     $id = $users->add(array(
-'idgroups' => array($groups->defaultgroup),
- 'login' => $login,
-'password' => $password, 
-'name' => $name, 
-'email' => $email, 
-'website' => $website
-));
+    'idgroups' => array($groups->defaultgroup),
+    'login' => $login,
+    'password' => $password,
+    'name' => $name,
+    'email' => $email,
+    'website' => $website
+    ));
     if (!$id) return $this->html->h4->invalidregdata;
     
     $args = targs::i();

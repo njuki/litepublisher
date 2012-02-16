@@ -138,8 +138,8 @@ class tposteditor extends tadminmenu {
       $post->status = $status == 'draft' ? 'draft' : 'published';
       $post->commentsenabled = isset($commentsenabled);
       $post->pingenabled = isset($pingenabled);
-$post->idperm = (int) $idperm;
-if ($password != '') $post->password = $password;
+      $post->idperm = (int) $idperm;
+      if ($password != '') $post->password = $password;
     }
     
     if (isset($url)) {

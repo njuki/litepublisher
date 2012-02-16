@@ -147,10 +147,10 @@ class tdbmanager  {
     $tables = $this->gettables();
     foreach ($tables as $table) {
       if (strbegin(strtolower($table), $prefix)) {
-$this->exec("LOCK TABLES `$table` WRITE");
-$this->exec("OPTIMIZE TABLE $table");
-$this->exec("UNLOCK TABLES");
-}
+        $this->exec("LOCK TABLES `$table` WRITE");
+        $this->exec("OPTIMIZE TABLE $table");
+        $this->exec("UNLOCK TABLES");
+      }
     }
   }
   

@@ -112,7 +112,7 @@ public function __get($name) { return tlocal::translate(date($name, $this->date)
 }
 
 //views.class.php
-class tview extends titem {
+class tview extends titem_storage {
   public $sidebars;
   private $themeinstance;
   
@@ -157,18 +157,16 @@ class tview extends titem {
     parent::__destruct();
   }
   
+  public function getowner() {
+    return tviews::i() ;
+  }
+  
   public function load() {
-    $views = tviews::i();
-    if ($views->itemexists($this->id)) {
-      $this->data = &$views->items[$this->id];
+    if (parent::load()) {
       $this->sidebars = &$this->data['sidebars'];
       return true;
     }
     return false;
-  }
-  
-  public function save() {
-    return tviews::i()->save();
   }
   
   public function setthemename($name) {
@@ -415,11 +413,20 @@ class ttemplate extends tevents_storage {
   }
   
   protected function  httpheader() {
-    if (method_exists($this->context, 'httpheader')) {
-      $result= $this->context->httpheader();
+    $ctx = $this->context;
+    if (method_exists($ctx, 'httpheader')) {
+      $result= $ctx->httpheader();
       if (!empty($result)) return $result;
     }
-    return turlmap::htmlheader($this->context->cache);
+    
+    if (isset($ctx->idperm) && ($idperm = $ctx->idperm)) {
+      $perm =tperm::i($idperm);
+      if ($result = $perm->getheader($ctx)) {
+        return $result . turlmap::htmlheader($ctx->cache);
+      }
+    }
+    
+    return turlmap::htmlheader($ctx->cache);
   }
   
   //html tags

@@ -285,12 +285,12 @@ class tcomment extends tdata {
     if ($url == '')  return $name;
     $manager = tcommentmanager::i();
     if ($manager->hidelink || ($this->trust <= $manager->trustlevel)) return $name;
-if (!strbegin($url, 'http://')) $url = 'http://' . $url;
     $rel = $manager->nofollow ? 'rel="nofollow"' : '';
     if ($manager->redir) {
       return sprintf('<a %s href="%s/comusers.htm%sid=%d">%s</a>',$rel,
       litepublisher::$site->url, litepublisher::$site->q, $this->author, $name);
     } else {
+      if (!strbegin($url, 'http://')) $url = 'http://' . $url;
       return sprintf('<a class="url fn" %s href="%s">%s</a>',
       $rel,$url, $name);
     }
@@ -593,7 +593,8 @@ class tcommentmanager extends tevents {
       $db->comusers.id = $db->comments.author and
       $db->posts.id = $db->comments.post and
       $db->urlmap.id = $db->posts.idurl and
-      $db->posts.status = 'published'
+      $db->posts.status = 'published' and
+      $db->posts.idperm = 0
       order by $db->comments.posted desc limit $count"));
       
       if (litepublisher::$options->commentpages && !litepublisher::$options->comments_invert_order) {
@@ -778,9 +779,37 @@ class tcommentform extends tevents {
       $values = $_POST;
       $values['date'] = time();
       $values['ip'] = preg_replace( '/[^0-9., ]/', '',$_SERVER['REMOTE_ADDR']);
+      $postid = isset($values['postid']) ? (int) $values['postid'] : 0;
+      $posts = litepublisher::$classes->posts;
+      if(!$posts->itemexists($postid)) {
+        return $this->htmlhelper->geterrorcontent($lang->postnotfound);
+      }
+      
+      $post = tpost::i($postid);
+      if ($post->status != 'published')  {
+        return $this->htmlhelper->geterrorcontent($lang->commentondraft);
+      }
+      
+      if (!$post->commentsenabled)       {
+        return $this->htmlhelper->geterrorcontent($lang->commentsdisabled);
+      }
+      
+      $header = '';
+      if ($post->idperm != 0) {
+        $url = litepublisher::$urlmap->url;
+        litepublisher::$urlmap->url = $post->url;
+        $item = litepublisher::$urlmap->itemrequested;
+        litepublisher::$urlmap->itemrequested = dbversion ? litepublisher::$urlmap->getitem($post->idurl) : litepublisher::$urlmap->items[$post->url];
+        litepublisher::$urlmap->itemrequested['id'] = $post->idurl;
+        $perm = tperm::i($post->idperm);
+        $header = $perm->getheader($post);
+        // not restore values because perm will be used this values
+        //litepublisher::$urlmap->itemrequested = $item;
+        //litepublisher::$urlmap->url = $url;
+      }
+      
       $confirmid  = $kept->add($values);
-      //return tsimplecontent::html($this->getconfirmform($confirmid));
-      return $this->htmlhelper->confirm($confirmid);
+      return $header . $this->htmlhelper->confirm($confirmid);
     }
     
     $confirmid = $_POST['confirmid'];
@@ -788,6 +817,7 @@ class tcommentform extends tevents {
     if (!($values = $kept->getitem($confirmid))) {
       return $this->htmlhelper->geterrorcontent($lang->notfound);
     }
+    
     $postid = isset($values['postid']) ? (int) $values['postid'] : 0;
     $posts = litepublisher::$classes->posts;
     if(!$posts->itemexists($postid)) {
@@ -795,6 +825,9 @@ class tcommentform extends tevents {
     }
     
     $post = tpost::i($postid);
+    if ($post->status != 'published')  {
+      return $this->htmlhelper->geterrorcontent($lang->commentondraft);
+    }
     
     $values = array(
     'name' => isset($values['name']) ? tcontentfilter::escape($values['name']) : '',
@@ -822,17 +855,13 @@ class tcommentform extends tevents {
       return $this->htmlhelper->geterrorcontent($lang->commentsdisabled);
     }
     
-    if ($post->status != 'published')  {
-      return $this->htmlhelper->geterrorcontent($lang->commentondraft);
-    }
-    
     if (litepublisher::$options->checkduplicate) {
       if (litepublisher::$classes->spamfilter->checkduplicate($postid, $values['content']) ) {
         return $this->htmlhelper->geterrorcontent($lang->duplicate);
       }
     }
     
-    $posturl = $post->haspages ? rtrim($post->url, '/') . "/page/$post->commentpages/" : $post->url;
+    $posturl = $post->lastcommenturl;
     $users = tcomusers::i($postid);
     $uid = $users->add($values['name'], $values['email'], $values['url'], $values['ip']);
     if (!litepublisher::$classes->spamfilter->canadd( $uid)) {
@@ -859,6 +888,7 @@ class tcommentform extends tevents {
     }
     
     if (!dbversion) $cookies['idpost'] = $post->id;
+    
     return $this->htmlhelper->sendcookies($cookies, litepublisher::$site->url . $posturl);
   }
   

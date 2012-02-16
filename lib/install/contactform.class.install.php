@@ -9,9 +9,9 @@
 function tcontactformInstall($self) {
   $html = tadminhtml::i();
   $html->section = 'contactform';
-tlocal::usefile('install');
+  tlocal::usefile('install');
   $lang = tlocal::i('contactform');
-
+  
   $self->title =  $lang->title;
   $self->subject = $lang->subject;
   $self->success  = $html->success();
