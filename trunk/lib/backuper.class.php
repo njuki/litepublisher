@@ -623,7 +623,7 @@ public function getfilename($ext) {
 $filename = litepublisher::$paths->backup . litepublisher::$domain . date('-Y-m-d');
 $result = $filename . $ext;
 $i = 2;
-while (!file_exists($result)) {
+while (file_exists($result) && ($i < 100)) {
 $result = $filename  . '_' . $i++ . $ext;
 }
 return $result;
@@ -637,8 +637,8 @@ return $result;
     }
 
 public function getshellfilename() {
-$result = $this->getfilename('.tar.gz');
-return substr(substr($filename, 0, strlen($filename) - strlen('.tar.gz')), strrpos($filename, '/') + 1);
+$filename = $this->getfilename('.tar.gz');
+return substr(substr($filename, 0, strlen($filename) - strlen('.tar.gz')), strrpos($filename, DIRECTORY_SEPARATOR) + 1);
 }
     
     public function createshellbackup(){

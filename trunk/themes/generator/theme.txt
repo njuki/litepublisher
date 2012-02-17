@@ -118,7 +118,6 @@ $excerpt = [
 
 content.excerpts.excerpt.filelist = [<span class="image" id="files-$post.id">
 $files = [<!---->]
-$images= [$image = [$preview]$preview = [<img class="photo" src="$preview.link" title="$description" alt="$title" />]]
 $audios = [<!---->]
 $videos = [<!---->]
 </span>]
