@@ -24,6 +24,24 @@ if (isset($this->item[$name])) return $this->item[$name];
 return parent::__get($name);
 }
 
+public function setperm($id, $idperm) {
+$files = tfiles::i();
+$item = $files->getitem($id);
+if ($idperm == $item['idperm']) return;
+$files->setvalue($id, 'idperm', $idperm);
+$filename = basename($item['filename']);
+$path = litepublisher::$paths->files . 'files' .DIRECTORY_SEPARATOR;
+if ($idperm) {
+rename($path . $item['filename'], $path . 'private/' . $filename);
+litepublisher::$urlmap->add('/files/' . $item['filename'], get_class($this), $id);
+} else {
+litepublisher::$urlmap->delete('/files/' . $item['filename']);
+rename($path . 'private/' . $filename, $path . $item['filename']);
+}
+
+if ($item['preview'] > 0) $this->setperm($item['preview'], $idperm);
+}
+
 public function error500() {
 }
   
