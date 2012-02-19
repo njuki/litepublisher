@@ -217,11 +217,14 @@ class tmediaparser extends tevents {
     'filename' => $filename,
     'size' => 0,
     'icon' => 0,
+'idperm' => 0,
+/*
     'bitrate' => 0,
     'framerate' => 0,
     'samplingrate' => '',
     'channels' => 0,
     'duration' => 0,
+*/
     'height' => 0,
     'width' => 0
     );
@@ -249,10 +252,12 @@ class tmediaparser extends tevents {
       $result['media'] = 'audio';
       $result['mime'] = preg_match('/\.mp3$/', $filename) ? 'audio/mpeg' : 'audio/x-wave';
       if ($info = $this->getaudioinfo($filename)) {
+/*
         $result['bitrate']  = $info['bitrate'];
         $result['samplingrate'] = $info['samplingrate'];
         $result['channels'] = $info['channels'];
         $result['duration'] = $info['duration'];
+*/
       }
       return $result;
     }
@@ -374,6 +379,8 @@ class tmediaparser extends tevents {
   }
   
   private function getaudioinfo($filename) {
+return false;
+/*
     if (!class_exists('getID3')) return false;
     $realfile = litepublisher::$paths->files . str_replace('/', DIRECTORY_SEPARATOR, $filename);
     
@@ -395,6 +402,7 @@ class tmediaparser extends tevents {
     //$result['tags']            = @$info['tags'];
     //$result['comments']        = @$info['comments'];
     return $result;
+*/
   }
   
   public function getvideopreview($filename) {

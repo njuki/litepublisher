@@ -17,7 +17,7 @@ function tpasswordpageInstall($self) {
   <label for="password-password"><strong>$lang.password</strong></label></p>
   
   <p><input type="checkbox" name="remember" id="checkbox-remember" $remember />
-  <label for="checkbox-remember"><strong>$lang.remember</strong></label></p>]
+  <label for="checkbox-remember"><strong>$lang.remember</strong></label></p>
   
   <p>
   <input type="hidden" name="antispam" id="hidden-antispam" value="$antispam" />
@@ -25,7 +25,7 @@ function tpasswordpageInstall($self) {
   </p>
   </form>';
   
-  $self->form =ttheme::i()->parse($form);
+  $self->data['form'] =ttheme::i()->parse($form);
   $self->data['title'] = $lang->reqpassword;
   $self->data['invalidpassword'] = $lang->invalidpassword;
   $self->save();
