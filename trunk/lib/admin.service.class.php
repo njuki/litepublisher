@@ -293,12 +293,13 @@ class tadminservice extends tadminmenu {
   private function sendfile(&$content, $filename) {
     //@file_put_contents(litepublisher::$domain . ".zip", $content);
     if ($filename == '') $filename = str_replace('.', '-', litepublisher::$domain) . date('-Y-m-d') . '.zip';
+    if (ob_get_level()) ob_end_clean ();
     header('HTTP/1.1 200 OK', true, 200);
     header('Content-type: application/octet-stream');
     header('Content-Disposition: attachment; filename=' . $filename);
     header('Content-Length: ' .strlen($content));
     header('Last-Modified: ' . date('r'));
-    
+
     echo $content;
     exit();
   }
