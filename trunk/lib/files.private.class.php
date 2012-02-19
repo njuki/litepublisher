@@ -57,24 +57,28 @@ exit();
 
   if (!isset($_SERVER['HTTP_RANGE'])) {
     header('HTTP/1.1 200 OK', true, 200);
-self::send($item, 0, $item['size']);
+self::send($item, 0, $item['size'] - 1);
 } else {
-    $range = $_SERVER['HTTP_RANGE'];
-    $range = str_replace('bytes=', '', $range);
-    $range = str_replace('-', '', $range);
+    list($unit, $ranges) = explode('=', $_SERVER['HTTP_RANGE'], 2);
+            list($range, $extra) = explode(',', $ranges, 2);
+list($from, $end) = explode('-', $range, 2);
+
+    $end= empty($end) ? $item['size'] - 1 : min(abs(intval($end)),$item['size'] - 1);
+    $from = empty($from) || ($end < abs(intval($from))) ? 0 : max(abs(intval($from)),0);
+
     header('HTTP/1.1 206 Partial Content', true, 206);
-self::send($item,
+        header("Content-Range: bytes $from-$end/" .$item['size']);
+self::send($item, $from, $end);
 }
 }
 
-public function send(array $item, $from, $size) {
+private function send(array $item, $from, $end) {
 $filename = basename($item['filename']);
 $realfile = litepublisher::$paths->files . '/files/private/' . $filename;
 
   header('Content-type: ' . $item['mime']);
   header('Content-Disposition: attachment; filename=' . $filename);
-        header('Content-Range: bytes '.$seek_start.'-'.$seek_end.'/'.$size);
-  header('Content-Length: ' . $item['size']);
+  header('Content-Length: ' . $end - $from + 1);
   header('Accept-Ranges: bytes');
         header('Etag: ' . $item['hash']);
   header('Last-Modified: ' . date('r', strtotime($item['posted'])));
@@ -82,9 +86,11 @@ $realfile = litepublisher::$paths->files . '/files/private/' . $filename;
     $fh = fopen($realfile, 'rb');
     fseek($fh, $from);
 $bufsize = 1024 * 16;
-    while(!feof($fh)) {
+    while(!feof($fh) && ($from < $end)) {
         set_time_limit(1);
-        echo fread($fh, $bufsize);
+$s = fread($fh, min($bufsize, $end - $from));
+$from += strlen($s);
+        echo $s;
         flush();
         //ob_flush();
     }
