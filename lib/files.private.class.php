@@ -47,24 +47,50 @@ return $result;
 }
 
 public static function sendfile(array $item) {
-$filename = basename($item['filename']);
-$realfile = litepublisher::$paths->files . '/files/private/' . $filename;
+    if (ob_get_level()) ob_end_clean ();
+		if (isset($_SERVER['HTTP_IF_NONE_MATCH']))
+if ($item['hash'] == $_SERVER['HTTP_IF_NONE_MATCH']) {
+header('HTTP/1.1 304 Not Modified', true, 304);
+exit();
+}
+}
+
   if (!isset($_SERVER['HTTP_RANGE'])) {
     header('HTTP/1.1 200 OK', true, 200);
-  header('Content-type: ' . $item['mime']);
-  header('Content-Disposition: attachment; filename=' . $filename);
-  header('Content-Length: ' . $item['size']);
-  header('Accept-Ranges: bytes');
-
-  header('Last-Modified: ' . date('r'));
+self::send($item, 0, $item['size']);
 } else {
     $range = $_SERVER['HTTP_RANGE'];
     $range = str_replace('bytes=', '', $range);
     $range = str_replace('-', '', $range);
-
     header('HTTP/1.1 206 Partial Content', true, 206);
-
+self::send($item,
 }
+}
+
+public function send(array $item, $from, $size) {
+$filename = basename($item['filename']);
+$realfile = litepublisher::$paths->files . '/files/private/' . $filename;
+
+  header('Content-type: ' . $item['mime']);
+  header('Content-Disposition: attachment; filename=' . $filename);
+        header('Content-Range: bytes '.$seek_start.'-'.$seek_end.'/'.$size);
+  header('Content-Length: ' . $item['size']);
+  header('Accept-Ranges: bytes');
+        header('Etag: ' . $item['hash']);
+  header('Last-Modified: ' . date('r', strtotime($item['posted'])));
+
+    $fh = fopen($realfile, 'rb');
+    fseek($fh, $from);
+$bufsize = 1024 * 16;
+    while(!feof($fh)) {
+        set_time_limit(1);
+        echo fread($fh, $bufsize);
+        flush();
+        //ob_flush();
+    }
+    fclose($fh);
+
+exit();
 }
 
 }//class
