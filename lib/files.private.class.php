@@ -6,7 +6,7 @@
 * and GPL (gpl.txt) licenses.
 **/
 
-class tprivatefiles extends titems {
+class tprivatefiles extends tevents {
 public $id;
 public $item;
 
@@ -15,10 +15,8 @@ public $item;
   }
   
   protected function create() {
-    $this->dbversion = dbversion;
     parent::create();
     $this->basename = 'files.private';
-    $this->addevents('changed', 'edited', 'ongetfilelist');
   }
 
 public function __get($name) {
@@ -44,9 +42,29 @@ $this->item = $item;
 
 $perm = tperm::i($item['idperm']);
 $result = $perm->getheader($this);
-
-
-
+$result .= sprintf('<?php %s::sendfile(%s); ?>', get_class($this), var_export($item, true));
+return $result;
 }
 
-//class
+public static function sendfile(array $item) {
+$filename = basename($item['filename']);
+$realfile = litepublisher::$paths->files . '/files/private/' . $filename;
+  if (!isset($_SERVER['HTTP_RANGE'])) {
+    header('HTTP/1.1 200 OK', true, 200);
+  header('Content-type: ' . $item['mime']);
+  header('Content-Disposition: attachment; filename=' . $filename);
+  header('Content-Length: ' . $item['size']);
+  header('Accept-Ranges: bytes');
+
+  header('Last-Modified: ' . date('r'));
+} else {
+    $range = $_SERVER['HTTP_RANGE'];
+    $range = str_replace('bytes=', '', $range);
+    $range = str_replace('-', '', $range);
+
+    header('HTTP/1.1 206 Partial Content', true, 206);
+
+}
+}
+
+}//class

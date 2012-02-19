@@ -26,5 +26,3 @@ function tfilesUninstall($self) {
   tposts::unsub($self);
   tposts::unsub($self->itemsposts);
 }
-
-?>
