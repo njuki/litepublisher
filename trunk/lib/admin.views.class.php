@@ -304,16 +304,18 @@ class tadminviews extends tadminmenu {
       
       case 'headers':
       $tabs = new tuitabs();
-      $template = ttemplate::i();
-      $args->heads = $template->heads;
+      $args->heads = ttemplate::i()->heads;
       $tabs->add($lang->headstitle, '[editor=heads]');
       
-      $adminmenus = tadminmenus::i();
-      $args->adminheads = $adminmenus->heads;
+      $args->adminheads = tadminmenus::i()->heads;
+      $tabs->add($lang->admin, '[editor=adminheads]');
+
       $ajax = tajaxposteditor ::i();
       $args->ajaxvisual=  $ajax->ajaxvisual;
       $args->visual= $ajax->visual;
-      $tabs->add($lang->admin, '[checkbox=ajaxvisual] [text=visual] [editor=adminheads]');
+      $args->show_file_perm = litepublisher::$options->show_file_perm;
+      $tabs->add($lang->posteditor, '[checkbox=show_file_perm] [checkbox=ajaxvisual] [text=visual]');
+
       $args->formtitle = $lang->headstitle;
       $result = $html->adminform($tabs->get(), $args);
       break;
@@ -461,6 +463,8 @@ class tadminviews extends tadminmenu {
       $ajax->ajaxvisual = isset($_POST['ajaxvisual']);
       $ajax->visual = trim($_POST['visual']);
       $ajax->save();
+
+litepublisher::$options->show_file_perm = isset($_POST['show_file_perm']);
       break;
       
       case 'admin':

@@ -192,7 +192,12 @@ class tajaxposteditor  extends tevents {
       case 'files':
       $args = targs::i();
       $args->ajax = tadminhtml::getadminlink('/admin/ajaxposteditor.htm', "id=$post->id&get");
-      $files = tfiles::i();
+      $files = $post->factory->files;
+if (litepublisher::$options->show_file_perm) {
+$args->fileperm = tadminperms::getcombo(0, 'idperm_upload');
+} else {
+$args->fileperm = '';
+}
       if (count($post->files) == 0) {
         $args->currentfiles = '<ul></ul>';
       } else {
@@ -273,9 +278,13 @@ class tajaxposteditor  extends tevents {
       if (!isset($_FILES['Filedata']) || !is_uploaded_file($_FILES['Filedata']['tmp_name']) ||
       $_FILES['Filedata']['error'] != 0) return self::error403();
       if ($this->isauthor && ($r = tauthor_rights::i()->canupload())) return $r;
-      
+
       $parser = tmediaparser::i();
       $id = $parser->uploadfile($_FILES['Filedata']['name'], $_FILES['Filedata']['tmp_name'], '', '', '', false);
+if (isset($_POST['idperm'])) {
+$idperm = (int) $_POST['idperm'];
+if ($idperm > 0) tprivatefiles::i()->setperm($id, (int) $_POST['idperm']);
+}
       $templates = $this->getfiletemplates('uploaded-$id', 'new-post-$post.id', 'newfile-$id');
       $files = tfiles::i();
       $result = $files->getlist(array($id), $templates);
