@@ -63,6 +63,8 @@ $perm = tperm::i($item['idperm']);
 $result = $perm->getheader($this);
 $result .= sprintf('<?php %s::sendfile(%s); ?>', get_class($this), var_export($item, true));
 //die(htmlspecialchars($result));
+//echo "<pre>";
+tfiler::log(var_export(apache_request_headers(), true));
 return $result;
 }
 
@@ -97,22 +99,22 @@ $filename = basename($item['filename']);
 $realfile = litepublisher::$paths->files . 'private' . DIRECTORY_SEPARATOR. $filename;
 
   header('Content-type: ' . $item['mime']);
-  header('Content-Disposition: attachment; filename=' . $filename);
-  header('Content-Length: ' . $end - $from + 1);
-  header('Accept-Ranges: bytes');
-        header('Etag: ' . $item['hash']);
+if ('application/octet-stream' == $item['mime']) header('Content-Disposition: attachment; filename=' . $filename);
   header('Last-Modified: ' . date('r', strtotime($item['posted'])));
+        header(sprintf('ETag: "%s"', $item['hash']));
+  header('Accept-Ranges: bytes');
+  header('Content-Length: ' . ($end - $from + 1));
 
 if ($fh = fopen($realfile, 'rb')) {
     fseek($fh, $from);
 $bufsize = 1024 * 16;
     while(!feof($fh) && ($from <= $end)) {
         set_time_limit(1);
-$s = fread($fh, min($bufsize, $end - $from));
+$s = fread($fh, min($bufsize, $end - $from + 1));
 $from += strlen($s);
         echo $s;
-        flush();
-        //ob_flush();
+       flush();
+        //@ob_flush();
     }
     fclose($fh);
 }
