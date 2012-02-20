@@ -8,7 +8,9 @@
 function fileDialogComplete(numFilesSelected, numFilesQueued) {
 $('#progressbar').progressbar({value: 0});
   var url = ltoptions.uploadurl == undefined ? ltoptions.url: ltoptions.uploadurl;
-  ltoptions.swfu .setUploadURL(url + "/admin/ajaxposteditor.htm?get=upload&id=" + ltoptions.idpost + '&random=' + Math.random());
+this.setUploadURL(url + "/admin/ajaxposteditor.htm?get=upload&id=" + ltoptions.idpost + '&random=' + Math.random());
+var perm = $("#combo-idperm_upload");
+if (perm.length) this.addPostParam("idperm", perm.val());
   this.startUpload();
 }
 

@@ -27,10 +27,11 @@ return parent::__get($name);
 public function setperm($id, $idperm) {
 $files = tfiles::i();
 $item = $files->getitem($id);
+dumpvar($item);
 if ($idperm == $item['idperm']) return;
 $files->setvalue($id, 'idperm', $idperm);
 $filename = basename($item['filename']);
-$path = litepublisher::$paths->files . 'files' .DIRECTORY_SEPARATOR;
+$path = litepublisher::$paths->files;
 if ($idperm) {
 rename($path . $item['filename'], $path . 'private/' . $filename);
 litepublisher::$urlmap->add('/files/' . $item['filename'], get_class($this), $id);
@@ -61,12 +62,13 @@ $this->item = $item;
 $perm = tperm::i($item['idperm']);
 $result = $perm->getheader($this);
 $result .= sprintf('<?php %s::sendfile(%s); ?>', get_class($this), var_export($item, true));
+//die(htmlspecialchars($result));
 return $result;
 }
 
 public static function sendfile(array $item) {
     if (ob_get_level()) ob_end_clean ();
-		if (isset($_SERVER['HTTP_IF_NONE_MATCH']))
+		if (isset($_SERVER['HTTP_IF_NONE_MATCH'])) {
 if ($item['hash'] == $_SERVER['HTTP_IF_NONE_MATCH']) {
 header('HTTP/1.1 304 Not Modified', true, 304);
 exit();
@@ -90,9 +92,9 @@ self::send($item, $from, $end);
 }
 }
 
-private function send(array $item, $from, $end) {
+private static function send(array $item, $from, $end) {
 $filename = basename($item['filename']);
-$realfile = litepublisher::$paths->files . '/files/private/' . $filename;
+$realfile = litepublisher::$paths->files . 'private' . DIRECTORY_SEPARATOR. $filename;
 
   header('Content-type: ' . $item['mime']);
   header('Content-Disposition: attachment; filename=' . $filename);
@@ -101,10 +103,10 @@ $realfile = litepublisher::$paths->files . '/files/private/' . $filename;
         header('Etag: ' . $item['hash']);
   header('Last-Modified: ' . date('r', strtotime($item['posted'])));
 
-    $fh = fopen($realfile, 'rb');
+if ($fh = fopen($realfile, 'rb')) {
     fseek($fh, $from);
 $bufsize = 1024 * 16;
-    while(!feof($fh) && ($from < $end)) {
+    while(!feof($fh) && ($from <= $end)) {
         set_time_limit(1);
 $s = fread($fh, min($bufsize, $end - $from));
 $from += strlen($s);
@@ -113,6 +115,7 @@ $from += strlen($s);
         //ob_flush();
     }
     fclose($fh);
+}
 
 exit();
 }

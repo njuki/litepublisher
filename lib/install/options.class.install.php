@@ -78,6 +78,7 @@ function installoptions($language) {
   $options->reguser = false;
   $options->icondisabled = false;
   $options->crontime = time();
+$options->show_file_perm = false;
   $options->unlock();
   return $password;
 }

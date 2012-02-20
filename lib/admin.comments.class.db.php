@@ -156,16 +156,15 @@ class tadminmoderator extends tadmincommoncomments {
     $html = $this->html;
     $result .= sprintf($html->h4->listhead, $from, $from + count($list), $total);
     $table = $this->createtable();
-    
     $args = targs::i();
     $args->adminurl = $this->adminurl;
-    $comment = new tcomment(null);
+    $comment = new tcomment(0);
     ttheme::$vars['comment'] = $comment;
     $body = '';
     foreach ($list as $id) {
       $comment->id = $id;
       $args->id = $id;
-      $args->excerpt = tcontentfilter::getexcerpt($comment->content, 120);
+      $args->excerpt = tadminhtml::specchars(tcontentfilter::getexcerpt($comment->content, 120));
       $args->onhold = $comment->status == 'hold';
       $args->email = $comment->email == '' ? '' : "<a href='mailto:$comment->email'>$comment->email</a>";
       $args->website =$comment->website == '' ? '' : "<a href='$comment->website'>$comment->website</a>";

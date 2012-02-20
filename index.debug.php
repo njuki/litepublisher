@@ -95,7 +95,7 @@ if (dbversion) litepublisher::$db = new tdatabase();
 tlocal::clearcache();
 //require('lib/update/update.4.81.php');
 //tjsmerger::i()->onupdated();
-//tupdater::i()->run(5.12);
+//tupdater::i()->run(5.13);
 //litepublisher::$classes->delete('tcategoriesmenu');
 //litepublisher::$classes->add('tajaxmenueditor', 'admin.menu.ajax.class.php');
 //tfiler::log(var_export($_SERVER, true));

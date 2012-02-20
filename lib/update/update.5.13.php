@@ -1,6 +1,9 @@
 <?php
 
 function update513() {
+litepublisher::$options->show_file_perm = false;
+litepublisher::$classes->add('tprivatefiles', 'files.private.class.php');
+
 $p = tpasswordpage::i();
 $p->form = str_replace(']', '', $p->form);
 $p->save();
@@ -18,13 +21,12 @@ $man->alter($files->table, "add   `idperm` int unsigned NOT NULL default '0' aft
 foreach ($files->items as &$item) {
 $item['idperm'] = 0;
 unset($item['bitrate']);
-unset($item['framerate'];
-unset($item['samplingrate'];
-unset($item['channels'];
-unset($item['duration'];
+unset($item['framerate']);
+unset($item['samplingrate']);
+unset($item['channels']);
+unset($item['duration']);
 }
 $files->save();
 }
 
-litepublisher::$classes->add('tprivatefiles', 'files.private.class.php');
 }
