@@ -29,4 +29,11 @@ unset($item['duration']);
 $files->save();
 }
 
+if (dbversion) {
+if ($id = litepublisher::$urlmap->urlexists('/admin/login/')) 
+litepublisher::$urlmap->db->setvalue($id, 'type', 'get');
+} else {
+litepublisher::$urlmap->items['/admin/login/']['type'] = 'get';
+litepublisher::$urlmap->save();
+}
 }

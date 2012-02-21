@@ -9,7 +9,7 @@
 function tadminloginInstall($self) {
   $urlmap = turlmap::i();
   $urlmap->lock();
-  $urlmap->add('/admin/login/', get_class($self), null, 'normal');
+  $urlmap->addget('/admin/login/', get_class($self));
   $urlmap->add('/admin/logout/', get_class($self), 'out', 'normal');
   $urlmap->unlock();
 }
@@ -17,5 +17,3 @@ function tadminloginInstall($self) {
 function tadminloginUninstall($self) {
   turlmap::unsub($self);
 }
-
-?>
