@@ -110,13 +110,15 @@ class tmediaparser extends tevents {
   }
   
   public static function getunique($dir, $filename) {
-    if  (!@file_exists($dir . $filename)) return $filename;
+$files = tfiles::i();
+$subdir = basename(rtrim($dir, '/' .DIRECTORY_SEPARATOR)) . '/';
+    if  (!$files->exists($subdir . $filename) && !@file_exists($dir . $filename)) return $filename;
     $parts = pathinfo($filename);
     $base = $parts['filename'];
     $ext = empty($parts['extension']) ? '' : ".$parts[extension]";
     for ($i = 2; $i < 10000; $i++) {
       $filename = "$base$i$ext";
-      if  (!file_exists($dir . $filename)) return $filename;
+      if  (!$files->exists($subdir . $filename) && !file_exists($dir . $filename)) return $filename;
     }
     return $filename;
   }
