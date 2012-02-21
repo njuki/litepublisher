@@ -105,7 +105,13 @@ $item['filename'], $item['title'], $icon . $item['description']);
     $this->itemsposts->deleteitem($id);
     $this->itemsposts->updateposts($list, 'files');
     $item = $this->getitem($id);
+if ($item['idperm'] == 0) {
     @unlink(litepublisher::$paths->files . str_replace('/', DIRECTORY_SEPARATOR, $item['filename']));
+} else {
+    @unlink(litepublisher::$paths->files . 'private' . DIRECTORY_SEPARATOR . basename($item['filename']));
+litepublisher::$urlmap->delete('/files/' . $item['filename']);
+}
+
     $this->lock();
     parent::delete($id);
     if ($item['preview'] > 0) $this->delete($item['preview']);

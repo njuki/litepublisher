@@ -135,7 +135,9 @@ public function save() { return true; }
     $auth = tauthdigest::i();
     if (litepublisher::$options->cookieenabled) {
       if ($s = $auth->checkattack()) return $s;
-      if (!litepublisher::$options->authcookie()) return litepublisher::$urlmap->redir301('/admin/login/');
+      if (!litepublisher::$options->authcookie()) {
+return litepublisher::$urlmap->redir301('/admin/login/' . litepublisher::$site->q . 'backurl=' . urlencode(litepublisher::$urlmap->url));
+}
     }
     elseif (!$auth->Auth())  return $auth->headers();
     
