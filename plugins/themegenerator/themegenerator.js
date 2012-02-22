@@ -96,6 +96,11 @@ name : type? "headerurl" : "logourl",
 }
 
 function set_color(name, value) {
+if (name == "themename") {
+$("#text-themename").val($value);
+return;
+}
+
 var input = 		$("#text-color-" + name);
 if (input.length == 0) return;
 //alert(name + '=' + value);

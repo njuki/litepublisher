@@ -2472,7 +2472,8 @@ class tfiles extends titems {
     if (($item['icon'] != 0) && ($item['media'] != 'icon')) {
       $icon = $this->geticon($item['icon']);
     }
-    return sprintf('<a href="%1$s" title="%2$s">%3$s</a>', litepublisher::$site->files. $item['filename'], $item['title'], $icon . $item['description']);
+    return sprintf('<a href="%1$s/files/%2$s" title="%3$s">%4$s</a>', litepublisher::$site->files,
+    $item['filename'], $item['title'], $icon . $item['description']);
   }
   
   public function geticon($id) {
@@ -2534,7 +2535,13 @@ class tfiles extends titems {
     $this->itemsposts->deleteitem($id);
     $this->itemsposts->updateposts($list, 'files');
     $item = $this->getitem($id);
-    @unlink(litepublisher::$paths->files . str_replace('/', DIRECTORY_SEPARATOR, $item['filename']));
+    if ($item['idperm'] == 0) {
+      @unlink(litepublisher::$paths->files . str_replace('/', DIRECTORY_SEPARATOR, $item['filename']));
+    } else {
+      @unlink(litepublisher::$paths->files . 'private' . DIRECTORY_SEPARATOR . basename($item['filename']));
+      litepublisher::$urlmap->delete('/files/' . $item['filename']);
+    }
+    
     $this->lock();
     parent::delete($id);
     if ($item['preview'] > 0) $this->delete($item['preview']);

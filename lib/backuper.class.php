@@ -618,28 +618,28 @@ class tbackuper extends tevents {
       //$this->__filer = $filer;
       return $result;
     }
-
-public function getfilename($ext) {
-$filename = litepublisher::$paths->backup . litepublisher::$domain . date('-Y-m-d');
-$result = $filename . $ext;
-$i = 2;
-while (file_exists($result) && ($i < 100)) {
-$result = $filename  . '_' . $i++ . $ext;
-}
-return $result;
-}
-
-        private function _savebackup($s) {
+    
+    public function getfilename($ext) {
+      $filename = litepublisher::$paths->backup . litepublisher::$domain . date('-Y-m-d');
+      $result = $filename . $ext;
+      $i = 2;
+      while (file_exists($result) && ($i < 100)) {
+        $result = $filename  . '_' . $i++ . $ext;
+      }
+      return $result;
+    }
+    
+    private function _savebackup($s) {
       $filename = $this->getfilename($this->archtype == 'zip' ? '.zip' : '.tar.gz');
       file_put_contents($filename, $s);
       @chmod($filename, 0666);
       return $filename;
     }
-
-public function getshellfilename() {
-$filename = $this->getfilename('.tar.gz');
-return substr(substr($filename, 0, strlen($filename) - strlen('.tar.gz')), strrpos($filename, DIRECTORY_SEPARATOR) + 1);
-}
+    
+    public function getshellfilename() {
+      $filename = $this->getfilename('.tar.gz');
+      return substr(substr($filename, 0, strlen($filename) - strlen('.tar.gz')), strrpos($filename, DIRECTORY_SEPARATOR) + 1);
+    }
     
     public function createshellbackup(){
       $dbconfig = litepublisher::$options->dbconfig;

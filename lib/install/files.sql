@@ -4,7 +4,7 @@
   `preview` int(10) unsigned NOT NULL default '0',
   `icon` int(10) unsigned NOT NULL default '0',
   `author` int(10) unsigned NOT NULL default '0',
-`idperm` int unsigned NOT NULL default '0' after author");
+`idperm` int unsigned NOT NULL default '0',
   `height` int(10) unsigned NOT NULL default '0',
   `width` int(10) unsigned NOT NULL default '0',
   `size` int(10) unsigned NOT NULL default '0',

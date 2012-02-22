@@ -309,13 +309,13 @@ class tadminviews extends tadminmenu {
       
       $args->adminheads = tadminmenus::i()->heads;
       $tabs->add($lang->admin, '[editor=adminheads]');
-
+      
       $ajax = tajaxposteditor ::i();
       $args->ajaxvisual=  $ajax->ajaxvisual;
       $args->visual= $ajax->visual;
       $args->show_file_perm = litepublisher::$options->show_file_perm;
       $tabs->add($lang->posteditor, '[checkbox=show_file_perm] [checkbox=ajaxvisual] [text=visual]');
-
+      
       $args->formtitle = $lang->headstitle;
       $result = $html->adminform($tabs->get(), $args);
       break;
@@ -463,8 +463,8 @@ class tadminviews extends tadminmenu {
       $ajax->ajaxvisual = isset($_POST['ajaxvisual']);
       $ajax->visual = trim($_POST['visual']);
       $ajax->save();
-
-litepublisher::$options->show_file_perm = isset($_POST['show_file_perm']);
+      
+      litepublisher::$options->show_file_perm = isset($_POST['show_file_perm']);
       break;
       
       case 'admin':
