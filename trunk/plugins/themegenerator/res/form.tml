@@ -39,6 +39,8 @@ $sidebar
 $sidebarbackground
 $footer
 $footerbackground
+<p><input type="text" name="themename" id="text-themename" value="" size="22" />
+<label for="text-themename"><strong>$lang.themename</strong></label></p>
 
 <p>
 <input type="hidden" name="formtype" value="colors" />

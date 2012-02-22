@@ -19,12 +19,12 @@ class tadminfiles extends tadminmenu {
     if (!isset($_GET['action'])) {
       $args = targs::i();
       $args->adminurl = $this->url;
-$args->perm = litepublisher::$options->show_file_perm ?  tadminperms::getcombo(0, 'idperm') : '';
-$args->add(array(
-'title' => '',
-'description' => '',
-'keywords' => ''
-));
+      $args->perm = litepublisher::$options->show_file_perm ?  tadminperms::getcombo(0, 'idperm') : '';
+      $args->add(array(
+      'title' => '',
+      'description' => '',
+      'keywords' => ''
+      ));
       $result .= $html->uploadform($args);
     } else {
       $id = $this->idget();
@@ -49,12 +49,12 @@ $args->add(array(
         
         case 'edit':
         $args = targs::i();
-$item = $files->getitem($id);
+        $item = $files->getitem($id);
         $args->add($item);
-$args->formtitle = $this->lang->editfile;
+        $args->formtitle = $this->lang->editfile;
         $result .= $html->adminform('[text=title] [text=description] [text=keywords]' .
-(litepublisher::$options->show_file_perm ?  tadminperms::getcombo($item['idperm'], 'idperm') : ''),
-$args);
+        (litepublisher::$options->show_file_perm ?  tadminperms::getcombo($item['idperm'], 'idperm') : ''),
+        $args);
         break;
       }
     }
@@ -132,14 +132,14 @@ $args);
         $parser = tmediaparser::i();
         $id = $parser->upload($filename, $content, $_POST['title'], $_POST['description'], $_POST['keywords'], $overwrite);
       }
-
-if (isset($_POST['idperm'])) tprivatefiles::i()->setperm($id, (int) $_POST['idperm']);
+      
+      if (isset($_POST['idperm'])) tprivatefiles::i()->setperm($id, (int) $_POST['idperm']);
       return $this->html->h4->success;
     } elseif ($_GET['action'] == 'edit') {
       $id = $this->idget();
       if (!$files->itemexists($id))  return $this->notfound;
       $files->edit($id, $_POST['title'], $_POST['description'], $_POST['keywords']);
-if (isset($_POST['idperm'])) tprivatefiles::i()->setperm($id, (int) $_POST['idperm']);
+      if (isset($_POST['idperm'])) tprivatefiles::i()->setperm($id, (int) $_POST['idperm']);
       return $this->html->h4->edited;
     }
     

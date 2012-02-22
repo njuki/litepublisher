@@ -10,8 +10,9 @@ $template.head
 <body>
 <div id="wrapper">
 <div id="top"><a id="logo" href="$site.url/">$site.name</a><p>$site.description</p>$template.menu</div>
-<div id="main"><div id="content">$template.content</div></div>
-<div id="ls" class="sbar">$template.sidebar</div>
+<div id="main"><div id="content"><div class="inner">$template.content</div></div>
+<div id="ls" class="sbar"><div class="inner">$template.sidebar</div></div>
+</div>
 <div id="btm">$template.footer</div>
 </div>
 </body>

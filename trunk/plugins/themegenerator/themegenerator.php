@@ -178,16 +178,17 @@ class tthemegenerator extends tmenu {
     }
     
     public function sendfile() {
-      $u = time();
-      $path = "themes/generator$u/";
+      $themename = isset($_POST['themename']) ? trim($_POST['themename']) : '';
+      if ($themename != '') $themename = tlinkgenerator::i()->filterfilename($themename);
+      if ($themename == '') $themename = time();
+      $path = "themes/generator-$themename/";
       
       require_once(litepublisher::$paths->libinclude . 'zip.lib.php');
       $zip = new zipfile();
       
-      //$themedir = litepublisher::$paths->themes . 'generator' . DIRECTORY_SEPARATOR;
       $themedir = dirname(__file__) . DIRECTORY_SEPARATOR . $this->type . DIRECTORY_SEPARATOR;
       $args = new targs();
-      $colors = "[themecolors]\n";
+      $colors = "[themecolors]\nthemename = \"$themename\"\n";
       foreach ($this->colors as $name => $value) {
         $colors .= "$name = \"$value\"\n";
         $args->$name = $value;
@@ -215,7 +216,7 @@ class tthemegenerator extends tmenu {
           break;
           
           case 'about.ini':
-          $content = str_replace('name = generator', "name = generator$u", $content);
+          $content = str_replace('name = generator', "name = generator-$themename", $content);
           break;
         }
         
@@ -227,7 +228,7 @@ class tthemegenerator extends tmenu {
       if (ob_get_level()) @ob_end_clean ();
       header('HTTP/1.1 200 OK', true, 200);
       header('Content-type: application/octet-stream');
-      header('Content-Disposition: attachment; filename=generator.theme.' . $u . '.zip');
+      header('Content-Disposition: attachment; filename=generator.theme.' . $themename . '.zip');
       header('Content-Length: ' .strlen($result));
       header('Last-Modified: ' . date('r'));
       Header( 'Cache-Control: no-cache, must-revalidate');

@@ -117,6 +117,8 @@ $excerpt = [
 </div>]]
 
 content.excerpts.excerpt.filelist = [<span class="image" id="files-$post.id">
+$images= [$image = [<span class="image"><a title="$title" rel="prettyPhoto[gallery-$post.id]" href="$link">$preview</a></span>]
+$preview = [<img class="photo" src="$preview.link" alt="$title" title="$description" />]]
 $files = [<!---->]
 $audios = [<!---->]
 $videos = [<!---->]
