@@ -153,7 +153,6 @@ class tjsmerger extends tfilemerger {
     sprintf('lang.%s = %s;', $section, json_encode($lang)));
   }
   
-  
   public function onupdated() {
     $this->save();
   }
