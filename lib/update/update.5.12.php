@@ -78,13 +78,13 @@ $man->alter('categories', "add   `idperm` int unsigned NOT NULL default '0' afte
 
 $u = tusers::i();
 $dir = litepublisher::$paths->lib . 'install' . DIRECTORY_SEPARATOR;
-    $man->CreateTable($u->grouptable, file_get_contents($dir .'usersgroups.sql'));
+    $man->CreateTable('usergroup', file_get_contents($dir .'usersgroups.sql'));
 $man->alter($u->table, "add `idgroups` text NOT NULL");
 
 $items = $u->db->res2assoc($u->db->query("select id, gid from $u->thistable"));
 foreach ($items as $item) {
 $u->db->setvalue($item['id'], 'idgroups', $item['gid']);
-$u->getdb($u->grouptable)->add(array(
+$u->getdb('usergroup')->add(array(
 'iduser' => $item['id'],
 'idgroup' => $item['gid']
 ));
