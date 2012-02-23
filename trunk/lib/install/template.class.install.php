@@ -16,10 +16,9 @@ function ttemplateInstall($self) {
   <meta name="generator" content="Lite Publisher $site.version" /> <!-- leave this for stats -->
   <meta name="keywords" content="$template.keywords" />
   <meta name="description" content="$template.description" />
-  <link rel="sitemap" href="$site.url/sitemap.htm" />
-  <link type="text/css" href="$site.files/js/prettyphoto/css/prettyPhoto.css" rel="stylesheet" />';
-  
-  //footer
+  <link rel="sitemap" href="$site.url/sitemap.htm" />';
+
+    //footer
   $html = tadminhtml::i();
   $html->section = 'installation';
   $lang = tlocal::i('installation');

@@ -22,13 +22,13 @@ class tcssmerger extends tfilemerger {
     $url = realpath($url);
     $url = substr($url, strlen(litepublisher::$paths->home));
     $url = str_replace(DIRECTORY_SEPARATOR, '/', $url);
-    return sprintf(' url(%s)', litepublisher::$site->files . $url);
+    return sprintf(' url(%s/%s)', litepublisher::$site->files, ltrim($url, '/'));
   }
   
   public function readfile($filename) {
     if ($result = parent::readfile($filename)) {
       chdir(dirname($filename));
-      $result = preg_replace_callback('/\surl\s*\(\s*[\'"]?(.*?)[\'"]?\s*\)/i',
+      $result = preg_replace_callback('/\s*url\s*\(\s*[\'"]?(.*?)[\'"]?\s*\)/i',
       array($this, 'replaceurl'), $result);
       return $result;
     }
