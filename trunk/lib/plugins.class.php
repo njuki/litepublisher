@@ -79,19 +79,25 @@ class tplugins extends TItems {
     $item = $this->items[$name];
     unset($this->items[$name]);
     $this->save();
-    
+
+$datafile = false;    
     if (class_exists($item['class'])) {
       $plugin = getinstance($item['class']);
       if ($plugin instanceof tplugin) {
-        @unlink(litepublisher::$paths->data. $plugin->getbasename() . '.php');
-        @unlink(litepublisher::$paths->data . $plugin->getbasename() . 'bak..php');
+$datafile = litepublisher::$paths->data. $plugin->getbasename();
       }
     }
     
     litepublisher::$classes->lock();
-    litepublisher::$classes->delete($item['class']);
     if (!empty($item['adminclass'])) litepublisher::$classes->delete($item['adminclass']);
+    litepublisher::$classes->delete($item['class']);
     litepublisher::$classes->unlock();
+
+if ($datafile) {
+@unlink($datafile . '.php');
+@unlink($datafile . '.bak.php');
+}
+
     $this->deleted($name);
   }
   

@@ -22,7 +22,6 @@ class tcssmerger extends tfilemerger {
     $url = realpath($url);
     $url = substr($url, strlen(litepublisher::$paths->home));
     $url = str_replace(DIRECTORY_SEPARATOR, '/', $url);
-    echo $url;
     return sprintf(' url(%s)', litepublisher::$site->files . $url);
   }
   
@@ -36,8 +35,27 @@ class tcssmerger extends tfilemerger {
   }
   
   public function getfilename($section, $revision) {
-    return sprintf('/files/css/%s.%s.css', $section, $revision);
+    return sprintf('/files/js/%s.%s.css', $section, $revision);
   }
   
-  
+  public function addstyle($filename) {
+    if (!($filename = $this->normfilename($filename))) return false;
+$template = ttemplate::i();
+if (strpos($template->head, $this->basename . '_default')) {
+$this->add('default', $filename);
+} else {
+$template->addtohead(sprintf('<link type="text/css" href="$site.files%s" rel="stylesheet" />', $filename));
+}
+}
+
+public function deletestyle($filename) {
+    if (!($filename = $this->normfilename($filename))) return false;
+$template = ttemplate::i();
+if (strpos($template->head, $this->basename . '_default')) {
+$this->deletefile('default', $filename);
+} else {
+$template->deletefromhead(sprintf('<link type="text/css" href="$site.files%s" rel="stylesheet" />', $filename));
+}
+}
+
 }//class

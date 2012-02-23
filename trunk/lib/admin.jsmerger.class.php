@@ -7,6 +7,7 @@
 **/
 
 class tadminjsmerger extends tadminmenu {
+
   public static function i($id = 0) {
     return self::iteminstance(__class__, $id);
   }
@@ -15,14 +16,18 @@ class tadminjsmerger extends tadminmenu {
     return parent::gethead() . tuitabs::gethead();
   }
   
+public function getmerger() {
+return tjsmerger::i();
+}
+
   public function getcontent() {
-    $jsmerger = tjsmerger::i();
+    $merger = $this->getmerger();
     $tabs = new tuitabs();
     $html = $this->html;
     $lang = tlocal::i('views');
     $args = targs::i();
-    $args->formtitle= $lang->jsmergertitle;
-    foreach ($jsmerger->items as $section => $items) {
+    $args->formtitle= $this->title;
+    foreach ($merger->items as $section => $items) {
       $tab = new tuitabs();
       $tab->add($lang->files, $html->getinput('editor',
       $section . '_files', tadminhtml::specchars(implode("\n", $items['files'])), $lang->files));
@@ -39,18 +44,18 @@ class tadminjsmerger extends tadminmenu {
   }
   
   public function processform() {
-    $jsmerger = tjsmerger::i();
-    $jsmerger->lock();
-    //$jsmerger->items = array();
-    //$jsmerger->install();
-    foreach (array_keys($jsmerger->items) as $section) {
-      $keys = array_keys($jsmerger->items[$section]['texts']);
-      $jsmerger->setfiles($section, $_POST[$section . '_files']);
+    $merger = $this->getmerger();
+    $merger->lock();
+    //$merger->items = array();
+    //$merger->install();
+    foreach (array_keys($merger->items) as $section) {
+      $keys = array_keys($merger->items[$section]['texts']);
+      $merger->setfiles($section, $_POST[$section . '_files']);
       foreach ($keys as $key) {
-        $jsmerger->addtext($section, $key, $_POST[$section . '_text_' . $key]);
+        $merger->addtext($section, $key, $_POST[$section . '_text_' . $key]);
       }
     }
-    $jsmerger->unlock();
+    $merger->unlock();
   }
   
 }//class

@@ -111,12 +111,8 @@ class tfilemerger extends titems {
   
   public function merge() {
     $home = rtrim(litepublisher::$paths->home, DIRECTORY_SEPARATOR);
-    /*
     $theme = ttheme::i();
     $template = ttemplate::i();
-    */
-    $theme = getinstance('ttheme');
-    $template = getinstance('ttemplate');
     
     foreach ($this->items as $section => $items) {
       $s = '';

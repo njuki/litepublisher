@@ -154,8 +154,27 @@ class tposts extends titems {
     }
     return 0;
   }
-  
-  private function beforechange($post) {
+
+public function getlinks($where, $tml) {
+$db = $this->db;
+$items = $db->res2assoc($db->query(
+    "select $this->thistable.id, $this->thistable.title, $db->urlmap.url as url  from $db->posts
+    left join  $db->urlmap on $db->urlmap.id  = $db->posts.idurl
+    where $db->posts.status = 'published' and $where"));
+
+if (count($items) == 0) return '';
+
+$result = '';
+$args = new targs();
+$theme = ttheme::i();
+foreach ($items as $item) {
+$args->add($item);
+$result .=$theme->parsearg($tml, $args);
+}
+return $result;
+}    
+
+    private function beforechange($post) {
     $post->title = trim($post->title);
     $post->modified = time();
     $post->data['revision'] = $this->revision;
