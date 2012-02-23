@@ -8,6 +8,7 @@
 
 function ttagreplacerInstall($self) {
   tthemeparser::i()->parsed = $self->themeparsed;
+  ttheme::clearcache();
 }
 
 function ttagreplacerUninstall($self) {

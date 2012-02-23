@@ -90,6 +90,8 @@ class tusergroups extends titems {
   }
   
   public function ingroup($iduser, $groupname) {
+    $iduser = (int) $iduser;
+    if ($iduser == 0) return false;
     $idgroup = $this->getidgroup($groupname);
     $item = tusers::i()->getitem($iduser);
     return in_array($idgroup, $item['idgroups']);

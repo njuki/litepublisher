@@ -495,10 +495,6 @@ class ttemplate extends tevents_storage {
     return $result;
   }
   
-  public function getcssfile() {
-    return sprintf('%s/files/css/%s.css', litepublisher::$site->files, $this->view->theme->name);
-  }
-  
   private function getltoptions() {
     return sprintf('<script type="text/javascript">var ltoptions = %s;</script>', json_encode($this->ltoptions));
   }

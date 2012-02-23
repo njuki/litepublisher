@@ -17,8 +17,8 @@ function ttemplateInstall($self) {
   <meta name="keywords" content="$template.keywords" />
   <meta name="description" content="$template.description" />
   <link rel="sitemap" href="$site.url/sitemap.htm" />';
-
-    //footer
+  
+  //footer
   $html = tadminhtml::i();
   $html->section = 'installation';
   $lang = tlocal::i('installation');

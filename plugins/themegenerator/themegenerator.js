@@ -97,7 +97,7 @@ name : type? "headerurl" : "logourl",
 
 function set_color(name, value) {
 if (name == "themename") {
-$("#text-themename").val($value);
+$("#text-themename").val(value);
 return;
 }
 
