@@ -7,7 +7,7 @@
 **/
 
 class tadminjsmerger extends tadminmenu {
-
+  
   public static function i($id = 0) {
     return self::iteminstance(__class__, $id);
   }
@@ -16,10 +16,10 @@ class tadminjsmerger extends tadminmenu {
     return parent::gethead() . tuitabs::gethead();
   }
   
-public function getmerger() {
-return tjsmerger::i();
-}
-
+  public function getmerger() {
+    return tjsmerger::i();
+  }
+  
   public function getcontent() {
     $merger = $this->getmerger();
     $tabs = new tuitabs();

@@ -16,8 +16,7 @@ class tpagenator3000 extends tplugin {
     if (strpos($theme->templates['content.navi'], 'paginator3000.min.js')) return;
     $url = litepublisher::$site->files . '/plugins/' . basename(dirname(__file__)) . '/';
     $about = tplugins::getabout(tplugins::getname(__file__));
-    $head = '<link type="text/css" href="' . $url . 'paginator3000.css" rel="stylesheet" />
-    <script type="text/javascript"><!--
+    $head = '<script type="text/javascript"><!--
     function init_paginator3000() {
       $.load_script("' . $url . 'paginator3000.min.js", function() {
         $(document).ready(function() {
@@ -58,6 +57,8 @@ class tpagenator3000 extends tplugin {
   }
   
   public function install() {
+    tcssmerger::i()->addstyle(dirname(__file__) . '/paginator3000.css');
+    
     $parser = tthemeparser::i();
     $parser->parsed = $this->themeparsed;
     ttheme::clearcache();
@@ -67,6 +68,8 @@ class tpagenator3000 extends tplugin {
     $parser = tthemeparser::i();
     $parser->unbind($this);
     ttheme::clearcache();
+    
+    tcssmerger::i()->deletestyle(dirname(__file__) . '/paginator3000.css');
   }
   
 }//class

@@ -40,22 +40,22 @@ class tcssmerger extends tfilemerger {
   
   public function addstyle($filename) {
     if (!($filename = $this->normfilename($filename))) return false;
-$template = ttemplate::i();
-if (strpos($template->head, $this->basename . '_default')) {
-$this->add('default', $filename);
-} else {
-$template->addtohead(sprintf('<link type="text/css" href="$site.files%s" rel="stylesheet" />', $filename));
-}
-}
-
-public function deletestyle($filename) {
+    $template = ttemplate::i();
+    if (strpos($template->heads, $this->basename . '_default')) {
+      $this->add('default', $filename);
+    } else {
+      $template->addtohead(sprintf('<link type="text/css" href="$site.files%s" rel="stylesheet" />', $filename));
+    }
+  }
+  
+  public function deletestyle($filename) {
     if (!($filename = $this->normfilename($filename))) return false;
-$template = ttemplate::i();
-if (strpos($template->head, $this->basename . '_default')) {
-$this->deletefile('default', $filename);
-} else {
-$template->deletefromhead(sprintf('<link type="text/css" href="$site.files%s" rel="stylesheet" />', $filename));
-}
-}
-
+    $template = ttemplate::i();
+    if (strpos($template->heads, $this->basename . '_default')) {
+      $this->deletefile('default', $filename);
+    } else {
+      $template->deletefromhead(sprintf('<link type="text/css" href="$site.files%s" rel="stylesheet" />', $filename));
+    }
+  }
+  
 }//class

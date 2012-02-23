@@ -7,6 +7,7 @@
 **/
 
 function tsinglecatInstall($self) {
+  if (!dbversion) die('Required database version');
   tthemeparser::i()->parsed = $self->themeparsed;
   ttheme::clearcache();
 }

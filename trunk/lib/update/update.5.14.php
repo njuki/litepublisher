@@ -15,4 +15,5 @@ $lang = tlocal::admin('views');
 'cssmerger', 'admin', 'tadmincssmerger');
 $menus->save();
 
+ttheme::clearcache();
 }

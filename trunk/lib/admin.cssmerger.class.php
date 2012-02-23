@@ -7,13 +7,13 @@
 **/
 
 class tadmincssmerger extends tadminjsmerger {
-
+  
   public static function i($id = 0) {
     return self::iteminstance(__class__, $id);
   }
   
-public function getmerger() {
-return tcssmerger::i();
-}
-
+  public function getmerger() {
+    return tcssmerger::i();
+  }
+  
 }//class
