@@ -126,7 +126,29 @@ class ttheme extends tevents {
   public function getsidebarscount() {
     return count($this->templates['sidebars']);
   }
-  
+
+
+private function  get_author() {
+$context = isset(litepublisher::$urlmap->context) ? litepublisher::$urlmap->context : ttemplate::i()->context;
+if (!is_object($context)) {
+if (!isset(self::$vars['post'])) return new emptyclass();
+$context = self::$vars['post'];
+}
+
+$iduser = 0;
+foreach (array('author', 'idauthor', 'user', 'iduser') as $propname) {
+if (isset($context->$propname)) {
+$iduser = $context->$propname;
+break;
+}
+}
+if (!$iduser) return new emptyclass();
+$pages = tuserpages::i();
+if (!$pages->itemexists($iduser)) return new emptyclass();
+$pages->request($iduser);
+return $pages;
+}
+
   private function getvar($name) {
     switch ($name) {
       case 'site':
@@ -134,7 +156,13 @@ class ttheme extends tevents {
       
       case 'lang':
       return tlocal::i();
-    }
+
+case 'author':
+return self::get_author();
+
+case 'metapost':
+return isset(self::$vars['post']) ? self::$vars['post']->meta : new emptyclass();
+    } //switch
     
     if (isset($GLOBALS[$name])) {
       $var =  $GLOBALS[$name];
@@ -405,7 +433,7 @@ class ttheme extends tevents {
     
     return false;
   }
-  
+
 }//class
 
 class tthemeprops {
@@ -482,7 +510,6 @@ class tthemeprops {
   
 }//class
 
-
 class targs {
   public $data;
   
@@ -536,3 +563,7 @@ class targs {
   }
   
 }//class
+
+class emptyclass{
+public function __get($name) { return ''; }
+}

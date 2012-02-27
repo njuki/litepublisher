@@ -18,6 +18,7 @@ class tusernews extends tplugin {
     $this->data['_canupload'] = true;
     $this->data['_candeletefile'] = true;
     $this->data['autosubscribe'] = true;
+    $this->data['insertsource'] = true;
     $this->data['sourcetml'] = '<h4><a href="%1$s">%1$s</a></h4>';
   }
   
@@ -70,14 +71,14 @@ class tusernews extends tplugin {
     $post->meta->sourceurl = $sourceurl;
     $post->title = $title;
     $post->categories = tposteditor::processcategories();
-    $post->author = litepublisher::$options->user;
+if (litepublisher::$options->user > 1) $post->author = litepublisher::$options->user;
     if (isset($files))  {
       $files = trim($files);
       $post->files = $files == '' ? array() : explode(',', $files);
     }
     
     $post->content = $raw;
-    $post->filtered = sprintf($this->sourcetml,     $post->meta->sourceurl) .$post->filtered;
+if ($this->insertsource) $post->filtered = sprintf($this->sourcetml,     $post->meta->sourceurl) .$post->filtered;
     if ($id == 0) {
       $post->status = $status;
       $id = $posts->add($post);

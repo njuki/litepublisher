@@ -21,6 +21,14 @@ class tuserpages extends titems implements itemplate {
     $this->data['lite'] = false;
     $this->data['createpage'] = true;
   }
+
+public function __get($name) {
+if (in_array($name, array('name', 'url', 'website'))) {
+return $this->getvalue($this->id, $name);
+}
+
+return parent::__get($name);
+}
   
   public function select($where, $limit) {
     if (!$this->dbversion) $this->error('Select method must be called ffrom database version');
@@ -61,7 +69,7 @@ class tuserpages extends titems implements itemplate {
       return sprintf("<?php turlmap::redir301('%s');",$item['url']);
     }
   }
-  
+
   public function gettitle() {
     return $this->getvalue($this->id, 'name');
   }
