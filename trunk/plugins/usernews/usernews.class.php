@@ -71,14 +71,14 @@ class tusernews extends tplugin {
     $post->meta->sourceurl = $sourceurl;
     $post->title = $title;
     $post->categories = tposteditor::processcategories();
-if (litepublisher::$options->user > 1) $post->author = litepublisher::$options->user;
+    if (litepublisher::$options->user > 1) $post->author = litepublisher::$options->user;
     if (isset($files))  {
       $files = trim($files);
       $post->files = $files == '' ? array() : explode(',', $files);
     }
     
     $post->content = $raw;
-if ($this->insertsource) $post->filtered = sprintf($this->sourcetml,     $post->meta->sourceurl) .$post->filtered;
+    if ($this->insertsource) $post->filtered = sprintf($this->sourcetml,     $post->meta->sourceurl) .$post->filtered;
     if ($id == 0) {
       $post->status = $status;
       $id = $posts->add($post);

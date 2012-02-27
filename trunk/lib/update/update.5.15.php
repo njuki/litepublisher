@@ -14,4 +14,5 @@ $plugin->save();
 }
 }
 
+tadminmoderator::refilter();
 }
