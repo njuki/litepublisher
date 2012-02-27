@@ -29,6 +29,10 @@ class tuserpages extends titems implements itemplate {
     
     return parent::__get($name);
   }
+
+public function getmd5email() {
+return md5($this->getvalue($this->id, 'email'));
+}
   
   public function select($where, $limit) {
     if (!$this->dbversion) $this->error('Select method must be called ffrom database version');
