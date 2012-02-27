@@ -1031,8 +1031,8 @@ class tpost extends titem implements  itemplate {
     } else {
       $pages = tuserpages::i();
       if (!$pages->itemexists($id)) return '';
-      if ($item['url'] == '') return '';
-      return sprintf('<a href="%s%s" title="%3$s" rel="author"><%3$s</a>', litepublisher::$site->url, $item['url'], $item['name']);
+      if ($item['website'] == '') return '';
+      return sprintf('<a href="%s%s" title="%3$s" rel="author"><%3$s</a>', litepublisher::$site->url, $item['website'], $item['name']);
     }
   }
   

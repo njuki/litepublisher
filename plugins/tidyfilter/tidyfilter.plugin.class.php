@@ -34,6 +34,7 @@ class ttidyfilter extends tplugin {
     'clean' => true,
     'enclose-block-text' => true,
     'enclose-text' => true,
+    'preserve-entities' => true,
     //'input-xml' => true,
     'logical-emphasis' => true,
     'char-encoding' => 'utf8',
