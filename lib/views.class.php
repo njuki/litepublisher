@@ -8,9 +8,15 @@
 
 class tview extends titem_storage {
   public $sidebars;
-  private $themeinstance;
+  protected $themeinstance;
   
   public static function i($id = 1) {
+if ($id == 1) {
+$class = __class__;
+} else {
+$views = tviews::i();
+    $class = $views->itemexists($id) ? $views->items[$id]['class'] : __class__;
+}
     return parent::iteminstance(__class__, $id);
   }
   
@@ -33,6 +39,7 @@ class tview extends titem_storage {
     parent::create();
     $this->data = array(
     'id' => 0,
+    'class' => get_class($this),
     'name' => 'default',
     'themename' => 'default',
     'menuclass' => 'tmenus',
@@ -127,10 +134,22 @@ class tviews extends titems_storage {
     $view = litepublisher::$classes->newitem(tview::getinstancename(), 'tview', $id);
     $view->id = $id;
     $view->name = $name;
+    $view->data['class'] = get_class($view);
     $this->items[$id] = &$view->data;
     $this->unlock();
     return $id;
   }
+
+public function addview(tview $view) {
+    $this->lock();
+    $id = ++$this->autoid;
+    $view->id = $id;
+if ($view->name == '') $view->name = 'view_' . $id;
+    $view->data['class'] = get_class($view);
+    $this->items[$id] = &$view->data;
+    $this->unlock();
+    return $id;
+}
   
   public function delete($id) {
     if ($id == 1) return $this->error('You cant delete default view');
