@@ -134,7 +134,8 @@ class ttheme extends tevents {
       if (!isset(self::$vars['post'])) return new emptyclass();
       $context = self::$vars['post'];
     }
-    
+
+if ($context instanceof     tuserpages) return $context;
     $iduser = 0;
     foreach (array('author', 'idauthor', 'user', 'iduser') as $propname) {
       if (isset($context->$propname)) {
