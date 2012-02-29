@@ -29,15 +29,15 @@ class tuserpages extends titems implements itemplate {
     
     return parent::__get($name);
   }
-
-public function getmd5email() {
-return md5($this->getvalue($this->id, 'email'));
-}
- 
-    public function getgravatar) {
-return sprintf('<img src="http://www.gravatar.com/avatar/%s?s=50&r=g&amp;d=wavatar" alt="avatar" />', $this->md5email());
-}
- 
+  
+  public function getmd5email() {
+    return md5($this->getvalue($this->id, 'email'));
+  }
+  
+  public function getgravatar() {
+    return sprintf('<img src="http://www.gravatar.com/avatar/%s?s=50&r=g&amp;d=wavatar" alt="avatar" />', $this->md5email());
+  }
+  
   public function select($where, $limit) {
     if (!$this->dbversion) $this->error('Select method must be called ffrom database version');
     if ($where != '') $where = ' where ' . $where;

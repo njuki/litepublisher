@@ -34,7 +34,11 @@ class tadminuserpages extends tadminmenu {
     $lang = tlocal::admin('users');
     $args = targs::i();
     
-    if (!($id= $this->getiduser())) return $this->notfound;
+    if (!($id= $this->getiduser())) {
+      if (litepublisher::$options->group == 'admin') return $this->getuserlist();
+      return $this->notfound;
+    }
+    
     $pages = tuserpages::i();
     $item = $pages->getitem($id);
     if (!isset($item['url'])) {
@@ -73,6 +77,33 @@ class tadminuserpages extends tadminmenu {
     
     $pages = tuserpages::i();
     $pages->edit($id, $item);
+  }
+  
+  
+  public function getuserlist() {
+    $users = tusers::i();
+    $perpage = 20;
+    $count = $users->count;
+    $from = $this->getfrom($perpage, $count);
+    if ($users->dbversion) {
+      $items = $users->select('', " order by id desc limit $from, $perpage");
+      if (!$items) $items = array();
+    } else {
+      $items = array_slice(array_keys($users->items), $from, $perpage);
+    }
+    
+    $html = $this->gethtml('users');
+    $lang = tlocal::admin('users');
+    $args = new targs();
+    $args->adminurl = $this->adminurl;
+    $result = $html->h4->userstable;
+    $result .= $html->items2table($users, $items, array(
+    array('left', $lang->edit, sprintf('<a href="%s=$id">$login</a>', $this->adminurl))
+    ));
+    
+    $theme = ttheme::i();
+    $result .= $theme->getpages($this->url, litepublisher::$urlmap->page, ceil($count/$perpage));
+    return $result;
   }
   
 }//class

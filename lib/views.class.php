@@ -11,12 +11,12 @@ class tview extends titem_storage {
   protected $themeinstance;
   
   public static function i($id = 1) {
-if ($id == 1) {
-$class = __class__;
-} else {
-$views = tviews::i();
-    $class = $views->itemexists($id) ? $views->items[$id]['class'] : __class__;
-}
+    if ($id == 1) {
+      $class = __class__;
+    } else {
+      $views = tviews::i();
+      $class = $views->itemexists($id) ? $views->items[$id]['class'] : __class__;
+    }
     return parent::iteminstance(__class__, $id);
   }
   
@@ -139,17 +139,17 @@ class tviews extends titems_storage {
     $this->unlock();
     return $id;
   }
-
-public function addview(tview $view) {
+  
+  public function addview(tview $view) {
     $this->lock();
     $id = ++$this->autoid;
     $view->id = $id;
-if ($view->name == '') $view->name = 'view_' . $id;
+    if ($view->name == '') $view->name = 'view_' . $id;
     $view->data['class'] = get_class($view);
     $this->items[$id] = &$view->data;
     $this->unlock();
     return $id;
-}
+  }
   
   public function delete($id) {
     if ($id == 1) return $this->error('You cant delete default view');

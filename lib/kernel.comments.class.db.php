@@ -349,6 +349,13 @@ class tcomment extends tdata {
     return $comments->raw->getvalue($this->id, 'ip');
   }
   
+  public function getmd5email() {
+    return md5($this->data['email']);
+  }
+  public function getgravatar() {
+    return sprintf('<img src="http://www.gravatar.com/avatar/%s?s=50&r=g&amp;d=wavatar" alt="avatar" />', $this->md5email());
+  }
+  
 }//class
 
 //comments.manager.class.php

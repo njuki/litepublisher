@@ -316,7 +316,7 @@ class tcomment extends tdata {
   public function  gettime() {
     return date('H:i', $this->posted);
   }
-
+  
   public function getwebsite() {
     return $this->data['url'];
   }
@@ -348,12 +348,12 @@ class tcomment extends tdata {
     $comments = tcomments::i($this->post);
     return $comments->raw->getvalue($this->id, 'ip');
   }
-
+  
   public function getmd5email() {
     return md5($this->data['email']);
   }
-    public function getgravatar) {
-return sprintf('<img src="http://www.gravatar.com/avatar/%s?s=50&r=g&amp;d=wavatar" alt="avatar" />', $this->md5email());
-}
-
+  public function getgravatar() {
+    return sprintf('<img src="http://www.gravatar.com/avatar/%s?s=50&r=g&amp;d=wavatar" alt="avatar" />', $this->md5email());
+  }
+  
 }//class
