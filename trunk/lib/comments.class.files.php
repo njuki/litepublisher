@@ -398,15 +398,15 @@ class TComment {
   public function getemail() {
     return $this->authoritem['email'];
   }
-
+  
   public function getmd5email() {
     return md5($this->authoritem['url']);
   }
   
-    public function getgravatar) {
-return sprintf('<img src="http://www.gravatar.com/avatar/%s?s=50&r=g&amp;d=wavatar" alt="avatar" />', $this->md5email());
-}
-
+  public function getgravatar() {
+    return sprintf('<img src="http://www.gravatar.com/avatar/%s?s=50&r=g&amp;d=wavatar" alt="avatar" />', $this->md5email());
+  }
+  
   public function getwebsite() {
     return $this->authoritem['url'];
   }
