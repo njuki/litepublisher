@@ -404,7 +404,7 @@ class TComment {
   }
   
   public function getgravatar() {
-    return sprintf('<img src="http://www.gravatar.com/avatar/%s?s=50&r=g&amp;d=wavatar" alt="avatar" />', $this->md5email());
+    return sprintf('<img class="avatar photo" src="http://www.gravatar.com/avatar/%s?s=32&amp;r=g&amp;d=wavatar" title="%2$s" alt="%2$s"/>', $this->getmd5email(), $this->name);
   }
   
   public function getwebsite() {
