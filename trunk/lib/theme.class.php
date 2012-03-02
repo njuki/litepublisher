@@ -330,10 +330,7 @@ class ttheme extends tevents {
   
   public function getposts(array $items, $lite) {
     if (count($items) == 0) return '';
-    if (dbversion) {
-      $posts = tposts::i();
-      $posts->loaditems($items);
-    }
+    if (dbversion) tposts::i()->loaditems($items);
     
     $result = '';
     self::$vars['lang'] = tlocal::i('default');
@@ -341,6 +338,8 @@ class ttheme extends tevents {
     foreach($items as $id) {
       self::$vars['post'] = tpost::i($id);
       $result .= $this->parse($tml);
+// has $author.* tags in tml
+if (isset(self::$vars['author'])) unset(self::$vars['author']);
     }
     
     $tml = $lite ? $this->templates['content.excerpts.lite'] : $this->templates['content.excerpts'];
