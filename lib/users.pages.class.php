@@ -146,6 +146,7 @@ class tuserpages extends titems implements itemplate {
   }
   
   private function addurl(array $item) {
+if ($item['id'] == 1) return $item;
     $item['url'] = '';
     $linkgen = tlinkgenerator::i();
     $item['url'] = $linkgen->addurl(new tarray2prop ($item), 'user');
@@ -182,6 +183,7 @@ class tuserpages extends titems implements itemplate {
   }
   
   public function delete($id) {
+if ($id <= 1) return false;
     $idurl = $this->getvalue($id, 'idurl');
     if ($idurl > 0) litepublisher::$urlmap->deleteitem($idurl);
     return parent::delete($id);
