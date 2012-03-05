@@ -205,7 +205,7 @@ class tcommentform extends tevents {
     }
     
     $confirmid = $_POST['confirmid'];
-    $lang = tlocal::i('commentform');
+    $lang = tlocal::i('comment');
     if (!($values = $kept->getitem($confirmid))) {
       return $this->htmlhelper->geterrorcontent($lang->notfound);
     }
@@ -285,7 +285,7 @@ class tcommentform extends tevents {
   }
   
   private function getconfirmform($confirmid) {
-    ttheme::$vars['lang'] = tlocal::i($this->basename);
+    ttheme::$vars['lang'] = tlocal::i('comment');
     $args = targs::i();
     $args->confirmid = $confirmid;
     $theme = tsimplecontent::gettheme();

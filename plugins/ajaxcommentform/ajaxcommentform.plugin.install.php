@@ -30,7 +30,7 @@ function tajaxcommentformpluginUninstall($self) {
 
 function tajaxcommentformpluginGetjs() {
   $name = basename(dirname(__file__));
-  $lang = tlocal::i('comments');
+  $lang = tlocal::admin('comments');
   $ls = array(
   'error_title' => $lang->error
   );

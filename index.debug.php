@@ -91,7 +91,7 @@ if (dbversion) litepublisher::$db = new tdatabase();
   litepublisher::$options->admincookie = litepublisher::$options->cookieenabled && litepublisher::$options->authcookie() && ('admin' == litepublisher::$options->group);
 
   litepublisher::$urlmap = turlmap::i();
-//ttheme::clearcache();
+ttheme::clearcache();
 tlocal::clearcache();
 //require('lib/update/update.4.81.php');
 //tjsmerger::i()->onupdated();

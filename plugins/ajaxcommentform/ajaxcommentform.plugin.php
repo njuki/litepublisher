@@ -40,19 +40,19 @@ class tajaxcommentformplugin extends tplugin {
   
   //htmlhelper
   public function confirm($confirmid) {
-    $result = tlocal::i()->ini['commentform'];
-    $result['title'] = tlocal::get('default', 'confirm');
-    $result['confirmid'] = $confirmid;
-    $result['code'] = 'confirm';
-    return json_encode($result);
+$lang = tlocal::i('default');
+    return json_encode(array(
+'confirmid' => $confirmid,
+    'code' => 'confirm',
+'title' => $lang->confirm,
+));
   }
   
   public function geterrorcontent($s) {
-    $result = array(
+    return json_encode(array(
     'msg' => $s,
     'code' => 'error'
-    );
-    return json_encode($result);
+    ));
   }
   
   public function sendcookies($cookies, $url) {
