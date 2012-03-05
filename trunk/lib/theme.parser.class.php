@@ -91,11 +91,14 @@ class tthemeparser extends tevents {
   }
   
   public function doreplacelang($theme) {
-    $lang = tlocal::i('default');
-    foreach ($theme->templates as &$value) {
-      if (is_string($value)) $value = $theme->replacelang($value, $lang);
+    $lang = tlocal::i('comment');
+    foreach ($theme->templates as $name => &$value) {
+      if (is_string($value)) {
+$value = $theme->replacelang($value, $lang);
+}
     }
     unset($value);
+
     foreach ($theme->templates['sidebars'] as &$sidebar) {
       unset($widget);
       foreach ($sidebar as &$widget) {
@@ -142,6 +145,7 @@ class tthemeparser extends tevents {
       $theme->templates = $parent->templates;
       $theme->parent = $parent->name;
     }
+
     $s = self::getfile($filename);
     $this->parsetags($theme, $s);
     $this->afterparse($theme);
@@ -190,11 +194,18 @@ class tthemeparser extends tevents {
   
   public function checkparent($name) {
     $about = $this->getabout($name);
-    if (empty($about['parent'])) return true;
-    $parent = $this->getabout($about['parent']);
-    if (!empty($parent['parent'])) {
-      $this->error(sprintf('Theme %s has parent %s theme which has parent %s', $name, $about['parent'], $parent['parent']));
+$parents = array($name);
+while (!empty($about['parent'])) {
+$name = $about['parent'];
+if (in_array($name, $parents)) {
+$this->error(sprintf('Theme cicle "%s"', implode(', ', $parents)));
+}
+
+$parents[] = $name;
+    $about = $this->getabout($name);
     }
+
+return true;
   }
   
   public function changetheme($old, $name) {
@@ -549,6 +560,8 @@ break;
         ) as $k) {
           if (substr($templates[$k], -1) != ' ') $templates[$k] .= ' ';
         }
+
+$templates['content.post.templatecomments.confirmform'] = str_replace('$lang.formhead', '$lang.checkspam', $templates['content.post.templatecomments.confirmform']);
       }
       
       public static function getmetaclasses($s) {
