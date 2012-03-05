@@ -23,7 +23,7 @@ class tuserpages extends titems implements itemplate {
   }
   
   public function __get($name) {
-    if (in_array($name, array('name', 'url', 'website'))) {
+    if (in_array($name, array('name', 'url', 'website', 'content', 'rawcontent'))) {
       return $this->getvalue($this->id, $name);
     }
     
@@ -103,9 +103,11 @@ class tuserpages extends titems implements itemplate {
   }
   
   public function getcont() {
-    $item =$this->getitem($this->id);
+$item = $this->getitem($this->id);
+ttheme::$vars['author'] = $this;
     $theme = tview::getview($this)->theme;
-    $result = empty($item['content']) ? '' : $theme->simple($item['content']);
+    $result = $theme->parse($theme->templates['content.author']);
+
     $perpage = $this->lite ? 1000 : litepublisher::$options->perpage;
     $posts = litepublisher::$classes->posts;
     $from = (litepublisher::$urlmap->page - 1) * $perpage;
