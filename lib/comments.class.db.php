@@ -254,7 +254,7 @@ class tcomments extends titems {
 
 class tcomment extends tdata {
   
-  public function __construct($id) {
+  public function __construct($id = 0) {
     if (!isset($id)) return false;
     parent::__construct();
     $this->table = 'comments';

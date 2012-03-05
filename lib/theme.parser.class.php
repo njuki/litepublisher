@@ -313,8 +313,6 @@ class tthemeparser extends tevents {
       
       while (($s != '') && preg_match('/(\$\w*+(\.\w\w*+)?)\s*=\s*(\[|\{|\()?/i', $s, $m)) {
           if (!isset($m[3])) {
-            dumpstr($s);
-            dumpvar($m);
             $this->error('The bracket not found');
           }
           $tag = $m[1];
@@ -337,10 +335,12 @@ class tthemeparser extends tevents {
         
         //retranslatepaths
         if (isset($this->pathmap[$parent])) $parent = $this->pathmap[$parent];
+
+//set value
         if (strbegin($parent, 'sidebar')) {
           $this->setwidgetvalue($parent, $s);
         }  elseif (isset($this->paths[$parent])) {
-          $this->theme->templates[$parent] = $s;
+$this->set_value($parent, $s);
         } elseif (($parent == '') || ($parent == '$template')) {
           $this->theme->templates['index'] = $s;
           //dumpstr($s);
@@ -350,6 +350,17 @@ class tthemeparser extends tevents {
           $this->error("The '$parent' tag not found. Content \n$s");
         }
       }
+
+public function set_value($name, $value) {
+//fix old ver
+switch ($name) {
+case 'content.menu':
+          $this->theme->templates['content.author'] = str_replace('menu', 'author', $value);
+break;
+}
+
+          $this->theme->templates[$name] = $value;
+}
       
       public function tagtopath($parent, $tag) {
         if (strbegin($tag,  '$template.sidebar') && (substr_count($tag, '.') == 1)) {
@@ -681,6 +692,11 @@ class tthemeparser extends tevents {
         
         'content.menu' => array(
         'tag' => '$menu',
+        'replace' => ''
+        ),
+
+        'content.author' => array(
+        'tag' => '$author',
         'replace' => ''
         ),
         
