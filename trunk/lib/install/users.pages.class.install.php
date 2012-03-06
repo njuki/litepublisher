@@ -12,14 +12,15 @@ function tuserpagesInstall($self) {
     $dir = dirname(__file__) . DIRECTORY_SEPARATOR;
     $manager->CreateTable($self->table, file_get_contents($dir .'userpage.sql'));
   }
-
-$v = $self->createpage;
-$self->lock();
-$self->createpage = false;
-$self->add(1, 'Admin', litepublisher::$options->email, litepublisher::$options->url . '/');
-$self->setvalue(1, 'idurl', litepublisher::$urlmap->url2id('/'));
-$self->createpage = $v;
-$self->unlock();
+  
+  $v = $self->createpage;
+  $self->lock();
+  $self->createpage = false;
+  $self->add(1, 'Admin', litepublisher::$options->email, litepublisher::$site->url . '/');
+  $itemurl = litepublisher::$urlmap->findurl('/');
+  $self->setvalue(1, 'idurl', $itemurl['id']);
+  $self->createpage = $v;
+  $self->unlock();
   
   $linkgen = tlinkgenerator::i();
   $linkgen->data['user'] = '/user/[name].htm';

@@ -525,7 +525,7 @@ class tpost extends titem implements  itemplate {
   public function gettheme() {
     ttheme::$vars['post'] = $this;
     if (isset($this->_theme)) return $this->_theme;
-    $this->_theme = tview::getview($this)->theme;
+    $this->_theme = isset(ttemplate::i()->view) ? ttemplate::i()->view->theme : tview::getview($this)->theme;
     return $this->_theme;
   }
   
@@ -2117,8 +2117,11 @@ class tcommontags extends titems implements  itemplate {
     return isset($item['idperm']) ? (int) $item['idperm'] : 0;
   }
   
+  public function getcontent() {
+    return $this->contents->getcontent($this->id);
+  }
+  
   public function getcont() {
-    $result = '';
     $theme = ttheme::i();
     if ($this->id == 0) {
       $items = $this->getsortedcontent(array(
@@ -2127,12 +2130,11 @@ class tcommontags extends titems implements  itemplate {
       'subitems' =>       '<ul>$item</ul>'
       ),
       0, 'count', 0, 0, false);
-      $result .= sprintf('<ul>%s</ul>', $items);
-      return $result;
+      return sprintf('<ul>%s</ul>', $items);
     }
     
-    $result .= $this->contents->getcontent($this->id);
-    if ($result != '') $result = $theme->simple($result);
+    ttheme::$vars['menu'] = $this;
+    $result = $theme->parse($theme->templates['content.menu']);
     
     $lite = $this->lite;
     $this->callevent('onlite', array($this->id, &$lite));

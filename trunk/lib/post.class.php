@@ -326,7 +326,7 @@ class tpost extends titem implements  itemplate {
   public function gettheme() {
     ttheme::$vars['post'] = $this;
     if (isset($this->_theme)) return $this->_theme;
-    $this->_theme = tview::getview($this)->theme;
+    $this->_theme = isset(ttemplate::i()->view) ? ttemplate::i()->view->theme : tview::getview($this)->theme;
     return $this->_theme;
   }
   

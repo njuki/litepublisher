@@ -254,7 +254,7 @@ class tcomments extends titems {
 
 class tcomment extends tdata {
   
-  public function __construct($id) {
+  public function __construct($id = 0) {
     if (!isset($id)) return false;
     parent::__construct();
     $this->table = 'comments';
@@ -352,8 +352,9 @@ class tcomment extends tdata {
   public function getmd5email() {
     return md5($this->data['email']);
   }
+  
   public function getgravatar() {
-    return sprintf('<img src="http://www.gravatar.com/avatar/%s?s=50&r=g&amp;d=wavatar" alt="avatar" />', $this->md5email());
+    return sprintf('<img class="avatar photo" src="http://www.gravatar.com/avatar/%s?s=32&amp;r=g&amp;d=wavatar" title="%2$s" alt="%2$s"/>', $this->getmd5email(), $this->name);
   }
   
 }//class
@@ -820,7 +821,7 @@ class tcommentform extends tevents {
     }
     
     $confirmid = $_POST['confirmid'];
-    $lang = tlocal::i('commentform');
+    $lang = tlocal::i('comment');
     if (!($values = $kept->getitem($confirmid))) {
       return $this->htmlhelper->geterrorcontent($lang->notfound);
     }
@@ -900,7 +901,7 @@ class tcommentform extends tevents {
   }
   
   private function getconfirmform($confirmid) {
-    ttheme::$vars['lang'] = tlocal::i($this->basename);
+    ttheme::$vars['lang'] = tlocal::i('comment');
     $args = targs::i();
     $args->confirmid = $confirmid;
     $theme = tsimplecontent::gettheme();

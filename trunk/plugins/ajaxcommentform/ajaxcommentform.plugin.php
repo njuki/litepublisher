@@ -40,12 +40,12 @@ class tajaxcommentformplugin extends tplugin {
   
   //htmlhelper
   public function confirm($confirmid) {
-$lang = tlocal::i('default');
+    $lang = tlocal::i('default');
     return json_encode(array(
-'confirmid' => $confirmid,
+    'confirmid' => $confirmid,
     'code' => 'confirm',
-'title' => $lang->confirm,
-));
+    'title' => $lang->confirm,
+    ));
   }
   
   public function geterrorcontent($s) {

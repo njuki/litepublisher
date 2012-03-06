@@ -37,7 +37,7 @@ class tuserpages extends titems implements itemplate {
   public function getgravatar() {
     return sprintf('<img class="avatar photo" src="http://www.gravatar.com/avatar/%s?s=32&amp;r=g&amp;d=wavatar" title="%2$s" alt="%2$s"/>', $this->getmd5email(), $this->name);
   }
-
+  
   public function select($where, $limit) {
     if (!$this->dbversion) $this->error('Select method must be called ffrom database version');
     if ($where != '') $where = ' where ' . $where;
@@ -103,11 +103,11 @@ class tuserpages extends titems implements itemplate {
   }
   
   public function getcont() {
-$item = $this->getitem($this->id);
-ttheme::$vars['author'] = $this;
+    $item = $this->getitem($this->id);
+    ttheme::$vars['author'] = $this;
     $theme = tview::getview($this)->theme;
     $result = $theme->parse($theme->templates['content.author']);
-
+    
     $perpage = $this->lite ? 1000 : litepublisher::$options->perpage;
     $posts = litepublisher::$classes->posts;
     $from = (litepublisher::$urlmap->page - 1) * $perpage;
@@ -148,7 +148,7 @@ ttheme::$vars['author'] = $this;
   }
   
   private function addurl(array $item) {
-if ($item['id'] == 1) return $item;
+    if ($item['id'] == 1) return $item;
     $item['url'] = '';
     $linkgen = tlinkgenerator::i();
     $item['url'] = $linkgen->addurl(new tarray2prop ($item), 'user');
@@ -185,7 +185,7 @@ if ($item['id'] == 1) return $item;
   }
   
   public function delete($id) {
-if ($id <= 1) return false;
+    if ($id <= 1) return false;
     $idurl = $this->getvalue($id, 'idurl');
     if ($idurl > 0) litepublisher::$urlmap->deleteitem($idurl);
     return parent::delete($id);

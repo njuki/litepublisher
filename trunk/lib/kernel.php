@@ -2020,7 +2020,7 @@ class turlmap extends titems {
       $item= array(
       'url' => $url,
       'class' => $class,
-      'arg' => $arg,
+      'arg' => (string) $arg,
       'type' => $type
       );
       $item['id'] = $this->db->add($item);

@@ -126,14 +126,14 @@ $(commentform.confirm_dialog).dialog( {
     modal: true,
     buttons: [
     {
-      text: ltoptions.lang.comment.robot,
+      text: lang.comment.robot,
       click: function() {
         $(this).dialog("close");
       }
     } ,
 
     {
-      text: ltoptions.lang.comment.human,
+      text: lang.comment.human,
       click: function() {
         $(this).dialog("close");
 commentform.sendconfirm(data.confirmid);

@@ -352,7 +352,7 @@ class tcomment extends tdata {
   public function getmd5email() {
     return md5($this->data['email']);
   }
-
+  
   public function getgravatar() {
     return sprintf('<img class="avatar photo" src="http://www.gravatar.com/avatar/%s?s=32&amp;r=g&amp;d=wavatar" title="%2$s" alt="%2$s"/>', $this->getmd5email(), $this->name);
   }
