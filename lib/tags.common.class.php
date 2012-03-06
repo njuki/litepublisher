@@ -364,11 +364,11 @@ class tcommontags extends titems implements  itemplate {
     $item = $this->getitem($this->id);
     return isset($item['idperm']) ? (int) $item['idperm'] : 0;
   }
-
-public function getcontent() {
-return $this->contents->getcontent($this->id);  
-}
-
+  
+  public function getcontent() {
+    return $this->contents->getcontent($this->id);
+  }
+  
   public function getcont() {
     $theme = ttheme::i();
     if ($this->id == 0) {
@@ -378,11 +378,11 @@ return $this->contents->getcontent($this->id);
       'subitems' =>       '<ul>$item</ul>'
       ),
       0, 'count', 0, 0, false);
-return sprintf('<ul>%s</ul>', $items);
+      return sprintf('<ul>%s</ul>', $items);
     }
     
-ttheme::$vars['menu'] = $this;
-$result = $theme->parse($theme->templates['content.menu']);
+    ttheme::$vars['menu'] = $this;
+    $result = $theme->parse($theme->templates['content.menu']);
     
     $lite = $this->lite;
     $this->callevent('onlite', array($this->id, &$lite));

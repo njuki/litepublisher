@@ -92,13 +92,12 @@ class tthemeparser extends tevents {
   
   public function doreplacelang($theme) {
     $lang = tlocal::i('comment');
-    foreach ($theme->templates as $name => &$value) {
+    foreach ($theme->templates as $name => $value) {
       if (is_string($value)) {
-$value = $theme->replacelang($value, $lang);
-}
+        $theme->templates[$name] = $theme->replacelang($value, $lang);
+      }
     }
-    unset($value);
-
+    
     foreach ($theme->templates['sidebars'] as &$sidebar) {
       unset($widget);
       foreach ($sidebar as &$widget) {
@@ -145,7 +144,7 @@ $value = $theme->replacelang($value, $lang);
       $theme->templates = $parent->templates;
       $theme->parent = $parent->name;
     }
-
+    
     $s = self::getfile($filename);
     $this->parsetags($theme, $s);
     $this->afterparse($theme);
@@ -194,18 +193,18 @@ $value = $theme->replacelang($value, $lang);
   
   public function checkparent($name) {
     $about = $this->getabout($name);
-$parents = array($name);
-while (!empty($about['parent'])) {
-$name = $about['parent'];
-if (in_array($name, $parents)) {
-$this->error(sprintf('Theme cicle "%s"', implode(', ', $parents)));
-}
-
-$parents[] = $name;
-    $about = $this->getabout($name);
+    $parents = array($name);
+    while (!empty($about['parent'])) {
+      $name = $about['parent'];
+      if (in_array($name, $parents)) {
+        $this->error(sprintf('Theme cicle "%s"', implode(', ', $parents)));
+      }
+      
+      $parents[] = $name;
+      $about = $this->getabout($name);
     }
-
-return true;
+    
+    return true;
   }
   
   public function changetheme($old, $name) {
@@ -346,12 +345,12 @@ return true;
         
         //retranslatepaths
         if (isset($this->pathmap[$parent])) $parent = $this->pathmap[$parent];
-
-//set value
+        
+        //set value
         if (strbegin($parent, 'sidebar')) {
           $this->setwidgetvalue($parent, $s);
         }  elseif (isset($this->paths[$parent])) {
-$this->set_value($parent, $s);
+          $this->set_value($parent, $s);
         } elseif (($parent == '') || ($parent == '$template')) {
           $this->theme->templates['index'] = $s;
           //dumpstr($s);
@@ -361,17 +360,17 @@ $this->set_value($parent, $s);
           $this->error("The '$parent' tag not found. Content \n$s");
         }
       }
-
-public function set_value($name, $value) {
-//fix old ver
-switch ($name) {
-case 'content.menu':
+      
+      public function set_value($name, $value) {
+        //fix old ver
+        switch ($name) {
+          case 'content.menu':
           $this->theme->templates['content.author'] = str_replace('menu', 'author', $value);
-break;
-}
-
-          $this->theme->templates[$name] = $value;
-}
+          break;
+        }
+        
+        $this->theme->templates[$name] = $value;
+      }
       
       public function tagtopath($parent, $tag) {
         if (strbegin($tag,  '$template.sidebar') && (substr_count($tag, '.') == 1)) {
@@ -560,8 +559,8 @@ break;
         ) as $k) {
           if (substr($templates[$k], -1) != ' ') $templates[$k] .= ' ';
         }
-
-$templates['content.post.templatecomments.confirmform'] = str_replace('$lang.formhead', '$lang.checkspam', $templates['content.post.templatecomments.confirmform']);
+        
+        $templates['content.post.templatecomments.confirmform'] = str_replace('$lang.formhead', '$lang.checkspam', $templates['content.post.templatecomments.confirmform']);
       }
       
       public static function getmetaclasses($s) {
@@ -707,7 +706,7 @@ $templates['content.post.templatecomments.confirmform'] = str_replace('$lang.for
         'tag' => '$menu',
         'replace' => ''
         ),
-
+        
         'content.author' => array(
         'tag' => '$author',
         'replace' => ''
