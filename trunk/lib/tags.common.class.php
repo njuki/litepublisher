@@ -383,11 +383,18 @@ class tcommontags extends titems implements  itemplate {
     
     ttheme::$vars['menu'] = $this;
     $result = $theme->parse($theme->templates['content.menu']);
-    
-    $lite = $this->lite;
+      $result .= $theme->getposts($list, $lite);
+    $item = $this->getitem($this->id);
+    $result .=$theme->getpages($item['url'], litepublisher::$urlmap->page, ceil($item['itemscount'] / $perpage));
+    return $result;
+}
+
+public function getidposts() {
+        $lite = $this->lite;
     $this->callevent('onlite', array($this->id, &$lite));
     $perpage = $lite ? 1000 : litepublisher::$options->perpage;
     $posts = litepublisher::$classes->posts;
+
     if ($this->dbversion) {
       if ($this->includeparents || $this->includechilds) {
         $this->loadall();
@@ -402,11 +409,9 @@ class tcommontags extends titems implements  itemplate {
       $from = (litepublisher::$urlmap->page - 1) * $perpage;
       $itemstable  = $this->itemsposts->thistable;
       $poststable = $posts->thistable;
-      $items = $posts->select("$poststable.status = 'published' and $poststable.id in
+return $posts->select("$poststable.status = 'published' and $poststable.id in
       (select DISTINCT post from $itemstable  where $itemstable .item $tags)",
       "order by $poststable.posted desc limit $from, $perpage");
-      
-      $result .= $theme->getposts($items, $lite);
     } else {
       $items = $this->itemsposts->getposts($this->id);
       if ($this->dbversion && ($this->includeparents || $this->includechilds)) $this->loadall();
@@ -426,13 +431,8 @@ class tcommontags extends titems implements  itemplate {
       
       $items = $posts->stripdrafts($items);
       $items = $posts->sortbyposted($items);
-      $list = array_slice($items, (litepublisher::$urlmap->page - 1) * $perpage, $perpage);
-      $result .= $theme->getposts($list, $lite);
+return array_slice($items, (litepublisher::$urlmap->page - 1) * $perpage, $perpage);
     }
-    
-    $item = $this->getitem($this->id);
-    $result .=$theme->getpages($item['url'], litepublisher::$urlmap->page, ceil($item['itemscount'] / $perpage));
-    return $result;
   }
   
   public function getparents($id) {$result = array();

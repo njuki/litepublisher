@@ -54,7 +54,7 @@ class ttemplate extends tevents_storage {
     
     if (array_key_exists($name, $this->data['tags'])) {
       $tags = ttemplatetags::i();
-      return $tags->__get($name);
+      return $tags->$name;
     }
     if (isset($this->context) && isset($this->context->$name)) return $this->context->$name;
     return parent::__get($name);

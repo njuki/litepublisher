@@ -621,7 +621,7 @@ class tpost extends titem implements  itemplate {
       if (($countpages > 1) && ($this->commentpages < $page)) {
         $result .= $this->getcommentslink();
       } else {
-        $result .= ttemplatecomments::i()->getcomments($this->id);
+        $result .= $this->factory->templatecomments->getcomments($this->id);
       }
     }
     
@@ -864,6 +864,10 @@ class tpostfactory extends tdata {
   public function getcategories() {
     return tcategories::i();
   }
+
+public function gettemplatecomments() {
+return ttemplatecomments::i();
+}
   
   public function getcomments($id) {
     return tcomments::i($id);
