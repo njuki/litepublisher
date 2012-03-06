@@ -41,8 +41,6 @@ class thomepage extends tmenu  {
     
     $items =  $this->getitems();
     $result .= $theme->getposts($items, false);
-    $Posts = tposts::i();
-    $result .=$theme->getpages($this->url, litepublisher::$urlmap->page, ceil($Posts->archivescount / litepublisher::$options->perpage));
     return $result;
   }
   

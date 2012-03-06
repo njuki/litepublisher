@@ -344,8 +344,10 @@ class ttheme extends tevents {
     }
     
     $tml = $lite ? $this->templates['content.excerpts.lite'] : $this->templates['content.excerpts'];
-    if ($tml == '') return $result;
-    return str_replace('$excerpt', $result, $this->parse($tml));
+    if ($tml != '') $result = str_replace('$excerpt', $result, $this->parse($tml));
+
+    $result .= $this->getpages(litepublisher::$urlmap->itemrequested['url'], litepublisher::$urlmap->page, ceil(tposts::i()->archivescount / litepublisher::$options->perpage));
+return $result;
   }
   
   public function getpostswidgetcontent(array $items, $sidebar, $tml) {
