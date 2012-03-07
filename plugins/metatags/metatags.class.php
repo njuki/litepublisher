@@ -19,23 +19,41 @@ $theme->templates['index'] = strtr($theme->templates['index'], array(
 ));
 }
 
-public function getkeywords() {
+public function getlist() {
 $context = ttemplate::i()->context;
-if ($context instanceof thomepage) {
-} elseif ($context instanceof tcommontags) {
-} else {
-return ttemplate::i()->getkeywords();
+if (isset($context) && isset($context->idposts)) {
+$list = $context->idposts;
+if (count($list) > 0) {
+tposts::i()->loaditems($list);
+return array_slice($list, 0, 3);
 }
+}
+return false;
+}
+
+public function getkeywords() {
+if ($list = $this->getlist()) {
+$result = '';
+foreach ($list as $id) {
+$post = tpost::i($id);
+$result .= $post->title . ' ';
+}
+return $result;
+
+}
+return ttemplate::i()->getkeywords();
 }
 
 public function getdescription() {
-$context = ttemplate::i()->context;
-if ($context instanceof thomepage) {
-} elseif ($context instanceof tcommontags) {
-} else {
-return ttemplate::i()->getdescription();
+if ($list = $this->getlist()) {
+$result = '';
+foreach ($list as $id) {
+$post = tpost::i($id);
+$result .= $post->title . ' ';
 }
-
+return $result;
+}
+return ttemplate::i()->getdescription();
 }
 
 }//class
