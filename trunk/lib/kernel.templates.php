@@ -401,7 +401,7 @@ class ttemplate extends tevents_storage {
     
     if (array_key_exists($name, $this->data['tags'])) {
       $tags = ttemplatetags::i();
-      return $tags->__get($name);
+      return $tags->$name;
     }
     if (isset($this->context) && isset($this->context->$name)) return $this->context->$name;
     return parent::__get($name);
@@ -934,8 +934,15 @@ class ttheme extends tevents {
     }
     
     $tml = $lite ? $this->templates['content.excerpts.lite'] : $this->templates['content.excerpts'];
-    if ($tml == '') return $result;
-    return str_replace('$excerpt', $result, $this->parse($tml));
+    if ($tml != '') $result = str_replace('$excerpt', $result, $this->parse($tml));
+    return $result;
+  }
+  
+  public function getpostsnavi(array $items, $lite, $url, $count) {
+    $result = $this->getposts($items, $lite);
+    $perpage = $lite ? 1000 : litepublisher::$options->perpage;
+    $result .= $this->getpages($url, litepublisher::$urlmap->page, ceil($count / $perpage));
+    return $result;
   }
   
   public function getpostswidgetcontent(array $items, $sidebar, $tml) {

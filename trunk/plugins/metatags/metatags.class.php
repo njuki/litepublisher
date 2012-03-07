@@ -13,46 +13,48 @@ class tmetatags extends tplugin {
   }
   
   public function themeparsed(ttheme $theme) {
-$theme->templates['index'] = strtr($theme->templates['index'], array(
-'$template.keywords' => '$metatags.keywords',
-'$template.description' => '$metatags.description',
-));
-}
-
-public function getlist() {
-$context = ttemplate::i()->context;
-if (isset($context) && isset($context->idposts)) {
-$list = $context->idposts;
-if (count($list) > 0) {
-tposts::i()->loaditems($list);
-return array_slice($list, 0, 3);
-}
-}
-return false;
-}
-
-public function getkeywords() {
-if ($list = $this->getlist()) {
-$result = '';
-foreach ($list as $id) {
-$post = tpost::i($id);
-$result .= $post->keywords . ', ';
-}
-return trim($result, ', ');
-}
-return ttemplate::i()->getkeywords();
-}
-
-public function getdescription() {
-if ($list = $this->getlist()) {
-$result = '';
-foreach ($list as $id) {
-$post = tpost::i($id);
-$result .= $post->title . ' ';
-}
-return $result;
-}
-return ttemplate::i()->getdescription();
-}
-
+    $theme->templates['index'] = strtr($theme->templates['index'], array(
+    '$template.keywords' => '$metatags.keywords',
+    '$template.description' => '$metatags.description',
+    ));
+  }
+  
+  public function getlist() {
+    $context = ttemplate::i()->context;
+    if (isset($context) && isset($context->idposts)) {
+      $list = $context->idposts;
+      if (count($list) > 0) {
+        tposts::i()->loaditems($list);
+        return array_slice($list, 0, 3);
+      }
+    }
+    return false;
+  }
+  
+  public function getkeywords() {
+    if ($list = $this->getlist()) {
+      $result = '';
+      foreach ($list as $id) {
+        $post = tpost::i($id);
+        $result .= $post->keywords . ', ';
+      }
+      return trim($result, ', ');
+    }
+    return ttemplate::i()->getkeywords();
+  }
+  
+  public function getdescription() {
+    if ($list = $this->getlist()) {
+      $result = '';
+      foreach ($list as $id) {
+        $post = tpost::i($id);
+        $result .= $post->title . ' ';
+        if (strlen($result) > 250) break;
+      }
+      //return tcontentfilter::getexcerpt($result, 300);
+      return $result;
+    }
+    return ttemplate::i()->getdescription();
+  }
+  
 }//class
