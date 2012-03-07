@@ -8,7 +8,7 @@
 
 class tarchives extends titems_itemplate implements  itemplate {
   public $date;
-private $_idposts;
+  private $_idposts;
   
   public static function i() {
     return getinstance(__class__);
@@ -118,7 +118,7 @@ private $_idposts;
   public function getcont() {
     $items = $this->getidposts();
     if (count($items) == 0)return '';
- 
+    
     $theme = tview::getview($this)->theme;
     $perpage = $this->lite ? 1000 : litepublisher::$options->perpage;
     $list = array_slice($items, (litepublisher::$urlmap->page - 1) * $perpage, $perpage);
@@ -128,11 +128,11 @@ private $_idposts;
   }
   
   public function getidposts() {
-if (isset($this->_idposts)) return $this->_idposts;
+    if (isset($this->_idposts)) return $this->_idposts;
     if (dbversion) {
       $item = $this->items[$this->date];
   $this->_idposts = $this->db->idselect("status = 'published' and year(posted) = '{$item['year']}' and month(posted) = '{$item['month']}' ORDER BY posted DESC ");
-return $this->_idposts;
+      return $this->_idposts;
     } else {
       if (!isset($this->items[$this->date]['posts'])) return array();
       return $this->items[$this->date]['posts'];

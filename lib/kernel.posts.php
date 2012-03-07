@@ -820,7 +820,7 @@ class tpost extends titem implements  itemplate {
       if (($countpages > 1) && ($this->commentpages < $page)) {
         $result .= $this->getcommentslink();
       } else {
-        $result .= ttemplatecomments::i()->getcomments($this->id);
+        $result .= $this->factory->templatecomments->getcomments($this->id);
       }
     }
     
@@ -1062,6 +1062,10 @@ class tpostfactory extends tdata {
   
   public function getcategories() {
     return tcategories::i();
+  }
+  
+  public function gettemplatecomments() {
+    return ttemplatecomments::i();
   }
   
   public function getcomments($id) {
@@ -1767,6 +1771,7 @@ class tcommontags extends titems implements  itemplate {
   public $id;
   private $newtitle;
   private $all_loaded;
+  private $_idposts;
   
   protected function create() {
     $this->dbversion = dbversion;
@@ -2133,13 +2138,29 @@ class tcommontags extends titems implements  itemplate {
       return sprintf('<ul>%s</ul>', $items);
     }
     
-    ttheme::$vars['menu'] = $this;
-    $result = $theme->parse($theme->templates['content.menu']);
+    if ($this->getcontent()) {
+      ttheme::$vars['menu'] = $this;
+      $result = $theme->parse($theme->templates['content.menu']);
+    } else {
+      $result = '';
+    }
     
     $lite = $this->lite;
     $this->callevent('onlite', array($this->id, &$lite));
+    $list = $this->getidposts();
+    $item = $this->getitem($this->id);
+    $result .= $theme->getpostsnavi($list, $lite,$item['url'], $item['itemscount']);
+    return $result;
+  }
+  
+  public function getidposts() {
+    if (isset($this->_idposts)) return $this->_idposts;
+    $lite = $this->lite;
+    $this->callevent('onlite', array($this->id, &$lite));
+    
     $perpage = $lite ? 1000 : litepublisher::$options->perpage;
     $posts = litepublisher::$classes->posts;
+    
     if ($this->dbversion) {
       if ($this->includeparents || $this->includechilds) {
         $this->loadall();
@@ -2154,11 +2175,9 @@ class tcommontags extends titems implements  itemplate {
       $from = (litepublisher::$urlmap->page - 1) * $perpage;
       $itemstable  = $this->itemsposts->thistable;
       $poststable = $posts->thistable;
-      $items = $posts->select("$poststable.status = 'published' and $poststable.id in
+      $this->_idposts = $posts->select("$poststable.status = 'published' and $poststable.id in
       (select DISTINCT post from $itemstable  where $itemstable .item $tags)",
       "order by $poststable.posted desc limit $from, $perpage");
-      
-      $result .= $theme->getposts($items, $lite);
     } else {
       $items = $this->itemsposts->getposts($this->id);
       if ($this->dbversion && ($this->includeparents || $this->includechilds)) $this->loadall();
@@ -2178,13 +2197,9 @@ class tcommontags extends titems implements  itemplate {
       
       $items = $posts->stripdrafts($items);
       $items = $posts->sortbyposted($items);
-      $list = array_slice($items, (litepublisher::$urlmap->page - 1) * $perpage, $perpage);
-      $result .= $theme->getposts($list, $lite);
+      $this->_idposts = array_slice($items, (litepublisher::$urlmap->page - 1) * $perpage, $perpage);
     }
-    
-    $item = $this->getitem($this->id);
-    $result .=$theme->getpages($item['url'], litepublisher::$urlmap->page, ceil($item['itemscount'] / $perpage));
-    return $result;
+    return $this->_idposts;
   }
   
   public function getparents($id) {$result = array();

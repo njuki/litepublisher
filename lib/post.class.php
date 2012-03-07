@@ -864,10 +864,10 @@ class tpostfactory extends tdata {
   public function getcategories() {
     return tcategories::i();
   }
-
-public function gettemplatecomments() {
-return ttemplatecomments::i();
-}
+  
+  public function gettemplatecomments() {
+    return ttemplatecomments::i();
+  }
   
   public function getcomments($id) {
     return tcomments::i($id);
