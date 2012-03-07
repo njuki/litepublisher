@@ -36,10 +36,9 @@ if ($list = $this->getlist()) {
 $result = '';
 foreach ($list as $id) {
 $post = tpost::i($id);
-$result .= $post->title . ' ';
+$result .= $post->keywords . ', ';
 }
-return $result;
-
+return trim($result, ', ');
 }
 return ttemplate::i()->getkeywords();
 }
