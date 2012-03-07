@@ -15,6 +15,7 @@ class tcommontags extends titems implements  itemplate {
   public $id;
   private $newtitle;
   private $all_loaded;
+private $_idposts;
   
   protected function create() {
     $this->dbversion = dbversion;
@@ -380,18 +381,27 @@ class tcommontags extends titems implements  itemplate {
       0, 'count', 0, 0, false);
       return sprintf('<ul>%s</ul>', $items);
     }
-    
+
+if ($this->getcontent()) {    
     ttheme::$vars['menu'] = $this;
     $result = $theme->parse($theme->templates['content.menu']);
-      $result .= $theme->getposts($list, $lite);
+} else {
+$result = '';
+}
+
+        $lite = $this->lite;
+    $this->callevent('onlite', array($this->id, &$lite));
+$list = $this->getidposts();
     $item = $this->getitem($this->id);
-    $result .=$theme->getpages($item['url'], litepublisher::$urlmap->page, ceil($item['itemscount'] / $perpage));
+      $result .= $theme->getpostsnavi($list, $lite,$item['url'], $item['itemscount']);
     return $result;
 }
 
 public function getidposts() {
+if (isset($this->_idposts)) return $this->_idposts;
         $lite = $this->lite;
     $this->callevent('onlite', array($this->id, &$lite));
+
     $perpage = $lite ? 1000 : litepublisher::$options->perpage;
     $posts = litepublisher::$classes->posts;
 
@@ -409,7 +419,7 @@ public function getidposts() {
       $from = (litepublisher::$urlmap->page - 1) * $perpage;
       $itemstable  = $this->itemsposts->thistable;
       $poststable = $posts->thistable;
-return $posts->select("$poststable.status = 'published' and $poststable.id in
+$this->_idposts = $posts->select("$poststable.status = 'published' and $poststable.id in
       (select DISTINCT post from $itemstable  where $itemstable .item $tags)",
       "order by $poststable.posted desc limit $from, $perpage");
     } else {
@@ -431,8 +441,9 @@ return $posts->select("$poststable.status = 'published' and $poststable.id in
       
       $items = $posts->stripdrafts($items);
       $items = $posts->sortbyposted($items);
-return array_slice($items, (litepublisher::$urlmap->page - 1) * $perpage, $perpage);
+$this->_idposts = array_slice($items, (litepublisher::$urlmap->page - 1) * $perpage, $perpage);
     }
+return $this->_idposts;
   }
   
   public function getparents($id) {$result = array();

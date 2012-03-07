@@ -8,6 +8,7 @@
 
 class tarchives extends titems_itemplate implements  itemplate {
   public $date;
+private $_idposts;
   
   public static function i() {
     return getinstance(__class__);
@@ -115,9 +116,10 @@ class tarchives extends titems_itemplate implements  itemplate {
   }
   
   public function getcont() {
-    $items = $this->getposts();
+    $items = $this->getidposts();
     if (count($items) == 0)return '';
-    $theme = ttheme::i();
+ 
+    $theme = tview::getview($this)->theme;
     $perpage = $this->lite ? 1000 : litepublisher::$options->perpage;
     $list = array_slice($items, (litepublisher::$urlmap->page - 1) * $perpage, $perpage);
     $result = $theme->getposts($list, $this->lite);
@@ -125,10 +127,12 @@ class tarchives extends titems_itemplate implements  itemplate {
     return $result;
   }
   
-  public function getposts() {
+  public function getidposts() {
+if (isset($this->_idposts)) return $this->_idposts;
     if (dbversion) {
       $item = $this->items[$this->date];
-  return $this->db->idselect("status = 'published' and year(posted) = '{$item['year']}' and month(posted) = '{$item['month']}' ORDER BY posted DESC ");
+  $this->_idposts = $this->db->idselect("status = 'published' and year(posted) = '{$item['year']}' and month(posted) = '{$item['month']}' ORDER BY posted DESC ");
+return $this->_idposts;
     } else {
       if (!isset($this->items[$this->date]['posts'])) return array();
       return $this->items[$this->date]['posts'];

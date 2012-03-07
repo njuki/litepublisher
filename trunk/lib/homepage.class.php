@@ -39,12 +39,12 @@ class thomepage extends tmenu  {
     }
     if ($this->hideposts) return $result;
     
-    $items =  $this->getitems();
-    $result .= $theme->getposts($items, false);
+    $items =  $this->getidposts();
+    $result .= $theme->getpostsnavi($items, false, $this->url, tposts::i()->archivescount);
     return $result;
   }
   
-  public function getitems() {
+  public function getidposts() {
     if($result = $this->onbeforegetitems()) return $result;
     $posts = tposts::i();
     $perpage = litepublisher::$options->perpage;

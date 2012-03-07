@@ -345,11 +345,16 @@ class ttheme extends tevents {
     
     $tml = $lite ? $this->templates['content.excerpts.lite'] : $this->templates['content.excerpts'];
     if ($tml != '') $result = str_replace('$excerpt', $result, $this->parse($tml));
-
-    $result .= $this->getpages(litepublisher::$urlmap->itemrequested['url'], litepublisher::$urlmap->page, ceil(tposts::i()->archivescount / litepublisher::$options->perpage));
 return $result;
   }
-  
+
+  public function getpostsnavi(array $items, $lite, $url, $count) {
+$result = $this->getposts($items, $lite);
+$perpage = $lite ? 1000 : litepublisher::$options->perpage;
+    $result .= $this->getpages($url, litepublisher::$urlmap->page, ceil($count / $perpage));
+return $result;
+}  
+
   public function getpostswidgetcontent(array $items, $sidebar, $tml) {
     if (count($items) == 0) return '';
     $result = '';
