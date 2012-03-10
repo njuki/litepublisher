@@ -142,26 +142,10 @@ class tauthdigest extends tevents {
   }
   
   public function logout() {
-    if (litepublisher::$options->cookieenabled) {
-      $this->setcookies('', 0);
-    }
     $this->lock();
     $this->newnonce();
     $this->logoutneeded = true;
     $this->unlock();
   }
-  
-  public function setcookies($cookie, $expired) {
-    setcookie('admin', $cookie, $expired, litepublisher::$site->subdir . '/', false);
-    if (litepublisher::$options->user == 1) {
-      litepublisher::$options->set_cookie($cookie);
-      litepublisher::$options->cookieexpired = $expired;
-    } else {
-      $users = tusers::i();
-      $users->setcookie(litepublisher::$options->user, $cookie, $expired);
-    }
-  }
-  
-}//class
 
-?>
+}//class

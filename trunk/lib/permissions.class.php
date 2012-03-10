@@ -66,7 +66,7 @@ class tpermgroups extends tperm {
       $author = sprintf('  || (litepublisher::$options->user != %d)', $obj->author);
     }
     
-    return sprintf('<?php if ((0 == count(array_intersect(litepublisher::$options->idgroups, array(\'%s\'))))%s) return litepublisher::$urlmap->forbidden(); ?>',  $groups, $author);
+    return sprintf('<?php if (!litepublisher::$options->user || (0 == count(array_intersect(litepublisher::$options->idgroups, array(\'%s\'))))%s) return litepublisher::$urlmap->forbidden(); ?>',  $groups, $author);
   }
   
 }//class

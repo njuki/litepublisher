@@ -89,7 +89,7 @@ class toptions extends tevents_storage {
 
 public function getadmincookie() {
 if (is_null($this->_admincookie)) {
-$this->_admincookie = $this->cookieenabled && $this->authcookie() && ('admin' == $this->group);
+$this->_admincookie = $this->cookieenabled && isset($_COOKIE['litepubl_admin']) ? $this->authcookie() && ('admin' == $this->group);
 }
 return $this->_admincookie;
 }
@@ -100,6 +100,7 @@ $this->_admincookie = $val;
 
 public function getuser() {
 if (is_null($this->_user)) {
+$this->_user = $this->cookieenabled ? $this->authcookie() : false;
 }
 return $this->_user;
 }
@@ -109,8 +110,9 @@ $this->_user = $id;
 }
   
   public function authcookie() {
-    if (!isset($_COOKIE['admin']))  return false;
-    $cookie = basemd5((string) $_COOKIE['admin'] . litepublisher::$secret);
+$cookie = isset($_COOKIE['litepubl_user']) ? (string) $_COOKIE['litepubl_user'] : (isset$_COOKIE['admin']) ? (string) $_COOKIE['admin'] : '');
+if ($cookie == '') return false;
+    $cookie = basemd5($cookie . litepublisher::$secret);
     if (    $cookie == basemd5( litepublisher::$secret)) return false;
     if (!empty($this->cookie ) && ($this->cookie == $cookie)) {
       if ($this->cookieexpired < time()) return false;
@@ -129,7 +131,7 @@ $this->_user = $id;
     }
     
     $this->updategroup();
-    return true;
+    return $this->_user;
   }
   
   public function auth($login, $password) {
@@ -176,6 +178,25 @@ $this->_user = $id;
   public function setdbpassword($password) {
     $this->data['dbconfig']['password'] = base64_encode(str_rot13 ($password));
     $this->save();
+  }
+  
+  public function logout() {
+    if ($this->cookieenabled) {
+      $this->setcookies('', 0);
+    } else {
+tauthdigest::i()->logout();
+}
+  }
+  
+  public function setcookies($cookie, $expired) {
+    setcookie('litepubl_user', $cookie, $expired, litepublisher::$site->subdir . '/', false);
+if ('admin' == $this->group) setcookie('litepubl_admin', $cookie ? 'true' : '', $expired, litepublisher::$site->subdir . '/', false);
+    if ($this->_user == 1) {
+      $this->set_cookie($cookie);
+      $this->cookieexpired = $expired;
+    } else {
+tusers::i()->setcookie($this->_user, $cookie, $expired);
+    }
   }
   
   public function Getinstalled() {
