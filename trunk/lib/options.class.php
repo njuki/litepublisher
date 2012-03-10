@@ -89,7 +89,7 @@ class toptions extends tevents_storage {
 
 public function getadmincookie() {
 if (is_null($this->_admincookie)) {
-$this->_admincookie = $this->cookieenabled && isset($_COOKIE['litepubl_admin']) ? $this->authcookie() && ('admin' == $this->group);
+$this->_admincookie = $this->cookieenabled && isset($_COOKIE['litepubl_user_req']) ? $this->authcookie() && ('admin' == $this->group);
 }
 return $this->_admincookie;
 }
@@ -190,7 +190,7 @@ tauthdigest::i()->logout();
   
   public function setcookies($cookie, $expired) {
     setcookie('litepubl_user', $cookie, $expired, litepublisher::$site->subdir . '/', false);
-if ('admin' == $this->group) setcookie('litepubl_admin', $cookie ? 'true' : '', $expired, litepublisher::$site->subdir . '/', false);
+if ('admin' == $this->group) setcookie('litepubl_user_req', $cookie ? 'true' : '', $expired, litepublisher::$site->subdir . '/', false);
     if ($this->_user == 1) {
       $this->set_cookie($cookie);
       $this->cookieexpired = $expired;
