@@ -7,6 +7,7 @@
 **/
 
 class tsitemap extends titems_itemplate implements itemplate {
+public $classes;
   private $lastmod;
   private $count;
   private $fd;
@@ -22,6 +23,7 @@ class tsitemap extends titems_itemplate implements itemplate {
     $this->addevents('onindex');
     $this->data['date'] = time();
     $this->data['countfiles'] = 1;
+$this->addmap('classes', array());
   }
   
   public function add($url, $prio) {
@@ -35,7 +37,6 @@ class tsitemap extends titems_itemplate implements itemplate {
   
   //itemplate
   public function gettitle() {
-    //dumpvar(tlocal::i()->ini['default']);
     return     tlocal::get('default', 'sitemap');
   }
   

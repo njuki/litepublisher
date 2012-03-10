@@ -7,10 +7,10 @@
 **/
 
 class toptions extends tevents_storage {
-  public $user;
   public $group;
   public $idgroups;
-  public $admincookie;
+  protected $_user;
+  protected $_admincookie;
   public $gmt;
   public $errorlog;
   
@@ -29,7 +29,6 @@ class toptions extends tevents_storage {
     unset($this->cache);
     $this->gmt = 0;
     $this->errorlog = '';
-    $this->admincookie = false;
     $this->group = '';
     $this->idgroups = array();
   }
@@ -87,6 +86,27 @@ class toptions extends tevents_storage {
       $this->save();
     }
   }
+
+public function getadmincookie() {
+if (is_null($this->_admincookie)) {
+$this->_admincookie = $this->cookieenabled && $this->authcookie() && ('admin' == $this->group);
+}
+return $this->_admincookie;
+}
+
+public function setadmincookie($val) {
+$this->_admincookie = $val;
+}
+
+public function getuser() {
+if (is_null($this->_user)) {
+}
+return $this->_user;
+}
+
+public function setuser($id) {
+$this->_user = $id;
+}
   
   public function authcookie() {
     if (!isset($_COOKIE['admin']))  return false;
@@ -94,7 +114,7 @@ class toptions extends tevents_storage {
     if (    $cookie == basemd5( litepublisher::$secret)) return false;
     if (!empty($this->cookie ) && ($this->cookie == $cookie)) {
       if ($this->cookieexpired < time()) return false;
-      $this->user = 1;
+      $this->_user = 1;
     } elseif (!$this->usersenabled)  {
       return false;
     } else {
@@ -102,7 +122,7 @@ class toptions extends tevents_storage {
       if ($iduser = $users->findcookie($cookie)){
         $item = $users->getitem($iduser);
         if (strtotime($item['expired']) <= time()) return false;
-        $this->user = (int) $iduser;
+        $this->_user = (int) $iduser;
       } else {
         return false;
       }
@@ -116,23 +136,23 @@ class toptions extends tevents_storage {
     if ($login == '' && $password == '' && $this->cookieenabled) return $this->authcookie();
     if ($login == $this->login) {
       if ($this->data['password'] != basemd5("$login:$this->realm:$password"))  return false;
-      $this->user = 1;
+      $this->_user = 1;
     } elseif(!$this->usersenabled) {
       return false;
     } else {
       $users = tusers::i();
-      if (!($this->user = $users->auth($login, $password))) return false;
+      if (!($this->_user = $users->auth($login, $password))) return false;
     }
     $this->updategroup();
     return true;
   }
   
   public function updategroup() {
-    if ($this->user == 1) {
+    if ($this->_user == 1) {
       $this->group = 'admin';
       $this->idgroups = array(1);
     } else {
-      $user = tusers::i()->getitem($this->user);
+      $user = tusers::i()->getitem($this->_user);
       $this->idgroups = $user['idgroups'];
       $this->group = tusergroups::i()->items[$user['idgroups'][0]]['name'];
     }
