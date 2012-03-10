@@ -14,6 +14,7 @@ class turlmap extends titems {
   public $itemrequested;
   public  $context;
   public $cachefilename;
+public $cache_enabled;
   public $argtree;
   public $is404;
   public $adminpanel;
@@ -38,6 +39,7 @@ class turlmap extends titems {
     $this->adminpanel = false;
     $this->mobile= false;
     $this->cachefilename = false;
+$this->cache_enabled =     litepublisher::$options->cache && !litepublisher::$options->admincookie;
     $this->page = 1;
     $this->onclose = array();
   }
@@ -150,7 +152,7 @@ class turlmap extends titems {
   
   private function  printcontent(array $item) {
     $options = litepublisher::$options;
-    if ($options->cache && !$options->admincookie) {
+    if ($this->cache_enabled) {
       $cachefile = $this->getcachefile($item);
       if (file_exists($cachefile) && ((filemtime ($cachefile) + $options->expiredcache - $options->filetime_offset) >= time())) {
         include($cachefile);
@@ -201,7 +203,7 @@ class turlmap extends titems {
     }
     //dumpstr($s);
     eval('?>'. $s);
-    if (litepublisher::$options->cache && $this->context->cache &&!litepublisher::$options->admincookie) {
+    if ($this->cache_enabled && $this->context->cache) {
       $cachefile = $this->getcachefile($item);
       file_put_contents($cachefile, $s);
       chmod($cachefile, 0666);
@@ -220,7 +222,7 @@ class turlmap extends titems {
   
   private function printclasspage($classname) {
     $cachefile = litepublisher::$paths->cache . $classname . '.php';
-    if (litepublisher::$options->cache && !litepublisher::$options->admincookie) {
+    if ($this->cache_enabled) {
       if (file_exists($cachefile) && ((filemtime ($cachefile) + litepublisher::$options->expiredcache - litepublisher::$options->filetime_offset) >= time())) {
         include($cachefile);
         return;
@@ -232,7 +234,7 @@ class turlmap extends titems {
     $s = $Template->request($obj);
     eval('?>'. $s);
     
-    if (litepublisher::$options->cache && $obj->cache &&!litepublisher::$options->admincookie) {
+    if ($this->cache_enabled && $obj->cache) {
       file_put_contents($cachefile, $s);
       chmod($cachefile, 0666);
     }
