@@ -22,13 +22,12 @@ class tadminlogin extends tadminform {
   }
   
   private function logout() {
-    $auth = tauthdigest::i();
     if (litepublisher::$options->cookieenabled) {
-      if (litepublisher::$options->authcookie()) $auth->logout();
-    } elseif ($auth->auth()) {
-      $auth->logout();
-    }
-    litepublisher::$options->savemodified();
+      if (litepublisher::$options->user) litepublisher::$options->logout();
+} else {
+    $auth = tauthdigest::i();
+if ($auth->auth()) $auth->logout();
+}
     return litepublisher::$urlmap->redir301('/admin/login/');
   }
   
