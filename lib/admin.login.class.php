@@ -50,8 +50,7 @@ if ($auth->auth()) $auth->logout();
     
     $expired = isset($_POST['remember']) ? time() + 1210000 : time() + 8*3600;
     $cookie = md5uniq();
-    $auth = tauthdigest::i();
-    $auth->setcookies($cookie, $expired);
+    litepublisher::$options->setcookies($cookie, $expired);
     if (isset($_GET['backurl'])) {
       $url = $_GET['backurl'];
     } else {
