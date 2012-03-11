@@ -85,7 +85,9 @@ try {
   litepublisher::$site = tsite::i();
   if (!litepublisher::$options->installed) require_once(litepublisher::$paths->lib .'install' . DIRECTORY_SEPARATOR . 'install.php');
   if (dbversion) litepublisher::$db = tdatabase::i();
+/*
   litepublisher::$options->admincookie = litepublisher::$options->cookieenabled && litepublisher::$options->authcookie() && ('admin' == litepublisher::$options->group);
+*/
   litepublisher::$urlmap = turlmap::i();
   if (!defined('litepublisher_mode')) {
     litepublisher::$urlmap->request(strtolower($_SERVER['HTTP_HOST']), $_SERVER['REQUEST_URI']);

@@ -132,14 +132,15 @@ public function save() { return true; }
   }
   
   public static function auth($group) {
-    $auth = tauthdigest::i();
     if (litepublisher::$options->cookieenabled) {
-      if ($s = $auth->checkattack()) return $s;
+      if ($s = tguard::checkattack()) return $s;
       if (!litepublisher::$options->user) {
         return litepublisher::$urlmap->redir301('/admin/login/' . litepublisher::$site->q . 'backurl=' . urlencode(litepublisher::$urlmap->url));
       }
-    }
-    elseif (!$auth->Auth())  return $auth->headers();
+    }else {
+    $auth = tauthdigest::i();
+if (!$auth->Auth())  return $auth->headers();
+}
     
     if (litepublisher::$options->group != 'admin') {
       $groups = tusergroups::i();

@@ -348,8 +348,7 @@ class topenid extends tevents {
     
     $auth = tauthdigest::i();
     if (litepublisher::$options->cookieenabled) {
-      //if ($s = $auth->checkattack()) return $s;
-      if (!litepublisher::$options->authcookie()) return litepublisher::$urlmap->redir301('/admin/login/');
+      if (!litepublisher::$options->user) return litepublisher::$urlmap->redir301('/admin/login/');
     }
     elseif (!$auth->Auth())  return $auth->headers();
     if (litepublisher::$options->group != 'admin') return 404;

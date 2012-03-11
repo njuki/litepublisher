@@ -13,12 +13,12 @@ class tadminlogin extends tadminform {
   }
   
   public function auth() {
-    $auth = tauthdigest::i();
     if (litepublisher::$options->cookieenabled) {
-      if ($s = $auth->checkattack()) return $s;
+      if ($s = tguard::checkattack()) return $s;
       if (!litepublisher::$options->authcookie()) return litepublisher::$urlmap->redir301('/admin/login/');
-    }
-    elseif (!$auth->Auth())  return $auth->headers();
+    }else {
+    $auth = tauthdigest::i();
+if (!$auth->Auth())  return $auth->headers();
   }
   
   private function logout() {

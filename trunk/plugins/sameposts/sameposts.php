@@ -61,7 +61,7 @@ class tsameposts extends tclasswidget {
     return array_slice(array_keys($same), 0, $this->maxcount);
   }
   
-  private function getsame($id) {
+  public function getsame($id) {
     if (dbversion) {
       $items = $this->db->getvalue($id, 'items');
       if (is_string($items)) {
