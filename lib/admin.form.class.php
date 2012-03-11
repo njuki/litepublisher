@@ -29,12 +29,7 @@ public function setidview($id) {}
     $this->cache = false;
     tlocal::usefile('admin');
     $this->formresult = '';
-    if (isset($_POST) && (count($_POST) > 0)) {
-      if (get_magic_quotes_gpc()) {
-        foreach ($_POST as $name => $value) {
-          $_POST[$name] = stripslashes($_POST[$name]);
-        }
-      }
+if (tguard::post()) {
       $this->formresult = $this->processform();
     }
   }

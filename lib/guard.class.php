@@ -6,9 +6,9 @@
 * and GPL (gpl.txt) licenses.
 **/
 
-class tparams {
+class tguard {
 
-public static function strip() {
+public static function post() {
     if (!isset($_POST) || (count($_POST) == 0)) return false;
 if (version_compare(PHP_VERSION, '5.3', '<') && get_magic_quotes_gpc()) {
         foreach ($_POST as $name => $value) {
@@ -18,7 +18,7 @@ if (version_compare(PHP_VERSION, '5.3', '<') && get_magic_quotes_gpc()) {
 return true;
 }
 
-  public static function isattack() {
+  public static function is_xxx() {
     if (isset($_GET['ref'])) {
       $ref = $_GET['ref'];
       $url = $_SERVER['REQUEST_URI'];
@@ -35,7 +35,7 @@ return true;
   }
   
   public static function checkattack() {
-    if (litepublisher::$options->xxxcheck  && self::is_attack()) {
+    if (litepublisher::$options->xxxcheck  && self::is_xxx()) {
       tlocal::usefile('admin');
       if ($_POST) {
         die(tlocal::get('login', 'xxxattack'));
