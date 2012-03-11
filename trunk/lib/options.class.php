@@ -89,7 +89,7 @@ class toptions extends tevents_storage {
 
 public function getadmincookie() {
 if (is_null($this->_admincookie)) {
-$this->_admincookie = $this->cookieenabled && isset($_COOKIE['litepubl_user_req']) ? $this->authcookie() && ('admin' == $this->group);
+$this->_admincookie = $this->cookieenabled && isset($_COOKIE['litepubl_user_flag']) ? $this->user && in_array(1, $this->idgroups) : false;
 }
 return $this->_admincookie;
 }
@@ -110,7 +110,7 @@ $this->_user = $id;
 }
   
   public function authcookie() {
-$cookie = isset($_COOKIE['litepubl_user']) ? (string) $_COOKIE['litepubl_user'] : (isset$_COOKIE['admin']) ? (string) $_COOKIE['admin'] : '');
+$cookie = isset($_COOKIE['litepubl_user']) ? (string) $_COOKIE['litepubl_user'] : (isset($_COOKIE['admin']) ? (string) $_COOKIE['admin'] : '');
 if ($cookie == '') return false;
     $cookie = basemd5($cookie . litepublisher::$secret);
     if (    $cookie == basemd5( litepublisher::$secret)) return false;
@@ -190,7 +190,7 @@ tauthdigest::i()->logout();
   
   public function setcookies($cookie, $expired) {
     setcookie('litepubl_user', $cookie, $expired, litepublisher::$site->subdir . '/', false);
-if ('admin' == $this->group) setcookie('litepubl_user_req', $cookie ? 'true' : '', $expired, litepublisher::$site->subdir . '/', false);
+if ('admin' == $this->group) setcookie('litepubl_user_flag', $cookie ? 'true' : '', $expired, litepublisher::$site->subdir . '/', false);
     if ($this->_user == 1) {
       $this->set_cookie($cookie);
       $this->cookieexpired = $expired;

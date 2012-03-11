@@ -157,15 +157,13 @@ class Tadminoptions extends tadminmenu {
       $html->p->notecatstags;
       
       case 'secure':
-      $auth = tauthdigest::i();
       $args->echoexception = $options->echoexception;
       $args->cookie = $options->cookieenabled;
       $args->usersenabled = $options->usersenabled;
       $args->reguser = $options->reguser;
       $args->parsepost = $options->parsepost;
       $args->show_draft_post = $options->show_draft_post ;
-      
-      $args->xxxcheck = $auth->xxxcheck;
+      $args->xxxcheck = $options->xxxcheck;
       $filter = tcontentfilter::i();
       $args->phpcode = $filter->phpcode;
       $args->removephp = tthemeparser::i()->removephp;
@@ -314,10 +312,7 @@ $options->logout();
         $this->usersenabled = isset($usersenabled);
         $options->parsepost = isset($parsepost);
         $options->show_draft_post  = isset($show_draft_post);
-        
-        $auth = tauthdigest::i();
-        $auth->xxxcheck = isset($xxxcheck);
-        $auth->save();
+        $options->xxxcheck = isset($xxxcheck);
         $filter = tcontentfilter::i();
         $filter->phpcode = isset($phpcode);
         $filter->save();

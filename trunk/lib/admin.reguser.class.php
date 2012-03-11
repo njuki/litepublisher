@@ -44,7 +44,7 @@ class tadminreguser extends tadminform {
     
     $args = targs::i();
     $form = '';
-    foreach (array('login', 'name', 'email', 'website') as $name) {
+    foreach (array('login', 'name', 'email') as $name) {
       $args->$name = isset($_POST[$name]) ? $_POST[$name] : '';
       $form .= "[text=$name]";
     }
@@ -67,8 +67,7 @@ class tadminreguser extends tadminform {
     'login' => $login,
     'password' => $password,
     'name' => $name,
-    'email' => $email,
-    'website' => $website
+    'email' => $email
     ));
     if (!$id) return $this->html->h4->invalidregdata;
     

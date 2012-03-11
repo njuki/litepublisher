@@ -18,7 +18,6 @@ class tauthdigest extends tevents {
     $this->basename = 'authdigest';
     $this->data['nonce'] = '';
     $this->data['time'] = 0;
-    $this->data['xxxcheck'] = true;
     $this->data['logoutneeded'] = false;
     $this->stale = false;
   }
@@ -109,36 +108,6 @@ class tauthdigest extends tevents {
     @header('$protocol 401 Unauthorized', true, 401);
     echo '401 Unauthorized';
     ?>";
-  }
-  
-  public function isattack() {
-    if (isset($_GET['ref'])) {
-      $ref = $_GET['ref'];
-      $url = $_SERVER['REQUEST_URI'];
-      $url = substr($url, 0, strpos($url, '&ref='));
-      if ($ref == md5(litepublisher::$secret . litepublisher::$site->url . $url)) return false;
-    }
-    
-    $host = '';
-    if (!empty($_SERVER['HTTP_REFERER'])) {
-      $p = parse_url($_SERVER['HTTP_REFERER']);
-      $host = $p['host'];
-    }
-    return $host != $_SERVER['HTTP_HOST'];
-  }
-  
-  public function checkattack() {
-    if ($this->xxxcheck  && $this->isattack()) {
-      tlocal::usefile('admin');
-      if ($_POST) {
-        die(tlocal::get('login', 'xxxattack'));
-      }
-      if ($_GET) {
-        die(tlocal::get('login', 'confirmxxxattack') .
-        sprintf(' <a href="%1$s">%1$s</a>', $_SERVER['REQUEST_URI']));
-      }
-    }
-    return false;
   }
   
   public function logout() {
