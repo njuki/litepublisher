@@ -62,7 +62,7 @@ class tajaxposteditor  extends tevents {
   
   public static function auth() {
     if (!litepublisher::$options->cookieenabled) return self::error403();
-    if (!litepublisher::$options->authcookie()) return self::error403();
+    if (!litepublisher::$options->user) return self::error403();
     if (litepublisher::$options->group != 'admin') {
       $groups = tusergroups::i();
       if (!$groups->hasright(litepublisher::$options->group, 'author')) return self::error403();
@@ -80,7 +80,7 @@ class tajaxposteditor  extends tevents {
         header('Content-Type: text/plain');
         ?>";
       }
-      $_COOKIE['admin'] = $_POST['admincookie'];
+      $_COOKIE['litepubl_user'] = $_POST['litepubl_user'];
     }
     if ($err = self::auth()) return $err;
     $this->idpost = tadminhtml::idparam();
