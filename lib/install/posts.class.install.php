@@ -33,4 +33,24 @@ function tpostsUninstall($self) {
   //@rmdir(litepublisher::$paths->data . 'posts');
 }
 
-?>
+function tpostsGetsitemap($self, $from, $count) {
+$result = array();
+$commentpages  = litepublisher::$options->commentpages;
+$commentsperpage = litepublisher::$options->commentsperpage;
+
+      $db = $self->db;
+      $now = sqldate();
+      $res = $db->query("select $db->posts.title, $db->posts.pagescount, $db->posts.commentscount, $db->urlmap.url
+      from $db->posts, $db->urlmap
+      where $db->posts.status = 'published' and $db->posts.posted < '$now' and $db->urlmap.id = $db->posts.idurl
+      order by $db->posts.posted desc limit $from, $count");
+      while ($item = $db->fetchassoc($res)) {
+        $comments = $commentpages ? ceil($item['commentscount'] / $commentsperpage) : 1;
+$result[] = array(
+'url' => $item['url'],
+'title' => $item['title'],
+'pages' => max($item['pagescount'], $comments)
+);
+        }
+return $result;
+}

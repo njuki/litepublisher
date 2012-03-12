@@ -118,8 +118,7 @@ class tcommontags extends titems implements  itemplate {
     if (count($items) == 0) return;
     if ($this->dbversion) {
       $db = litepublisher::$db;
-      // вначале один запрос к таблице постов, чтобы получить массив новых значений
-      //следующие запросы обновляют значение в таблице тегов
+      //next queries update values
       $items = implode(',', $items);
       $thistable = $this->thistable;
       $itemstable = $this->itemsposts->thistable;
@@ -461,6 +460,10 @@ class tcommontags extends titems implements  itemplate {
     }
     return $result;
   }
+
+public function getsitemap($from, $count) {
+return $this->externalfunc(__class__, 'Getsitemap', array($from, $count));
+}
   
 }//class
 

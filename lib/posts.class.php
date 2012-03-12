@@ -437,6 +437,11 @@ class tposts extends titems {
     $this->callevent('afterexcerpt', array($post, &$result));
   }
   
+
+public function getsitemap($from, $count) {
+return $this->externalfunc(__class__, 'Getsitemap', array($from, $count));
+}
+
 }//class
 
 

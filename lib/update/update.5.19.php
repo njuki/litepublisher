@@ -2,7 +2,7 @@
 
 function update519() {
 $auth = tauthdigest::i();
-litepublisher::$options->xxxcheck = $auth->xxxcheck;
+litepublisher::$options->xxxcheck = isset($auth->xxxcheck) ? $auth->xxxcheck : true;
     unset($auth->data['xxxcheck']);
 $auth->save();
 
@@ -16,13 +16,7 @@ litepublisher::$classes->save();
 
 if (dbversion) {
 $sitemap = tsitemap::i();
-$sitemap->data['classes'] = array(
-'tpost' => 'posts',
-'tcategories' => 'categories',
-'ttags' => 'tags',
-'tarchives', 
-);
-
+$sitemap->data['classes'] = array('tmenus', 'tposts', 'tcategories', 'ttags', 'tarchives' );
 $sitemap->save();
 }
 }
