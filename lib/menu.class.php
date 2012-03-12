@@ -320,10 +320,10 @@ class tmenus extends titems {
     }
     return false;
   }
-
-public function getsitemap($from, $count) {
-return $this->externalfunc(__class__, 'Getsitemap', array($from, $count));
-}
+  
+  public function getsitemap($from, $count) {
+    return $this->externalfunc(__class__, 'Getsitemap', array($from, $count));
+  }
   
 }//class
 
@@ -424,7 +424,7 @@ class tmenu extends titem implements  itemplate {
   }
   
   protected function doprocessform() {
-if (tguard::post()) {
+    if (tguard::post()) {
       $this->formresult.= $this->processform();
     }
   }

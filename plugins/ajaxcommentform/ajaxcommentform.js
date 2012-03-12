@@ -117,7 +117,7 @@ if (name) commentform.find(name).focus();
 confirm: function(data) {
 $.load_ui(function() {
 if (!commentform.confirm_dialog) {
-commentform.confirm_dialog= $('<div class="ui-helper-hidden" title="' + data.title + '"><h4>' + data.formhead  + '</h4></div>')
+commentform.confirm_dialog= $('<div class="ui-helper-hidden" title="' + data.title + '"><h4>' + data.title + '</h4></div>')
 .appendTo($("input[name='name']").closest("form"));
 }
 

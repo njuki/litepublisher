@@ -303,7 +303,7 @@ class Tadminoptions extends tadminmenu {
         if (($newpassword == '') || ($newpassword != $repassword))  return $h2->difpassword;
         if (!$options->auth($options->login, $oldpassword)) return $h2->badpassword;
         $options->changepassword($newpassword);
-$options->logout();
+        $options->logout();
         return $h2->passwordchanged;
       } else {
         $options->echoexception = isset($echoexception);

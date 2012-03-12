@@ -14,7 +14,7 @@ class turlmap extends titems {
   public $itemrequested;
   public  $context;
   public $cachefilename;
-public $cache_enabled;
+  public $cache_enabled;
   public $argtree;
   public $is404;
   public $adminpanel;
@@ -39,7 +39,7 @@ public $cache_enabled;
     $this->adminpanel = false;
     $this->mobile= false;
     $this->cachefilename = false;
-$this->cache_enabled =     litepublisher::$options->cache && !litepublisher::$options->admincookie;
+    $this->cache_enabled =     litepublisher::$options->cache && !litepublisher::$options->admincookie;
     $this->page = 1;
     $this->onclose = array();
   }

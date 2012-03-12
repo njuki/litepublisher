@@ -16,14 +16,14 @@ function  tmenusUninstall($self) {
   //rmdir(. 'menus');
 }
 function tmenusGetsitemap($self, $from, $count) {
-      $result = array();
-      foreach ($self->items as $id => $item) {
-        if ($item['status'] == 'draft') continue;
-        $result[] = array(
-'url' => $item['url'], 
-'title' => $item['title'],
-'pages' => 1
-);
-      }
-return $result;
-      }
+  $result = array();
+  foreach ($self->items as $id => $item) {
+    if ($item['status'] == 'draft') continue;
+    $result[] = array(
+    'url' => $item['url'],
+    'title' => $item['title'],
+    'pages' => 1
+    );
+  }
+  return $result;
+}

@@ -876,12 +876,7 @@ class tcommentform extends tevents {
     }
     
     $posturl = litepublisher::$site->url . '/';
-    
-    if (get_magic_quotes_gpc()) {
-      foreach ($_POST as $name => $value) {
-        $_POST[$name] = stripslashes($_POST[$name]);
-      }
-    }
+    tguard::post();
     
     $kept = tkeptcomments::i();
     $kept->deleteold();

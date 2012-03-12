@@ -461,7 +461,7 @@ class tdata {
     }
   }
   
-  protected function externalfunc($class, $func, $arg) {
+  protected function externalfunc($class, $func, $args) {
     if ($filename = litepublisher::$classes->getclassfilename($class, true)) {
       $externalname = basename($filename, '.php') . '.install.php';
       $dir = dirname($filename) . DIRECTORY_SEPARATOR;
@@ -472,7 +472,15 @@ class tdata {
       }
       include_once($file);
       $fnc = $class . $func;
-      if (function_exists($fnc)) $fnc($this, $arg);
+      if (function_exists($fnc)) {
+        //$fnc($this, $arg);
+        if (is_array($args)) {
+          array_unshift($args, $this);
+        } else {
+          $args = array($this, $args);
+        }
+        return call_user_func_array($fnc, $args);
+      }
     }
   }
   
@@ -1486,10 +1494,10 @@ function getinstance($class) {
 
 //options.class.php
 class toptions extends tevents_storage {
-  public $user;
   public $group;
   public $idgroups;
-  public $admincookie;
+  protected $_user;
+  protected $_admincookie;
   public $gmt;
   public $errorlog;
   
@@ -1508,7 +1516,6 @@ class toptions extends tevents_storage {
     unset($this->cache);
     $this->gmt = 0;
     $this->errorlog = '';
-    $this->admincookie = false;
     $this->group = '';
     $this->idgroups = array();
   }
@@ -1567,13 +1574,36 @@ class toptions extends tevents_storage {
     }
   }
   
+  public function getadmincookie() {
+    if (is_null($this->_admincookie)) {
+      $this->_admincookie = $this->cookieenabled && isset($_COOKIE['litepubl_user_flag']) ? $this->user && in_array(1, $this->idgroups) : false;
+    }
+    return $this->_admincookie;
+  }
+  
+  public function setadmincookie($val) {
+    $this->_admincookie = $val;
+  }
+  
+  public function getuser() {
+    if (is_null($this->_user)) {
+      $this->_user = $this->cookieenabled ? $this->authcookie() : false;
+    }
+    return $this->_user;
+  }
+  
+  public function setuser($id) {
+    $this->_user = $id;
+  }
+  
   public function authcookie() {
-    if (!isset($_COOKIE['admin']))  return false;
-    $cookie = basemd5((string) $_COOKIE['admin'] . litepublisher::$secret);
+    $cookie = isset($_COOKIE['litepubl_user']) ? (string) $_COOKIE['litepubl_user'] : (isset($_COOKIE['admin']) ? (string) $_COOKIE['admin'] : '');
+    if ($cookie == '') return false;
+    $cookie = basemd5($cookie . litepublisher::$secret);
     if (    $cookie == basemd5( litepublisher::$secret)) return false;
     if (!empty($this->cookie ) && ($this->cookie == $cookie)) {
       if ($this->cookieexpired < time()) return false;
-      $this->user = 1;
+      $this->_user = 1;
     } elseif (!$this->usersenabled)  {
       return false;
     } else {
@@ -1581,37 +1611,37 @@ class toptions extends tevents_storage {
       if ($iduser = $users->findcookie($cookie)){
         $item = $users->getitem($iduser);
         if (strtotime($item['expired']) <= time()) return false;
-        $this->user = (int) $iduser;
+        $this->_user = (int) $iduser;
       } else {
         return false;
       }
     }
     
     $this->updategroup();
-    return true;
+    return $this->_user;
   }
   
   public function auth($login, $password) {
     if ($login == '' && $password == '' && $this->cookieenabled) return $this->authcookie();
     if ($login == $this->login) {
       if ($this->data['password'] != basemd5("$login:$this->realm:$password"))  return false;
-      $this->user = 1;
+      $this->_user = 1;
     } elseif(!$this->usersenabled) {
       return false;
     } else {
       $users = tusers::i();
-      if (!($this->user = $users->auth($login, $password))) return false;
+      if (!($this->_user = $users->auth($login, $password))) return false;
     }
     $this->updategroup();
     return true;
   }
   
   public function updategroup() {
-    if ($this->user == 1) {
+    if ($this->_user == 1) {
       $this->group = 'admin';
       $this->idgroups = array(1);
     } else {
-      $user = tusers::i()->getitem($this->user);
+      $user = tusers::i()->getitem($this->_user);
       $this->idgroups = $user['idgroups'];
       $this->group = tusergroups::i()->items[$user['idgroups'][0]]['name'];
     }
@@ -1635,6 +1665,25 @@ class toptions extends tevents_storage {
   public function setdbpassword($password) {
     $this->data['dbconfig']['password'] = base64_encode(str_rot13 ($password));
     $this->save();
+  }
+  
+  public function logout() {
+    if ($this->cookieenabled) {
+      $this->setcookies('', 0);
+    } else {
+      tauthdigest::i()->logout();
+    }
+  }
+  
+  public function setcookies($cookie, $expired) {
+    setcookie('litepubl_user', $cookie, $expired, litepublisher::$site->subdir . '/', false);
+    if ('admin' == $this->group) setcookie('litepubl_user_flag', $cookie ? 'true' : '', $expired, litepublisher::$site->subdir . '/', false);
+    if ($this->_user == 1) {
+      $this->set_cookie($cookie);
+      $this->cookieexpired = $expired;
+    } else {
+      tusers::i()->setcookie($this->_user, $cookie, $expired);
+    }
   }
   
   public function Getinstalled() {
@@ -1770,6 +1819,7 @@ class turlmap extends titems {
   public $itemrequested;
   public  $context;
   public $cachefilename;
+  public $cache_enabled;
   public $argtree;
   public $is404;
   public $adminpanel;
@@ -1794,6 +1844,7 @@ class turlmap extends titems {
     $this->adminpanel = false;
     $this->mobile= false;
     $this->cachefilename = false;
+    $this->cache_enabled =     litepublisher::$options->cache && !litepublisher::$options->admincookie;
     $this->page = 1;
     $this->onclose = array();
   }
@@ -1906,7 +1957,7 @@ class turlmap extends titems {
   
   private function  printcontent(array $item) {
     $options = litepublisher::$options;
-    if ($options->cache && !$options->admincookie) {
+    if ($this->cache_enabled) {
       $cachefile = $this->getcachefile($item);
       if (file_exists($cachefile) && ((filemtime ($cachefile) + $options->expiredcache - $options->filetime_offset) >= time())) {
         include($cachefile);
@@ -1957,7 +2008,7 @@ class turlmap extends titems {
     }
     //dumpstr($s);
     eval('?>'. $s);
-    if (litepublisher::$options->cache && $this->context->cache &&!litepublisher::$options->admincookie) {
+    if ($this->cache_enabled && $this->context->cache) {
       $cachefile = $this->getcachefile($item);
       file_put_contents($cachefile, $s);
       chmod($cachefile, 0666);
@@ -1976,7 +2027,7 @@ class turlmap extends titems {
   
   private function printclasspage($classname) {
     $cachefile = litepublisher::$paths->cache . $classname . '.php';
-    if (litepublisher::$options->cache && !litepublisher::$options->admincookie) {
+    if ($this->cache_enabled) {
       if (file_exists($cachefile) && ((filemtime ($cachefile) + litepublisher::$options->expiredcache - litepublisher::$options->filetime_offset) >= time())) {
         include($cachefile);
         return;
@@ -1988,7 +2039,7 @@ class turlmap extends titems {
     $s = $Template->request($obj);
     eval('?>'. $s);
     
-    if (litepublisher::$options->cache && $obj->cache &&!litepublisher::$options->admincookie) {
+    if ($this->cache_enabled && $obj->cache) {
       file_put_contents($cachefile, $s);
       chmod($cachefile, 0666);
     }

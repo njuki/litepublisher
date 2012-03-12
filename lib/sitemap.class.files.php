@@ -45,9 +45,9 @@ class tsitemap extends titems_itemplate implements itemplate {
     $theme = $this->view->theme;
     $perpage = 1000;
     $from = (litepublisher::$urlmap->page - 1) * $perpage;
-      $list = array_slice(array_keys($posts->archives), (litepublisher::$urlmap->page - 1) * $perpage, $perpage);
-      $result = $theme->getposts($list, true);
-
+    $list = array_slice(array_keys($posts->archives), (litepublisher::$urlmap->page - 1) * $perpage, $perpage);
+    $result = $theme->getposts($list, true);
+    
     if (litepublisher::$urlmap->page  == 1) {
       $menus = tmenus::i();
       $result .= '<h2>' . tlocal::get('default', 'menu') . "</h2>\n<ul>\n";
@@ -139,14 +139,14 @@ class tsitemap extends titems_itemplate implements itemplate {
   }
   
   private function writeposts() {
-      $posts = tposts::i();
-      foreach ($posts->archives as $id => $posted) {
-        $post = tpost::i($id);
-        $this->write($post->url, $post->countpages);
-        $post->free();
-      }
+    $posts = tposts::i();
+    foreach ($posts->archives as $id => $posted) {
+      $post = tpost::i($id);
+      $this->write($post->url, $post->countpages);
+      $post->free();
     }
- 
+  }
+  
   private function writemenus() {
     $menus = tmenus::i();
     foreach ($menus->items as $id => $item) {
@@ -157,9 +157,9 @@ class tsitemap extends titems_itemplate implements itemplate {
   
   private function writetags($tags) {
     $perpage = $tags->lite ? 1000 : litepublisher::$options->perpage;
-      foreach ($tags->items as $id => $item) {
-        $this->write($item['url'], ceil($item['itemscount']/ $perpage));
-      }
+    foreach ($tags->items as $id => $item) {
+      $this->write($item['url'], ceil($item['itemscount']/ $perpage));
+    }
   }
   
   private function writearchives() {

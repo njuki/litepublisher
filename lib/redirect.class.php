@@ -37,11 +37,11 @@ class tredirector extends titems {
       if (strbegin($url, litepublisher::$site->url)) return substr($url, strlen(litepublisher::$site->url));
       if (litepublisher::$urlmap->urlexists($url)) return $url;
     }
-
-//fix php warnings e.g. function.preg-split
-if (($i = strrpos($url, '/')) && strbegin(substr($url, $i), '/function.')) {
-return substr($url, 0, $i + 1);
-}
+    
+    //fix php warnings e.g. function.preg-split
+    if (($i = strrpos($url, '/')) && strbegin(substr($url, $i), '/function.')) {
+      return substr($url, 0, $i + 1);
+    }
     return false;
   }
   

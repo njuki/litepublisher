@@ -29,7 +29,7 @@ public function setidview($id) {}
     $this->cache = false;
     tlocal::usefile('admin');
     $this->formresult = '';
-if (tguard::post()) {
+    if (tguard::post()) {
       $this->formresult = $this->processform();
     }
   }

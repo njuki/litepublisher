@@ -24,8 +24,8 @@ function tsamepostsInstall($self) {
 
 function tsamepostsUninstall($self) {
   tposts::unsub($self);
-twidgets::i()->deleteclass(get_class($self));
-
+  twidgets::i()->deleteclass(get_class($self));
+  
   if (dbversion) {
     $manager = tdbmanager ::i();
     $manager->deletetable($self->table);
