@@ -63,11 +63,13 @@ function uploadSuccess(file, serverData) {
 
 function createswfu () {
   var url = ltoptions.uploadurl == undefined ? ltoptions.url: ltoptions.uploadurl;
+var cookie = get_cookie("litepubl_user");
+if (cookie == "") cookie = get_cookie("admin");
   var settings = {
     flash_url : url + "/js/swfupload/swfupload.swf",
     upload_url: url + "/admin/ajaxposteditor.htm?get=upload&id=" + ltoptions.idpost,
     // prevent_swf_caching: false,
-  post_params: {"admincookie": get_cookie("admin")},
+  post_params: {"litepubl_user": cookie},
     file_size_limit : "100 MB",
     file_types : "*.*",
     file_types_description : "All Files",
