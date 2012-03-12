@@ -23,7 +23,7 @@ public $classes;
     $this->addevents('onindex');
     $this->data['date'] = time();
     $this->data['countfiles'] = 1;
-$this->addmap('classes', array());
+$this->addmap('classes', array('tmenus', 'tposts', 'tcategories', 'ttags', 'tarchives' ));
   }
   
   public function add($url, $prio) {
@@ -41,69 +41,32 @@ $this->addmap('classes', array());
   }
   
   public function getcont() {
-    $result = '';
-    $posts = tposts::i();
+    $result = '<ul>';
     $theme = $this->view->theme;
     $perpage = 1000;
+$count = 0;
     $from = (litepublisher::$urlmap->page - 1) * $perpage;
-    if (dbversion) {
-      $db = litepublisher::$db;
-      $now = sqldate();
-      $res = $db->query("select $db->posts.title, $db->posts.pagescount, $db->posts.commentscount, $db->urlmap.url
-      from $db->posts, $db->urlmap
-      where $db->posts.status = 'published' and $db->posts.posted < '$now' and $db->urlmap.id = $db->posts.idurl
-      order by $db->posts.posted desc limit $from, $perpage");
-      while ($item = $db->fetchassoc($res)) {
-        $comments = litepublisher::$options->commentpages ? ceil($item['commentscount'] / litepublisher::$options->commentsperpage) : 1;
-        $pages = max($item['pagescount'], $comments);
-        $postpages = '';
-        if ($pages > 1) {
+$siteurl = litepublisher::$site->url;
+foreach ($this->classes as $class) {
+$instance = getinstance($class);
+$links = $instance->getsitemap($from, $perpage - $count);
+$count += count($links);
+foreach ($links as $item) {
+$pages = '';
+        if ($item['pages'] > 1) {
           $url = rtrim($item['url'], '/');
-          for ($i = 2; $i < $pages; $i++) {
-            $postpages .= '<a href="' . litepublisher::$site->url . "$url/page/$i/\">$i</a>,";
+          for ($i = 2; $i < $link['pages']; $i++) {
+            $pages = "<a href=\"$siteurl$url/page/$i/\">$i</a>,";
           }
-        }
-        $result .= sprintf('<li><a href="%s%s" title="%s">%3$s</a>%4$s</li>', litepublisher::$site->url, $item['url'], $item['title'], $postpages);
+}
+
+        $result .= "<li><a href=\"$siteurl{$item['url']}\" title=\"{$item['title']}\">{$item['title']}</a>$pages</li>";
       }
-      if ($result != '') $result = sprintf('<h1>' . tlocal::get('default', 'sitemap') . '</h1><h2>' . tlocal::get('default', 'posts') . '</h2><ul>%s</ul>', $result);
-    } else {
-      $list = array_slice(array_keys($posts->archives), (litepublisher::$urlmap->page - 1) * $perpage, $perpage);
-      $result = $theme->getposts($list, true);
-    }
-    
-    if (litepublisher::$urlmap->page  == 1) {
-      $menus = tmenus::i();
-      $result .= '<h2>' . tlocal::get('default', 'menu') . "</h2>\n<ul>\n";
-      foreach ($menus->items as $id => $item) {
-        if ($item['status'] == 'draft') continue;
-        $result .= sprintf('<li><a href="%s%s" title="%3$s">%3$s</a></li>', litepublisher::$site->url, $item['url'], $item['title']);
-      }
-      $result .= '</ul>';
-      
-      $result .= $this->gettags(tcategories::i());
-      $result .= $this->gettags(ttags::i());
-      $arch = tarchives::i();
-      if (count($arch->items) > 0) {
-        $result .= '<h2>' . tlocal::get('default', 'archive') . "</h2>\n<ul>\n";
-        foreach ($arch->items as $date => $item) {
-          $result .= sprintf('<li><a href="%s%s" title="%3$s">%3$s</a></li>', litepublisher::$site->url, $item['url'], $item['title']);
-        }
-        $result .= '</ul>';
-      }
-    }
-    
-    $result .=$theme->getpages('/sitemap.htm', litepublisher::$urlmap->page, ceil($posts->archivescount / $perpage));
-    return $result;
-  }
-  
-  private function gettags(tcommontags $tags) {
-    $tags->loadall();
-    if ($tags->count == 0)  return '';
-    $result = '<h2>' . tlocal::get('default', $tags->postpropname) . "</h2>\n<p>\n";
-    foreach ($tags->items as $id => $item) {
-      $result .= sprintf('<a href="%s%s" title="%3$s">%3$s</a>, ', litepublisher::$site->url, $item['url'], $item['title']);
-    }
-    $result .= '</p>';
+
+if ($count > $perpage) break;
+}
+$result .= '</ul>';
+//    $result .=$theme->getpages('/sitemap.htm', litepublisher::$urlmap->page, ceil($posts->archivescount / $perpage));
     return $result;
   }
   
@@ -139,20 +102,22 @@ $this->addmap('classes', array());
     //home page
     $this->prio = 9;
     $this->write('/', ceil(litepublisher::$classes->posts->archivescount / litepublisher::$options->perpage));
-    $this->prio = 8;
-    $this->writeposts();
+
+    $perpage = 1000;
+foreach ($this->classes as $prio => $class) {
+    $this->prio = max(9 - $prio, 1);
+$instance = getinstance($class);
+$from = 0;
+do {
+$links = $instance->getsitemap($from, $perpage );
+$from += count($links);
+foreach ($links as $item) {
+        $this->write($item['url'], $item['pages']);
+}
+} while (count($links) == $perpage);
+}    
     
-    $this->prio = 8;
-    $this->writemenus();
-    
-    $this->prio = 7;
-    $this->writetags(litepublisher::$classes->categories);
-    $this->writetags(litepublisher::$classes->tags);
-    
-    $this->prio = 5;
-    $this->writearchives();
-    
-    //урлы ккоторые добавлены в items
+       //url's from items prop
     foreach ($this->items as $url => $prio) {
       $this->writeitem($url, $prio);
     }
@@ -161,25 +126,6 @@ $this->addmap('classes', array());
     $this->Save();
   }
   
-  private function writeposts() {
-    if (dbversion) {
-      $db = litepublisher::$db;
-      $now = sqldate();
-      $res = $db->query("select $db->posts.pagescount, $db->posts.commentscount, $db->urlmap.url from $db->posts, $db->urlmap
-      where $db->posts.status = 'published' and $db->posts.posted < '$now' and $db->urlmap.id = $db->posts.idurl");
-      while ($item = $db->fetchassoc($res)) {
-        $comments = litepublisher::$options->commentpages ? ceil($item['commentscount'] / litepublisher::$options->commentsperpage) : 1;
-        $this->write($item['url'], max($item['pagescount'], $comments));
-      }
-    } else {
-      $posts = tposts::i();
-      foreach ($posts->archives as $id => $posted) {
-        $post = tpost::i($id);
-        $this->write($post->url, $post->countpages);
-        $post->free();
-      }
-    }
-  }
   
   private function writemenus() {
     $menus = tmenus::i();

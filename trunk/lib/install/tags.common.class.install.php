@@ -40,3 +40,15 @@ function tcommontagsUninstall($self) {
   $widgets = twidgets::i();
   $widgets->deleteclass(get_class($self));
 }
+function tcommontagsGetsitemap($self, $from, $count) {
+      $result = array();
+    $self->loadall();
+    foreach ($self->items as $id => $item) {
+      $result[] = array(
+'url' => $item['url'],
+'title' => $item['title'],
+'pages' => $self->lite ? 1 : ceil($item['itemscount']/ litepublisher::$options->perpage)
+);
+}
+return $result;
+}

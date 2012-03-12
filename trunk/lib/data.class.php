@@ -122,7 +122,7 @@ class tdata {
     }
   }
   
-  protected function externalfunc($class, $func, $arg) {
+  protected function externalfunc($class, $func, $args) {
     if ($filename = litepublisher::$classes->getclassfilename($class, true)) {
       $externalname = basename($filename, '.php') . '.install.php';
       $dir = dirname($filename) . DIRECTORY_SEPARATOR;
@@ -133,7 +133,15 @@ class tdata {
       }
       include_once($file);
       $fnc = $class . $func;
-      if (function_exists($fnc)) $fnc($this, $arg);
+      if (function_exists($fnc)) {
+//$fnc($this, $arg);
+if (is_array($args)) {
+array_unshift($args, $this);
+} else {
+$args = array($this, $args);
+}
+return call_user_func_array($fnc, $args);
+}
     }
   }
   

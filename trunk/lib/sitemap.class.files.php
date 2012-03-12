@@ -45,31 +45,9 @@ class tsitemap extends titems_itemplate implements itemplate {
     $theme = $this->view->theme;
     $perpage = 1000;
     $from = (litepublisher::$urlmap->page - 1) * $perpage;
-    if (dbversion) {
-      $db = litepublisher::$db;
-      $now = sqldate();
-      $res = $db->query("select $db->posts.title, $db->posts.pagescount, $db->posts.commentscount, $db->urlmap.url
-      from $db->posts, $db->urlmap
-      where $db->posts.status = 'published' and $db->posts.posted < '$now' and $db->urlmap.id = $db->posts.idurl
-      order by $db->posts.posted desc limit $from, $perpage");
-      while ($item = $db->fetchassoc($res)) {
-        $comments = litepublisher::$options->commentpages ? ceil($item['commentscount'] / litepublisher::$options->commentsperpage) : 1;
-        $pages = max($item['pagescount'], $comments);
-        $postpages = '';
-        if ($pages > 1) {
-          $url = rtrim($item['url'], '/');
-          for ($i = 2; $i < $pages; $i++) {
-            $postpages .= '<a href="' . litepublisher::$site->url . "$url/page/$i/\">$i</a>,";
-          }
-        }
-        $result .= sprintf('<li><a href="%s%s" title="%s">%3$s</a>%4$s</li>', litepublisher::$site->url, $item['url'], $item['title'], $postpages);
-      }
-      if ($result != '') $result = sprintf('<h1>' . tlocal::get('default', 'sitemap') . '</h1><h2>' . tlocal::get('default', 'posts') . '</h2><ul>%s</ul>', $result);
-    } else {
       $list = array_slice(array_keys($posts->archives), (litepublisher::$urlmap->page - 1) * $perpage, $perpage);
       $result = $theme->getposts($list, true);
-    }
-    
+
     if (litepublisher::$urlmap->page  == 1) {
       $menus = tmenus::i();
       $result .= '<h2>' . tlocal::get('default', 'menu') . "</h2>\n<ul>\n";
@@ -161,16 +139,6 @@ class tsitemap extends titems_itemplate implements itemplate {
   }
   
   private function writeposts() {
-    if (dbversion) {
-      $db = litepublisher::$db;
-      $now = sqldate();
-      $res = $db->query("select $db->posts.pagescount, $db->posts.commentscount, $db->urlmap.url from $db->posts, $db->urlmap
-      where $db->posts.status = 'published' and $db->posts.posted < '$now' and $db->urlmap.id = $db->posts.idurl");
-      while ($item = $db->fetchassoc($res)) {
-        $comments = litepublisher::$options->commentpages ? ceil($item['commentscount'] / litepublisher::$options->commentsperpage) : 1;
-        $this->write($item['url'], max($item['pagescount'], $comments));
-      }
-    } else {
       $posts = tposts::i();
       foreach ($posts->archives as $id => $posted) {
         $post = tpost::i($id);
@@ -178,8 +146,7 @@ class tsitemap extends titems_itemplate implements itemplate {
         $post->free();
       }
     }
-  }
-  
+ 
   private function writemenus() {
     $menus = tmenus::i();
     foreach ($menus->items as $id => $item) {
@@ -190,20 +157,9 @@ class tsitemap extends titems_itemplate implements itemplate {
   
   private function writetags($tags) {
     $perpage = $tags->lite ? 1000 : litepublisher::$options->perpage;
-    if (dbversion) {
-      $db = litepublisher::$db;
-      $table = $tags->thistable;
-      $res = $db->query("select $table.itemscount, $db->urlmap.url from $table, $db->urlmap
-      where $db->urlmap.id = $table.idurl");
-      
-      while ($item = $db->fetchassoc($res)) {
-        $this->write($item['url'], ceil($item['itemscount']/ $perpage));
-      }
-    } else {
       foreach ($tags->items as $id => $item) {
         $this->write($item['url'], ceil($item['itemscount']/ $perpage));
       }
-    }
   }
   
   private function writearchives() {
