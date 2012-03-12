@@ -70,9 +70,9 @@ class tajaxposteditor  extends tevents {
   }
   
   public function request($arg) {
-    //tfiler::log(var_export($_GET, true) . var_export($_POST, true) . var_export($_FILES, true));
+   //tfiler::log(var_export($_GET, true) . var_export($_POST, true) . var_export($_FILES, true));
     if (isset($_GET['get']) && ($_GET['get'] == 'upload')) {
-      if (empty($_POST['admincookie'])) return self::error403();
+      if (empty($_POST['litepubl_user'])) return self::error403();
       if ( 'POST' != $_SERVER['REQUEST_METHOD'] ) {
         return "<?php
         header('Allow: POST');
