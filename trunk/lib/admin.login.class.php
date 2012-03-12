@@ -17,17 +17,18 @@ class tadminlogin extends tadminform {
       if ($s = tguard::checkattack()) return $s;
       if (!litepublisher::$options->authcookie()) return litepublisher::$urlmap->redir301('/admin/login/');
     }else {
-    $auth = tauthdigest::i();
-if (!$auth->Auth())  return $auth->headers();
+      $auth = tauthdigest::i();
+      if (!$auth->Auth())  return $auth->headers();
+    }
   }
   
   private function logout() {
     if (litepublisher::$options->cookieenabled) {
       if (litepublisher::$options->user) litepublisher::$options->logout();
-} else {
-    $auth = tauthdigest::i();
-if ($auth->auth()) $auth->logout();
-}
+    } else {
+      $auth = tauthdigest::i();
+      if ($auth->auth()) $auth->logout();
+    }
     return litepublisher::$urlmap->redir301('/admin/login/');
   }
   

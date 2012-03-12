@@ -116,5 +116,5 @@ class tauthdigest extends tevents {
     $this->logoutneeded = true;
     $this->unlock();
   }
-
+  
 }//class

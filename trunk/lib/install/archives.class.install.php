@@ -19,13 +19,13 @@ function tarchivesUninstall($self) {
   $widgets->deleteclass(get_class($self));
 }
 function tarchivesGetsitemap($self, $from, $count) {
-      $result = array();
-        foreach ($self->items as $date => $item) {
-          $result[] = array(
-'url' => $item['url'], 
-'title' => $item['title'],
-'pages' => 1
-);
-        }
-return $result;
+  $result = array();
+  foreach ($self->items as $date => $item) {
+    $result[] = array(
+    'url' => $item['url'],
+    'title' => $item['title'],
+    'pages' => 1
+    );
+  }
+  return $result;
 }

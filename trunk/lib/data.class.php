@@ -134,14 +134,14 @@ class tdata {
       include_once($file);
       $fnc = $class . $func;
       if (function_exists($fnc)) {
-//$fnc($this, $arg);
-if (is_array($args)) {
-array_unshift($args, $this);
-} else {
-$args = array($this, $args);
-}
-return call_user_func_array($fnc, $args);
-}
+        //$fnc($this, $arg);
+        if (is_array($args)) {
+          array_unshift($args, $this);
+        } else {
+          $args = array($this, $args);
+        }
+        return call_user_func_array($fnc, $args);
+      }
     }
   }
   

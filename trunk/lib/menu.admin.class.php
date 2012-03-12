@@ -138,9 +138,9 @@ public function save() { return true; }
         return litepublisher::$urlmap->redir301('/admin/login/' . litepublisher::$site->q . 'backurl=' . urlencode(litepublisher::$urlmap->url));
       }
     }else {
-    $auth = tauthdigest::i();
-if (!$auth->Auth())  return $auth->headers();
-}
+      $auth = tauthdigest::i();
+      if (!$auth->Auth())  return $auth->headers();
+    }
     
     if (litepublisher::$options->group != 'admin') {
       $groups = tusergroups::i();

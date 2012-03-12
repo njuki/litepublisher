@@ -7,7 +7,7 @@
 **/
 
 class tsitemap extends titems_itemplate implements itemplate {
-public $classes;
+  public $classes;
   private $lastmod;
   private $count;
   private $fd;
@@ -23,7 +23,7 @@ public $classes;
     $this->addevents('onindex');
     $this->data['date'] = time();
     $this->data['countfiles'] = 1;
-$this->addmap('classes', array('tmenus', 'tposts', 'tcategories', 'ttags', 'tarchives' ));
+    $this->addmap('classes', array('tmenus', 'tposts', 'tcategories', 'ttags', 'tarchives' ));
   }
   
   public function add($url, $prio) {
@@ -41,32 +41,33 @@ $this->addmap('classes', array('tmenus', 'tposts', 'tcategories', 'ttags', 'tarc
   }
   
   public function getcont() {
-    $result = '<ul>';
+    $result = '<h4>' . tlocal::get('default', 'sitemap') . '</h4><ul>';
     $theme = $this->view->theme;
     $perpage = 1000;
-$count = 0;
+    $count = 0;
     $from = (litepublisher::$urlmap->page - 1) * $perpage;
-$siteurl = litepublisher::$site->url;
-foreach ($this->classes as $class) {
-$instance = getinstance($class);
-$links = $instance->getsitemap($from, $perpage - $count);
-$count += count($links);
-foreach ($links as $item) {
-$pages = '';
+    $siteurl = litepublisher::$site->url;
+    $classes = litepublisher::$urlmap->page == 1 ? $this->classes : 'tposts';
+    foreach ($classes as $class) {
+      $instance = getinstance($class);
+      $links = $instance->getsitemap($from, $perpage - $count);
+      $count += count($links);
+      foreach ($links as $item) {
+        $pages = '';
         if ($item['pages'] > 1) {
           $url = rtrim($item['url'], '/');
           for ($i = 2; $i < $link['pages']; $i++) {
             $pages = "<a href=\"$siteurl$url/page/$i/\">$i</a>,";
           }
-}
-
-        $result .= "<li><a href=\"$siteurl{$item['url']}\" title=\"{$item['title']}\">{$item['title']}</a>$pages</li>";
+        }
+        
+  $result .= "<li><a href=\"$siteurl{$item['url']}\" title=\"{$item['title']}\">{$item['title']}</a>$pages</li>";
       }
-
-if ($count > $perpage) break;
-}
-$result .= '</ul>';
-//    $result .=$theme->getpages('/sitemap.htm', litepublisher::$urlmap->page, ceil($posts->archivescount / $perpage));
+      
+      if ($count > $perpage) break;
+    }
+    $result .= '</ul>';
+    //    $result .=$theme->getpages('/sitemap.htm', litepublisher::$urlmap->page, ceil($posts->archivescount / $perpage));
     return $result;
   }
   
@@ -102,70 +103,28 @@ $result .= '</ul>';
     //home page
     $this->prio = 9;
     $this->write('/', ceil(litepublisher::$classes->posts->archivescount / litepublisher::$options->perpage));
-
-    $perpage = 1000;
-foreach ($this->classes as $prio => $class) {
-    $this->prio = max(9 - $prio, 1);
-$instance = getinstance($class);
-$from = 0;
-do {
-$links = $instance->getsitemap($from, $perpage );
-$from += count($links);
-foreach ($links as $item) {
-        $this->write($item['url'], $item['pages']);
-}
-} while (count($links) == $perpage);
-}    
     
-       //url's from items prop
+    $perpage = 1000;
+    foreach ($this->classes as $prio => $class) {
+      $this->prio = max(9 - $prio, 1);
+      $instance = getinstance($class);
+      $from = 0;
+      do {
+        $links = $instance->getsitemap($from, $perpage );
+        $from += count($links);
+        foreach ($links as $item) {
+          $this->write($item['url'], $item['pages']);
+        }
+      } while (count($links) == $perpage);
+    }
+    
+    //url's from items prop
     foreach ($this->items as $url => $prio) {
       $this->writeitem($url, $prio);
     }
     
     $this->closefile();
     $this->Save();
-  }
-  
-  
-  private function writemenus() {
-    $menus = tmenus::i();
-    foreach ($menus->items as $id => $item) {
-      if ($item['status'] == 'draft') continue;
-      $this->writeitem($item['url'], $this->prio);
-    }
-  }
-  
-  private function writetags($tags) {
-    $perpage = $tags->lite ? 1000 : litepublisher::$options->perpage;
-    if (dbversion) {
-      $db = litepublisher::$db;
-      $table = $tags->thistable;
-      $res = $db->query("select $table.itemscount, $db->urlmap.url from $table, $db->urlmap
-      where $db->urlmap.id = $table.idurl");
-      
-      while ($item = $db->fetchassoc($res)) {
-        $this->write($item['url'], ceil($item['itemscount']/ $perpage));
-      }
-    } else {
-      foreach ($tags->items as $id => $item) {
-        $this->write($item['url'], ceil($item['itemscount']/ $perpage));
-      }
-    }
-  }
-  
-  private function writearchives() {
-    $db = litepublisher::$db;
-    $arch = tarchives::i();
-    $perpage = $arch->lite ? 1000 : litepublisher::$options->perpage;
-    if (dbversion) $db->table = 'posts';
-    foreach ($arch->items as $date => $item) {
-      if (dbversion) {
-    $count = $db->getcount("status = 'published' and year(posted) = '{$item['year']}' and month(posted) = '{$item['month']}'");
-      } else {
-        $count = count($item['posts']);
-      }
-      $this->write($item['url'], ceil($count/ $perpage));
-    }
   }
   
   private function write($url, $pages) {

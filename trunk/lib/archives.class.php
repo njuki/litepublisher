@@ -138,10 +138,10 @@ class tarchives extends titems_itemplate implements  itemplate {
       return $this->items[$this->date]['posts'];
     }
   }
-
-public function getsitemap($from, $count) {
-return $this->externalfunc(__class__, 'Getsitemap', array($from, $count));
-}
+  
+  public function getsitemap($from, $count) {
+    return $this->externalfunc(__class__, 'Getsitemap', array($from, $count));
+  }
   
 }//class
 

@@ -158,7 +158,7 @@ class tcommentform extends tevents {
     }
     
     $posturl = litepublisher::$site->url . '/';
-tguard::post();    
+    tguard::post();
     
     $kept = tkeptcomments::i();
     $kept->deleteold();

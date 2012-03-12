@@ -92,11 +92,11 @@ if (dbversion) litepublisher::$db = new tdatabase();
 */
 
   litepublisher::$urlmap = turlmap::i();
-ttheme::clearcache();
+//ttheme::clearcache();
 tlocal::clearcache();
 //tjsmerger::i()->save();
 //litepublisher::$options->show_draft_post = true;
-//tupdater::i()->run(5.18);
+//tupdater::i()->run(5.19);
 //litepublisher::$classes->delete('tcategoriesmenu');
 //litepublisher::$classes->add('tajaxmenueditor', 'admin.menu.ajax.class.php');
 //tfiler::log(var_export($_SERVER, true));

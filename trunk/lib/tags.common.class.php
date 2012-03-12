@@ -460,10 +460,10 @@ class tcommontags extends titems implements  itemplate {
     }
     return $result;
   }
-
-public function getsitemap($from, $count) {
-return $this->externalfunc(__class__, 'Getsitemap', array($from, $count));
-}
+  
+  public function getsitemap($from, $count) {
+    return $this->externalfunc(__class__, 'Getsitemap', array($from, $count));
+  }
   
 }//class
 
