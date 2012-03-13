@@ -16,7 +16,7 @@ public static $site;
   public static $paths;
   public static $_paths;
   public static $domain;
-  public static $debug = true;
+  public static $debug = false;
   public static $secret = '8r7j7hbt8iik//pt7hUy5/e/7FQvVBoh7/Zt8sCg8+ibVBUt7rQ';
   public static $microtime;
 

@@ -10,6 +10,12 @@ class tadmincommoncomments extends tadminmenu {
   protected $user;
   protected $showcolumns;
   
+  public function gethead() {
+    $result = parent::gethead();
+    $result .= ttemplate::i()->getjavascript('/js/litepublisher/tablecolumns.min.js');
+    return $result;
+  }
+  
   protected function getmanager() {
     return litepublisher::$classes->commentmanager;
   }
