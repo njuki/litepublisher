@@ -307,16 +307,15 @@ class tadminhtml {
   public function parsearg($s, targs $args) {
     if (!is_string($s)) $s = (string) $s;
     $theme = ttheme::i();
-    $admin = $theme->content->admin;
-    $admin->tostring = true;
     // parse tags [form] .. [/form]
+    $form = $theme->templates['content.admin.form'];
     if (is_int($i = strpos($s, '[form]'))) {
-      $replace = substr($admin->form, 0, strpos($admin->form, '$items'));
+      $replace = substr($form, 0, strpos($form, '$items'));
       $s = substr_replace($s, $replace, $i, strlen('[form]'));
     }
     
     if ($i = strpos($s, '[/form]')) {
-      $replace = substr($admin->form, strrpos($admin->form, '$items') + strlen('$items'));
+      $replace = substr($form, strrpos($form, '$items') + strlen('$items'));
       $s = substr_replace($s, $replace, $i, strlen('[/form]'));
     }
     
@@ -333,7 +332,7 @@ class tadminhtml {
             $args->data[$varname] = '';
           }
         }
-        $tag = strtr($admin->$type, array(
+        $tag = strtr($theme->templates["content.admin.$type"], array(
         '$name' => $name,
         '$value' =>$varname
         ));
