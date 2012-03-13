@@ -10,7 +10,7 @@ class tguard {
   
   public static function post() {
     if (!isset($_POST) || (count($_POST) == 0)) return false;
-    if (version_compare(PHP_VERSION, '5.3', '<') && get_magic_quotes_gpc()) {
+    if (get_magic_quotes_gpc()) {
       foreach ($_POST as $name => $value) {
         $_POST[$name] = stripslashes($_POST[$name]);
       }
