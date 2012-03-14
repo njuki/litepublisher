@@ -20,6 +20,7 @@ class tadminthemes extends tadminmenu {
   
   public static function getlist($tml, $selected) {
     $result = '';
+if (!is_array($selected)) $selected = array((string) $name);
     $html = tadminhtml::i();
     $html->section = 'themes';
     $args = targs::i();
@@ -33,7 +34,8 @@ class tadminthemes extends tadminmenu {
         $about['name'] = $name;
         if (!isset($about['screenshot'])) $about['screenshot'] = 'screenshot.png';
         $args->add($about);
-        $args->checked = $name == $selected;
+        //$args->checked = $name == $selected;
+$args->checked = in_array($name,  $selected);
         $result .= $html->parsearg($tml, $args);
       }
     }

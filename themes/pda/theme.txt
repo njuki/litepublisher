@@ -39,7 +39,7 @@ $post.content
 			<br clear="all" />
 			<p class="postmetadata">
 $post.date |
-$porst.catlinks |
+$post.catlinks |
 $post.taglinks
 			</p>
 		</div>

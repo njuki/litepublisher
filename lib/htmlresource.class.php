@@ -306,7 +306,7 @@ class tadminhtml {
     $result = array();
     foreach ($_POST as $key => $value) {
       if (strbegin($key, $prefix)) {
-        $result[] = (int) $value;
+        $result[] = is_numeric($value) ? (int) $value : $value;
       }
     }
     return $result;

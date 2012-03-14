@@ -181,9 +181,11 @@ class tthemeparser extends tevents {
           $about['about'] = $about[litepublisher::$options->language] + $about['about'];
         }
         $this->abouts[$name] = $about['about'];
+/*
       } elseif ($about =  twordpressthemeparser::get_about_wordpress_theme($name)){
         $about['type'] = 'wordpress';
         $this->abouts[$name] = $about;
+*/
       } else {
         $this->abouts[$name] = false;
       }
@@ -265,7 +267,7 @@ class tthemeparser extends tevents {
     $this->theme = $theme;
     $this->paths = self::getpaths($theme);
     $s = trim($s);
-    $this->callevent('beforeparse', array(&$s));
+    $this->callevent('beforeparse', array($theme, &$s));
     if ($this->removephp) {
       $s = preg_replace('/\<\?.*?\?\>/ims', '', $s);
     } else {

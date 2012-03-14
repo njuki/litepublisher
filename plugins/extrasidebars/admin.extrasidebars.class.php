@@ -38,6 +38,8 @@ $plugin->beforepost = isset($_POST['beforepost']);
 $plugin->afterpost = isset($_POST['afterpost']);
 $plugin->themes =tadminhtml::check2array('theme-');
 $plugin->save();
+
+ttheme::clearcache();
 }
 
 }//class

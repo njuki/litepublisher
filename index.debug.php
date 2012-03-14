@@ -16,7 +16,7 @@ public static $site;
   public static $paths;
   public static $_paths;
   public static $domain;
-  public static $debug = false;
+  public static $debug = true;
   public static $secret = '8r7j7hbt8iik//pt7hUy5/e/7FQvVBoh7/Zt8sCg8+ibVBUt7rQ';
   public static $microtime;
 
@@ -92,11 +92,11 @@ if (dbversion) litepublisher::$db = new tdatabase();
 */
 
   litepublisher::$urlmap = turlmap::i();
-//ttheme::clearcache();
+ttheme::clearcache();
 tlocal::clearcache();
 //tjsmerger::i()->save();
 //litepublisher::$options->show_draft_post = true;
-//tupdater::i()->run(5.19);
+//tupdater::i()->run(5.21);
 //litepublisher::$classes->delete('tcategoriesmenu');
 //litepublisher::$classes->add('tajaxmenueditor', 'admin.menu.ajax.class.php');
 //tfiler::log(var_export($_SERVER, true));

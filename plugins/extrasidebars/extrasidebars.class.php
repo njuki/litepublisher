@@ -22,16 +22,27 @@ $this->data['afterpost'] = true;
 
   public function beforeparse(ttheme $theme, &$s) {
 if (in_array($theme->name, $this->themes) && !isset($theme->data['extrasidebars'])) {
-if ($this->beforepost) $theme->templates['sidebars'][] = array();
-if ($this->afterpost) $theme->templates['sidebars'][] = array();
+$s = &$theme->templates['index'];
+if ($this->beforepost) $s .= '<!--$template.sidebar-->';
+if ($this->afterpost) $s .= '<!--$template.sidebar-->';
 }
 }
   
   public function themeparsed(ttheme $theme) {
 if (in_array($theme->name, $this->themes) && !isset($theme->data['extrasidebars'])) {
-$theme->data['extrasidebars'] = true;
-if ($this->beforepost) $theme->templates['content.post'] = str_replace('$post.content', '$template.sidebar $post.content', $theme->templates['content.post']);
-if ($this->afterpost) $theme->templates['content.post'] = str_replace('$post.content', '$post.content $template.sidebar', $theme->templates['content.post']);
+$s = &$theme->templates['index'];
+$s = str_replace('<!--$template.sidebar-->', '', $s);
+$sidebar = 0;
+$tag = '$template.sidebar';
+$i = 0;
+while ($i = strpos($s, $tag, $i + 1)) {
+$s = substr_replace($s, $tag . $sidebar++, $i, strlen($tag));
+}
+
+$theme->data['extrasidebars'] = $sidebar;
+$post = &$theme->templates['content.post'];
+if ($this->beforepost) $post = str_replace('$post.content', $tag . $sidebar++ . '$post.content', $post);
+if ($this->afterpost) $post = str_replace('$post.content', '$post.content ' . $tag . $sidebar++, $post);
 }
 }
 
