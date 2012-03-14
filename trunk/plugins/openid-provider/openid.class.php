@@ -127,7 +127,13 @@ class topenid extends tevents {
   }
   
   private function nomode() {
-    return tsimplecontent::html(tlocal::get('openidserver', 'nomode'));
+$result = tsimplecontent::html(tlocal::get('openidserver', 'nomode'));
+$js = ttemplate::i()->getready('var s = window.location.toString();
+if (-1 == s.indexOf("?")) {
+window.location = ltoptions.url + "/";
+}');
+$result = str_replace('</head>', $js . '</head>', $result);
+return $result;
   }
   
   private function id_res() {
