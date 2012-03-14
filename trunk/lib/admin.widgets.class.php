@@ -14,6 +14,7 @@ class tadminwidgets extends tadminmenu {
   
   public static function getsidebarnames(tview $view) {
     $count = $view->theme->sidebarscount;
+echo "$count = count sidebars<br>";
     $result = range(1, $count);
     $parser = tthemeparser::i();
     $about = $parser->getabout($view->theme->name);
