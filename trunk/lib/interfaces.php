@@ -23,8 +23,8 @@ interface iwidgets {
 }
 
 interface iadmin {
-public function getcontent();
-public function processform();
+  public function getcontent();
+  public function processform();
 }
 
 interface iposts {

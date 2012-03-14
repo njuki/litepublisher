@@ -2349,6 +2349,11 @@ interface iwidgets {
   public function getsidebar(&$content, $sidebar);
 }
 
+interface iadmin {
+  public function getcontent();
+  public function processform();
+}
+
 interface iposts {
   public function add(tpost $post);
   public function edit(tpost $post);
