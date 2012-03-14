@@ -21,7 +21,7 @@ class tthemeparser extends tevents {
   protected function create() {
     parent::create();
     $this->basename = 'themeparser';
-    $this->addevents('beforeparse', 'parsed');
+    $this->addevents('beforeparse', 'parsed', 'onfix');
     $this->data['replacelang'] = false;
     $this->data['removephp'] = true;
     $this->fixsubcount = true;
@@ -181,11 +181,11 @@ class tthemeparser extends tevents {
           $about['about'] = $about[litepublisher::$options->language] + $about['about'];
         }
         $this->abouts[$name] = $about['about'];
-/*
+        /*
       } elseif ($about =  twordpressthemeparser::get_about_wordpress_theme($name)){
         $about['type'] = 'wordpress';
         $this->abouts[$name] = $about;
-*/
+        */
       } else {
         $this->abouts[$name] = false;
       }
@@ -476,6 +476,7 @@ class tthemeparser extends tevents {
       }
       
       public function afterparse($theme) {
+        $this->onfix($theme);
         $templates = &$this->theme->templates;
         $templates['menu.hover'] = isset($templates['menu.hover']) ? ($templates['menu.hover'] == 'true' ? 'true' : 'false') : 'true';
         if (!isset($templates['content.post.templatecomments'])) $templates['content.post.templatecomments'] = '';

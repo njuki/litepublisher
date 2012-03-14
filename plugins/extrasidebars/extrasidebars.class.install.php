@@ -8,11 +8,11 @@
 
 function textrasidebarsInstall($self) {
   $parser = tthemeparser::i();
-$parser->lock();
-$parser->beforeparse = $self->beforeparse;
-$parser->parsed = $self->themeparsed;
-$parser->unlock();
-
+  $parser->lock();
+  $parser->onfix = $self->fix;
+  $parser->parsed = $self->themeparsed;
+  $parser->unlock();
+  
   ttheme::clearcache();
 }
 
