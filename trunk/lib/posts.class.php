@@ -319,6 +319,7 @@ class tposts extends titems {
     $this->PublishFuture();
     ttheme::$vars['post'] = tpost::i($id);
     $this->singlecron($id);
+unset(ttheme::$vars['post']);
   }
   
   public function hourcron() {

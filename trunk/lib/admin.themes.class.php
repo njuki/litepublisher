@@ -20,7 +20,7 @@ class tadminthemes extends tadminmenu {
   
   public static function getlist($tml, $selected) {
     $result = '';
-    if (!is_array($selected)) $selected = array((string) $name);
+    if (!is_array($selected)) $selected = array((string) $selected);
     $html = tadminhtml::i();
     $html->section = 'themes';
     $args = targs::i();
