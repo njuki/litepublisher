@@ -41,7 +41,6 @@ class toauth extends tevents {
     return array();
   }
   
-  
   private function getsign($keys, $url, $method='GET'){
     $parsed = parse_url($url);
     if (isset($parsed['query'])){
