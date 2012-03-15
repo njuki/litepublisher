@@ -21,7 +21,7 @@ class textrasidebars extends tplugin {
   }
   
   public function fix(ttheme $theme) {
-    if (in_array($theme->name, $this->themes) && !isset($theme->data['extrasidebars'])) {
+    if (in_array($theme->name, $this->themes) && !isset($theme->templates['extrasidebars'])) {
       $s = &$theme->templates['index'];
       if ($this->beforepost) $s .= '<!--$template.sidebar-->';
       if ($this->afterpost) $s .= '<!--$template.sidebar-->';
@@ -31,7 +31,7 @@ class textrasidebars extends tplugin {
   }
   
   public function themeparsed(ttheme $theme) {
-    if (in_array($theme->name, $this->themes) && !isset($theme->data['extrasidebars'])) {
+    if (in_array($theme->name, $this->themes) && !isset($theme->templates['extrasidebars'])) {
       $s = &$theme->templates['index'];
       $s = str_replace('<!--$template.sidebar-->', '', $s);
       $sidebar = 0;
@@ -41,7 +41,7 @@ class textrasidebars extends tplugin {
         $s = substr_replace($s, $tag . $sidebar++, $i, strlen($tag));
       }
       
-      $theme->data['extrasidebars'] = $sidebar;
+      $theme->templates['extrasidebars'] = $sidebar;
       $post = &$theme->templates['content.post'];
       if ($this->beforepost) $post = str_replace('$post.content', $tag . $sidebar++ . '$post.content', $post);
       if ($this->afterpost) $post = str_replace('$post.content', '$post.content ' . $tag . $sidebar++, $post);
