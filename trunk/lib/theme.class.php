@@ -157,11 +157,11 @@ class ttheme extends tevents {
       
       case 'lang':
       return tlocal::i();
-
-case 'post':
-    $context = isset(litepublisher::$urlmap->context) ? litepublisher::$urlmap->context : ttemplate::i()->context;
-if ($context instanceof tpost) return $context;
-break;
+      
+      case 'post':
+      $context = isset(litepublisher::$urlmap->context) ? litepublisher::$urlmap->context : ttemplate::i()->context;
+      if ($context instanceof tpost) return $context;
+      break;
       
       case 'author':
       return self::get_author();
@@ -350,7 +350,7 @@ break;
     
     $tml = $lite ? $this->templates['content.excerpts.lite'] : $this->templates['content.excerpts'];
     if ($tml != '') $result = str_replace('$excerpt', $result, $this->parse($tml));
-unset(self::$vars['post']);
+    unset(self::$vars['post']);
     return $result;
   }
   
