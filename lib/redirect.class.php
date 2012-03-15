@@ -42,6 +42,20 @@ class tredirector extends titems {
     if (($i = strrpos($url, '/')) && strbegin(substr($url, $i), '/function.')) {
       return substr($url, 0, $i + 1);
     }
+    
+    //redir version js files
+    if (preg_match('/^\/files\/js\/(\w*+)\.(\d*+)\.js$/', $url, $m)) {
+      $name = 'jsmerger_' . $m[1];
+      $template = ttemplate::i();
+      if (isset($template->$name)) return $template->$name;
+    }
+    
+    if (preg_match('/^\/files\/js\/(\w*+)\.(\d*+)\.css$/', $url, $m)) {
+      $name = 'cssmerger_' . $m[1];
+      $template = ttemplate::i();
+      if (isset($template->$name)) return $template->$name;
+    }
+    
     return false;
   }
   
