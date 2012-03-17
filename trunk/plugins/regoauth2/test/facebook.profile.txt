@@ -1,0 +1,26 @@
+object(stdClass)#8 (11) {
+  ["id"]=>
+  string(15) "100002117680760"
+  ["name"]=>
+  string(15) "Vladimir Yushko"
+  ["first_name"]=>
+  string(8) "Vladimir"
+  ["last_name"]=>
+  string(6) "Yushko"
+  ["link"]=>
+  string(54) "http://www.facebook.com/profile.php?id=100002117680760"
+  ["gender"]=>
+  string(4) "male"
+  ["email"]=>
+  string(20) "yarrowsoft@gmail.com"
+  ["timezone"]=>
+  int(4)
+  ["locale"]=>
+  string(5) "ru_RU"
+  ["verified"]=>
+  bool(true)
+  ["updated_time"]=>
+  string(24) "2011-03-18T18:57:21+0000"
+}
+
+Facebook auth

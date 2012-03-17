@@ -1,0 +1,14 @@
+{
+ "id": "116888767313351470669",
+ "email": "yarrowsoft@gmail.com",
+ "verified_email": true,
+ "name": "Vladimir Yushko",
+ "given_name": "Vladimir",
+ "family_name": "Yushko",
+ "link": "https://plus.google.com/116888767313351470669",
+ "picture": "https://lh4.googleusercontent.com/-sii_Zs8YyQA/AAAAAAAAAAI/AAAAAAAAABE/Yjd5h0jUoEY/photo.jpg",
+ "gender": "male",
+ "locale": "ru"
+}
+
+google auth
