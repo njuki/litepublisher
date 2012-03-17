@@ -21,8 +21,6 @@ $this->basename = 'plugins/regoauth2';
 public function add(toauthservice $service) {
 $id = $this->additem(array(
 'class' => get_class($service),
-'title' => $service->title
-'icon' => $service->icon
 ));
 $service->id = $id;
 $service->save();
