@@ -1,0 +1,63 @@
+ID:
+668167
+
+Приватный ключ:
+cb3e9f83b6228ac8d9b65a139806d8e4
+
+Секретный ключ:
+52f3e0029ea47940475ee611aee559bc
+
+object(stdClass)#8 (5) {
+  ["refresh_token"]=>
+  string(32) "27084560c8e0f13206fdf3b92473c66e"
+  ["expires_in"]=>
+  int(86400)
+  ["access_token"]=>
+  string(32) "577a73cd1d86e04943258748cc65df0b"
+  ["token_type"]=>
+  string(6) "bearer"
+  ["x_mailru_vid"]=>
+  string(20) "16864821736428204095"
+}
+
+array(1) {
+  [0]=>
+  object(stdClass)#9 (17) {
+    ["nick"]=>
+    string(25) "Владимир Юшко"
+    ["is_online"]=>
+    int(0)
+    ["pic_big"]=>
+    string(46) "http://avt.appsmail.ru/mail/yuushko/_avatarbig"
+    ["last_name"]=>
+    string(8) "Юшко"
+    ["has_pic"]=>
+    int(0)
+    ["email"]=>
+    string(15) "yuushko@mail.ru"
+    ["referer_id"]=>
+    string(0) ""
+    ["vip"]=>
+    int(0)
+    ["birthday"]=>
+    string(10) "20.03.1972"
+    ["referer_type"]=>
+    string(0) ""
+    ["link"]=>
+    string(31) "http://my.mail.ru/mail/yuushko/"
+    ["uid"]=>
+    string(20) "16864821736428204095"
+    ["app_installed"]=>
+    int(1)
+    ["sex"]=>
+    int(1)
+    ["pic"]=>
+    string(43) "http://avt.appsmail.ru/mail/yuushko/_avatar"
+    ["pic_small"]=>
+    string(48) "http://avt.appsmail.ru/mail/yuushko/_avatarsmall"
+    ["first_name"]=>
+    string(16) "Владимир"
+  }
+}
+
+Mail.ru auth
