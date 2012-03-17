@@ -18,6 +18,12 @@ $this->data['id'] = 0;
 $this->data['title'] = 'service';
 $this->data['icon'] = '';
 $this->data['url'] = '';
+$this->data['client_id'] = '';
+$this->data['client_secret'] = '';
+}
+
+public function valid() {
+return $this->client_id && $this->client_secret;
 }
 
   public function getbasename() {
@@ -52,13 +58,13 @@ public static function http_post($url, array $post) {
 public function start_session() {
       ini_set('session.use_cookies', 1);
       ini_set('session.use_trans_sid', 0);
-      ini_set(session.use_only_cookies', 1);
+      ini_set('session.use_only_cookies', 1);
 
 if (tfilestorage::$memcache) {
 ini_set('session.save_handler', 'memcache');
 ini_set('session.save_path', 'tcp://127.0.0.1:11211');
 } else {
-      ini_set(session.save_handler', 'files');
+      ini_set('session.save_handler', 'files');
 }
 
       session_cache_limiter(false);
@@ -86,6 +92,13 @@ return $state;
 
 public function getauthurl() {
 $this->error('Call abstract method');
+}
+
+public function errorauth() {
+}
+
+public function adduser(array $item) {
+
 }
 
 }//class

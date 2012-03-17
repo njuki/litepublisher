@@ -17,12 +17,6 @@ class tgoogleregservice extends tregservice {
 $this->data['title'] = 'Google';
 $this->data['icon'] = 'google.png';
 $this->data['url'] = '/google-oauth2callback.php';
-$this->data['client_id'] = '';
-$this->data['client_secret'] = '';
-}
-
-public function vlid() {
-return $this->client_id && $this->client_secret;
 }
 
 public function getauthurl() {
@@ -51,20 +45,15 @@ if ($resp) {
 $tokens  = json_decode($resp);
 if ($r = http::get('https://www.googleapis.com/oauth2/v1/userinfo?access_token=' . $tokens->access_token)) {
 $info = json_decode($r);
-$iduser = $this->adduser(array(
-'email' => $info->email, 
+return $this->adduser(array(
+'email' => isset($info->email) ? $info->email : '',
 'name' => $info->name, 
-'website' => $info->link
+'website' => isset($info->link) ? $info->link : ''
 ));
-
-if ($iduser) {
-$this->redir
-}
-
 }
 }
 
-return $this->errorauth();;
+return $this->errorauth();
 }
 
 }//class

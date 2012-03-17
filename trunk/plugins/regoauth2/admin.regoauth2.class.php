@@ -12,34 +12,52 @@ class tadminregoauth2 implements iadmin {
     return getinstance(__class__);
   }
   
+  public function  gethead() {
+    return tuitabs::gethead();
+  }
+  
   public function getcontent() {
-    $plugin = textrasidebars ::i();
+    $plugin = tregoauth2 ::i();
     $html = tadminhtml::i();
-    $themes = tadminthemes::getlist(
-    '<li><input name="theme-$name" id="checkbox-theme-$name" type="checkbox" value="$name" $checked />
-    <label for="checkbox-theme-$name"><img src="$site.files/themes/$name/$screenshot" alt="$name" /></label>
-    $lang.version:$version $lang.author: <a href="$url">$author</a> $lang.description:  $description</li>',
-    $plugin->themes);
-    
+    $tabs = new tuitabs();
     $args = targs::i();
-    $lang = tplugins::getlangabout(__file__);
-    $args->formtitle = $lang->name;
-    $args->beforepost = $plugin->beforepost;
-    $args->afterpost = $plugin->afterpost;
+    $about = tplugins::getabout(tplugins::getname(__file__));
+    $args->formtitle = $about['name'];
     
-    return $html->adminform('[checkbox=beforepost] [checkbox=afterpost]' .
-    "<h4>$lang->themes</h4><ul>$themes</ul>",
-    $args);
+    foreach ($plugin->items as $id => $item) {
+$service = getinstance($item['class']);
+      $tabs->add($service->title,
+      $html->getinput('text',
+      "where-$i", tadminhtml::specchars($item['where']), $about['where']) .
+      $html->getinput('text',
+      "search-$i", tadminhtml::specchars($item['search']), $about['search']) .
+      $html->getinput('editor',
+      "replace-$i", tadminhtml::specchars($item['replace']), $about['replace']) );
+    }
+    
+    return $html->adminform($tabs->get(), $args);
   }
   
   public function processform() {
-    $plugin = textrasidebars ::i();
-    $plugin->beforepost = isset($_POST['beforepost']);
-    $plugin->afterpost = isset($_POST['afterpost']);
-    $plugin->themes =tadminhtml::check2array('theme-');
-    $plugin->save();
-    
-    ttheme::clearcache();
+    $plugin = tregoauth2 ::i();
+    $plugin->lock();
+    foreach ($plugin->items as $id => $item) {
+$service = getinstance($item['class']);
+
+      if (!strbegin($name, 'where-')) continue;
+      $id = substr($name, strlen('where-'));
+      $where = trim($value);
+      if (!isset($theme->templates[$where]) || !is_string($theme->templates[$where])) continue;
+      $search = $_POST["search-$id"];
+      if ($search == '') continue;
+      $plugin->items[] = array(
+      'where' => $where,
+      'search' => $search,
+      'replace' => $_POST["replace-$id"]
+      );
+    }
+    $plugin->unlock();
+    return '';
   }
   
 }//class

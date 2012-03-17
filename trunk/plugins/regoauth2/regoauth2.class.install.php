@@ -7,15 +7,20 @@
 **/
 
 function tregoauth2Install($self) {
-  litepublisher::$urlmap->addget('/admin/regoauth2.php', get_class($self));
+  //litepublisher::$urlmap->addget('/admin/regoauth2.php', get_class($self));
   
 $self->lock();
-
-litepublisher::$classes->add('
+$dirname = basename(dirname(__file__));
+litepublisher::$classes->add('tregservice', 'regoauth2.service.php', $dirname);
+litepublisher::$classes->add('tgoogleregservice', 'google.service.php', $dirname);
 
   litepublisher::$urlmap->clearcache();
 }
 
 function tregoauth2Uninstall($self) {
+foreach ($self->items as $id => $item) {
+litepublisher::$classes->delete($item['class']);
+//@unlink($dir . $item['class']);
+}
 turlmap::unsub($self);
 }
