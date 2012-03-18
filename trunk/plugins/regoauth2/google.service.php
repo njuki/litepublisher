@@ -57,7 +57,7 @@ return $this->errorauth();
 }
 
 public function gettab($html, $args, $lang) {
-$head = $html->parse($lang->google_head);
+$head = $html->p($lang->google_head . litepublisher::$site->url . $this->url);
 $result = "<p>$head</p>";
 $result .= $html->getinput('text', "client_id_$this->id", tadminhtml::specchars($this->client_id), $lang->client_id) ;
 $result .= $html->getinput('text', "client_secret_$this->id", tadminhtml::specchars($this->client_secret), $lang->client_secret) ;
