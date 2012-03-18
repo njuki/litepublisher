@@ -94,6 +94,10 @@ public function getauthurl() {
 $this->error('Call abstract method');
 }
 
+public function gettab($html, $args, $lang) {
+return '';
+}
+
 public function errorauth() {
 }
 
