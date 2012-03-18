@@ -44,10 +44,10 @@ dumpvar($r);
 if ($r) {
 $a = json_decode($r);
 dumpvar($a);
-exit();
 //$access_token = $a['access_token'];
-if ($r = http::get('https://www.googleapis.com/oauth2/v1/userinfo?access_token=' . $a->access_token)) {
-dumpstr($r);
+if ($r = http::get('https://api-yaru.yandex.ru/me/?format=json&oauth_token=' . $a->access_token)) {
+$info = json_decode($r);
+var_dump($info);
 }
 }
 
