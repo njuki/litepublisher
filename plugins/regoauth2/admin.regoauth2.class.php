@@ -21,18 +21,11 @@ class tadminregoauth2 implements iadmin {
     $html = tadminhtml::i();
     $tabs = new tuitabs();
     $args = targs::i();
-    $about = tplugins::getabout(tplugins::getname(__file__));
-    $args->formtitle = $about['name'];
-    
-    foreach ($plugin->items as $id => $item) {
+    $lang = tplugins::getlangabout(__file__);
+    $args->formtitle = $lang->options;
+        foreach ($plugin->items as $id => $item) {
 $service = getinstance($item['class']);
-      $tabs->add($service->title,
-      $html->getinput('text',
-      "where-$i", tadminhtml::specchars($item['where']), $about['where']) .
-      $html->getinput('text',
-      "search-$i", tadminhtml::specchars($item['search']), $about['search']) .
-      $html->getinput('editor',
-      "replace-$i", tadminhtml::specchars($item['replace']), $about['replace']) );
+      $tabs->add($service->title, $service->gettab($html, $args, $lang));
     }
     
     return $html->adminform($tabs->get(), $args);
@@ -43,18 +36,9 @@ $service = getinstance($item['class']);
     $plugin->lock();
     foreach ($plugin->items as $id => $item) {
 $service = getinstance($item['class']);
-
-      if (!strbegin($name, 'where-')) continue;
-      $id = substr($name, strlen('where-'));
-      $where = trim($value);
-      if (!isset($theme->templates[$where]) || !is_string($theme->templates[$where])) continue;
-      $search = $_POST["search-$id"];
-      if ($search == '') continue;
-      $plugin->items[] = array(
-      'where' => $where,
-      'search' => $search,
-      'replace' => $_POST["replace-$id"]
-      );
+if (isset($_POST["client_id_$id"])) $service->client_id = $_POST["client_id_$id"]; 
+if (isset($_POST["client_secret_$id"])) $service->client_id = $_POST["client_secret_$id"]; 
+$service->save();
     }
     $plugin->unlock();
     return '';
