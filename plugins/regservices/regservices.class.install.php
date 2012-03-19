@@ -20,11 +20,13 @@ litepublisher::$classes->add('tgoogleregservice', 'google.service.php', $name);
 litepublisher::$classes->add('tfacebookregservice', 'facebook.service.php', $name);
 litepublisher::$classes->add('tmailruregservice', 'mailru.service.php', $name);
 litepublisher::$classes->add('tyandexregservice', 'yandex.service.php', $name);
+litepublisher::$classes->add('tvkontakteregservice', 'vkontakte.service.php', $name);
 
 $self->add(tgoogleregservice::i());
 $self->add(tfacebookregservice::i());
 $self->add(tmailruregservice::i());
 $self->add(tyandexregservice::i());
+$self->add(tvkontakteregservice::i());
 
 $self->unlock();
 
