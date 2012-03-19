@@ -11,8 +11,14 @@ class tadminlogin extends tadminform {
   public static function i() {
     return getinstance(__class__);
   }
-  
-  public function auth() {
+
+  protected function create() {
+    parent::create();
+$this->basename = 'admin.loginform';
+$this->addevents('oncontent');
+}
+
+    public function auth() {
     if (litepublisher::$options->cookieenabled) {
       if ($s = tguard::checkattack()) return $s;
       if (!litepublisher::$options->authcookie()) return litepublisher::$urlmap->redir301('/admin/login/');
@@ -72,13 +78,13 @@ class tadminlogin extends tadminform {
     $args->login = !empty($_POST['login']) ? strip_tags($_POST['login']) : '';
     $args->password = !empty($_POST['password']) ? strip_tags($_POST['password']) : '';
     $args->remember = isset($_POST['remember']);
-    return $this->html->adminform('[text=login]
+    $result = $this->html->adminform('[text=login]
     [password=password]
     [checkbox=remember]',
     $args) .
     $this->html->lostpass();
+$this->callevent('oncontent', array(&$result));
+return $result;
   }
-  
-}//class
 
-?>
+  }//class
