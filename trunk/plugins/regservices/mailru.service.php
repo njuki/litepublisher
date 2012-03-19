@@ -62,10 +62,12 @@ $params = array(
 ksort($params);
 $params['sig'] = $this->sign($params, $this->client_secret);
 if ($r = http::get('http://www.appsmail.ru/platform/api?' . http_build_query($params))) {
-$info = json_decode($r);
+$js = json_decode($r);
+$info = $js[0];
 return $this->adduser(array(
+'idstr' => $info->uid,
 'email' => isset($info->email) ? $info->email : '',
-'name' => $info->name, 
+'name' => $info->nick, 
 'website' => isset($info->link) ? $info->link : ''
 ));
 }
