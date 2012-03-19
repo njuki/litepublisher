@@ -18,9 +18,12 @@ $name = basename(dirname(__file__));
 litepublisher::$classes->add('tregservice', 'service.class.php', $name);
 litepublisher::$classes->add('tgoogleregservice', 'google.service.php', $name);
 litepublisher::$classes->add('tfacebookregservice', 'facebook.service.php', $name);
+litepublisher::$classes->add('tmailruregservice', 'mailru.service.php', $name);
 
 $self->add(tgoogleregservice::i());
 $self->add(tfacebookregservice::i());
+$self->add(tmailruregservice::i());
+
 $self->unlock();
 
  litepublisher::$urlmap->addget($self->url, get_class($self));
@@ -35,10 +38,9 @@ tadminlogin::i()->unbind($self);
 tadminreguser::i()->unbind($self);
 
 turlmap::unsub($self);
-foreach ($self->items as $id => $item) {
-litepublisher::$classes->delete($item['class']);
+foreach ($self->items as $id => $classname) {
+litepublisher::$classes->delete($classname);
 }
 
-
-tfiler::delete(litepublisher::$paths->data . 'regservices');
+tfiler::delete(litepublisher::$paths->data . 'regservices', true, true);
 }

@@ -14,7 +14,7 @@ class tgoogleregservice extends tregservice {
   
   protected function create() {
     parent::create();
-    $this->basename = 'regservices' . DIRECTORY_SEPARATOR . 'google';
+    $this->data['name'] = 'google';
 $this->data['title'] = 'Google';
 $this->data['icon'] = 'google.png';
 $this->data['url'] = '/google-oauth2callback.php';
@@ -56,8 +56,8 @@ return $this->errorauth();
 
 public function gettab($html, $args, $lang) {
 $result = $html->p($lang->google_head . litepublisher::$site->url . $this->url);
-$result .= $html->getinput('text', "client_id_$this->id", tadminhtml::specchars($this->client_id), $lang->client_id) ;
-$result .= $html->getinput('text', "client_secret_$this->id", tadminhtml::specchars($this->client_secret), $lang->client_secret) ;
+$result .= $html->getinput('text', "client_id_$this->name", tadminhtml::specchars($this->client_id), $lang->client_id) ;
+$result .= $html->getinput('text', "client_secret_$this->name", tadminhtml::specchars($this->client_secret), $lang->client_secret) ;
 return $result;
 }
 
