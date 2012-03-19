@@ -14,7 +14,7 @@ class tfacebookregservice extends tregservice {
   
   protected function create() {
     parent::create();
-    $this->basename = 'regservices' . DIRECTORY_SEPARATOR . 'facebook';
+    $this->data['name'] = 'facebook';
 $this->data['title'] = 'FaceBook';
 $this->data['icon'] = 'facebook.png';
 $this->data['url'] = '/facebook-oauth2callback.php';
@@ -57,9 +57,9 @@ return $this->errorauth();
 }
 
 public function gettab($html, $args, $lang) {
-$result = $html->p($lang->google_head . litepublisher::$site->url . $this->url);
-$result .= $html->getinput('text', "client_id_$this->id", tadminhtml::specchars($this->client_id), $lang->client_id) ;
-$result .= $html->getinput('text', "client_secret_$this->id", tadminhtml::specchars($this->client_secret), $lang->client_secret) ;
+$result = $html->p($lang->facebook_head . litepublisher::$site->url . $this->url);
+$result .= $html->getinput('text', "client_id_$this->name", tadminhtml::specchars($this->client_id), 'App ID');
+$result .= $html->getinput('text', "client_secret_$this->name", tadminhtml::specchars($this->client_secret), 'App Secret') ;
 return $result;
 }
 

@@ -14,12 +14,16 @@ class tregservice extends tplugin {
   
   protected function create() {
     parent::create();
-$this->data['id'] = 0;
+$this->data['name'] = 'service';
 $this->data['title'] = 'service';
 $this->data['icon'] = '';
 $this->data['url'] = '';
 $this->data['client_id'] = '';
 $this->data['client_secret'] = '';
+}
+
+public function getbasename() {
+return 'regservices' . DIRECTORY_SEPARATOR . $this->name;
 }
 
 public function valid() {
@@ -102,7 +106,7 @@ public function errorauth() {
 }
 
 public function adduser(array $item) {
-
+dumpvar($item);
 }
 
 }//class

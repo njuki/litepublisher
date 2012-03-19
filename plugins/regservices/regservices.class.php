@@ -21,24 +21,20 @@ $this->data['widget'] = '';
 $this->data['widget_title'] = '';
 }
 
-public function add(tgoogleregservice $service) {
+public function add(tregservice $service) {
 $this->lock();
-$id = $this->additem(array(
-'class' => get_class($service),
-));
-$service->id = $id;
+$this->items[$service->name] = get_class($service);
 $service->save();
 $this->update_widget();
 $this->unlock();
-return $id;
 }
 
 public function update_widget() {
 $widget = '';
 $url = litepublisher::$site->url . $this->url . litepublisher::$site->q . 'id';
 $iconurl = litepublisher::$site->files . '/plugins/bookmarks/icons/';
-foreach ($this->items as $id => $item) {
-$service = getinstance($item['class']);
+foreach ($this->items as $name => $classname) {
+$service = getinstance($classname);
 if ($service->valid()) {
 $icon = $service->icon ? sprintf('<img src="%s%s" alt="%s" />', $iconurl, $service->icon, $service->title) : '';
 $widget .= sprintf('<li><a href="%s=%s">%s%s</a></li>', $url, $id, $icon, $service->title);
@@ -55,8 +51,8 @@ $s = $this->widget . $s;
   public function request($arg) {
 $this->cache = false;
 $id = empty($_GET['id']) ? 0 : (int) $_GET['id'];
-if (!$this->itemexists($id)) return 404;
-$service = getinstance($this->items[$id]['class']);
+if (!isset($this->items[$id])) return 404;
+$service = getinstance($this->items[$id]);
 if (!$service->valid) return 403;
 $url = $service->getauthurl();
 return turlmap::redir($url);
