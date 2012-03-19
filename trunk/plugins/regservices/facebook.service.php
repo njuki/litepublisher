@@ -45,7 +45,8 @@ if ($resp) {
 if ($r = http::get('https://graph.facebook.com/me?access_token=' . $params['access_token'])) {
 $info = json_decode($r);
 return $this->adduser(array(
-'idstr' => isset($info->id) ? $info->id : '',
+'service' => $this->name,
+'idservice' => isset($info->id) ? $info->id : '',
 'email' => isset($info->email) ? $info->email : '',
 'name' => $info->name, 
 'website' => isset($info->link) ? $info->link : ''
