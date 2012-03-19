@@ -37,9 +37,11 @@ $service = getinstance($item['class']);
     foreach ($plugin->items as $id => $item) {
 $service = getinstance($item['class']);
 if (isset($_POST["client_id_$id"])) $service->client_id = $_POST["client_id_$id"]; 
-if (isset($_POST["client_secret_$id"])) $service->client_id = $_POST["client_secret_$id"]; 
+if (isset($_POST["client_secret_$id"])) $service->client_secret = $_POST["client_secret_$id"]; 
 $service->save();
     }
+
+$plugin->update_widget();
     $plugin->unlock();
     return '';
   }
