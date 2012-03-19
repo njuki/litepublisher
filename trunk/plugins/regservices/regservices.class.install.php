@@ -7,7 +7,7 @@
 **/
 
 function tregservicesInstall($self) {
-$dir = litepublisher::$paths->plugins . 'regservices';
+$dir = litepublisher::$paths->data . 'regservices';
 @mkdir($dir, 0777);
 @chmod($dir, 0777);
 
@@ -38,5 +38,5 @@ litepublisher::$classes->delete($item['class']);
 }
 
 
-tfiler::delete(litepublisher::$paths->plugins . 'regservices');
+tfiler::delete(litepublisher::$paths->data . 'regservices');
 }
