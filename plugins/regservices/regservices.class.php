@@ -40,8 +40,9 @@ $iconurl = litepublisher::$site->files . '/plugins/bookmarks/icons/';
 foreach ($this->items as $id => $item) {
 $service = getinstance($item['class']);
 if ($service->valid()) {
-$icon = $service->icon ? sprintf('<img src="%s%s" alt="%s" />, $iconurl, $service->icon, $service->title) : '';
+$icon = $service->icon ? sprintf('<img src="%s%s" alt="%s" />', $iconurl, $service->icon, $service->title) : '';
 $widget .= sprintf('<li><a href="%s=%s">%s%s</a></li>', $url, $id, $icon, $service->title);
+}
 }
 $this->widget = $this->widget_title . sprintf('<ul>%s</ul>', $widget);
 $this->save();
