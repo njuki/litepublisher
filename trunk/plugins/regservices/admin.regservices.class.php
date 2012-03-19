@@ -6,7 +6,7 @@
 * and GPL (gpl.txt) licenses.
 **/
 
-class tadminregoauth2 implements iadmin {
+class tadminregservices implements iadmin {
   
   public static function i() {
     return getinstance(__class__);
@@ -17,7 +17,7 @@ class tadminregoauth2 implements iadmin {
   }
   
   public function getcontent() {
-    $plugin = tregoauth2 ::i();
+    $plugin = tregservices ::i();
     $html = tadminhtml::i();
     $tabs = new tuitabs();
     $args = targs::i();
@@ -32,7 +32,7 @@ $service = getinstance($item['class']);
   }
   
   public function processform() {
-    $plugin = tregoauth2 ::i();
+    $plugin = tregservices ::i();
     $plugin->lock();
     foreach ($plugin->items as $id => $item) {
 $service = getinstance($item['class']);
