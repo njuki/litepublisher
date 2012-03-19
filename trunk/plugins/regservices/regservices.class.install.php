@@ -17,8 +17,10 @@ $self->widget_title  = sprintf('<h4>%s</h4>', $about['widget_title']);
 $name = basename(dirname(__file__));
 litepublisher::$classes->add('tregservice', 'service.class.php', $name);
 litepublisher::$classes->add('tgoogleregservice', 'google.service.php', $name);
+litepublisher::$classes->add('tfacebookregservice', 'facebook.service.php', $name);
 
 $self->add(tgoogleregservice::i());
+$self->add(tfacebookregservice::i());
 $self->unlock();
 
  litepublisher::$urlmap->addget($self->url, get_class($self));

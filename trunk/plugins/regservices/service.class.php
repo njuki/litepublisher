@@ -87,7 +87,11 @@ return $state;
 }
 
 public function getauthurl() {
-$this->error('Call abstract method');
+$url = 'response_type=code';
+$url .= '&redirect_uri=' . urlencode(litepublisher::$site->url . $this->url);
+$url .= '&client_id=' . $this->client_id;
+$url .= '&state=' . $this->newstate();
+return $url;
 }
 
 public function gettab($html, $args, $lang) {
