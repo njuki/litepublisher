@@ -6,7 +6,7 @@
 * and GPL (gpl.txt) licenses.
 **/
 
-class tregoauth2 extends titems {
+class tregservices extends titems {
 
     public static function i() {
     return getinstance(__class__);
