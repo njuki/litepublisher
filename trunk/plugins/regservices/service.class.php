@@ -26,10 +26,6 @@ public function valid() {
 return $this->client_id && $this->client_secret;
 }
 
-  public function getbasename() {
-    return 'regservices' . DIRECTORY_SEPARATOR . $this->id;
-  }
-
 public function install() {
 if ($this->url) litepublisher::$urlmap->addget($this->url, get_class($this));
 }

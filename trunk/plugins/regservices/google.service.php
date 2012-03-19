@@ -14,6 +14,7 @@ class tgoogleregservice extends tregservice {
   
   protected function create() {
     parent::create();
+    $this->basename = 'regservices' . DIRECTORY_SEPARATOR . 'google';
 $this->data['title'] = 'Google';
 $this->data['icon'] = 'google.png';
 $this->data['url'] = '/google-oauth2callback.php';
