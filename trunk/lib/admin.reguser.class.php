@@ -15,6 +15,8 @@ class tadminreguser extends tadminform {
   
   protected function create() {
     parent::create();
+$this->basename = 'admin.reguser';
+$this->addevents('oncontent');
     $this->section = 'users';
     $this->registered = false;
   }
@@ -51,7 +53,9 @@ class tadminreguser extends tadminform {
     $lang = tlocal::i('users');
     $args->formtitle = $lang->regform;
     $args->data['$lang.email'] = 'email';
-    return $html->adminform($form, $args);
+    $result = $html->adminform($form, $args);
+$this->callevent('oncontent', array(&$result));
+return $result;
   }
   
   public function processform() {
@@ -90,5 +94,3 @@ class tadminreguser extends tadminform {
   }
   
 }//class
-
-?>

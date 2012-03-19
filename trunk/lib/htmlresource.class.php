@@ -8,12 +8,12 @@
 
 class thtmltag {
   public $tag;
+
 public function __construct($tag) { $this->tag = $tag; }
   public function __get($name) {
-    $lang = tlocal::i();
-  return "<$this->tag>{$lang->$name}</$this->tag>\n";
+  return sprintf('<%1$s>%2$s</%1$s>', $this->tag, tlocal::i()->$name);
   }
-  
+ 
 }//class
 
 class tadminhtml {
@@ -41,15 +41,15 @@ class tadminhtml {
   }
   
   public function __get($name) {
-    if (in_array($name, self::$tags)) return new thtmltag($name);
     if (isset($this->ini[$this->section][$name]))  {
-      $s = $this->ini[$this->section][$name];
+      return $this->ini[$this->section][$name];
     } elseif (isset($this->ini['common'][$name]))  {
-      $s = $this->ini['common'][$name];
+      return $this->ini['common'][$name];
+    } elseif (in_array($name, self::$tags)) {
+return new thtmltag($name);
     } else {
       throw new Exception("the requested $name item not found in $this->section section");
     }
-    return $s;
   }
   
   public function __call($name, $params) {
@@ -57,9 +57,12 @@ class tadminhtml {
       $s = $this->ini[$this->section][$name];
     } elseif (isset($this->ini['common'][$name]))  {
       $s = $this->ini['common'][$name];
+    } elseif (in_array($name, self::$tags)) {
+return sprintf('<%1$s>%2$s</%1$s>', $name, $params[0]);
     } else {
       throw new Exception("the requested $name item not found in $this->section section");
     }
+
     $args = isset($params[0]) && $params[0] instanceof targs ? $params[0] : targs::i();
     return $this->parsearg($s, $args);
   }
