@@ -18,7 +18,7 @@ $this->dbversion = false;
 $this->basename = 'plugins/regoauth2';
 }
 
-public function add(toauthservice $service) {
+public function add(tgoogleregservice $service) {
 $id = $this->additem(array(
 'class' => get_class($service),
 ));

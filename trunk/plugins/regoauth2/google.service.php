@@ -57,12 +57,10 @@ return $this->errorauth();
 }
 
 public function gettab($html, $args, $lang) {
-$head = $html->p($lang->google_head . litepublisher::$site->url . $this->url);
-$result = "<p>$head</p>";
+$result = $html->p($lang->google_head . litepublisher::$site->url . $this->url);
 $result .= $html->getinput('text', "client_id_$this->id", tadminhtml::specchars($this->client_id), $lang->client_id) ;
 $result .= $html->getinput('text', "client_secret_$this->id", tadminhtml::specchars($this->client_secret), $lang->client_secret) ;
 return $result;
 }
-
 
 }//class

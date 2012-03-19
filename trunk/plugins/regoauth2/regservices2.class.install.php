@@ -11,9 +11,10 @@ function tregoauth2Install($self) {
   
 $self->lock();
 $dirname = basename(dirname(__file__));
-litepublisher::$classes->add('tregservice', service.class.php', $dirname);
+litepublisher::$classes->add('tregservice', 'service.class.php', $dirname);
 litepublisher::$classes->add('tgoogleregservice', 'google.service.php', $dirname);
 
+$self->add(tgoogleregservice::i());
   litepublisher::$urlmap->clearcache();
 }
 
