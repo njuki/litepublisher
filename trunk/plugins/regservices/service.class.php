@@ -27,7 +27,7 @@ return $this->client_id && $this->client_secret;
 }
 
   public function getbasename() {
-    return 'regservices' .DIRECTORY_SEPARATOR . $this->id;
+    return 'plugins' . DIRECTORY_SEPARATOR . 'regservice.' . $this->id;
   }
 
 public function install() {

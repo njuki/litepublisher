@@ -15,7 +15,7 @@ class tregservices extends titems {
   protected function create() {
 $this->dbversion = false;
     parent::create();
-$this->basename = 'regservices' .DIRECTORY_SEPARATOR . 'index';
+$this->basename = 'plugins/regoauth2';
 }
 
 public function add(tgoogleregservice $service) {
