@@ -7,21 +7,36 @@
 **/
 
 function tregservicesInstall($self) {
-  //litepublisher::$urlmap->addget('/admin/regoauth2.php', get_class($self));
-  
+$dir = litepublisher::$paths->plugins . 'regservices';
+@mkdir($dir, 0777);
+@chmod($dir, 0777);
+
+$about = tplugins::getabout(tplugins::getname(__file__));
 $self->lock();
-$dirname = basename(dirname(__file__));
-litepublisher::$classes->add('tregservice', 'service.class.php', $dirname);
-litepublisher::$classes->add('tgoogleregservice', 'google.service.php', $dirname);
+$self->widget_title  = sprintf('<h4>%s</h4>', $about['widget_title']);
+$name = basename(dirname(__file__));
+litepublisher::$classes->add('tregservice', 'service.class.php', $name);
+litepublisher::$classes->add('tgoogleregservice', 'google.service.php', $name);
 
 $self->add(tgoogleregservice::i());
+$self->unlock();
+
+ litepublisher::$urlmap->addget($self->url, get_class($self));
   litepublisher::$urlmap->clearcache();
+
+tadminlogin::i()->oncontent = $self->oncontent;
+tadminreguser::i()->oncontent = $self->oncontent;
 }
 
 function tregservicesUninstall($self) {
+tadminlogin::i()->unbind($self);
+tadminreguser::i()->unbind($self);
+
+turlmap::unsub($self);
 foreach ($self->items as $id => $item) {
 litepublisher::$classes->delete($item['class']);
-//@unlink($dir . $item['class']);
 }
-turlmap::unsub($self);
+
+
+tfiler::delete(litepublisher::$paths->plugins . 'regservices');
 }
