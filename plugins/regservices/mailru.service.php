@@ -65,7 +65,8 @@ if ($r = http::get('http://www.appsmail.ru/platform/api?' . http_build_query($pa
 $js = json_decode($r);
 $info = $js[0];
 return $this->adduser(array(
-'idstr' => $info->uid,
+'service' => $this->name,
+'idservice' => $info->uid,
 'email' => isset($info->email) ? $info->email : '',
 'name' => $info->nick, 
 'website' => isset($info->link) ? $info->link : ''
