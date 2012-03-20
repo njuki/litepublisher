@@ -31,22 +31,22 @@ return $url;
   public function request($arg) {
 if ($err = parent::request($arg)) return $err;
 $code = $_REQUEST['code'];
-$resp = http::get('https://oauth.vk.com/access_token?', http_build_query(array(
+$resp = self::http_post::get('https://oauth.vk.com/access_token', array(
 'code' => $code,
 'client_id' => $this->client_id,
 'client_secret' => $this->client_secret,
 'redirect_uri' => litepublisher::$site->url . $this->url,
-'grant_type' => 'authorization_code'
-)));
+//'grant_type' => 'authorization_code'
+));
 
 if ($resp) {
 $tokens  = json_decode($resp);
-if ($r = http::get('https://api.vk.com/method/getProfiles?access_token=' . $tokens->access_token)) {
-$info = json_decode($r);
+if ($r = http::get('https://api.vk.com/method/getProfiles?uids=' . $tokens->user_id . '&access_token=' . $tokens->access_token)) {
+$js = json_decode($r);
+$info = $js->response[0];
 return $this->adduser(array(
 'service' => $this->name,
-'idservice' => $info->uid,
-'email' => isset($info->email) ? $info->email : '',
+'uidservice' => $info->uid,
 'name' => $info->first_name.' '.$info->last_name,
 'website' => 'http://vkontakte.ru/id'.$info->uid
 ));
