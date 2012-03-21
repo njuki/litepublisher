@@ -56,12 +56,12 @@ return $this->adduser(array(
 
 return $this->errorauth();
 }
-
-public function gettab($html, $args, $lang) {
-$result = $html->p($lang->facebook_head . litepublisher::$site->url . $this->url);
-$result .= $html->getinput('text', "client_id_$this->name", tadminhtml::specchars($this->client_id), 'App ID');
-$result .= $html->getinput('text', "client_secret_$this->name", tadminhtml::specchars($this->client_secret), 'App Secret') ;
-return $result;
+protected function getadmininfo() {
+return array(
+'regurl' => 'https://developers.facebook.com/apps',
+'client_id' => 'App ID',
+'client_secret' =>'App Secret'
+);
 }
 
 }//class

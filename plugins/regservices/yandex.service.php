@@ -55,11 +55,12 @@ return $this->adduser(array(
 return $this->errorauth();
 }
 
-public function gettab($html, $args, $lang) {
-$result = $html->p($lang->yandex . litepublisher::$site->url . $this->url);
-$result .= $html->getinput('text', "client_id_$this->name", tadminhtml::specchars($this->client_id), $lang->yandex_id) ;
-$result .= $html->getinput('text', "client_secret_$this->name", tadminhtml::specchars($this->client_secret), $lang->yandex_secret) ;
-return $result;
+protected function getadmininfo() {
+return array(
+'regurl' => 'https://oauth.yandex.ru/client/new',
+'client_id' => $lang->yandex_id,
+'client_secret' =>'$lang->yandex_secret
+);
 }
 
 }//class

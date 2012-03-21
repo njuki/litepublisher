@@ -77,11 +77,12 @@ return $this->adduser(array(
 return $this->errorauth();
 }
 
-public function gettab($html, $args, $lang) {
-$result = $html->p($lang->mailru . litepublisher::$site->url . $this->url);
-$result .= $html->getinput('text', "client_id_$this->name", tadminhtml::specchars($this->client_id), 'ID') ;
-$result .= $html->getinput('text', "client_secret_$this->name", tadminhtml::specchars($this->client_secret), $lang->mailru_secret) ;
-return $result;
+protected function getadmininfo() {
+return array(
+'regurl' => 'http://api.mail.ru/sites/my/add',
+'client_id' => 'ID',
+'client_secret' =>'$lang->mailru_secret
+);
 }
 
 }//class
