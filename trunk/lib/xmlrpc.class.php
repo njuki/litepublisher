@@ -146,8 +146,10 @@ class TXMLRPCAbstract extends tevents {
     $caller->deleteclass(get_class($this));
   }
   
-  public static function auth($login, $password, $group) {
-    if (litepublisher::$options->auth($login, $password))  {
+  public static function auth($email, $password, $group) {
+//fix login
+if ($email == 'admin') $email = litepublisher::$options->email;
+    if (litepublisher::$options->auth($email, $password))  {
       if ((litepublisher::$options->group == 'admin') || (litepublisher::$options->group == $group) || ($group == 'nobody')) return true;
       $groups = tusergroups::i();
       if ($groups->hasright(litepublisher::$options->group, $group)) return true;
@@ -155,8 +157,9 @@ class TXMLRPCAbstract extends tevents {
     throw new Exception('Bad login/pass combination.', 403);
   }
   
-  public static function canedit($login, $password, $idpost) {
-    if (litepublisher::$options->auth($login, $password))  {
+  public static function canedit($email, $password, $idpost) {
+if ($email == 'admin') $email = litepublisher::$options->email;
+    if (litepublisher::$options->auth($email, $password))  {
       $group = litepublisher::$options->group;
       if (($group == 'admin') || ($group == 'editor')) return true;
       $groups = tusergroups::i();

@@ -74,18 +74,28 @@ $this->data['widget'] = '';
   
   public function getcontent() {
     $args = targs::i();
+$html = $this->html;
     $lang = tlocal::admin('login');
     $args->formtitle = $lang->formhead;
-    $args->login = !empty($_POST['login']) ? strip_tags($_POST['login']) : '';
+    $args->email = !empty($_POST['email']) ? strip_tags($_POST['email']) : '';
     $args->password = !empty($_POST['password']) ? strip_tags($_POST['password']) : '';
     $args->remember = isset($_POST['remember']);
 $result = $this->widget;
     if (isset($_GET['backurl'])) $result = str_replace('&backurl=', '&backurl=' . urlencode($_GET['backurl']), $result);
-    $result .= $this->html->adminform('[text=email]
+    $result .= $html->adminform('[text=email]
     [password=password]
     [checkbox=remember]',
     $args) .
-    $this->html->lostpass();
+    $html->lostpass();
+
+if (litepublisher::$options->usersenabled) {
+    $lang = tlocal::i('users');
+    $args->formtitle = $lang->regform;
+$args->email = '';
+$args->name = '';
+    $form = $html->adminform('[text=email] [text=name]', $args);
+$result .= str_replace('action=""', 'action="'. litepublisher::$site->url . '/admin/reguser/', $form);
+}
 $this->callevent('oncontent', array(&$result));
 return $result;
   }
