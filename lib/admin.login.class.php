@@ -16,6 +16,7 @@ class tadminlogin extends tadminform {
     parent::create();
 $this->basename = 'admin.loginform';
 $this->addevents('oncontent');
+$this->data['widget'] = '';
 }
 
     public function auth() {
@@ -46,11 +47,11 @@ $this->addevents('oncontent');
       $this->formresult = $this->html->h4->cookiedisabled;
       return;
     }
-    if (!isset($_POST['login']) || !isset($_POST['password'])) return;
-    $login = trim($_POST['login']);
+    if (!isset($_POST['email']) || !isset($_POST['password'])) return;
+    $email = trim($_POST['email']);
     $password = trim($_POST['password']);
-    if (empty($login) || empty($password)) return;
-    if (!litepublisher::$options->auth($login, $password)) {
+    if (empty($email) || empty($password)) return;
+    if (!litepublisher::$options->auth($email, $password)) {
       $this->formresult = $this->html->h4->error;
       return;
     }
@@ -78,7 +79,9 @@ $this->addevents('oncontent');
     $args->login = !empty($_POST['login']) ? strip_tags($_POST['login']) : '';
     $args->password = !empty($_POST['password']) ? strip_tags($_POST['password']) : '';
     $args->remember = isset($_POST['remember']);
-    $result = $this->html->adminform('[text=login]
+$result = $this->widget;
+    if (isset($_GET['backurl'])) $result = str_replace('&backurl=', '&backurl=' . urlencode($_GET['backurl']), $result);
+    $result .= $this->html->adminform('[text=email]
     [password=password]
     [checkbox=remember]',
     $args) .

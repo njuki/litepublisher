@@ -42,10 +42,14 @@ $widget .= sprintf('<li><a href="%s=%s&backurl=">%s%s</a></li>', $url, $id, $ico
 }
 $this->widget = $this->widget_title . sprintf('<ul>%s</ul>', $widget);
 $this->save();
-}
 
-public function oncontent(&$s) {
-$s = $this->widget . $s;
+$admin = tadminlogin::i();
+$admin->widget = $this->widget;
+$admin->save();
+
+$admin = tadminreguser::i();
+$admin->widget = $this->widget;
+$admin->save();
 }
 
   public function request($arg) {
@@ -56,7 +60,6 @@ $service = getinstance($this->items[$id]);
 if (!$service->valid) return 403;
 $url = $service->getauthurl();
 if (!empty($_GET['backurl'])) setcookie('backurl', $_GET['backurl'], time() + 8 * 3600, litepublisher::$site->subdir . '/', false);
-if (isset($_GET['remember'])) setcookie('remember', 'true', time() + 8 * 3600, litepublisher::$site->subdir . '/', false);
 
 return turlmap::redir($url);
 }

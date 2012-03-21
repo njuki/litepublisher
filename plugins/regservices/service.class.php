@@ -127,17 +127,17 @@ return 403;
 }
 }
 
-    $expired = isset($_COOKIE['remember']) ? time() + 1210000 : time() + 8*3600;
+    $expired = time() + 1210000;
     $cookie = md5uniq();
 litepublisher::$options->user = $id;
     litepublisher::$options->setcookies($cookie, $expired);
 $groups = tusergroups::i();
     if ($groups->ingroup($id, 'admin')) setcookie('litepubl_user_flag', 'true', $expired, litepublisher::$site->subdir . '/', false);
 if (!empty($_COOKIE['backurl'])) {
-$backurl = ? $_COOKIE['backurl'];
+$backurl = $_COOKIE['backurl'];
 } else {
 $user = $users->getitem($id);
-$backurl =  : $groups->gethome($user['idgroups'][0]);
+$backurl =  $groups->gethome($user['idgroups'][0]);
 }
 
 return turlmap::redir($backurl);

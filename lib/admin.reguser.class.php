@@ -17,6 +17,7 @@ class tadminreguser extends tadminform {
     parent::create();
 $this->basename = 'admin.reguser';
 $this->addevents('oncontent');
+$this->data['widget'] = '';
     $this->section = 'users';
     $this->registered = false;
   }
@@ -46,14 +47,15 @@ $this->addevents('oncontent');
     
     $args = targs::i();
     $form = '';
-    foreach (array('login', 'name', 'email') as $name) {
+    foreach (array('email', 'name') as $name) {
       $args->$name = isset($_POST[$name]) ? $_POST[$name] : '';
       $form .= "[text=$name]";
     }
     $lang = tlocal::i('users');
     $args->formtitle = $lang->regform;
     $args->data['$lang.email'] = 'email';
-    $result = $html->adminform($form, $args);
+$result = $this->widget;
+    $result .= $html->adminform($form, $args);
 $this->callevent('oncontent', array(&$result));
 return $result;
   }
@@ -62,13 +64,12 @@ return $result;
     extract($_POST, EXTR_SKIP);
     if (!tcontentfilter::ValidateEmail($email)) return '<p><strong>' .  tlocal::get('comment', 'invalidemail') . "</strong></p>\n";
     $users = tusers::i();
-    if ($users->loginexists($login) || $users->emailexists($email)) return $this->html->h2->invalidregdata;
+    if ($users->emailexists($email)) return $this->html->h2->invalidregdata;
     $password = md5uniq();
     $groups = tusergroups::i();
     
     $id = $users->add(array(
     'idgroups' => array($groups->defaultgroup),
-    'login' => $login,
     'password' => $password,
     'name' => $name,
     'email' => $email
