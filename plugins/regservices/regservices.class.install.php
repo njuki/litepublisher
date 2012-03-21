@@ -16,6 +16,7 @@ $self->lock();
 $self->widget_title  = sprintf('<h4>%s</h4>', $about['widget_title']);
 $name = basename(dirname(__file__));
 litepublisher::$classes->add('tregservice', 'service.class.php', $name);
+litepublisher::$classes->add('tregserviceuser', 'service.class.php', $name);
 litepublisher::$classes->add('tgoogleregservice', 'google.service.php', $name);
 litepublisher::$classes->add('tfacebookregservice', 'facebook.service.php', $name);
 litepublisher::$classes->add('tmailruregservice', 'mailru.service.php', $name);
@@ -29,6 +30,20 @@ $self->add(tyandexregservice::i());
 $self->add(tvkontakteregservice::i());
 
 $self->unlock();
+
+tusers::i()->deleted = tregserviceuser::i()->delete;
+if (dbversion) {
+$names =implode("', '", array_keys($self->items));
+tdbmanager::i()->createtable('regservices',
+  "id int unsigned NOT NULL default 0,
+  service enum('$names') default 'google',
+uid varchar(128) default '',
+
+  KEY `id` (`id`),
+  KEY `service` (`service`),
+  KEY `uid` (`uid`),
+");
+}
 
  litepublisher::$urlmap->addget($self->url, get_class($self));
   litepublisher::$urlmap->clearcache();
@@ -46,5 +61,12 @@ foreach ($self->items as $id => $classname) {
 litepublisher::$classes->delete($classname);
 }
 
+litepublisher::$classes->delete('tregserviceuser');
+
 tfiler::delete(litepublisher::$paths->data . 'regservices', true, true);
+
+if (dbversion) {
+tusers::i()->unbind('tregserviceuser');
+tdbmanager::i()->deletetable('regservices');
+}
 }

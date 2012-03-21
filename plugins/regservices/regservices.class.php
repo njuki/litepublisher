@@ -37,7 +37,7 @@ foreach ($this->items as $name => $classname) {
 $service = getinstance($classname);
 if ($service->valid()) {
 $icon = $service->icon ? sprintf('<img src="%s%s" alt="%s" />', $iconurl, $service->icon, $service->title) : '';
-$widget .= sprintf('<li><a href="%s=%s">%s%s</a></li>', $url, $id, $icon, $service->title);
+$widget .= sprintf('<li><a href="%s=%s&backurl=">%s%s</a></li>', $url, $id, $icon, $service->title);
 }
 }
 $this->widget = $this->widget_title . sprintf('<ul>%s</ul>', $widget);
@@ -55,6 +55,9 @@ if (!isset($this->items[$id])) return 404;
 $service = getinstance($this->items[$id]);
 if (!$service->valid) return 403;
 $url = $service->getauthurl();
+if (!empty($_GET['backurl'])) setcookie('backurl', $_GET['backurl'], time() + 8 * 3600, litepublisher::$site->subdir . '/', false);
+if (isset($_GET['remember'])) setcookie('remember', 'true', time() + 8 * 3600, litepublisher::$site->subdir . '/', false);
+
 return turlmap::redir($url);
 }
 

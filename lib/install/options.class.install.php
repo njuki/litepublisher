@@ -38,7 +38,6 @@ function installoptions($language) {
   $options->language = $language;
   
   $options->dateformat = '';
-  $options->login = 'admin';
   $options->password = '';
   $options->realm = 'Admin panel';
   $password = md5uniq();

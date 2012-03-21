@@ -106,7 +106,85 @@ public function errorauth() {
 }
 
 public function adduser(array $item) {
-dumpvar($item);
+$users = tusers::i();
+if (!empty($item['email'])) {
+if ($id = $users->indexOf('email', $item['email'])) {
+
+} else {
 }
+} else {
+$reguser =tregserviceuser::i();
+$uid = !empty($item['uid']) ? $item['uid'] : (!empty($item['website']) ? $item['website'] : '');
+if ($uid) {
+if ($id = $reguser->find($this->name, $uid)){
+} else {
+$id = 
+$reguser->add($id, $this->name, $uid);
+}
+} else {
+//nothing found and hasnt email or uid
+return 403;
+}
+}
+
+    $expired = isset($_COOKIE['remember']) ? time() + 1210000 : time() + 8*3600;
+    $cookie = md5uniq();
+litepublisher::$options->user = $id;
+    litepublisher::$options->setcookies($cookie, $expired);
+$groups = tusergroups::i();
+    if ($groups->ingroup($id, 'admin')) setcookie('litepubl_user_flag', 'true', $expired, litepublisher::$site->subdir . '/', false);
+if (!empty($_COOKIE['backurl'])) {
+$backurl = ? $_COOKIE['backurl'];
+} else {
+$user = $users->getitem($id);
+$backurl =  : $groups->gethome($user['idgroups'][0]);
+}
+
+return turlmap::redir($backurl);
+}
+
+}//class
+
+class tregserviceuser extends titems {
+
+  public static function i() {
+    return getinstance(__class__);
+  }
+  
+  protected function create() {
+    $this->dbversion = dbversion;
+    parent::create();
+    $this->basename = 'regservices' . DIRECTORY_SEPARATOR . 'users';
+    $this->table = 'regservices';
+}
+
+public function add($id, $service, $uid) {
+if (dbversion) {
+$this->db->insert_a(array(
+'id' => $id,
+'service' => $service,
+'uid' => $uid
+));
+} else {
+$this->items[$id] = array(
+'service' => $service,
+'uid' => $uid
+);
+$this->save();
+}
+}
+
+public function find($service, $uid) {
+    if ($this->dbversion){
+      return $this->db->findid('service = '. dbquote($service) . ' and uid = ' . dbquote($uid));
+    }
+    
+    foreach ($this->items as $id => $item) {
+      if (($item['service'] == $service) && ($item['uid'] == $uid)) {
+        return $id;
+      }
+    }
+    return false;
+  }
 
 }//class
