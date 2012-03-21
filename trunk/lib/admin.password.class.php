@@ -74,15 +74,7 @@ $html = $this->html;
     if (empty($email)) return $html->h2->error;
 $id = $this->getiduser($email);
     if (!$id) return $html->h2->error;
-    
-    $args = targs::i();
-    if ($id == 1) {
-      $name = 'admin';
-    } else {
-      $item = $users->getitem($id);
-      $args->add($item);
-      $name = $item['login'];
-    }
+    $args = targs::i();    
 
 $this->start_session($email);
 if (!isset($_SESSION['count'])) {
@@ -96,8 +88,15 @@ $_SESSION['confirm'] = md5(mt_rand() . litepublisher::$secret. microtime());
 $args->confirm = $_SESSION['confirm'];
 session_write_close();
 
-    $args->login = $name;
-    $args->password = $password;
+$args->email = urlencode($email);
+    if ($id == 1) {
+      $name = 'admin';
+    } else {
+      $item = $users->getitem($id);
+      $args->add($item);
+      $name = $item['login'];
+    }
+
     $mailtemplate = tmailtemplate::i($this->section);
     $subject = $mailtemplate->subject($args);
     $body = $mailtemplate->body($args);
