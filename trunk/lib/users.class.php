@@ -39,7 +39,7 @@ class tusers extends titems {
     if ($id == 1) return array(
     'email' =>litepublisher::$options->email,
 'name' => litepublisher::$options->name,
-'website' => litepublisher::$site->url . '/';
+'website' => litepublisher::$site->url . '/',
     'password' => litepublisher::$options->password,
     'cookie' => litepublisher::$options->cookie,
     'expired' => sqldate(litepublisher::$options->cookieexpired ),

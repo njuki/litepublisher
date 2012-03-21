@@ -30,6 +30,7 @@ foreach (array('email', 'name', 'website') as $name) {
 $u->items[$id][$name] =  $p->items[$id][$name];
 unset($p->items[$id][$name]);
 }
+}
 $u->save();
 $p->save();
 }

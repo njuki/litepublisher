@@ -47,15 +47,9 @@ uid varchar(128) default '',
 
  litepublisher::$urlmap->addget($self->url, get_class($self));
   litepublisher::$urlmap->clearcache();
-
-tadminlogin::i()->oncontent = $self->oncontent;
-tadminreguser::i()->oncontent = $self->oncontent;
 }
 
 function tregservicesUninstall($self) {
-tadminlogin::i()->unbind($self);
-tadminreguser::i()->unbind($self);
-
 turlmap::unsub($self);
 foreach ($self->items as $id => $classname) {
 litepublisher::$classes->delete($classname);
