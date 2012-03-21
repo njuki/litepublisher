@@ -21,24 +21,23 @@ class tadminpassword extends tadminform {
     $args = new targs();
     $lang = tlocal::admin('password');
     $args->formtitle = $lang->enteremail;
-    return $this->html->adminform('[text=login] [text=email]', $args);
+    return $this->html->adminform('[text=email]', $args);
   }
   
   public function processform() {
     $id = false;
-    $login = trim($_POST['login']);
+$html = $this->html;
     $email = strtolower(trim($_POST['email']));
-    if (empty($email) || empty($login)) return $this->html->h2->error;
-    if (($email == strtolower(trim(litepublisher::$options->email))) && ($login == litepublisher::$options->login)) {
+    if (empty($email)) return $html->h2->error;
+    if (($email == strtolower(trim(litepublisher::$options->email)))) {
       $id = 1;
     } elseif (litepublisher::$options->usersenabled) {
       $users = tusers::i();
-      if ($id = $users->emailexists($email)) {
-        if ($login != $users->getvalue($id, 'login')) $id = false;
+$id = $users->emailexists($email);
       }
     }
     
-    if (!$id) return $this->html->h2->error;
+    if (!$id) return $html->h2->error;
     $password = md5uniq();
     if ($id == 1) {
       litepublisher::$options->changepassword($password);
@@ -62,7 +61,7 @@ class tadminpassword extends tadminform {
     
     tmailer::sendmail(litepublisher::$site->name, litepublisher::$options->fromemail,
     $name, $email, $subject, $body);
-    return $this->html->h2->success;
+    return $html->h2->success;
   }
   
 }//class
