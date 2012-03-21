@@ -134,16 +134,16 @@ class toptions extends tevents_storage {
     return $this->_user;
   }
   
-  public function auth($login, $password) {
-    if ($login == '' && $password == '' && $this->cookieenabled) return $this->authcookie();
-    if ($login == $this->login) {
-      if ($this->data['password'] != basemd5("$login:$this->realm:$password"))  return false;
+  public function auth($email, $password) {
+    if ($email == '' && $password == '' && $this->cookieenabled) return $this->authcookie();
+    if ($email == $this->email) {
+      if ($this->data['password'] != basemd5("$email:$this->realm:$password"))  return false;
       $this->_user = 1;
     } elseif(!$this->usersenabled) {
       return false;
     } else {
       $users = tusers::i();
-      if (!($this->_user = $users->auth($login, $password))) return false;
+      if (!($this->_user = $users->auth($email, $password))) return false;
     }
     $this->updategroup();
     return true;
@@ -171,7 +171,7 @@ class toptions extends tevents_storage {
   }
   
   public function changepassword($newpassword) {
-    $this->data['password'] = basemd5("$this->login:$this->realm:$newpassword");
+    $this->data['password'] = basemd5("$this->email:$this->realm:$newpassword");
     $this->save();
   }
   
@@ -200,7 +200,7 @@ class toptions extends tevents_storage {
   }
   
   public function Getinstalled() {
-    return isset($this->data['login']);
+    return isset($this->data['email']);
   }
   
   public function settimezone($value) {
