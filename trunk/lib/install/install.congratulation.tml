@@ -43,7 +43,7 @@ $site.description
 <h1 class="rubric">$lang.success</h1>
 
    <p>$lang.canlogin: <a href='$site.url/admin/'>$site.url/admin/</a> $lang.uselogin
-<strong>$lang.login</strong>: <code>$options.login</code> <strong>$lang.password</strong>: <code>$password</code></p>
+<strong>E-Mail</strong>: <code>$options.email</code> <strong>$lang.password</strong>: <code>$password</code></p>
    <p>$lang.passnote</p>
    
    <dl>
