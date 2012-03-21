@@ -34,4 +34,6 @@ unset($p->items[$id][$name]);
 $u->save();
 $p->save();
 }
+
+  litepublisher::$urlmap->addget('/admin/password/restore/', 'tadminpassword');
 }
