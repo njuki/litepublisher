@@ -54,11 +54,12 @@ return $this->adduser(array(
 return $this->errorauth();
 }
 
-public function gettab($html, $args, $lang) {
-$result = $html->p($lang->google_head . litepublisher::$site->url . $this->url);
-$result .= $html->getinput('text', "client_id_$this->name", tadminhtml::specchars($this->client_id), $lang->client_id) ;
-$result .= $html->getinput('text', "client_secret_$this->name", tadminhtml::specchars($this->client_secret), $lang->client_secret) ;
-return $result;
+protected function getadmininfo() {
+return array(
+'regurl' => 'https://code.google.com/apis/console/',
+'client_id' => $lang->client_id,
+'client_secret' =>$lang->client_secret
+);
 }
 
 }//class

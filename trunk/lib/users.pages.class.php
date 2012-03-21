@@ -156,15 +156,12 @@ class tuserpages extends titems implements itemplate {
     return $item;
   }
   
-  public function add($id, $name, $email, $website) {
+  public function add($id) {
     $item = array(
     'id' => $id,
     'idurl' => 0,
     'idview' => 1,
     'registered' => sqldate(),
-    'name' => $name,
-    'email' => $email,
-    'website' => $website,
     'ip' => '',
     'avatar' => 0,
     'content' => '',

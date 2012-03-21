@@ -217,7 +217,11 @@ class ttheme extends tevents {
   }
   
   public function parse($s) {
-    $s = str_replace('$site.url', litepublisher::$site->url, (string) $s);
+    $s = strtr((string) $s, array(
+'$site.url' => litepublisher::$site->url, 
+'$site.files' => litepublisher::$site->files,
+'{$site.q}' => litepublisher::$site->q
+));
     array_push($this->parsing, $s);
     try {
       $s = preg_replace('/%%([a-zA-Z0-9]*+)_(\w\w*+)%%/', '\$$1.$2', $s);

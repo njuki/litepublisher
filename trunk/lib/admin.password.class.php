@@ -30,7 +30,7 @@ ini_set('session.save_path', 'tcp://127.0.0.1:11211');
 }
 
       session_cache_limiter(false);
-      session_id ('password_restore_' .md5($email));
+      session_id ('password-restore-' .md5($email));
       session_start();
 }
 
