@@ -35,5 +35,11 @@ $u->save();
 $p->save();
 }
 
-  litepublisher::$urlmap->addget('/admin/password/restore/', 'tadminpassword');
+if (dbversion) {
+if ($id = litepublisher::$urlmap->urlexists('/admin/password/')) 
+litepublisher::$urlmap->db->setvalue($id, 'type', 'get');
+} else {
+litepublisher::$urlmap->items['/admin/password/']['type'] = 'get';
+litepublisher::$urlmap->save();
+}
 }
