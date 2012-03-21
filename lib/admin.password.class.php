@@ -56,7 +56,7 @@ if ($id = $this->getiduser($email)) {
     }
 $args->password = $password;
 $args->email = $email;
-return $html->newpass($args);
+return $html->newpassword($args);
 } else {
 return $html->h4->notfound;
 }
@@ -90,11 +90,11 @@ session_write_close();
 
 $args->email = urlencode($email);
     if ($id == 1) {
-      $name = 'admin';
+      $name = litepublisher::$site->author;
     } else {
-      $item = $users->getitem($id);
+      $item = tusers::i()->getitem($id);
       $args->add($item);
-      $name = $item['login'];
+      $name = $item['name'];
     }
 
     $mailtemplate = tmailtemplate::i($this->section);

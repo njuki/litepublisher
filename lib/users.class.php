@@ -38,7 +38,7 @@ class tusers extends titems {
   public function getitem($id) {
     if ($id == 1) return array(
     'email' =>litepublisher::$options->email,
-'name' => litepublisher::$options->name,
+'name' => litepublisher::$site->author,
 'website' => litepublisher::$site->url . '/',
     'password' => litepublisher::$options->password,
     'cookie' => litepublisher::$options->cookie,
