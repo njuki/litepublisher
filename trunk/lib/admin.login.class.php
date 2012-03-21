@@ -88,7 +88,7 @@ $result = $this->widget;
     $args) .
     $html->lostpass();
 
-if (litepublisher::$options->usersenabled) {
+if (litepublisher::$options->usersenabled && litepublisher::$options->reguser) {
     $lang = tlocal::i('users');
     $args->formtitle = $lang->regform;
 $args->email = '';

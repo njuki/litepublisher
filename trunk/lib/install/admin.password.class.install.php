@@ -7,12 +7,10 @@
 **/
 
 function tadminpasswordInstall($self) {
-  $urlmap = turlmap::i();
-  $urlmap->add('/admin/password/', get_class($self), null, 'normal');
+  litepublisher::$urlmap->add('/admin/password/', get_class($self), null, 'normal');
+  litepublisher::$urlmap->addget('/admin/password/restore/', get_class($self));
 }
 
 function tadminpasswordUninstall($self) {
   turlmap::unsub($self);
 }
-
-?>

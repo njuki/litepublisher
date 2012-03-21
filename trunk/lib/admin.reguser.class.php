@@ -55,6 +55,7 @@ $this->data['widget'] = '';
     $args->formtitle = $lang->regform;
     $args->data['$lang.email'] = 'email';
 $result = $this->widget;
+    if (isset($_GET['backurl'])) $result = str_replace('&backurl=', '&backurl=' . urlencode($_GET['backurl']), $result);
     $result .= $html->adminform($form, $args);
 $this->callevent('oncontent', array(&$result));
 return $result;
