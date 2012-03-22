@@ -77,11 +77,11 @@ return $this->adduser(array(
 return $this->errorauth();
 }
 
-protected function getadmininfo() {
+protected function getadmininfo($lang) {
 return array(
 'regurl' => 'http://api.mail.ru/sites/my/add',
 'client_id' => 'ID',
-'client_secret' =>'$lang->mailru_secret
+'client_secret' =>$lang->mailru_secret
 );
 }
 

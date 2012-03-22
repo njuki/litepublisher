@@ -21,8 +21,7 @@ $this->data['url'] = '/vkontakte-oauth2callback.php';
 }
 
 public function getauthurl() {
-$url = 'http://oauth.vk.com/authorize';
-$url .= '?scope=
+$url = 'http://oauth.vk.com/authorize?';
 $url .= parent::getauthurl();
 return $url;
 }
@@ -31,7 +30,7 @@ return $url;
   public function request($arg) {
 if ($err = parent::request($arg)) return $err;
 $code = $_REQUEST['code'];
-$resp = self::http_post::get('https://oauth.vk.com/access_token', array(
+$resp = self::http_post('https://oauth.vk.com/access_token', array(
 'code' => $code,
 'client_id' => $this->client_id,
 'client_secret' => $this->client_secret,
@@ -56,11 +55,11 @@ return $this->adduser(array(
 return $this->errorauth();
 }
 
-protected function getadmininfo() {
+protected function getadmininfo($lang) {
 return array(
 'regurl' => 'https://oauth.yandex.ru/client/new',
 'client_id' => $lang->yandex_id,
-'client_secret' =>'$lang->vk_secret 
+'client_secret' =>$lang->vk_secret 
 );
 }
 

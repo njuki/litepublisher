@@ -56,7 +56,7 @@ return $this->adduser(array(
 
 return $this->errorauth();
 }
-protected function getadmininfo() {
+protected function getadmininfo($lang) {
 return array(
 'regurl' => 'https://developers.facebook.com/apps',
 'client_id' => 'App ID',

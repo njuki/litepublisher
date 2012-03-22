@@ -55,11 +55,11 @@ return $this->adduser(array(
 return $this->errorauth();
 }
 
-protected function getadmininfo() {
+protected function getadmininfo($lang) {
 return array(
 'regurl' => 'https://oauth.yandex.ru/client/new',
 'client_id' => $lang->yandex_id,
-'client_secret' =>'$lang->yandex_secret
+'client_secret' =>$lang->yandex_secret
 );
 }
 

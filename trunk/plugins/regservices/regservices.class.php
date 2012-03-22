@@ -32,12 +32,12 @@ $this->unlock();
 public function update_widget() {
 $widget = '';
 $url = litepublisher::$site->url . $this->url . litepublisher::$site->q . 'id';
-$iconurl = litepublisher::$site->files . '/plugins/' . basename(dirname__file)) . '/icons/';
+$iconurl = litepublisher::$site->files . '/plugins/' . basename(dirname(__file__)) . '/icons/';
 foreach ($this->items as $name => $classname) {
 $service = getinstance($classname);
 if ($service->valid()) {
 $icon = $service->icon ? sprintf('<img src="%s%s" alt="%s" />', $iconurl, $service->icon, $service->title) : '';
-$widget .= sprintf('<li><a href="%s=%s&backurl=">%s%s</a></li>', $url, $id, $icon, $service->title);
+$widget .= sprintf('<li><a href="%s=%s&backurl=">%s%s</a></li>', $url, $name, $icon, $service->title);
 }
 }
 $this->widget = $this->widget_title . sprintf('<ul>%s</ul>', $widget);
@@ -54,7 +54,7 @@ $admin->save();
 
   public function request($arg) {
 $this->cache = false;
-$id = empty($_GET['id']) ? 0 : (int) $_GET['id'];
+$id = empty($_GET['id']) ? 0 : $_GET['id'];
 if (!isset($this->items[$id])) return 404;
 $service = getinstance($this->items[$id]);
 if (!$service->valid) return 403;
