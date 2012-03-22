@@ -54,7 +54,7 @@ return $this->adduser(array(
 return $this->errorauth();
 }
 
-protected function getadmininfo() {
+protected function getadmininfo($lang) {
 return array(
 'regurl' => 'https://code.google.com/apis/console/',
 'client_id' => $lang->client_id,

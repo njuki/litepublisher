@@ -147,8 +147,6 @@ class TXMLRPCAbstract extends tevents {
   }
   
   public static function auth($email, $password, $group) {
-//fix login
-if ($email == 'admin') $email = litepublisher::$options->email;
     if (litepublisher::$options->auth($email, $password))  {
       if ((litepublisher::$options->group == 'admin') || (litepublisher::$options->group == $group) || ($group == 'nobody')) return true;
       $groups = tusergroups::i();
@@ -158,7 +156,6 @@ if ($email == 'admin') $email = litepublisher::$options->email;
   }
   
   public static function canedit($email, $password, $idpost) {
-if ($email == 'admin') $email = litepublisher::$options->email;
     if (litepublisher::$options->auth($email, $password))  {
       $group = litepublisher::$options->group;
       if (($group == 'admin') || ($group == 'editor')) return true;

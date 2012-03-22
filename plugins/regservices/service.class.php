@@ -98,18 +98,19 @@ $url .= '&state=' . $this->newstate();
 return $url;
 }
 
-protected function getadmininfo() {
+protected function getadmininfo($lang) {
 return array(
 'regurl' => '',
 'client_id' => $lang->client_id,
 'client_secret' =>$lang->client_secret
 );
+}
 
 public function gettab($html, $args, $lang) {
-$a = $this->getadmininfo();
+$a = $this->getadmininfo($lang);
 $result = $html->p(sprintf(tlocal::i()->reg, $a['regurl'], litepublisher::$site->url . $this->url));
-$result .= $html->getinput('text', "client_id_$this->name", tadminhtml::specchars($this->client_id), $lang->client_id) ;
-$result .= $html->getinput('text', "client_secret_$this->name", tadminhtml::specchars($this->client_secret), $lang->client_secret) ;
+$result .= $html->getinput('text', "client_id_$this->name", tadminhtml::specchars($this->client_id), $a['client_id']) ;
+$result .= $html->getinput('text', "client_secret_$this->name", tadminhtml::specchars($this->client_secret), $a['client_secret']) ;
 return $result;
 }
 

@@ -37,11 +37,11 @@ $names =implode("', '", array_keys($self->items));
 tdbmanager::i()->createtable('regservices',
   "id int unsigned NOT NULL default 0,
   service enum('$names') default 'google',
-uid varchar(128) default '',
+uid varchar(128) NOT NULL default '',
 
   KEY `id` (`id`),
   KEY `service` (`service`),
-  KEY `uid` (`uid`),
+  KEY `uid` (`uid`)
 ");
 }
 
