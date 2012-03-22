@@ -38,13 +38,12 @@ class tadminusers extends tadminmenu {
         
         $item = $users->getitem($id);
         $args->add($item);
-        $args->email = tuserpages::i()->getvalue($id, 'email');
         $args->registered = tuserpages::i()->getvalue($id, 'registered');
-        $args->formtitle = $item['login'];
+        $args->formtitle = $item['name'];
         $args->status = tadminhtml::array2combo($statuses, $item['status']);
         
         $tabs = new tuitabs();
-        $tabs->add($lang->login, '[text=login] [password=password] [text=email]');
+        $tabs->add($lang->login, '[text=email] [password=password]');
         $tabs->add($lang->groups, '[combo=status]' .
         tadmingroups::getgroups($item['idgroups']));
         $tabs->add('Cookie', '[text=cookie] [text=expired] [text=registered] [text=trust]');
@@ -59,12 +58,11 @@ class tadminusers extends tadminmenu {
       
       default:
       $args->formtitle = $lang->newuser;
-      $args->login = '';
       $args->email = '';
       $args->action = 'add';
       
       $tabs = new tuitabs();
-      $tabs->add($lang->login, '[text=login] [password=password] [text=name] [text=email] [hidden=action]');
+      $tabs->add($lang->login, '[text=email] [password=password] [text=name] [hidden=action]');
       $tabs->add($lang->groups, tadmingroups::getgroups(array()));
       
       $result .= $html->adminform($tabs->get(), $args);
@@ -89,7 +87,7 @@ class tadminusers extends tadminmenu {
     $args->formtitle = $lang->userstable;
     $args->table = $html->items2table($users, $items, array(
     $html->get_table_checkbox('user'),
-    array('left', $lang->edit, sprintf('<a href="%s=$id&action=edit">$login</a>', $this->adminurl)),
+    array('left', $lang->edit, sprintf('<a href="%s=$id&action=edit">$name</a>', $this->adminurl)),
     $html->get_table_item('status'),
     array('left', $lang->page, sprintf('<a href="%s">%s</a>', tadminhtml::getadminlink('/admin/users/pages/', 'id=$id'), $lang->page)),
     $html->get_table_link('delete', $this->adminurl)

@@ -64,9 +64,8 @@ class tinstaller extends tdata {
     if ($this->mode == 'remote') {
       $result = array(
       'url' => litepublisher::$site->url,
-      'login' => litepublisher::$options->login,
-      'password' => $password,
       'email' => litepublisher::$options->email,
+      'password' => $password,
       'name' => litepublisher::$site->name,
       'description' => litepublisher::$site->description
       );
@@ -311,7 +310,7 @@ class tinstaller extends tdata {
   
   public static function sendmail() {
     $lang = tlocal::$self->ini['installation'];
-    $body = sprintf($lang['body'], litepublisher::$site->url, litepublisher::$options->login, mailpassword);
+    $body = sprintf($lang['body'], litepublisher::$site->url, litepublisher::$options->email, mailpassword);
     
     tmailer::sendmail('', litepublisher::$options->fromemail,
     '', litepublisher::$options->email, $lang['subject'], $body);

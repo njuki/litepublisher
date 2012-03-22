@@ -7,7 +7,10 @@
 **/
 
 class tuserpages extends titems implements itemplate {
+public static $userprops = array('email', 'name', 'website');
+public static $pageprops = array('url', 'content', 'rawcontent');
   public $id;
+protected $useritem;
   
   public static function i() {
     return getinstance(__class__);
@@ -23,7 +26,11 @@ class tuserpages extends titems implements itemplate {
   }
   
   public function __get($name) {
-    if (in_array($name, array('name', 'url', 'website', 'content', 'rawcontent'))) {
+    if (in_array($name, self::$userprops)) {
+      return tusers::i()->getvalue($this->id, $name);
+    }
+
+    if (in_array($name, self::$pageprops)) {
       return $this->getvalue($this->id, $name);
     }
     
@@ -31,11 +38,19 @@ class tuserpages extends titems implements itemplate {
   }
   
   public function getmd5email() {
-    return md5($this->getvalue($this->id, 'email'));
+if ($email = tusers::i()->getvalue($this->id, 'email')) {
+    return md5($email);
+} else {
+return '';
+}
   }
   
   public function getgravatar() {
-    return sprintf('<img class="avatar photo" src="http://www.gravatar.com/avatar/%s?s=32&amp;r=g&amp;d=wavatar" title="%2$s" alt="%2$s"/>', $this->getmd5email(), $this->name);
+if ($md5 = $this->md5email) {
+    return sprintf('<img class="avatar photo" src="http://www.gravatar.com/avatar/%s?s=32&amp;r=g&amp;d=wavatar" title="%2$s" alt="%2$s"/>', $md5, $this->name);
+} else {
+return '';
+}
   }
   
   public function select($where, $limit) {
@@ -62,8 +77,9 @@ class tuserpages extends titems implements itemplate {
   public function request($id) {
     if ($id == 'url') {
       $id = isset($_GET['id']) ? (int) $_GET['id'] : 1;
-      if (!$this->itemexists($id)) return 404;
-      $item = $this->getitem($id);
+$users = tusers::i();
+      if (!$users->itemexists($id)) return 404;
+      $item = $users->getitem($id);
       $website = $item['website'];
       if (!strpos($website, '.')) $website = litepublisher::$site->url . litepublisher::$site->home;
       if (!strbegin($website, 'http://')) $website = 'http://' . $website;
@@ -79,7 +95,7 @@ class tuserpages extends titems implements itemplate {
   }
   
   public function gettitle() {
-    return $this->getvalue($this->id, 'name');
+    return $this->name;
   }
   
   public function getkeywords() {
@@ -150,8 +166,9 @@ class tuserpages extends titems implements itemplate {
   private function addurl(array $item) {
     if ($item['id'] == 1) return $item;
     $item['url'] = '';
+$linkitem = tusers::i()->getitem($item['id']) + $item;
     $linkgen = tlinkgenerator::i();
-    $item['url'] = $linkgen->addurl(new tarray2prop ($item), 'user');
+    $item['url'] = $linkgen->addurl(new tarray2prop ($linkitem), 'user');
     $item['idurl'] = litepublisher::$urlmap->add($item['url'], get_class($this), $item['id']);
     return $item;
   }

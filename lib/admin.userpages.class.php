@@ -40,12 +40,11 @@ class tadminuserpages extends tadminmenu {
     }
     
     $pages = tuserpages::i();
-    $item = $pages->getitem($id);
+    $item = tusers::i()->getitem($id) + $pages->getitem($id);
     if (!isset($item['url'])) {
       $item['url'] = $item['idurl'] ? litepublisher::$urlmap->getidurl($item['idurl']) : '';
     }
     $args->add($item);
-    $args->add($pages->getitem($id));
     $args->formtitle = sprintf('<a href="$site.url%s">%s</a>', $item['url'], $item['name']);
     $tabs = new tuitabs();
     $tabs->add($lang->title, '[text=name] [text=website]');
@@ -61,8 +60,6 @@ class tadminuserpages extends tadminmenu {
     extract($_POST, EXTR_SKIP);
     if (!($id= $this->getiduser())) return;
     $item = array(
-    'name' => $name,
-    'website' => $website,
     'rawcontent' => trim($rawcontent),
     'content' => tcontentfilter::i()->filter($rawcontent)
     );
@@ -77,10 +74,14 @@ class tadminuserpages extends tadminmenu {
     
     $pages = tuserpages::i();
     $pages->edit($id, $item);
+
+tusers::i()->edit($id, array(
+    'name' => $name,
+    'website' => tcontentfilter::clean_website($website),
+));
   }
   
-  
-  public function getuserlist() {
+    public function getuserlist() {
     $users = tusers::i();
     $perpage = 20;
     $count = $users->count;
@@ -98,7 +99,7 @@ class tadminuserpages extends tadminmenu {
     $args->adminurl = $this->adminurl;
     $result = $html->h4->userstable;
     $result .= $html->items2table($users, $items, array(
-    array('left', $lang->edit, sprintf('<a href="%s=$id">$login</a>', $this->adminurl))
+    array('left', $lang->edit, sprintf('<a href="%s=$id">$name</a>', $this->adminurl))
     ));
     
     $theme = ttheme::i();

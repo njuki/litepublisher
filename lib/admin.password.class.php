@@ -64,6 +64,7 @@ return $html->h4->notfound;
   }
 
 public function getiduser($email) {
+if (empty($email)) returnfalse;
     if (($email == strtolower(trim(litepublisher::$options->email)))) return 1;
 return tusers::i()->emailexists($email);
 }
