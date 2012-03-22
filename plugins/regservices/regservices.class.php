@@ -32,7 +32,7 @@ $this->unlock();
 public function update_widget() {
 $widget = '';
 $url = litepublisher::$site->url . $this->url . litepublisher::$site->q . 'id';
-$iconurl = litepublisher::$site->files . '/plugins/bookmarks/icons/';
+$iconurl = litepublisher::$site->files . '/plugins/' . basename(dirname__file)) . '/icons/';
 foreach ($this->items as $name => $classname) {
 $service = getinstance($classname);
 if ($service->valid()) {
