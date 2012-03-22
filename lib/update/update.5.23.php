@@ -1,6 +1,8 @@
 <?php
 
 function update523() {
+  litepublisher::$site->jquery_version = '1.7.2';
+
 $u = tusers::i();
 $p = tuserpages::i();
 if (dbversion) {
