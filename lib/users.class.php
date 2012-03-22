@@ -38,8 +38,8 @@ class tusers extends titems {
   public function getitem($id) {
     if ($id == 1) return array(
     'email' =>litepublisher::$options->email,
-'name' => litepublisher::$site->author,
-'website' => litepublisher::$site->url . '/',
+    'name' => litepublisher::$site->author,
+    'website' => litepublisher::$site->url . '/',
     'password' => litepublisher::$options->password,
     'cookie' => litepublisher::$options->cookie,
     'expired' => sqldate(litepublisher::$options->cookieexpired ),
@@ -62,8 +62,8 @@ class tusers extends titems {
     
     $item = array(
     'email' => $email,
-'name' =>isset($values['name']) ? trim($values['name']) : '', 
-'website' => isset($values['website']) ? trim($values['website']) : '',
+    'name' =>isset($values['name']) ? trim($values['name']) : '',
+    'website' => isset($values['website']) ? trim($values['website']) : '',
     'password' => $password,
     'cookie' =>  md5uniq(),
     'expired' => sqldate(),
@@ -81,7 +81,7 @@ class tusers extends titems {
       $this->save();
     }
     
-tuserpages::i()->add($id);
+    tuserpages::i()->add($id);
     $this->added($id);
     return $id;
   }
