@@ -1013,12 +1013,9 @@ class tpost extends titem implements  itemplate {
         return litepublisher::$site->author;
       }
     } else {
-      $pages = tuserpages::i();
-      try {
-        $item = $pages->getitem($id);
-      } catch (Exception $e) {
-        return '';
-      }
+      $users = tusers::i();
+      if (!$users->itemexists($id)) return '';
+      $item = $users->getitem($id);
       if (!$link || ($item['website'] == '')) return $item['name'];
       return sprintf('<a href="%s/users.htm%sid=%s">%s</a>',litepublisher::$site->url, litepublisher::$site->q, $id, $item['name']);
     }
@@ -1031,8 +1028,9 @@ class tpost extends titem implements  itemplate {
     } else {
       $pages = tuserpages::i();
       if (!$pages->itemexists($id)) return '';
-      if ($item['website'] == '') return '';
-      return sprintf('<a href="%s%s" title="%3$s" rel="author"><%3$s</a>', litepublisher::$site->url, $item['website'], $item['name']);
+      $pages->id = $id;
+      if ($pages->url == '') return '';
+      return sprintf('<a href="%s%s" title="%3$s" rel="author"><%3$s</a>', litepublisher::$site->url, $pages->url, $pages->name);
     }
   }
   

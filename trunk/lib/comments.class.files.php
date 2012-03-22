@@ -256,15 +256,15 @@ class tcomments extends titems {
         $moderate = '';
       }
       
-      $tmlcomment= $theme->gettag('content.post.templatecomments.comments.comment');;
-      $tml = strtr((string) $tmlcomment, array(
+      $tml = strtr($theme->templates['content.post.templatecomments.comments.comment'], array(
       '$moderate' => $moderate,
-      '$quotebuttons' => $post->commentsenabled ? $tmlcomment->quotebuttons : ''
+      '$quotebuttons' => $post->commentsenabled ? $theme->templates['content.post.templatecomments.comments.comment.quotebuttons'] : ''
       ));
       
+      
       $index = $from;
-      $class1 = $tmlcomment->class1;
-      $class2 = $tmlcomment->class2;
+      $class1 = $theme->templates['content.post.templatecomments.comments.comment.class1'];
+      $class2 = $theme->templates['content.post.templatecomments.comments.comment.class2'];
       foreach ($items as $id) {
         //one method for approved and hold comments
         if (!litepublisher::$options->admincookie && $hold) {

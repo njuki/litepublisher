@@ -74,14 +74,14 @@ class tadminuserpages extends tadminmenu {
     
     $pages = tuserpages::i();
     $pages->edit($id, $item);
-
-tusers::i()->edit($id, array(
+    
+    tusers::i()->edit($id, array(
     'name' => $name,
     'website' => tcontentfilter::clean_website($website),
-));
+    ));
   }
   
-    public function getuserlist() {
+  public function getuserlist() {
     $users = tusers::i();
     $perpage = 20;
     $count = $users->count;

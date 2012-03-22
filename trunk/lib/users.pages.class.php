@@ -7,10 +7,10 @@
 **/
 
 class tuserpages extends titems implements itemplate {
-public static $userprops = array('email', 'name', 'website');
-public static $pageprops = array('url', 'content', 'rawcontent');
+  public static $userprops = array('email', 'name', 'website');
+  public static $pageprops = array('url', 'content', 'rawcontent');
   public $id;
-protected $useritem;
+  protected $useritem;
   
   public static function i() {
     return getinstance(__class__);
@@ -29,7 +29,7 @@ protected $useritem;
     if (in_array($name, self::$userprops)) {
       return tusers::i()->getvalue($this->id, $name);
     }
-
+    
     if (in_array($name, self::$pageprops)) {
       return $this->getvalue($this->id, $name);
     }
@@ -38,19 +38,19 @@ protected $useritem;
   }
   
   public function getmd5email() {
-if ($email = tusers::i()->getvalue($this->id, 'email')) {
-    return md5($email);
-} else {
-return '';
-}
+    if ($email = tusers::i()->getvalue($this->id, 'email')) {
+      return md5($email);
+    } else {
+      return '';
+    }
   }
   
   public function getgravatar() {
-if ($md5 = $this->md5email) {
-    return sprintf('<img class="avatar photo" src="http://www.gravatar.com/avatar/%s?s=32&amp;r=g&amp;d=wavatar" title="%2$s" alt="%2$s"/>', $md5, $this->name);
-} else {
-return '';
-}
+    if ($md5 = $this->md5email) {
+      return sprintf('<img class="avatar photo" src="http://www.gravatar.com/avatar/%s?s=32&amp;r=g&amp;d=wavatar" title="%2$s" alt="%2$s"/>', $md5, $this->name);
+    } else {
+      return '';
+    }
   }
   
   public function select($where, $limit) {
@@ -77,7 +77,7 @@ return '';
   public function request($id) {
     if ($id == 'url') {
       $id = isset($_GET['id']) ? (int) $_GET['id'] : 1;
-$users = tusers::i();
+      $users = tusers::i();
       if (!$users->itemexists($id)) return 404;
       $item = $users->getitem($id);
       $website = $item['website'];
@@ -166,7 +166,7 @@ $users = tusers::i();
   private function addurl(array $item) {
     if ($item['id'] == 1) return $item;
     $item['url'] = '';
-$linkitem = tusers::i()->getitem($item['id']) + $item;
+    $linkitem = tusers::i()->getitem($item['id']) + $item;
     $linkgen = tlinkgenerator::i();
     $item['url'] = $linkgen->addurl(new tarray2prop ($linkitem), 'user');
     $item['idurl'] = litepublisher::$urlmap->add($item['url'], get_class($this), $item['id']);

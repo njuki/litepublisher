@@ -219,15 +219,15 @@ class tcomments extends titems {
     } else {
       $moderate = '';
     }
-    $tmlcomment= $theme->gettag('content.post.templatecomments.comments.comment');;
-    $tml = strtr((string) $tmlcomment, array(
+    
+    $tml = strtr($theme->templates['content.post.templatecomments.comments.comment'], array(
     '$moderate' => $moderate,
-    '$quotebuttons' => $post->commentsenabled ? $tmlcomment->quotebuttons : ''
+    '$quotebuttons' => $post->commentsenabled ? $theme->templates['content.post.templatecomments.comments.comment.quotebuttons'] : ''
     ));
     
     $index = $from;
-    $class1 = $tmlcomment->class1;
-    $class2 = $tmlcomment->class2;
+    $class1 = $theme->templates['content.post.templatecomments.comments.comment.class1'];
+    $class2 = $theme->templates['content.post.templatecomments.comments.comment.class2'];
     foreach ($items as $id) {
       $comment->id = $id;
       $args->index = ++$index;
@@ -350,11 +350,16 @@ class tcomment extends tdata {
   }
   
   public function getmd5email() {
-    return md5($this->data['email']);
+    $email = $this->data['email'];
+    return $email ? md5($email) : '';
   }
   
   public function getgravatar() {
-    return sprintf('<img class="avatar photo" src="http://www.gravatar.com/avatar/%s?s=32&amp;r=g&amp;d=wavatar" title="%2$s" alt="%2$s"/>', $this->getmd5email(), $this->name);
+    if ($email = $this->data['email']) {
+      return sprintf('<img class="avatar photo" src="http://www.gravatar.com/avatar/%s?s=32&amp;r=g&amp;d=wavatar" title="%2$s" alt="%2$s"/>', md5($email), $this->name);
+    } else {
+      return '';
+    }
   }
   
 }//class
@@ -835,7 +840,7 @@ class tcommentform extends tevents {
     $values = array(
     'name' => isset($values['name']) ? tcontentfilter::escape($values['name']) : '',
     'email' => isset($values['email']) ? trim($values['email']) : '',
-    'url' => isset($values['url']) ? tcontentfilter::escape($values['url']) : '',
+    'url' => isset($values['url']) ? tcontentfilter::escape(tcontentfilter::clean_website($values['url'])) : '',
     'subscribe' => isset($values['subscribe']),
     'content' => isset($values['content']) ? trim($values['content']) : '',
     'ip' => isset($values['ip']) ? $values['ip'] : '',

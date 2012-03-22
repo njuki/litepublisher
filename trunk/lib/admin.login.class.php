@@ -11,15 +11,15 @@ class tadminlogin extends tadminform {
   public static function i() {
     return getinstance(__class__);
   }
-
+  
   protected function create() {
     parent::create();
-$this->basename = 'admin.loginform';
-$this->addevents('oncontent');
-$this->data['widget'] = '';
-}
-
-    public function auth() {
+    $this->basename = 'admin.loginform';
+    $this->addevents('oncontent');
+    $this->data['widget'] = '';
+  }
+  
+  public function auth() {
     if (litepublisher::$options->cookieenabled) {
       if ($s = tguard::checkattack()) return $s;
       if (!litepublisher::$options->authcookie()) return litepublisher::$urlmap->redir301('/admin/login/');
@@ -74,30 +74,30 @@ $this->data['widget'] = '';
   
   public function getcontent() {
     $args = targs::i();
-$html = $this->html;
+    $html = $this->html;
     $lang = tlocal::admin('login');
     $args->formtitle = $lang->formhead;
     $args->email = !empty($_POST['email']) ? strip_tags($_POST['email']) : '';
     $args->password = !empty($_POST['password']) ? strip_tags($_POST['password']) : '';
     $args->remember = isset($_POST['remember']);
-$result = $this->widget;
+    $result = $this->widget;
     if (isset($_GET['backurl'])) $result = str_replace('&backurl=', '&backurl=' . urlencode($_GET['backurl']), $result);
     $result .= $html->adminform('[text=email]
     [password=password]
     [checkbox=remember]',
     $args) .
     $html->lostpass();
-
-if (litepublisher::$options->usersenabled && litepublisher::$options->reguser) {
-    $lang = tlocal::i('users');
-    $args->formtitle = $lang->regform;
-$args->email = '';
-$args->name = '';
-    $form = $html->adminform('[text=email] [text=name]', $args);
-$result .= str_replace('action=""', 'action="'. litepublisher::$site->url . '/admin/reguser/', $form);
-}
-$this->callevent('oncontent', array(&$result));
-return $result;
+    
+    if (litepublisher::$options->usersenabled && litepublisher::$options->reguser) {
+      $lang = tlocal::i('users');
+      $args->formtitle = $lang->regform;
+      $args->email = '';
+      $args->name = '';
+      $form = $html->adminform('[text=email] [text=name]', $args);
+      $result .= str_replace('action=""', 'action="'. litepublisher::$site->url . '/admin/reguser/', $form);
+    }
+    $this->callevent('oncontent', array(&$result));
+    return $result;
   }
-
-  }//class
+  
+}//class

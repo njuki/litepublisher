@@ -9,7 +9,7 @@
 class ttheme extends tevents {
   public static $instances = array();
   public static $vars = array();
-public static $defaultargs;
+  public static $defaultargs;
   public $name;
   public $parsing;
   public $templates;
@@ -54,14 +54,14 @@ public static $defaultargs;
     'customadmin' => array()
     );
     $this->themeprops = new tthemeprops($this);
-if (!isset(self::$defaultargs)) {
-self::$defaultargs = array(
-'$site.url' => litepublisher::$site->url, 
-'$site.files' => litepublisher::$site->files,
-'{$site.q}' => litepublisher::$site->q,
-'$site.q' => litepublisher::$site->q
-);
-}
+    if (!isset(self::$defaultargs)) {
+      self::$defaultargs = array(
+      '$site.url' => litepublisher::$site->url,
+      '$site.files' => litepublisher::$site->files,
+    '{$site.q}' => litepublisher::$site->q,
+      '$site.q' => litepublisher::$site->q
+      );
+    }
   }
   
   public function __destruct() {
@@ -277,7 +277,7 @@ self::$defaultargs = array(
   }
   
   public function getnotfount() {
-    return $this->parse($this->content->notfound);
+    return $this->parse($this->templates['content.notfound']);
   }
   
   public function getpages($url, $page, $count) {
@@ -416,7 +416,7 @@ self::$defaultargs = array(
   
   
   public function simple($content) {
-    return str_replace('$content', $content, $this->content->simple);
+    return str_replace('$content', $content, $this->templates['content.simple']);
   }
   
   public static function clearcache() {
@@ -495,6 +495,7 @@ class tthemeprops {
   }
   
   public function __get($name) {
+    //echo "$name get tml<br>";
     $path = $this->getpath($name);
     if (!array_key_exists($path, $this->root)) $this->error($path);
     if ($this->tostring) return $this->root[$path];

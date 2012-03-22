@@ -248,10 +248,10 @@ class tauthor_rights extends tevents {
 //htmlresource.class.php
 class thtmltag {
   public $tag;
+  
 public function __construct($tag) { $this->tag = $tag; }
   public function __get($name) {
-    $lang = tlocal::i();
-  return "<$this->tag>{$lang->$name}</$this->tag>\n";
+    return sprintf('<%1$s>%2$s</%1$s>', $this->tag, tlocal::i()->$name);
   }
   
 }//class
@@ -281,15 +281,15 @@ class tadminhtml {
   }
   
   public function __get($name) {
-    if (in_array($name, self::$tags)) return new thtmltag($name);
     if (isset($this->ini[$this->section][$name]))  {
-      $s = $this->ini[$this->section][$name];
+      return $this->ini[$this->section][$name];
     } elseif (isset($this->ini['common'][$name]))  {
-      $s = $this->ini['common'][$name];
+      return $this->ini['common'][$name];
+    } elseif (in_array($name, self::$tags)) {
+      return new thtmltag($name);
     } else {
       throw new Exception("the requested $name item not found in $this->section section");
     }
-    return $s;
   }
   
   public function __call($name, $params) {
@@ -297,9 +297,12 @@ class tadminhtml {
       $s = $this->ini[$this->section][$name];
     } elseif (isset($this->ini['common'][$name]))  {
       $s = $this->ini['common'][$name];
+    } elseif (in_array($name, self::$tags)) {
+      return sprintf('<%1$s>%2$s</%1$s>', $name, $params[0]);
     } else {
       throw new Exception("the requested $name item not found in $this->section section");
     }
+    
     $args = isset($params[0]) && $params[0] instanceof targs ? $params[0] : targs::i();
     return $this->parsearg($s, $args);
   }
@@ -1368,7 +1371,9 @@ class tusers extends titems {
   
   public function getitem($id) {
     if ($id == 1) return array(
-    'login' =>litepublisher::$options->login,
+    'email' =>litepublisher::$options->email,
+    'name' => litepublisher::$site->author,
+    'website' => litepublisher::$site->url . '/',
     'password' => litepublisher::$options->password,
     'cookie' => litepublisher::$options->cookie,
     'expired' => sqldate(litepublisher::$options->cookieexpired ),
@@ -1380,17 +1385,19 @@ class tusers extends titems {
   }
   
   public function add(array $values) {
-    $login = trim($values['login']);
-    if ($this->loginexists($login)) return false;
+    $email = trim($values['email']);
+    if ($this->emailexists($email)) return false;
     $groups = tusergroups::i();
     $idgroups = $groups->cleangroups($values['idgroups']);
     if (count($idgroups) == 0) $idgroups = array($groups->getidgroup($groups->defaultgroup));
     
     $password = empty($values['password']) ? md5uniq() : $values['password'];
-    $password = basemd5(sprintf('%s:%s:%s', $login,  litepublisher::$options->realm, $password));
+    $password = basemd5(sprintf('%s:%s:%s', $email,  litepublisher::$options->realm, $password));
     
     $item = array(
-    'login' => $login,
+    'email' => $email,
+    'name' =>isset($values['name']) ? trim($values['name']) : '',
+    'website' => isset($values['website']) ? trim($values['website']) : '',
     'password' => $password,
     'cookie' =>  md5uniq(),
     'expired' => sqldate(),
@@ -1408,8 +1415,7 @@ class tusers extends titems {
       $this->save();
     }
     
-    $pages = tuserpages::i();
-    $pages->add($id, isset($values['name']) ? trim($values['name']) : '', $values['email'], isset($values['website']) ? trim($values['website']) : '');
+    tuserpages::i()->add($id);
     $this->added($id);
     return $id;
   }
@@ -1422,7 +1428,7 @@ class tusers extends titems {
       switch ($k) {
         case 'password':
         if ($values['password'] != '') {
-          $item['password'] = basemd5(sprintf('%s:%s:%s', $values['login'],  litepublisher::$options->realm, $values['password']));
+          $item['password'] = basemd5(sprintf('%s:%s:%s', $values['email'],  litepublisher::$options->realm, $values['password']));
         }
         break;
         
@@ -1471,24 +1477,12 @@ class tusers extends titems {
     return parent::delete($id);
   }
   
-  public function loginexists($login) {
-    if ($login == litepublisher::$options->login) return 1;
+  public function emailexists($email) {
+    if ($email == litepublisher::$options->email) return 1;
     if ($this->dbversion) {
-      return $this->db->findid('login = '. dbquote($login));
+      return $this->db->findid('email = '. dbquote($email));
     } else {
       foreach ($this->items as $id => $item) {
-        if ($login == $item['login']) return true;
-      }
-      return false;
-    }
-  }
-  
-  public function emailexists($email) {
-    $pages = tuserpages::i();
-    if ($this->dbversion) {
-      return $pages->db->findid('email = '. dbquote($email));
-    } else {
-      foreach ($pages->items as $id => $item) {
         if ($email == $item['email']) return true;
       }
       return false;
@@ -1501,7 +1495,7 @@ class tusers extends titems {
   
   public function changepassword($id, $password) {
     $item = $this->getitem($id);
-    $this->setvalue($id, 'password', basemd5(sprintf('%s:%s:%s', $item['login'],  litepublisher::$options->realm, $password)));
+    $this->setvalue($id, 'password', basemd5(sprintf('%s:%s:%s', $item['email'],  litepublisher::$options->realm, $password)));
   }
   
   public function approve($id) {
@@ -1516,18 +1510,18 @@ class tusers extends titems {
     if ($pages->createpage) $pages->addpage($id);
   }
   
-  public function auth($login,$password) {
-    $password = basemd5(sprintf('%s:%s:%s', $login,  litepublisher::$options->realm, $password));
+  public function auth($email,$password) {
+    $password = basemd5(sprintf('%s:%s:%s', $email,  litepublisher::$options->realm, $password));
     if ($this->dbversion) {
-      $login = dbquote($login);
-      if (($a = $this->select("login = $login and password = '$password'", 'limit 1')) && (count($a) > 0)) {
+      $email = dbquote($email);
+      if (($a = $this->select("email = $email and password = '$password'", 'limit 1')) && (count($a) > 0)) {
         $item = $this->getitem($a[0]);
         if ($item['status'] == 'wait') $this->approve($item['id']);
         return (int) $item['id'];
       }
     } else {
       foreach ($this->items as $id => $item) {
-        if (($login == $item['login']) && ($password = $item['password'])) {
+        if (($email == $item['email']) && ($password = $item['password'])) {
           if ($item['status'] == 'wait') $this->approve($id);
           return $id;
         }

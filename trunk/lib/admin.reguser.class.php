@@ -15,9 +15,9 @@ class tadminreguser extends tadminform {
   
   protected function create() {
     parent::create();
-$this->basename = 'admin.reguser';
-$this->addevents('oncontent');
-$this->data['widget'] = '';
+    $this->basename = 'admin.reguser';
+    $this->addevents('oncontent');
+    $this->data['widget'] = '';
     $this->section = 'users';
     $this->registered = false;
   }
@@ -54,11 +54,11 @@ $this->data['widget'] = '';
     $lang = tlocal::i('users');
     $args->formtitle = $lang->regform;
     $args->data['$lang.email'] = 'email';
-$result = $this->widget;
+    $result = $this->widget;
     if (isset($_GET['backurl'])) $result = str_replace('&backurl=', '&backurl=' . urlencode($_GET['backurl']), $result);
     $result .= $html->adminform($form, $args);
-$this->callevent('oncontent', array(&$result));
-return $result;
+    $this->callevent('oncontent', array(&$result));
+    return $result;
   }
   
   public function processform() {

@@ -598,6 +598,7 @@ class ttemplate extends tevents_storage {
 class ttheme extends tevents {
   public static $instances = array();
   public static $vars = array();
+  public static $defaultargs;
   public $name;
   public $parsing;
   public $templates;
@@ -642,6 +643,14 @@ class ttheme extends tevents {
     'customadmin' => array()
     );
     $this->themeprops = new tthemeprops($this);
+    if (!isset(self::$defaultargs)) {
+      self::$defaultargs = array(
+      '$site.url' => litepublisher::$site->url,
+      '$site.files' => litepublisher::$site->files,
+    '{$site.q}' => litepublisher::$site->q,
+      '$site.q' => litepublisher::$site->q
+      );
+    }
   }
   
   public function __destruct() {
@@ -806,7 +815,7 @@ class ttheme extends tevents {
   }
   
   public function parse($s) {
-    $s = str_replace('$site.url', litepublisher::$site->url, (string) $s);
+    $s = strtr((string) $s, self::$defaultargs);
     array_push($this->parsing, $s);
     try {
       $s = preg_replace('/%%([a-zA-Z0-9]*+)_(\w\w*+)%%/', '\$$1.$2', $s);
@@ -827,12 +836,7 @@ class ttheme extends tevents {
   public function replacelang($s, $lang) {
     $s = preg_replace('/%%([a-zA-Z0-9]*+)_(\w\w*+)%%/', '\$$1.$2', (string) $s);
     self::$vars['lang'] = isset($lang) ? $lang : tlocal::i('default');
-    $s = strtr($s, array(
-    '$site.url' => litepublisher::$site->url,
-    '$site.files' => litepublisher::$site->files,
-  '{$site.q}' => litepublisher::$site->q
-    ));
-    
+    $s = strtr($s, self::defaultargs);
     if (preg_match_all('/\$lang\.(\w\w*+)/', $s, $m, PREG_SET_ORDER)) {
       foreach ($m as $item) {
         $name = $item[1];
@@ -862,7 +866,7 @@ class ttheme extends tevents {
   }
   
   public function getnotfount() {
-    return $this->parse($this->content->notfound);
+    return $this->parse($this->templates['content.notfound']);
   }
   
   public function getpages($url, $page, $count) {
@@ -1001,7 +1005,7 @@ class ttheme extends tevents {
   
   
   public function simple($content) {
-    return str_replace('$content', $content, $this->content->simple);
+    return str_replace('$content', $content, $this->templates['content.simple']);
   }
   
   public static function clearcache() {
@@ -1080,6 +1084,7 @@ class tthemeprops {
   }
   
   public function __get($name) {
+    //echo "$name get tml<br>";
     $path = $this->getpath($name);
     if (!array_key_exists($path, $this->root)) $this->error($path);
     if ($this->tostring) return $this->root[$path];
@@ -1121,13 +1126,7 @@ class targs {
   }
   
   public function __construct($thisthis = null) {
-    $site = litepublisher::$site;
-    $this->data = array(
-    '$site.url' => $site->url,
-  '{$site.q}' => $site->q,
-    '$site.q' => $site->q,
-    '$site.files' => $site->files
-    );
+    $this->data = ttheme::$defaultargs;
     if (isset($thisthis)) $this->data['$this'] = $thisthis;
   }
   

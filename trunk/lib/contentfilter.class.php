@@ -301,24 +301,24 @@ class tcontentfilter extends tevents {
     $str = preg_replace('~\n<li>(.*)</p>\n~', "\n<li>\$1\n", $str);
     return $str;
   }
-
-public static function clean_website($url) {
-$url = trim(strip_tags($url));
-if (strlen($url) <= 3) return '';
-if (!strbegin($url, 'http')) $url = 'http://' . $url;
-if ($parts = @parse_url($url)) {
-if (empty($parts['host'])) return '';
-if (!strpos($parts['host'], '.')) return '';
-$url = isset($parts['scheme']) ? $parts['scheme'] : 'http';
-$url .= '://';
-$url .= trim($parts['host']);
-$url .= isset($parts['path']) ? $parts['path'] : '/';
-if (isset($parts['query'])) $url .= '?' . $parts['query'];
-if (isset($parts['fragment'])) $url .= '#' . $parts['fragment'];
-return $url;
-}
-return '';
-}
+  
+  public static function clean_website($url) {
+    $url = trim(strip_tags($url));
+    if (strlen($url) <= 3) return '';
+    if (!strbegin($url, 'http')) $url = 'http://' . $url;
+    if ($parts = @parse_url($url)) {
+      if (empty($parts['host'])) return '';
+      if (!strpos($parts['host'], '.')) return '';
+      $url = isset($parts['scheme']) ? $parts['scheme'] : 'http';
+      $url .= '://';
+      $url .= trim($parts['host']);
+      $url .= isset($parts['path']) ? $parts['path'] : '/';
+      if (isset($parts['query'])) $url .= '?' . $parts['query'];
+      if (isset($parts['fragment'])) $url .= '#' . $parts['fragment'];
+      return $url;
+    }
+    return '';
+  }
   
   // imported code from wordpress
   public static function createlinks($s) {
