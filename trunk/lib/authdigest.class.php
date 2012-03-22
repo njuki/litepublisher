@@ -77,7 +77,7 @@ class tauthdigest extends tevents {
         return false;
       }
       $users = tusers::i();
-      if (!(litepublisher::$options->user  =$users->loginexists($hdr['username']))) return false;
+      if (!(litepublisher::$options->user  =$users->emailexists($hdr['username']))) return false;
       litepublisher::$options->updategroup();
       //convert to 32 length md5
       //      $a1 = strtolower(litepublisher::$options->password);

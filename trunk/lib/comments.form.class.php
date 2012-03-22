@@ -219,7 +219,7 @@ class tcommentform extends tevents {
     $values = array(
     'name' => isset($values['name']) ? tcontentfilter::escape($values['name']) : '',
     'email' => isset($values['email']) ? trim($values['email']) : '',
-    'url' => isset($values['url']) ? tcontentfilter::escape($values['url']) : '',
+    'url' => isset($values['url']) ? tcontentfilter::escape(tcontentfilter::clean_website($values['url'])) : '',
     'subscribe' => isset($values['subscribe']),
     'content' => isset($values['content']) ? trim($values['content']) : '',
     'ip' => isset($values['ip']) ? $values['ip'] : '',

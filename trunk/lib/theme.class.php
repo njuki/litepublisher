@@ -9,6 +9,7 @@
 class ttheme extends tevents {
   public static $instances = array();
   public static $vars = array();
+public static $defaultargs;
   public $name;
   public $parsing;
   public $templates;
@@ -53,6 +54,14 @@ class ttheme extends tevents {
     'customadmin' => array()
     );
     $this->themeprops = new tthemeprops($this);
+if (!isset(self::$defaultargs)) {
+self::$defaultargs = array(
+'$site.url' => litepublisher::$site->url, 
+'$site.files' => litepublisher::$site->files,
+'{$site.q}' => litepublisher::$site->q,
+'$site.q' => litepublisher::$site->q
+);
+}
   }
   
   public function __destruct() {
@@ -217,11 +226,7 @@ class ttheme extends tevents {
   }
   
   public function parse($s) {
-    $s = strtr((string) $s, array(
-'$site.url' => litepublisher::$site->url, 
-'$site.files' => litepublisher::$site->files,
-'{$site.q}' => litepublisher::$site->q
-));
+    $s = strtr((string) $s, self::$defaultargs);
     array_push($this->parsing, $s);
     try {
       $s = preg_replace('/%%([a-zA-Z0-9]*+)_(\w\w*+)%%/', '\$$1.$2', $s);
@@ -242,12 +247,7 @@ class ttheme extends tevents {
   public function replacelang($s, $lang) {
     $s = preg_replace('/%%([a-zA-Z0-9]*+)_(\w\w*+)%%/', '\$$1.$2', (string) $s);
     self::$vars['lang'] = isset($lang) ? $lang : tlocal::i('default');
-    $s = strtr($s, array(
-    '$site.url' => litepublisher::$site->url,
-    '$site.files' => litepublisher::$site->files,
-  '{$site.q}' => litepublisher::$site->q
-    ));
-    
+    $s = strtr($s, self::defaultargs);
     if (preg_match_all('/\$lang\.(\w\w*+)/', $s, $m, PREG_SET_ORDER)) {
       foreach ($m as $item) {
         $name = $item[1];
@@ -536,13 +536,7 @@ class targs {
   }
   
   public function __construct($thisthis = null) {
-    $site = litepublisher::$site;
-    $this->data = array(
-    '$site.url' => $site->url,
-  '{$site.q}' => $site->q,
-    '$site.q' => $site->q,
-    '$site.files' => $site->files
-    );
+    $this->data = ttheme::$defaultargs;
     if (isset($thisthis)) $this->data['$this'] = $thisthis;
   }
   
