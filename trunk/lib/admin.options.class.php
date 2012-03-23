@@ -301,7 +301,7 @@ class Tadminoptions extends tadminmenu {
         $h2 = $this->html->h2;
         if ($oldpassword == '') return $h2->badpassword;
         if (($newpassword == '') || ($newpassword != $repassword))  return $h2->difpassword;
-        if (!$options->auth($options->login, $oldpassword)) return $h2->badpassword;
+        if (!$options->auth($options->email, $oldpassword)) return $h2->badpassword;
         $options->changepassword($newpassword);
         $options->logout();
         return $h2->passwordchanged;
