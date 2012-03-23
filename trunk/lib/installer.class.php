@@ -143,7 +143,7 @@ class tinstaller extends tdata {
     }
     
     require_once(litepublisher::$paths->lib . 'install' . DIRECTORY_SEPARATOR . 'classes.install.php');
-    return installclasses($this->language);
+    return installclasses($_REQUEST['email'], $this->language);
   }
   
   public function install() {

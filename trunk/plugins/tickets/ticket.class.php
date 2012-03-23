@@ -25,7 +25,7 @@ class tticket extends tpost {
     $this->data['childdata'] = &$this->childdata;
     $this->childdata = array(
     'id' => 0,
-    'type' => 'bug',
+    //'type' => 'bug',
     'state'  => 'opened',
     'prio' => 'major',
     'assignto' => 0,
@@ -82,7 +82,7 @@ class tticket extends tpost {
   public function getticketcontent() {
     $lang = tlocal::i('ticket');
     $args = targs::i();
-    foreach (array('type', 'state', 'prio') as $prop) {
+    foreach (array('state', 'prio') as $prop) {
       $value = $this->$prop;
       $args->$prop = $lang->$value;
     }

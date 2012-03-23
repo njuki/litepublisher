@@ -1386,10 +1386,14 @@ class tusers extends titems {
   
   public function add(array $values) {
     $email = trim($values['email']);
-    if ($this->emailexists($email)) return false;
+    if ( $this->emailexists($email)) return false;
     $groups = tusergroups::i();
-    $idgroups = $groups->cleangroups($values['idgroups']);
-    if (count($idgroups) == 0) $idgroups = array($groups->getidgroup($groups->defaultgroup));
+    if (isset($values['idgroups'])) {
+      $idgroups = $groups->cleangroups($values['idgroups']);
+      if (count($idgroups) == 0) $idgroups = array($groups->getidgroup($groups->defaultgroup));
+    } else {
+      $idgroups = array($groups->getidgroup($groups->defaultgroup));
+    }
     
     $password = empty($values['password']) ? md5uniq() : $values['password'];
     $password = basemd5(sprintf('%s:%s:%s', $email,  litepublisher::$options->realm, $password));
@@ -1478,6 +1482,7 @@ class tusers extends titems {
   }
   
   public function emailexists($email) {
+    if ($email == '') return false;
     if ($email == litepublisher::$options->email) return 1;
     if ($this->dbversion) {
       return $this->db->findid('email = '. dbquote($email));

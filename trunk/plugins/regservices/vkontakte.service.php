@@ -47,7 +47,7 @@ class tvkontakteregservice extends tregservice {
         'service' => $this->name,
         'uidservice' => $info->uid,
         'name' => $info->first_name.' '.$info->last_name,
-        'website' => 'http://vkontakte.ru/id'.$info->uid
+        'website' => 'http://vk.com/id'.$info->uid
         ));
       }
     }

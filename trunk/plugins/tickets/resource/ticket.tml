@@ -2,9 +2,6 @@
 <table class="classictable">
 <tbody>
 <tr>
-		<td>$lang.type</td>
-		<td><a href='$site.url/$ticket.type/'>$type</a></td>
-</tr><tr>
 		<td>$lang.state</td>
 		<td>$state</td>
 </tr><tr>

@@ -47,8 +47,8 @@ $site.description
    <p>$lang.passnote</p>
    
    <dl>
-   <dt>$lang.login</dt>
-   <dd><code>$options.login</code></dd>
+   <dt>E-Mail</dt>
+   <dd><code>$options.email</code></dd>
    <dt>$lang.password</dt>
    <dd><code>$password</code></dd>
    </dl>
