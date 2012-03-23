@@ -128,7 +128,7 @@ class tusergroups extends titems {
   }
   
   public function gethome($name) {
-    if ($id = $this->getidgroup($name)) {
+    if ($id = $this->cleangroup($name)) {
       return isset($this->items[$id]['home']) ? $this->items[$id]['home'] : '/admin/';
     }
     return '/admin/';

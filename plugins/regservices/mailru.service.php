@@ -54,7 +54,7 @@ class tmailruregservice extends tregservice {
       'method' => 'users.getInfo',
       'app_id' => $this->client_id,
       'session_key' => $tokens->access_token,
-      //'uids' => $a->x_mailru_vid,
+      'uids' => $tokens->x_mailru_vid,
       'secure' => '1',
       'format' => 'json',
       );
@@ -65,8 +65,7 @@ class tmailruregservice extends tregservice {
         $js = json_decode($r);
         $info = $js[0];
         return $this->adduser(array(
-        'service' => $this->name,
-        'idservice' => $info->uid,
+        'uid' => $info->uid,
         'email' => isset($info->email) ? $info->email : '',
         'name' => $info->nick,
         'website' => isset($info->link) ? $info->link : ''
