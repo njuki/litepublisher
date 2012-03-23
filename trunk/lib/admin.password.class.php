@@ -21,13 +21,14 @@ class tadminpassword extends tadminform {
     ini_set('session.use_cookies', 0);
     ini_set('session.use_trans_sid', 0);
     ini_set('session.use_only_cookies', 0);
-    
+    /*
     if (tfilestorage::$memcache) {
       ini_set('session.save_handler', 'memcache');
       ini_set('session.save_path', 'tcp://127.0.0.1:11211');
     } else {
       ini_set('session.save_handler', 'files');
     }
+    */
     
     session_cache_limiter(false);
     session_id ('password-restore-' .md5($email));

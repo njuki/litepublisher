@@ -25,7 +25,7 @@ class tticket extends tpost {
     $this->data['childdata'] = &$this->childdata;
     $this->childdata = array(
     'id' => 0,
-    //'type' => 'bug',
+    'type' => 'bug',
     'state'  => 'opened',
     'prio' => 'major',
     'assignto' => 0,

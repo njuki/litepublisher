@@ -59,13 +59,14 @@ class tregservice extends tplugin {
     ini_set('session.use_cookies', 1);
     ini_set('session.use_trans_sid', 0);
     ini_set('session.use_only_cookies', 1);
-    
+    /*
     if (tfilestorage::$memcache) {
       ini_set('session.save_handler', 'memcache');
       ini_set('session.save_path', 'tcp://127.0.0.1:11211');
     } else {
       ini_set('session.save_handler', 'files');
     }
+    */
     
     session_cache_limiter(false);
     //session_id (md5($this->token));
@@ -115,6 +116,7 @@ class tregservice extends tplugin {
   }
   
   public function errorauth() {
+    return 403;
   }
   
   public function adduser(array $item) {
@@ -129,6 +131,7 @@ class tregservice extends tplugin {
         'name' => $item['name'],
         'website' => isset($item['website']) ? tcontentfilter::clean_website($item['website']) : ''
         ));
+        $users->approve($id);
         if (isset($item['uid'])) $reguser->add($id, $this->name, $item['uid']);
       }
     } else {
@@ -142,6 +145,7 @@ class tregservice extends tplugin {
           'name' => $item['name'],
           'website' => isset($item['website']) ? tcontentfilter::clean_website($item['website']) : ''
           ));
+          $users->approve($id);
           $reguser->add($id, $this->name, $uid);
         }
       } else {
