@@ -243,8 +243,7 @@ class toptions extends tevents_storage {
     $log = $message . "\n" . $trace;
     $this->errorlog .= str_replace("\n", "<br />\n", htmlspecialchars($log));
     tfiler::log($log, 'exceptions.log');
-    $urlmap = turlmap::i();
-    if (!(litepublisher::$debug || $this->echoexception || $this->admincookie || $urlmap->adminpanel)) {
+    if (!(litepublisher::$debug || $this->echoexception || $this->admincookie || litepublisher::$urlmap->adminpanel)) {
       tfiler::log($log, 'exceptionsmail.log');
     }
   }

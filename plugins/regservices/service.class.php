@@ -119,18 +119,29 @@ class tregservice extends tplugin {
   
   public function adduser(array $item) {
     $users = tusers::i();
+    $reguser =tregserviceuser::i();
     if (!empty($item['email'])) {
-      if ($id = $users->indexOf('email', $item['email'])) {
+      if ($id = $users->emailexists($item['email'])) {
         
       } else {
+        $id = $users->add(array(
+        'email' => $item['email'],
+        'name' => $item['name'],
+        'website' => isset($item['website']) ? tcontentfilter::clean_website($item['website']) : ''
+        ));
+        if (isset($item['uid'])) $reguser->add($id, $this->name, $item['uid']);
       }
     } else {
-      $reguser =tregserviceuser::i();
       $uid = !empty($item['uid']) ? $item['uid'] : (!empty($item['website']) ? $item['website'] : '');
       if ($uid) {
         if ($id = $reguser->find($this->name, $uid)){
+          
         } else {
-          $id =
+          $id = $users->add(array(
+          'email' => '',
+          'name' => $item['name'],
+          'website' => isset($item['website']) ? tcontentfilter::clean_website($item['website']) : ''
+          ));
           $reguser->add($id, $this->name, $uid);
         }
       } else {
@@ -171,6 +182,7 @@ class tregserviceuser extends titems {
   }
   
   public function add($id, $service, $uid) {
+    if (($id == 0) || ($service == '') || ($uid == '')) return;
     if (dbversion) {
       $this->db->insert_a(array(
       'id' => $id,
@@ -187,7 +199,7 @@ class tregserviceuser extends titems {
   }
   
   public function find($service, $uid) {
-    if ($this->dbversion){
+    if (dbversion){
       return $this->db->findid('service = '. dbquote($service) . ' and uid = ' . dbquote($uid));
     }
     

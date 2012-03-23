@@ -6,12 +6,12 @@
 * and GPL (gpl.txt) licenses.
 **/
 
-function installclasses($language) {
+function installclasses($email, $language) {
   ParseClassesIni();
   $options = toptions::i();
   $options->lock();
   require_once(dirname(__file__) . DIRECTORY_SEPARATOR. 'options.class.install.php');
-  $password = installoptions($language);
+  $password = installoptions($email, $language);
   //require_once(dirname(__file__) . DIRECTORY_SEPARATOR. 'local.class.install.php');
   //tlocalInstall(getinstance('tlocal'));
   doinstallclasses();
@@ -70,6 +70,7 @@ function doinstallclasses() {
   
   $xmlrpc = TXMLRPC::i();
   $xmlrpc->lock();
+  ttheme::$defaultargs = array();
   $theme = ttheme::getinstance('default');
   //  $html = tadminhtml::i();
   //      $html->loadinstall();

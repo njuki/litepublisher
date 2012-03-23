@@ -7,11 +7,11 @@
 **/
 
 /* to prevent recurse call */
-function installoptions($language) {
+function installoptions($email, $language) {
   $options = toptions::i();
   $options->lock();
   if (dbversion) {
-    $usehost = $_REQUEST['usehost'] == '1';
+    $usehost = isset($_REQUEST['usehost']) ? ($_REQUEST['usehost'] == '1') : false;
     $options->data['dbconfig'] = array(
     'driver' => 'mysql',
     'host' => $usehost ? $_REQUEST['dbhost'] : 'localhost',
@@ -36,7 +36,7 @@ function installoptions($language) {
   }
   
   $options->language = $language;
-  
+  $options->email = $email;
   $options->dateformat = '';
   $options->password = '';
   $options->realm = 'Admin panel';
@@ -46,7 +46,6 @@ function installoptions($language) {
   $options->cookie = '';
   $options->cookieexpired = 0;
   
-  $options->email = 'yarrowsoft@gmail.com';
   $options->mailer = '';
   $options->data['cache'] = true;
   $options->expiredcache= 3600;
