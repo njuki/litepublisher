@@ -101,14 +101,19 @@ class tcontentfilter extends tevents {
     $tag = '<!--nextpage-->';
     $post->deletepages();
     if (!strpos( $s, $tag) )  return $this->filter($s);
-    
+$count = 0;    
     while($i = strpos( $s, $tag) ) {
       $page = trim(substr($s, 0, $i));
-      $post->addpage($this->filter($page));
       $s = trim(substr($s, $i + strlen($tag)));
+if ($count == 0) {
+$firstpage = $this->filter($page);
+} else {
+      $post->addpage($this->filter($page));
+}
+$count++;
     }
     if ($s != '') $post->addpage($this->filter($s));
-    return $post->GetPage(0);
+    return $firstpage;
   }
   
   public static function gettitle($s) {

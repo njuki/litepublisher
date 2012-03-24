@@ -45,7 +45,7 @@ class tposttransform  {
     
     $db->table = 'pages';
     foreach ($post->data['pages'] as $i => $content) {
-      $db->insert_a(array('post' => $id, 'page' => $i,         'content' => $content));
+      $db->insert_a(array('id' => $id, 'page' => $i,         'content' => $content));
     }
     
     return $id;
@@ -70,9 +70,9 @@ class tposttransform  {
     if (false !== $post->data['rawcontent']) $raw['rawcontent'] = $post->data['rawcontent'];
     $post->rawdb->updateassoc($raw);
     $db->table = 'pages';
-    $db->iddelete($this->post->id);
+    $db->iddelete($post->id);
     foreach ($post->data['pages'] as $i => $content) {
-      $db->updateassoc(array('post' => $post->id, 'page' => $i, 'content' => $content));
+      $db->insert_a(array('id' => $post->id, 'page' => $i, 'content' => $content));
     }
   }
   

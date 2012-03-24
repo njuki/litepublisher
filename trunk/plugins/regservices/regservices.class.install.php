@@ -39,9 +39,7 @@ function tregservicesInstall($self) {
     service enum('$names') default 'google',
     uid varchar(128) NOT NULL default '',
     
-    KEY `id` (`id`),
-    KEY `service` (`service`),
-    KEY `uid` (`uid`)
+    KEY (`service`, `uid`)
     ");
   }
   
