@@ -673,12 +673,11 @@ class tpost extends titem implements  itemplate {
     if ($page == 1) {
       $result .= $this->filtered;
       $result = $this->replacemore($result, false);
-    } elseif ($s = $this->getpage($page - 1)) {
+    } elseif ($s = $this->getpage($page - 2)) {
       $result .= $s;
     } elseif ($page <= $this->commentpages) {
     } else {
-      $lang = tlocal::i();
-      $result .= $lang->notfound;
+      $result .= tlocal::i()->notfound;
     }
     
     return $result;
@@ -733,7 +732,7 @@ class tpost extends titem implements  itemplate {
   }
   
   public function getpage($i) {
-    if ($i == 0) return $this->filtered;
+    //if ($i == 0) return $this->filtered;
     if (dbversion && ($this->id > 0)) {
       if ($r = $this->getdb('pages')->getassoc("(id = $this->id) and (page = $i) limit 1")) {
         return $r['content'];
