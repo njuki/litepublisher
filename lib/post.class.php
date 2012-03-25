@@ -744,11 +744,19 @@ return $s;
   public function addpage($s) {
     $this->data['pages'][] = $s;
 $this->data['pagescount'] = count($this->data['pages']);
+if (dbversion && ($this->id > 0)) {
+$this->getdb('pages')->insert_a(array(
+'id' => $this->id, 
+'page' => $this->data['pagescount'] -1, 
+'content' => $s
+));
+}
   }
   
   public function deletepages() {
     $this->data['pages'] = array();
 $this->data['pagescount'] = 0;
+if (dbversion && ($this->id > 0)) $this->getdb('pages')->iddelete($this->id);
   }
   
   public function gethaspages() {
