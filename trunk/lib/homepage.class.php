@@ -20,6 +20,7 @@ class thomepage extends tmenu  {
     $this->data['invertorder'] = false;
     $this->data['includecats'] = array();
     $this->data['excludecats'] = array();;
+    $this->data['archcount'] = 0;
     $this->coinstances[] = new tcoevents($this, 'onbeforegetitems', 'ongetitems');
   }
   
@@ -40,7 +41,7 @@ class thomepage extends tmenu  {
     if ($this->hideposts) return $result;
     
     $items =  $this->getidposts();
-    $result .= $theme->getpostsnavi($items, false, $this->url, tposts::i()->archivescount);
+    $result .= $theme->getpostsnavi($items, false, $this->url, $this->data['archcount']);
     return $result;
   }
   
@@ -52,22 +53,13 @@ class thomepage extends tmenu  {
     $include = $this->data['includecats'];
     $exclude = $this->data['excludecats'];
     if ((count($include) == 0) && (count($exclude) == 0)) {
+$this->data['archcount'] = $posts->archivescount;
       $result = $posts->getpage(0, litepublisher::$urlmap->page, $perpage, $this->invertorder);
     } else {
       if (dbversion) {
-        $poststable = $posts->thistable;
         $order = $this->invertorder ? 'asc' : 'desc';
-        $catstable  = litepublisher::$db->prefix . 'categoriesitems';
-        $where = '';
-        if (count($include) > 0) $where .= sprintf('%s.item  in (%s)', $catstable , implode(',', $include));
-        if (count($exclude) > 0) {
-          if (count($include) > 0) $where .= ' and ';
-          $where .= sprintf('%s.item  not in (%s)', $catstable , implode(',', $exclude));
-        }
-        
-        $result = $posts->select("$poststable.status = 'published' and $poststable.id in
-        (select DISTINCT post from $catstable  where $where)",
-        "order by $poststable.posted $order limit $from, $perpage");
+        $result = $posts->select($this->getwhere(), 
+'order by ' . $posts->thistable . ".posted $order limit $from, $perpage");
       } else {
         $catsposts = tcategories::i()->itemsposts;
         if (count($include) == 0) {
@@ -86,6 +78,7 @@ class thomepage extends tmenu  {
         $result = $posts->stripdrafts($result);
         $result = $posts->sortbyposted($result);
         if ($this->invertorder)       $result = array_reverse($result);
+$this->data['archcount'] = count($result);
         $result = array_slice($result, (litepublisher::$urlmap->page - 1) * $perpage, $perpage);
       }
     }
@@ -94,4 +87,36 @@ class thomepage extends tmenu  {
     return $result;
   }
   
+
+
+public function getwhere() {
+$result = '';
+        $poststable = litepublisher::$db->prefix . 'posts';
+        $catstable  = litepublisher::$db->prefix . 'categoriesitems';
+    $include = $this->data['includecats'];
+    $exclude = $this->data['excludecats'];
+
+        if (count($include) > 0) {
+$result .= sprintf('%s.item  in (%s)', $catstable , implode(',', $include));
+}
+
+        if (count($exclude) > 0) {
+          if (count($include) > 0) $result .= ' and ';
+          $result .= sprintf('%s.item  not in (%s)', $catstable , implode(',', $exclude));
+        }
+
+
+if ($result == '') {
+return "$poststable.status = 'published'";
+} else {
+return "$poststable.status = 'published' and $poststable.id in 
+(select DISTINCT post from $catstable  where $result)";
+}
+}
+
+public function postschanged() {
+$this->data['archcount'] = tposts::i()->db->getcount($this->getwhere());
+$this->save();
+}
+
 }//class
