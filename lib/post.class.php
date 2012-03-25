@@ -698,11 +698,8 @@ class tpost extends titem implements  itemplate {
   
   public function setcontent($s) {
     if (!is_string($s)) $this->error('Error! Post content must be string');
-    if ($s != $this->rawcontent) {
       $this->rawcontent = $s;
-      $filter = tcontentfilter::i();
-      $filter->filterpost($this,$s);
-    }
+      tcontentfilter::i()->filterpost($this,$s);
   }
   
   public function setrevision($value) {
@@ -715,8 +712,7 @@ class tpost extends titem implements  itemplate {
   }
   
   public function updatefiltered() {
-    $filter = tcontentfilter::i();
-    $filter->filterpost($this,$this->rawcontent);
+    tcontentfilter::i()->filterpost($this,$this->rawcontent);
   }
   
   public function getrawcontent() {
@@ -732,23 +728,27 @@ class tpost extends titem implements  itemplate {
   }
   
   public function getpage($i) {
-    //if ($i == 0) return $this->filtered;
+  if ( isset($This->data['pages'][$i]))   return $this->data['pages'][$i];
     if (dbversion && ($this->id > 0)) {
       if ($r = $this->getdb('pages')->getassoc("(id = $this->id) and (page = $i) limit 1")) {
-        return $r['content'];
+        $s = $r['content'];
+} else {
+$s = false;
+}
+$this->data['pages'][$i] = $s;
+return $s;
       }
-    } elseif ( isset($This->data['pages'][$i]))  {
-      return $this->data['pages'][$i];
-    }
     return false;
   }
   
   public function addpage($s) {
     $this->data['pages'][] = $s;
+$this->data['pagescount'] = count($this->data['pages']);
   }
   
   public function deletepages() {
     $this->data['pages'] = array();
+$this->data['pagescount'] = 0;
   }
   
   public function gethaspages() {
@@ -756,7 +756,7 @@ class tpost extends titem implements  itemplate {
   }
   
   public function getpagescount() {
-    if (dbversion && ($this->id > 0)) return $this->data['pagescount'];
+    if (dbversion) return $this->data['pagescount'] + 1;
     return isset($this->data['pages']) ? count($this->data['pages']) : 1;
   }
   

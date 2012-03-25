@@ -205,7 +205,6 @@ class tposts extends titems {
       if (isset($views->defaults['post'])) $post->data['idview'] = $views->defaults['post'];
     }
     
-    $post->pagescount = count($post->pages);
     $linkgen = tlinkgenerator::i();
     $post->url = $linkgen->addurl($post, $post->schemalink);
     $post->title = tcontentfilter::escape($post->title);
