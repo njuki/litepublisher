@@ -33,8 +33,7 @@ class tposttransform  {
     foreach (self::$props as $name) {
       $values[$name] = $self->__get($name);
     }
-    $db = litepublisher::$db;
-    $db->table = 'posts';
+    $db = $post->db;
     $id = $db->add($values);
     $post->rawdb->insert_a(array(
     'id' => $id,
@@ -52,9 +51,8 @@ class tposttransform  {
   }
   
   public function save() {
-    $db = litepublisher::$db;
-    $db->table = 'posts';
     $post = $this->post;
+$db = $post->db;
     $list = array();
     foreach (self::$props  As $name) {
       if ($name == 'id') continue;
@@ -83,7 +81,7 @@ class tposttransform  {
   }
   
   public function __get($name) {
-    if ('head' == $name) return $this->post->data['head'];
+    if (('head' == $name) || ('pagescount' == $name)) return $this->post->data[$name];
     if (method_exists($this, $get = "get$name")) return $this->$get();
     if (in_array($name, self::$arrayprops))  return implode(',', $this->post->$name);
     if (in_array($name, self::$boolprops))  return $this->post->$name ? 1 : 0;
