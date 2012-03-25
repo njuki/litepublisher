@@ -223,7 +223,7 @@ class tdatabase {
     $sql = "SELECT COUNT(*) as count FROM $this->prefix$this->table";
     if ($where != '') $sql .= ' where '. $where;
     if ($r = mysql_fetch_assoc( $this->query($sql))) {
-      return $r['count'];
+      return (int) $r['count'];
     }
     return false;
   }
