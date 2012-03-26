@@ -358,7 +358,7 @@ class Markdown_Parser {
 		"doHorizontalRules" => 20,
 		
 		"doLists"           => 40,
-		"doCodeBlocks"      => 50,
+		//"doCodeBlocks"      => 50,
 		"doBlockQuotes"     => 60,
 		);
 
