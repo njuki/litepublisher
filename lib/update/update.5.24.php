@@ -14,4 +14,9 @@ $man->alter($table, "drop index uid");
 $man->alter($table, "add   index (`service`, `uid`)");
 }
 }
+
+if (litepublisher::$classes->exists('ttickets')) {
+include_once(dirname(__file__) . '/update.tickets.5.24.php');
+update524tickets();
+}
 }
