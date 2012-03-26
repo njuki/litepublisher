@@ -59,15 +59,15 @@ class tcontentfilter extends tevents {
     ) {
       $parts = explode($matches[0], $s, 2);
       $excerpt = $this->filter(trim($parts[0]) . $moretag);
-      $post->filtered = $excerpt . $this->ExtractPages($post,trim($parts[1]));
+      $post->filtered = $excerpt . $this->extract_pages($post,trim($parts[1]));
       $this->setexcerpt($post, $excerpt, self::gettitle($matches[1]));
       if ($post->moretitle == '')  $post->moretitle = tlocal::get('default', 'more');
     } else {
       if ($this->automore) {
-        $post->filtered = $this->ExtractPages($post, $s);
-        $this->setexcerpt($post, $this->filter(trim(self::GetExcerpt($s, $this->automorelength)) . $moretag), tlocal::get('default', 'more'));
+        $post->filtered = $this->extract_pages($post, $s);
+        $this->setexcerpt($post, $this->filter(trim(self::GetExcerpt($post->pagescount == 1 ? $s : $post->filtered, $this->automorelength)) . $moretag), tlocal::get('default', 'more'));
       } else {
-        $post->filtered = $this->ExtractPages($post, $s);
+        $post->filtered = $this->extract_pages($post, $s);
         $this->setexcerpt($post, $post->filtered, '');
       }
     }
@@ -97,7 +97,7 @@ class tcontentfilter extends tevents {
     return $description;
   }
   
-  public function ExtractPages(tpost $post, $s) {
+  public function extract_pages(tpost $post, $s) {
     $post->deletepages();
 $pages = explode('<!--nextpage-->', $s);
 $firstpage = $this->filter(array_shift($pages));
