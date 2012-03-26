@@ -247,7 +247,7 @@ class ttheme extends tevents {
   public function replacelang($s, $lang) {
     $s = preg_replace('/%%([a-zA-Z0-9]*+)_(\w\w*+)%%/', '\$$1.$2', (string) $s);
     self::$vars['lang'] = isset($lang) ? $lang : tlocal::i('default');
-    $s = strtr($s, self::defaultargs);
+    $s = strtr($s, self::$defaultargs);
     if (preg_match_all('/\$lang\.(\w\w*+)/', $s, $m, PREG_SET_ORDER)) {
       foreach ($m as $item) {
         $name = $item[1];

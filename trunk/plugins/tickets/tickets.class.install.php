@@ -91,7 +91,7 @@ function tticketsInstall($self) {
   
   $groups = tusergroups  ::i();
   $groups->lock();
-  $groups->add('ticket', '/admin/tickets/editor/');
+  $groups->add('ticket', 'Tickets', '/admin/tickets/editor/');
   $groups->defaultgroup = 'ticket';
   $groups->onhasright = $self->hasright;
   $groups->unlock();

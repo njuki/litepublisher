@@ -97,6 +97,9 @@ tlocal::clearcache();
 //tjsmerger::i()->save();
 //litepublisher::$options->show_draft_post = true;
 //tupdater::i()->run(5.24);
+//include_once(dirname(__file__) . '/lib/update/update.tickets.5.24.php');
+//update524tickets();
+
 //litepublisher::$classes->delete('tcategoriesmenu');
 //litepublisher::$classes->add('tajaxmenueditor', 'admin.menu.ajax.class.php');
 //tfiler::log(var_export($_SERVER, true));
