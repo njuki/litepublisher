@@ -12,6 +12,13 @@ class thomepage extends tmenu  {
     return $id == 0 ? self::singleinstance(__class__) : self::iteminstance(__class__, $id);
   }
   
+  public function __construct() {
+    parent::__construct();
+    if ($id = $this->getowner()->class2id(get_class($this))) {
+$this->loaddata($id);
+}
+  }
+
   protected function create() {
     parent::create();
     $this->basename = 'homepage' ;
@@ -31,12 +38,15 @@ class thomepage extends tmenu  {
     $result = '';
     $theme = ttheme::i();
     if (litepublisher::$urlmap->page == 1) {
-      $image = $this->image;
-      if ($image != '') {
+      if ($image = $this->image) {
         if (!strbegin($image, 'http://')) $image = litepublisher::$site->files . $image;
-        $image = sprintf('<img src="%s" algt="Home image" />', $image);
+        $image = sprintf('<img src="%s" alt="Home image" />', $image);
       }
       $result .= $theme->simple($image . $this->content);
+    if (litepublisher::$options->parsepost) {
+      $result = $theme->parse($result);
+    }
+
     }
     if ($this->hideposts) return $result;
     
@@ -115,6 +125,7 @@ return "$poststable.status = 'published' and $poststable.id in
 }
 
 public function postschanged() {
+if ($this->hideposts) return;
 $this->data['archcount'] = tposts::i()->db->getcount($this->getwhere());
 $this->save();
 }

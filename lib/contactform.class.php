@@ -12,6 +12,14 @@ class tcontactform extends tmenu {
     return self::iteminstance(__class__, $id);
   }
   
+  public function __construct() {
+    parent::__construct();
+    if ($id = $this->getowner()->class2id(get_class($this))) {
+$this->loaddata($id);
+}
+  }
+
+
   protected function create() {
     parent::create();
     $this->cache = false;
