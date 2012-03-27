@@ -1,6 +1,10 @@
 <?php
 
 function update524tickets() {
+  $linkgen = tlinkgenerator::i();
+  $linkgen->data['ticket'] = '/tickets/[title].htm';
+  $linkgen->save();
+
 $types = array('bug','feature','support','task');
 $tickets = ttickets::i();
 $tickets->data['cats'] = array();
@@ -92,6 +96,15 @@ $man->alter($table, "drop index type");
 $man->alter($table, "drop type"); 
 
 $tickets->save();
+  $adminmenus = tadminmenus::i();
+  $adminmenus->lock();
+  $parent = $adminmenus->url2id('/admin/tickets/');
+  $idmenu = $adminmenus->createitem($parent, 'options', 'admin', 'tadminticketoptions');
+  $adminmenus->items[$idmenu]['title'] = tlocal::i()->options;
+  $adminmenus->unlock();
+
+  litepublisher::$classes->Add('tadminticketoptions', 'admin.tickets.options.php', 'tickets');
+
 litepublisher::$options->savemodified();
   litepublisher::$classes->delete('tticketsmenu');
 }

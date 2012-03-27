@@ -8,7 +8,10 @@
 
 function tticketsInstall($self) {
   if (!dbversion) die("Ticket  system only for database version");
-$dirname = basename(dirname(__file__));
+  $self->data['cats'] = array();
+  $self->save();
+  
+  $dirname = basename(dirname(__file__));
   $merger = tlocalmerger::i();
   $merger->addplugin(tplugins::getname(__file__));
   
@@ -37,19 +40,24 @@ $dirname = basename(dirname(__file__));
   $polls->save();
   
   litepublisher::$classes->Add('tticket', 'ticket.class.php', $dirname);
-  litepublisher::$classes->Add('tticketsmenu', 'tickets.menu.class.php', $dirname);
+  //litepublisher::$classes->Add('tticketsmenu', 'tickets.menu.class.php', $dirname);
   litepublisher::$classes->Add('tticketeditor', 'admin.ticketeditor.class.php', $dirname);
   litepublisher::$classes->Add('tadmintickets', 'admin.tickets.class.php', $dirname);
   litepublisher::$classes->Add('tadminticketoptions', 'admin.tickets.options.php', $dirname);
-
-    litepublisher::$options->reguser = true;
+  
+  litepublisher::$options->reguser = true;
   $adminoptions = tadminoptions::i();
   $adminoptions->usersenabled = true;
   
   $adminmenus = tadminmenus::i();
   $adminmenus->lock();
+  
+  
   $parent = $adminmenus->createitem(0, 'tickets', 'ticket', 'tadmintickets');
   $adminmenus->items[$parent]['title'] = tlocal::get('tickets', 'tickets');
+  
+  $idmenu = $adminmenus->createitem($parent, 'editor', 'ticket', 'tticketeditor');
+  $adminmenus->items[$idmenu]['title'] = tlocal::get('tickets', 'editortitle');
   
   $idmenu = $adminmenus->createitem($parent, 'opened', 'ticket', 'tadmintickets');
   $adminmenus->items[$idmenu]['title'] = tlocal::get('ticket', 'opened');
@@ -57,15 +65,13 @@ $dirname = basename(dirname(__file__));
   $idmenu = $adminmenus->createitem($parent, 'fixed', 'ticket', 'tadmintickets');
   $adminmenus->items[$idmenu]['title'] = tlocal::get('ticket', 'fixed');
   
-  $idmenu = $adminmenus->createitem($parent, 'editor', 'ticket', 'tticketeditor');
-  $adminmenus->items[$idmenu]['title'] = tlocal::get('tickets', 'editortitle');
-
   $idmenu = $adminmenus->createitem($parent, 'options', 'admin', 'tadminticketoptions');
   $adminmenus->items[$idmenu]['title'] = tlocal::i()->options;
   
   $adminmenus->onexclude = $self->onexclude;
   $adminmenus->unlock();
   
+  /*
   $menus = tmenus::i();
   $menus->lock();
   $ini = parse_ini_file($dir . litepublisher::$options->language . '.install.ini', false);
@@ -87,11 +93,12 @@ $dirname = basename(dirname(__file__));
     $menus->add($menu);
   }
   $menus->unlock();
+  */
   
   litepublisher::$classes->unlock();
   
   $linkgen = tlinkgenerator::i();
-  $linkgen->data['ticket'] = '/[type]/[title].htm';
+  $linkgen->data['ticket'] = '/tickets/[title].htm';
   $linkgen->save();
   
   $groups = tusergroups  ::i();
@@ -119,6 +126,7 @@ function tticketsUninstall($self) {
   $adminmenus->unbind($self);
   $adminmenus->unlock();
   
+  /*
   $menus = tmenus::i();
   $menus->lock();
   foreach (array('bug', 'feature', 'support', 'task') as $type) {
@@ -128,6 +136,7 @@ function tticketsUninstall($self) {
   $menus->unlock();
   
   litepublisher::$classes->delete('tticketsmenu');
+  */
   litepublisher::$classes->unlock();
   
   if (class_exists('tpolls')) {

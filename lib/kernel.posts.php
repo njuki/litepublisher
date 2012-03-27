@@ -872,12 +872,11 @@ class tpost extends titem implements  itemplate {
     if ($page == 1) {
       $result .= $this->filtered;
       $result = $this->replacemore($result, false);
-    } elseif ($s = $this->getpage($page - 1)) {
+    } elseif ($s = $this->getpage($page - 2)) {
       $result .= $s;
     } elseif ($page <= $this->commentpages) {
     } else {
-      $lang = tlocal::i();
-      $result .= $lang->notfound;
+      $result .= tlocal::i()->notfound;
     }
     
     return $result;
@@ -898,11 +897,8 @@ class tpost extends titem implements  itemplate {
   
   public function setcontent($s) {
     if (!is_string($s)) $this->error('Error! Post content must be string');
-    if ($s != $this->rawcontent) {
-      $this->rawcontent = $s;
-      $filter = tcontentfilter::i();
-      $filter->filterpost($this,$s);
-    }
+    $this->rawcontent = $s;
+    tcontentfilter::i()->filterpost($this,$s);
   }
   
   public function setrevision($value) {
@@ -915,8 +911,7 @@ class tpost extends titem implements  itemplate {
   }
   
   public function updatefiltered() {
-    $filter = tcontentfilter::i();
-    $filter->filterpost($this,$this->rawcontent);
+    tcontentfilter::i()->filterpost($this,$this->rawcontent);
   }
   
   public function getrawcontent() {
@@ -932,23 +927,35 @@ class tpost extends titem implements  itemplate {
   }
   
   public function getpage($i) {
-    if ($i == 0) return $this->filtered;
+    if ( isset($This->data['pages'][$i]))   return $this->data['pages'][$i];
     if (dbversion && ($this->id > 0)) {
       if ($r = $this->getdb('pages')->getassoc("(id = $this->id) and (page = $i) limit 1")) {
-        return $r['content'];
+        $s = $r['content'];
+      } else {
+        $s = false;
       }
-    } elseif ( isset($This->data['pages'][$i]))  {
-      return $this->data['pages'][$i];
+      $this->data['pages'][$i] = $s;
+      return $s;
     }
     return false;
   }
   
   public function addpage($s) {
     $this->data['pages'][] = $s;
+    $this->data['pagescount'] = count($this->data['pages']);
+    if (dbversion && ($this->id > 0)) {
+      $this->getdb('pages')->insert_a(array(
+      'id' => $this->id,
+      'page' => $this->data['pagescount'] -1,
+      'content' => $s
+      ));
+    }
   }
   
   public function deletepages() {
     $this->data['pages'] = array();
+    $this->data['pagescount'] = 0;
+    if (dbversion && ($this->id > 0)) $this->getdb('pages')->iddelete($this->id);
   }
   
   public function gethaspages() {
@@ -956,7 +963,7 @@ class tpost extends titem implements  itemplate {
   }
   
   public function getpagescount() {
-    if (dbversion && ($this->id > 0)) return $this->data['pagescount'];
+    if (dbversion) return $this->data['pagescount'] + 1;
     return isset($this->data['pages']) ? count($this->data['pages']) : 1;
   }
   
@@ -1288,7 +1295,6 @@ class tposts extends titems {
       if (isset($views->defaults['post'])) $post->data['idview'] = $views->defaults['post'];
     }
     
-    $post->pagescount = count($post->pages);
     $linkgen = tlinkgenerator::i();
     $post->url = $linkgen->addurl($post, $post->schemalink);
     $post->title = tcontentfilter::escape($post->title);
@@ -1584,8 +1590,7 @@ class tposttransform  {
     foreach (self::$props as $name) {
       $values[$name] = $self->__get($name);
     }
-    $db = litepublisher::$db;
-    $db->table = 'posts';
+    $db = $post->db;
     $id = $db->add($values);
     $post->rawdb->insert_a(array(
     'id' => $id,
@@ -1596,16 +1601,15 @@ class tposttransform  {
     
     $db->table = 'pages';
     foreach ($post->data['pages'] as $i => $content) {
-      $db->insert_a(array('post' => $id, 'page' => $i,         'content' => $content));
+      $db->insert_a(array('id' => $id, 'page' => $i,         'content' => $content));
     }
     
     return $id;
   }
   
   public function save() {
-    $db = litepublisher::$db;
-    $db->table = 'posts';
     $post = $this->post;
+    $db = $post->db;
     $list = array();
     foreach (self::$props  As $name) {
       if ($name == 'id') continue;
@@ -1620,11 +1624,13 @@ class tposttransform  {
     );
     if (false !== $post->data['rawcontent']) $raw['rawcontent'] = $post->data['rawcontent'];
     $post->rawdb->updateassoc($raw);
+    /*
     $db->table = 'pages';
-    $db->iddelete($this->post->id);
+    $db->iddelete($post->id);
     foreach ($post->data['pages'] as $i => $content) {
-      $db->updateassoc(array('post' => $post->id, 'page' => $i, 'content' => $content));
+      $db->insert_a(array('id' => $post->id, 'page' => $i, 'content' => $content));
     }
+    */
   }
   
   public function setassoc(array $a) {
@@ -1634,7 +1640,7 @@ class tposttransform  {
   }
   
   public function __get($name) {
-    if ('head' == $name) return $this->post->data['head'];
+    if (('head' == $name) || ('pagescount' == $name)) return $this->post->data[$name];
     if (method_exists($this, $get = "get$name")) return $this->$get();
     if (in_array($name, self::$arrayprops))  return implode(',', $this->post->$name);
     if (in_array($name, self::$boolprops))  return $this->post->$name ? 1 : 0;

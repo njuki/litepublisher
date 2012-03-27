@@ -58,7 +58,6 @@ class tadmintickets extends tadminmenu {
       $ticket = tticket::i($id);
       ttheme::$vars['ticket'] = $ticket;
     $args->status = $lang->{$ticket->status};
-    $args->type = $lang->{$ticket->type};
     $args->prio = $lang->{$ticket->prio};
     $args->state = $lang->{$ticket->state};
       $result .= $html->itemlist($args);

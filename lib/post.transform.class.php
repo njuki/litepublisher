@@ -52,7 +52,7 @@ class tposttransform  {
   
   public function save() {
     $post = $this->post;
-$db = $post->db;
+    $db = $post->db;
     $list = array();
     foreach (self::$props  As $name) {
       if ($name == 'id') continue;
@@ -67,13 +67,13 @@ $db = $post->db;
     );
     if (false !== $post->data['rawcontent']) $raw['rawcontent'] = $post->data['rawcontent'];
     $post->rawdb->updateassoc($raw);
-/*
+    /*
     $db->table = 'pages';
     $db->iddelete($post->id);
     foreach ($post->data['pages'] as $i => $content) {
       $db->insert_a(array('id' => $post->id, 'page' => $i, 'content' => $content));
     }
-*/
+    */
   }
   
   public function setassoc(array $a) {

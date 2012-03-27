@@ -7,7 +7,7 @@
 **/
 
 function twidgetUninstall($self) {
-twidgets::i()->deleteclass(get_class($self));
+  twidgets::i()->deleteclass(get_class($self));
 }
 
 function twidgetsInstall($self) {

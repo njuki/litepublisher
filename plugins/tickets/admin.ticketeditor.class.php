@@ -65,9 +65,10 @@ class tticketeditor extends tposteditor {
     
     $args->fixed = $ticket->state == 'fixed';
     
-    $args->catcombo = tposteditor::getcombocategories(ttickets::i()->cats, count($ticket->categories) ? $ticket->categories[0] : 0);
-
-        $states =array();
+    $tickets = ttickets::i();
+    $args->catcombo = tposteditor::getcombocategories($tickets->cats, count($ticket->categories) ? $ticket->categories[0] : $tickets->cats[0]);
+    
+    $states =array();
     foreach (array('fixed', 'opened', 'wontfix', 'invalid', 'duplicate', 'reassign') as $state) {
       $states[$state] = $lang->$state;
     }
@@ -129,7 +130,7 @@ class tticketeditor extends tposteditor {
     //if (litepublisher::$options->group != 'ticket') $ticket->state = $state;
     if ($id == 0) {
       $ticket->status = $newstatus;
-    $ticket->categories = array((int) $combocat);
+      $ticket->categories = array((int) $combocat);
       $ticket->closed = time();
       $id = $tickets->add($ticket);
       $_GET['id'] = $id;

@@ -11,21 +11,21 @@ function texcerptslideInstall($self) {
   $widgets->deleted = $self->widgetdeleted;
   
   $self->tags->deleted = $self->tagdeleted;
-
+  
 tcssmerger::i()->addtext('default', 'excerptslide', '.excerptslide p { display:none;}');
-tjsmerger::i()->addtext('default', 'excerptslide',
-    '$(document).ready(function() {
-      $(".excerptslide_link").click(function() {
-        $(this).parent().children("p").slideToggle();
-        return false;
-      });
+  tjsmerger::i()->addtext('default', 'excerptslide',
+  '$(document).ready(function() {
+    $(".excerptslide_link").click(function() {
+      $(this).parent().children("p").slideToggle();
+      return false;
     });
-');
+  });
+  ');
 }
 
 function texcerptslideUninstall($self) {
   $self->tags->unbind($self);
-
-tjsmerger::i()->deletetext('default', 'excerptslide');
-tcssmerger::i()->deletetext('default', 'excerptslide');
+  
+  tjsmerger::i()->deletetext('default', 'excerptslide');
+  tcssmerger::i()->deletetext('default', 'excerptslide');
 }

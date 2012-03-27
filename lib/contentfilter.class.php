@@ -99,11 +99,11 @@ class tcontentfilter extends tevents {
   
   public function extract_pages(tpost $post, $s) {
     $post->deletepages();
-$pages = explode('<!--nextpage-->', $s);
-$firstpage = $this->filter(array_shift($pages));
-foreach ($pages as $page) {
-$page = trim($page);
-if ($page) $post->addpage($this->filter($page));
+    $pages = explode('<!--nextpage-->', $s);
+    $firstpage = $this->filter(array_shift($pages));
+    foreach ($pages as $page) {
+      $page = trim($page);
+      if ($page) $post->addpage($this->filter($page));
     }
     return $firstpage;
   }
