@@ -13,18 +13,17 @@ class tadminticketoptions extends tadminmenu {
   }
   
   public function getcontent() {
-    $result = '';
-    $tickets = ttickets::i();
     $lang = tlocal::admin('tickets');
-$args = new targs();
+    $args = new targs();
     $args->formtitle = $lang->admincats;
+    $tickets = ttickets::i();
     return $this->html->adminform(tposteditor::getcategories($tickets->cats), $args);
   }
   
   public function processform() {
-$tickets = ttickets::i();
+    $tickets = ttickets::i();
     $tickets->cats = tposteditor::processcategories();
-$tickets->save();
-}
-
+    $tickets->save();
+  }
+  
 }//class

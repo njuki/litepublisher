@@ -19,14 +19,14 @@ function thomepageInstall($self) {
   
   $menus->idhome = $menus->add($self);
   $menus->unlock();
-
-if (dbversion) tposts::i()->addevent('changed', get_class($self), 'postschanged');
+  
+  if (dbversion) tposts::i()->addevent('changed', get_class($self), 'postschanged');
 }
 
 function thomepageUninstall($self) {
   turlmap::unsub($self);
-tposts::unsub($self);
-
+  tposts::unsub($self);
+  
   $menus = tmenus::i();
   $menus->lock();
   unset($menus->items[$menus->idhome]);

@@ -7,7 +7,7 @@
 **/
 
 class ttickets extends tposts {
-public $cats;
+  public $cats;
   
   public static function i() {
     return getinstance(__class__);
@@ -16,7 +16,7 @@ public $cats;
   protected function create() {
     parent::create();
     $this->childtable = 'tickets';
-$this->addmap('cats', array());
+    $this->addmap('cats', array());
   }
   
   public function newpost() {
@@ -29,19 +29,19 @@ $this->addmap('cats', array());
     $polls = tpolls::i();
     return $polls->add('', 'opened', 'button', $items);
   }
-
+  
   public function filtercats(tpost $post) {
-$cats = array_intersect($post->categories, $this->cats);
-if (count($cats) == 0) {
-$cats = array($this->cats[0]);
-} elseif (count($cats) > 1) {
-$cats = array($cats[0]);
-}
-$post->categories = $cats;
-}
+    $cats = array_intersect($post->categories, $this->cats);
+    if (count($cats) == 0) {
+      $cats = array($this->cats[0]);
+    } elseif (count($cats) > 1) {
+      $cats = array($cats[0]);
+    }
+    $post->categories = $cats;
+  }
   
   public function add(tpost $post) {
-$this->filtercats($post);
+    $this->filtercats($post);
     $post->poll = $this->createpoll();
     $post->updatefiltered();
     //$post->status = 'draft';
@@ -61,7 +61,7 @@ $this->filtercats($post);
   }
   
   public function edit(tpost $post) {
-$this->filtercats($post);
+    $this->filtercats($post);
     $post->updatefiltered();
     return parent::edit($post);
   }

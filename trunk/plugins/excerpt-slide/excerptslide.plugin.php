@@ -93,14 +93,14 @@ class texcerptslide extends  twidget {
     
     if (count($items) == 0) return '';
     $theme = ttheme::i();
-    return $theme->getpostswidgetcontent($items, $sidebar, 
-'<li class="excerptslide"><a class="excerptslide_link" href="">$post.title</a> $post.excerptcontent</li>');
+    return $theme->getpostswidgetcontent($items, $sidebar,
+    '<li class="excerptslide"><a class="excerptslide_link" href="">$post.title</a> $post.excerptcontent</li>');
   }
   
-public function getcont() {
-$a = array_keys($this->items);
-return twidgets::i()->getwidgetcache($a[0], 0);
-//return $this->getwidget($a[0], 0);
-}
-
+  public function getcont() {
+    $a = array_keys($this->items);
+    return twidgets::i()->getwidgetcache($a[0], 0);
+    //return $this->getwidget($a[0], 0);
+  }
+  
 }//class

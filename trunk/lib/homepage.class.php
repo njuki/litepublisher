@@ -15,10 +15,10 @@ class thomepage extends tmenu  {
   public function __construct() {
     parent::__construct();
     if ($id = $this->getowner()->class2id(get_class($this))) {
-$this->loaddata($id);
-}
+      $this->loaddata($id);
+    }
   }
-
+  
   protected function create() {
     parent::create();
     $this->basename = 'homepage' ;
@@ -43,10 +43,10 @@ $this->loaddata($id);
         $image = sprintf('<img src="%s" alt="Home image" />', $image);
       }
       $result .= $theme->simple($image . $this->content);
-    if (litepublisher::$options->parsepost) {
-      $result = $theme->parse($result);
-    }
-
+      if (litepublisher::$options->parsepost) {
+        $result = $theme->parse($result);
+      }
+      
     }
     if ($this->hideposts) return $result;
     
@@ -63,13 +63,13 @@ $this->loaddata($id);
     $include = $this->data['includecats'];
     $exclude = $this->data['excludecats'];
     if ((count($include) == 0) && (count($exclude) == 0)) {
-$this->data['archcount'] = $posts->archivescount;
+      $this->data['archcount'] = $posts->archivescount;
       $result = $posts->getpage(0, litepublisher::$urlmap->page, $perpage, $this->invertorder);
     } else {
       if (dbversion) {
         $order = $this->invertorder ? 'asc' : 'desc';
-        $result = $posts->select($this->getwhere(), 
-'order by ' . $posts->thistable . ".posted $order limit $from, $perpage");
+        $result = $posts->select($this->getwhere(),
+        'order by ' . $posts->thistable . ".posted $order limit $from, $perpage");
       } else {
         $catsposts = tcategories::i()->itemsposts;
         if (count($include) == 0) {
@@ -88,7 +88,7 @@ $this->data['archcount'] = $posts->archivescount;
         $result = $posts->stripdrafts($result);
         $result = $posts->sortbyposted($result);
         if ($this->invertorder)       $result = array_reverse($result);
-$this->data['archcount'] = count($result);
+        $this->data['archcount'] = count($result);
         $result = array_slice($result, (litepublisher::$urlmap->page - 1) * $perpage, $perpage);
       }
     }
@@ -97,37 +97,37 @@ $this->data['archcount'] = count($result);
     return $result;
   }
   
-
-
-public function getwhere() {
-$result = '';
-        $poststable = litepublisher::$db->prefix . 'posts';
-        $catstable  = litepublisher::$db->prefix . 'categoriesitems';
+  
+  
+  public function getwhere() {
+    $result = '';
+    $poststable = litepublisher::$db->prefix . 'posts';
+    $catstable  = litepublisher::$db->prefix . 'categoriesitems';
     $include = $this->data['includecats'];
     $exclude = $this->data['excludecats'];
-
-        if (count($include) > 0) {
-$result .= sprintf('%s.item  in (%s)', $catstable , implode(',', $include));
-}
-
-        if (count($exclude) > 0) {
-          if (count($include) > 0) $result .= ' and ';
-          $result .= sprintf('%s.item  not in (%s)', $catstable , implode(',', $exclude));
-        }
-
-
-if ($result == '') {
-return "$poststable.status = 'published'";
-} else {
-return "$poststable.status = 'published' and $poststable.id in 
-(select DISTINCT post from $catstable  where $result)";
-}
-}
-
-public function postschanged() {
-if ($this->hideposts) return;
-$this->data['archcount'] = tposts::i()->db->getcount($this->getwhere());
-$this->save();
-}
-
+    
+    if (count($include) > 0) {
+      $result .= sprintf('%s.item  in (%s)', $catstable , implode(',', $include));
+    }
+    
+    if (count($exclude) > 0) {
+      if (count($include) > 0) $result .= ' and ';
+      $result .= sprintf('%s.item  not in (%s)', $catstable , implode(',', $exclude));
+    }
+    
+    
+    if ($result == '') {
+      return "$poststable.status = 'published'";
+    } else {
+      return "$poststable.status = 'published' and $poststable.id in
+      (select DISTINCT post from $catstable  where $result)";
+    }
+  }
+  
+  public function postschanged() {
+    if ($this->hideposts) return;
+    $this->data['archcount'] = tposts::i()->db->getcount($this->getwhere());
+    $this->save();
+  }
+  
 }//class
