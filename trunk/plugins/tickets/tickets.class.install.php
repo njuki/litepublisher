@@ -8,6 +8,7 @@
 
 function tticketsInstall($self) {
   if (!dbversion) die("Ticket  system only for database version");
+$dirname = basename(dirname(__file__));
   $merger = tlocalmerger::i();
   $merger->addplugin(tplugins::getname(__file__));
   
@@ -35,12 +36,13 @@ function tticketsInstall($self) {
   $polls->garbage = false;
   $polls->save();
   
-  litepublisher::$classes->Add('tticket', 'ticket.class.php', basename(dirname(__file__) ));
-  litepublisher::$classes->Add('tticketsmenu', 'tickets.menu.class.php', basename(dirname(__file__) ));
-  litepublisher::$classes->Add('tticketeditor', 'admin.ticketeditor.class.php', basename(dirname(__file__)));
-  litepublisher::$classes->Add('tadmintickets', 'admin.tickets.class.php', basename(dirname(__file__)));
-  
-  litepublisher::$options->reguser = true;
+  litepublisher::$classes->Add('tticket', 'ticket.class.php', $dirname);
+  litepublisher::$classes->Add('tticketsmenu', 'tickets.menu.class.php', $dirname);
+  litepublisher::$classes->Add('tticketeditor', 'admin.ticketeditor.class.php', $dirname);
+  litepublisher::$classes->Add('tadmintickets', 'admin.tickets.class.php', $dirname);
+  litepublisher::$classes->Add('tadminticketoptions', 'admin.tickets.options.php', $dirname);
+
+    litepublisher::$options->reguser = true;
   $adminoptions = tadminoptions::i();
   $adminoptions->usersenabled = true;
   
@@ -57,6 +59,9 @@ function tticketsInstall($self) {
   
   $idmenu = $adminmenus->createitem($parent, 'editor', 'ticket', 'tticketeditor');
   $adminmenus->items[$idmenu]['title'] = tlocal::get('tickets', 'editortitle');
+
+  $idmenu = $adminmenus->createitem($parent, 'options', 'admin', 'tadminticketoptions');
+  $adminmenus->items[$idmenu]['title'] = tlocal::i()->options;
   
   $adminmenus->onexclude = $self->onexclude;
   $adminmenus->unlock();
@@ -106,6 +111,7 @@ function tticketsUninstall($self) {
   litepublisher::$classes->delete('tticket');
   litepublisher::$classes->delete('tticketeditor');
   litepublisher::$classes->delete('tadmintickets');
+  litepublisher::$classes->delete('tadminticketoptions');
   
   $adminmenus = tadminmenus::i();
   $adminmenus->lock();

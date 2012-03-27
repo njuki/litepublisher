@@ -54,7 +54,6 @@ class tticketeditor extends tposteditor {
     $args = targs::i();
     $args->id = $this->idpost;
     $args->title = htmlspecialchars_decode($ticket->title, ENT_QUOTES);
-    //$args->categories = $this->getpostcategories($ticket);
     $args->ajax = tadminhtml::getadminlink('/admin/ajaxposteditor.htm', "id=$ticket->id&get");
     $ajaxeditor = tajaxposteditor ::i();
     $args->raw = $ajaxeditor->geteditor('raw', $ticket->rawcontent, true);
@@ -65,17 +64,10 @@ class tticketeditor extends tposteditor {
     $args->code = $html->getinput('editor', 'code', tadminhtml::specchars($ticket->code), $lang->codetext);
     
     $args->fixed = $ticket->state == 'fixed';
-    $types = array(
-    'bug' => $lang->bug,
-    'feature' => $lang->feature,
-    'support' => $lang->support,
-    'task' => $lang->task
-    );
     
-    $args->typecombo= $html->array2combo($types, $ticket->type);
-    $args->typedisabled = $ticket->id == 0 ? '' : "disabled = 'disabled'";
-    
-    $states =array();
+    $args->catcombo = getcombocategories(ttickets::i()->cats, count($ticket->categories) ? $ticket->categories[0] : 0);
+
+        $states =array();
     foreach (array('fixed', 'opened', 'wontfix', 'invalid', 'duplicate', 'reassign') as $state) {
       $states[$state] = $lang->$state;
     }
@@ -120,7 +112,7 @@ class tticketeditor extends tposteditor {
     }
     $ticket = tticket::i((int)$id);
     $ticket->title = $title;
-    //$ticket->categories = self::processcategories();
+    $ticket->categories = array((int) $combocat);
     if (isset($tags)) $ticket->tagnames = $tags;
     if ($ticket->author == 0) $ticket->author = litepublisher::$options->user;
     if (isset($files))  {
