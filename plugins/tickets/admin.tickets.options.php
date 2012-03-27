@@ -13,7 +13,7 @@ class tadminticketoptions extends tadminmenu {
   }
   
   public function getcontent() {
-    $result = ''
+    $result = '';
     $tickets = ttickets::i();
     $lang = tlocal::admin('tickets');
 $args = new targs();
