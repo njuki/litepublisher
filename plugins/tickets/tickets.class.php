@@ -7,6 +7,7 @@
 **/
 
 class ttickets extends tposts {
+public $cats;
   
   public static function i() {
     return getinstance(__class__);
@@ -15,6 +16,7 @@ class ttickets extends tposts {
   protected function create() {
     parent::create();
     $this->childtable = 'tickets';
+$this->addmap('cats', array());
   }
   
   public function newpost() {
@@ -27,8 +29,19 @@ class ttickets extends tposts {
     $polls = tpolls::i();
     return $polls->add('', 'opened', 'button', $items);
   }
+
+  public function filtercats(tpost $post) {
+$cats = array_intersect($post->categories, $this->cats);
+if (count($cats) == 0) {
+$cats = array($this->cats[0]);
+} elseif (count($cats) > 1) {
+$cats = array($cats[0]);
+}
+$post->categories = $cats;
+}
   
   public function add(tpost $post) {
+$this->filtercats($post);
     $post->poll = $this->createpoll();
     $post->updatefiltered();
     //$post->status = 'draft';
@@ -48,6 +61,7 @@ class ttickets extends tposts {
   }
   
   public function edit(tpost $post) {
+$this->filtercats($post);
     $post->updatefiltered();
     return parent::edit($post);
   }
