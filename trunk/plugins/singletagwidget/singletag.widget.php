@@ -86,8 +86,8 @@ class tsingletagwidget extends  twidget {
     $items = $posts->sortbyposted($items);
     
     if ($this->items[$id]['invertorder']) {
-      $items = array_slice($items, 0 - $this->items[$id]['maxcount']);
-      $items = array_reverse($items);    $items = array_slice($items, 0 - $this->items[$id]['maxcount']);
+      $items = array_reverse($items);
+    $items = array_slice($items, 0 - $this->items[$id]['maxcount']);
     } else {
       $items = array_slice($items, 0, $this->items[$id]['maxcount']);
       

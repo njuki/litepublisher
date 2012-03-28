@@ -28,6 +28,7 @@ class thomepage extends tmenu  {
     $this->data['includecats'] = array();
     $this->data['excludecats'] = array();;
     $this->data['archcount'] = 0;
+    $this->data['parsetags'] = false;
     $this->coinstances[] = new tcoevents($this, 'onbeforegetitems', 'ongetitems');
   }
   
@@ -43,7 +44,7 @@ class thomepage extends tmenu  {
         $image = sprintf('<img src="%s" alt="Home image" />', $image);
       }
       $result .= $theme->simple($image . $this->content);
-      if (litepublisher::$options->parsepost) {
+      if (litepublisher::$options->parsepost || $this->parsetags) {
         $result = $theme->parse($result);
       }
       

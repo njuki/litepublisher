@@ -87,6 +87,19 @@ class tadmintags extends tadminmenu {
     $result .= $theme->getpages($this->url, litepublisher::$urlmap->page, ceil($count/$perpage));
     return $result;
   }
+
+private function set_view(array $item) {
+    extract($_POST, EXTR_SKIP);
+$item['idview'] = (int) $idview;
+$item['includechilds'] = isset($includechilds);
+$item['includeparents'] = isset($includeparents);
+$item['invertorder'] = isset($invertorder);
+$item['lite'] = isset($lite);
+$item['liteperpage'] = (int) trim($liteperpage);
+      if (isset($idperm)) $item['idperm'] = (int) $idperm;
+      if (isset($icon)) $item['icon'] = (int) $icon;
+return $item;
+}
   
   public function processform() {
     if (empty($_POST['title'])) return '';
@@ -99,17 +112,18 @@ class tadmintags extends tadminmenu {
       $id = $tags->add((int) $parent, $title);
       if (isset($order)) $tags->setvalue($id, 'customorder', (int) $order);
       if (isset($url)) $tags->edit($id, $title, $url);
-      if (isset($idview)) $tags->setvalue($id, 'idview', (int) $idview);
-      if (isset($idperm)) $tags->setvalue($id, 'idperm', (int) $idperm);
-      if (isset($icon)) $tags->setvalue($id, 'icon', (int) $icon);
+      if (isset($idview)) {
+$item =$tags->getitem($id);
+$item = $this->set_view($item);
+$this->items[$id] = $item;
+if ($tags->dbversion) $tags->db->updateassoc($item);
+}
     } else {
       $item = $tags->getitem($id);
       $item['title'] = $title;
       if (isset($parent)) $item['parent'] = (int) $parent;
       if (isset($order)) $item['customorder'] = (int) $order;
-      if (isset($idview)) $item['idview'] = (int) $idview;
-      if (isset($idperm)) $item['idperm'] = (int) $idperm;
-      if (isset($icon)) $item['icon'] = (int) $icon;
+      if (isset($idview)) $item = $this->set_view($item);
       $tags->items[$id] = $item;
       if (!empty($url) && ($url != $item['url'])) $tags->edit($id, $title, $url);
       $tags->items[$id] = $item;

@@ -358,9 +358,9 @@ class ttheme extends tevents {
     return $result;
   }
   
-  public function getpostsnavi(array $items, $lite, $url, $count) {
+  public function getpostsnavi(array $items, $lite, $url, $count, $liteperpage = 1000) {
     $result = $this->getposts($items, $lite);
-    $perpage = $lite ? 1000 : litepublisher::$options->perpage;
+    $perpage = $lite ? $liteperpage : litepublisher::$options->perpage;
     $result .= $this->getpages($url, litepublisher::$urlmap->page, ceil($count / $perpage));
     return $result;
   }
