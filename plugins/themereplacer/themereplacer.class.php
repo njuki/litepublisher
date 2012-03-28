@@ -41,6 +41,7 @@ $result->idview = $idview;
   }
   
   public function parsetheme() {
+if ($this->name == '') return false;
 if (!isset($this->source)) {    
 $this->source = new ttheme();
 }
@@ -57,6 +58,9 @@ $this->templates = $this->replace + $this->templates;
 return true;
   }
 
+
+public function install() {}
+public function uninstall() {}
 }//class
 
 class titemsreplacer extends titems {
@@ -69,6 +73,10 @@ class titemsreplacer extends titems {
     parent::create();
     $this->basename=  'plugins' .DIRECTORY_SEPARATOR  . strtolower(get_class($this));
   }
-  
+
+public function add($id) {
+$this->items[$id] = array();
+$this->save();
+}  
 
 }//class
