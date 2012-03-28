@@ -69,12 +69,16 @@ class tview extends titem_storage {
     }
     return false;
   }
+
+protected function get_theme_instance($name) {
+return ttheme::getinstance($name);
+}
   
   public function setthemename($name) {
     if ($name != $this->themename) {
       if (!ttheme::exists($name)) return $this->error(sprintf('Theme %s not exists', $name));
       $this->data['themename'] = $name;
-      $this->themeinstance = ttheme::getinstance($name);
+      $this->themeinstance = $this->get_theme_instance($name);
       $this->data['custom'] = $this->themeinstance->templates['custom'];
       $this->save();
       tviews::i()->themechanged($this);
@@ -84,7 +88,7 @@ class tview extends titem_storage {
   public function gettheme() {
     if (isset($this->themeinstance)) return $this->themeinstance;
     if (ttheme::exists($this->themename)) {
-      $this->themeinstance = ttheme::getinstance($this->themename);
+      $this->themeinstance = $this->get_theme_instance($this->themename);
       if (count($this->data['custom']) == count($this->themeinstance->templates['custom'])) {
         $this->themeinstance->templates['custom'] = $this->data['custom'];
       } else {
