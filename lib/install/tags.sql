@@ -9,6 +9,7 @@
   `title` text NOT NULL,
   `includeparents` boolean default false,
   `includechilds` boolean default false,
+  `invertorder` boolean default false,
   `lite` boolean default false,
   `liteperpage` int unsigned NOT NULL default '1000',
 

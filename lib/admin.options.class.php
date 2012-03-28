@@ -83,6 +83,7 @@ class Tadminoptions extends tadminmenu {
       case 'home':
       $home = thomepage::i();
       $args->hideposts = $home->hideposts;
+      $args->parsetags = $home->parsetags;
       $args->invertorder = $home->invertorder;
       $args->image = $home->image;
       $args->idhome =  $home->id;
@@ -194,6 +195,7 @@ class Tadminoptions extends tadminmenu {
       $home->lock();
       $home->image = $image;
       $home->hideposts = isset($hideposts);
+      $home->parsetags = isset($parsetags);
       $home->invertorder = isset($invertorder);
       $home->includecats = tadminhtml::check2array('category-');
       $home->excludecats = tadminhtml::check2array('exclude_category-');
