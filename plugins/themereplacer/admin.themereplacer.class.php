@@ -17,51 +17,71 @@ class tadminitemsreplacer implements iadmin{
   }
   
   public function getcontent() {
-    $plugin = ttagreplacer ::i();
+$result = '';
+    $plugin = titemsreplacer ::i();
     $html = tadminhtml::i();
-    $tabs = new tuitabs();
     $args = targs::i();
-    $about = tplugins::getabout(tplugins::getname(__file__));
-    $args->formtitle = $about['name'];
+$lang = tplugins::getlangabout(__file__);
+    $args->formtitle = $lang->formtitle;
+
+if (isset($_GET['action']) && ('add' == $_GET['action'])) {
+$args->name = '';
+$result .= $html->adminform('[text=name]', $args);
+}
+
+if (!empty($_GET['id'])) {
+$id = (int) $_GET['id'];
+if (isset($plugin->items[$id])) {
+    $tabs = new tuitabs();
+$args->id = $id;
     
-    $tabs->add($about['new'], $html->getinput('text',
-    'where-add', '', $about['where']) .
-    $html->getinput('text',
-    'search-add', '', $about['search']) .
+    $tabs->add($lang->new, $html->getinput('text',
+    'addtag', '', $lang->addtag) .
     $html->getinput('editor',
     'replace-add', '', $about['replace']) );
-    
-    foreach ($plugin->items as $i => $item) {
-      $tabs->add($item['where'],
-      $html->getinput('text',
-      "where-$i", tadminhtml::specchars($item['where']), $about['where']) .
-      $html->getinput('text',
-      "search-$i", tadminhtml::specchars($item['search']), $about['search']) .
+
+    $i = 0;
+    foreach ($plugin->items[$id] as $tag => $replace) {
+$i++;
+      $tabs->add($tag,
       $html->getinput('editor',
-      "replace-$i", tadminhtml::specchars($item['replace']), $about['replace']) );
+      "replace-$i", tadminhtml::specchars($replace), $lang->replace) );
     }
     
-    return $html->adminform($tabs->get(), $args);
+    $result .= $html->adminform($tabs->get(), $args);
+}
+}
+
+$result .= '<ul>';
+$adminurl = tadminhtml::getadminlink('/admin/plugins/', 'plugin=' . basename(dirname(__file__)));
+$views = tviews::i();
+foreach (array_keys($plugin->items) as $id) {
+$name= $views->items[$id]['name'];
+$result .= "<li><a href='$adminurl&id=$id'>$name</a></li>";
+}
+$result .= '</ul>';
+
+return $result;
   }
   
   public function processform() {
     $theme = tview::i(tviews::i()->defaults['admin'])->theme;
-    $plugin = ttagreplacer ::i();
+    $plugin = titemsreplacer ::i();
     $plugin->lock();
-    $plugin->items = array();
-    foreach ($_POST as $name => $value) {
-      if (!strbegin($name, 'where-')) continue;
-      $id = substr($name, strlen('where-'));
-      $where = trim($value);
-      if (!isset($theme->templates[$where]) || !is_string($theme->templates[$where])) continue;
-      $search = $_POST["search-$id"];
-      if ($search == '') continue;
-      $plugin->items[] = array(
-      'where' => $where,
-      'search' => $search,
-      'replace' => $_POST["replace-$id"]
-      );
-    }
+
+    $i = 0;
+    foreach ($plugin->items[$id] as $tag => $replace) {
+$i++;
+$k = "replace-$i";
+if (!isset($_POST[$k])) continue;
+$v = trim($_POST[$k]);
+if ($v) {
+$plugin->items[$id][$tag] = $v;
+} else {
+unset($plugin->items[$id][$tag]);
+}
+}
+
     $plugin->unlock();
     ttheme::clearcache();
     return '';
