@@ -6,7 +6,7 @@
 * and GPL (gpl.txt) licenses.
 **/
 
-class tadminitemsreplacer extends iadmin{
+class tadminitemsreplacer implements iadmin{
   
   public static function i() {
     return getinstance(__class__);
