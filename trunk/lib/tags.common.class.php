@@ -20,7 +20,7 @@ class tcommontags extends titems implements  itemplate {
   protected function create() {
     $this->dbversion = dbversion;
     parent::create();
-    $this->addevents('changed', 'onlite');
+    $this->addevents('changed');
     $this->factory = litepublisher::$classes->getfactory($this);
     $this->data['lite'] = false;
     $this->data['includechilds'] = false;
@@ -162,7 +162,11 @@ class tcommontags extends titems implements  itemplate {
       'idview' => $idview,
       'idperm' => 0,
       'icon' => 0,
-      'itemscount' => 0
+      'itemscount' => 0,
+'includechilds' => $this->includechilds,
+'includeparents' => $this->includeparents,
+'lite' => $this->lite,
+'liteperpage' => 1000
       ));
       $idurl =         $urlmap->add($url, get_class($this),  $id);
       $this->db->setvalue($id, 'idurl', $idurl);
@@ -182,7 +186,11 @@ class tcommontags extends titems implements  itemplate {
     'icon' => 0,
     'idview' => $idview,
     'idperm' => 0,
-    'itemscount' => 0
+    'itemscount' => 0,
+'includechilds' => $this->includechilds,
+'includeparents' => $this->includeparents,
+'lite' => $this->lite,
+'liteperpage' => 1000
     );
     $this->unlock();
     
@@ -388,28 +396,26 @@ class tcommontags extends titems implements  itemplate {
       $result = '';
     }
     
-    $lite = $this->lite;
-    $this->callevent('onlite', array($this->id, &$lite));
     $list = $this->getidposts();
     $item = $this->getitem($this->id);
-    $result .= $theme->getpostsnavi($list, $lite,$item['url'], $item['itemscount']);
+    $result .= $theme->getpostsnavi($list, (int) $item['lite'], $item['url'], $item['itemscount']);
     return $result;
   }
   
   public function getidposts() {
     if (isset($this->_idposts)) return $this->_idposts;
-    $lite = $this->lite;
-    $this->callevent('onlite', array($this->id, &$lite));
-    
-    $perpage = $lite ? 1000 : litepublisher::$options->perpage;
+    $item = $this->getitem($this->id);
+
+   
+    $perpage = (int) $item['lite'] ? $item['liteperpage'] : litepublisher::$options->perpage;
     $posts = litepublisher::$classes->posts;
     
     if ($this->dbversion) {
-      if ($this->includeparents || $this->includechilds) {
+      if (((int) $item['includeparents']) || ((int) $item['includechilds'])) {
         $this->loadall();
         $all = array($this->id);
-        if ($this->includeparents) $all = array_merge($all, $this->getparents($this->id));
-        if ($this->includechilds) $all = array_merge($all, $this->getchilds($this->id));
+        if ((int) $item['includeparents']) $all = array_merge($all, $this->getparents($this->id));
+        if ((int) $item['includechilds']) $all = array_merge($all, $this->getchilds($this->id));
         $tags = sprintf('in (%s)', implode(',', $all));
       } else {
         $tags = " = $this->id";
