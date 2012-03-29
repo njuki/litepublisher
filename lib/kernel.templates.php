@@ -123,7 +123,7 @@ class tview extends titem_storage {
       $views = tviews::i();
       $class = $views->itemexists($id) ? $views->items[$id]['class'] : __class__;
     }
-    return parent::iteminstance(__class__, $id);
+    return parent::iteminstance($class, $id);
   }
   
   public static function getinstancename() {
@@ -176,11 +176,15 @@ class tview extends titem_storage {
     return false;
   }
   
+  protected function get_theme_instance($name) {
+    return ttheme::getinstance($name);
+  }
+  
   public function setthemename($name) {
     if ($name != $this->themename) {
       if (!ttheme::exists($name)) return $this->error(sprintf('Theme %s not exists', $name));
       $this->data['themename'] = $name;
-      $this->themeinstance = ttheme::getinstance($name);
+      $this->themeinstance = $this->get_theme_instance($name);
       $this->data['custom'] = $this->themeinstance->templates['custom'];
       $this->save();
       tviews::i()->themechanged($this);
@@ -190,7 +194,7 @@ class tview extends titem_storage {
   public function gettheme() {
     if (isset($this->themeinstance)) return $this->themeinstance;
     if (ttheme::exists($this->themename)) {
-      $this->themeinstance = ttheme::getinstance($this->themename);
+      $this->themeinstance = $this->get_theme_instance($this->themename);
       if (count($this->data['custom']) == count($this->themeinstance->templates['custom'])) {
         $this->themeinstance->templates['custom'] = $this->data['custom'];
       } else {
@@ -417,7 +421,6 @@ class ttemplate extends tevents_storage {
     ttheme::$vars['template'] = $this;
     $this->itemplate = $context instanceof itemplate;
     $this->view = $this->get_view($context);
-    //$this->itemplate ? tview::getview($context) : tview::i();
     $theme = $this->view->theme;
     $this->ltoptions['themename'] = $theme->name;
     litepublisher::$classes->instances[get_class($theme)] = $theme;
@@ -947,9 +950,9 @@ class ttheme extends tevents {
     return $result;
   }
   
-  public function getpostsnavi(array $items, $lite, $url, $count) {
+  public function getpostsnavi(array $items, $lite, $url, $count, $liteperpage = 1000) {
     $result = $this->getposts($items, $lite);
-    $perpage = $lite ? 1000 : litepublisher::$options->perpage;
+    $perpage = $lite ? $liteperpage : litepublisher::$options->perpage;
     $result .= $this->getpages($url, litepublisher::$urlmap->page, ceil($count / $perpage));
     return $result;
   }

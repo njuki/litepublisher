@@ -7,30 +7,30 @@
 **/
 
 class tviewthemereplacer extends tview {
-
-protected function get_theme_instance($name) {
-return tthemereplacer::get_instance($name, $this->id);
-}
-
+  
+  protected function get_theme_instance($name) {
+    return tthemereplacer::get_instance($name, $this->id);
+  }
+  
 }//class
 
 class tthemereplacer extends ttheme {
-protected $replace;
-protected $source;
-public $idview;
-
+  protected $replace;
+  protected $source;
+  public $idview;
+  
   public static function get_instance($name, $idview) {
     if (isset(self::$instances[$name])) return self::$instances[$name];
-$class = 'ttheme';
-if (isset(litepublisher::$classes->instances[$class])) {
-$result = litepublisher::$classes->instances[$class];
-    if ($result->name != '') $result = litepublisher::$classes->newinstance(__class__);
-} else {
-$result = litepublisher::$classes->newinstance(__class__);
-litepublisher::$classes->instances[$class] = $result;
-}
-
-$result->idview = $idview;
+    $class = 'ttheme';
+    if (isset(litepublisher::$classes->instances[$class])) {
+      $result = litepublisher::$classes->instances[$class];
+      if ($result->name != '') $result = litepublisher::$classes->newinstance(__class__);
+    } else {
+      $result = litepublisher::$classes->newinstance(__class__);
+      litepublisher::$classes->instances[$class] = $result;
+    }
+    
+    $result->idview = $idview;
     $result->name = $name;
     $result->load();
     return $result;
@@ -41,24 +41,24 @@ $result->idview = $idview;
   }
   
   public function parsetheme() {
-if ($this->name == '') return false;
-if (!isset($this->source)) {    
-$this->source = new ttheme();
-}
-
-if (!isset($this->replace)) {
-$this->replace = titemsreplacer::i()->items[$this->idview];
-}
-
-$this->source->name = $this->name;
-$this->source->load();
-      self::$instances[$this->name] = $this;
-$this->templates = $this->replace + $this->templates;
-      $this->save();
-return true;
+    if ($this->name == '') return false;
+    if (!isset($this->source)) {
+      $this->source = new ttheme();
+    }
+    
+    if (!isset($this->replace)) {
+      $this->replace = titemsreplacer::i()->items[$this->idview];
+    }
+    
+    $this->source->name = $this->name;
+    $this->source->load();
+    self::$instances[$this->name] = $this;
+    $this->templates = $this->replace + $this->source->templates;
+    $this->save();
+    return true;
   }
-
-
+  
+  
 public function install() {}
 public function uninstall() {}
 }//class
@@ -73,10 +73,10 @@ class titemsreplacer extends titems {
     parent::create();
     $this->basename=  'plugins' .DIRECTORY_SEPARATOR  . strtolower(get_class($this));
   }
-
-public function add($id) {
-$this->items[$id] = array();
-$this->save();
-}  
-
+  
+  public function add($id) {
+    $this->items[$id] = array();
+    $this->save();
+  }
+  
 }//class

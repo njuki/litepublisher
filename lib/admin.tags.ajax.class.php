@@ -40,11 +40,11 @@ class tajaxtageditor extends tajaxposteditor  {
       'idview' => isset($views->defaults[$name]) ? $views->defaults[$name] : 1,
       'idperm' => 0,
       'icon' => 0,
-'includechilds' => $tags->includechilds,
-'includeparents' => $tags->includeparents,
-'invertorder' => false,
-'lite' => $tags->lite,
-'liteperpage' => 1000,
+      'includechilds' => $tags->includechilds,
+      'includeparents' => $tags->includeparents,
+      'invertorder' => false,
+      'lite' => $tags->lite,
+      'liteperpage' => 1000,
       'url' => '',
       'keywords' => '',
       'description' => '',
@@ -53,16 +53,16 @@ class tajaxtageditor extends tajaxposteditor  {
     } else {
       $item = $tags->getitem($id);
     }
-
+    
     switch ($_GET['get']) {
       case 'view':
-if ($id > 0) {
-foreach (array('includechilds', 'includeparents', 'invertorder', 'lite') as $prop) {
-$item[$prop] = ((int) $item[$prop]) > 0;
-}
-}
-$args = new targs();
-$args->add($item);
+      if ($id > 0) {
+        foreach (array('includechilds', 'includeparents', 'invertorder', 'lite') as $prop) {
+          $item[$prop] = ((int) $item[$prop]) > 0;
+        }
+      }
+      $args = new targs();
+      $args->add($item);
       $result = $html->parsearg('[checkbox=includechilds] [checkbox=includeparents] [checkbox=invertorder] [checkbox=lite] [text=liteperpage]', $args);
       $result .= $this->getviewicon($item['idview'], $item['icon']);
       $result .= tadminperms::getcombo($item['idperm']);

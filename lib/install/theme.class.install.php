@@ -15,4 +15,3 @@ function tthemeInstall($self) {
   $self->name = 'default';
   $self->parsetheme();
 }
-?>
