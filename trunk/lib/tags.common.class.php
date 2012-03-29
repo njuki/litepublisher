@@ -163,11 +163,11 @@ class tcommontags extends titems implements  itemplate {
       'idperm' => 0,
       'icon' => 0,
       'itemscount' => 0,
-'includechilds' => $this->includechilds,
-'includeparents' => $this->includeparents,
-'invertorder' => false,
-'lite' => $this->lite,
-'liteperpage' => 1000
+      'includechilds' => $this->includechilds,
+      'includeparents' => $this->includeparents,
+      'invertorder' => false,
+      'lite' => $this->lite,
+      'liteperpage' => 1000
       ));
       $idurl =         $urlmap->add($url, get_class($this),  $id);
       $this->db->setvalue($id, 'idurl', $idurl);
@@ -188,11 +188,11 @@ class tcommontags extends titems implements  itemplate {
     'idview' => $idview,
     'idperm' => 0,
     'itemscount' => 0,
-'includechilds' => $this->includechilds,
-'includeparents' => $this->includeparents,
-'invertorder' => false,
-'lite' => $this->lite,
-'liteperpage' => 1000
+    'includechilds' => $this->includechilds,
+    'includeparents' => $this->includeparents,
+    'invertorder' => false,
+    'lite' => $this->lite,
+    'liteperpage' => 1000
     );
     $this->unlock();
     
@@ -407,11 +407,11 @@ class tcommontags extends titems implements  itemplate {
   public function getidposts() {
     if (isset($this->_idposts)) return $this->_idposts;
     $item = $this->getitem($this->id);
-$includeparents = (int) $item['includeparents'];
-$includechilds = (int) $item['includechilds'];
-       $perpage = (int) $item['lite'] ? $item['liteperpage'] : litepublisher::$options->perpage;
+    $includeparents = (int) $item['includeparents'];
+    $includechilds = (int) $item['includechilds'];
+    $perpage = (int) $item['lite'] ? $item['liteperpage'] : litepublisher::$options->perpage;
     $posts = litepublisher::$classes->posts;
-
+    
     if ($this->dbversion) {
       if ($includeparents || $includechilds) {
         $this->loadall();
@@ -426,7 +426,7 @@ $includechilds = (int) $item['includechilds'];
       $from = (litepublisher::$urlmap->page - 1) * $perpage;
       $itemstable  = $this->itemsposts->thistable;
       $poststable = $posts->thistable;
-$order = (int) $item['invertorder'] ? 'asc' : 'desc';
+      $order = (int) $item['invertorder'] ? 'asc' : 'desc';
       $this->_idposts = $posts->select("$poststable.status = 'published' and $poststable.id in
       (select DISTINCT post from $itemstable  where $itemstable .item $tags)",
       "order by $poststable.posted $order limit $from, $perpage");
@@ -448,7 +448,7 @@ $order = (int) $item['invertorder'] ? 'asc' : 'desc';
       
       $items = $posts->stripdrafts($items);
       $items = $posts->sortbyposted($items);
-if ($item['invertorder']) $items = array_reverse($items);
+      if ($item['invertorder']) $items = array_reverse($items);
       $this->_idposts = array_slice($items, (litepublisher::$urlmap->page - 1) * $perpage, $perpage);
     }
     return $this->_idposts;

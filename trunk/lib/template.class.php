@@ -70,7 +70,6 @@ class ttemplate extends tevents_storage {
     ttheme::$vars['template'] = $this;
     $this->itemplate = $context instanceof itemplate;
     $this->view = $this->get_view($context);
-    //$this->itemplate ? tview::getview($context) : tview::i();
     $theme = $this->view->theme;
     $this->ltoptions['themename'] = $theme->name;
     litepublisher::$classes->instances[get_class($theme)] = $theme;

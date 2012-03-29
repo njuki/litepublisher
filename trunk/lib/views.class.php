@@ -17,7 +17,7 @@ class tview extends titem_storage {
       $views = tviews::i();
       $class = $views->itemexists($id) ? $views->items[$id]['class'] : __class__;
     }
-    return parent::iteminstance(__class__, $id);
+    return parent::iteminstance($class, $id);
   }
   
   public static function getinstancename() {
@@ -69,10 +69,10 @@ class tview extends titem_storage {
     }
     return false;
   }
-
-protected function get_theme_instance($name) {
-return ttheme::getinstance($name);
-}
+  
+  protected function get_theme_instance($name) {
+    return ttheme::getinstance($name);
+  }
   
   public function setthemename($name) {
     if ($name != $this->themename) {

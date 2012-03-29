@@ -87,19 +87,19 @@ class tadmintags extends tadminmenu {
     $result .= $theme->getpages($this->url, litepublisher::$urlmap->page, ceil($count/$perpage));
     return $result;
   }
-
-private function set_view(array $item) {
+  
+  private function set_view(array $item) {
     extract($_POST, EXTR_SKIP);
-$item['idview'] = (int) $idview;
-$item['includechilds'] = isset($includechilds);
-$item['includeparents'] = isset($includeparents);
-$item['invertorder'] = isset($invertorder);
-$item['lite'] = isset($lite);
-$item['liteperpage'] = (int) trim($liteperpage);
-      if (isset($idperm)) $item['idperm'] = (int) $idperm;
-      if (isset($icon)) $item['icon'] = (int) $icon;
-return $item;
-}
+    $item['idview'] = (int) $idview;
+    $item['includechilds'] = isset($includechilds);
+    $item['includeparents'] = isset($includeparents);
+    $item['invertorder'] = isset($invertorder);
+    $item['lite'] = isset($lite);
+    $item['liteperpage'] = (int) trim($liteperpage);
+    if (isset($idperm)) $item['idperm'] = (int) $idperm;
+    if (isset($icon)) $item['icon'] = (int) $icon;
+    return $item;
+  }
   
   public function processform() {
     if (empty($_POST['title'])) return '';
@@ -113,11 +113,11 @@ return $item;
       if (isset($order)) $tags->setvalue($id, 'customorder', (int) $order);
       if (isset($url)) $tags->edit($id, $title, $url);
       if (isset($idview)) {
-$item =$tags->getitem($id);
-$item = $this->set_view($item);
-$this->items[$id] = $item;
-if ($tags->dbversion) $tags->db->updateassoc($item);
-}
+        $item =$tags->getitem($id);
+        $item = $this->set_view($item);
+        $this->items[$id] = $item;
+        if ($tags->dbversion) $tags->db->updateassoc($item);
+      }
     } else {
       $item = $tags->getitem($id);
       $item['title'] = $title;

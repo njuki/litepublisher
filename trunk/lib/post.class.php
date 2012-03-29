@@ -728,7 +728,7 @@ class tpost extends titem implements  itemplate {
   }
   
   public function getpage($i) {
-    if ( isset($This->data['pages'][$i]))   return $this->data['pages'][$i];
+    if ( isset($this->data['pages'][$i]))   return $this->data['pages'][$i];
     if (dbversion && ($this->id > 0)) {
       if ($r = $this->getdb('pages')->getassoc("(id = $this->id) and (page = $i) limit 1")) {
         $s = $r['content'];
@@ -765,7 +765,7 @@ class tpost extends titem implements  itemplate {
   
   public function getpagescount() {
     if (dbversion) return $this->data['pagescount'] + 1;
-    return isset($this->data['pages']) ? count($this->data['pages']) : 1;
+    return isset($this->data['pages']) ? count($this->data['pages']) + 1: 1;
   }
   
   public function getcountpages() {
