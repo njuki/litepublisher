@@ -533,13 +533,11 @@ class twidgets extends titems_storage {
       
       case 'include':
       $filename = twidget::getcachefilename($id, $sidebar);
-      if (file_exists($filename)) {
-        $result = file_get_contents($filename);
-      } else {
+$result = tfilestorage::getfile($filename);
+      if (!$result) {
         $widget = $this->getwidget($id);
         $result = $widget->getcontent($id, $sidebar);
-        file_put_contents($filename, $result);
-        @chmod($filename, 0666);
+        tfilestorage::setfile($filename, $result);
       }
       break;
       
