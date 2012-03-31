@@ -100,13 +100,21 @@ class tdbmanager  {
   public function delete_enum($table, $column, $value) {
     if ($values = $this->getenum($table, $column)) {
       $value = trim($value, ' \'"');
-      if (false !== ($i = array_search($value, $values))) {
+$i = array_search($value, $values);
+      if (false === $i) return;
         unset($values[$i]);
         $default = $values[0];
         $this->exec("update $this->prefix$table set $column = '$default' where $column = '$value'");
-        $this->setenum($table, $column, $values);
+    $items = implode("','", $values);
+$items = "'$items'";
+    $tmp = $column . '_tmp';
+    $this->exec("alter table $this->prefix$table add $tmp enum($items)");
+foreach ($values as $name) {
+        $this->exec("update $this->prefix$table set $tmp = '$name' where $column = '$name'");
+}
+    $this->exec("alter table $this->prefix$table drop $column");
+    $this->exec("alter table $this->prefix$table change $tmp $column enum($items)");
       }
-    }
   }
   
   public function getdatabases() {
