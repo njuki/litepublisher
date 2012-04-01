@@ -6,7 +6,6 @@
 * and GPL (gpl.txt) licenses.
 **/
 if (!class_exists('tkeptcomments', false)) {
-  if (dbversion) {
     class tkeptcomments extends tdata {
       
       public static function i() {
@@ -42,41 +41,6 @@ if (!class_exists('tkeptcomments', false)) {
       
     }//class
     
-  } else {
-    
-    class tkeptcomments extends titems {
-      
-      public static function i() {
-        return getinstance(__class__);
-      }
-      
-      protected function create() {
-        parent::create();
-        $this->basename ='comments.kept';
-      }
-      
-      public function deleteold() {
-        foreach ($this->items as $id => $item) {
-          if ($item['date']+ 600 < time()) unset($this->items[$id]);
-        }
-      }
-      
-      public function add($values) {
-        $confirmid = md5uniq();
-        $this->items[$confirmid] =$values;
-        $this->save();
-        return $confirmid;
-      }
-      
-      public function getitem($confirmid) {
-        if (!isset($this->items[$confirmid])) return false;
-        $this->save();
-        return $this->items[$confirmid];
-      }
-      
-    }//class
-    
-  }
 }
 
 class tcommentform extends tevents {
