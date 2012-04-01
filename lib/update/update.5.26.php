@@ -10,7 +10,7 @@ $man = tdbmanager::i();
 $man->delete_enum('users', 'status', 'lock');
 $man->addenum('users', 'status', 'notconfirmed');
 
-$man->alter('posts', "add `comments_status` enum('closed','reg','guest','email') default 'email'");
+$man->alter('posts', "add `comments_status` enum('closed','reg','guest','notconfirmed') default 'notconfirmed'");
 $db = litepublisher::$db;
 $db->table = 'posts';
 $db->update("comments_status = 'closed'", "commentsenabled = 0");

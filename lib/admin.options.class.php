@@ -30,7 +30,23 @@ class Tadminoptions extends tadminmenu {
       
       case 'comments':
       $form = new tautoform(litepublisher::$options, 'options', 'commentform');
-      $form->add($form->filtercommentstatus, $form->commentsapproved, $form->checkduplicate, $form->defaultsubscribe, $form->commentsdisabled, $form->autocmtform, $form->commentsenabled, $form->pingenabled,
+if (dbversion) {
+      $form->addprop(array(
+'obj' => litepublisher::$options,
+'propname' => comments_status',
+'type' => 'combo',
+'items' => array(
+'closed' => $lang->closed,
+'reg' => $lang->reg,
+'guest' => $lang->guest,
+'notconfirmed' => $lang->notconfirmed
+)
+));
+} else {
+      $form->add($form->commentsenabled);
+}
+
+      $form->add($form->filtercommentstatus, $form->commentsapproved, $form->checkduplicate, $form->defaultsubscribe, $form->commentsdisabled, $form->autocmtform, $form->pingenabled,
       $form->commentpages, $form->commentsperpage, $form->comments_invert_order);
       $form->obj = litepublisher::$classes->commentmanager;
       $form->add($form->sendnotification, $form->hidelink,  $form->redir, $form->nofollow);
