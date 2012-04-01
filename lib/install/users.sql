@@ -5,7 +5,7 @@
   `expired` datetime NOT NULL default '2010-01-01 10:01:01',
   `idgroups` text NOT NULL,
   `trust` int unsigned NOT NULL default '0',
-  `status` enum('approved','hold','wait','anonim') default 'wait',
+  `status` enum('wait', 'approved','hold','notconfirmed') default 'wait',
   `name` text not null,
   `website` varchar(255) NOT NULL,
 

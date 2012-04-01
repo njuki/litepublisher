@@ -10,14 +10,14 @@ class tposttransform  {
   public $post;
   public static $arrayprops= array('categories', 'tags', 'files');
   public static $intprops= array('id', 'idurl', 'parent', 'author', 'revision', 'icon', 'commentscount', 'pingbackscount', 'pagescount', 'idview', 'idperm');
-  public static $boolprops= array('commentsenabled', 'pingenabled');
+  public static $boolprops= array('pingenabled');
   public static $props = array('id', 'idurl', 'parent', 'author', 'revision', 'class',
   //'created', 'modified',
   'posted',
   'title', 'title2', 'filtered', 'excerpt', 'rss', 'keywords', 'description', 'head', 'moretitle',
   'categories', 'tags', 'files',
   'password', 'idview', 'idperm', 'icon',
-  'status', 'commentsenabled', 'pingenabled',
+  'status', 'comments_status', 'pingenabled',
   'commentscount', 'pingbackscount', 'pagescount',
   );
   
