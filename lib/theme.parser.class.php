@@ -13,7 +13,8 @@ class tthemeparser extends tevents {
   private $abouts;
   private $sidebar_index;
   private $pathmap;
-  
+private $parsedtags;
+
   public static function i() {
     return getinstance(__class__);
   }
@@ -145,6 +146,8 @@ class tthemeparser extends tevents {
       $theme->parent = $parent->name;
     }
     
+$this->parsedtags = array();
+
     $s = self::getfile($filename);
     $this->parsetags($theme, $s);
     $this->afterparse($theme);
@@ -364,6 +367,7 @@ class tthemeparser extends tevents {
       }
       
       public function set_value($name, $value) {
+$this->parsedtags[] = $name;
         //fix old ver
         switch ($name) {
           case 'content.menu':
@@ -566,6 +570,23 @@ class tthemeparser extends tevents {
         $templates['content.post.templatecomments.confirmform'] = str_replace('$lang.formhead', '$lang.checkspam', $templates['content.post.templatecomments.confirmform']);
       }
       
+$regform = 'content.post.templatecomments.regform';
+if (!in_array($regform, $this->parsedtags) && in_array('content.admin.editor', $this->parsedtags)) {
+$editor = strtr($templates['content.admin.editor'], array(
+    '$lang.$name' => $this->replacelang ? tlocal::i('comment')->content : '$lang.content',
+    '$name' => 'content',
+    '$value' => ''
+));
+$templates[$regform] =  
+'<for								<form action="$site.url/send-comment.php" method="post" id="commentform">'
+ . $editor .
+'<p>
+									<input type="hidden" name="postid" value="$postid" />
+									<input type="hidden" name="antispam" value="$antispam" />
+
+									<input name="submitbutton" type="submit" id="submitbutton" value="$lang.send" /></p>
+								</form>';
+}
       public static function getmetaclasses($s) {
         $result = array('rss' => '', 'comments' => '', 'media' => '', 'foaf' => '', 'profile' => '', 'sitemap' => '');
         foreach (explode(',', $s) as $class) {
@@ -879,8 +900,13 @@ class tthemeparser extends tevents {
         'tag' => '$form',
         'replace' => ''
         ),
+
+        'content.post.templatecomments.regform' => array(
+        'tag' => '$regform',
+        'replace' => ''
+        ),
         
-        'content.post.templatecomments.confirmform' => array(
+                'content.post.templatecomments.confirmform' => array(
         'tag' => '$confirmform',
         'replace' => ''
         ),
