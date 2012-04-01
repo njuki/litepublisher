@@ -8,7 +8,7 @@
   `icon` int unsigned NOT NULL default '0',
   `idview` int unsigned NOT NULL default '1',
   `status` enum('published','draft','future','deleted') default 'published',
-  `comments_status` enum('closed','reg','guest','email') default 'guest',
+  `comments_status` enum('closed','reg','guest','notconfirmed') default 'notconfirmed',
   `pingenabled` boolean default true,
   `commentscount` int unsigned NOT NULL default '0',
   `pingbackscount` int unsigned NOT NULL default '0',

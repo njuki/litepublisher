@@ -159,7 +159,17 @@ class tajaxposteditor  extends tevents {
       
       case 'status':
       $args = new targs();
+if (dbversion) {
+      $args->comments_status= tadminhtml::array2combo(array(
+'closed' => $lang->closed,
+'reg' => $lang->reg,
+'guest' => $lang->guest,
+'notconfirmed' => $lang->notconfirmed
+      ), $post->comments_status);
+      } else {
       $args->commentsenabled = $post->commentsenabled;
+}
+
       $args->pingenabled = $post->pingenabled;
       $args->status= tadminhtml::array2combo(array(
       'published' => $lang->published,
@@ -169,8 +179,8 @@ class tajaxposteditor  extends tevents {
       $args->perms = tadminperms::getcombo($post->idperm);
       $args->password = $post->password;
       $result = $html->parsearg(
-      '[checkbox=commentsenabled]
-      [checkbox=pingenabled]
+      (dbversion ? '[combo=comments_status]' : '[checkbox=commentsenabled]') .
+      '[checkbox=pingenabled]
       [combo=status]
       $perms
       [password=password]

@@ -90,7 +90,6 @@ class tpost extends titem implements  itemplate {
     'tags' => array(),
     'files' => array(),
     'status' => 'published',
-    //'commentsenabled' => litepublisher::$options->commentsenabled,
 'comments_status' => litepublisher::$options->comments_status,
     'pingenabled' => litepublisher::$options->pingenabled,
     'password' => '',
@@ -100,7 +99,9 @@ class tpost extends titem implements  itemplate {
     'pagescount' => 0,
     'pages' => array()
     );
-    
+
+if (!dbversion)     $this->data['commentsenabled'] = litepublisher::$options->commentsenabled;
+
     $this->factory = litepublisher::$classes->getfactory($this);
     $posts = $this->factory->posts;
     foreach ($posts->itemcoclasses as $class) {
@@ -631,6 +632,13 @@ class tpost extends titem implements  itemplate {
 
 public function getcommentsenabled() {
 return dbversion ? ('closed' != $this->data['comments_status']) : $this->data['commentsenabled'];
+}
+
+public function setcommentsenabled($value) {
+if (dbversion) {$this->data['comments_status'] = $value ? litepublisher::$options->comments_status : 'closed';
+} else {
+$this->data['commentsenabled'] = $value;
+}
 }
   
   public function get_excerpt() {

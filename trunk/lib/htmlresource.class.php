@@ -417,8 +417,7 @@ class tautoform {
     $result = '';
     $lang = tlocal::i();
     $theme = ttheme::i();
-    $admin = $theme->content->admin;
-    $admin->tostring = true;
+
     foreach ($this->props as $prop) {
     $value = $prop['obj']->{$prop['propname']};
       switch ($prop['type']) {
@@ -436,7 +435,7 @@ class tautoform {
         break;
       }
       
-    $result .= strtr($admin->{$prop['type']}, array(
+    $result .= strtr($theme->templates['content.admin.' . $prop['type']], array(
     '$lang.$name' => empty($prop['title']) ? $lang->{$prop['propname']} : $prop['title'],
       '$name' => $prop['propname'],
       '$value' => $value
@@ -450,7 +449,7 @@ class tautoform {
     $args->formtitle = $this->_title;
     $args->items = $this->getcontent();
     $theme = ttheme::i();
-    return $theme->parsearg($theme->content->admin->form, $args);
+    return $theme->parsearg($theme->templates['content.admin.form'], $args);
   }
   
   public function processform() {
