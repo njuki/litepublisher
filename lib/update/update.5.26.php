@@ -35,5 +35,34 @@ $man->alter('posts', "add `comments_status` enum('closed','reg','guest','notconf
 $db->table = 'posts';
 $db->update("comments_status = 'closed'", "commentsenabled = 0");
 $man->alter('posts', "drop commentsenabled");
+
+$group = 'comment';
+    $from = 0;
+$db->table = 'comusers';
+    while ($items = $db->res2assoc($db->query("select * from $db->comusers limit $from, 100"))) {
+$from += count($items);
+      foreach ($items as $item) {
+$db->table = 'users';
+if ($id = $db->findid('email = '. dbquote($item['email']))) {
+} else {
+$id = $db->add(array(
+    'email' => $item['email'],
+    'name' =>$item['name'],
+    'website' => $item['url'],
+    'password' => '',
+    'cookie' =>  '',
+    'expired' => sqldate(),
+    'idgroups' => $group,
+    'trust' => 0,
+    'status' => 'notconfirmed'
+));
+}
+
+        $db->query("update $db->comments set author = $id where $author= " . $item['id']);
+      }
+
+$db->table = 'comusers';
+    }
+
 }
 }
