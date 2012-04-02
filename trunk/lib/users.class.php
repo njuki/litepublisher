@@ -36,7 +36,7 @@ class tusers extends titems {
   }
   
   public function getitem($id) {
-    if ($id == 1) return array(
+    if (($id == 1) && dbversion) return array(
     'email' =>litepublisher::$options->email,
     'name' => litepublisher::$site->author,
     'website' => litepublisher::$site->url . '/',
@@ -127,7 +127,7 @@ class tusers extends titems {
     return true;
   }
   
-  protected function setgroups($id, array $idgroups) {
+  public function setgroups($id, array $idgroups) {
     $this->items[$id]['idgroups'] = $idgroups;
     if ($this->dbversion) {
       $db = $this->getdb($this->grouptable);
