@@ -31,9 +31,10 @@ class Tadminoptions extends tadminmenu {
       case 'comments':
       $form = new tautoform(litepublisher::$options, 'options', 'commentform');
 if (dbversion) {
+$lang = tlocal::admin();
       $form->addprop(array(
 'obj' => litepublisher::$options,
-'propname' => comments_status',
+'propname' => 'comments_status',
 'type' => 'combo',
 'items' => array(
 'closed' => $lang->closed,
