@@ -14,5 +14,6 @@ $plugin->save();
 }
 }
 
-if (dbversion) tadminmoderator::refilter();
+if (dbversion) 
+tadminmoderator::refilter();
 }
