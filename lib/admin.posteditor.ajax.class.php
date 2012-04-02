@@ -164,7 +164,7 @@ if (dbversion) {
 'closed' => $lang->closed,
 'reg' => $lang->reg,
 'guest' => $lang->guest,
-'notconfirmed' => $lang->notconfirmed
+'comuser' => $lang->comuser
       ), $post->comments_status);
       } else {
       $args->commentsenabled = $post->commentsenabled;

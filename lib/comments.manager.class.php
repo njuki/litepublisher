@@ -239,12 +239,12 @@ class tcommentmanager extends tevents {
     if (dbversion) {
       $db = litepublisher::$db;
       $result = $db->res2assoc($db->query("select $db->comments.*,
-      $db->comusers.name as name, $db->comusers.email as email, $db->comusers.url as url,
+      $db->users.name as name, $db->users.email as email, $db->users.website as url,
       $db->posts.title as title, $db->posts.commentscount as commentscount,
       $db->urlmap.url as posturl
-      from $db->comments, $db->comusers, $db->posts, $db->urlmap
+      from $db->comments, $db->users, $db->posts, $db->urlmap
       where $db->comments.status = '$status' and
-      $db->comusers.id = $db->comments.author and
+      $db->users.id = $db->comments.author and
       $db->posts.id = $db->comments.post and
       $db->urlmap.id = $db->posts.idurl and
       $db->posts.status = 'published' and

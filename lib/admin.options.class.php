@@ -40,7 +40,7 @@ $lang = tlocal::admin();
 'closed' => $lang->closed,
 'reg' => $lang->reg,
 'guest' => $lang->guest,
-'notconfirmed' => $lang->notconfirmed
+'comuser' => $lang->comuser
 )
 ));
 } else {
