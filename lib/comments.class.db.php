@@ -253,6 +253,7 @@ class tcomments extends titems {
 }//class
 
 class tcomment extends tdata {
+private static $md5;
   
   public function __construct($id = 0) {
     if (!isset($id)) return false;
@@ -351,12 +352,18 @@ class tcomment extends tdata {
   
   public function getmd5email() {
     $email = $this->data['email'];
-    return $email ? md5($email) : '';
+if ($email) {
+if (isset(self::$md5[$email]) self::$md5[$email];
+$md5 = md5($email);
+self::$md5[$email] = $md5;
+return $md5;
+}
+return '';
   }
   
   public function getgravatar() {
-    if ($email = $this->data['email']) {
-      return sprintf('<img class="avatar photo" src="http://www.gravatar.com/avatar/%s?s=32&amp;r=g&amp;d=wavatar" title="%2$s" alt="%2$s"/>', md5($email), $this->name);
+    if ($md5email = $this->getmd5email()) {
+      return sprintf('<img class="avatar photo" src="http://www.gravatar.com/avatar/%s?s=32&amp;r=g&amp;d=wavatar" title="%2$s" alt="%2$s"/>', $md5email, $this->name);
     } else {
       return '';
     }

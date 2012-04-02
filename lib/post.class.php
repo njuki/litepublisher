@@ -635,7 +635,8 @@ return dbversion ? ('closed' != $this->data['comments_status']) : $this->data['c
 }
 
 public function setcommentsenabled($value) {
-if (dbversion) {$this->data['comments_status'] = $value ? litepublisher::$options->comments_status : 'closed';
+if (dbversion) {
+$this->data['comments_status'] = $value ? litepublisher::$options->comments_status : 'closed';
 } else {
 $this->data['commentsenabled'] = $value;
 }
@@ -795,13 +796,6 @@ $this->data['commentsenabled'] = $value;
     $url = $this->url;
     if (($c > 1) && !litepublisher::$options->comments_invert_order) $url = rtrim($url, '/') . "/page/$c/";
     return $url;
-  }
-  
-  public function setcommentsenabled($value) {
-    if ($value != $this->commentsenabled) {
-      if (!dbversion) $this->data['commentscount'] =  $this->comments->count;
-      $this->data['commentsenabled'] = $value;
-    }
   }
   
   public function getcommentscount() {
