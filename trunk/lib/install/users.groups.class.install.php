@@ -15,7 +15,7 @@ function tusergroupsInstall($self) {
   $self->add('subeditor', $lang->subeditor, '/admin/posts/');
   $self->add('author', $lang->author, '/admin/posts/');
   $self->add('moderator', $lang->moderator, '/admin/comments/');
-  $self->add('subscriber', $lang->subscriber, '/admin/subscribers/');
+  $self->add('commentator', $lang->commentator, '/admin/subscribers/');
   $self->add('nobody', $lang->nobody, '/admin/');
   $self->unlock();
 }

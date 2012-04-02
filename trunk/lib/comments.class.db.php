@@ -107,11 +107,12 @@ class tcomments extends titems {
   }
   
   public function select($where, $limit) {
+dumpstr($where);
     if ($where != '') $where .= ' and ';
-    $comusers = tcomusers::i();
-    $authors = $comusers->thistable;
     $table = $this->thistable;
-    $res = litepublisher::$db->query("select $table.*, $authors.name, $authors.email, $authors.url, $authors.trust from $table, $authors
+$authors = litepublisher::$db->prefix. 'users';
+
+    $res = litepublisher::$db->query("select $table.*, $authors.name, $authors.email, $authors.website, $authors.trust from $table, $authors
     where $where $authors.id = $table.author $limit");
     
     return $this->res2items($res);
@@ -253,7 +254,7 @@ class tcomments extends titems {
 }//class
 
 class tcomment extends tdata {
-private static $md5;
+private static $md5 = array();
   
   public function __construct($id = 0) {
     if (!isset($id)) return false;
@@ -282,8 +283,8 @@ private static $md5;
   
   public function getauthorlink() {
     $name = $this->data['name'];
-    $url = $this->data['url'];
-    if ($url == '')  return $name;
+    $website = $this->data['website'];
+    if ($website == '')  return $name;
     $manager = tcommentmanager::i();
     if ($manager->hidelink || ($this->trust <= $manager->trustlevel)) return $name;
     $rel = $manager->nofollow ? 'rel="nofollow"' : '';
@@ -291,9 +292,9 @@ private static $md5;
       return sprintf('<a %s href="%s/comusers.htm%sid=%d">%s</a>',$rel,
       litepublisher::$site->url, litepublisher::$site->q, $this->author, $name);
     } else {
-      if (!strbegin($url, 'http://')) $url = 'http://' . $url;
+      if (!strbegin($website, 'http://')) $website = 'http://' . $website;
       return sprintf('<a class="url fn" %s href="%s">%s</a>',
-      $rel,$url, $name);
+      $rel,$website, $name);
     }
   }
   
@@ -316,10 +317,6 @@ private static $md5;
   
   public function  gettime() {
     return date('H:i', $this->posted);
-  }
-  
-  public function getwebsite() {
-    return $this->data['url'];
   }
   
   public function geturl() {
@@ -353,7 +350,7 @@ private static $md5;
   public function getmd5email() {
     $email = $this->data['email'];
 if ($email) {
-if (isset(self::$md5[$email]) self::$md5[$email];
+if (isset(self::$md5[$email])) return self::$md5[$email];
 $md5 = md5($email);
 self::$md5[$email] = $md5;
 return $md5;
