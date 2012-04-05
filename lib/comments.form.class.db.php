@@ -72,12 +72,20 @@ class tcommentform extends tevents {
     return false;
   }
   
-  public static function printform($postid, $themename) {
+  public function getform(tpost $post, ttheme $theme) {
     $result = '';
-    $self = self::i();
     $lang = tlocal::i('comment');
-    $theme = ttheme::getinstance($themename);
-    $args = targs::i();
+    $args = new targs();
+
+switch ($post->comments_status) {
+case 'reg':
+break;
+
+case 'guest':
+break;
+
+case 'notconfirm':
+
     $args->name = '';
     $args->email = '';
     $args->url = '';

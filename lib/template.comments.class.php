@@ -39,6 +39,9 @@ public function save() {}
     }
     
     if (!litepublisher::$options->commentsdisabled && $post->commentsenabled) {
+if (dbversion) {
+        $result .=  tcommentform::i()->getform($post, $theme);
+} else {
       if (litepublisher::$options->autocmtform) {
         $result .=  "<?php  echo tcommentform::printform($idpost, '$theme->name'); ?>\n";
       } else {
@@ -53,6 +56,7 @@ public function save() {}
         
         $result .= $theme->parsearg($theme->templates['content.post.templatecomments.form'], $args);
       }
+}
     } else {
       $result .= $theme->parse($theme->templates['content.post.templatecomments.closed']);
     }

@@ -577,14 +577,19 @@ $editor = strtr($templates['content.admin.editor'], array(
     '$name' => 'content',
     '$value' => ''
 ));
+
 $templates[$regform] =  
-'<for								<form action="$site.url/send-comment.php" method="post" id="commentform">'
+'								<h4 id="respond">$lang.leavereply</h4>
+<div id="commentform_note">$commentform.note</div>
+<form action="$site.url/send-comment.php" method="post" id="commentform">'
  . $editor .
 '<p>
 									<input type="hidden" name="postid" value="$postid" />
 									<input type="hidden" name="antispam" value="$antispam" />
 
-									<input name="submitbutton" type="submit" id="submitbutton" value="$lang.send" /></p>
+									<input type="submit" name="submitbutton" id="submitcomment" value="' 
+. ($this->replacelang ? tlocal::i()->send : '$lang.send' ) .
+'" /></p>
 								</form>';
 }
       public static function getmetaclasses($s) {
