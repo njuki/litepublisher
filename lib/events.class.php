@@ -100,8 +100,7 @@ class tevents extends tdata {
   }
   
   private function get_events($name) {
-    if (isset($this->events[$name])) return $this->events[$name];
-    return false;
+return isset($this->events[$name]) ? $this->events[$name] : false;
   }
   
   public function callevent($name, $params) {
