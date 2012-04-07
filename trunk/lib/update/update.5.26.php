@@ -2,6 +2,8 @@
 
 function update526() {
 litepublisher::$classes->items['tcommentform'][2] = dbversion ? 'comments.form.class.db.php' : 'comments.form.class.files.php';
+litepublisher::$classes->items['tcommentmanager'][2] = dbversion ? 'comments.manager.class.db.php' : 'comments.manager.class.files.php';
+
   litepublisher::$options->comments_status = 'guest';
 
 if (dbversion) {
