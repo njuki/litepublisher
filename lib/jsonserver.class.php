@@ -17,12 +17,12 @@ class tjsonserver extends titems {
     parent::create();
     $this->basename = 'jsonserver';
     $this->cache = false;
-    $this->addevents('beforecall', 'aftercall', 'getmethods');
+    $this->addevents('beforerequest', 'beforecall', 'aftercall');
     $this->data['eventnames'] = &$this->eventnames;
     $this->map['eventnames'] = 'eventnames';
   }
   
-  public function request($param) {
+  public function getpostbody() {
     global$HTTP_RAW_POST_DATA;
     if ( !isset( $HTTP_RAW_POST_DATA ) ) {
       $HTTP_RAW_POST_DATA = file_get_contents( 'php://input' );
@@ -38,26 +38,64 @@ class tjsonserver extends titems {
       @chmod($reqname, 0666);
       //$HTTP_RAW_POST_DATA = file_get_contents($GLOBALS['paths']['home'] . 'raw.txt');
     }
-    
-    $this->getmethods();
-    $Result = $this->Server->XMLResult;
-    $this->aftercall();
+
+return $HTTP_RAW_POST_DATA;
+}
+
+public function get_json_args() {
+if ($s = trim($this->getpostbody())) {
+return json_decode($s);
+}
+return false;
+}
+
+  public function request($param) {
+$this->beforerequest();
+if (isset($_REQUEST['method'])) {
+$method = $_REQUEST['method'];
+$args = $_REQUEST;
+if (isset($args['litepubl_user'])) $_COOKIE['litepubl_user'] = $args['litepubl_user'];
+} elseif ($args = $this->get_json_args()) {
+if (isset($args->method)) {
+$method = $args->method;
+if (isset($args->litepubl_user)) $_COOKIE['litepubl_user'] = $args->litepubl_user;
+} else {
+return 403;
+}
+} else {
+return 403;
+}
+
+if (!isset($this->events[$method])) return 403;
+
+$a = array($args);
+$this->callevent('beforecall', $a);
+
+try {
+$result = $this->callevent($method, a);
+     } catch (Exception $e) {
+//500 error
+        $result = '<?php header('HTTP/1.1 500 Internal Server Error', true, 500); ?>';
+$result .= $e->getMessage();
+return $result;
+    }
+
+$this->callevent('aftercall', array(&$result, $args));
     if (litepublisher::$debug) tfiler::log("response:\n".$Result, 'json.txt');
 
-    $head = '<?xml version="1.0" encoding="utf-8"?>' . "\n";
-    $length = strlen($head) + strlen($xml);
-    $this->XMLResult = "<?php
-    @header('Connection: close');
-    @header('Content-Length: $length');
-    @header('Content-Type: text/xml; charset=utf-8');
-    @header('Date: ".date('r') . "');
-    @Header( 'Cache-Control: no-cache, must-revalidate');
-    @Header( 'Pragma: no-cache');
-    @header('X-Pingback: ". litepublisher::$site->url . "/rpc.xml');
-    echo'$head';
-    ?>" . $xml;
+$js = json_encode($result);
 
-    return $Result;
+return "<?php
+    header('Connection: close');
+    header('Content-Length: ". strlen($js) . "');
+header('Content-Type: text/javascript');
+//header('Content-Type: application/json');
+//header('Content-Disposition: attachment; filename=response.js');
+    header('Date: ".date('r') . "');
+    Header( 'Cache-Control: no-cache, must-revalidate');
+    Header( 'Pragma: no-cache');
+    header('X-Pingback: ". litepublisher::$site->url . "/rpc.xml');
+    ?>" . $js;
   }
   
   public function addevent($name, $class, $func) {
@@ -95,10 +133,6 @@ class TXMLRPCAbstract extends tevents {
       }
     }
     throw new Exception('Bad login/pass combination.', 403);
-  }
-  
-  public static function xerror($code, $msg) {
-    return new IXR_Error($code, $msg);
   }
   
 }//class

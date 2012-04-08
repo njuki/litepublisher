@@ -46,13 +46,11 @@ litepublisher::$paths->cache = litepublisher::$paths->cache . 'mobile.';
 litepublisher::$classes->instances['ttemplate'] = tmobiletemplate::i();
 
 $url = $_SERVER['REQUEST_URI'];
-    if (strbegin($url, '/mobile/') || ($url == '/mobile')) {
       if ($url == '/mobile') {
         $url = '/';
-      } else {
+      } elseif (strbegin($url, '/mobile/')) {
         $url = substr($url, strlen('/mobile'));
       }
-}
 
 try {
     litepublisher::$urlmap->request(strtolower($_SERVER['HTTP_HOST']), $url);
