@@ -96,7 +96,7 @@ if (dbversion) litepublisher::$db = new tdatabase();
 tlocal::clearcache();
 //tjsmerger::i()->save();
 //litepublisher::$options->show_draft_post = true;
-//tupdater::i()->run(5.25);
+//tupdater::i()->run(5.26);
 //include_once(dirname(__file__) . '/lib/update/update.tickets.5.24.php');
 //update524tickets();
 
