@@ -42,11 +42,11 @@ $.extend({
     if ($.isFunction(fn)) $.uiscript.done(fn);
   },
 
-litepubl_json: function(data, callback) {
+litejson: function(data, callback) {
 var c = get_cookie("litepubl_user");
 if (c != '') data.litepubl_user = c;
 if (ltoptions.idpost !== undefined) data.idpost = ltoptions.idpost;
-return jQuery.get(ltoptions.url + "/admin/jsonserver.js", data, callback, "json" );
+return jQuery.get(ltoptions.url + "/admin/jsonserver.php", data, callback, "json" );
 }
 
 });

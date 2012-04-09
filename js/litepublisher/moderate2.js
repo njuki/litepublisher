@@ -1,55 +1,45 @@
 (function( $ ){
-  $.fn.litepubl.comments = function() {
-data.litepubl_user = get_cookie("litepubl_user");
-jsonserv: function(data, callback) {
-return jQuery.get(ltoptions.url + "/admin/jsonserver.js", data, callback, "json" );
-}
-
-move = function(id, status) {
-  var item =document.getElementById("comment-" + id);
-  var idnewparent = ltoptions.commentsid;
-  if (status == 'hold') idnewparent = 'hold' + ltoptions.commentsid;
-  var newparent = document.getElementById(idnewparent);
-  newparent.appendChild(item.cloneNode(true));
-  item.parentNode.removeChild(item);
+  $.fn.moderatebuttons= function() {
+    return this.click(function() {
+var self = $(this);
+var action = self.data("moderate");
+var id = self.parent().data("idcomment");
+$.moderate_comment(id, action);
+return false;
+});
 };
 
-  $.fn.litepubl_delete_comment = function(id) {
+$.move_comment = function(id, status) {
+  var item =$("#comment-" + id);
+  var parent = $("#" + (status == "hold" ? "hold" : "") + ltoptions.commentsid);
+if (item.parent() != parent) parent.append(item);
+};
+
+$.moderate_comment = function (id, status) {
+var idcomment = "#comment-" + id;
+switch (status) {
+case "delete":
   if (!confirm(lang.comments.confirmdelete)) return;
-jsonserv({
-    
-    params:['', '', id, ltoptions.idpost],
-    
-    onSuccess:function(result){
-      var item =document.getElementById("comment-" + id);
-      item.parentNode.removeChild(item);
-    },
-    
-    onException:function(errorObj){
+$.litejson("comment_delete", {id: id}, function(r){
+$(idcomment).remove();
+    })
+    .error( function(jq, textStatus, errorThrown) {
+      //alert('error ' + jq.responseText );
       alert(lang.comments.notdeleted);
-    },
-    
-  onComplete:function(responseObj){ }
-  } );
-};
-
-function setcommentstatus(id, status) {
-  if (commentclient == undefined) commentclient = createcommentclient();
-  commentclient.litepublisher.comments.setstatus( {
-    params:['', '', id, ltoptions.idpost, status],
-    
-    onSuccess:function(result){
-      movecomment(id, status);
-    },
-    
-    onException:function(errorObj){
-      alert(lang.comments.notmoderated);
-    },
-    
-  onComplete:function(responseObj){ }
-  } );
+    };
 }
+break;
 
+case "hold":
+case "approved":
+$.litejson("comment_setstatus", {id: id, status: status}, function(r) {
+      $.move_comment(id, status);
+    })
+        .error( function(jq, textStatus, errorThrown) {
+      alert(lang.comments.notmoderated);
+    });
+break;
+    
 function moderate(list, action) {
   if (action == 'delete') {
     if (!confirm(lang.comments.confirmdelete)) return;
