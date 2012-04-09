@@ -217,6 +217,15 @@ class toptions extends tevents_storage {
     $this->data['cookie'] = $cookie;
     $this->save();
   }
+
+public function ingroup($groupname) {
+//admin has all rights
+if ($this->user == 1) return true;
+if (in_array(1, $this->idgroups)) return true;
+return tusergroups::i()->ingroup($this->user, $groupname);
+}
+
+
   
   public function getcommentsapproved() {
     return $this->DefaultCommentStatus  == 'approved';

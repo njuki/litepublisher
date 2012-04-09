@@ -20,6 +20,7 @@ class tjsonserver extends titems {
     $this->addevents('beforerequest', 'beforecall', 'aftercall');
     $this->data['eventnames'] = &$this->eventnames;
     $this->map['eventnames'] = 'eventnames';
+$this->data['url'] = '/admin/jsonserver.js');
   }
   
   public function getpostbody() {
@@ -101,38 +102,6 @@ header('Content-Type: text/javascript');
   public function addevent($name, $class, $func) {
 if (!in_array($method, $this->eventnames)) $this->eventnames[] = $method;
 return parent::addevent($name, $class, $func);
-  }
-  
-}//class
-
-class TXMLRPCAbstract extends tevents {
-  
-  public function uninstall() {
-    $caller = TXMLRPC::i();
-    $caller->deleteclass(get_class($this));
-  }
-  
-  public static function auth($email, $password, $group) {
-    if (litepublisher::$options->auth($email, $password))  {
-      if ((litepublisher::$options->group == 'admin') || (litepublisher::$options->group == $group) || ($group == 'nobody')) return true;
-      $groups = tusergroups::i();
-      if ($groups->hasright(litepublisher::$options->group, $group)) return true;
-    }
-    throw new Exception('Bad login/pass combination.', 403);
-  }
-  
-  public static function canedit($email, $password, $idpost) {
-    if (litepublisher::$options->auth($email, $password))  {
-      $group = litepublisher::$options->group;
-      if (($group == 'admin') || ($group == 'editor')) return true;
-      $groups = tusergroups::i();
-      if ($groups->hasright($group, 'author')) {
-        if ($idpost == 0) return true;
-        $post = tpost::i($idpost);
-        return $post->author == litepublisher::$options->user;
-      }
-    }
-    throw new Exception('Bad login/pass combination.', 403);
   }
   
 }//class

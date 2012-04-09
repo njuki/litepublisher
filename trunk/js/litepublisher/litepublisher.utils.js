@@ -15,6 +15,7 @@ function get_get(name) {
   return false;
 }
 
+(function( $ ){
 $.extend({
   load_script: function( url, callback ) {
     return $.ajax({
@@ -39,5 +40,14 @@ $.extend({
       $.uiscript = $.load_script(dir + '/jquery-ui-' + ltoptions.jqueryui_version + '.custom.min.js');
     }
     if ($.isFunction(fn)) $.uiscript.done(fn);
-  }
+  },
+
+litepubl_json: function(data, callback) {
+var c = get_cookie("litepubl_user");
+if (c != '') data.litepubl_user = c;
+if (ltoptions.idpost !== undefined) data.idpost = ltoptions.idpost;
+return jQuery.get(ltoptions.url + "/admin/jsonserver.js", data, callback, "json" );
+}
+
 });
+})( jQuery );
