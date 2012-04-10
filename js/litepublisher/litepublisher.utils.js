@@ -42,11 +42,15 @@ $.extend({
     if ($.isFunction(fn)) $.uiscript.done(fn);
   },
 
-litejson: function(data, callback) {
+litejson: function(data, errmesg, callback) {
 var c = get_cookie("litepubl_user");
 if (c != '') data.litepubl_user = c;
-if (ltoptions.idpost !== undefined) data.idpost = ltoptions.idpost;
-return jQuery.get(ltoptions.url + "/admin/jsonserver.php", data, callback, "json" );
+//if (ltoptions.idpost !== undefined) data.idpost = ltoptions.idpost;
+return jQuery.get(ltoptions.url + "/admin/jsonserver.php", data, callback, "json" )
+        .error( function(jq, textStatus, errorThrown) {
+//jq.responseText 
+alert(errmesg);
+});
 }
 
 });
