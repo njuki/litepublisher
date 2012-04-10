@@ -20,32 +20,37 @@ var idcomment = "#comment-" + id;
 switch (status) {
 case "delete":
   if (!confirm(lang.comments.confirmdelete)) return;
-$.litejson("comment_delete", {id: id}, function(r){
+$.litejson("comment_delete", {id: id}, lang.comments.notdeleted,
+function(r){
 $(idcomment).remove();
-    })
-    .error( function(jq, textStatus, errorThrown) {
-      //alert('error ' + jq.responseText );
-      alert(lang.comments.notdeleted);
-    };
-}
+    });
 break;
 
 case "hold":
 case "approved":
-$.litejson("comment_setstatus", {id: id, status: status}, function(r) {
+$.litejson("comment_setstatus", {id: id, status: status}, lang.comments.notmoderated,
+function(r) {
       $.move_comment(id, status);
-    })
-        .error( function(jq, textStatus, errorThrown) {
-      alert(lang.comments.notmoderated);
     });
 break;
-    
-function moderate(list, action) {
+
+case "edit":
+break;
+
+default:
+alert("Unknown status " + status);
+}
+};
+
+  $.fn.moderateform = function() {    
+
+};
+
+$.moderate_comments = function (list, status) {
   if (action == 'delete') {
     if (!confirm(lang.comments.confirmdelete)) return;
   }
   
-  if (commentclient == undefined) commentclient = createcommentclient();
   commentclient.litepublisher.moderate( {
     params:['', '', ltoptions.idpost, list, action],
     
@@ -69,16 +74,7 @@ function moderate(list, action) {
   
 }
 
-function submitmoderateform(form, action) {
-  var list = new Array();
-  for (var i = 0, n = form.elements.length; i < n; i++) {
-    var elem = form.elements[i];
-    if((elem.type == 'checkbox') && (elem.checked == true)) {
-      list.push(parseInt(elem.value));
-    }
-  }
-  moderate(list, action);
-}
+
 
 function editcomment(id) {
   if (commentclient == undefined) commentclient = createcommentclient();
