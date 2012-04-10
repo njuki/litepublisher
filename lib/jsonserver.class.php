@@ -20,7 +20,7 @@ class tjsonserver extends titems {
     $this->addevents('beforerequest', 'beforecall', 'aftercall');
     $this->data['eventnames'] = &$this->eventnames;
     $this->map['eventnames'] = 'eventnames';
-$this->data['url'] = '/admin/jsonserver.js');
+$this->data['url'] = '/admin/jsonserver.php');
   }
   
   public function getpostbody() {
