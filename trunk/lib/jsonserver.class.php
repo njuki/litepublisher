@@ -45,7 +45,7 @@ return $HTTP_RAW_POST_DATA;
 
 public function get_json_args() {
 if ($s = trim($this->getpostbody())) {
-return json_decode($s);
+return json_decode($s, true);
 }
 return false;
 }
@@ -55,11 +55,9 @@ $this->beforerequest();
 if (isset($_REQUEST['method'])) {
 $method = $_REQUEST['method'];
 $args = $_REQUEST;
-if (isset($args['litepubl_user'])) $_COOKIE['litepubl_user'] = $args['litepubl_user'];
 } elseif ($args = $this->get_json_args()) {
-if (isset($args->method)) {
-$method = $args->method;
-if (isset($args->litepubl_user)) $_COOKIE['litepubl_user'] = $args->litepubl_user;
+if (isset($args['method'])) {
+$method = $args['method'];
 } else {
 return 403;
 }
@@ -68,12 +66,12 @@ return 403;
 }
 
 if (!isset($this->events[$method])) return 403;
-
+if (isset($args['litepubl_user'])) $_COOKIE['litepubl_user'] = $args['litepubl_user'];
 $a = array($args);
 $this->callevent('beforecall', $a);
 
 try {
-$result = $this->callevent($method, a);
+$result = $this->callevent($method, $a);
      } catch (Exception $e) {
 //500 error
         $result = '<?php header('HTTP/1.1 500 Internal Server Error', true, 500); ?>';

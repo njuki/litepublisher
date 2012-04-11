@@ -41,9 +41,6 @@ class tcommentmanager extends tevents {
     if (!$status) return false;
     $comments = tcomments::i($idpost);
     $id = $comments->add($idauthor,  $content, $status, $ip);
-    
-    if (!dbversion && $status == 'approved') $this->addrecent($id, $idpost);
-    
     $this->dochanged($id, $idpost);
     $this->added($id, $idpost);
     $this->sendmail($id, $idpost);
@@ -56,10 +53,9 @@ class tcommentmanager extends tevents {
     return $this->editcomment($id, $idpost, $idauthor, $content);
   }
   
-  public function editcomment($id, $idpost, $idauthor, $content) {
+  public function editcomment($id, $content) {
     $comments = tcomments::i($idpost);
     if (!$comments->edit($id, $idauthor,  $content)) return false;
-    if (!dbversion && $status == 'approved') $this->editrecent($id, $idpost);
     
     $this->dochanged($id, $idpost);
     $this->edited($id, $idpost);
@@ -86,7 +82,6 @@ class tcommentmanager extends tevents {
   }
   
   private function dochanged($id, $idpost) {
-    if (dbversion) {
       $comments = tcomments::i($idpost);
       $count = $comments->db->getcount("post = $idpost and status = 'approved'");
       $comments->getdb('posts')->setvalue($idpost, 'commentscount', $count);

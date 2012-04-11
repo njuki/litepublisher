@@ -1,6 +1,6 @@
 <?php
 
-function update526() {
+function update527() {
 litepublisher::$classes->items['tcommentform'][2] = dbversion ? 'comments.form.class.db.php' : 'comments.form.class.files.php';
 litepublisher::$classes->items['tcommentmanager'][2] = dbversion ? 'comments.manager.class.db.php' : 'comments.manager.class.files.php';
 litepublisher::$classes->add('tjsonserver', 'jsonserver.class.php');
