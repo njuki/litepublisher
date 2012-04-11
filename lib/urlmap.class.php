@@ -78,6 +78,14 @@ class turlmap extends titems {
     }
   }
 
+  public function getidurl($id) {
+      if (!isset($this->items[$id])) {
+        $this->items[$id] = $this->db->getitem($id);
+      }
+      return $this->items[$id]['url'];
+  }
+  
+
   public function findurl($url) {
       if ($result = $this->db->finditem('url = '. dbquote($url))) return $result;
     return false;
@@ -289,18 +297,10 @@ class turlmap extends titems {
   
   //for Archives
   public function GetClassUrls($class) {
-    if (dbversion) {
       $res = $this->db->query("select url from $this->thistable where class = '$class'");
       return $this->db->res2id($res);
-    }
-    
-    $result = array();
-    foreach ($this->items as $url => $item) {
-      if ($item['class'] == $class) $result[] = $url;
-    }
-    return $result;
-  }
-  
+}
+
   public function clearcache() {
     $path = litepublisher::$paths->cache;
     if ( $h = @opendir($path)) {
@@ -338,16 +338,10 @@ class turlmap extends titems {
   }
   
   public function expiredclass($class) {
-    if (dbversion) {
       $items = $this->db->idselect("class = '$class'");
       foreach ($items as $id) $this->setexpired($id);
-    } else {
-      foreach ($this->items as $url => $item) {
-        if ($class == $item['class']) $this->setexpired($item['id']);
-      }
-    }
-  }
-  
+}  
+
   public function addredir($from, $to) {
     if ($from == $to) return;
     $Redir = tredirector::i();
@@ -405,34 +399,10 @@ class turlmap extends titems {
     exit();
   }
   
-  //db
-  public function getidurl($id) {
-    if (dbversion) {
-      if (!isset($this->items[$id])) {
-        $this->items[$id] = $this->db->getitem($id);
-      }
-      return $this->items[$id]['url'];
-    } else {
-      foreach ($this->items as $url => $item) {
-        if ($item['id'] == $id) return $url;
-      }
-    }
-  }
-  
+
   public function setidurl($id, $url) {
-    if (dbversion) {
       $this->db->setvalue($id, 'url', $url);
       if (isset($this->items[$id])) $this->items[$id]['url'] = $url;
-    } else {
-      foreach ($this->items as $u => $item) {
-        if ($id == $item['id']) {
-          unset($this->items[$u]);
-          $this->items[$url] = $item;
-          $this->save();
-          return;
-        }
-      }
-    }
   }
   
   public function getnextpage() {

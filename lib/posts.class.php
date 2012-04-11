@@ -22,7 +22,7 @@ class tposts extends titems {
   }
   
   protected function create() {
-    $this->dbversion = dbversion;
+    $this->dbversion = true;
     parent::create();
     $this->table = 'posts';
     $this->childtable = '';
@@ -32,19 +32,13 @@ class tposts extends titems {
     $this->data['archivescount'] = 0;
     $this->data['revision'] = 0;
     $this->data['syncmeta'] = false;
-    if (!dbversion) $this->addmap('archives' , array());
     $this->addmap('itemcoclasses', array());
   }
   
   public function getitem($id) {
-    if (dbversion) {
       if ($result = tpost::i($id)) return $result;
       $this->error("Item $id not found in class ". get_class($this));
-    } else {
-      if (isset($this->items[$id])) return tpost::i($id);
-    }
-    return $this->error("Item $id not found in class ". get_class($this));
-  }
+}
   
   public function finditems($where, $limit) {
     if (isset(titem::$instances['post']) && (count(titem::$instances['post']) > 0)) {
@@ -57,7 +51,6 @@ class tposts extends titems {
   }
   
   public function loaditems(array $items) {
-    if (!dbversion || count($items) == 0) return;
     //exclude already loaded items
     if (isset(titem::$instances['post'])) {
       $items = array_diff($items, array_keys(titem::$instances['post']));
@@ -137,11 +130,7 @@ class tposts extends titems {
   }
   
   public function getcount() {
-    if (dbversion) {
       return $this->db->getcount("status<> 'deleted'");
-    } else {
-      return count($this->items);
-    }
   }
   
   public function getchildscount($where) {
@@ -209,22 +198,13 @@ class tposts extends titems {
     $post->url = $linkgen->addurl($post, $post->schemalink);
     $post->title = tcontentfilter::escape($post->title);
     $urlmap = turlmap::i();
-    if (dbversion) {
       $id = $post->addtodb();
       $post->idurl = $urlmap->add($post->url, get_class($post), (int) $post->id);
       $post->db->setvalue($post->id, 'idurl', $post->idurl);
-    } else {
-      $post->id = ++$this->autoid;
-      $dir =litepublisher::$paths->data . 'posts' . DIRECTORY_SEPARATOR  . $post->id;
-      if (!is_dir($dir)) mkdir($dir, 0777);
-      chmod($dir, 0777);
-      $post->idurl = $urlmap->Add($post->url, get_class($post), $post->id);
-    }
     $post->onid();
     $this->lock();
     $this->updated($post);
     $this->cointerface('add', $post);
-    if (!$this->dbversion) $post->save();
     $this->unlock();
     $this->added($post->id);
     $this->changed();
@@ -256,23 +236,13 @@ class tposts extends titems {
   public function delete($id) {
     if (!$this->itemexists($id)) return false;
     $urlmap = turlmap::i();
-    if ($this->dbversion) {
       $idurl = $this->db->getvalue($id, 'idurl');
       $this->db->setvalue($id, 'status', 'deleted');
       if ($this->childtable) {
         $db = $this->getdb($this->childtable);
         $db->delete("id = $id");
       }
-    } else {
-      if ($post = tpost::i($id)) {
-        $idurl = $post->idurl;
-        $post->free();
-      }
-      titem::deletedir(litepublisher::$paths->data . 'posts'. DIRECTORY_SEPARATOR   . $id . DIRECTORY_SEPARATOR  );
-      unset($this->items[$id]);
-      $urlmap->deleteitem($idurl);
-    }
-    
+
     $this->lock();
     $this->PublishFuture();
     $this->UpdateArchives();
@@ -286,13 +256,6 @@ class tposts extends titems {
   
   
   public function updated(tpost $post) {
-    if (!$this->dbversion) {
-      $this->items[$post->id] = array(
-      'posted' => $post->posted
-      );
-      if   ($post->status != 'published') $this->items[$post->id]['status'] = $post->status;
-      if   ($post->author > 1) $this->items[$post->id]['author'] = $post->author;
-    }
     $this->PublishFuture();
     $this->UpdateArchives();
     $cron = tcron::i();
@@ -300,18 +263,7 @@ class tposts extends titems {
   }
   
   public function UpdateArchives() {
-    if ($this->dbversion) {
       $this->archivescount = $this->db->getcount("status = 'published' and posted <= '" . sqldate() . "'");
-    } else {
-      $this->archives = array();
-      foreach ($this->items as $id => $item) {
-        if ((!isset($item['status']) || ($item['status'] == 'published')) &&(time() >= $item['posted'])) {
-          $this->archives[$id] = $item['posted'];
-        }
-      }
-      arsort($this->archives,  SORT_NUMERIC);
-      $this->archivescount = count($this->archives);
-    }
   }
   
   public function dosinglecron($id) {
@@ -332,80 +284,46 @@ class tposts extends titems {
   }
   
   public function PublishFuture() {
-    if ($this->dbversion) {
       if ($list = $this->db->idselect(sprintf('status = \'future\' and posted <= \'%s\' order by posted asc', sqldate()))) {
         foreach( $list as $id) $this->publish($id);
       }
-    } else {
-      foreach ($this->items as $id => $item) {
-        if (isset($item['status']) && ($item['status'] == 'future') && ($item['posted'] <= time())) $this->publish($id);
-      }
-    }
   }
   
   public function getrecent($author, $count) {
     $author = (int) $author;
-    if (dbversion) {
       $where = "status != 'deleted'";
       if ($author > 1) $where .= " and author = $author";
       return $this->finditems($where, ' order by posted desc limit ' . (int) $count);
-    }  else {
-      return array_slice(array_keys($this->archives), 0, $count);
-    }
   }
   
   public function getpage($author, $page, $perpage, $invertorder) {
     $author = (int) $author;
     $from = ($page - 1) * $perpage;
-    if (dbversion)  {
       $where = "status = 'published'";
       if ($author > 1) $where .= " and author = $author";
       $order = $invertorder ? 'asc' : 'desc';
-      //      return $this->select($where, " order by posted $order limit $from, $perpage");
       return $this->finditems($where,  " order by posted $order limit $from, $perpage");
-    } else {
-      $count = $this->archivescount;
-      if ($from > $count)  return array();
-      $to = min($from + $perpage , $count);
-      $result = array_keys($this->archives);
-      if ($invertorder) $result =array_reverse($result);
-      return array_slice($result, $from, $to - $from);
-    }
   }
   
   public function GetPublishedRange($page, $perpage) {
     $count = $this->archivescount;
     $from = ($page - 1) * $perpage;
     if ($from > $count)  return array();
-    if (dbversion)  {
+
       return $this->finditems("status = 'published'", " order by posted desc limit $from, $perpage");
-    } else {
-      $to = min($from + $perpage , $count);
-      return array_slice(array_keys($this->archives), $from, $to - $from);
-    }
   }
   
   public function stripdrafts(array $items) {
     if (count($items) == 0) return array();
-    if (dbversion) {
       $list = implode(', ', $items);
       return $this->db->idselect("status = 'published' and id in ($list)");
-    } else {
-      return array_intersect($items, array_keys($this->archives));
-    }
   }
   
   public function sortbyposted(array $items) {
     if (count($items) <= 1) return $items;
-    if (dbversion) {
       $list = implode(', ', $items);
       return $this->db->idselect("status = 'published' and id in ($list) order by posted desc");
-    }
-    /* надо выбрать опубликованные посты из items, потом отсортировать */
-    $result = array_intersect_key ($this->archives, array_combine($items, $items));
-    arsort($result,  SORT_NUMERIC);
-    return array_keys($result);
-  }
+}
   
   //coclasses
   private function cointerface($method, $arg) {
