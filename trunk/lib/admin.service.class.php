@@ -22,6 +22,10 @@ class tadminservice extends tadminmenu {
     
     switch ($this->name) {
       case 'service':
+if (!dbversion) {
+return $html->h2->noupdates;
+}
+
       $result .= $this->doupdate($_GET);
       $args->postscount = litepublisher::$classes->posts->count;
       $args->commentscount = litepublisher::$classes->commentmanager->count;
