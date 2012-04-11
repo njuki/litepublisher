@@ -46,17 +46,14 @@ alert("Unknown status " + status);
 
 };
 
-$.moderate_comments = function (list, status) {
-  if (action == 'delete') {
+$.moderate_list = function (list, status) {
+  if (status == 'delete') {
     if (!confirm(lang.comments.confirmdelete)) return;
   }
   
-  commentclient.litepublisher.moderate( {
-    params:['', '', ltoptions.idpost, list, action],
-    
-    onSuccess:function(result){
+$.litejson("moderate_list",  {status: status, list: list.join(",")}, lang.comments.notmoderated, function(r){
       for (var i = 0, n = list.length; i <n; i++) {
-        if (action == 'delete') {
+        if (status == 'delete') {
           var item =document.getElementById("comment-" + list[i]);
           item.parentNode.removeChild(item);
         } else {
@@ -65,16 +62,6 @@ $.moderate_comments = function (list, status) {
       }
     },
     
-    onException:function(errorObj){
-      alert(lang.comments.notmoderated);
-    },
-    
-  onComplete:function(responseObj){ }
-  } );
-  
-}
-
-
 
 function editcomment(id) {
   if (commentclient == undefined) commentclient = createcommentclient();

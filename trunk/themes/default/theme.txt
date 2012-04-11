@@ -652,12 +652,12 @@ $comment.gravatar - html картинка аватара комментатор�
 
 Как и обещали шаблон кнопок модерирования:
 content.post.templatecomments.comments.comment.moderate = [
- <div class="moderationbuttons">
+ <div class="moderationbuttons" data-idcomment="$comment.id">
   <input type="checkbox" name="checkbox-comment-$comment.id" id="checkbox-comment-$comment.id" value="$comment.id" />
-													  <input type="button" value="$lang.approve" onclick="setcommentstatus($comment.id, 'approved');" />
-  <input type="button" value="$lang.holdbutton" onclick="setcommentstatus($comment.id, 'hold');" />
-  <input type="button" value="$lang.delete" onclick="deletecomment($comment.id);" />
-  <input type="button" value="$lang.edit" onclick="editcomment($comment.id);" />
+													  <input type="button" value="$lang.approve" data-moderate="approved" />
+  <input type="button" value="$lang.holdbutton" data-moderate="hold" />
+  <input type="button" value="$lang.delete" data-moderate="delete" />
+  <input type="button" value="$lang.edit" data-moderate="edit" />
  </div>
 ]
 
