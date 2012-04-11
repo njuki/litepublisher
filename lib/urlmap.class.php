@@ -30,7 +30,7 @@ class turlmap extends titems {
   }
   
   protected function create() {
-    $this->dbversion = dbversion;
+    $this->dbversion = true;
     parent::create();
     $this->table = 'urlmap';
     $this->basename = 'urlmap';
@@ -77,16 +77,21 @@ class turlmap extends titems {
       $this->notfound404();
     }
   }
+
+  public function findurl($url) {
+      if ($result = $this->db->finditem('url = '. dbquote($url))) return $result;
+    return false;
+  }
+  
+  public function urlexists($url) {
+      return $this->db->findid('url = '. dbquote($url));
+  }
   
   private function query($url) {
-    if (dbversion) {
       if ($item = $this->db->getassoc('url = '. dbquote($url). ' limit 1')) {
         $this->items[$item['id']] = $item;
         return $item;
       }
-    } elseif (isset($this->items[$url])) {
-      return $this->items[$url];
-    }
     return false;
   }
   
@@ -130,15 +135,6 @@ class turlmap extends titems {
     return false;
   }
   
-  public function findurl($url) {
-    if (dbversion) {
-      if ($result = $this->db->finditem('url = '. dbquote($url))) return $result;
-    } else {
-      if (isset($this->items[$url])) return $this->items[$url];
-    }
-    return false;
-  }
-  
   private function getcachefile(array $item) {
     if (!$this->cachefilename) {
       if ($item['type'] == 'normal') {
@@ -169,13 +165,7 @@ class turlmap extends titems {
   }
   
   public function getidcontext($id) {
-    if ($this->dbversion) {
       $item = $this->getitem($id);
-    } else {
-      foreach ($this->items as $url => $item) {
-        if ($id == $item['id']) break;
-      }
-    }
     return $this->getcontext($item);
   }
   
@@ -245,14 +235,6 @@ class turlmap extends titems {
     $this->printclasspage('tforbidden');
   }
   
-  public function urlexists($url) {
-    if (dbversion) {
-      return $this->db->findid('url = '. dbquote($url));
-    } else {
-      return isset($this->items[$url]) ? $this->items[$url]['id'] : false;
-    }
-  }
-  
   public function addget($url, $class) {
     return $this->add($url, $class, null, 'get');
   }
@@ -261,7 +243,7 @@ class turlmap extends titems {
     if (empty($url)) $this->error('Empty url to add');
     if (empty($class)) $this->error('Empty class name of adding url');
     if (!in_array($type, array('normal','get','tree'))) $this->error(sprintf('Invalid url type %s', $type));
-    if (dbversion) {
+
       if ($item = $this->db->finditem('url = ' . dbquote($url))) $this->error(sprintf('Url "%s" already exists', $url));
       $item= array(
       'url' => $url,
@@ -272,33 +254,15 @@ class turlmap extends titems {
       $item['id'] = $this->db->add($item);
       $this->items[$item['id']] = $item;
       return $item['id'];
-    }
-    
-    if (isset($this->items[$url])) $this->error(sprintf('Url "%s" already exists', $url));
-    $this->items[$url] = array(
-    'id' => ++$this->autoid,
-    'class' => $class,
-    'arg' => $arg,
-    'type' => $type
-    );
-    $this->save();
-    return $this->autoid;
   }
   
   public function delete($url) {
-    if (dbversion) {
       $url = dbquote($url);
       if ($id = $this->db->findid('url = ' . $url)) {
         $this->db->iddelete($id);
       } else {
         return false;
       }
-    } elseif (isset($this->items[$url])) {
-      $id = $this->items[$url]['id'];
-      unset($this->items[$url]);
-      $this->save();
-    } else {
-      return false;
     }
     $this->clearcache();
     $this->deleted($id);
@@ -306,40 +270,18 @@ class turlmap extends titems {
   }
   
   public function deleteclass($class) {
-    if (dbversion){
       if ($items =
       $this->db->getitems("class = '$class'")) {
         $this->db->delete("class = '$class'");
         foreach ($items as $item) $this->deleted($item);
       }
-    } else  {
-      foreach ($this->items as $url => $item) {
-        if ($item['class'] == $class) {
-          $item = $this->items[$url];
-          unset($this->items[$url]);
-          $this->deleted($item);
-        }
-      }
-      $this->save();
-    }
     $this->clearcache();
   }
   
   public function deleteitem($id) {
-    if (dbversion){
       if ($item = $this->db->getitem($id)) {
         $this->db->iddelete($id);
         $this->deleted($item);
-      }
-    } else  {
-      foreach ($this->items as $url => $item) {
-        if ($item['id'] == $id) {
-          $item = $this->items[$url];
-          unset($this->items[$url]);
-          $this->save();
-          $this->deleted($item);
-          break;
-        }
       }
     }
     $this->clearcache();
