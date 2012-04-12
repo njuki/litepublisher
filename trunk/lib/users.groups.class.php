@@ -73,9 +73,7 @@ class tusergroups extends titems {
     
     if(is_string($v)) {
       $v = trim($v);
-      if (strpos($v, ',')) {
-        return $this->checkgroups(explode(',', $v));
-      }
+      if (strpos($v, ',')) return $this->checkgroups(explode(',', $v));
     }
     if ($id = $this->cleangroup($v)) return array($id);
   }

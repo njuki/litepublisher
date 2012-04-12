@@ -22,7 +22,9 @@ class tcommentmanager extends tevents {
     $this->data['hidelink'] = false;
     $this->data['redir'] = true;
     $this->data['nofollow'] = false;
-    $this->data['maxrecent'] =  20;
+    $this->data['canedit'] =  true;
+    $this->data['candelete'] =  true;
+    $this->data['idguest'] =  0;
   }
   
   public function getcount() {
