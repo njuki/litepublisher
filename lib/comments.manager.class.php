@@ -33,13 +33,13 @@ class tcommentmanager extends tevents {
   }
   
   public function add($idpost, $name, $email, $url, $content, $ip) {
-    $comusers = dbversion ? tcomusers ::i() : tcomusers ::i($idpost);
+$users = tusers::i();
     $idauthor = $comusers->add($name, $email, $url, $ip);
     return $this->addcomment($idpost, $idauthor, $content, $ip);
   }
   
   public function addcomment($idpost, $idauthor, $content, $ip) {
-    $status = litepublisher::$classes->spamfilter->createstatus($idpost, $idauthor, $content, $ip);
+    $status = $this->createstatus($idpost, $idauthor, $content, $ip);
     if (!$status) return false;
     $comments = tcomments::i($idpost);
     $id = $comments->add($idauthor,  $content, $status, $ip);
@@ -102,7 +102,7 @@ class tcommentmanager extends tevents {
     $this->changed($id, $idpost);
   }
   
-  public function delete($id, $idpost) {
+  public function delete($id) {
     $comments = tcomments::i($idpost);
     if ($comments->delete($id)) {
       if (!dbversion) $this->deleterecent($id, $idpost);

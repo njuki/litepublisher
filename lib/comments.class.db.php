@@ -165,10 +165,10 @@ $authors = litepublisher::$db->prefix. 'users';
   public function getcontent() {
     $result = $this->getcontentwhere('approved', '');
     if (!$this->moderator) return $result;
-    $theme = ttheme::i();
+    $post = tpost::i($this->pid);
+    $theme = $post->theme;
     tlocal::usefile('admin');
     $args = targs::i();
-    $post = tpost::i($this->pid);
     if ($post->commentpages == litepublisher::$urlmap->page) {
       $result .= $this->getcontentwhere('hold', '');
     } else {
@@ -176,9 +176,13 @@ $authors = litepublisher::$db->prefix. 'users';
       $args->comment = '';
       $result .= $theme->parsearg($theme->templates['content.post.templatecomments.holdcomments'], $args);
     }
-    
+
+return $result;
+
+/*    
     $args->comments = $result;
     return $theme->parsearg($theme->templates['content.post.templatecomments.moderateform'], $args);
+*/
   }
   
   public function getholdcontent($idauthor) {
