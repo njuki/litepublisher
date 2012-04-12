@@ -2,8 +2,13 @@
 
 function update527() {
 $cm = tcommentmanager::i();
+$data = new tdata();
+$data->basename = 'commentmanager';
+$data->load();
+$cm->data = $data->data;
     $cm->data['canedit'] =  true;
     $cm->data['candelete'] =  true;
+$cm->data['reqireconfirm'] = false;
     $cm->data['idguest'] =  tusers::i()->add(array(
 'email' => '',
 'name' => tlocal::get('default', 'guest'),
@@ -11,6 +16,9 @@ $cm = tcommentmanager::i();
 'idgroups' => 'commentator'
 ));
 $cm->save();
+
+  tposts::unsub($cm);
+  tposts::i()->addevent('deleted', 'tcomments', 'postdeleted');
 
 litepublisher::$classes->add('tjsonserver', 'jsonserver.class.php');
 litepublisher::$classes->add('tjsoncomments', 'json.comments.class.php');

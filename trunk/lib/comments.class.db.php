@@ -26,13 +26,13 @@ class tcomments extends titems {
     $this->pid = 0;
   }
   
-  public function add($idauthor, $content, $status, $ip) {
+  public function add($idpost, $idauthor, $content, $status, $ip) {
     if ($idauthor == 0) $this->error('Author id = 0');
     $filter = tcontentfilter::i();
     $filtered = $filter->filtercomment($content);
     
     $item = array(
-    'post' => $this->pid,
+    'post' => $idpost,
     'parent' => 0,
     'author' => (int) $idauthor,
     'posted' => sqldate(),
@@ -96,6 +96,10 @@ class tcomments extends titems {
   
   public function delete($id) {
     return $this->db->setvalue($id, 'status', 'deleted');
+  }
+
+  public function postdeleted($idpost) {
+      $this->db->update("status = 'deleted'", "post = $idpost");
   }
   
   public function setstatus($id, $status) {
