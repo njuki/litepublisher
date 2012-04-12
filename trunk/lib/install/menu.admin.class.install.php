@@ -70,7 +70,7 @@ function tadminmenusInstall($self) {
     $self->createitem($opt, 'mail', 'admin', 'tadminoptions');
     $self->createitem($opt, 'rss', 'admin', 'tadminoptions');
     $self->createitem($opt, 'view', 'admin', 'tadminoptions');
-    $self->createitem($opt, 'comments', 'admin', 'tadminoptions');
+    $self->createitem($opt, 'comments', 'admin', 'tadmincommentmanager');
     $self->createitem($opt, 'ping', 'admin', 'tadminoptions');
     $self->createitem($opt, 'links', 'admin', 'tadminoptions');
     $self->createitem($opt, 'cache', 'admin', 'tadminoptions');

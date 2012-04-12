@@ -14,7 +14,13 @@ $cm->save();
 
 litepublisher::$classes->add('tjsonserver', 'jsonserver.class.php');
 litepublisher::$classes->add('tjsoncomments', 'json.comments.class.php');
+litepublisher::$classes->add('Tadmincommentmanager', 'admin.commentmanager.class.php');
+
   litepublisher::$options->comments_status = 'guest';
+
+$admin = tadminmenus::i();
+$admin->items[$admin->url2id('/admin/options/comments/')]['class'] = 'tadmincommentmanager';
+$admin->save();
 
 $db = litepublisher::$db;
 $db->table = 'users';
