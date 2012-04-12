@@ -14,7 +14,7 @@ class tusers extends titems {
   }
   
   protected function create() {
-    $this->dbversion = dbversion;
+    $this->dbversion = true;
     parent::create();
     $this->basename = 'users';
     $this->table = 'users';
@@ -36,7 +36,7 @@ class tusers extends titems {
   }
   
   public function getitem($id) {
-    if (($id == 1) && dbversion) return array(
+    if ($id == 1) return array(
     'email' =>litepublisher::$options->email,
     'name' => litepublisher::$site->author,
     'website' => litepublisher::$site->url . '/',
@@ -76,14 +76,10 @@ class tusers extends titems {
     'status' => $groups->ingroup(litepublisher::$options->user, 'admin') ? 'approved' : 'wait'
     );
     
-    $id = $this->dbversion ? $this->db->add($item) : ++$this->autoid;
+    $id = $this->db->add($item);
     $item['idgroups'] = $idgroups;
     $this->items[$id] = $item;
-    if ($this->dbversion) {
       $this->setgroups($id, $item['idgroups']);
-    } else {
-      $this->save();
-    }
     
     tuserpages::i()->add($id);
     $this->added($id);
@@ -114,13 +110,10 @@ class tusers extends titems {
     
     $this->items[$id] = $item;
     $item['id'] = $id;
-    if ($this->dbversion) {
+
       $this->setgroups($id, $item['idgroups']);
       $item['idgroups'] = implode(',', $item['idgroups']);
       $this->db->updateassoc($item);
-    } else {
-      $this->save();
-    }
     
     $pages = tuserpages::i();
     $pages->edit($id, $values);
@@ -129,7 +122,6 @@ class tusers extends titems {
   
   public function setgroups($id, array $idgroups) {
     $this->items[$id]['idgroups'] = $idgroups;
-    if ($this->dbversion) {
       $db = $this->getdb($this->grouptable);
       $db->delete("iduser = $id");
       foreach ($idgroups as $idgroup) {
@@ -138,11 +130,10 @@ class tusers extends titems {
         'idgroup' => $idgroup
         ));
       }
-    }
   }
   
   public function delete($id) {
-    if ($this->dbversion) $this->getdb($this->grouptable)->delete('iduser = ' .(int)$id);
+$this->getdb($this->grouptable)->delete('iduser = ' .(int)$id);
     tuserpages::i()->delete($id);
     return parent::delete($id);
   }
@@ -150,14 +141,7 @@ class tusers extends titems {
   public function emailexists($email) {
     if ($email == '') return false;
     if ($email == litepublisher::$options->email) return 1;
-    if ($this->dbversion) {
       return $this->db->findid('email = '. dbquote($email));
-    } else {
-      foreach ($this->items as $id => $item) {
-        if ($email == $item['email']) return true;
-      }
-      return false;
-    }
   }
   
   public function getpassword($id) {
@@ -170,36 +154,23 @@ class tusers extends titems {
   }
   
   public function approve($id) {
-    if (dbversion) {
       $this->db->setvalue($id, 'status', 'approved');
       if (isset(            $this->items[$id])) $this->items[$id]['status'] = 'approved';
-    } else {
-      $this->items[$id]['status'] = 'approved';
-      $this->save();
-    }
     $pages = tuserpages::i();
     if ($pages->createpage) $pages->addpage($id);
   }
   
   public function auth($email,$password) {
     $password = basemd5(sprintf('%s:%s:%s', $email,  litepublisher::$options->realm, $password));
-    if ($this->dbversion) {
+
       $email = dbquote($email);
       if (($a = $this->select("email = $email and password = '$password'", 'limit 1')) && (count($a) > 0)) {
         $item = $this->getitem($a[0]);
         if ($item['status'] == 'wait') $this->approve($item['id']);
         return (int) $item['id'];
       }
-    } else {
-      foreach ($this->items as $id => $item) {
-        if (($email == $item['email']) && ($password = $item['password'])) {
-          if ($item['status'] == 'wait') $this->approve($id);
-          return $id;
-        }
-      }
-    }
-    return  false;
-  }
+return false;
+}
   
   public function authcookie($cookie) {
     $cookie = (string) $cookie;
@@ -214,16 +185,10 @@ class tusers extends titems {
   }
   
   public function findcookie($cookie) {
-    if ($this->dbversion) {
       $cookie = dbquote($cookie);
       if (($a = $this->select('cookie = ' . $cookie, 'limit 1')) && (count($a) > 0)) {
         return (int) $a[0];
       }
-    } else {
-      foreach ($this->items as $id => $item) {
-        if ($cookie == $item['cookie']) return $id;
-      }
-    }
     return false;
   }
   
@@ -245,19 +210,14 @@ class tusers extends titems {
       $this->items[$id]['expired'] = $expired;
     }
     
-    if ($this->dbversion) {
       $this->db->updateassoc(array(
       'id' => $id,
       'cookie' => $cookie,
       'expired' => $expired
       ));
-    } else {
-      $this->save();
-    }
   }
   
   public function optimize() {
-    if ($this->dbversion) {
       $time = sqldate(strtotime('-1 day'));
       $pagetable = litepublisher::$db->prefix . 'userpage';
       $delete = $this->db->idselect("status = 'wait' and id in (select id from $pagetable where registered < '$time')");
@@ -269,21 +229,6 @@ class tusers extends titems {
           $pages->delete($id);
         }
       }
-    } else {
-      $pages = tuserpages::i();
-      $pages->lock();
-      $time = strtotime('-1 day');
-      $deleted = false;
-      foreach ($this->items as $id => $item) {
-        if (($item['status'] == 'wait') && ($pages->items[$id]['registered'] < $time)) {
-          unset($this->items[$id]);
-          $pages->delete($id);
-          $deleted = true;
-        }
-      }
-      if ($deleted) $this->save();
-      $pages->unlock();
-    }
   }
   
 }//class

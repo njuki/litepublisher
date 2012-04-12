@@ -1,13 +1,21 @@
 <?php
 
 function update527() {
-litepublisher::$classes->items['tcommentform'][2] = dbversion ? 'comments.form.class.db.php' : 'comments.form.class.files.php';
-litepublisher::$classes->items['tcommentmanager'][2] = dbversion ? 'comments.manager.class.db.php' : 'comments.manager.class.files.php';
+$cm = tcommentmanager::i();
+    $cm->data['canedit'] =  true;
+    $cm->data['candelete'] =  true;
+    $cm->data['idguest'] =  tusers::i()->add(array(
+'email' => '',
+'name' => tlocal::get('default', 'guest'),
+'status' => 'approved',
+'idgroups' => 'commentator'
+));
+$cm->save();
+
 litepublisher::$classes->add('tjsonserver', 'jsonserver.class.php');
-litepublisher::$classes->add('TjsonComments', 'json.comments.class.php');
+litepublisher::$classes->add('tjsoncomments', 'json.comments.class.php');
   litepublisher::$options->comments_status = 'guest';
 
-if (dbversion) {
 $db = litepublisher::$db;
 $db->table = 'users';
 $db->insertrow($db->assoctorow(array(
@@ -88,5 +96,4 @@ $man->alter('comments', "change tmp author int unsigned NOT NULL default '0'");
 $man->alter('comments', "add KEY `author` (`author`)");
 
 $man->deletetable('comusers');
-}
 }

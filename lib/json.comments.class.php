@@ -6,7 +6,7 @@
 * and GPL (gpl.txt) licenses.
 **/
 
-class TjsonComments extends tevents {
+class tjsoncomments extends tevents {
   
   public static function i() {
     return getinstance(__class__);
@@ -25,7 +25,7 @@ if (!litepublisher::$options->ingroup('moderator')) $this->error('Not enough rig
     return $manager->delete($id);
   }
   
-    public function setstatus($login, $password, $id, $idpost, $status) {
+    public function comment_setstatus($args) {
     $this->auth($login, $password, 'moderator');
     $manager = tcommentmanager::i();
     if (!$manager->setstatus((int) $id, (int) $idpost, $status)) return $this->xerror(404, "Comment status not changed");
@@ -38,7 +38,7 @@ if (!litepublisher::$options->ingroup('moderator')) $this->error('Not enough rig
     return $manager->add((int) $idpost, $name, $email, $url, $content);
   }
   
-  public function edit($login, $password, $id, $idpost, $comment) {
+  public function comment_edit(array $args) {
     $this->auth($login, $password, 'moderator');
     $manager = tcommentmanager::i();
     if (!$manager->edit((int) $id, (int) $idpost, $comment['name'], $comment['email'], $comment['url'], $comment['content'])) {
@@ -53,7 +53,7 @@ if (!litepublisher::$options->ingroup('moderator')) $this->error('Not enough rig
     return $manager->reply((int) $id, (int) $idpost, $content);
   }
   
-  public function getcomment($login, $password, $id, $idpost) {
+  public function comment_get($login, $password, $id, $idpost) {
     $this->auth($login, $password, 'moderator');
     $comments = tcomments::i((int) $idpost);
     $comment = $comments->getcomment((int) $id);
