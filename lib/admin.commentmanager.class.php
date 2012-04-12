@@ -21,27 +21,41 @@ return parent::gethead() . tuitabs::gethead();
 $html = $this->html;
     $args = new targs();
     $tabs = new tuitabs();
+$cm = tcommentmanager::i();
     $options = litepublisher::$options;
-      $form = new tautoform(litepublisher::$options, 'options', 'commentform');
-if (dbversion) {
 $lang = tlocal::admin();
-      $form->addprop(array(
-'obj' => litepublisher::$options,
-'propname' => 'comments_status',
-'type' => 'combo',
-'items' => array(
+$args->comments_status = tadminhtml::array2combo(array(
 'closed' => $lang->closed,
 'reg' => $lang->reg,
 'guest' => $lang->guest,
 'comuser' => $lang->comuser
-)
-));
-} else {
-      $form->add($form->commentsenabled);
-}
+), $options->comments_status);
 
-      $form->add($form->filtercommentstatus, $form->commentsapproved, $form->checkduplicate, $form->defaultsubscribe, $form->commentsdisabled, $form->autocmtform, $form->pingenabled,
-      $form->commentpages, $form->commentsperpage, $form->comments_invert_order);
+$args->filtercommentstatus = $options->filtercommentstatus;
+$args->commentsapproved = $options->commentsapproved;
+$args->checkduplicate = $options->checkduplicate;
+$args->defaultsubscribe = $options->defaultsubscribe;
+$args->commentsdisabled  = $options->commentsdisabled;
+$args->autocmtform  = $options->autocmtform;
+$args->pingenabled  = $options->pingenabled;
+$args->commentpages  = $options->commentpages;
+$args->commentsperpage  = $options->commentsperpage;
+$args->comments_invert_order  = $options->comments_invert_order;
+
+$tabs->add($lang->options, 
+'[combo=comments_status]
+[checkbox=filtercommentstatus]
+[checkbox=commentsapproved]
+[checkbox=checkduplicate]
+[checkbox=defaultsubscribe]
+[checkbox=commentsdisabled]
+[checkbox=autocmtform]
+[checkbox=pingenabled]
+[checkbox=commentpages]
+[text=commentsperpage]
+[checkbox=comments_invert_order]
+');
+
       $form->obj = litepublisher::$classes->commentmanager;
       $form->add($form->sendnotification, $form->hidelink,  $form->redir, $form->nofollow);
       $form->addeditor(tsubscribers::i(), 'locklist');
@@ -50,5 +64,16 @@ return $html->adminform($tabs->get(), $args);
 }
     
 public function processform() {
+$options->filtercommentstatus = isset($filtercommentstatus);
+$options->commentsapproved = isset($commentsapproved);
+$options->checkduplicate = isset($checkduplicate);
+$options->defaultsubscribe = isset($defaultsubscribe);
+$options->commentsdisabled  = isset($commentsdisabled);
+$options->autocmtform  = isset($autocmtform);
+$options->pingenabled  = isset($pingenabled);
+$options->commentpages  = isset($commentpages);
+$options->commentsperpage  = (int) trim($commentsperpage);
+$options->comments_invert_order  = isset($comments_invert_order);
+
 }
 }//class
