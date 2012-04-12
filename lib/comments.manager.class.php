@@ -6,7 +6,7 @@
 * and GPL (gpl.txt) licenses.
 **/
 
-class tcommentmanager extends tevents {
+class tcommentmanager extends tevents_storage {
 
   public static function i() {
     return getinstance(__class__);
@@ -15,18 +15,8 @@ class tcommentmanager extends tevents {
   protected function create() {
     parent::create();
     $this->basename = 'commentmanager';
-    $this->addevents('added', 'deleted', 'edited', 'changed', 'approved',
-    'authoradded', 'authordeleted', 'authoredited');
-    $this->data['sendnotification'] =  true;
-    $this->data['trustlevel'] = 2;
-    $this->data['hidelink'] = false;
-    $this->data['redir'] = true;
-    $this->data['nofollow'] = false;
-    $this->data['canedit'] =  true;
-    $this->data['candelete'] =  true;
-    $this->data['idguest'] =  0;
-  }
-  
+}
+
   public function getcount() {
     litepublisher::$db->table = 'comments';
     return litepublisher::$db->getcount();
@@ -41,8 +31,8 @@ $users = tusers::i();
   public function addcomment($idpost, $idauthor, $content, $ip) {
     $status = $this->createstatus($idpost, $idauthor, $content, $ip);
     if (!$status) return false;
-    $comments = tcomments::i($idpost);
-    $id = $comments->add($idauthor,  $content, $status, $ip);
+    $comments = tcomments::i();
+    $id = $comments->add($idpost, $idauthor,  $content, $status, $ip);
     $this->dochanged($id, $idpost);
     $this->added($id, $idpost);
     $this->sendmail($id, $idpost);
@@ -56,7 +46,7 @@ $users = tusers::i();
   }
   
   public function editcomment($id, $content) {
-    $comments = tcomments::i($idpost);
+    $comments = tcomments::i();
     if (!$comments->edit($id, $idauthor,  $content)) return false;
     
     $this->dochanged($id, $idpost);
@@ -64,18 +54,13 @@ $users = tusers::i();
     return true;
   }
   
-  public function reply($idreply, $idpost, $content) {
+  public function reply($idparent, $content) {
+$idauthor = 1; //admin
     $status = 'approved';
-    $idpost = (int) $idpost;
-    $email = litepublisher::$options->fromemail;
-    $site = litepublisher::$site->url . litepublisher::$site->home;
-    $name = litepublisher::$site->author;
-    $comusers = tcomusers::i($idpost);
-    $idauthor = $comusers->add($name, $email, $site, '');
-    $comments = tcomments::i($idpost);
-    $id = $comments->add($idauthor,  $content, $status, '');
-    
-    if (!dbversion) $this->addrecent($id, $idpost);
+    $comments = tcomments::i();
+$idpost = $comments->getvalue($idparent, 'post');
+    $id = $comments->add($idpost, $idauthor,  $content, $status, '');
+$comments->setvalue($id, 'parent', $idreply);
     
     $this->dochanged($id, $idpost);
     $this->added($id, $idpost);
@@ -84,7 +69,7 @@ $users = tusers::i();
   }
   
   private function dochanged($id, $idpost) {
-      $comments = tcomments::i($idpost);
+      $comments = tcomments::i();
       $count = $comments->db->getcount("post = $idpost and status = 'approved'");
       $comments->getdb('posts')->setvalue($idpost, 'commentscount', $count);
       //update trust
@@ -103,9 +88,8 @@ $users = tusers::i();
   }
   
   public function delete($id) {
-    $comments = tcomments::i($idpost);
+    $comments = tcomments::i();
     if ($comments->delete($id)) {
-      if (!dbversion) $this->deleterecent($id, $idpost);
       $this->deleted($id, $idpost);
       $this->dochanged($id, $idpost);
       return true;
@@ -113,22 +97,10 @@ $users = tusers::i();
     return false;
   }
   
-  public function postdeleted($idpost) {
-      $comments = tcomments::i($idpost);
-      $comments->db->update("status = 'deleted'", "post = $idpost");
-  }
-  
-  public function setstatus($id, $idpost, $status) {
+  public function setstatus($id, $$status) {
     if (!in_array($status, array('approved', 'hold', 'spam')))  return false;
     $comments = tcomments::i($idpost);
     if ($comments->setstatus($id, $status)) {
-      if (!dbversion){
-        if ($status == 'approved') {
-          $this->addrecent($id, $idpost);
-        } else {
-          $this->deleterecent($id, $idpost);
-        }
-      }
       $this->dochanged($id, $idpost);
       return true;
     }
@@ -189,5 +161,3 @@ $users = tusers::i();
   }
   
 }//class
-
-?>

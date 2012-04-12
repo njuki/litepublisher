@@ -47,6 +47,9 @@ $args->sendnotification = $cm->sendnotification;
 $args->hidelink =  $cm->hidelink;
 $args->redir = $cm->redir;
 $args->nofollow = $cm->nofollow;
+$args->canedit = $cm->canedit;
+$args->candelete = $cm->candelete;
+$args->reqireconfirm = $cm->reqireconfirm;
 
 $tabs->add($lang->options, 
 '[combo=comments_status]
@@ -64,7 +67,12 @@ $tabs->add($lang->options,
 [checkbox=hidelink]
 [checkbox=redir]
 [checkbox=nofollow]
+[checkbox=canedit]
+[checkbox=candelete]
+[checkbox=reqireconfirm]
 ');
+
+
 
 $args->locklist = tsubscribers::i()->locklist;
       $tabs->add('E-Mail', '[editor=locklist]');

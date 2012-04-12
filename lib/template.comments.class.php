@@ -39,24 +39,7 @@ public function save() {}
     }
     
     if (!litepublisher::$options->commentsdisabled && $post->commentsenabled) {
-if (dbversion) {
         $result .=  tcommentform::i()->getform($post, $theme);
-} else {
-      if (litepublisher::$options->autocmtform) {
-        $result .=  "<?php  echo tcommentform::printform($idpost, '$theme->name'); ?>\n";
-      } else {
-        $lang = tlocal::i('comment');
-        $args->name = '';
-        $args->email = '';
-        $args->url = '';
-        $args->subscribe = litepublisher::$options->defaultsubscribe;
-        $args->content = '';
-        $args->postid = $idpost;
-        $args->antispam = base64_encode('superspamer' . strtotime ("+1 hour"));
-        
-        $result .= $theme->parsearg($theme->templates['content.post.templatecomments.form'], $args);
-      }
-}
     } else {
       $result .= $theme->parse($theme->templates['content.post.templatecomments.closed']);
     }

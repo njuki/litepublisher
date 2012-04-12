@@ -11,6 +11,11 @@ function tcommentsInstall($self) {
   $dir = dirname(__file__) . DIRECTORY_SEPARATOR;
   $manager->CreateTable($self->table, file_get_contents($dir .'comments.sql'));
   $manager->CreateTable($self->rawtable, file_get_contents($dir .'comments.raw.sql'));
+
+  tposts::i()->deleted = $self->postdeleted;
 }
 
-?>
+function tcommentsUninstall($self) {
+  tposts::unsub($self);
+
+}
