@@ -38,8 +38,19 @@ public function save() {}
       $result .= $pingbacks->getcontent();
     }
     
-    if (!litepublisher::$options->commentsdisabled && $post->commentsenabled) {
+    if (!litepublisher::$options->commentsdisabled && ($post->comments_status != 'closed')) {
+switch ($post->comments_status) {
+case 'reg':
+
+break;
+
+case 'guest':
+break;
+
+case 'comuser':
         $result .=  tcommentform::i()->getform($post, $theme);
+break;
+}
     } else {
       $result .= $theme->parse($theme->templates['content.post.templatecomments.closed']);
     }
