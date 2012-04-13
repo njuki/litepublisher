@@ -18,7 +18,7 @@ class tpost extends titem implements  itemplate {
   
   public static function i($id = 0) {
     $id = (int) $id;
-    if (dbversion && ($id > 0)) {
+    if ($id > 0) {
       if (isset(self::$instances['post'][$id]))     return self::$instances['post'][$id];
       if ($result = self::loadpost($id)) {
         self::$instances['post'][$id] = $result;
@@ -81,7 +81,7 @@ class tpost extends titem implements  itemplate {
     'filtered' => '',
     'excerpt' => '',
     'rss' => '',
-    'rawcontent' => dbversion ? false : '',
+    'rawcontent' => false,
     'keywords' => '',
     'description' => '',
     'head' => '',
@@ -100,8 +100,6 @@ class tpost extends titem implements  itemplate {
     'pages' => array()
     );
 
-if (!dbversion)     $this->data['commentsenabled'] = litepublisher::$options->commentsenabled;
-
     $this->factory = litepublisher::$classes->getfactory($this);
     $posts = $this->factory->posts;
     foreach ($posts->itemcoclasses as $class) {
@@ -109,10 +107,6 @@ if (!dbversion)     $this->data['commentsenabled'] = litepublisher::$options->co
       $coinstance->post = $this;
       $this->coinstances[]  = $coinstance;
     }
-  }
-  
-  public function getdbversion() {
-    return dbversion;
   }
   
   public function __get($name) {
@@ -166,7 +160,7 @@ if (!dbversion)     $this->data['commentsenabled'] = litepublisher::$options->co
   }
   
   public function load() {
-    $result = dbversion? $this->LoadFromDB() : parent::load();
+    $result = $this->LoadFromDB();
     if ($result) {
       foreach ($this->coinstances as $coinstance) $coinstance->load();
     }
@@ -276,33 +270,18 @@ if (!dbversion)     $this->data['commentsenabled'] = litepublisher::$options->co
   public function getprev() {
     if (!is_null($this->aprev)) return $this->aprev;
     $this->aprev = false;
-    if (dbversion) {
       if ($id = $this->db->findid("status = 'published' and posted < '$this->sqldate' order by posted desc")) {
         $this->aprev = self::i($id);
       }
-    } else {
-      $posts = $this->factory->posts;
-      $keys = array_keys($posts->archives);
-      $i = array_search($this->id, $keys);
-      if ($i < count($keys) -1) $this->aprev = self::i($keys[$i + 1]);
-    }
     return $this->aprev;
   }
   
   public function getnext() {
     if (!is_null($this->anext)) return $this->anext;
     $this->anext = false;
-    if (dbversion) {
       if ($id = $this->db->findid("status = 'published' and posted > '$this->sqldate' order by posted asc")) {
         $this->anext = self::i($id);
       }
-    } else {
-      $posts = $this->factory->posts;
-      $keys = array_keys($posts->archives);
-      $i = array_search($this->id, $keys);
-      if ($i > 0 ) $this->anext = self::i($keys[$i - 1]);
-      
-    }
     return $this->anext;
   }
   
@@ -521,12 +500,8 @@ if (!dbversion)     $this->data['commentsenabled'] = litepublisher::$options->co
   public function setidview($id) {
     if ($id != $this->idview) {
       $this->data['idview'] = $id;
-      if ($this->dbversion) {
         $this->db->setvalue($this->id, 'idview', $id);
-      } else {
-        $this->save();
-      }
-    }
+}
   }
   
   public function geticonurl() {
@@ -631,15 +606,11 @@ if (!dbversion)     $this->data['commentsenabled'] = litepublisher::$options->co
   }
 
 public function getcommentsenabled() {
-return dbversion ? ('closed' != $this->data['comments_status']) : $this->data['commentsenabled'];
+return 'closed' != $this->data['comments_status'];
 }
 
 public function setcommentsenabled($value) {
-if (dbversion) {
 $this->data['comments_status'] = $value ? litepublisher::$options->comments_status : 'closed';
-} else {
-$this->data['commentsenabled'] = $value;
-}
 }
   
   public function get_excerpt() {
@@ -730,20 +701,19 @@ $this->data['commentsenabled'] = $value;
   }
   
   public function getrawcontent() {
-    if (dbversion && ($this->id > 0) && ($this->data['rawcontent'] === false)) {
+    if (($this->id > 0) && ($this->data['rawcontent'] === false)) {
       $this->data['rawcontent'] = $this->rawdb->getvalue($this->id, 'rawcontent');
     }
     return $this->data['rawcontent'];
   }
   
   protected function getrawdb() {
-    litepublisher::$db->table = 'rawposts';
-    return litepublisher::$db;
+return $this->getdb('rawposts');
   }
   
   public function getpage($i) {
     if ( isset($this->data['pages'][$i]))   return $this->data['pages'][$i];
-    if (dbversion && ($this->id > 0)) {
+    if ($this->id > 0) {
       if ($r = $this->getdb('pages')->getassoc("(id = $this->id) and (page = $i) limit 1")) {
         $s = $r['content'];
       } else {
@@ -758,7 +728,7 @@ $this->data['commentsenabled'] = $value;
   public function addpage($s) {
     $this->data['pages'][] = $s;
     $this->data['pagescount'] = count($this->data['pages']);
-    if (dbversion && ($this->id > 0)) {
+    if ($this->id > 0) {
       $this->getdb('pages')->insert_a(array(
       'id' => $this->id,
       'page' => $this->data['pagescount'] -1,
@@ -770,7 +740,7 @@ $this->data['commentsenabled'] = $value;
   public function deletepages() {
     $this->data['pages'] = array();
     $this->data['pagescount'] = 0;
-    if (dbversion && ($this->id > 0)) $this->getdb('pages')->iddelete($this->id);
+    if ($this->id > 0) $this->getdb('pages')->iddelete($this->id);
   }
   
   public function gethaspages() {
@@ -778,8 +748,7 @@ $this->data['commentsenabled'] = $value;
   }
   
   public function getpagescount() {
-    if (dbversion) return $this->data['pagescount'] + 1;
-    return isset($this->data['pages']) ? count($this->data['pages']) + 1: 1;
+return $this->data['pagescount'] + 1;
   }
   
   public function getcountpages() {
@@ -796,11 +765,6 @@ $this->data['commentsenabled'] = $value;
     $url = $this->url;
     if (($c > 1) && !litepublisher::$options->comments_invert_order) $url = rtrim($url, '/') . "/page/$c/";
     return $url;
-  }
-  
-  public function getcommentscount() {
-    if (!$this->commentsenabled || dbversion)  return $this->data['commentscount'];
-    return $this->comments->approvedcount;
   }
   
   public function clearcache() {
