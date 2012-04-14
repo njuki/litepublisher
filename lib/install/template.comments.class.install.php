@@ -8,7 +8,7 @@
 
 function ttemplatecommentsInstall($self) {
 tlocal::usefile('install');
-$lang = tlocal::i('comments');
+$lang = tlocal::i('beforecommentsform');
 $self->data['reg'] = $lang->reg;
 $self->data['noreg'] = $lang->noreg;
 $self->data['guest'] = $lang->guest;
