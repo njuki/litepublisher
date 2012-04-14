@@ -32,7 +32,7 @@ class tabstractcron extends tevents {
   }
   
   protected function geturl() {
-    return "/croncron.htm" . litepublisher::$site->q . "cronpass=$this->password";
+    return '/croncron.htm' . litepublisher::$site->q . "cronpass=$this->password";
   }
   
   public function request($arg) {

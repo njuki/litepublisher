@@ -39,7 +39,6 @@ function tjsmergerInstall($self) {
   $self->add($section, '/js/litepublisher/comments.min.js');
   
   $section = 'moderate';
-  $self->add($section, '/js/litepublisher/rpc.min.js');
   $self->add($section, '/js/litepublisher/moderate.min.js');
   
   tlocal::usefile('admin');
