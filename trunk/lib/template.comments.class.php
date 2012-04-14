@@ -49,7 +49,7 @@ $result .= '<?php } else { ?>';
 
 switch ($post->comments_status) {
 case 'reg':
-$result .= $this->needreg;
+$result .= $this->noreg;
 break;
 
 case 'guest':
@@ -58,6 +58,7 @@ $result .= $this->guest;
 break;
 
 case 'comuser':
+$result .= $this->comuser;
         $result .=  tcommentform::i()->getform($post, $theme);
 break;
 }
