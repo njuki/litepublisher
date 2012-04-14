@@ -6,14 +6,16 @@
 * and GPL (gpl.txt) licenses.
 **/
 
-class ttemplatecomments extends tdata {
+class ttemplatecomments extends tevents {
   
   public static function i() {
     return getinstance(__class__);
   }
   
-public function load() {}
-public function save() {}
+  protected function create() {
+    parent::create();
+    $this->basename = 'comments.templates';
+}
   
   public function getcomments($idpost) {
     $result = '';
@@ -39,18 +41,28 @@ public function save() {}
     }
     
     if (!litepublisher::$options->commentsdisabled && ($post->comments_status != 'closed')) {
+$result .= '<?php if (litepublisher::$options->ingroup(\'author\')) { ?>';
+$result .= $this->reg;
+      $regform = $theme->parse($theme->templates['content.post.templatecomments.regform']);
+      $result .= $regform;
+$result .= '<?php } else { ?>';
+
 switch ($post->comments_status) {
 case 'reg':
-
+$result .= $this->needreg;
 break;
 
 case 'guest':
+$result .= $this->guest;
+      $result .= $regform;
 break;
 
 case 'comuser':
         $result .=  tcommentform::i()->getform($post, $theme);
 break;
 }
+
+$result .= '<?php } ?>';
     } else {
       $result .= $theme->parse($theme->templates['content.post.templatecomments.closed']);
     }
