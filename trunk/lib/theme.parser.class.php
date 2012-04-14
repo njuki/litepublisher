@@ -579,8 +579,8 @@ $editor = strtr($templates['content.admin.editor'], array(
 ));
 
 $templates[$regform] =  
-'								<h4 id="respond">$lang.leavereply</h4>
-<div id="commentform_note">$commentform.note</div>
+'								<div id="beforeregform"$mesg</div>
+<h4 id="respond">$lang.leavereply</h4>
 <form action="$site.url/send-comment.php" method="post" id="commentform">'
  . $editor .
 '<p>

@@ -11,8 +11,8 @@ return false;
 
 $.move_comment = function(id, status) {
   var item =$("#comment-" + id);
-  var parent = $("#" + (status == "hold" ? "hold" : "") + ltoptions.commentsid);
-if (item.parent() != parent) parent.append(item);
+  var parent = status == "hold" ? $(ltoptions.theme.holdcommentlist) : $(ltoptions.theme.commentlist);
+parent.append(item);
 };
 
 $.moderate_comment = function (id, status) {

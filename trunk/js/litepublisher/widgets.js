@@ -10,7 +10,7 @@ function widget_load(node, id, sidebar) {
   var comment = widget_findcomment(node, id);
   if (! comment) return alert('Widget not found');
   $.get(ltoptions.url + '/getwidget.htm',
-{id: id, sidebar: sidebar, themename: ltoptions.themename, idurl: ltoptions.idurl},
+{id: id, sidebar: sidebar, themename: ltoptions.theme.name, idurl: ltoptions.idurl},
   
   function (html) {
     var content = $(html);

@@ -172,7 +172,7 @@ $authors = litepublisher::$db->prefix. 'users';
     $post = tpost::i($this->pid);
     $theme = $post->theme;
     tlocal::usefile('admin');
-    $args = targs::i();
+    $args = new targs();
     if ($post->commentpages == litepublisher::$urlmap->page) {
       $result .= $this->getcontentwhere('hold', '');
     } else {
@@ -197,6 +197,7 @@ return $result;
   private function getcontentwhere($status, $whereauthor) {
     $result = '';
     $post = tpost::i($this->pid);
+$theme = $post->theme;
     if ($status == 'approved') {
       if (litepublisher::$options->commentpages ) {
         $page = litepublisher::$urlmap->page;
@@ -221,7 +222,6 @@ return $result;
     $comment = new tcomment(0);
     ttheme::$vars['comment'] = $comment;
     $lang = tlocal::i('comment');
-    $theme = ttheme::i();
     if ($ismoder = $this->moderator) {
       tlocal::usefile('admin');
       $moderate =$theme->templates['content.post.templatecomments.comments.comment.moderate'];
