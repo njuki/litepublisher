@@ -34,6 +34,7 @@ class ttemplate extends tevents_storage {
     'files' =>litepublisher::$site->files,
     'idurl' => litepublisher::$urlmap->itemrequested['id'],
     'jqueryui_version' => litepublisher::$site->jqueryui_version,
+'theme' => array()
     );
     $this->hover = true;
     $this->data['heads'] = '';
@@ -71,7 +72,7 @@ class ttemplate extends tevents_storage {
     $this->itemplate = $context instanceof itemplate;
     $this->view = $this->get_view($context);
     $theme = $this->view->theme;
-    $this->ltoptions['themename'] = $theme->name;
+    $this->ltoptions['theme']['name'] = $theme->name;
     litepublisher::$classes->instances[get_class($theme)] = $theme;
     $this->path = litepublisher::$paths->themes . $theme->name . DIRECTORY_SEPARATOR ;
     $this->url = litepublisher::$site->files . '/themes/' . $theme->name;
