@@ -538,7 +538,6 @@ $confirmid - строка с набором цифр и букв для подт
 К простым шаблонам также относится и шаблон кнопок модерирования для массовой модерации, не индивидуальные кнопки в каждом комментарии, а общие кнопки для всего списка. Присвоим шаблон
 
 content.post.templatecomments.moderateform= [
-		<script type="text/javascript" src="$site.files$template.jsmerger_moderate"></script>
 								<form name="moderateform" id="moderateform" action="$site.url/admin/comments/" method="post">
 								$comments
 								<p>
