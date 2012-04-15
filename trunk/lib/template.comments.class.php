@@ -42,24 +42,23 @@ class ttemplatecomments extends tevents {
     
     if (!litepublisher::$options->commentsdisabled && ($post->comments_status != 'closed')) {
 $result .= '<?php if (litepublisher::$options->ingroup(\'author\')) { ?>';
-$result .= $this->reg;
-      $regform = $theme->parse($theme->templates['content.post.templatecomments.regform']);
-      $result .= $regform;
+$args->mesg = $this->reg;
+      $result .= $theme->parsearg($theme->templates['content.post.templatecomments.regform'], $args);
 $result .= '<?php } else { ?>';
-
 switch ($post->comments_status) {
 case 'reg':
-$result .= $this->noreg;
+$args->mesg = $this->noreg;
+      $result .= $theme->parsearg($theme->templates['content.post.templatecomments.regform'], $args);
 break;
 
 case 'guest':
-$result .= $this->guest;
-      $result .= $regform;
+$args->mesg = $this->guest;
+      $result .= $theme->parsearg($theme->templates['content.post.templatecomments.regform'], $args);
 break;
 
 case 'comuser':
-$result .= $this->comuser;
-        $result .=  tcommentform::i()->getform($post, $theme);
+$args->mesg = $this->comuser;
+      $result .= $theme->parsearg($theme->templates['content.post.templatecomments.form'], $args);
 break;
 }
 
