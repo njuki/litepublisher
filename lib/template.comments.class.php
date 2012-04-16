@@ -42,8 +42,7 @@ class ttemplatecomments extends tevents {
     
     if (!litepublisher::$options->commentsdisabled && ($post->comments_status != 'closed')) {
 $result .= '<?php if (litepublisher::$options->ingroup(\'author\')) { ?>';
-$link = '<?php echo litepublisher::$site->getuserlink(); ?>';
-$mesg = sprintf($this->logged, $link);
+$mesg = sprintf($this->logged, '<?php echo litepublisher::$site->getuserlink(); ?>');
 $mesg .= ' <a href="$site.url/admin/logout/">$lang.logout</a> ';
 $args->mesg = $this->fixmesg($mesg);
       $result .= $theme->parsearg($theme->templates['content.post.templatecomments.regform'], $args);

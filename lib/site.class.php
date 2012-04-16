@@ -6,7 +6,8 @@
 * and GPL (gpl.txt) licenses.
 **/
 
-class tsite extends tevents_storage {
+class tsite ext0ends tevents_storage {
+private $users;
   
   public static function i() {
     return getinstance(__class__);
@@ -64,16 +65,21 @@ class tsite extends tevents_storage {
 
 public function getuserlink() {
 if ($id = litepublisher::$options->user) {
+if (!isset($this->users)) $this->users = array();
+if (isset($this->users[$id])) return $this->users;
 $item = tusers::i()->getitem($id);
 if ($item['website']) {
-return sprintf('<a href="%s">%s</a>', $item['website'], $item['name']);
+$result = sprintf('<a href="%s">%s</a>', $item['website'], $item['name']);
 } else {
 $db = litepublisher::$db;
     $item= $db->res2assoc($db->query("select $db->userpage.*, $db->urlmap.url as url from $db->userpage
     left join  $db->urlmap on $db->urlmap.id  = $db->userpage.idurl
     where id = $id limit 1"));
 
-return sprintf('<a href="%s%s">%s</a>', $this->url, $item['url'], $item['name']);
+$result = sprintf('<a href="%s%s">%s</a>', $this->url, $item['url'], $item['name']);
+}
+$this->users[$id] = $result;
+return $result;
 }
 return '';
 }
