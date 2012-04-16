@@ -124,8 +124,9 @@ class tregservice extends tplugin {
     $reguser =tregserviceuser::i();
     if (!empty($item['email'])) {
       if ($id = $users->emailexists($item['email'])) {
-        
-      } else {
+$user = $users->getitem($id);        
+if (($user['status'] == 'wait') || ($user['status'] == 'comuser')) $users->approve($id);
+      } elseif (litepublisher::$options->reguser) {
         $id = $users->add(array(
         'email' => $item['email'],
         'name' => $item['name'],
@@ -133,13 +134,16 @@ class tregservice extends tplugin {
         ));
         $users->approve($id);
         if (isset($item['uid'])) $reguser->add($id, $this->name, $item['uid']);
-      }
+      } else {
+//registration disabled
+        return 403;
+}
     } else {
       $uid = !empty($item['uid']) ? $item['uid'] : (!empty($item['website']) ? $item['website'] : '');
       if ($uid) {
         if ($id = $reguser->find($this->name, $uid)){
-          
-        } else {
+//nothing
+        } elseif (litepublisher::$options->reguser) {
           $id = $users->add(array(
           'email' => '',
           'name' => $item['name'],
@@ -147,7 +151,10 @@ class tregservice extends tplugin {
           ));
           $users->approve($id);
           $reguser->add($id, $this->name, $uid);
-        }
+        } else {
+//registration disabled
+        return 403;
+}
       } else {
         //nothing found and hasnt email or uid
         return 403;

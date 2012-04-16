@@ -61,4 +61,21 @@ class tsite extends tevents_storage {
     return litepublisher::$options->data['language'];
   }
   
+
+public function getuserlink() {
+if ($id = litepublisher::$options->user) {
+$item = tusers::i()->getitem($id);
+if ($item['website']) {
+return sprintf('<a href="%s">%s</a>', $item['website'], $item['name']);
+} else {
+$db = litepublisher::$db;
+    $item= $db->res2assoc($db->query("select $db->userpage.*, $db->urlmap.url as url from $db->userpage
+    left join  $db->urlmap on $db->urlmap.id  = $db->userpage.idurl
+    where id = $id limit 1"));
+
+return sprintf('<a href="%s%s">%s</a>', $this->url, $item['url'], $item['name']);
+}
+return '';
+}
+
 }//class
