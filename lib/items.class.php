@@ -83,7 +83,7 @@ class titems extends tevents {
     if ($this->dbversion) {
       if ($this->select("$this->thistable.id = $id", 'limit 1')) return $this->items[$id];
     }
-    return $this->error("Item $id not found in class ". get_class($this));
+    return $this->error(sprintf('Item %d not found in class %s', $id, get_class($this)));
   }
   
   public function getvalue($id, $name) {

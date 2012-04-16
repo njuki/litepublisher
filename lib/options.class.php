@@ -110,29 +110,62 @@ class toptions extends tevents_storage {
   }
   
   public function authcookie() {
+    $iduser = isset($_COOKIE['litepubl_user_id']) ? (int) $_COOKIE['litepubl_user_id'] : 0;
     $cookie = isset($_COOKIE['litepubl_user']) ? (string) $_COOKIE['litepubl_user'] : (isset($_COOKIE['admin']) ? (string) $_COOKIE['admin'] : '');
     if ($cookie == '') return false;
     $cookie = basemd5($cookie . litepublisher::$secret);
     if (    $cookie == basemd5( litepublisher::$secret)) return false;
-    if (!empty($this->cookie ) && ($this->cookie == $cookie)) {
-      if ($this->cookieexpired < time()) return false;
-      $this->_user = 1;
-    } elseif (!$this->usersenabled)  {
-      return false;
-    } else {
+
+if ($iduser) {
+if (!$this->finduser($iduser, $cookie)) return false;
+} elseif ($iduser = $this->findcookie($cookie)) {
+//fix prev versions
+if ($iiduser == 1) {
+$expired = $this->expired;
+} else {
+        $item = tusers::i()->getitem($iduser);
+$expired = strtotime($item['expired']);
+}
+    setcookie('litepubl_user_id', $iduser, $expired, litepublisher::$site->subdir . '/', false);
+} else {
+return false;
+}
+
+        $this->_user = $iduser;
+    $this->updategroup();
+    return $iduser;
+}
+
+public function finduser($iduser, $cookie) {
+    if ($iduser == 1) return $this->compare_cookie($cookie);
+if (!$this->usersenabled)  return false;
+
+      $users = tusers::i();
+try {
+        $item = $users->getitem($iduser);
+    } catch (Exception $e) {
+return false;
+}
+
+return ($cookie == $item['cookie']) && (strtotime($item['expired']) > time());
+}
+
+public function findcookie($cookie) {
+if ($this->compare_cookie($cookie)) return 1;
+if (!$this->usersenabled)  return false;
+
       $users = tusers::i();
       if ($iduser = $users->findcookie($cookie)){
         $item = $users->getitem($iduser);
         if (strtotime($item['expired']) <= time()) return false;
-        $this->_user = (int) $iduser;
-      } else {
+return (int) $iduser;
+}
         return false;
-      }
-    }
-    
-    $this->updategroup();
-    return $this->_user;
   }
+
+private function compare_cookie($cookie) {
+return !empty($this->cookie ) && ($this->cookie == $cookie) && ($this->cookieexpired > time());
+}
   
   public function auth($email, $password) {
     if ($email == '' && $password == '' && $this->cookieenabled) return $this->authcookie();
@@ -189,6 +222,7 @@ class toptions extends tevents_storage {
   }
   
   public function setcookies($cookie, $expired) {
+    setcookie('litepubl_user_id', $this->_user, $expired, litepublisher::$site->subdir . '/', false);
     setcookie('litepubl_user', $cookie, $expired, litepublisher::$site->subdir . '/', false);
     if ('admin' == $this->group) setcookie('litepubl_user_flag', $cookie ? 'true' : '', $expired, litepublisher::$site->subdir . '/', false);
     if ($this->_user == 1) {
