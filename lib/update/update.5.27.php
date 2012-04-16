@@ -30,8 +30,9 @@ $admin = tadminmenus::i();
 $admin->items[$admin->url2id('/admin/options/comments/')]['class'] = 'tadmincommentmanager';
 $admin->save();
 
-
 tjsmerger::i()->deletefile('moderate', '/js/litepublisher/rpc.min.js');
+
+ttemplatecomments::i()->install();
 
 $db = litepublisher::$db;
 $db->table = 'users';

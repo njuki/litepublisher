@@ -34,7 +34,7 @@ body {background:#f0f6f7 url(../images/bg7.png) repeat-x;font:12px Arial, Verdan
 #prevnext p {margin:0;}
 #prevnext #next {text-align:right;}
 .post-comments {background: url(../images/balloon.png) no-repeat left center;padding:0 0 0 20px;float:right;text-align:right;}
-#content #comments, #content .hold, #content #respond {margin:30px 0 15px 0;}
+#content #comments, #content .hold, #content #respond, #content #beforeregform {margin:30px 0 15px 0;}
 .moderationbuttons, .replyquotebuttons {margin:15px 0 15px 0;text-align:right;}
 .commentmetadata a{font-size:10px;color:#A7A7A7;}
 .commentmetadata {float:right;}

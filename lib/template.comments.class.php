@@ -42,22 +42,27 @@ class ttemplatecomments extends tevents {
     
     if (!litepublisher::$options->commentsdisabled && ($post->comments_status != 'closed')) {
 $result .= '<?php if (litepublisher::$options->ingroup(\'author\')) { ?>';
-$args->mesg = $this->reg;
+$link = '<?php echo litepublisher::$site->getuserlink(); ?>';
+$mesg = sprintf($this->logged, $link);
+$mesg .= ' <a href="$site.url/admin/logout/">$lang.logout</a> ';
+$args->mesg = $this->fixmesg($mesg);
       $result .= $theme->parsearg($theme->templates['content.post.templatecomments.regform'], $args);
 $result .= '<?php } else { ?>';
+
 switch ($post->comments_status) {
 case 'reg':
-$args->mesg = $this->noreg;
+$this->noreg;
+$args->mesg = $this->fixmesg($mesg);
       $result .= $theme->parsearg($theme->templates['content.post.templatecomments.regform'], $args);
 break;
 
 case 'guest':
-$args->mesg = $this->guest;
+$args->mesg = $this->fixmesg($msg);
       $result .= $theme->parsearg($theme->templates['content.post.templatecomments.regform'], $args);
 break;
 
 case 'comuser':
-$args->mesg = $this->comuser;
+$args->mesg = $this->fixmesg($mesg);
       $result .= $theme->parsearg($theme->templates['content.post.templatecomments.form'], $args);
 break;
 }
@@ -68,5 +73,10 @@ $result .= '<?php } ?>';
     }
     return $result;
   }
+
+public function fixmesg($mesg) {
+return str_replace(array('&backurl=', '&amp;backurl='), 
+'&amp;backurl=' . urlencode(litepublisher::$urlmap->url));
+}
   
 } //class

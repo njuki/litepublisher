@@ -40,6 +40,7 @@ class tregservices extends titems {
         $widget .= sprintf('<li><a href="%s=%s&backurl=">%s%s</a></li>', $url, $name, $icon, $service->title);
       }
     }
+$widget = str_replace('&', '&amp;', $widget);
     $this->widget = $this->widget_title . sprintf('<ul>%s</ul>', $widget);
     $this->save();
     
