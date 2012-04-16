@@ -10,5 +10,4 @@
   `website` varchar(255) NOT NULL,
 
   PRIMARY KEY  (`id`),
-  KEY `email` (`email`),
-  KEY `cookie` (`cookie`)
+  KEY `email` (`email`)
