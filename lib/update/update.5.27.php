@@ -23,6 +23,7 @@ $cm->save();
 litepublisher::$classes->add('tjsonserver', 'jsonserver.class.php');
 litepublisher::$classes->add('tjsoncomments', 'json.comments.class.php');
 litepublisher::$classes->add('Tadmincommentmanager', 'admin.commentmanager.class.php');
+litepublisher::$classes->items['tusers'][0] = 'kernel.php';
 
   litepublisher::$options->comments_status = 'guest';
 
