@@ -82,6 +82,7 @@ class tajaxposteditor  extends tevents {
         ?>";
       }
       $_COOKIE['litepubl_user'] = $_POST['litepubl_user'];
+      $_COOKIE['litepubl_user_id'] = $_POST['litepubl_user_id'];
     }
     if ($err = self::auth()) return $err;
     $this->idpost = tadminhtml::idparam();

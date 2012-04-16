@@ -43,20 +43,23 @@ class ttemplatecomments extends tevents {
     if (!litepublisher::$options->commentsdisabled && ($post->comments_status != 'closed')) {
 $result .= '<?php if (litepublisher::$options->ingroup(\'author\')) { ?>';
 $mesg = sprintf($this->logged, '<?php echo litepublisher::$site->getuserlink(); ?>');
-$mesg .= ' <a href="$site.url/admin/logout/">$lang.logout</a> ';
+$mesg .= ' <a class="logout" href="$site.url/admin/logout/">$lang.logout</a> ';
 $args->mesg = $this->fixmesg($mesg);
       $result .= $theme->parsearg($theme->templates['content.post.templatecomments.regform'], $args);
 $result .= '<?php } else { ?>';
 
 switch ($post->comments_status) {
 case 'reg':
-$this->noreg;
+$mesg = $this->reqlogin;
+if (litepublisher::$options->reguser) {
+$mesg .= sprintf($this->regaccount, '<a class="registration" href="$site.url/admin/reguser/">$lang.registration</a>');
+}
 $args->mesg = $this->fixmesg($mesg);
       $result .= $theme->parsearg($theme->templates['content.post.templatecomments.regform'], $args);
 break;
 
 case 'guest':
-$args->mesg = $this->fixmesg($msg);
+$args->mesg = $this->fixmesg($mesg);
       $result .= $theme->parsearg($theme->templates['content.post.templatecomments.regform'], $args);
 break;
 
