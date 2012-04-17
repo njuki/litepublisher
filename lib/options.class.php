@@ -259,8 +259,6 @@ if (in_array(1, $this->idgroups)) return true;
 return tusergroups::i()->ingroup($this->user, $groupname);
 }
 
-
-  
   public function getcommentsapproved() {
     return $this->DefaultCommentStatus  == 'approved';
   }
