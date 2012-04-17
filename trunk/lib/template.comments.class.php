@@ -42,6 +42,8 @@ class ttemplatecomments extends tevents {
     
     if (!litepublisher::$options->commentsdisabled && ($post->comments_status != 'closed')) {
 $result .= '<?php if (litepublisher::$options->ingroup(\'author\')) { ?>';
+$result .=  sprintf('<?php if (litepublisher::$options->user && count(array_intersect(litepublisher::$options->idgroups, array(%s)))) { ?>', implode(',', $this->idgroups));
+
 $mesg = sprintf($this->logged, '<?php echo litepublisher::$site->getuserlink(); ?>');
 $mesg .= ' <a class="logout" href="$site.url/admin/logout/">$lang.logout</a> ';
 $args->mesg = $this->fixmesg($mesg);

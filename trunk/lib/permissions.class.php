@@ -60,13 +60,13 @@ class tpermgroups extends tperm {
     $g = $this->groups;
     if (!$this->author  && (count($g) == 0)) return '';
     array_unshift($g, 1);
-    $groups = implode("', '", $g);
+    $groups = implode(',', $g);
     $author = '';
     if ($this->author && isset($obj->author) && ($obj->author > 1)) {
       $author = sprintf('  || (litepublisher::$options->user != %d)', $obj->author);
     }
     
-    return sprintf('<?php if (!litepublisher::$options->user || (0 == count(array_intersect(litepublisher::$options->idgroups, array(\'%s\'))))%s) return litepublisher::$urlmap->forbidden(); ?>',  $groups, $author);
+    return sprintf('<?php if (!litepublisher::$options->user || (0 == count(array_intersect(litepublisher::$options->idgroups, array(%s))))%s) return litepublisher::$urlmap->forbidden(); ?>',  $groups, $author);
   }
   
 }//class
