@@ -76,6 +76,8 @@ $idgroup = $groups->getidgroup('commentator');
 
 $man->alter('comments', "add tmp int unsigned NOT NULL default '0'");
 
+// $map for subscribers
+$map = array();
     $from = 0;
 $db->table = 'comusers';
     while ($items = $db->res2assoc($db->query("select * from $db->comusers limit $from, 100"))) {
@@ -103,12 +105,31 @@ $id = $db->add(array(
 }
 
         $db->query("update $db->comments set tmp = '$id' where author= '" . $item['id'] . "'");
-
+$map[(int) $item['id']] = (int) $id;
       }
 
 $db->table = 'comusers';
     }
 
+//create temp table
+$man->createtable('tempsubscribers', file_get_contents(litepublisher::$paths->lib . 'install' .DIRECTORY_SEPARATOR . 'items.posts.sql'));
+    $from = 0;
+$db->table = 'subscribers';
+    while ($items = $db->res2assoc($db->query("select * from $db->subscribers limit $from, 500"))) {
+$from += count($items);
+$db->table = 'tempsubscribers';
+        $vals = array();
+      foreach ($items as $item) {
+          $vals[]= sprintf('(%d, %s)', $item['post'], $map[$item['item']]);
+        }
+        $db->exec("INSERT INTO $db->tempsubscribers (post, item) values " . implode(',', $vals) );
+$db->table = 'subscribers';
+}
+
+$man->deletetable('subscribers');
+$db->query("rename table $db->tempsubscribers to $db->subscribers");
+
+//move column
 $man->alter('comments', "drop index author");
 $man->alter('comments', "drop author");
 $man->alter('comments', "change tmp author int unsigned NOT NULL default '0'");

@@ -64,6 +64,7 @@ break;
 
 case 'comuser':
 $mesg = $this->comuser;
+if (litepublisher::$options->reguser) $mesg .= $this->regaccount;
 $args->mesg = $this->fixmesg($mesg);
       $result .= $theme->parsearg($theme->templates['content.post.templatecomments.form'], $args);
 break;
