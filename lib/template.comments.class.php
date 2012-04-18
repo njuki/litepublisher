@@ -42,34 +42,28 @@ class ttemplatecomments extends tevents {
     
     if (!litepublisher::$options->commentsdisabled && ($post->comments_status != 'closed')) {
 $result .= '<?php if (litepublisher::$options->ingroup(\'author\')) { ?>';
-$result .=  sprintf('<?php if (litepublisher::$options->user && count(array_intersect(litepublisher::$options->idgroups, array(%s)))) { ?>', implode(',', $this->idgroups));
-
-$mesg = sprintf($this->logged, '<?php echo litepublisher::$site->getuserlink(); ?>');
-$mesg .= ' <a class="logout" href="$site.url/admin/logout/">$lang.logout</a> ';
-$args->mesg = $this->fixmesg($mesg);
+$result .=  sprintf('<?php if (litepublisher::$options->ingroups(array(%s))) { ?>', implode(',', $this->idgroups));
+$args->mesg = $this->logged;
       $result .= $theme->parsearg($theme->templates['content.post.templatecomments.regform'], $args);
 $result .= '<?php } else { ?>';
 
 switch ($post->comments_status) {
 case 'reg':
 $mesg = $this->reqlogin;
-if (litepublisher::$options->reguser) {
-$mesg .= sprintf($this->regaccount, '<a class="registration" href="$site.url/admin/reguser/">$lang.registration</a>');
-}
+if (litepublisher::$options->reguser) $mesg .= $this->regaccount;
 $args->mesg = $this->fixmesg($mesg);
       $result .= $theme->parsearg($theme->templates['content.post.templatecomments.regform'], $args);
 break;
 
 case 'guest':
-$mesg = sprintf($this->guest, '<a class="login" href="$site.url/admin/login/">$login.login</a>');
-if (litepublisher::$options->reguser) {
-$mesg .= sprintf($this->regaccount, '<a class="registration" href="$site.url/admin/reguser/">$lang.registration</a>');
-}
+$mesg = $this->guest;
+if (litepublisher::$options->reguser) $mesg .= $this->regaccount;
 $args->mesg = $this->fixmesg($mesg);
       $result .= $theme->parsearg($theme->templates['content.post.templatecomments.regform'], $args);
 break;
 
 case 'comuser':
+$mesg = $this->comuser;
 $args->mesg = $this->fixmesg($mesg);
       $result .= $theme->parsearg($theme->templates['content.post.templatecomments.form'], $args);
 break;
@@ -83,8 +77,8 @@ $result .= '<?php } ?>';
   }
 
 public function fixmesg($mesg) {
-return str_replace(array('&backurl=', '&amp;backurl='), 
-'&amp;backurl=' . urlencode(litepublisher::$urlmap->url));
+return str_replace('backurl=', 'backurl=' . urlencode(litepublisher::$urlmap->url), 
+str_replace('&backurl=', '&amp;backurl=', $mesg));
 }
   
 } //class
