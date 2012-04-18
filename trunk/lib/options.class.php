@@ -259,6 +259,12 @@ if (in_array(1, $this->idgroups)) return true;
 return tusergroups::i()->ingroup($this->user, $groupname);
 }
 
+public function ingroups(array $idgroups) {
+//admin has all rights
+if ($this->user == 1) return true;
+return count(array_intersect($this->idgroups, $idgroups));
+}
+
   public function getcommentsapproved() {
     return $this->DefaultCommentStatus  == 'approved';
   }
