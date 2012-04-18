@@ -19,7 +19,7 @@ $self->data['guest'] = sprintf('<p>%s</p>', sprintf($lang->guest,
  '<a class="log-in" href="$site.url/admin/login/{$site.q}backurl=">' . $lang->log_in . '</a>'));
 
 $self->data['regaccount'] = sprintf('<p>%s</p>', sprintf($lang->regaccount,
-'<a class="registration" href="$site.url/admin/reguser/{$site.q}backurl=">' . $lang->registration . '</a>'));
+'<a class="registration" href="$site.url/admin/reguser/{$site.q}backurl=">' . $lang->regaccount . '</a>'));
 
 $self->data['comuser'] = sprintf('<p>%s</p>', sprintf($lang->comuser,
  '<a class="log-in" href="$site.url/admin/login/{$site.q}backurl=">' . $lang->log_in . '</a>'));
