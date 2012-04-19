@@ -73,10 +73,16 @@ $tabs->add($lang->options,
 ');
 
 
-
 $args->locklist = tsubscribers::i()->locklist;
       $tabs->add('E-Mail', '[editor=locklist]');
 
+    $mesgtabs = new tuitabs();
+$tc = ttemplatecomments::i();
+foreach (array('logged', 'reqlogin', 'regaccount', 'guest', 'comuser') as $name) {
+$args->$name = $tc->$name;
+$mesgtabs->add($lang->$name, "[editor=$name]");
+}
+$tabs->add($lang->mesgtabs, $mesgtabs->get());
 $args->formtitle = $lang->title;
 return $html->adminform($tabs->get(), $args);
 }
@@ -105,6 +111,12 @@ $cm->redir = isset($redir);
 $cm->nofollow = isset($nofollow);
 
 $cm->unlock();
+
+$tc = ttemplatecomments::i();
+foreach (array('logged', 'reqlogin', 'regaccount', 'guest', 'comuser') as $name) {
+$tc->$name = $_POST[$name];
+}
+$tc->save();
 
 tsubscribers::i()->locklist = $locklist;
 }
