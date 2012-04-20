@@ -144,25 +144,20 @@ $comments->setvalue($id, 'parent', $idreply);
     if (($status == 'hold') || ($status == 'approved')) return $status;
     if (!litepublisher::$options->filtercommentstatus) return litepublisher::$options->DefaultCommentStatus;
     if (litepublisher::$options->DefaultCommentStatus == 'approved') return 'approved';
-    $manager = tcommentmanager::i();
-    if ($manager->trusted($idauthor)) return  'approved';
+
+    if ($this->trusted($idauthor)) return  'approved';
     return 'hold';
   }
   
   public function canadd($idauthor) {
-    if ($this->is_spamer($idauthor)) return false;
-    return true;
+return !$this->is_spamer($idauthor);
   }
   
   public function checkduplicate($idpost, $content) {
     $comments = tcomments::i($idpost);
     $content = trim($content);
-    if (dbversion) {
       $hash = basemd5($content);
       return $comments->raw->findid("hash = '$hash'");
-    } else {
-      return $comments->raw->IndexOf('content', $content);
-    }
   }
   
 }//class
