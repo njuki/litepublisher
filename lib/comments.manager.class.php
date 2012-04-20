@@ -15,6 +15,9 @@ class tcommentmanager extends tevents_storage {
   protected function create() {
     parent::create();
     $this->basename = 'commentmanager';
+    $this->addevents('added', 'deleted', 'edited', 'changed', 'approved',
+    'authoradded', 'authordeleted', 'authoredited',
+'is_spamer', 'onstatus');
 }
 
   public function getcount() {
@@ -39,8 +42,6 @@ $users = tusers::i();
     return $id;
   }
 
-
-  
   public function edit($id, $idpost, $name, $email, $url, $content) {
     $comusers = dbversion ? tcomusers ::i() : tcomusers ::i($idpost);
     $idauthor = $comusers->add($name, $email, $url, '');
@@ -134,6 +135,34 @@ $comments->setvalue($id, 'parent', $idreply);
     $subject = $mailtemplate->subject($args);
     $body = $mailtemplate->body($args);
     tmailer::sendtoadmin($subject, $body, true);
+  }
+  
+  public function createstatus($idpost, $idauthor, $content, $ip) {
+    $status = $this->onstatus($idpost, $idauthor, $content, $ip);
+    if (false ===  $status) return false;
+    if ($status == 'spam') return false;
+    if (($status == 'hold') || ($status == 'approved')) return $status;
+    if (!litepublisher::$options->filtercommentstatus) return litepublisher::$options->DefaultCommentStatus;
+    if (litepublisher::$options->DefaultCommentStatus == 'approved') return 'approved';
+    $manager = tcommentmanager::i();
+    if ($manager->trusted($idauthor)) return  'approved';
+    return 'hold';
+  }
+  
+  public function canadd($idauthor) {
+    if ($this->is_spamer($idauthor)) return false;
+    return true;
+  }
+  
+  public function checkduplicate($idpost, $content) {
+    $comments = tcomments::i($idpost);
+    $content = trim($content);
+    if (dbversion) {
+      $hash = basemd5($content);
+      return $comments->raw->findid("hash = '$hash'");
+    } else {
+      return $comments->raw->IndexOf('content', $content);
+    }
   }
   
 }//class

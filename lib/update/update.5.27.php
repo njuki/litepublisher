@@ -16,6 +16,16 @@ $cm->data['reqireconfirm'] = false;
 'status' => 'approved',
 'idgroups' => 'commentator'
 ));
+
+$spam = new tdata();
+$spam->basename = 'spamfilter';
+$spam->load();
+if (isset($spam->data['events'])) {
+foreach ($spam->data['events'] as $eventname => $events) {
+$cm->data['events'][$eventname] = $events;
+}
+}
+
 $cm->save();
 
   tposts::unsub($cm);
