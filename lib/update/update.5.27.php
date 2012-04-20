@@ -1,6 +1,7 @@
 <?php
 
 function update527() {
+
 $cm = tcommentmanager::i();
 $data = new tdata();
 $data->basename = 'commentmanager';
@@ -24,6 +25,8 @@ litepublisher::$classes->add('tjsonserver', 'jsonserver.class.php');
 litepublisher::$classes->add('tjsoncomments', 'json.comments.class.php');
 litepublisher::$classes->add('Tadmincommentmanager', 'admin.commentmanager.class.php');
 litepublisher::$classes->items['tusers'][0] = 'kernel.php';
+unset(litepublisher::$classes->items['tspamfilter']);
+unset(litepublisher::$classes->classes['spamfilter']);
 
   litepublisher::$options->comments_status = 'guest';
 

@@ -22,13 +22,13 @@ class tcommentmanager extends tevents_storage {
     return litepublisher::$db->getcount();
   }
   
-  public function add($idpost, $name, $email, $url, $content, $ip) {
+  public function addcomuser($name, $email, $url) {
 $users = tusers::i();
     $idauthor = $comusers->add($name, $email, $url, $ip);
     return $this->addcomment($idpost, $idauthor, $content, $ip);
   }
   
-  public function addcomment($idpost, $idauthor, $content, $ip) {
+  public function add($idpost, $idauthor, $content, $ip) {
     $status = $this->createstatus($idpost, $idauthor, $content, $ip);
     if (!$status) return false;
     $comments = tcomments::i();
@@ -38,6 +38,8 @@ $users = tusers::i();
     $this->sendmail($id, $idpost);
     return $id;
   }
+
+
   
   public function edit($id, $idpost, $name, $email, $url, $content) {
     $comusers = dbversion ? tcomusers ::i() : tcomusers ::i($idpost);
@@ -45,11 +47,10 @@ $users = tusers::i();
     return $this->editcomment($id, $idpost, $idauthor, $content);
   }
   
-  public function editcomment($id, $content) {
+  public function edit($id, $content) {
     $comments = tcomments::i();
     if (!$comments->edit($id, $idauthor,  $content)) return false;
-    
-    $this->dochanged($id, $idpost);
+        $this->dochanged($id, $idpost);
     $this->edited($id, $idpost);
     return true;
   }
@@ -133,31 +134,6 @@ $comments->setvalue($id, 'parent', $idreply);
     $subject = $mailtemplate->subject($args);
     $body = $mailtemplate->body($args);
     tmailer::sendtoadmin($subject, $body, true);
-  }
-  
-  //status supports only db version
-  public function getrecent($count, $status = 'approved') {
-      $db = litepublisher::$db;
-      $result = $db->res2assoc($db->query("select $db->comments.*,
-      $db->users.name as name, $db->users.email as email, $db->users.website as url,
-      $db->posts.title as title, $db->posts.commentscount as commentscount,
-      $db->urlmap.url as posturl
-      from $db->comments, $db->users, $db->posts, $db->urlmap
-      where $db->comments.status = '$status' and
-      $db->users.id = $db->comments.author and
-      $db->posts.id = $db->comments.post and
-      $db->urlmap.id = $db->posts.idurl and
-      $db->posts.status = 'published' and
-      $db->posts.idperm = 0
-      order by $db->comments.posted desc limit $count"));
-      
-      if (litepublisher::$options->commentpages && !litepublisher::$options->comments_invert_order) {
-        foreach ($result as $i => $item) {
-          $page = ceil($item['commentscount'] / litepublisher::$options->commentsperpage);
-          if ($page > 1) $result[$i]['posturl']= rtrim($item['posturl'], '/') . "/page/$page/";
-        }
-      }
-      return $result;
   }
   
 }//class

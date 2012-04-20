@@ -42,14 +42,6 @@ class tcomments extends titems {
     
     $id = (int) $this->db->add($item);
     $item['rawcontent'] = $content;
-    
-    $comusers = tcomusers::i();
-    if ($author = $comusers->getitem($idauthor)) {
-      $item = $item + $author;
-    } else {
-      $this->error(sprintf('Author %d not found', $idauthor));
-    }
-    
     $item['id'] = $id;
     $this->items[$id] = $item;
     
@@ -61,32 +53,28 @@ class tcomments extends titems {
     'rawcontent' => $content,
     'hash' => basemd5($content)
     ));
-    
+
+$this->added($id);    
     return $id;
   }
   
-  public function edit($id, $idauthor, $content) {
-    if (!$this->itemexists($id)) return false;
-    if ($idauthor == 0) $idauthor = $this->db->getvalue($id, 'author');
-    $filter = tcontentfilter::i();
-    $item = array(
-    'id' => (int) $id,
-    'author' => (int)$idauthor,
-    'content' => $filter->filtercomment($content)
-    );
-    
-    $this->db->updateassoc($item);
-    
-    $item['rawcontent'] = $content;
-    $this->items[$id] = $item + $this->items[$id];
-    
+  public function edit($id, $content) {
+  if (!$this->itemexists($id)) return false;
+$filtered = tcontentfilter::i()->filtercomment($content));
+    $this->db->setvalue($id, 'content', $filtered);
     $this->getdb($this->rawtable)->updateassoc(array(
     'id' => $id,
     'modified' => sqldate(),
     'rawcontent' => $content,
     'hash' => basemd5($content)
     ));
-    
+
+if (isset($this->items[$id])) {
+$this->items[$id]['content'] = $filtered;
+$this->items[$id]['rawcontent'] = $content;
+}    
+
+$this->edited($id);
     return true;
   }
   
@@ -111,11 +99,9 @@ class tcomments extends titems {
   }
   
   public function select($where, $limit) {
-dumpstr($where);
     if ($where != '') $where .= ' and ';
     $table = $this->thistable;
-$authors = litepublisher::$db->prefix. 'users';
-
+$authors = $this->getdb('users');
     $res = litepublisher::$db->query("select $table.*, $authors.name, $authors.email, $authors.website, $authors.trust from $table, $authors
     where $where $authors.id = $table.author $limit");
     
@@ -129,10 +115,10 @@ $authors = litepublisher::$db->prefix. 'users';
   public function getapprovedcount() {
     return $this->db->getcount("post = $this->pid and status = 'approved'");
   }
-  
+
+//uses in import functions  
   public function insert($idauthor, $content, $ip, $posted, $status) {
-    $filter = tcontentfilter::i();
-    $filtered = $filter->filtercomment($content);
+    $filtered = tcontentfilter::i()->filtercomment($content);
     $item = array(
     'post' => $this->pid,
     'parent' => 0,
@@ -158,12 +144,8 @@ $authors = litepublisher::$db->prefix. 'users';
     return $id;
   }
   
-  
-  public function getmoderator() {
-    if (!litepublisher::$options->admincookie) return false;
-    if (litepublisher::$options->group == 'admin') return true;
-    $groups = tusergroups::i();
-    return $groups->hasright(litepublisher::$options->group, 'moderator');
+    public function getmoderator() {
+return litepublisher::$options->ingroup('moderator');
   }
   
   public function getcontent() {
