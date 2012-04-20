@@ -127,7 +127,7 @@ class tadminmoderator extends tadmincommoncomments {
     $comment = new tcomment($id);
     ttheme::$vars['comment'] = $comment;
     $args = targs::i();
-    $args->content = $comment->content;
+    $args->content = $comment->rawcontent;
     $args->adminurl =$this->adminurl . "=$id&action";
     $result = $this->html->info($args);
     $result .= $this->html->editform($args);
@@ -337,7 +337,7 @@ class tadminmoderator extends tadmincommoncomments {
           
           case 'edit':
           $comments = tcomments::i();
-          $comments->edit($this->idget(), 0, $_POST['content']);
+          $comments->edit($this->idget(), $_POST['content']);
           break;
         }
       } else {
