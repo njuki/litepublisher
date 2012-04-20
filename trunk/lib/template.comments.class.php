@@ -41,8 +41,10 @@ class ttemplatecomments extends tevents {
     }
     
     if (!litepublisher::$options->commentsdisabled && ($post->comments_status != 'closed')) {
-$result .= '<?php if (litepublisher::$options->ingroup(\'author\')) { ?>';
-$result .=  sprintf('<?php if (litepublisher::$options->ingroups(array(%s))) { ?>', implode(',', $this->idgroups));
+    $args->postid = $post->id;
+    $args->antispam = base64_encode('superspamer' . strtotime ("+1 hour"));
+
+$result .=  sprintf('<?php if (litepublisher::$options->ingroups(array(%s))) { ?>', implode(',', tcommentmanager::i()->idgroups));
 $args->mesg = $this->logged;
       $result .= $theme->parsearg($theme->templates['content.post.templatecomments.regform'], $args);
 $result .= '<?php } else { ?>';
@@ -66,6 +68,13 @@ case 'comuser':
 $mesg = $this->comuser;
 if (litepublisher::$options->reguser) $mesg .= $this->regaccount;
 $args->mesg = $this->fixmesg($mesg);
+
+    $args->name = '';
+    $args->email = '';
+    $args->url = '';
+    $args->subscribe = litepublisher::$options->defaultsubscribe;
+    $args->content = '';
+ 
       $result .= $theme->parsearg($theme->templates['content.post.templatecomments.form'], $args);
 break;
 }
