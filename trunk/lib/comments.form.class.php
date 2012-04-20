@@ -38,10 +38,13 @@ class tcommentform extends tevents {
       ?>";
     }
     
-    $homeurl = litepublisher::$site->url . '/';
     tguard::post();
-    if (isset($_POST['confirmid'])) return $this->doconfirm();
+    if (isset($_POST['confirmid'])) return $this->confirm_recevied();
+return $this->processform($_POST, false);
+}
 
+public function processform(array $values, $confirmed) {
+    $lang = tlocal::i('comment');
       $postid = isset($values['postid']) ? (int) $values['postid'] : 0;
       $posts = litepublisher::$classes->posts;
       if(!$posts->itemexists($postid)) {
@@ -52,84 +55,61 @@ class tcommentform extends tevents {
       if ($post->status != 'published')  {
         return $this->htmlhelper->geterrorcontent($lang->commentondraft);
       }
-    $cm = tcommentmanager::i();      
-switch ($post->comments_status) {
-case 'closed':
-        return $this->htmlhelper->geterrorcontent($lang->commentsdisabled);
 
-case 'reg':
+if ($post->comments_status == 'closed') {
+        return $this->htmlhelper->geterrorcontent($lang->commentsdisabled);
+}
+
+    $cm = tcommentmanager::i();      
 if (litepublisher::$options->ingroups($cm->idgroups)) {
 $iduser = litepublisher::$options->user;
 } else {
+switch ($post->comments_status) {
+case 'reg':
         return $this->htmlhelper->geterrorcontent($lang->reg);
-}
-break;
 
 case 'guest':
-if (litepublisher::$options->ingroups($cm->idgroups)) {
-$iduser = litepublisher::$options->user;
-} else {
 if ($cm->confirmguest) {
-return $this->reqconfirm();
+return $this->request_confirm();
 } else {
 $iduser = $cm->idguest;
-}
 }
 break;
 
 case 'comuser':
-if (litepublisher::$options->ingroups($cm->idgroups)) {
-$iduser = litepublisher::$options->user;
-} else {
+return $this->request_confirm();
+      }
+      
+      if ($post->idperm > 0) $header = $this->getpermheader($post);
 }
-break;
 
-      }
-      
-      $header = '';
-      if ($post->idperm != 0) {
-        $url = litepublisher::$urlmap->url;
-        litepublisher::$urlmap->url = $post->url;
-        $item = litepublisher::$urlmap->itemrequested;
-        litepublisher::$urlmap->itemrequested = dbversion ? litepublisher::$urlmap->getitem($post->idurl) : litepublisher::$urlmap->items[$post->url];
-        litepublisher::$urlmap->itemrequested['id'] = $post->idurl;
+public function getpermheader(tpost $post) {
+$result = '';
+$urlmap = turlmap::i();
+        $url = $urlmap->url;
+        $urlmap->url = $post->url;
+        $urlitem = $urlmap->itemrequested;
+        $urlmap->itemrequested = $urlmap->getitem($post->idurl);
+        $urlmap->itemrequested['id'] = $post->idurl;
         $perm = tperm::i($post->idperm);
-        $header = $perm->getheader($post);
         // not restore values because perm will be used this values
-        //litepublisher::$urlmap->itemrequested = $item;
-        //litepublisher::$urlmap->url = $url;
-      }
-      
-      $confirmid  = $kept->add($values);
-      return $header . $this->htmlhelper->confirm($confirmid);
+return $perm->getheader($post);
     }
 
-public function doconfirm() {
+public function confirm_recevied() {
+    $lang = tlocal::i('comment');
     $kept = tkeptcomments::i();
     $kept->deleteold();
-
-
-      $values = $_POST;
-      $values['date'] = time();
-      $values['ip'] = preg_replace( '/[^0-9., ]/', '',$_SERVER['REMOTE_ADDR']);
-    
     $confirmid = $_POST['confirmid'];
-    $lang = tlocal::i('comment');
     if (!($values = $kept->getitem($confirmid))) {
       return $this->htmlhelper->geterrorcontent($lang->notfound);
     }
     
-    $postid = isset($values['postid']) ? (int) $values['postid'] : 0;
-    $posts = litepublisher::$classes->posts;
-    if(!$posts->itemexists($postid)) {
-      return $this->htmlhelper->geterrorcontent($lang->postnotfound);
-    }
-    
-    $post = tpost::i($postid);
-    if ($post->status != 'published')  {
-      return $this->htmlhelper->geterrorcontent($lang->commentondraft);
-    }
-    
+return $this->processform($values);
+}
+
+
+public function processcomuser($values) {
     $values = array(
     'name' => isset($values['name']) ? tcontentfilter::escape($values['name']) : '',
     'email' => isset($values['email']) ? trim($values['email']) : '',
@@ -193,6 +173,18 @@ $cm->add($post->id, $uid, $values['content'], $values['ip']);
     
     return $this->htmlhelper->sendcookies($cookies, litepublisher::$site->url . $posturl);
   }
+
+public function request_confirm() {
+    $kept = tkeptcomments::i();
+    $kept->deleteold();
+
+      $values = $_POST;
+      $values['date'] = time();
+      $values['ip'] = preg_replace( '/[^0-9., ]/', '',$_SERVER['REMOTE_ADDR']);
+    
+      $confirmid  = $kept->add($values);
+      return $header . $this->htmlhelper->confirm($confirmid);
+}
   
   private function getconfirmform($confirmid) {
     ttheme::$vars['lang'] = tlocal::i('comment');
