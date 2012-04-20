@@ -214,8 +214,9 @@ case 'notconfirm':
       return $this->htmlhelper->geterrorcontent($lang->commentsdisabled);
     }
     
+$cm = tcommentmanager::i();
     if (litepublisher::$options->checkduplicate) {
-      if (litepublisher::$classes->spamfilter->checkduplicate($postid, $values['content']) ) {
+      if ($cm->checkduplicate($postid, $values['content']) ) {
         return $this->htmlhelper->geterrorcontent($lang->duplicate);
       }
     }
@@ -223,14 +224,14 @@ case 'notconfirm':
     $posturl = $post->lastcommenturl;
     $users = tcomusers::i($postid);
     $uid = $users->add($values['name'], $values['email'], $values['url'], $values['ip']);
-    if (!litepublisher::$classes->spamfilter->canadd( $uid)) {
+    if (!$cm->canadd( $uid)) {
       return $this->htmlhelper->geterrorcontent($lang->toomany);
     }
     
     $subscribers = tsubscribers::i();
     $subscribers->update($post->id, $uid, $values['subscribe']);
     
-    litepublisher::$classes->commentmanager->addcomment($post->id, $uid, $values['content'], $values['ip']);
+$cm->add($post->id, $uid, $values['content'], $values['ip']);
     
     $cookies = array();
     $cookie = empty($_COOKIE['userid']) ? '' : $_COOKIE['userid'];
