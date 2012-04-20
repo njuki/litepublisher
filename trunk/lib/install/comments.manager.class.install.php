@@ -7,8 +7,6 @@
 **/
 
 function tcommentmanagerInstall($self) {
-    $self->addevents('added', 'deleted', 'edited', 'changed', 'approved',
-    'authoradded', 'authordeleted', 'authoredited');
     $self->data['sendnotification'] =  true;
     $self->data['trustlevel'] = 2;
     $self->data['hidelink'] = false;
