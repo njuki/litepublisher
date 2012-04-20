@@ -50,6 +50,7 @@ $args->nofollow = $cm->nofollow;
 $args->canedit = $cm->canedit;
 $args->candelete = $cm->candelete;
 $args->reqireconfirm = $cm->reqireconfirm;
+$args->confirmguest = $cm->confirmguest ;
 
 $tabs->add($lang->options, 
 '[combo=comments_status]
@@ -70,6 +71,7 @@ $tabs->add($lang->options,
 [checkbox=canedit]
 [checkbox=candelete]
 [checkbox=reqireconfirm]
+[checkbox=confirmguest]
 ');
 
 

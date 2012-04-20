@@ -5,43 +5,6 @@
 * Dual licensed under the MIT (mit.txt)
 * and GPL (gpl.txt) licenses.
 **/
-if (!class_exists('tkeptcomments', false)) {
-    class tkeptcomments extends tdata {
-      
-      public static function i() {
-        return getinstance(__class__);
-      }
-      
-      protected function create() {
-        parent::create();
-        $this->table ='commentskept';
-        
-      }
-      
-      public function deleteold() {
-        $this->db->delete(sprintf("posted < '%s' - INTERVAL 20 minute ", sqldate()));
-      }
-      
-      public function add($values) {
-        $confirmid = md5uniq();
-        $this->db->add(array(
-        'id' => $confirmid,
-        'posted' => sqldate(),
-        'vals' => serialize($values)
-        ));
-        return $confirmid;
-      }
-      
-      public function getitem($confirmid) {
-        if ($item = $this->db->getitem(dbquote($confirmid))) {
-          return unserialize($item['vals']);
-        }
-        return false;
-      }
-      
-    }//class
-    
-}
 
 class tcommentform extends tevents {
   public $htmlhelper;
@@ -57,60 +20,6 @@ class tcommentform extends tevents {
     $this->htmlhelper = $this;
   }
   
-  public static function getcomuser($postid) {
-    if (!empty($_COOKIE['userid'])) {
-      $cookie = basemd5($_COOKIE['userid']  . litepublisher::$secret);
-      $comusers = tcomusers::i($postid);
-      $user = $comusers->fromcookie($cookie);
-      $comusers->loadall();
-      if (!dbversion && !$user && !empty($_COOKIE["idpost"])) {
-        $comusers2 = tcomusers::i( (int) $_COOKIE['idpost']);
-        $user = $comusers2->fromcookie($cookie);
-      }
-      return $user;
-    }
-    return false;
-  }
-  
-  public function getform(tpost $post, ttheme $theme) {
-    $result = '';
-    $lang = tlocal::i('comment');
-    $args = new targs();
-
-switch ($post->comments_status) {
-case 'reg':
-break;
-
-case 'guest':
-break;
-
-case 'notconfirm':
-
-    $args->name = '';
-    $args->email = '';
-    $args->url = '';
-    $args->subscribe = litepublisher::$options->defaultsubscribe;
-    $args->content = '';
-    $args->postid = $postid;
-    $args->antispam = base64_encode('superspamer' . strtotime ("+1 hour"));
-    
-    if ($user = self::getcomuser($postid)) {
-      $args->name = $user['name'];
-      $args->email = $user['email'];
-      $args->url = $user['url'];
-      $subscribers = tsubscribers::i();
-      $args->subscribe = $subscribers->exists($postid, $user['id']);
-      
-      $comments = tcomments::i($postid);
-      if ($hold = $comments->getholdcontent($user['id'])) {
-        $result .= $hold;
-      }
-    }
-    
-    $result .= $theme->parsearg($theme->templates['content.post.templatecomments.form'], $args);
-    return $result;
-  }
-  
   private function checkspam($s) {
     if  (!($s = @base64_decode($s))) return false;
     $sign = 'superspamer';
@@ -123,21 +32,16 @@ case 'notconfirm':
     if (litepublisher::$options->commentsdisabled) return 404;
     if ( 'POST' != $_SERVER['REQUEST_METHOD'] ) {
       return "<?php
-      @header('Allow: POST');
       @header('HTTP/1.1 405 Method Not Allowed', true, 405);
+      @header('Allow: POST');
       @header('Content-Type: text/plain');
       ?>";
     }
     
-    $posturl = litepublisher::$site->url . '/';
+    $homeurl = litepublisher::$site->url . '/';
     tguard::post();
-    
-    $kept = tkeptcomments::i();
-    $kept->deleteold();
-    if (!isset($_POST['confirmid'])) {
-      $values = $_POST;
-      $values['date'] = time();
-      $values['ip'] = preg_replace( '/[^0-9., ]/', '',$_SERVER['REMOTE_ADDR']);
+    if (isset($_POST['confirmid'])) return $this->doconfirm();
+
       $postid = isset($values['postid']) ? (int) $values['postid'] : 0;
       $posts = litepublisher::$classes->posts;
       if(!$posts->itemexists($postid)) {
@@ -148,9 +52,38 @@ case 'notconfirm':
       if ($post->status != 'published')  {
         return $this->htmlhelper->geterrorcontent($lang->commentondraft);
       }
-      
-      if (!$post->commentsenabled)       {
+    $cm = tcommentmanager::i();      
+switch ($post->comments_status) {
+case 'closed':
         return $this->htmlhelper->geterrorcontent($lang->commentsdisabled);
+
+case 'reg':
+if (litepublisher::$options->ingroups($cm->idgroups)) {
+$iduser = litepublisher::$options->user;
+} else {
+        return $this->htmlhelper->geterrorcontent($lang->reg);
+}
+break;
+
+case 'guest':
+if (litepublisher::$options->ingroups($cm->idgroups)) {
+$iduser = litepublisher::$options->user;
+} else {
+if ($cm->confirmguest) {
+return $this->reqconfirm();
+} else {
+$iduser = $cm->idguest;
+}
+}
+break;
+
+case 'comuser':
+if (litepublisher::$options->ingroups($cm->idgroups)) {
+$iduser = litepublisher::$options->user;
+} else {
+}
+break;
+
       }
       
       $header = '';
@@ -170,6 +103,15 @@ case 'notconfirm':
       $confirmid  = $kept->add($values);
       return $header . $this->htmlhelper->confirm($confirmid);
     }
+
+public function doconfirm() {
+    $kept = tkeptcomments::i();
+    $kept->deleteold();
+
+
+      $values = $_POST;
+      $values['date'] = time();
+      $values['ip'] = preg_replace( '/[^0-9., ]/', '',$_SERVER['REMOTE_ADDR']);
     
     $confirmid = $_POST['confirmid'];
     $lang = tlocal::i('comment');

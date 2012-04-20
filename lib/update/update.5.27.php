@@ -10,6 +10,8 @@ $cm->data = $data->data;
     $cm->data['canedit'] =  true;
     $cm->data['candelete'] =  true;
 $cm->data['reqireconfirm'] = false;
+$cm->data['confirmguest'] = true;
+
     $cm->data['idguest'] =  tusers::i()->add(array(
 'email' => '',
 'name' => tlocal::get('default', 'guest'),
@@ -35,8 +37,13 @@ litepublisher::$classes->add('tjsonserver', 'jsonserver.class.php');
 litepublisher::$classes->add('tjsoncomments', 'json.comments.class.php');
 litepublisher::$classes->add('Tadmincommentmanager', 'admin.commentmanager.class.php');
 litepublisher::$classes->items['tusers'][0] = 'kernel.php';
+litepublisher::$classes->items['tkeptcomments'][2] = 'comments.trap.class.php';
+
 unset(litepublisher::$classes->items['tspamfilter']);
 unset(litepublisher::$classes->classes['spamfilter']);
+
+unset(litepublisher::$classes->items['tcomusers']);
+unset(litepublisher::$classes->classes['comusers']);
 
   litepublisher::$options->comments_status = 'guest';
 

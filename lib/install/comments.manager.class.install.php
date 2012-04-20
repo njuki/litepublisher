@@ -16,6 +16,7 @@ function tcommentmanagerInstall($self) {
     $self->data['candelete'] =  true;
     $self->data['idguest'] =  0;
 $self->data['reqireconfirm'] = false;
+$self->data['confirmguest'] = true;
 $self->save();
   }
 
