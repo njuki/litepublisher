@@ -9,8 +9,10 @@ $data->load();
 $cm->data = $data->data;
     $cm->data['canedit'] =  true;
     $cm->data['candelete'] =  true;
-$cm->data['reqireconfirm'] = false;
+$cm->data['confirmemail'] = false;
+$cm->data['confirmlogged'] = false;
 $cm->data['confirmguest'] = true;
+$cm->data['confirmcomuser'] = true;
 
     $cm->data['idguest'] =  tusers::i()->add(array(
 'email' => '',
