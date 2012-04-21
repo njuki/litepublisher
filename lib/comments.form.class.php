@@ -27,7 +27,7 @@ class tcommentform extends tevents {
     $TimeKey = (int) substr($s, strlen($sign));
     return time() < $TimeKey;
   }
-  
+
   public function request($arg) {
     if (litepublisher::$options->commentsdisabled) return 404;
     if ( 'POST' != $_SERVER['REQUEST_METHOD'] ) {
@@ -43,57 +43,68 @@ class tcommentform extends tevents {
 return $this->processform($_POST, false);
 }
 
-public function processform(array $values, $confirmed) {
+public function getshortpost($id) {
+$id = (int) $id;
+if ($id == 0) return false;
+$db = litepublisher::$db;
+return $db->selectassoc("select id, idurl, idperm, status, comments_status from $db->posts where id = $id");
+}
+
+public function invalidate(array $shortpost) {
     $lang = tlocal::i('comment');
-      $postid = isset($values['postid']) ? (int) $values['postid'] : 0;
-      $posts = litepublisher::$classes->posts;
-      if(!$posts->itemexists($postid)) {
+      if(!$shortpost) {
         return $this->htmlhelper->geterrorcontent($lang->postnotfound);
       }
       
-      $post = tpost::i($postid);
-      if ($post->status != 'published')  {
+      if ($shortpost['status'] != 'published')  {
         return $this->htmlhelper->geterrorcontent($lang->commentondraft);
       }
 
-if ($post->comments_status == 'closed') {
+if ($shortpost['comments_status'] == 'closed') {
         return $this->htmlhelper->geterrorcontent($lang->commentsdisabled);
 }
 
+return false;
+}
+
+public function processform(array $values, $confirmed) {
+    $lang = tlocal::i('comment');
+    if (trim($values['content']) == '') return $this->htmlhelper->geterrorcontent($lang->emptycontent);
+
+      $shortpost= $this->getshortpost(isset($values['postid']) ? (int) $values['postid'] : 0);
+if ($err = $this->invalidate($shortpost)) return $err;
+
     $cm = tcommentmanager::i();      
 if (litepublisher::$options->ingroups($cm->idgroups)) {
+if (!$confirmed && $cm->confirmlogged)  return $this->request_confirm($values, $shortpost);
 $iduser = litepublisher::$options->user;
 } else {
-switch ($post->comments_status) {
+switch ($shortpost['comments_status']) {
 case 'reg':
         return $this->htmlhelper->geterrorcontent($lang->reg);
 
 case 'guest':
-if ($cm->confirmguest) {
-return $this->request_confirm();
-} else {
+if (!$confirmed && $cm->confirmguest)  return $this->request_confirm($values, $shortpost);
 $iduser = $cm->idguest;
-}
 break;
 
 case 'comuser':
-return $this->request_confirm();
-      }
+if (!$confirmed && $cm->confirmcomuser)  return $this->request_confirm($values, $shortpost);
+$iduser = $this->addcomuser($values);
+break;
+}
       
-      if ($post->idperm > 0) $header = $this->getpermheader($post);
 }
 
-public function getpermheader(tpost $post) {
-$result = '';
-$urlmap = turlmap::i();
+public function getpermheader(array $shortpost) {
+$urlmap = litepublisher::$urlmap;
         $url = $urlmap->url;
-        $urlmap->url = $post->url;
-        $urlitem = $urlmap->itemrequested;
-        $urlmap->itemrequested = $urlmap->getitem($post->idurl);
-        $urlmap->itemrequested['id'] = $post->idurl;
+        $saveitem = $urlmap->itemrequested;
+        $urlmap->itemrequested = $urlmap->getitem($shortpost['idurl']);
+        $urlmap->url = $urlmap->itemrequested['url'];
         $perm = tperm::i($post->idperm);
         // not restore values because perm will be used this values
-return $perm->getheader($post);
+return $perm->getheader(tpost::i($shortpost['id']));
     }
 
 public function confirm_recevied() {
@@ -105,9 +116,8 @@ public function confirm_recevied() {
       return $this->htmlhelper->geterrorcontent($lang->notfound);
     }
     
-return $this->processform($values);
+return $this->processform($values, true);
 }
-
 
 public function processcomuser($values) {
     $values = array(
@@ -174,15 +184,21 @@ $cm->add($post->id, $uid, $values['content'], $values['ip']);
     return $this->htmlhelper->sendcookies($cookies, litepublisher::$site->url . $posturl);
   }
 
-public function request_confirm() {
+public function request_confirm(array $values, array $shortpost) {
     $kept = tkeptcomments::i();
     $kept->deleteold();
 
-      $values = $_POST;
       $values['date'] = time();
       $values['ip'] = preg_replace( '/[^0-9., ]/', '',$_SERVER['REMOTE_ADDR']);
     
       $confirmid  = $kept->add($values);
+
+if (intval($shortpost['idperm']) > 0) {
+$header = $this->getpermheader($shortpost);
+} else {
+$header = '';
+}
+
       return $header . $this->htmlhelper->confirm($confirmid);
 }
   
