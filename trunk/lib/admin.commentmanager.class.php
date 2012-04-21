@@ -49,8 +49,10 @@ $args->redir = $cm->redir;
 $args->nofollow = $cm->nofollow;
 $args->canedit = $cm->canedit;
 $args->candelete = $cm->candelete;
-$args->reqireconfirm = $cm->reqireconfirm;
+$args->confirmlogged = $cm->confirmlogged;
 $args->confirmguest = $cm->confirmguest ;
+$args->confirmcomuser = $cm->confirmcomuser;
+$args->confirmemail = $cm->confirmemail;
 
 $tabs->add($lang->options, 
 '[combo=comments_status]
@@ -70,8 +72,11 @@ $tabs->add($lang->options,
 [checkbox=nofollow]
 [checkbox=canedit]
 [checkbox=candelete]
-[checkbox=reqireconfirm]
+
+[checkbox=confirmlogged]
 [checkbox=confirmguest]
+[checkbox=confirmcomuser]
+[checkbox=confirmemail]
 ');
 
 
