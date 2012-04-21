@@ -98,14 +98,61 @@ break;
 
 public function confirm_recevied() {
     $lang = tlocal::i('comment');
+/*
     $kept = tkeptcomments::i();
     $kept->deleteold();
+*/
     $confirmid = $_POST['confirmid'];
-    if (!($values = $kept->getitem($confirmid))) {
+$this->start_session($confirmid);
+    //if (!($values = $kept->getitem($confirmid))) {
+if (!isset($_SESSION['confirmid'] || ($confirmid != $_SESSION['confirmid'])) {
       return $this->htmlhelper->geterrorcontent($lang->notfound);
     }
-    
+$values = $_SESSION['values'];
+          session_destroy();
 return $this->processform($values, true);
+}
+
+  public function start_session($idconfirm) {
+    ini_set('session.use_cookies', 0);
+    ini_set('session.use_trans_sid', 0);
+    ini_set('session.use_only_cookies', 0);
+    /*
+    if (tfilestorage::$memcache) {
+      ini_set('session.save_handler', 'memcache');
+      ini_set('session.save_path', 'tcp://127.0.0.1:11211');
+    } else {
+      ini_set('session.save_handler', 'files');
+    }
+    */
+    
+    session_cache_limiter(false);
+    session_id ('commentform-' .md5($idconfirm));
+    session_start();
+  }
+  
+public function request_confirm(array $values, array $shortpost) {
+/*
+    $kept = tkeptcomments::i();
+    $kept->deleteold();
+*/
+      $values['date'] = time();
+      $values['ip'] = preg_replace( '/[^0-9., ]/', '',$_SERVER['REMOTE_ADDR']);
+    
+      //$confirmid  = $kept->add($values);
+$confirmid = md5uniq();
+$this->start_session($confirmid);
+$_SESSION['confirmid'] = $confirmid;
+$_SESSION['values'] = $values;
+    session_write_close();
+
+if (intval($shortpost['idperm']) > 0) {
+$header = $this->getpermheader($shortpost);
+} else {
+$header = '';
+}
+
+      return $header . $this->htmlhelper->confirm($confirmid);
 }
 
 public function getpermheader(array $shortpost) {
@@ -119,23 +166,6 @@ $urlmap = litepublisher::$urlmap;
 return $perm->getheader(tpost::i($shortpost['id']));
     }
 
-public function request_confirm(array $values, array $shortpost) {
-    $kept = tkeptcomments::i();
-    $kept->deleteold();
-
-      $values['date'] = time();
-      $values['ip'] = preg_replace( '/[^0-9., ]/', '',$_SERVER['REMOTE_ADDR']);
-    
-      $confirmid  = $kept->add($values);
-
-if (intval($shortpost['idperm']) > 0) {
-$header = $this->getpermheader($shortpost);
-} else {
-$header = '';
-}
-
-      return $header . $this->htmlhelper->confirm($confirmid);
-}
   
   private function getconfirmform($confirmid) {
     ttheme::$vars['lang'] = tlocal::i('comment');
