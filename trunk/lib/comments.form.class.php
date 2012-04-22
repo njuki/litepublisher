@@ -103,9 +103,10 @@ public function confirm_recevied() {
     $kept->deleteold();
 */
     $confirmid = $_POST['confirmid'];
-$this->start_session($confirmid);
+tsession::start($confirmid);
     //if (!($values = $kept->getitem($confirmid))) {
 if (!isset($_SESSION['confirmid'] || ($confirmid != $_SESSION['confirmid'])) {
+          session_destroy();
       return $this->htmlhelper->geterrorcontent($lang->notfound);
     }
 $values = $_SESSION['values'];
@@ -113,24 +114,6 @@ $values = $_SESSION['values'];
 return $this->processform($values, true);
 }
 
-  public function start_session($idconfirm) {
-    ini_set('session.use_cookies', 0);
-    ini_set('session.use_trans_sid', 0);
-    ini_set('session.use_only_cookies', 0);
-    /*
-    if (tfilestorage::$memcache) {
-      ini_set('session.save_handler', 'memcache');
-      ini_set('session.save_path', 'tcp://127.0.0.1:11211');
-    } else {
-      ini_set('session.save_handler', 'files');
-    }
-    */
-    
-    session_cache_limiter(false);
-    session_id ('commentform-' .md5($idconfirm));
-    session_start();
-  }
-  
 public function request_confirm(array $values, array $shortpost) {
 /*
     $kept = tkeptcomments::i();
@@ -141,7 +124,7 @@ public function request_confirm(array $values, array $shortpost) {
     
       //$confirmid  = $kept->add($values);
 $confirmid = md5uniq();
-$this->start_session($confirmid);
+tsession::start($confirmid);
 $_SESSION['confirmid'] = $confirmid;
 $_SESSION['values'] = $values;
     session_write_close();
