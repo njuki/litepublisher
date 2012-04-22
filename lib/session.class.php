@@ -20,16 +20,16 @@ public function truefunc() {
 return true;
 }
 
-public function read($sessID) {
-return tfilestorage::$memcache->get($this->prefix . $sessID);
+public function read($id) {
+return tfilestorage::$memcache->get($this->prefix . $id);
 }
 
-public function write($sessID,$sessData) {
-return tfilestorage::$memcache->set($this->prefix . $sessID,$sessData);
+public function write($id,$data) {
+return tfilestorage::$memcache->set($this->prefix . $id,$data, false, 3600);
 }
 
-public function destroy($sessID) {
-return tfilestorage::$memcache->delete($this->prefix . $sessID);
+public function destroy($id) {
+return tfilestorage::$memcache->delete($this->prefix . $id);
 }
 
 public static function init($usecookie = false) {
