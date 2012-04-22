@@ -17,24 +17,6 @@ class tadminpassword extends tadminform {
     $this->section = 'password';
   }
   
-  public function start_session($email) {
-    ini_set('session.use_cookies', 0);
-    ini_set('session.use_trans_sid', 0);
-    ini_set('session.use_only_cookies', 0);
-    /*
-    if (tfilestorage::$memcache) {
-      ini_set('session.save_handler', 'memcache');
-      ini_set('session.save_path', 'tcp://127.0.0.1:11211');
-    } else {
-      ini_set('session.save_handler', 'files');
-    }
-    */
-    
-    session_cache_limiter(false);
-    session_id ('password-restore-' .md5($email));
-    session_start();
-  }
-  
   public function getcontent() {
     $html = $this->html;
     $args = new targs();
@@ -45,8 +27,11 @@ class tadminpassword extends tadminform {
     } else {
       $email = $_GET['email'];
       $confirm = $_GET['confirm'];
-      $this->start_session($email);
-      if (($email != $_SESSION['email']) || ($confirm != $_SESSION['confirm'])) return $html->h4->notfound;
+      tsession::start('password-restore-' .md5($email));
+      if (!isset($_SESSION['email']) || ($email != $_SESSION['email']) || ($confirm != $_SESSION['confirm'])) {
+if (!isset($_SESSION['email']) session_destroy();
+return $html->h4->notfound;
+}
       session_destroy();
       if ($id = $this->getiduser($email)) {
         $password = md5uniq();
@@ -78,7 +63,7 @@ class tadminpassword extends tadminform {
     if (!$id) return $html->h2->error;
     $args = targs::i();
     
-    $this->start_session($email);
+      tsession::start('password-restore-' .md5($email));
     if (!isset($_SESSION['count'])) {
       $_SESSION['count'] =1;
     } else {
