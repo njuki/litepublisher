@@ -56,20 +56,7 @@ class tregservice extends tplugin {
   
   
   public function start_session() {
-    ini_set('session.use_cookies', 1);
-    ini_set('session.use_trans_sid', 0);
-    ini_set('session.use_only_cookies', 1);
-    /*
-    if (tfilestorage::$memcache) {
-      ini_set('session.save_handler', 'memcache');
-      ini_set('session.save_path', 'tcp://127.0.0.1:11211');
-    } else {
-      ini_set('session.save_handler', 'files');
-    }
-    */
-    
-    session_cache_limiter(false);
-    //session_id (md5($this->token));
+tsession::init(1);
     session_start();
   }
   
@@ -78,8 +65,11 @@ class tregservice extends tplugin {
     $this->cache = false;
     if (empty($_REQUEST['code'])) return 403;
     $this->start_session();
-    if (empty($_REQUEST['state']) || empty($_SESSION['state'])) return 403;
-    if ($_REQUEST['state'] != $_SESSION['state']) return 403;
+    if (empty($_REQUEST['state']) || empty($_SESSION['state']) ||
+   ($_REQUEST['state'] != $_SESSION['state'])) {
+    session_destroy();
+return 403;
+}
     session_destroy();
   }
   
