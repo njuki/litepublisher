@@ -124,7 +124,7 @@ public function request_confirm(array $values, array $shortpost) {
     
       //$confirmid  = $kept->add($values);
 $confirmid = md5uniq();
-tsession::start($confirmid);
+if ($sess = tsession::start($confirmid)) $sess->lifetime = 900;
 $_SESSION['confirmid'] = $confirmid;
 $_SESSION['values'] = $values;
     session_write_close();

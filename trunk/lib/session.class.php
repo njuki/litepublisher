@@ -8,10 +8,11 @@
 
 class tsession {
 public $prefix;
+public $lifetime;
 
 public function __construct () {
- //ini_set('session.name',COOKPREFIX.'sid');
 $this->prefix = 'ses-' . str_replace((array('_', '.'), '-', litepublisher::$domain) . '-';
+$this->lifetime = 3600;
 $truefunc = array($this, 'truefunc');
 session_set_save_handler($truefunc,$truefunc, array($this,'read'), array($this,'write'), array($this,'destroy'), $truefunc);
 }
@@ -25,7 +26,7 @@ return tfilestorage::$memcache->get($this->prefix . $id);
 }
 
 public function write($id,$data) {
-return tfilestorage::$memcache->set($this->prefix . $id,$data, false, 3600);
+return tfilestorage::$memcache->set($this->prefix . $id,$data, false, $this->lifetime);
 }
 
 public function destroy($id) {
@@ -39,16 +40,17 @@ public static function init($usecookie = false) {
     session_cache_limiter(false);
 
     if (tfilestorage::$memcache) {
-$ses = new __class__();
+return getinstance(__class__);
     } else {
 ini_set('session.gc_probability', 1);
 }
 }
 
 public static function start($id) {
-self::init(false);
+$r = self::init(false);
     session_id ($id);
-    session_start();
+session_start();
+    return $r;
   }
  
 }//class
