@@ -44,7 +44,7 @@ litepublisher::$classes->items['tkeptcomments'][2] = 'comments.trap.class.php';
 
 unset(litepublisher::$classes->items['tspamfilter']);
 unset(litepublisher::$classes->classes['spamfilter']);
-
+unset(litepublisher::$classes->items['tkeptcomments']);
 unset(litepublisher::$classes->items['tcomusers']);
 unset(litepublisher::$classes->classes['comusers']);
 
@@ -159,4 +159,5 @@ $man->alter('comments', "change tmp author int unsigned NOT NULL default '0'");
 $man->alter('comments', "add KEY `author` (`author`)");
 
 $man->deletetable('comusers');
+$man->deletetable('commentskept');
 }

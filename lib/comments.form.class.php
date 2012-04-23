@@ -7,7 +7,7 @@
 **/
 
 class tcommentform extends tevents {
-  public $htmlhelper;
+  public $helper;
   
   public static function i() {
     return getinstance(__class__);
@@ -17,7 +17,6 @@ class tcommentform extends tevents {
     parent::create();
     $this->basename ='commentform';
     $this->cache = false;
-    $this->htmlhelper = $this;
   }
   
   private function checkspam($s) {
@@ -53,15 +52,15 @@ return $db->selectassoc("select id, idurl, idperm, status, comments_status from 
 public function invalidate(array $shortpost) {
     $lang = tlocal::i('comment');
       if(!$shortpost) {
-        return $this->htmlhelper->geterrorcontent($lang->postnotfound);
+        return $this->geterrorcontent($lang->postnotfound);
       }
       
       if ($shortpost['status'] != 'published')  {
-        return $this->htmlhelper->geterrorcontent($lang->commentondraft);
+        return $this->geterrorcontent($lang->commentondraft);
       }
 
 if ($shortpost['comments_status'] == 'closed') {
-        return $this->htmlhelper->geterrorcontent($lang->commentsdisabled);
+        return $this->geterrorcontent($lang->commentsdisabled);
 }
 
 return false;
@@ -69,7 +68,7 @@ return false;
 
 public function processform(array $values, $confirmed) {
     $lang = tlocal::i('comment');
-    if (trim($values['content']) == '') return $this->htmlhelper->geterrorcontent($lang->emptycontent);
+    if (trim($values['content']) == '') return $this->geterrorcontent($lang->emptycontent);
 
       $shortpost= $this->getshortpost(isset($values['postid']) ? (int) $values['postid'] : 0);
 if ($err = $this->invalidate($shortpost)) return $err;
@@ -81,7 +80,7 @@ $iduser = litepublisher::$options->user;
 } else {
 switch ($shortpost['comments_status']) {
 case 'reg':
-        return $this->htmlhelper->geterrorcontent($lang->reg);
+        return $this->geterrorcontent($lang->reg);
 
 case 'guest':
 if (!$confirmed && $cm->confirmguest)  return $this->request_confirm($values, $shortpost);
@@ -107,7 +106,7 @@ tsession::start($confirmid);
     //if (!($values = $kept->getitem($confirmid))) {
 if (!isset($_SESSION['confirmid'] || ($confirmid != $_SESSION['confirmid'])) {
           session_destroy();
-      return $this->htmlhelper->geterrorcontent($lang->notfound);
+      return $this->geterrorcontent($lang->notfound);
     }
 $values = $_SESSION['values'];
           session_destroy();
@@ -135,7 +134,7 @@ $header = $this->getpermheader($shortpost);
 $header = '';
 }
 
-      return $header . $this->htmlhelper->confirm($confirmid);
+      return $header . $this->confirm($confirmid);
 }
 
 public function getpermheader(array $shortpost) {
@@ -149,7 +148,6 @@ $urlmap = litepublisher::$urlmap;
 return $perm->getheader(tpost::i($shortpost['id']));
     }
 
-  
   private function getconfirmform($confirmid) {
     ttheme::$vars['lang'] = tlocal::i('comment');
     $args = targs::i();
@@ -161,10 +159,12 @@ return $perm->getheader(tpost::i($shortpost['id']));
   
   //htmlhelper
   public function confirm($confirmid) {
+if (isset($this->helper) && ($this != $this->helper)) return $this->helper->confirm($confirmid);
     return tsimplecontent::html($this->getconfirmform($confirmid));
   }
   
   public function geterrorcontent($s) {
+if (isset($this->helper) && ($this != $this->helper)) return $this->helper->geterrorcontent($s);
     return tsimplecontent::content($s);
   }
 
@@ -182,23 +182,23 @@ public function processcomuser($values) {
     
     $lang = tlocal::i('comment');
     if (!$this->checkspam($values['antispam']))          {
-      return $this->htmlhelper->geterrorcontent($lang->spamdetected);
+      return $this->geterrorcontent($lang->spamdetected);
     }
     
-    if (empty($values['content'])) return $this->htmlhelper->geterrorcontent($lang->emptycontent);
-    if (empty($values['name']))       return $this->htmlhelper->geterrorcontent($lang->emptyname);
+    if (empty($values['content'])) return $this->geterrorcontent($lang->emptycontent);
+    if (empty($values['name']))       return $this->geterrorcontent($lang->emptyname);
     if (!tcontentfilter::ValidateEmail($values['email'])) {
-      return $this->htmlhelper->geterrorcontent($lang->invalidemail);
+      return $this->geterrorcontent($lang->invalidemail);
     }
     
     if (!$post->commentsenabled)       {
-      return $this->htmlhelper->geterrorcontent($lang->commentsdisabled);
+      return $this->geterrorcontent($lang->commentsdisabled);
     }
     
 $cm = tcommentmanager::i();
     if (litepublisher::$options->checkduplicate) {
       if ($cm->checkduplicate($postid, $values['content']) ) {
-        return $this->htmlhelper->geterrorcontent($lang->duplicate);
+        return $this->geterrorcontent($lang->duplicate);
       }
     }
     
@@ -206,7 +206,7 @@ $cm = tcommentmanager::i();
     $users = tcomusers::i($postid);
     $uid = $users->add($values['name'], $values['email'], $values['url'], $values['ip']);
     if (!$cm->canadd( $uid)) {
-      return $this->htmlhelper->geterrorcontent($lang->toomany);
+      return $this->geterrorcontent($lang->toomany);
     }
     
     $subscribers = tsubscribers::i();
@@ -230,10 +230,11 @@ $cm->add($post->id, $uid, $values['content'], $values['ip']);
     
     if (!dbversion) $cookies['idpost'] = $post->id;
     
-    return $this->htmlhelper->sendcookies($cookies, litepublisher::$site->url . $posturl);
+    return $this->sendcookies($cookies, litepublisher::$site->url . $posturl);
   }
 
   public function sendcookies($cookies, $url) {
+if (isset($this->helper) && ($this != $this->helper)) return $this->helper->sendcookies($cookies, $url);
     $result = '<?php ';
     foreach ($cookies as $name => $value) {
       $result .= " setcookie('$name', '$value', time() + 30000000,  '/', false);";
