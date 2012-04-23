@@ -135,6 +135,7 @@ $c = 1;
     $url = litepublisher::$urlmap->getvalue($shortpost['idurl'], 'url');
     if (($c > 1) && !litepublisher::$options->comments_invert_order) $url = rtrim($url, '/') . "/page/$c/";
 
+    litepublisher::$urlmap->setexpired($shortpost['idurl']);
     return $this->sendresult(litepublisher::$site->url . $url, isset($cookies) ? $cookies : array());
 }
 

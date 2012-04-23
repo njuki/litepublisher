@@ -64,16 +64,10 @@ $this->authoradded($id);
     $id = $comments->add($idpost, $idauthor,  $content, $status, $ip);
     $this->dochanged($id, $idpost);
     $this->added($id, $idpost);
-    $this->sendmail($id, $idpost);
+    $this->sendmail($id);
     return $id;
   }
 
-  public function edit($id, $idpost, $name, $email, $url, $content) {
-    $comusers = dbversion ? tcomusers ::i() : tcomusers ::i($idpost);
-    $idauthor = $comusers->add($name, $email, $url, '');
-    return $this->editcomment($id, $idpost, $idauthor, $content);
-  }
-  
   public function edit($id, $content) {
     $comments = tcomments::i();
     if (!$comments->edit($id, $idauthor,  $content)) return false;
@@ -110,8 +104,6 @@ $comments->setvalue($id, 'parent', $idreply);
       }
     }
     
-    $post = tpost::i($idpost);
-    $post->clearcache();
     $this->changed($id, $idpost);
   }
   
@@ -146,7 +138,7 @@ $comments->setvalue($id, 'parent', $idreply);
     return $this->checktrust($item['trust']);
   }
   
-  public function sendmail($id, $idpost) {
+  public function sendmail($id) {
     if (!$this->sendnotification) return;
     $comments = tcomments::i($idpost);
     $comment = $comments->getcomment($id);

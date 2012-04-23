@@ -104,13 +104,10 @@ class tsubscribers extends titemsposts {
       if (($item['status'] != 'approved')) return;
     }
     
-    $cron = tcron::i();
-    $cron->add('single', get_class($this),  'cronsendmail', array((int) $id, (int) $idpost));
+tcron::i()->add('single', get_class($this),  'cronsendmail', (int) $id);
   }
   
-  public function cronsendmail($arg) {
-    $id = $arg[0];
-    $pid = $arg[1];
+  public function cronsendmail($id) {
     $comments = tcomments::i($pid);
     try {
       $item = $comments->getitem($id);
@@ -118,7 +115,7 @@ class tsubscribers extends titemsposts {
       return;
     }
     
-    $subscribers  = $this->getitems($pid);
+    $subscribers  = $this->getitems($item['post']);
     if (!$subscribers  || (count($subscribers ) == 0)) return;
     $comment = $comments->getcomment($id);
     ttheme::$vars['comment'] = $comment;
