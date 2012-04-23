@@ -79,7 +79,8 @@ class tabstractcron extends tevents {
   }
   
   public function ping() {
-    $this->pinghost(litepublisher::$urlmap->host, litepublisher::$site->subdir . $this->url);
+$p = parse_url(litepublisher::$site->url . $this->url);
+    $this->pinghost($p['host'], $p['path'] . (empty($p['query']) ? '' : '?' . $p['query']));
   }
   
   private function pinghost($host, $path) {
@@ -90,7 +91,6 @@ class tabstractcron extends tevents {
   }
   
   public function sendexceptions() {
-    //проверить, если файл логов создан более часа назад, то его отослать на почту
     $filename = litepublisher::$paths->data . 'logs' . DIRECTORY_SEPARATOR . 'exceptionsmail.log';
     if (!file_exists($filename)) return;
     $time = @filectime ($filename);
