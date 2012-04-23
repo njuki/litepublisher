@@ -69,9 +69,10 @@ $mesg = $this->comuser;
 if (litepublisher::$options->reguser) $mesg .= $this->regaccount;
 $args->mesg = $this->fixmesg($mesg);
 
-    $args->name = '';
-    $args->email = '';
-    $args->url = '';
+    foreach (array('name', 'email', 'url') as $field) {
+$args->$field = "<?php echo (isset(\$_COOKIE['comuser_$field']) ? \$_COOKIE['comuser_$field'] : ''); ?>";
+}
+
     $args->subscribe = litepublisher::$options->defaultsubscribe;
     $args->content = '';
  
