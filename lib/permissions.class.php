@@ -43,8 +43,13 @@ class tperm extends titem_storage {
   }
   
   public function getheader($obj) {
+return '';
   }
   
+  public function hasperm($obj) {
+return true;
+}
+
 }//class
 
 class tpermgroups extends tperm {
@@ -59,16 +64,21 @@ class tpermgroups extends tperm {
   public function getheader($obj) {
     $g = $this->groups;
     if (!$this->author  && (count($g) == 0)) return '';
-    array_unshift($g, 1);
-    $groups = implode(',', $g);
     $author = '';
     if ($this->author && isset($obj->author) && ($obj->author > 1)) {
       $author = sprintf('  || (litepublisher::$options->user != %d)', $obj->author);
     }
     
-    return sprintf('<?php if (!litepublisher::$options->user || (0 == count(array_intersect(litepublisher::$options->idgroups, array(%s))))%s) return litepublisher::$urlmap->forbidden(); ?>',  $groups, $author);
+    return sprintf('<?php if (!litepublisher::$options->ingroups( array(%s)) %s) return litepublisher::$urlmap->forbidden(); ?>',  implode(',', $g), $author);
   }
-  
+
+  public function hasperm($obj) {
+    $g = $this->groups;
+    if (!$this->author  && (count($g) == 0)) return true;
+if (litepublisher::$options->ingroups($g)) return true;
+return $this->author && isset($obj->author) && ($obj->author > 1) && (litepublisher::$options->user == $obj->author);
+    }
+
 }//class
 
 class tperms extends titems_storage {

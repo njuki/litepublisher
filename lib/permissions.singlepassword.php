@@ -15,6 +15,13 @@ class tsinglepassword extends tperm {
       return sprintf('<?php if (!%s::auth(%d, \'%s\')) return; ?>', get_class($this), $this->id, self::encryptpassword($p));
     }
   }
+
+  public function hasperm($obj) {  
+    if (isset($obj->password) && ($p = $obj->password)) {
+      return self::authcookie(self::encryptpassword($p));
+    }
+return true;
+}
   
   public static function encryptpassword($p) {
     return md5(litepublisher::$urlmap->itemrequested['id'] . litepublisher::$secret . $p);
@@ -36,7 +43,7 @@ class tsinglepassword extends tperm {
     return true;
   }
   
-  public static function auth($id, $p) {
+  public static function authcookie($p) {
     if (litepublisher::$options->group == 'admin') return true;
     $cookiename = self::getcookiename();
     $cookie = isset($_COOKIE[$cookiename]) ? $_COOKIE[$cookiename] : '';
@@ -44,7 +51,11 @@ class tsinglepassword extends tperm {
       list($login, $password) = explode('.', $cookie);
       if ($password == md5($login . litepublisher::$secret . $p)) return true;
     }
+return false;
+}
     
+  public static function auth($id, $p) {
+if (self::authcookie($p)) return true;
     $self = self::i($id);
     return $self->getform($p);
   }

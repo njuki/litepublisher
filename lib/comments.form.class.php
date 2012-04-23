@@ -19,14 +19,6 @@ class tcommentform extends tevents {
     $this->cache = false;
   }
   
-  private function checkspam($s) {
-    if  (!($s = @base64_decode($s))) return false;
-    $sign = 'superspamer';
-    if (!strbegin($s, $sign)) return false;
-    $TimeKey = (int) substr($s, strlen($sign));
-    return time() < $TimeKey;
-  }
-
   public function request($arg) {
     if (litepublisher::$options->commentsdisabled) return 404;
     if ( 'POST' != $_SERVER['REQUEST_METHOD'] ) {
@@ -69,11 +61,23 @@ return false;
 public function processform(array $values, $confirmed) {
     $lang = tlocal::i('comment');
     if (trim($values['content']) == '') return $this->geterrorcontent($lang->emptycontent);
+    if (!$this->checkspam(isset($values['antispam']) ? $values['antispam'] : ''))          {
+      return $this->geterrorcontent($lang->spamdetected);
+    }
 
       $shortpost= $this->getshortpost(isset($values['postid']) ? (int) $values['postid'] : 0);
 if ($err = $this->invalidate($shortpost)) return $err;
+if (intval($shortpost['idperm'])) > 0) {
+$post = tpost::i((int) $shortpost['id']);
+        $perm = tperm::i($post->idperm);
+if (!$perm->hasperm($post)) return 403; 
+}
 
     $cm = tcommentmanager::i();      
+    if (litepublisher::$options->checkduplicate && $cm->checkduplicate($shortpost['id'], $values['content']) ) {
+        return $this->geterrorcontent($lang->duplicate);
+      }
+
 if (litepublisher::$options->ingroups($cm->idgroups)) {
 if (!$confirmed && $cm->confirmlogged)  return $this->request_confirm($values, $shortpost);
 $iduser = litepublisher::$options->user;
@@ -89,6 +93,7 @@ break;
 
 case 'comuser':
 if (!$confirmed && $cm->confirmcomuser)  return $this->request_confirm($values, $shortpost);
+if ($err = $this->processcomuser($values)) return $err;
 $iduser = $this->addcomuser($values);
 break;
 }
@@ -143,9 +148,10 @@ $urlmap = litepublisher::$urlmap;
         $saveitem = $urlmap->itemrequested;
         $urlmap->itemrequested = $urlmap->getitem($shortpost['idurl']);
         $urlmap->url = $urlmap->itemrequested['url'];
+$post = tpost::i((int) $shortpost['id']);
         $perm = tperm::i($post->idperm);
         // not restore values because perm will be used this values
-return $perm->getheader(tpost::i($shortpost['id']));
+return $perm->getheader($post);
     }
 
   private function getconfirmform($confirmid) {
@@ -168,7 +174,15 @@ if (isset($this->helper) && ($this != $this->helper)) return $this->helper->gete
     return tsimplecontent::content($s);
   }
 
-public function processcomuser($values) {
+  private function checkspam($s) {
+    if  (!($s = @base64_decode($s))) return false;
+    $sign = 'superspamer';
+    if (!strbegin($s, $sign)) return false;
+    $TimeKey = (int) substr($s, strlen($sign));
+    return time() < $TimeKey;
+  }
+
+public function processcomuser(array &$values) {
     $values = array(
     'name' => isset($values['name']) ? tcontentfilter::escape($values['name']) : '',
     'email' => isset($values['email']) ? trim($values['email']) : '',
@@ -176,33 +190,18 @@ public function processcomuser($values) {
     'subscribe' => isset($values['subscribe']),
     'content' => isset($values['content']) ? trim($values['content']) : '',
     'ip' => isset($values['ip']) ? $values['ip'] : '',
-    'postid' => $postid,
+    'postid' =>     isset($values['postid']) ? intval($values['postid']) : 0,
     'antispam' => isset($values['antispam']) ? $values['antispam'] : ''
     );
     
-    $lang = tlocal::i('comment');
-    if (!$this->checkspam($values['antispam']))          {
-      return $this->geterrorcontent($lang->spamdetected);
-    }
-    
-    if (empty($values['content'])) return $this->geterrorcontent($lang->emptycontent);
     if (empty($values['name']))       return $this->geterrorcontent($lang->emptyname);
     if (!tcontentfilter::ValidateEmail($values['email'])) {
       return $this->geterrorcontent($lang->invalidemail);
     }
-    
-    if (!$post->commentsenabled)       {
-      return $this->geterrorcontent($lang->commentsdisabled);
-    }
-    
+        $lang = tlocal::i('comment');
 $cm = tcommentmanager::i();
-    if (litepublisher::$options->checkduplicate) {
-      if ($cm->checkduplicate($postid, $values['content']) ) {
-        return $this->geterrorcontent($lang->duplicate);
-      }
-    }
-    
-    $posturl = $post->lastcommenturl;
+
+        $posturl = $post->lastcommenturl;
     $users = tcomusers::i($postid);
     $uid = $users->add($values['name'], $values['email'], $values['url'], $values['ip']);
     if (!$cm->canadd( $uid)) {

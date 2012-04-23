@@ -19,7 +19,11 @@ class tpermpassword extends tperm {
     if ($this->password == '') return '';
     return sprintf('<?php %s::i(%d)->auth(); ?>', get_class($this), $this->id);
   }
-  
+
+  public function hasperm($obj) {  
+    return $this->authcookie();
+}
+
   public function getcookiename() {
     return 'permpassword_' .$this->id;
   }
@@ -43,13 +47,19 @@ class tpermpassword extends tperm {
     return true;
   }
   
-  public function auth() {
+  public function authcookie() {
     if (litepublisher::$options->group == 'admin') return true;
     $cookiename = $this->getcookiename();
     $cookie = isset($_COOKIE[$cookiename]) ? $_COOKIE[$cookiename] : '';
     if (($cookie == '') || !strpos($cookie, '.')) return $this->redir();
     list($login, $password) = explode('.', $cookie);
     if ($password == md5($login . litepublisher::$secret . $this->password)) return true;
+}
+return false;
+}
+
+  public function auth() {
+if ($this->authcookie()) return true;
     return $this->redir();
   }
   
