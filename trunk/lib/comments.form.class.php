@@ -38,7 +38,7 @@ public function getshortpost($id) {
 $id = (int) $id;
 if ($id == 0) return false;
 $db = litepublisher::$db;
-return $db->selectassoc("select id, idurl, idperm, status, comments_status from $db->posts where id = $id");
+return $db->selectassoc("select id, idurl, idperm, status, comments_status, commentscount from $db->posts where id = $id");
 }
 
 public function invalidate(array $shortpost) {
@@ -78,6 +78,7 @@ if (!$perm->hasperm($post)) return 403;
         return $this->geterrorcontent($lang->duplicate);
       }
 
+      if (!$confirmed) $values['ip'] = preg_replace( '/[^0-9., ]/', '',$_SERVER['REMOTE_ADDR']);
 if (litepublisher::$options->ingroups($cm->idgroups)) {
 if (!$confirmed && $cm->confirmlogged)  return $this->request_confirm($values, $shortpost);
 $iduser = litepublisher::$options->user;
@@ -97,7 +98,21 @@ if ($err = $this->processcomuser($values)) return $err;
 $iduser = $this->addcomuser($values);
 break;
 }
-      
+
+$cm->add($shortpost['id'], $iduser, $values['content'], $values['ip']);
+
+//$post->lastcommenturl;      
+$shortpost['commentscount']++;
+    if (!litepublisher::$options->commentpages || ($shortpost['commentscount'] <= litepublisher::$options->commentsperpage)) {
+$c = 1;
+} else {
+    $c = ceil($shortpost['commentscount'] / litepublisher::$options->commentsperpage);
+}
+
+    $url = litepublisher::$urlmap->getvalue($shortpost['idurl'], 'url');
+    if (($c > 1) && !litepublisher::$options->comments_invert_order) $url = rtrim($url, '/') . "/page/$c/";
+
+    return $this->sendcookies($cookies, litepublisher::$site->url . $posturl);
 }
 
 public function confirm_recevied() {
@@ -183,27 +198,28 @@ if (isset($this->helper) && ($this != $this->helper)) return $this->helper->gete
   }
 
 public function processcomuser(array &$values) {
-    $values = array(
-    'name' => isset($values['name']) ? tcontentfilter::escape($values['name']) : '',
-    'email' => isset($values['email']) ? trim($values['email']) : '',
-    'url' => isset($values['url']) ? tcontentfilter::escape(tcontentfilter::clean_website($values['url'])) : '',
-    'subscribe' => isset($values['subscribe']),
-    'content' => isset($values['content']) ? trim($values['content']) : '',
-    'ip' => isset($values['ip']) ? $values['ip'] : '',
-    'postid' =>     isset($values['postid']) ? intval($values['postid']) : 0,
-    'antispam' => isset($values['antispam']) ? $values['antispam'] : ''
-    );
-    
+        $lang = tlocal::i('comment');
     if (empty($values['name']))       return $this->geterrorcontent($lang->emptyname);
+    $values['name'] = tcontentfilter::escape($values['name']);
+    $values['email'] = isset($values['email']) ? trim($values['email']) : '';
     if (!tcontentfilter::ValidateEmail($values['email'])) {
       return $this->geterrorcontent($lang->invalidemail);
     }
-        $lang = tlocal::i('comment');
-$cm = tcommentmanager::i();
 
-        $posturl = $post->lastcommenturl;
-    $users = tcomusers::i($postid);
+    $values['url'] = isset($values['url']) ? tcontentfilter::escape(tcontentfilter::clean_website($values['url'])) : '';
+    $subscribe = isset($values['subscribe']);
+
+$cm = tcommentmanager::i();
+    $users = tusers::i();
+if ($id =$users->emailexists($values['email'])) {
+$status = $users->getvalue($id, 'status');
+if ($status != 'comuser') {
+      return $this->geterrorcontent($lang->emailregistered);
+}
+} else {
     $uid = $users->add($values['name'], $values['email'], $values['url'], $values['ip']);
+}
+
     if (!$cm->canadd( $uid)) {
       return $this->geterrorcontent($lang->toomany);
     }
@@ -211,7 +227,7 @@ $cm = tcommentmanager::i();
     $subscribers = tsubscribers::i();
     $subscribers->update($post->id, $uid, $values['subscribe']);
     
-$cm->add($post->id, $uid, $values['content'], $values['ip']);
+
     
     $cookies = array();
     $cookie = empty($_COOKIE['userid']) ? '' : $_COOKIE['userid'];
@@ -227,7 +243,6 @@ $cm->add($post->id, $uid, $values['content'], $values['ip']);
       $cookies["comuser_$field"] = $values[$field];
     }
     
-    if (!dbversion) $cookies['idpost'] = $post->id;
     
     return $this->sendcookies($cookies, litepublisher::$site->url . $posturl);
   }
