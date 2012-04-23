@@ -95,11 +95,29 @@ break;
 case 'comuser':
 if (!$confirmed && $cm->confirmcomuser)  return $this->request_confirm($values, $shortpost);
 if ($err = $this->processcomuser($values)) return $err;
-$iduser = $this->addcomuser($values);
+
+    $users = tusers::i();
+if ($iduser =$users->emailexists($values['email'])) {
+if ('comuser' != $users->getvalue($iduser, 'status')) {
+      return $this->geterrorcontent($lang->emailregistered);
+}
+} else {
+    $iduser = $cm->addcomuser($values['name'], $values['email'], $values['url'], $values['ip']);
+}
 break;
 }
 
-$cm->add($shortpost['id'], $iduser, $values['content'], $values['ip']);
+if ('hold == tusers::i()->getvalue($iduser, 'status')') {
+        return $this->geterrorcontent($lang->holduser);
+}
+
+    if (!$cm->canadd( $iduser)) {
+      return $this->geterrorcontent($lang->toomany);
+    }
+
+if (!$cm->add($shortpost['id'], $iduser, $values['content'], $values['ip'])) {
+        return $this->geterrorcontent($lang->spamdetected );
+}
 
 //$post->lastcommenturl;      
 $shortpost['commentscount']++;
@@ -207,23 +225,9 @@ public function processcomuser(array &$values) {
     }
 
     $values['url'] = isset($values['url']) ? tcontentfilter::escape(tcontentfilter::clean_website($values['url'])) : '';
-    $subscribe = isset($values['subscribe']);
+    $values['subscribe'] = isset($values['subscribe']);
 
-$cm = tcommentmanager::i();
-    $users = tusers::i();
-if ($id =$users->emailexists($values['email'])) {
-$status = $users->getvalue($id, 'status');
-if ($status != 'comuser') {
-      return $this->geterrorcontent($lang->emailregistered);
-}
-} else {
-    $uid = $users->add($values['name'], $values['email'], $values['url'], $values['ip']);
-}
-
-    if (!$cm->canadd( $uid)) {
-      return $this->geterrorcontent($lang->toomany);
-    }
-    
+   
     $subscribers = tsubscribers::i();
     $subscribers->update($post->id, $uid, $values['subscribe']);
     
