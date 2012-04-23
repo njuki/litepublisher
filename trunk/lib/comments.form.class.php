@@ -104,6 +104,11 @@ if ('comuser' != $users->getvalue($iduser, 'status')) {
 } else {
     $iduser = $cm->addcomuser($values['name'], $values['email'], $values['url'], $values['ip']);
 }
+
+$cookies = array();
+    foreach (array('name', 'email', 'url') as $field) {
+      $cookies["comuser_$field"] = $values[$field];
+    }
 break;
 }
 
@@ -130,7 +135,7 @@ $c = 1;
     $url = litepublisher::$urlmap->getvalue($shortpost['idurl'], 'url');
     if (($c > 1) && !litepublisher::$options->comments_invert_order) $url = rtrim($url, '/') . "/page/$c/";
 
-    return $this->sendcookies($cookies, litepublisher::$site->url . $posturl);
+    return $this->sendresult(litepublisher::$site->url . $url, isset($cookies) ? $cookies : array());
 }
 
 public function confirm_recevied() {
@@ -219,7 +224,7 @@ public function processcomuser(array &$values) {
         $lang = tlocal::i('comment');
     if (empty($values['name']))       return $this->geterrorcontent($lang->emptyname);
     $values['name'] = tcontentfilter::escape($values['name']);
-    $values['email'] = isset($values['email']) ? trim($values['email']) : '';
+    $values['email'] = isset($values['email']) ? strtolower(trim($values['email'])) : '';
     if (!tcontentfilter::ValidateEmail($values['email'])) {
       return $this->geterrorcontent($lang->invalidemail);
     }
@@ -230,35 +235,20 @@ public function processcomuser(array &$values) {
    
     $subscribers = tsubscribers::i();
     $subscribers->update($post->id, $uid, $values['subscribe']);
-    
-
-    
-    $cookies = array();
-    $cookie = empty($_COOKIE['userid']) ? '' : $_COOKIE['userid'];
-    $usercookie = $users->getcookie($uid);
-    if ($usercookie != basemd5($cookie . litepublisher::$secret)) {
-      $cookie= md5uniq();
-      $usercookie = basemd5($cookie . litepublisher::$secret);
-      $users->setvalue($uid, 'cookie', $usercookie);
-    }
-    $cookies['userid'] = $cookie;
-    
-    foreach (array('name', 'email', 'url') as $field) {
-      $cookies["comuser_$field"] = $values[$field];
-    }
-    
-    
-    return $this->sendcookies($cookies, litepublisher::$site->url . $posturl);
   }
 
-  public function sendcookies($cookies, $url) {
-if (isset($this->helper) && ($this != $this->helper)) return $this->helper->sendcookies($cookies, $url);
-    $result = '<?php ';
+  public function sendresult($link, $cookies) {
+if (isset($this->helper) && ($this != $this->helper)) return $this->helper->sendresult($cookies, $url);
+$result = '';
+if (count($cookies)) {
+    $result .= '<?php ';
     foreach ($cookies as $name => $value) {
       $result .= " setcookie('$name', '$value', time() + 30000000,  '/', false);";
     }
+$result .= ' ?>';
+}
     
-    $result .= sprintf(" header('Location: %s'); ?>", $url);
+    $result .= turlmap::redir($link);
     return $result;
   }
   
