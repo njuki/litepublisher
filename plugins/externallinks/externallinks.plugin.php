@@ -76,7 +76,7 @@ class texternallinks extends titems {
     $url = $item['url'];
     $filename = litepublisher::$paths->data . 'logs' . DIRECTORY_SEPARATOR . 'externallinks.txt';
     return "<?php tfiler::append('$id\n', '$filename');
-    turlmap::redir('$url');";
+    litepublisher::\$urlmap->redir('$url');";
   }
   
   public function filter(&$content) {

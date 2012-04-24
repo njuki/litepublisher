@@ -170,10 +170,7 @@ class topenid extends tevents {
   }
   
   private function redir($url) {
-    return "<?php
-    @header('HTTP/1.1 302 Found', true, 302);
-    @header('Location: $url');
-    ?>";
+    return "<?php litepublisher::\$urlmap->redir('$url', 302); ?>";
   }
   
   private function DoError() {
@@ -354,7 +351,7 @@ class topenid extends tevents {
     
     $auth = tauthdigest::i();
     if (litepublisher::$options->cookieenabled) {
-      if (!litepublisher::$options->user) return litepublisher::$urlmap->redir301('/admin/login/');
+      if (!litepublisher::$options->user) return litepublisher::$urlmap->redir('/admin/login/');
     }
     elseif (!$auth->Auth())  return $auth->headers();
     if (litepublisher::$options->group != 'admin') return 404;

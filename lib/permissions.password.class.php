@@ -66,12 +66,7 @@ if ($this->authcookie()) return true;
   public function redir() {
     $url = litepublisher::$site->url . '/check-password.php' . litepublisher::$site->q;
     $url .= "idperm=$this->id&backurl=" . urlencode(litepublisher::$urlmap->url);
-    litepublisher::$options->savemodified();
-    header('HTTP/1.1 307 Temporary Redirect', true, 307);
-    header('Location: ' . $url);
-    
-    if (ob_get_level()) ob_end_flush ();
-    exit();
+litepublisher::$urlmap->redir($url, 307);
   }
   
 }//class

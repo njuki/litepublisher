@@ -249,7 +249,7 @@ if (count($cookies)) {
 $result .= ' ?>';
 }
     
-    $result .= turlmap::redir($link);
+    $result .= sprintf('<?php litepublisher::$urlmap->redir(\'%s\'); ?>', $link;);
     return $result;
   }
   

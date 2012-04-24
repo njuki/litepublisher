@@ -62,7 +62,7 @@ $widget = str_replace('&', '&amp;', $widget);
     $url = $service->getauthurl();
     if (!empty($_GET['backurl'])) setcookie('backurl', $_GET['backurl'], time() + 8 * 3600, litepublisher::$site->subdir . '/', false);
     
-    return turlmap::redir($url);
+    return litepublisher::$urlmap->redir($url);
   }
   
 }//class

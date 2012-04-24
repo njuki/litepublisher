@@ -34,7 +34,7 @@ class tajaxcommentformplugin extends tplugin {
     }
     
     $commentform = tcommentform::i();
-    $commentform->htmlhelper = $this;
+    $commentform->helper = $this;
     return turlmap::htmlheader(false) .$commentform->request(null);
   }
   
@@ -55,7 +55,7 @@ class tajaxcommentformplugin extends tplugin {
     ));
   }
   
-  public function sendcookies($cookies, $url) {
+  public function sendresult($url, $cookies) {
     $result = $cookies;
     $result['posturl'] = $url;
     $result['code'] = 'success';

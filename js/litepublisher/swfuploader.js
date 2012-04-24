@@ -69,7 +69,7 @@ function createswfu () {
     flash_url : url + "/js/swfupload/swfupload.swf",
     upload_url: url + "/admin/ajaxposteditor.htm?get=upload&id=" + ltoptions.idpost,
     // prevent_swf_caching: false,
-  post_params: {"litepubl_user": cookie},
+  post_params: {"litepubl_user": cookie, litepubl_user_id: get_cookie("litepubl_user_id")},
     file_size_limit : "100 MB",
     file_types : "*.*",
     file_types_description : "All Files",

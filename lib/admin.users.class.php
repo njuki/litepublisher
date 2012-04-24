@@ -119,7 +119,7 @@ class tadminusers extends tadminmenu {
       case 'add':
       $_POST['idgroups'] = tadminhtml::check2array('idgroup-');
       if ($id = $users->add($_POST)) {
-        turlmap::redir("$this->adminurl=$id&action=edit");
+        litepublisher::$urlmap->redir("$this->adminurl=$id&action=edit");
       } else {
         return $this->html->h2->invalidregdata;
       }

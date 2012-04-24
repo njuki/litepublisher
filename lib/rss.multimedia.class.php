@@ -28,9 +28,7 @@ class trssMultimedia extends tevents {
     if (($arg == null) && ($this->feedburner  != '')) {
       $result .= "<?php
       if (!preg_match('/feedburner|feedvalidator/i', \$_SERVER['HTTP_USER_AGENT'])) {
-        header('HTTP/1.1 307 Temporary Redirect');
-        header('Location:$this->feedburner');
-        return;
+        return litepublisher::\$urlmap->redir('$this->feedburner', 307);
       }
       ?>";
     }

@@ -72,7 +72,7 @@ class tbookmarkswidget extends tlinkswidget  {
     '$title' => urlencode($_GET['title'])
     );
     $url = strtr($url, $a);
-    return turlmap::redir($url);
+    return litepublisher::$urlmap->redir($url);
   }
   
 }//class

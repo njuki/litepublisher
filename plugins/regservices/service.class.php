@@ -164,7 +164,7 @@ if (($user['status'] == 'wait') || ($user['status'] == 'comuser')) $users->appro
       $backurl =  $groups->gethome($user['idgroups'][0]);
     }
     
-    return turlmap::redir($backurl);
+    return litepublisher::$urlmap->redir($backurl);
   }
   
 }//class

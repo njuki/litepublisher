@@ -78,7 +78,7 @@ flush();
 
 private function close_connection() {
 ignore_user_abort(true);
-$len = ob_get_length();
+$len = $this->isredir ? 0 : ob_get_length();
 header('Connection: close');
 header('Content-Length: ' . $len);
 header('Content-Encoding: none');
@@ -122,23 +122,23 @@ header('Accept-Ranges: bytes');
     if ($result = $this->query($url)) return $result;
     $srcurl = $url;
     if ($i = strpos($url, '?'))  $url = substr($url, 0, $i);
-    if ('//' == substr($url, -2)) $this->redir301(rtrim($url, '/') . '/');
+    if ('//' == substr($url, -2)) $this->redir(rtrim($url, '/') . '/');
     //extract page number
     if (preg_match('/(.*?)\/page\/(\d*?)\/?$/', $url, $m)) {
-      if ('/' != substr($url, -1))  return $this->redir301($url . '/');
+      if ('/' != substr($url, -1))  return $this->redir($url . '/');
       $url = $m[1];
       if ($url == '') $url = '/';
       $this->page = max(1, abs((int) $m[2]));
     }
     
     if ($result = $this->query($url)) {
-      if (($this->page == 1) && ($result['type'] == 'normal') && ($srcurl != $result['url'])) return $this->redir301($url);
+      if (($this->page == 1) && ($result['type'] == 'normal') && ($srcurl != $result['url'])) return $this->redir($url);
       return $result;
     }
     $url = $url != rtrim($url, '/') ? rtrim($url, '/') : $url . '/';
     if ($result = $this->query($url)) {
       if ($this->page > 1) return $result;
-      if ($result['type'] == 'normal') return $this->redir301($url);
+      if ($result['type'] == 'normal') return $this->redir($url);
       return $result;
     }
     
@@ -226,7 +226,7 @@ header('Accept-Ranges: bytes');
   public function notfound404() {
     $redir = tredirector::i();
     if ($url  = $redir->get($this->url)) {
-      return $this->redir301($url);
+      return $this->redir($url);
     }
     
     $this->is404 = true;
@@ -404,17 +404,26 @@ call_user_func_array(array_splice($a, 0, 2), $a);
     }
   }
   
-  public static function redir301($url) {
-    if (!strbegin($url, 'http://')) $url = litepublisher::$site->url . $url;
-    self::redir($url);
-  }
-  
-  public static function redir($url) {
+  public function redir($url, $status = 301) {
     litepublisher::$options->savemodified();
+$this->redir = true;
+
+switch ($status) {
+case 301:
       header('HTTP/1.1 301 Moved Permanently', true, 301);
+break;
+
+case 302:
+    header('HTTP/1.1 302 Found', true, 302);
+break;
+
+case 307:
+    header('HTTP/1.1 307 Temporary Redirect', true, 307);
+break;
+}
+
+    if (!strbegin($url, 'http://')) $url = litepublisher::$site->url . $url;
     header('Location: ' . $url);
-    if (ob_get_level()) ob_end_flush ();
-    exit();
   }
   
   public function setidurl($id, $url) {

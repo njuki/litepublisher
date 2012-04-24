@@ -105,7 +105,7 @@ class tadminitemsreplacer implements iadmin{
       $plugin->add($id);
       $view->themename = tview::i(1)->themename;
       $adminurl = tadminhtml::getadminlink('/admin/plugins/', 'plugin=' . basename(dirname(__file__)));
-      return turlmap::redir301("$adminurl&id=$id");
+      return litepublisher::$urlmap->redir("$adminurl&id=$id");
     }
     
     ttheme::clearcache();

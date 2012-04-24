@@ -333,7 +333,7 @@ class tadminmoderator extends tadmincommoncomments {
           $item = $comments->getitem($this->idget() );
           $post = tpost::i( (int) $item['post']);
           $this->manager->reply($this->idget(), $post->id, $_POST['content']);
-          return turlmap::redir301($post->lastcommenturl);
+          return litepublisher::$urlmap->redir($post->lastcommenturl);
           
           case 'edit':
           $comments = tcomments::i();
