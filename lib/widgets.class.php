@@ -603,7 +603,7 @@ class twidgetscache extends titems {
   
   public function save() {
     if (!$this->modified) {
-      litepublisher::$urlmap->onclose['widgetscache'] = array($this, 'savemodified');
+      litepublisher::$urlmap->onclose = array($this, 'savemodified');
       $this->modified = true;
     }
   }

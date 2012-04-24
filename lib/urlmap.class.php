@@ -211,6 +211,7 @@ header('Accept-Ranges: bytes');
         case 403: return $this->forbidden();
       }
     } else {
+if ($this->isredir) return;
       $template = ttemplate::i();
       $s = $template->request($this->context);
     }
