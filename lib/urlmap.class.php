@@ -17,9 +17,10 @@ class turlmap extends titems {
   public $cache_enabled;
   public $argtree;
   public $is404;
+public $isredir;
   public $adminpanel;
   public $mobile;
-  public $onclose;
+  protected $close_events;
   
   public static function i() {
     return getinstance(__class__);
@@ -36,12 +37,13 @@ class turlmap extends titems {
     $this->basename = 'urlmap';
     $this->addevents('beforerequest', 'afterrequest', 'onclearcache');
     $this->is404 = false;
+    $this->isredir = false;
     $this->adminpanel = false;
     $this->mobile= false;
     $this->cachefilename = false;
     $this->cache_enabled =     litepublisher::$options->cache && !litepublisher::$options->admincookie;
     $this->page = 1;
-    $this->onclose = array();
+    $this->close_events = array();
   }
   
   protected function prepareurl($host, $url) {
@@ -65,10 +67,23 @@ class turlmap extends titems {
     } catch (Exception $e) {
       litepublisher::$options->handexception($e);
     }
-    if (!litepublisher::$debug && litepublisher::$options->ob_cache) @ob_end_flush ();
+    if (!litepublisher::$debug && litepublisher::$options->ob_cache) {
+if ($this->isredir || count($this->close_events)) $this->close_connection();
+@ob_end_flush ();
+flush();
+}
     $this->afterrequest($this->url);
     $this->close();
   }
+
+private function close_connection() {
+ignore_user_abort(true);
+$len = ob_get_length();
+header('Connection: close');
+header('Content-Length: ' . $len);
+header('Content-Encoding: none');
+header('Accept-Ranges: bytes');
+}
   
   private function dorequest($url) {
     if ($this->itemrequested = $this->finditem($url)){
@@ -355,16 +370,24 @@ class turlmap extends titems {
     $self->deleteclass(get_class($obj));
     $self->unlock();
   }
+
+public function setonclose(array $a) {
+$this->close_events[] = $a;
+}
   
+public function onclose() {
+$this->close_events[] = func_get_args();
+}
+
   private function call_close_events() {
-    foreach ($this->onclose as $event) {
+    foreach ($this->close_events as $a) {
       try {
-        call_user_func($event);
+call_user_func_array(array_splice($a, 0, 2), $a);
       } catch (Exception $e) {
         litepublisher::$options->handexception($e);
       }
     }
-    $this->onclose = array();
+    $this->close_events = array();
   }
   
   protected function close() {
@@ -388,18 +411,12 @@ class turlmap extends titems {
   
   public static function redir($url) {
     litepublisher::$options->savemodified();
-    if ( php_sapi_name() != 'cgi-fcgi' ) {
-      $protocol = $_SERVER["SERVER_PROTOCOL"];
-      if ( ('HTTP/1.1' != $protocol) && ('HTTP/1.0' != $protocol) ) $protocol = 'HTTP/1.0';
-      header( "$protocol 301 Moved Permanently", true, 301);
-    }
-    
-    header("Location: $url");
+      header('HTTP/1.1 301 Moved Permanently', true, 301);
+    header('Location: ' . $url);
     if (ob_get_level()) ob_end_flush ();
     exit();
   }
   
-
   public function setidurl($id, $url) {
       $this->db->setvalue($id, 'url', $url);
       if (isset($this->items[$id])) $this->items[$id]['url'] = $url;
