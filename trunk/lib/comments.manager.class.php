@@ -139,7 +139,12 @@ $comments->setvalue($id, 'parent', $idreply);
   }
   
   public function sendmail($id) {
-    if (!$this->sendnotification) return;
+    if ($this->sendnotification) {
+litepublisher::$urlmap->onclose($this, 'send_mail', $id);
+}
+}
+
+  public function send_mail($id) {
     $comments = tcomments::i($idpost);
     $comment = $comments->getcomment($id);
     ttheme::$vars['comment'] = $comment;
@@ -152,7 +157,7 @@ $comments->setvalue($id, 'parent', $idreply);
     $mailtemplate = tmailtemplate::i('comments');
     $subject = $mailtemplate->subject($args);
     $body = $mailtemplate->body($args);
-    tmailer::sendtoadmin($subject, $body, true);
+    return tmailer::sendtoadmin($subject, $body, false);
   }
   
   public function createstatus($idpost, $idauthor, $content, $ip) {
