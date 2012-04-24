@@ -23,7 +23,7 @@ class tmailer {
       return file_put_contents($dir . date('H-i-s.d.m.Y.\e\m\l'), $eml);
     }
     
-    mail($to, $subj, $body,
+    return mail($to, $subj, $body,
     "To: $to\nFrom: $from\nReply-To: $from\nContent-Type: text/plain; charset=\"utf-8\"\nContent-Transfer-Encoding: 8bit\nDate: $date\nX-Priority: 3\nX-Mailer: Lite Publisher ver " . litepublisher::$options->version);
   }
   
@@ -45,13 +45,13 @@ class tmailer {
     if ($onshutdown) {
       if (!isset(self::$hold)) {
         self::$hold = array();
-        register_shutdown_function(__class__ . '::onshutdown');
+        register_shutdown_function(array(__class__, 'onshutdown'));
       }
       self::$hold[] = array('subject' => $subject, 'body' => $body);
       return;
     }
     
-    self::sendmail(litepublisher::$site->name, litepublisher::$options->fromemail,
+    return self::sendmail(litepublisher::$site->name, litepublisher::$options->fromemail,
     'admin', litepublisher::$options->email, $subject, $body);
   }
   
@@ -87,7 +87,7 @@ class tmailer {
     return file_put_contents(litepublisher::$paths->data . 'logs' . DIRECTORY_SEPARATOR  . date('H-i-s.d.m.Y.\e\m\l'),
     "To: $to\nSubject: $subj\nFrom: $from\nReply-To: $from\nMIME-Version: 1.0\nContent-Type: multipart/mixed; boundary=\"$boundary\"\nDate: $date\nX-Priority: 3\nX-Mailer: Lite Publisher ver $options->version\n\n". $body);
     
-    mail($to, $subj, $body,
+    return mail($to, $subj, $body,
     "From: $from\nReply-To: $from\nMIME-Version: 1.0\nContent-Type: multipart/mixed; boundary=\"$boundary\"\nDate: $date\nX-Priority: 3\nX-Mailer: Lite Publisher ver " . litepublisher::$options->version);
   }
   
