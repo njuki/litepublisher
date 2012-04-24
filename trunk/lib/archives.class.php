@@ -107,7 +107,7 @@ class tarchives extends titems_itemplate implements  itemplate {
     if (!isset($this->items[$date])) return 404;
     $this->date = $date;
     if ($this->lite && (litepublisher::$urlmap->page > 1)) {
-      return sprintf("<?php turlmap::redir301('%s');",$item['url']);
+      return sprintf("<?php litepublisher::$urlmap->redir('%s');",$item['url']);
     }
   }
   

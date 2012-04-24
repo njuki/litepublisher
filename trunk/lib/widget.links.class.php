@@ -92,7 +92,7 @@ class tlinkswidget extends twidget {
     $this->cache = false;
     $id = empty($_GET['id']) ? 1 : (int) $_GET['id'];
     if (!isset($this->items[$id])) return 404;
-  return "<?php @header('Location: {$this->items[$id]['url']}'); ?>";
+  return '<?php litepublisher::$urlmap->redir(\'' . $this->items[$id]['url'] . '\'); ?>';
   }
   
 }//class

@@ -326,7 +326,7 @@ class tcommontags extends titems implements  itemplate {
     }
     
     if ($this->lite && (litepublisher::$urlmap->page > 1)) {
-      return sprintf("<?php turlmap::redir301('%s');",$item['url']);
+      return sprintf("<?php litepublisher::$urlmap->redir('%s');",$item['url']);
     }
     
   }

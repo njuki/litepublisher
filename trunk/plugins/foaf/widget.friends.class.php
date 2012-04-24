@@ -60,7 +60,7 @@ class tfriendswidget extends twidget {
     if (!$foaf->itemexists($id)) return 404;
     $item = $foaf->getitem($id);
     $this->cache = false;
-    return sprintf('<?php @header(\'Location: %s\'); ?>', $item['url']);
+    return sprintf('<?php litepublisher::$urlmap->redir(\'%s\'); ?>', $item['url']);
   }
   
 }//class

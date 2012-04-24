@@ -55,7 +55,7 @@ class tprivatefiles extends tevents {
         exit();
       }
       
-      return turlmap::redir301($filename);
+      return litepublisher::$urlmap->redir($filename);
     }
     
     $this->id = $id;

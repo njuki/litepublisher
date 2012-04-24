@@ -22,7 +22,7 @@ class tadminlogin extends tadminform {
   public function auth() {
     if (litepublisher::$options->cookieenabled) {
       if ($s = tguard::checkattack()) return $s;
-      if (!litepublisher::$options->authcookie()) return litepublisher::$urlmap->redir301('/admin/login/');
+      if (!litepublisher::$options->authcookie()) return litepublisher::$urlmap->redir('/admin/login/');
     }else {
       $auth = tauthdigest::i();
       if (!$auth->Auth())  return $auth->headers();
@@ -36,7 +36,7 @@ class tadminlogin extends tadminform {
       $auth = tauthdigest::i();
       if ($auth->auth()) $auth->logout();
     }
-    return litepublisher::$urlmap->redir301('/admin/login/');
+    return litepublisher::$urlmap->redir('/admin/login/');
   }
   
   public function request($arg) {
@@ -69,7 +69,7 @@ class tadminlogin extends tadminform {
       }
     }
     
-    return litepublisher::$urlmap->redir301($url);
+    return litepublisher::$urlmap->redir($url);
   }
   
   public function getcontent() {

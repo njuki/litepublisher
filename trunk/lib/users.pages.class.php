@@ -83,14 +83,14 @@ class tuserpages extends titems implements itemplate {
       $website = $item['website'];
       if (!strpos($website, '.')) $website = litepublisher::$site->url . litepublisher::$site->home;
       if (!strbegin($website, 'http://')) $website = 'http://' . $website;
-      return "<?php turlmap::redir('$website');";
+      return "<?php litepublisher::$urlmap->redir('$website');";
     }
     
     $this->id = (int) $id;
     if (!$this->itemexists($id)) return 404;
     $item =$this->getitem($id);
     if ($this->lite && (litepublisher::$urlmap->page > 1)) {
-      return sprintf("<?php turlmap::redir301('%s');",$item['url']);
+      return sprintf("<?php litepublisher::$urlmap->redir('%s');",$item['url']);
     }
   }
   

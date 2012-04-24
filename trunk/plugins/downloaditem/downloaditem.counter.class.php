@@ -50,7 +50,7 @@ class tdownloaditemcounter extends titems {
     $url = $item['downloadurl'];
     $filename = litepublisher::$paths->data . 'logs' . DIRECTORY_SEPARATOR . 'downloaditemscount.txt';
     return "<?php tfiler::append('$id\n', '$filename');
-    return turlmap::redir('$url');";
+    return litepublisher::\$urlmap->redir('$url');";
   }
   
 }//class

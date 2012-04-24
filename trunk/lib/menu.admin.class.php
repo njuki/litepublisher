@@ -135,7 +135,7 @@ public function save() { return true; }
     if (litepublisher::$options->cookieenabled) {
       if ($s = tguard::checkattack()) return $s;
       if (!litepublisher::$options->user) {
-        return litepublisher::$urlmap->redir301('/admin/login/' . litepublisher::$site->q . 'backurl=' . urlencode(litepublisher::$urlmap->url));
+        return litepublisher::$urlmap->redir('/admin/login/' . litepublisher::$site->q . 'backurl=' . urlencode(litepublisher::$urlmap->url));
       }
     }else {
       $auth = tauthdigest::i();
