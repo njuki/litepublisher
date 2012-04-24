@@ -25,35 +25,20 @@ class tcommentmanager extends tevents_storage {
     return litepublisher::$db->getcount();
   }
   
-  public function addcomuser($name, $email, $url, $ip) {
-    $email = strtolower(trim($email));
-    if ($id = $this->find($name, $email, $url)) {
-      $this->db->setvalue($id, 'ip', $ip);
-      return $id;
-    }
-    
-    if (($parsed = @parse_url($url)) &&  is_array($parsed) ) {
-      if ( empty($parsed['host'])) {
-        $url = '';
-      } else {
-        if ( !isset($parsed['scheme']) || !in_array($parsed['scheme'], array('http','https')) ) $parsed['scheme']= 'http';
-        if (!isset($parsed['path'])) $parsed['path'] = '';
-        $url = $parsed['scheme'] . '://' . $parsed['host'] . $parsed['path'];
-        if (!empty($parsed['query'])) $url .= '?' . $parsed['query'];
-      }
-    } else {
-      $url = '';
-    }
-    $id = $this->db->add(array(
-    'trust' => 0,
+  public function addcomuser($name, $email, $website, $ip) {
+$users = tusers::i();
+    $id = $users->add(array(
+    'email' => strtolower(trim($email)),
     'name' => $name,
-    'url' => $url,
-    'email' => $email,
+    'website' => tcontentfilter::clean_website($website),
     'ip' => $ip,
-    'cookie' => md5uniq(),
+'idgroups' => 'commentator'
     ));
     
+if ($id) {
+$users->setvalue($id, 'status', 'comuser');
 $this->authoradded($id);
+}
     return $id;
   }
   
@@ -96,10 +81,12 @@ $comments->setvalue($id, 'parent', $idreply);
       $comments->getdb('posts')->setvalue($idpost, 'commentscount', $count);
       //update trust
       try {
-        $item = $comments->getitem($id);
-        $idauthor = $item['author'];
-        $comusers = tcomusers::i($idpost);
-        $comusers->setvalue($idauthor, 'trust', $comments->db->getcount("author = $idauthor and status = 'approved' limit 5"));
+        $idauthor = $COMMENTS->GETVALUE($ID, 'AUTHOR');
+$USERS = TUSERS::I();
+IF ($THIS->trustlevel > INTVAL($USERS->GETVALUE($IDAUTHOR, 'TRUST'))) {
+$TRUST = $comments->db->getcount("author = $idauthor and status = 'approved' limit "  ($THIS->trustlevel + 1));
+        $users->setvalue($idauthor, 'trust', $TRUST);
+}
       } catch (Exception $e) {
       }
     }
@@ -125,17 +112,6 @@ $comments->setvalue($id, 'parent', $idreply);
       return true;
     }
     return false;
-  }
-  
-  public function checktrust($value) {
-    return $value >= $this->trustlevel;
-  }
-  
-  public function trusted($idauthor) {
-    if (!dbversion) return true;
-    $comusers = tcomusers::i(0);
-    $item = $comusers->getitem($idauthor);
-    return $this->checktrust($item['trust']);
   }
   
   public function sendmail($id) {

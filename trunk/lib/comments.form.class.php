@@ -240,17 +240,11 @@ public function processcomuser(array &$values) {
 
   public function sendresult($link, $cookies) {
 if (isset($this->helper) && ($this != $this->helper)) return $this->helper->sendresult($cookies, $url);
-$result = '';
-if (count($cookies)) {
-    $result .= '<?php ';
     foreach ($cookies as $name => $value) {
-      $result .= " setcookie('$name', '$value', time() + 30000000,  '/', false);";
+setcookie($name, $value, time() + 30000000,  '/', false);
     }
-$result .= ' ?>';
-}
     
-    $result .= sprintf('<?php litepublisher::$urlmap->redir(\'%s\'); ?>', $link;);
-    return $result;
+return litepublisher::$urlmap->redir($link);
   }
   
 }//class

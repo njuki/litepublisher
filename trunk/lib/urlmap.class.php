@@ -76,7 +76,7 @@ flush();
     $this->close();
   }
 
-private function close_connection() {
+public function close_connection() {
 ignore_user_abort(true);
 $len = $this->isredir ? 0 : ob_get_length();
 header('Connection: close');
