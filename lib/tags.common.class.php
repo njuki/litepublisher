@@ -153,8 +153,7 @@ class tcommontags extends titems implements  itemplate {
     $views = tviews::i();
     $idview = isset($views->defaults[$this->PermalinkIndex]) ? $views->defaults[$this->PermalinkIndex] : 1;
     
-    if ($this->dbversion)  {
-      $id = $this->db->add(array(
+$item = array(
       'idurl' => 0,
       'customorder' => 0,
       'parent' => $parent,
@@ -168,34 +167,13 @@ class tcommontags extends titems implements  itemplate {
       'invertorder' => false,
       'lite' => $this->lite,
       'liteperpage' => 1000
-      ));
+      );
+
+      $id = $this->db->add($item);
+$this->items[$id] = $item;
       $idurl =         $urlmap->add($url, get_class($this),  $id);
-      $this->db->setvalue($id, 'idurl', $idurl);
-    } else {
-      $id = ++$this->autoid;
-      $idurl =         $urlmap->add($url, get_class($this),  $id);
-    }
-    
-    $this->lock();
-    $this->items[$id] = array(
-    'id' => $id,
-    'customorder' => 0,
-    'parent' => $parent,
-    'idurl' =>         $idurl,
-    'url' =>$url,
-    'title' => $title,
-    'icon' => 0,
-    'idview' => $idview,
-    'idperm' => 0,
-    'itemscount' => 0,
-    'includechilds' => $this->includechilds,
-    'includeparents' => $this->includeparents,
-    'invertorder' => false,
-    'lite' => $this->lite,
-    'liteperpage' => 1000
-    );
-    $this->unlock();
-    
+      $this->setvalue($id, 'idurl', $idurl);
+$this->items[$id]['url'] = $url;    
     $this->added($id);
     $this->changed();
     $urlmap->clearcache();
@@ -324,8 +302,11 @@ class tcommontags extends titems implements  itemplate {
     } catch (Exception $e) {
       return 404;
     }
-    
-    if ($this->lite && (litepublisher::$urlmap->page > 1)) {
+
+    $perpage = (int) $item['lite'] ? (int) $item['liteperpage'] : litepublisher::$options->perpage;
+    $list = $this->getidposts();
+$pages = ceil($ount ($list) / $perpage);
+    if (litepublisher::$urlmap->page > $pages) {
       return sprintf("<?php litepublisher::$urlmap->redir('%s');",$item['url']);
     }
     
