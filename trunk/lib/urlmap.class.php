@@ -65,7 +65,6 @@ public $isredir;
     try {
       $this->dorequest($this->url);
     } catch (Exception $e) {
-      litepublisher::$options->handexception($e);
     }
     if (!litepublisher::$debug && litepublisher::$options->ob_cache) {
 if ($this->isredir || count($this->close_events)) $this->close_connection();
@@ -85,7 +84,7 @@ $len = ob_get_length();
 header('Connection: close');
 header('Content-Length: ' . $len);
 header('Content-Encoding: none');
-header('Accept-Ranges: bytes');
+//header('Accept-Ranges: bytes');
 }
   
   private function dorequest($url) {
