@@ -84,12 +84,12 @@ $comments->setvalue($id, 'parent', $idreply);
         $idauthor = $COMMENTS->GETVALUE($ID, 'AUTHOR');
 $USERS = TUSERS::I();
 IF ($THIS->trustlevel > INTVAL($USERS->GETVALUE($IDAUTHOR, 'TRUST'))) {
-$TRUST = $comments->db->getcount("author = $idauthor and status = 'approved' limit "  ($THIS->trustlevel + 1));
+$TRUST = $comments->db->getcount("author = $idauthor and status = 'approved' limit " . ($THIS->trustlevel + 1));
         $users->setvalue($idauthor, 'trust', $TRUST);
 }
       } catch (Exception $e) {
       }
-    }
+
     
     $this->changed($id, $idpost);
   }
@@ -104,7 +104,7 @@ $TRUST = $comments->db->getcount("author = $idauthor and status = 'approved' lim
     return false;
   }
   
-  public function setstatus($id, $$status) {
+  public function setstatus($id, $status) {
     if (!in_array($status, array('approved', 'hold', 'spam')))  return false;
     $comments = tcomments::i($idpost);
     if ($comments->setstatus($id, $status)) {
@@ -121,11 +121,11 @@ litepublisher::$urlmap->onclose($this, 'send_mail', $id);
 }
 
   public function send_mail($id) {
-    $comments = tcomments::i($idpost);
+    $comments = tcomments::i();
     $comment = $comments->getcomment($id);
     ttheme::$vars['comment'] = $comment;
     $args = targs::i();
-    $adminurl = litepublisher::$site->url . '/admin/comments/'. litepublisher::$site->q . "id=$id&post=$idpost";
+    $adminurl = litepublisher::$site->url . '/admin/comments/'. litepublisher::$site->q . "id=$id";
     $ref = md5(litepublisher::$secret . $adminurl);
     $adminurl .= "&ref=$ref&action";
     $args->adminurl = $adminurl;

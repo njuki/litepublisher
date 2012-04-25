@@ -60,7 +60,7 @@ $this->added($id);
   
   public function edit($id, $content) {
   if (!$this->itemexists($id)) return false;
-$filtered = tcontentfilter::i()->filtercomment($content));
+$filtered = tcontentfilter::i()->filtercomment($content);
     $this->db->setvalue($id, 'content', $filtered);
     $this->getdb($this->rawtable)->updateassoc(array(
     'id' => $id,
@@ -101,7 +101,7 @@ $this->edited($id);
   public function select($where, $limit) {
     if ($where != '') $where .= ' and ';
     $table = $this->thistable;
-$authors = $this->getdb('users');
+$authors = litepublisher::$db->users;
     $res = litepublisher::$db->query("select $table.*, $authors.name, $authors.email, $authors.website, $authors.trust from $table, $authors
     where $where $authors.id = $table.author $limit");
     
