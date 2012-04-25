@@ -69,8 +69,10 @@ public $isredir;
     }
     if (!litepublisher::$debug && litepublisher::$options->ob_cache) {
 if ($this->isredir || count($this->close_events)) $this->close_connection();
-@ob_end_flush ();
+while (@ob_end_flush ());
 flush();
+//prevent output while client connected
+if ($this->isredir || count($this->close_events)) ob_start();
 }
     $this->afterrequest($this->url);
     $this->close();
@@ -78,7 +80,8 @@ flush();
 
 public function close_connection() {
 ignore_user_abort(true);
-$len = $this->isredir ? 0 : ob_get_length();
+//$len = $this->isredir ? 0 : ob_get_length();
+$len = ob_get_length();
 header('Connection: close');
 header('Content-Length: ' . $len);
 header('Content-Encoding: none');
@@ -287,7 +290,7 @@ if ($this->isredir) return;
       } else {
         return false;
       }
-    }
+
     $this->clearcache();
     $this->deleted($id);
     return true;
@@ -306,7 +309,6 @@ if ($this->isredir) return;
       if ($item = $this->db->getitem($id)) {
         $this->db->iddelete($id);
         $this->deleted($item);
-      }
     }
     $this->clearcache();
   }

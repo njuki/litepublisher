@@ -6,7 +6,7 @@
 * and GPL (gpl.txt) licenses.
 **/
 
-class tsite ext0ends tevents_storage {
+class tsite extends tevents_storage {
 private $users;
   
   public static function i() {
