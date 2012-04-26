@@ -50,7 +50,7 @@ unset(litepublisher::$classes->items['tkeptcomments']);
 unset(litepublisher::$classes->items['tcomusers']);
 unset(litepublisher::$classes->classes['comusers']);
 
-  litepublisher::$options->comments_status = 'guest';
+  litepublisher::$options->comstatus = 'guest';
 
 $admin = tadminmenus::i();
 $admin->items[$admin->url2id('/admin/options/comments/')]['class'] = 'tadmincommentmanager';
@@ -85,10 +85,10 @@ $man = tdbmanager::i();
 $man->delete_enum('users', 'status', 'lock');
 $man->addenum('users', 'status', 'comuser');
 
-$man->alter('posts', "add `comments_status` enum('closed','reg','guest','comuser') default 'comuser'");
+$man->alter('posts', "add `comstatus` enum('closed','reg','guest','comuser') default 'comuser'");
 
 $db->table = 'posts';
-$db->update("comments_status = 'closed'", "commentsenabled = 0");
+$db->update("comstatus = 'closed'", "commentsenabled = 0");
 $man->alter('posts', "drop commentsenabled");
 
 $groups = tusergroups::i();

@@ -40,7 +40,7 @@ class ttemplatecomments extends tevents {
       $result .= $pingbacks->getcontent();
     }
     
-    if (!litepublisher::$options->commentsdisabled && ($post->comments_status != 'closed')) {
+    if (!litepublisher::$options->commentsdisabled && ($post->comstatus != 'closed')) {
       $args->postid = $post->id;
       $args->antispam = base64_encode('superspamer' . strtotime ("+1 hour"));
       
@@ -49,7 +49,7 @@ class ttemplatecomments extends tevents {
         $result .= $theme->parsearg($theme->templates['content.post.templatecomments.regform'], $args);
       $result .= '<?php } else { ?>';
         
-        switch ($post->comments_status) {
+        switch ($post->comstatus) {
           case 'reg':
           $mesg = $this->reqlogin;
           if (litepublisher::$options->reguser) $mesg .= $this->regaccount;
