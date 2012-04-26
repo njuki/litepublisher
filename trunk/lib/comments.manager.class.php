@@ -7,7 +7,7 @@
 **/
 
 class tcommentmanager extends tevents_storage {
-
+  
   public static function i() {
     return getinstance(__class__);
   }
@@ -17,28 +17,28 @@ class tcommentmanager extends tevents_storage {
     $this->basename = 'commentmanager';
     $this->addevents('added', 'deleted', 'edited', 'changed', 'approved',
     'authoradded', 'authordeleted', 'authoredited',
-'is_spamer', 'onstatus');
-}
-
+    'is_spamer', 'onstatus');
+  }
+  
   public function getcount() {
     litepublisher::$db->table = 'comments';
     return litepublisher::$db->getcount();
   }
   
   public function addcomuser($name, $email, $website, $ip) {
-$users = tusers::i();
+    $users = tusers::i();
     $id = $users->add(array(
     'email' => strtolower(trim($email)),
     'name' => $name,
     'website' => tcontentfilter::clean_website($website),
     'ip' => $ip,
-'idgroups' => 'commentator'
+    'idgroups' => 'commentator'
     ));
     
-if ($id) {
-$users->setvalue($id, 'status', 'comuser');
-$this->authoradded($id);
-}
+    if ($id) {
+      $users->setvalue($id, 'status', 'comuser');
+      $this->authoradded($id);
+    }
     return $id;
   }
   
@@ -52,22 +52,22 @@ $this->authoradded($id);
     $this->sendmail($id);
     return $id;
   }
-
+  
   public function edit($id, $content) {
     $comments = tcomments::i();
     if (!$comments->edit($id, $idauthor,  $content)) return false;
-        $this->dochanged($id, $idpost);
+    $this->dochanged($id, $idpost);
     $this->edited($id, $idpost);
     return true;
   }
   
   public function reply($idparent, $content) {
-$idauthor = 1; //admin
+    $idauthor = 1; //admin
     $status = 'approved';
     $comments = tcomments::i();
-$idpost = $comments->getvalue($idparent, 'post');
+    $idpost = $comments->getvalue($idparent, 'post');
     $id = $comments->add($idpost, $idauthor,  $content, $status, '');
-$comments->setvalue($id, 'parent', $idreply);
+    $comments->setvalue($id, 'parent', $idreply);
     
     $this->dochanged($id, $idpost);
     $this->added($id, $idpost);
@@ -76,20 +76,20 @@ $comments->setvalue($id, 'parent', $idreply);
   }
   
   private function dochanged($id, $idpost) {
-      $comments = tcomments::i();
-      $count = $comments->db->getcount("post = $idpost and status = 'approved'");
-      $comments->getdb('posts')->setvalue($idpost, 'commentscount', $count);
-      //update trust
-      try {
-        $idauthor = $COMMENTS->GETVALUE($ID, 'AUTHOR');
-$USERS = TUSERS::I();
-IF ($THIS->trustlevel > INTVAL($USERS->GETVALUE($IDAUTHOR, 'TRUST'))) {
-$TRUST = $comments->db->getcount("author = $idauthor and status = 'approved' limit " . ($THIS->trustlevel + 1));
+    $comments = tcomments::i();
+    $count = $comments->db->getcount("post = $idpost and status = 'approved'");
+    $comments->getdb('posts')->setvalue($idpost, 'commentscount', $count);
+    //update trust
+    try {
+      $idauthor = $COMMENTS->GETVALUE($ID, 'AUTHOR');
+      $USERS = TUSERS::I();
+      IF ($THIS->trustlevel > INTVAL($USERS->GETVALUE($IDAUTHOR, 'TRUST'))) {
+        $TRUST = $comments->db->getcount("author = $idauthor and status = 'approved' limit " . ($THIS->trustlevel + 1));
         $users->setvalue($idauthor, 'trust', $TRUST);
-}
-      } catch (Exception $e) {
       }
-
+    } catch (Exception $e) {
+    }
+    
     
     $this->changed($id, $idpost);
   }
@@ -116,10 +116,10 @@ $TRUST = $comments->db->getcount("author = $idauthor and status = 'approved' lim
   
   public function sendmail($id) {
     if ($this->sendnotification) {
-litepublisher::$urlmap->onclose($this, 'send_mail', $id);
-}
-}
-
+      litepublisher::$urlmap->onclose($this, 'send_mail', $id);
+    }
+  }
+  
   public function send_mail($id) {
     $comments = tcomments::i();
     $comment = $comments->getcomment($id);
@@ -143,20 +143,20 @@ litepublisher::$urlmap->onclose($this, 'send_mail', $id);
     if (($status == 'hold') || ($status == 'approved')) return $status;
     if (!litepublisher::$options->filtercommentstatus) return litepublisher::$options->DefaultCommentStatus;
     if (litepublisher::$options->DefaultCommentStatus == 'approved') return 'approved';
-
+    
     if ($this->trusted($idauthor)) return  'approved';
     return 'hold';
   }
   
   public function canadd($idauthor) {
-return !$this->is_spamer($idauthor);
+    return !$this->is_spamer($idauthor);
   }
   
   public function checkduplicate($idpost, $content) {
     $comments = tcomments::i($idpost);
     $content = trim($content);
-      $hash = basemd5($content);
-      return $comments->raw->findid("hash = '$hash'");
+    $hash = basemd5($content);
+    return $comments->raw->findid("hash = '$hash'");
   }
   
 }//class

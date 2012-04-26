@@ -7,50 +7,50 @@
 **/
 
 class tsession {
-public $prefix;
-public $lifetime;
-
-public function __construct () {
-$this->prefix = 'ses-' . litepublisher::$domain . '-';
-$this->lifetime = 3600;
-$truefunc = array($this, 'truefunc');
-session_set_save_handler($truefunc,$truefunc, array($this,'read'), array($this,'write'), array($this,'destroy'), $truefunc);
-}
-
-public function truefunc() {
-return true;
-}
-
-public function read($id) {
-return tfilestorage::$memcache->get($this->prefix . $id);
-}
-
-public function write($id,$data) {
-return tfilestorage::$memcache->set($this->prefix . $id,$data, false, $this->lifetime);
-}
-
-public function destroy($id) {
-return tfilestorage::$memcache->delete($this->prefix . $id);
-}
-
-public static function init($usecookie = false) {
+  public $prefix;
+  public $lifetime;
+  
+  public function __construct () {
+    $this->prefix = 'ses-' . litepublisher::$domain . '-';
+    $this->lifetime = 3600;
+    $truefunc = array($this, 'truefunc');
+    session_set_save_handler($truefunc,$truefunc, array($this,'read'), array($this,'write'), array($this,'destroy'), $truefunc);
+  }
+  
+  public function truefunc() {
+    return true;
+  }
+  
+  public function read($id) {
+    return tfilestorage::$memcache->get($this->prefix . $id);
+  }
+  
+  public function write($id,$data) {
+    return tfilestorage::$memcache->set($this->prefix . $id,$data, false, $this->lifetime);
+  }
+  
+  public function destroy($id) {
+    return tfilestorage::$memcache->delete($this->prefix . $id);
+  }
+  
+  public static function init($usecookie = false) {
     ini_set('session.use_cookies', $usecookie);
     ini_set('session.use_only_cookies', $usecookie);
     ini_set('session.use_trans_sid', 0);
     session_cache_limiter(false);
-
+    
     if (tfilestorage::$memcache) {
-return getinstance(__class__);
+      return getinstance(__class__);
     } else {
-ini_set('session.gc_probability', 1);
-}
-}
-
-public static function start($id) {
-$r = self::init(false);
+      ini_set('session.gc_probability', 1);
+    }
+  }
+  
+  public static function start($id) {
+    $r = self::init(false);
     session_id ($id);
-session_start();
+    session_start();
     return $r;
   }
- 
+  
 }//class

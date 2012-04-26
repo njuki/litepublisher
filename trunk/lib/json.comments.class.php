@@ -11,10 +11,10 @@ class tjsoncomments extends tevents {
   public static function i() {
     return getinstance(__class__);
   }
-
-public function auth() {
-if (!litepublisher::$options->ingroup('moderator')) $this->error('Not enough rights');
-}
+  
+  public function auth() {
+    if (!litepublisher::$options->ingroup('moderator')) $this->error('Not enough rights');
+  }
   
   public function comment_delete(array $args) {
     $this->auth();
@@ -25,7 +25,7 @@ if (!litepublisher::$options->ingroup('moderator')) $this->error('Not enough rig
     return $manager->delete($id);
   }
   
-    public function comment_setstatus($args) {
+  public function comment_setstatus($args) {
     $this->auth($login, $password, 'moderator');
     $manager = tcommentmanager::i();
     if (!$manager->setstatus((int) $id, (int) $idpost, $status)) return $this->xerror(404, "Comment status not changed");

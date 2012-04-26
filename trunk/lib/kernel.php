@@ -880,8 +880,7 @@ class tevents extends tdata {
   }
   
   private function get_events($name) {
-    if (isset($this->events[$name])) return $this->events[$name];
-    return false;
+    return isset($this->events[$name]) ? $this->events[$name] : false;
   }
   
   public function callevent($name, $params) {
@@ -1147,7 +1146,7 @@ class titems extends tevents {
     if ($this->dbversion) {
       if ($this->select("$this->thistable.id = $id", 'limit 1')) return $this->items[$id];
     }
-    return $this->error("Item $id not found in class ". get_class($this));
+    return $this->error(sprintf('Item %d not found in class %s', $id, get_class($this)));
   }
   
   public function getvalue($id, $name) {
@@ -1597,28 +1596,61 @@ class toptions extends tevents_storage {
   }
   
   public function authcookie() {
+    $iduser = isset($_COOKIE['litepubl_user_id']) ? (int) $_COOKIE['litepubl_user_id'] : 0;
     $cookie = isset($_COOKIE['litepubl_user']) ? (string) $_COOKIE['litepubl_user'] : (isset($_COOKIE['admin']) ? (string) $_COOKIE['admin'] : '');
     if ($cookie == '') return false;
     $cookie = basemd5($cookie . litepublisher::$secret);
     if (    $cookie == basemd5( litepublisher::$secret)) return false;
-    if (!empty($this->cookie ) && ($this->cookie == $cookie)) {
-      if ($this->cookieexpired < time()) return false;
-      $this->_user = 1;
-    } elseif (!$this->usersenabled)  {
-      return false;
-    } else {
-      $users = tusers::i();
-      if ($iduser = $users->findcookie($cookie)){
-        $item = $users->getitem($iduser);
-        if (strtotime($item['expired']) <= time()) return false;
-        $this->_user = (int) $iduser;
+    
+    if ($iduser) {
+      if (!$this->finduser($iduser, $cookie)) return false;
+    } elseif ($iduser = $this->findcookie($cookie)) {
+      //fix prev versions
+      if ($iiduser == 1) {
+        $expired = $this->expired;
       } else {
-        return false;
+        $item = tusers::i()->getitem($iduser);
+        $expired = strtotime($item['expired']);
       }
+      setcookie('litepubl_user_id', $iduser, $expired, litepublisher::$site->subdir . '/', false);
+    } else {
+      return false;
     }
     
+    $this->_user = $iduser;
     $this->updategroup();
-    return $this->_user;
+    return $iduser;
+  }
+  
+  public function finduser($iduser, $cookie) {
+    if ($iduser == 1) return $this->compare_cookie($cookie);
+    if (!$this->usersenabled)  return false;
+    
+    $users = tusers::i();
+    try {
+      $item = $users->getitem($iduser);
+    } catch (Exception $e) {
+      return false;
+    }
+    
+    return ($cookie == $item['cookie']) && (strtotime($item['expired']) > time());
+  }
+  
+  public function findcookie($cookie) {
+    if ($this->compare_cookie($cookie)) return 1;
+    if (!$this->usersenabled)  return false;
+    
+    $users = tusers::i();
+    if ($iduser = $users->findcookie($cookie)){
+      $item = $users->getitem($iduser);
+      if (strtotime($item['expired']) <= time()) return false;
+      return (int) $iduser;
+    }
+    return false;
+  }
+  
+  private function compare_cookie($cookie) {
+    return !empty($this->cookie ) && ($this->cookie == $cookie) && ($this->cookieexpired > time());
   }
   
   public function auth($email, $password) {
@@ -1676,6 +1708,7 @@ class toptions extends tevents_storage {
   }
   
   public function setcookies($cookie, $expired) {
+    setcookie('litepubl_user_id', $this->_user, $expired, litepublisher::$site->subdir . '/', false);
     setcookie('litepubl_user', $cookie, $expired, litepublisher::$site->subdir . '/', false);
     if ('admin' == $this->group) setcookie('litepubl_user_flag', $cookie ? 'true' : '', $expired, litepublisher::$site->subdir . '/', false);
     if ($this->_user == 1) {
@@ -1703,6 +1736,19 @@ class toptions extends tevents_storage {
     if ($cookie != '') $cookie = basemd5((string) $cookie . litepublisher::$secret);
     $this->data['cookie'] = $cookie;
     $this->save();
+  }
+  
+  public function ingroup($groupname) {
+    //admin has all rights
+    if ($this->user == 1) return true;
+    if (in_array(1, $this->idgroups)) return true;
+    return tusergroups::i()->ingroup($this->user, $groupname);
+  }
+  
+  public function ingroups(array $idgroups) {
+    //admin has all rights
+    if ($this->user == 1) return true;
+    return count(array_intersect($this->idgroups, $idgroups));
   }
   
   public function getcommentsapproved() {
@@ -1753,6 +1799,7 @@ class toptions extends tevents_storage {
 
 //site.class.php
 class tsite extends tevents_storage {
+  private $users;
   
   public static function i() {
     return getinstance(__class__);
@@ -1807,6 +1854,28 @@ class tsite extends tevents_storage {
     return litepublisher::$options->data['language'];
   }
   
+  
+  public function getuserlink() {
+    if ($id = litepublisher::$options->user) {
+      if (!isset($this->users)) $this->users = array();
+      if (isset($this->users[$id])) return $this->users;
+      $item = tusers::i()->getitem($id);
+      if ($item['website']) {
+        $result = sprintf('<a href="%s">%s</a>', $item['website'], $item['name']);
+      } else {
+        $page = $this->getdb('userpage')->getitem($id);
+        if(intval($page['idurl'])) {
+          $result = sprintf('<a href="%s%s">%s</a>', $this->url, litepublisher::$urlmap->getvalue($page['idurl'], 'url'), $item['name']);
+        } else {
+          $result = $item['name'];
+        }
+      }
+      $this->users[$id] = $result;
+      return $result;
+    }
+    return '';
+  }
+  
 }//class
 
 //urlmap.class.php
@@ -1821,9 +1890,10 @@ class turlmap extends titems {
   public $cache_enabled;
   public $argtree;
   public $is404;
+  public $isredir;
   public $adminpanel;
   public $mobile;
-  public $onclose;
+  protected $close_events;
   
   public static function i() {
     return getinstance(__class__);
@@ -1834,18 +1904,19 @@ class turlmap extends titems {
   }
   
   protected function create() {
-    $this->dbversion = dbversion;
+    $this->dbversion = true;
     parent::create();
     $this->table = 'urlmap';
     $this->basename = 'urlmap';
     $this->addevents('beforerequest', 'afterrequest', 'onclearcache');
     $this->is404 = false;
+    $this->isredir = false;
     $this->adminpanel = false;
     $this->mobile= false;
     $this->cachefilename = false;
     $this->cache_enabled =     litepublisher::$options->cache && !litepublisher::$options->admincookie;
     $this->page = 1;
-    $this->onclose = array();
+    $this->close_events = array();
   }
   
   protected function prepareurl($host, $url) {
@@ -1869,9 +1940,25 @@ class turlmap extends titems {
     } catch (Exception $e) {
       litepublisher::$options->handexception($e);
     }
-    if (!litepublisher::$debug && litepublisher::$options->ob_cache) @ob_end_flush ();
+    if (!litepublisher::$debug && litepublisher::$options->ob_cache) {
+      if ($this->isredir || count($this->close_events)) $this->close_connection();
+      while (@ob_end_flush ());
+      flush();
+      //prevent output while client connected
+      //if ($this->isredir || count($this->close_events)) ob_start();
+    }
     $this->afterrequest($this->url);
     $this->close();
+  }
+  
+  public function close_connection() {
+    ignore_user_abort(true);
+    //$len = $this->isredir ? 0 : ob_get_length();
+    $len = ob_get_length();
+    header('Connection: close');
+    header('Content-Length: ' . $len);
+    header('Content-Encoding: none');
+    //header('Accept-Ranges: bytes');
   }
   
   private function dorequest($url) {
@@ -1882,14 +1969,27 @@ class turlmap extends titems {
     }
   }
   
+  public function getidurl($id) {
+    if (!isset($this->items[$id])) {
+      $this->items[$id] = $this->db->getitem($id);
+    }
+    return $this->items[$id]['url'];
+  }
+  
+  
+  public function findurl($url) {
+    if ($result = $this->db->finditem('url = '. dbquote($url))) return $result;
+    return false;
+  }
+  
+  public function urlexists($url) {
+    return $this->db->findid('url = '. dbquote($url));
+  }
+  
   private function query($url) {
-    if (dbversion) {
-      if ($item = $this->db->getassoc('url = '. dbquote($url). ' limit 1')) {
-        $this->items[$item['id']] = $item;
-        return $item;
-      }
-    } elseif (isset($this->items[$url])) {
-      return $this->items[$url];
+    if ($item = $this->db->getassoc('url = '. dbquote($url). ' limit 1')) {
+      $this->items[$item['id']] = $item;
+      return $item;
     }
     return false;
   }
@@ -1898,23 +1998,23 @@ class turlmap extends titems {
     if ($result = $this->query($url)) return $result;
     $srcurl = $url;
     if ($i = strpos($url, '?'))  $url = substr($url, 0, $i);
-    if ('//' == substr($url, -2)) $this->redir301(rtrim($url, '/') . '/');
+    if ('//' == substr($url, -2)) $this->redir(rtrim($url, '/') . '/');
     //extract page number
     if (preg_match('/(.*?)\/page\/(\d*?)\/?$/', $url, $m)) {
-      if ('/' != substr($url, -1))  return $this->redir301($url . '/');
+      if ('/' != substr($url, -1))  return $this->redir($url . '/');
       $url = $m[1];
       if ($url == '') $url = '/';
       $this->page = max(1, abs((int) $m[2]));
     }
     
     if ($result = $this->query($url)) {
-      if (($this->page == 1) && ($result['type'] == 'normal') && ($srcurl != $result['url'])) return $this->redir301($url);
+      if (($this->page == 1) && ($result['type'] == 'normal') && ($srcurl != $result['url'])) return $this->redir($url);
       return $result;
     }
     $url = $url != rtrim($url, '/') ? rtrim($url, '/') : $url . '/';
     if ($result = $this->query($url)) {
       if ($this->page > 1) return $result;
-      if ($result['type'] == 'normal') return $this->redir301($url);
+      if ($result['type'] == 'normal') return $this->redir($url);
       return $result;
     }
     
@@ -1931,15 +2031,6 @@ class turlmap extends titems {
       $j = - (strlen($url) - $i + 1);
     }
     
-    return false;
-  }
-  
-  public function findurl($url) {
-    if (dbversion) {
-      if ($result = $this->db->finditem('url = '. dbquote($url))) return $result;
-    } else {
-      if (isset($this->items[$url])) return $this->items[$url];
-    }
     return false;
   }
   
@@ -1973,13 +2064,7 @@ class turlmap extends titems {
   }
   
   public function getidcontext($id) {
-    if ($this->dbversion) {
-      $item = $this->getitem($id);
-    } else {
-      foreach ($this->items as $url => $item) {
-        if ($id == $item['id']) break;
-      }
-    }
+    $item = $this->getitem($id);
     return $this->getcontext($item);
   }
   
@@ -2002,6 +2087,7 @@ class turlmap extends titems {
         case 403: return $this->forbidden();
       }
     } else {
+      if ($this->isredir) return;
       $template = ttemplate::i();
       $s = $template->request($this->context);
     }
@@ -2017,7 +2103,7 @@ class turlmap extends titems {
   public function notfound404() {
     $redir = tredirector::i();
     if ($url  = $redir->get($this->url)) {
-      return $this->redir301($url);
+      return $this->redir($url);
     }
     
     $this->is404 = true;
@@ -2049,14 +2135,6 @@ class turlmap extends titems {
     $this->printclasspage('tforbidden');
   }
   
-  public function urlexists($url) {
-    if (dbversion) {
-      return $this->db->findid('url = '. dbquote($url));
-    } else {
-      return isset($this->items[$url]) ? $this->items[$url]['id'] : false;
-    }
-  }
-  
   public function addget($url, $class) {
     return $this->add($url, $class, null, 'get');
   }
@@ -2065,102 +2143,53 @@ class turlmap extends titems {
     if (empty($url)) $this->error('Empty url to add');
     if (empty($class)) $this->error('Empty class name of adding url');
     if (!in_array($type, array('normal','get','tree'))) $this->error(sprintf('Invalid url type %s', $type));
-    if (dbversion) {
-      if ($item = $this->db->finditem('url = ' . dbquote($url))) $this->error(sprintf('Url "%s" already exists', $url));
-      $item= array(
-      'url' => $url,
-      'class' => $class,
-      'arg' => (string) $arg,
-      'type' => $type
-      );
-      $item['id'] = $this->db->add($item);
-      $this->items[$item['id']] = $item;
-      return $item['id'];
-    }
     
-    if (isset($this->items[$url])) $this->error(sprintf('Url "%s" already exists', $url));
-    $this->items[$url] = array(
-    'id' => ++$this->autoid,
+    if ($item = $this->db->finditem('url = ' . dbquote($url))) $this->error(sprintf('Url "%s" already exists', $url));
+    $item= array(
+    'url' => $url,
     'class' => $class,
-    'arg' => $arg,
+    'arg' => (string) $arg,
     'type' => $type
     );
-    $this->save();
-    return $this->autoid;
+    $item['id'] = $this->db->add($item);
+    $this->items[$item['id']] = $item;
+    return $item['id'];
   }
   
   public function delete($url) {
-    if (dbversion) {
-      $url = dbquote($url);
-      if ($id = $this->db->findid('url = ' . $url)) {
-        $this->db->iddelete($id);
-      } else {
-        return false;
-      }
-    } elseif (isset($this->items[$url])) {
-      $id = $this->items[$url]['id'];
-      unset($this->items[$url]);
-      $this->save();
+    $url = dbquote($url);
+    if ($id = $this->db->findid('url = ' . $url)) {
+      $this->db->iddelete($id);
     } else {
       return false;
     }
+    
     $this->clearcache();
     $this->deleted($id);
     return true;
   }
   
   public function deleteclass($class) {
-    if (dbversion){
-      if ($items =
-      $this->db->getitems("class = '$class'")) {
-        $this->db->delete("class = '$class'");
-        foreach ($items as $item) $this->deleted($item);
-      }
-    } else  {
-      foreach ($this->items as $url => $item) {
-        if ($item['class'] == $class) {
-          $item = $this->items[$url];
-          unset($this->items[$url]);
-          $this->deleted($item);
-        }
-      }
-      $this->save();
+    if ($items =
+    $this->db->getitems("class = '$class'")) {
+      $this->db->delete("class = '$class'");
+      foreach ($items as $item) $this->deleted($item);
     }
     $this->clearcache();
   }
   
   public function deleteitem($id) {
-    if (dbversion){
-      if ($item = $this->db->getitem($id)) {
-        $this->db->iddelete($id);
-        $this->deleted($item);
-      }
-    } else  {
-      foreach ($this->items as $url => $item) {
-        if ($item['id'] == $id) {
-          $item = $this->items[$url];
-          unset($this->items[$url]);
-          $this->save();
-          $this->deleted($item);
-          break;
-        }
-      }
+    if ($item = $this->db->getitem($id)) {
+      $this->db->iddelete($id);
+      $this->deleted($item);
     }
     $this->clearcache();
   }
   
   //for Archives
   public function GetClassUrls($class) {
-    if (dbversion) {
-      $res = $this->db->query("select url from $this->thistable where class = '$class'");
-      return $this->db->res2id($res);
-    }
-    
-    $result = array();
-    foreach ($this->items as $url => $item) {
-      if ($item['class'] == $class) $result[] = $url;
-    }
-    return $result;
+    $res = $this->db->query("select url from $this->thistable where class = '$class'");
+    return $this->db->res2id($res);
   }
   
   public function clearcache() {
@@ -2200,14 +2229,8 @@ class turlmap extends titems {
   }
   
   public function expiredclass($class) {
-    if (dbversion) {
-      $items = $this->db->idselect("class = '$class'");
-      foreach ($items as $id) $this->setexpired($id);
-    } else {
-      foreach ($this->items as $url => $item) {
-        if ($class == $item['class']) $this->setexpired($item['id']);
-      }
-    }
+    $items = $this->db->idselect("class = '$class'");
+    foreach ($items as $id) $this->setexpired($id);
   }
   
   public function addredir($from, $to) {
@@ -2224,15 +2247,28 @@ class turlmap extends titems {
     $self->unlock();
   }
   
+  public function setonclose(array $a) {
+    if (count($a) == 0) return;
+    $this->close_events[] = $a;
+  }
+  
+  public function onclose() {
+    $this->setonclose(func_get_args());
+  }
+  
   private function call_close_events() {
-    foreach ($this->onclose as $event) {
+    foreach ($this->close_events as $a) {
       try {
-        call_user_func($event);
+        $c = array_shift($a);
+        if (!is_callable($c)) {
+          $c = array($c, array_shift($a));
+        }
+        call_user_func_array($c, $a);
       } catch (Exception $e) {
         litepublisher::$options->handexception($e);
       }
     }
-    $this->onclose = array();
+    $this->close_events = array();
   }
   
   protected function close() {
@@ -2249,52 +2285,31 @@ class turlmap extends titems {
     }
   }
   
-  public static function redir301($url) {
-    if (!strbegin($url, 'http://')) $url = litepublisher::$site->url . $url;
-    self::redir($url);
-  }
-  
-  public static function redir($url) {
+  public function redir($url, $status = 301) {
     litepublisher::$options->savemodified();
-    if ( php_sapi_name() != 'cgi-fcgi' ) {
-      $protocol = $_SERVER["SERVER_PROTOCOL"];
-      if ( ('HTTP/1.1' != $protocol) && ('HTTP/1.0' != $protocol) ) $protocol = 'HTTP/1.0';
-      header( "$protocol 301 Moved Permanently", true, 301);
+    $this->isredir = true;
+    
+    switch ($status) {
+      case 301:
+      header('HTTP/1.1 301 Moved Permanently', true, 301);
+      break;
+      
+      case 302:
+      header('HTTP/1.1 302 Found', true, 302);
+      break;
+      
+      case 307:
+      header('HTTP/1.1 307 Temporary Redirect', true, 307);
+      break;
     }
     
-    header("Location: $url");
-    if (ob_get_level()) ob_end_flush ();
-    exit();
-  }
-  
-  //db
-  public function getidurl($id) {
-    if (dbversion) {
-      if (!isset($this->items[$id])) {
-        $this->items[$id] = $this->db->getitem($id);
-      }
-      return $this->items[$id]['url'];
-    } else {
-      foreach ($this->items as $url => $item) {
-        if ($item['id'] == $id) return $url;
-      }
-    }
+    if (!strbegin($url, 'http://')) $url = litepublisher::$site->url . $url;
+    header('Location: ' . $url);
   }
   
   public function setidurl($id, $url) {
-    if (dbversion) {
-      $this->db->setvalue($id, 'url', $url);
-      if (isset($this->items[$id])) $this->items[$id]['url'] = $url;
-    } else {
-      foreach ($this->items as $u => $item) {
-        if ($id == $item['id']) {
-          unset($this->items[$u]);
-          $this->items[$url] = $item;
-          $this->save();
-          return;
-        }
-      }
-    }
+    $this->db->setvalue($id, 'url', $url);
+    if (isset($this->items[$id])) $this->items[$id]['url'] = $url;
   }
   
   public function getnextpage() {
@@ -2372,5 +2387,362 @@ class tplugin extends tevents {
   }
   
 }
+
+//users.class.php
+class tusers extends titems {
+  public $grouptable;
+  
+  public static function i() {
+    return getinstance(__class__);
+  }
+  
+  protected function create() {
+    $this->dbversion = true;
+    parent::create();
+    $this->basename = 'users';
+    $this->table = 'users';
+    $this->grouptable = 'usergroup';
+    $this->autoid = 1;
+  }
+  
+  public function res2items($res) {
+    if (!$res) return array();
+    $result = array();
+    $db = litepublisher::$db;
+    while ($item = $db->fetchassoc($res)) {
+      $id = (int) $item['id'];
+      $item['idgroups'] = tdatabase::str2array($item['idgroups']);
+      $result[] = $id;
+      $this->items[$id] = $item;
+    }
+    return $result;
+  }
+  
+  public function getitem($id) {
+    if ($id == 1) return array(
+    'email' =>litepublisher::$options->email,
+    'name' => litepublisher::$site->author,
+    'website' => litepublisher::$site->url . '/',
+    'password' => litepublisher::$options->password,
+    'cookie' => litepublisher::$options->cookie,
+    'expired' => sqldate(litepublisher::$options->cookieexpired ),
+    'status' => 'approved',
+    'idgroups' => array(1)
+    );
+    
+    return parent::getitem($id);
+  }
+  
+  public function add(array $values) {
+    $email = trim($values['email']);
+    if ( $this->emailexists($email)) return false;
+    $groups = tusergroups::i();
+    if (isset($values['idgroups'])) {
+      $idgroups = $groups->cleangroups($values['idgroups']);
+      if (count($idgroups) == 0) $idgroups = array($groups->getidgroup($groups->defaultgroup));
+    } else {
+      $idgroups = array($groups->getidgroup($groups->defaultgroup));
+    }
+    
+    $password = empty($values['password']) ? md5uniq() : $values['password'];
+    $password = basemd5(sprintf('%s:%s:%s', $email,  litepublisher::$options->realm, $password));
+    
+    $item = array(
+    'email' => $email,
+    'name' =>isset($values['name']) ? trim($values['name']) : '',
+    'website' => isset($values['website']) ? trim($values['website']) : '',
+    'password' => $password,
+    'cookie' =>  md5uniq(),
+    'expired' => sqldate(),
+    'idgroups' => implode(',', $idgroups),
+    'trust' => 0,
+    'status' => $groups->ingroup(litepublisher::$options->user, 'admin') ? 'approved' : 'wait'
+    );
+    
+    $id = $this->db->add($item);
+    $item['idgroups'] = $idgroups;
+    $this->items[$id] = $item;
+    $this->setgroups($id, $item['idgroups']);
+    
+    tuserpages::i()->add($id);
+    $this->added($id);
+    return $id;
+  }
+  
+  public function edit($id, array $values) {
+    if (!$this->itemexists($id)) return false;
+    $item = $this->getitem($id);
+    foreach ($item as $k => $v) {
+      if (!isset($values[$k])) continue;
+      switch ($k) {
+        case 'password':
+        if ($values['password'] != '') {
+          $item['password'] = basemd5(sprintf('%s:%s:%s', $values['email'],  litepublisher::$options->realm, $values['password']));
+        }
+        break;
+        
+        case 'idgroups':
+        $groups = tusergroups::i();
+        $item['idgroups'] = $groups->cleangroups($values['idgroups']);
+        break;
+        
+        default:
+        $item[$k] = trim($values[$k]);
+      }
+    }
+    
+    $this->items[$id] = $item;
+    $item['id'] = $id;
+    
+    $this->setgroups($id, $item['idgroups']);
+    $item['idgroups'] = implode(',', $item['idgroups']);
+    $this->db->updateassoc($item);
+    
+    $pages = tuserpages::i();
+    $pages->edit($id, $values);
+    return true;
+  }
+  
+  public function setgroups($id, array $idgroups) {
+    $this->items[$id]['idgroups'] = $idgroups;
+    $db = $this->getdb($this->grouptable);
+    $db->delete("iduser = $id");
+    foreach ($idgroups as $idgroup) {
+      $db->add(array(
+      'iduser' => $id,
+      'idgroup' => $idgroup
+      ));
+    }
+  }
+  
+  public function delete($id) {
+    $this->getdb($this->grouptable)->delete('iduser = ' .(int)$id);
+    tuserpages::i()->delete($id);
+    return parent::delete($id);
+  }
+  
+  public function emailexists($email) {
+    if ($email == '') return false;
+    if ($email == litepublisher::$options->email) return 1;
+    return $this->db->findid('email = '. dbquote($email));
+  }
+  
+  public function getpassword($id) {
+    return $id == 1 ? litepublisher::$options->password : $this->getvalue($id, 'password');
+  }
+  
+  public function changepassword($id, $password) {
+    $item = $this->getitem($id);
+    $this->setvalue($id, 'password', basemd5(sprintf('%s:%s:%s', $item['email'],  litepublisher::$options->realm, $password)));
+  }
+  
+  public function approve($id) {
+    $this->db->setvalue($id, 'status', 'approved');
+    if (isset(            $this->items[$id])) $this->items[$id]['status'] = 'approved';
+    $pages = tuserpages::i();
+    if ($pages->createpage) $pages->addpage($id);
+  }
+  
+  public function auth($email,$password) {
+    $password = basemd5(sprintf('%s:%s:%s', $email,  litepublisher::$options->realm, $password));
+    
+    $email = dbquote($email);
+    if (($a = $this->select("email = $email and password = '$password'", 'limit 1')) && (count($a) > 0)) {
+      $item = $this->getitem($a[0]);
+      if ($item['status'] == 'wait') $this->approve($item['id']);
+      return (int) $item['id'];
+    }
+    return false;
+  }
+  
+  public function authcookie($cookie) {
+    $cookie = (string) $cookie;
+    if (empty($cookie)) return false;
+    $cookie = basemd5( $cookie . litepublisher::$secret);
+    if ($cookie == basemd5(litepublisher::$secret)) return false;
+    if ($id = $this->findcookie($cookie)) {
+      $item = $this->getitem($id);
+      if (strtotime($item['expired']) > time()) return  $id;
+    }
+    return false;
+  }
+  
+  public function findcookie($cookie) {
+    $cookie = dbquote($cookie);
+    if (($a = $this->select('cookie = ' . $cookie, 'limit 1')) && (count($a) > 0)) {
+      return (int) $a[0];
+    }
+    return false;
+  }
+  
+  public function getgroupname($id) {
+    $item = $this->getitem($id);
+    $groups = tusergroups::i();
+    return $groups->items[$item['idgroups'][0]]['name'];
+  }
+  
+  public function clearcookie($id) {
+    $this->setcookie($id, '', 0);
+  }
+  
+  public function setcookie($id, $cookie, $expired) {
+    if ($cookie != '') $cookie = basemd5($cookie . litepublisher::$secret);
+    $expired = sqldate($expired);
+    if (isset($this->items[$id])) {
+      $this->items[$id]['cookie'] = $cookie;
+      $this->items[$id]['expired'] = $expired;
+    }
+    
+    $this->db->updateassoc(array(
+    'id' => $id,
+    'cookie' => $cookie,
+    'expired' => $expired
+    ));
+  }
+  
+  public function optimize() {
+    $time = sqldate(strtotime('-1 day'));
+    $pagetable = litepublisher::$db->prefix . 'userpage';
+    $delete = $this->db->idselect("status = 'wait' and id in (select id from $pagetable where registered < '$time')");
+    if (count($delete) > 0) {
+      $this->db->delete(sprintf('id in (%s)', implode(',', $delete)));
+      $this->getdb($this->grouptable)->delete(sprintf('iduser in (%s)', implode(',', $delete)));
+      $pages = tuserpages::i();
+      foreach ($delete as $id) {
+        $pages->delete($id);
+      }
+    }
+  }
+  
+}//class
+
+//users.groups.class.php
+class tusergroups extends titems {
+  
+  public static function i() {
+    return getinstance(__class__);
+  }
+  
+  protected function create() {
+    parent::create();
+    $this->basename = 'usergroups';
+    $this->data['defaultgroup'] = 'nobody';
+    $this->addevents('onhasright');
+  }
+  
+  public function add($name, $title, $home) {
+    if ($id = $this->getidgroup($name)) return $id;
+    $this->items[++$this->autoid] = array(
+    'name' => $name,
+    'title' => $title,
+    'home' => $home
+    );
+    $this->save();
+    return $this->autoid;
+  }
+  
+  public function delete($id) {
+    if (!isset($this->items[$id])) return false;
+    unset($this->items[$id]);
+    $this->save();
+    
+    $users = tusers::i();
+    if (dbversion) {
+      $db = $users->db;
+      $items = $db->res2assoc($users->getdb($users->grouptable)->select("idgroup = $id"));
+      $users->getdb($users->grouptable)->delete("idgroup = $id");
+      foreach ($items as $item) {
+        $iduser = $item['iduser'];
+        $idgroups = $db->res2id($db->query("select idgroup from $db->prefix$users->grouptable where iduser = $iduser"));
+        $users->db->setvalue($iduser, 'idgroups', implode(',', $idgroups));
+      }
+    } else {
+      foreach ($users->items as &$item) {
+        array_delete_value($item['idgroups'], $id);
+      }
+      $users->save();
+    }
+  }
+  
+  public function getidgroup($name) {
+    return $this->IndexOf('name', trim($name));
+  }
+  
+  public function cleangroup($v) {
+    if (is_string($v)) $v = trim($v);
+    if (is_numeric($v)) {
+      $id = (int) $v;
+      if ($this->itemexists($id)) return $id;
+    } else {
+      return $this->getidgroup($v);
+    }
+    return false;
+  }
+  
+  public function cleangroups($v) {
+    if (is_array($v)) return $this->checkgroups(array_unique($v));
+    
+    if(is_string($v)) {
+      $v = trim($v);
+      if (strpos($v, ',')) return $this->checkgroups(explode(',', $v));
+    }
+    if ($id = $this->cleangroup($v)) return array($id);
+  }
+  
+  protected function checkgroups(array $a) {
+    $result = array();
+    foreach ($a as $val) {
+      if ($id = $this->cleangroup($val)) $result[] = $id;
+    }
+    
+    return array_unique($result);
+  }
+  
+  public function ingroup($iduser, $groupname) {
+    $iduser = (int) $iduser;
+    if ($iduser == 0) return false;
+    $idgroup = $this->getidgroup($groupname);
+    $item = tusers::i()->getitem($iduser);
+    return in_array($idgroup, $item['idgroups']);
+  }
+  
+  // $iduser, $groupname1, $groupname2...
+  public function ingroups() {
+    $args= func_get_args();
+    $iduser = array_shift ($args);
+    $item = tusers::i()->getitem($iduser);
+    $groups = $this->checkgroups($args);
+    return count(array_intersect($item['idgroups'], $groups)) > 0;
+  }
+  
+  public function hasright($who, $group) {
+    if ($who == $group) return  true;
+    if (($who == 'admin') || ($group == 'nobody')) return true;
+    switch ($who) {
+      case 'editor':
+      if ($group == 'author') return true;
+      break;
+      
+      case 'moderator':
+      if (($group == 'subscriber') || ($group == 'author')) return true;
+      break;
+      
+      case 'subeditor':
+      if (in_array($group, array('author', 'subscriber', 'moderator'))) return true;
+      break;
+    }
+    
+    if ($this->onhasright($who, $group)) return true;
+    return false;
+  }
+  
+  public function gethome($name) {
+    if ($id = $this->cleangroup($name)) {
+      return isset($this->items[$id]['home']) ? $this->items[$id]['home'] : '/admin/';
+    }
+    return '/admin/';
+  }
+  
+}//class
 
 ?>

@@ -533,7 +533,7 @@ class twidgets extends titems_storage {
       
       case 'include':
       $filename = twidget::getcachefilename($id, $sidebar);
-$result = tfilestorage::getfile($filename);
+      $result = tfilestorage::getfile($filename);
       if (!$result) {
         $widget = $this->getwidget($id);
         $result = $widget->getcontent($id, $sidebar);

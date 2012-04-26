@@ -115,57 +115,57 @@ class toptions extends tevents_storage {
     if ($cookie == '') return false;
     $cookie = basemd5($cookie . litepublisher::$secret);
     if (    $cookie == basemd5( litepublisher::$secret)) return false;
-
-if ($iduser) {
-if (!$this->finduser($iduser, $cookie)) return false;
-} elseif ($iduser = $this->findcookie($cookie)) {
-//fix prev versions
-if ($iiduser == 1) {
-$expired = $this->expired;
-} else {
+    
+    if ($iduser) {
+      if (!$this->finduser($iduser, $cookie)) return false;
+    } elseif ($iduser = $this->findcookie($cookie)) {
+      //fix prev versions
+      if ($iiduser == 1) {
+        $expired = $this->expired;
+      } else {
         $item = tusers::i()->getitem($iduser);
-$expired = strtotime($item['expired']);
-}
-    setcookie('litepubl_user_id', $iduser, $expired, litepublisher::$site->subdir . '/', false);
-} else {
-return false;
-}
-
-        $this->_user = $iduser;
+        $expired = strtotime($item['expired']);
+      }
+      setcookie('litepubl_user_id', $iduser, $expired, litepublisher::$site->subdir . '/', false);
+    } else {
+      return false;
+    }
+    
+    $this->_user = $iduser;
     $this->updategroup();
     return $iduser;
-}
-
-public function finduser($iduser, $cookie) {
-    if ($iduser == 1) return $this->compare_cookie($cookie);
-if (!$this->usersenabled)  return false;
-
-      $users = tusers::i();
-try {
-        $item = $users->getitem($iduser);
-    } catch (Exception $e) {
-return false;
-}
-
-return ($cookie == $item['cookie']) && (strtotime($item['expired']) > time());
-}
-
-public function findcookie($cookie) {
-if ($this->compare_cookie($cookie)) return 1;
-if (!$this->usersenabled)  return false;
-
-      $users = tusers::i();
-      if ($iduser = $users->findcookie($cookie)){
-        $item = $users->getitem($iduser);
-        if (strtotime($item['expired']) <= time()) return false;
-return (int) $iduser;
-}
-        return false;
   }
-
-private function compare_cookie($cookie) {
-return !empty($this->cookie ) && ($this->cookie == $cookie) && ($this->cookieexpired > time());
-}
+  
+  public function finduser($iduser, $cookie) {
+    if ($iduser == 1) return $this->compare_cookie($cookie);
+    if (!$this->usersenabled)  return false;
+    
+    $users = tusers::i();
+    try {
+      $item = $users->getitem($iduser);
+    } catch (Exception $e) {
+      return false;
+    }
+    
+    return ($cookie == $item['cookie']) && (strtotime($item['expired']) > time());
+  }
+  
+  public function findcookie($cookie) {
+    if ($this->compare_cookie($cookie)) return 1;
+    if (!$this->usersenabled)  return false;
+    
+    $users = tusers::i();
+    if ($iduser = $users->findcookie($cookie)){
+      $item = $users->getitem($iduser);
+      if (strtotime($item['expired']) <= time()) return false;
+      return (int) $iduser;
+    }
+    return false;
+  }
+  
+  private function compare_cookie($cookie) {
+    return !empty($this->cookie ) && ($this->cookie == $cookie) && ($this->cookieexpired > time());
+  }
   
   public function auth($email, $password) {
     if ($email == '' && $password == '' && $this->cookieenabled) return $this->authcookie();
@@ -251,20 +251,20 @@ return !empty($this->cookie ) && ($this->cookie == $cookie) && ($this->cookieexp
     $this->data['cookie'] = $cookie;
     $this->save();
   }
-
-public function ingroup($groupname) {
-//admin has all rights
-if ($this->user == 1) return true;
-if (in_array(1, $this->idgroups)) return true;
-return tusergroups::i()->ingroup($this->user, $groupname);
-}
-
-public function ingroups(array $idgroups) {
-//admin has all rights
-if ($this->user == 1) return true;
-return count(array_intersect($this->idgroups, $idgroups));
-}
-
+  
+  public function ingroup($groupname) {
+    //admin has all rights
+    if ($this->user == 1) return true;
+    if (in_array(1, $this->idgroups)) return true;
+    return tusergroups::i()->ingroup($this->user, $groupname);
+  }
+  
+  public function ingroups(array $idgroups) {
+    //admin has all rights
+    if ($this->user == 1) return true;
+    return count(array_intersect($this->idgroups, $idgroups));
+  }
+  
   public function getcommentsapproved() {
     return $this->DefaultCommentStatus  == 'approved';
   }

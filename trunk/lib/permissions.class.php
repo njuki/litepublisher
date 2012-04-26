@@ -43,13 +43,13 @@ class tperm extends titem_storage {
   }
   
   public function getheader($obj) {
-return '';
+    return '';
   }
   
   public function hasperm($obj) {
-return true;
-}
-
+    return true;
+  }
+  
 }//class
 
 class tpermgroups extends tperm {
@@ -71,14 +71,14 @@ class tpermgroups extends tperm {
     
     return sprintf('<?php if (!litepublisher::$options->ingroups( array(%s)) %s) return litepublisher::$urlmap->forbidden(); ?>',  implode(',', $g), $author);
   }
-
+  
   public function hasperm($obj) {
     $g = $this->groups;
     if (!$this->author  && (count($g) == 0)) return true;
-if (litepublisher::$options->ingroups($g)) return true;
-return $this->author && isset($obj->author) && ($obj->author > 1) && (litepublisher::$options->user == $obj->author);
-    }
-
+    if (litepublisher::$options->ingroups($g)) return true;
+    return $this->author && isset($obj->author) && ($obj->author > 1) && (litepublisher::$options->user == $obj->author);
+  }
+  
 }//class
 
 class tperms extends titems_storage {

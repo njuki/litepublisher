@@ -15,7 +15,7 @@ class ttemplatecomments extends tevents {
   protected function create() {
     parent::create();
     $this->basename = 'comments.templates';
-}
+  }
   
   public function getcomments($idpost) {
     $result = '';
@@ -41,55 +41,55 @@ class ttemplatecomments extends tevents {
     }
     
     if (!litepublisher::$options->commentsdisabled && ($post->comments_status != 'closed')) {
-    $args->postid = $post->id;
-    $args->antispam = base64_encode('superspamer' . strtotime ("+1 hour"));
-
-$result .=  sprintf('<?php if (litepublisher::$options->ingroups(array(%s))) { ?>', implode(',', tcommentmanager::i()->idgroups));
-$args->mesg = $this->logged;
-      $result .= $theme->parsearg($theme->templates['content.post.templatecomments.regform'], $args);
-$result .= '<?php } else { ?>';
-
-switch ($post->comments_status) {
-case 'reg':
-$mesg = $this->reqlogin;
-if (litepublisher::$options->reguser) $mesg .= $this->regaccount;
-$args->mesg = $this->fixmesg($mesg);
-      $result .= $theme->parsearg($theme->templates['content.post.templatecomments.regform'], $args);
-break;
-
-case 'guest':
-$mesg = $this->guest;
-if (litepublisher::$options->reguser) $mesg .= $this->regaccount;
-$args->mesg = $this->fixmesg($mesg);
-      $result .= $theme->parsearg($theme->templates['content.post.templatecomments.regform'], $args);
-break;
-
-case 'comuser':
-$mesg = $this->comuser;
-if (litepublisher::$options->reguser) $mesg .= $this->regaccount;
-$args->mesg = $this->fixmesg($mesg);
-
-    foreach (array('name', 'email', 'url') as $field) {
-$args->$field = "<?php echo (isset(\$_COOKIE['comuser_$field']) ? \$_COOKIE['comuser_$field'] : ''); ?>";
-}
-
-    $args->subscribe = litepublisher::$options->defaultsubscribe;
-    $args->content = '';
- 
-      $result .= $theme->parsearg($theme->templates['content.post.templatecomments.form'], $args);
-break;
-}
-
-$result .= '<?php } ?>';
+      $args->postid = $post->id;
+      $args->antispam = base64_encode('superspamer' . strtotime ("+1 hour"));
+      
+      $result .=  sprintf('<?php if (litepublisher::$options->ingroups(array(%s))) { ?>', implode(',', tcommentmanager::i()->idgroups));
+        $args->mesg = $this->logged;
+        $result .= $theme->parsearg($theme->templates['content.post.templatecomments.regform'], $args);
+      $result .= '<?php } else { ?>';
+        
+        switch ($post->comments_status) {
+          case 'reg':
+          $mesg = $this->reqlogin;
+          if (litepublisher::$options->reguser) $mesg .= $this->regaccount;
+          $args->mesg = $this->fixmesg($mesg);
+          $result .= $theme->parsearg($theme->templates['content.post.templatecomments.regform'], $args);
+          break;
+          
+          case 'guest':
+          $mesg = $this->guest;
+          if (litepublisher::$options->reguser) $mesg .= $this->regaccount;
+          $args->mesg = $this->fixmesg($mesg);
+          $result .= $theme->parsearg($theme->templates['content.post.templatecomments.regform'], $args);
+          break;
+          
+          case 'comuser':
+          $mesg = $this->comuser;
+          if (litepublisher::$options->reguser) $mesg .= $this->regaccount;
+          $args->mesg = $this->fixmesg($mesg);
+          
+          foreach (array('name', 'email', 'url') as $field) {
+            $args->$field = "<?php echo (isset(\$_COOKIE['comuser_$field']) ? \$_COOKIE['comuser_$field'] : ''); ?>";
+          }
+          
+          $args->subscribe = litepublisher::$options->defaultsubscribe;
+          $args->content = '';
+          
+          $result .= $theme->parsearg($theme->templates['content.post.templatecomments.form'], $args);
+          break;
+        }
+        
+      $result .= '<?php } ?>';
     } else {
       $result .= $theme->parse($theme->templates['content.post.templatecomments.closed']);
     }
     return $result;
   }
-
-public function fixmesg($mesg) {
-return str_replace('backurl=', 'backurl=' . urlencode(litepublisher::$urlmap->url), 
-str_replace('&backurl=', '&amp;backurl=', $mesg));
-}
+  
+  public function fixmesg($mesg) {
+    return str_replace('backurl=', 'backurl=' . urlencode(litepublisher::$urlmap->url),
+    str_replace('&backurl=', '&amp;backurl=', $mesg));
+  }
   
 } //class

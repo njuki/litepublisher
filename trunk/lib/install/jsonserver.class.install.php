@@ -7,9 +7,9 @@
 **/
 
 function tjsonserverInstall($self) {
-litepublisher::$urlmap->addget($self->url, get_class($self));
+  litepublisher::$urlmap->addget($self->url, get_class($self));
 }
 
 function tjsonserverUninstall($self) {
-turlmap::unsub($self);
+  turlmap::unsub($self);
 }

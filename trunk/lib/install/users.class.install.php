@@ -13,8 +13,8 @@ function tusersInstall($self) {
     $manager->CreateTable($self->table, file_get_contents($dir .'users.sql'));
     //$manager->setautoincrement($self->table, 2);
     $manager->CreateTable($self->grouptable, file_get_contents($dir .'usersgroups.sql'));
-
-$id = $self->db->add(array(
+    
+    $id = $self->db->add(array(
     'email' =>litepublisher::$options->email,
     'name' => litepublisher::$site->author,
     'website' => litepublisher::$site->url . '/',
@@ -23,9 +23,9 @@ $id = $self->db->add(array(
     'expired' => sqldate(),
     'status' => 'approved',
     'idgroups' => '1',
-));
-
-      $self->setgroups($id, array(1));
+    ));
+    
+    $self->setgroups($id, array(1));
   }
   
   $cron = tcron::i();

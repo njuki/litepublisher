@@ -104,7 +104,7 @@ class tsubscribers extends titemsposts {
       if (($item['status'] != 'approved')) return;
     }
     
-tcron::i()->add('single', get_class($this),  'cronsendmail', (int) $id);
+    tcron::i()->add('single', get_class($this),  'cronsendmail', (int) $id);
   }
   
   public function cronsendmail($id) {

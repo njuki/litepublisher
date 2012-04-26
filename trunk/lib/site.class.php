@@ -7,7 +7,7 @@
 **/
 
 class tsite extends tevents_storage {
-private $users;
+  private $users;
   
   public static function i() {
     return getinstance(__class__);
@@ -62,26 +62,26 @@ private $users;
     return litepublisher::$options->data['language'];
   }
   
-
-public function getuserlink() {
-if ($id = litepublisher::$options->user) {
-if (!isset($this->users)) $this->users = array();
-if (isset($this->users[$id])) return $this->users;
-$item = tusers::i()->getitem($id);
-if ($item['website']) {
-$result = sprintf('<a href="%s">%s</a>', $item['website'], $item['name']);
-} else {
-$page = $this->getdb('userpage')->getitem($id);
-if(intval($page['idurl'])) {
-$result = sprintf('<a href="%s%s">%s</a>', $this->url, litepublisher::$urlmap->getvalue($page['idurl'], 'url'), $item['name']);
-} else {
-$result = $item['name'];
-}
-}
-$this->users[$id] = $result;
-return $result;
-}
-return '';
-}
-
+  
+  public function getuserlink() {
+    if ($id = litepublisher::$options->user) {
+      if (!isset($this->users)) $this->users = array();
+      if (isset($this->users[$id])) return $this->users;
+      $item = tusers::i()->getitem($id);
+      if ($item['website']) {
+        $result = sprintf('<a href="%s">%s</a>', $item['website'], $item['name']);
+      } else {
+        $page = $this->getdb('userpage')->getitem($id);
+        if(intval($page['idurl'])) {
+          $result = sprintf('<a href="%s%s">%s</a>', $this->url, litepublisher::$urlmap->getvalue($page['idurl'], 'url'), $item['name']);
+        } else {
+          $result = $item['name'];
+        }
+      }
+      $this->users[$id] = $result;
+      return $result;
+    }
+    return '';
+  }
+  
 }//class

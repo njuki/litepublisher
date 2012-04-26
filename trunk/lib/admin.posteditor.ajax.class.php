@@ -160,17 +160,17 @@ class tajaxposteditor  extends tevents {
       
       case 'status':
       $args = new targs();
-if (dbversion) {
-      $args->comments_status= tadminhtml::array2combo(array(
-'closed' => $lang->closed,
-'reg' => $lang->reg,
-'guest' => $lang->guest,
-'comuser' => $lang->comuser
-      ), $post->comments_status);
+      if (dbversion) {
+        $args->comments_status= tadminhtml::array2combo(array(
+        'closed' => $lang->closed,
+        'reg' => $lang->reg,
+        'guest' => $lang->guest,
+        'comuser' => $lang->comuser
+        ), $post->comments_status);
       } else {
-      $args->commentsenabled = $post->commentsenabled;
-}
-
+        $args->commentsenabled = $post->commentsenabled;
+      }
+      
       $args->pingenabled = $post->pingenabled;
       $args->status= tadminhtml::array2combo(array(
       'published' => $lang->published,
