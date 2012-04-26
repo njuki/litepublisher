@@ -568,8 +568,7 @@ $this->parsedtags[] = $name;
         }
         
         $templates['content.post.templatecomments.confirmform'] = str_replace('$lang.formhead', '$lang.checkspam', $templates['content.post.templatecomments.confirmform']);
-      }
-      
+
 $regform = 'content.post.templatecomments.regform';
 if (!in_array($regform, $this->parsedtags) && in_array('content.admin.editor', $this->parsedtags)) {
 $editor = strtr($templates['content.admin.editor'], array(
@@ -592,6 +591,8 @@ $templates[$regform] =
 '" /></p>
 								</form>';
 }
+}
+
       public static function getmetaclasses($s) {
         $result = array('rss' => '', 'comments' => '', 'media' => '', 'foaf' => '', 'profile' => '', 'sitemap' => '');
         foreach (explode(',', $s) as $class) {

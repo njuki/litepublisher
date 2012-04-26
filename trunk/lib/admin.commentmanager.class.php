@@ -97,7 +97,7 @@ return $html->adminform($tabs->get(), $args);
 public function processform() {
         extract($_POST, EXTR_SKIP);
 $options = litepublisher::$options;
-$cm = tcommentmanager:i();
+$cm = tcommentmanager::i();
 $cm->lock();
 
 $options->comments_status = $comments_status;

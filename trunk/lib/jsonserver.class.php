@@ -20,7 +20,7 @@ class tjsonserver extends titems {
     $this->addevents('beforerequest', 'beforecall', 'aftercall');
     $this->data['eventnames'] = &$this->eventnames;
     $this->map['eventnames'] = 'eventnames';
-$this->data['url'] = '/admin/jsonserver.php');
+$this->data['url'] = '/admin/jsonserver.php';
   }
   
   public function getpostbody() {
@@ -75,7 +75,7 @@ try {
 $result = $this->callevent($method, $a);
      } catch (Exception $e) {
 //500 error
-        $result = '<?php header('HTTP/1.1 500 Internal Server Error', true, 500); ?>';
+        $result = '<?php header(\'HTTP/1.1 500 Internal Server Error\', true, 500); ?>';
 $result .= $e->getMessage();
 return $result;
     }
@@ -99,7 +99,7 @@ header('Content-Type: text/javascript');
   }
   
   public function addevent($name, $class, $func) {
-if (!in_array($method, $this->eventnames)) $this->eventnames[] = $method;
+if (!in_array($name, $this->eventnames)) $this->eventnames[] = $name;
 return parent::addevent($name, $class, $func);
   }
   

@@ -135,17 +135,22 @@ $db->table = 'comusers';
     }
 
 //create temp table
+$man->deletetable('tempsubscribers');
 $man->createtable('tempsubscribers', file_get_contents(litepublisher::$paths->lib . 'install' .DIRECTORY_SEPARATOR . 'items.posts.sql'));
     $from = 0;
 $db->table = 'subscribers';
     while ($items = $db->res2assoc($db->query("select * from $db->subscribers limit $from, 500"))) {
 $from += count($items);
 $db->table = 'tempsubscribers';
-        $vals = array();
       foreach ($items as $item) {
-          $vals[]= sprintf('(%d, %s)', $item['post'], $map[$item['item']]);
+$idpost = (int) $item['post'];
+$idold = (int) $item['item'];
+$idnew = $map[$idold];
+if (!$db->finditem("post = $idpost and  item = $idnew")) {
+        $db->exec("INSERT INTO $db->tempsubscribers (post, item) values ($idpost, $idnew)");
+}
         }
-        $db->exec("INSERT INTO $db->tempsubscribers (post, item) values " . implode(',', $vals) );
+
 $db->table = 'subscribers';
 }
 

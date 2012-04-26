@@ -11,7 +11,7 @@ public $prefix;
 public $lifetime;
 
 public function __construct () {
-$this->prefix = 'ses-' . str_replace((array('_', '.'), '-', litepublisher::$domain) . '-';
+$this->prefix = 'ses-' . litepublisher::$domain . '-';
 $this->lifetime = 3600;
 $truefunc = array($this, 'truefunc');
 session_set_save_handler($truefunc,$truefunc, array($this,'read'), array($this,'write'), array($this,'destroy'), $truefunc);
