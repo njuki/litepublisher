@@ -21,6 +21,8 @@ $cm->data['confirmcomuser'] = true;
 'idgroups' => 'commentator'
 ));
 
+$cm->data['idgroups'] = tusergroups::i()->cleangroups('admin, editor, moderator, author, commentator, ticket');
+
 $spam = new tdata();
 $spam->basename = 'spamfilter';
 $spam->load();
