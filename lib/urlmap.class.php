@@ -65,6 +65,7 @@ public $isredir;
     try {
       $this->dorequest($this->url);
     } catch (Exception $e) {
+      litepublisher::$options->handexception($e);
     }
     if (!litepublisher::$debug && litepublisher::$options->ob_cache) {
 if ($this->isredir || count($this->close_events)) $this->close_connection();
@@ -408,7 +409,7 @@ call_user_func_array(array_splice($a, 0, 2), $a);
   
   public function redir($url, $status = 301) {
     litepublisher::$options->savemodified();
-$this->redir = true;
+$this->isredir = true;
 
 switch ($status) {
 case 301:
