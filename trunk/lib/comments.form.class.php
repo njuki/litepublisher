@@ -67,7 +67,7 @@ class tcommentform extends tevents {
     
     $shortpost= $this->getshortpost(isset($values['postid']) ? (int) $values['postid'] : 0);
     if ($err = $this->invalidate($shortpost)) return $err;
-    if (intval($shortpost['idperm'])) > 0) {
+    if (intval($shortpost['idperm']) > 0) {
       $post = tpost::i((int) $shortpost['id']);
       $perm = tperm::i($post->idperm);
       if (!$perm->hasperm($post)) return 403;
@@ -111,8 +111,9 @@ class tcommentform extends tevents {
         }
         break;
       }
+}
       
-      if ('hold == tusers::i()->getvalue($iduser, 'status')') {
+      if ('hold' == tusers::i()->getvalue($iduser, 'status')) {
         return $this->geterrorcontent($lang->holduser);
       }
       
@@ -148,7 +149,7 @@ class tcommentform extends tevents {
       $confirmid = $_POST['confirmid'];
       tsession::start($confirmid);
       //if (!($values = $kept->getitem($confirmid))) {
-        if (!isset($_SESSION['confirmid'] || ($confirmid != $_SESSION['confirmid'])) {
+        if (!isset($_SESSION['confirmid']) || ($confirmid != $_SESSION['confirmid'])) {
           session_destroy();
           return $this->geterrorcontent($lang->notfound);
         }
