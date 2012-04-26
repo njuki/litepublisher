@@ -55,28 +55,41 @@ class tdboptimizer extends tevents {
     //comments
 $db->table = 'comments';
 $items = $db->idselect("status = 'deleted'");
+if (count($items)) {
       $deleted = sprintf('id in (%s)', implode(',', $items));
 $db->delete($deleted);
-$db->table = 'rawcomments');
+$db->table = 'rawcomments';
 $db->delete($deleted);
-
-//divide one qury by parts
-/*
-    $db->exec("delete from $db->users where status = 'comuser' and id not in
-    (select DISTINCT author from $db->comments)");
-  */  
-
-    $from = 0;
-$db->table = 'users';
-    while ($items = $db->res2id($db->query("select id from $db->users where status = 'comuser' limit $from, 200"))) {
-$from += count($items);
-$comusers= implode(',', $items);
-      $deleted = $db->res2id($db->query("select author from $db->comments where
-
 }
-    //subscribtions
-    $db->exec("delete from $db->subscribers where post not in (select id from $db->posts)");
-    $db->exec("delete from $db->subscribers where item not in (select id from $db->comusers)");
+
+$items = $db->res2id($db->query("select $db->users.id FROM $db->users
+        LEFT JOIN $db->comments ON $db->users.id=$db->comments.author
+        WHERE $db->users.status = 'comuser' and $db->comments.author IS NULL"));
+
+if (count($items)) {
+$db->table = 'users';
+$db->delete(sprintf('id in(%s)', implode(',', $items)));
+}
+
+$items = $db->res2id($db->query("select $db->subscribers.post FROM $db->subscribers 
+        LEFT JOIN $db->posts ON $db->subscribers.post = $db->posts.id
+        WHERE $db->posts.id IS NULL"));
+
+if (count($items)) {
+$db->table = 'subscribers';
+$db->delete(sprintf('post in(%s)', implode(',', $items)));
+}
+
+
+$items = $db->res2id($db->query("select $db->subscribers.item FROM $db->subscribers 
+        LEFT JOIN $db->users ON $db->subscribers.item = $db->users.id
+        WHERE $db->users.id IS NULL"));
+
+if (count($items)) {
+$db->table = 'subscribers';
+$db->delete(sprintf('item in(%s)', implode(',', $items)));
+}
+
   }
   
   public function optimize() {
