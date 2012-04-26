@@ -385,6 +385,7 @@ class ttemplate extends tevents_storage {
     'files' =>litepublisher::$site->files,
     'idurl' => litepublisher::$urlmap->itemrequested['id'],
     'jqueryui_version' => litepublisher::$site->jqueryui_version,
+    'theme' => array()
     );
     $this->hover = true;
     $this->data['heads'] = '';
@@ -422,7 +423,7 @@ class ttemplate extends tevents_storage {
     $this->itemplate = $context instanceof itemplate;
     $this->view = $this->get_view($context);
     $theme = $this->view->theme;
-    $this->ltoptions['themename'] = $theme->name;
+    $this->ltoptions['theme']['name'] = $theme->name;
     litepublisher::$classes->instances[get_class($theme)] = $theme;
     $this->path = litepublisher::$paths->themes . $theme->name . DIRECTORY_SEPARATOR ;
     $this->url = litepublisher::$site->files . '/themes/' . $theme->name;
@@ -1701,13 +1702,11 @@ class twidgets extends titems_storage {
       
       case 'include':
       $filename = twidget::getcachefilename($id, $sidebar);
-      if (file_exists($filename)) {
-        $result = file_get_contents($filename);
-      } else {
+      $result = tfilestorage::getfile($filename);
+      if (!$result) {
         $widget = $this->getwidget($id);
         $result = $widget->getcontent($id, $sidebar);
-        file_put_contents($filename, $result);
-        @chmod($filename, 0666);
+        tfilestorage::setfile($filename, $result);
       }
       break;
       
@@ -1773,7 +1772,7 @@ class twidgetscache extends titems {
   
   public function save() {
     if (!$this->modified) {
-      litepublisher::$urlmap->onclose['widgetscache'] = array($this, 'savemodified');
+      litepublisher::$urlmap->onclose = array($this, 'savemodified');
       $this->modified = true;
     }
   }

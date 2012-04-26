@@ -90,7 +90,7 @@ class tpost extends titem implements  itemplate {
     'tags' => array(),
     'files' => array(),
     'status' => 'published',
-'comments_status' => litepublisher::$options->comments_status,
+    'comments_status' => litepublisher::$options->comments_status,
     'pingenabled' => litepublisher::$options->pingenabled,
     'password' => '',
     'idview' => 1,
@@ -99,7 +99,7 @@ class tpost extends titem implements  itemplate {
     'pagescount' => 0,
     'pages' => array()
     );
-
+    
     $this->factory = litepublisher::$classes->getfactory($this);
     $posts = $this->factory->posts;
     foreach ($posts->itemcoclasses as $class) {
@@ -270,18 +270,18 @@ class tpost extends titem implements  itemplate {
   public function getprev() {
     if (!is_null($this->aprev)) return $this->aprev;
     $this->aprev = false;
-      if ($id = $this->db->findid("status = 'published' and posted < '$this->sqldate' order by posted desc")) {
-        $this->aprev = self::i($id);
-      }
+    if ($id = $this->db->findid("status = 'published' and posted < '$this->sqldate' order by posted desc")) {
+      $this->aprev = self::i($id);
+    }
     return $this->aprev;
   }
   
   public function getnext() {
     if (!is_null($this->anext)) return $this->anext;
     $this->anext = false;
-      if ($id = $this->db->findid("status = 'published' and posted > '$this->sqldate' order by posted asc")) {
-        $this->anext = self::i($id);
-      }
+    if ($id = $this->db->findid("status = 'published' and posted > '$this->sqldate' order by posted asc")) {
+      $this->anext = self::i($id);
+    }
     return $this->anext;
   }
   
@@ -500,8 +500,8 @@ class tpost extends titem implements  itemplate {
   public function setidview($id) {
     if ($id != $this->idview) {
       $this->data['idview'] = $id;
-        $this->db->setvalue($this->id, 'idview', $id);
-}
+      $this->db->setvalue($this->id, 'idview', $id);
+    }
   }
   
   public function geticonurl() {
@@ -604,14 +604,14 @@ class tpost extends titem implements  itemplate {
     
     return $result;
   }
-
-public function getcommentsenabled() {
-return 'closed' != $this->data['comments_status'];
-}
-
-public function setcommentsenabled($value) {
-$this->data['comments_status'] = $value ? litepublisher::$options->comments_status : 'closed';
-}
+  
+  public function getcommentsenabled() {
+    return 'closed' != $this->data['comments_status'];
+  }
+  
+  public function setcommentsenabled($value) {
+    $this->data['comments_status'] = $value ? litepublisher::$options->comments_status : 'closed';
+  }
   
   public function get_excerpt() {
     return $this->data['excerpt'];
@@ -708,7 +708,7 @@ $this->data['comments_status'] = $value ? litepublisher::$options->comments_stat
   }
   
   protected function getrawdb() {
-return $this->getdb('rawposts');
+    return $this->getdb('rawposts');
   }
   
   public function getpage($i) {
@@ -748,7 +748,7 @@ return $this->getdb('rawposts');
   }
   
   public function getpagescount() {
-return $this->data['pagescount'] + 1;
+    return $this->data['pagescount'] + 1;
   }
   
   public function getcountpages() {

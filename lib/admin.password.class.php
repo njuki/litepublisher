@@ -29,9 +29,9 @@ class tadminpassword extends tadminform {
       $confirm = $_GET['confirm'];
       tsession::start('password-restore-' .md5($email));
       if (!isset($_SESSION['email']) || ($email != $_SESSION['email']) || ($confirm != $_SESSION['confirm'])) {
-if (!isset($_SESSION['email']) session_destroy();
-return $html->h4->notfound;
-}
+        if (!isset($_SESSION['email']) session_destroy();
+        return $html->h4->notfound;
+      }
       session_destroy();
       if ($id = $this->getiduser($email)) {
         $password = md5uniq();
@@ -63,7 +63,7 @@ return $html->h4->notfound;
     if (!$id) return $html->h2->error;
     $args = targs::i();
     
-      tsession::start('password-restore-' .md5($email));
+    tsession::start('password-restore-' .md5($email));
     if (!isset($_SESSION['count'])) {
       $_SESSION['count'] =1;
     } else {

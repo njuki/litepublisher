@@ -153,27 +153,27 @@ class tcommontags extends titems implements  itemplate {
     $views = tviews::i();
     $idview = isset($views->defaults[$this->PermalinkIndex]) ? $views->defaults[$this->PermalinkIndex] : 1;
     
-$item = array(
-      'idurl' => 0,
-      'customorder' => 0,
-      'parent' => $parent,
-      'title' => $title,
-      'idview' => $idview,
-      'idperm' => 0,
-      'icon' => 0,
-      'itemscount' => 0,
-      'includechilds' => $this->includechilds,
-      'includeparents' => $this->includeparents,
-      'invertorder' => false,
-      'lite' => $this->lite,
-      'liteperpage' => 1000
-      );
-
-      $id = $this->db->add($item);
-$this->items[$id] = $item;
-      $idurl =         $urlmap->add($url, get_class($this),  $id);
-      $this->setvalue($id, 'idurl', $idurl);
-$this->items[$id]['url'] = $url;    
+    $item = array(
+    'idurl' => 0,
+    'customorder' => 0,
+    'parent' => $parent,
+    'title' => $title,
+    'idview' => $idview,
+    'idperm' => 0,
+    'icon' => 0,
+    'itemscount' => 0,
+    'includechilds' => $this->includechilds,
+    'includeparents' => $this->includeparents,
+    'invertorder' => false,
+    'lite' => $this->lite,
+    'liteperpage' => 1000
+    );
+    
+    $id = $this->db->add($item);
+    $this->items[$id] = $item;
+    $idurl =         $urlmap->add($url, get_class($this),  $id);
+    $this->setvalue($id, 'idurl', $idurl);
+    $this->items[$id]['url'] = $url;
     $this->added($id);
     $this->changed();
     $urlmap->clearcache();
@@ -302,10 +302,10 @@ $this->items[$id]['url'] = $url;
     } catch (Exception $e) {
       return 404;
     }
-
+    
     $perpage = (int) $item['lite'] ? (int) $item['liteperpage'] : litepublisher::$options->perpage;
     $list = $this->getidposts();
-$pages = ceil($ount ($list) / $perpage);
+    $pages = ceil($ount ($list) / $perpage);
     if (litepublisher::$urlmap->page > $pages) {
       return sprintf("<?php litepublisher::$urlmap->redir('%s');",$item['url']);
     }

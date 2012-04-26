@@ -46,29 +46,29 @@ class tcommentswidget extends twidget {
   public function changed() {
     $this->expire();
   }
-
+  
   public function getrecent($count, $status = 'approved') {
-      $db = litepublisher::$db;
-      $result = $db->res2assoc($db->query("select $db->comments.*,
-      $db->users.name as name, $db->users.email as email, $db->users.website as url,
-      $db->posts.title as title, $db->posts.commentscount as commentscount,
-      $db->urlmap.url as posturl
-      from $db->comments, $db->users, $db->posts, $db->urlmap
-      where $db->comments.status = '$status' and
-      $db->users.id = $db->comments.author and
-      $db->posts.id = $db->comments.post and
-      $db->urlmap.id = $db->posts.idurl and
-      $db->posts.status = 'published' and
-      $db->posts.idperm = 0
-      order by $db->comments.posted desc limit $count"));
-      
-      if (litepublisher::$options->commentpages && !litepublisher::$options->comments_invert_order) {
-        foreach ($result as $i => $item) {
-          $page = ceil($item['commentscount'] / litepublisher::$options->commentsperpage);
-          if ($page > 1) $result[$i]['posturl']= rtrim($item['posturl'], '/') . "/page/$page/";
-        }
+    $db = litepublisher::$db;
+    $result = $db->res2assoc($db->query("select $db->comments.*,
+    $db->users.name as name, $db->users.email as email, $db->users.website as url,
+    $db->posts.title as title, $db->posts.commentscount as commentscount,
+    $db->urlmap.url as posturl
+    from $db->comments, $db->users, $db->posts, $db->urlmap
+    where $db->comments.status = '$status' and
+    $db->users.id = $db->comments.author and
+    $db->posts.id = $db->comments.post and
+    $db->urlmap.id = $db->posts.idurl and
+    $db->posts.status = 'published' and
+    $db->posts.idperm = 0
+    order by $db->comments.posted desc limit $count"));
+    
+    if (litepublisher::$options->commentpages && !litepublisher::$options->comments_invert_order) {
+      foreach ($result as $i => $item) {
+        $page = ceil($item['commentscount'] / litepublisher::$options->commentsperpage);
+        if ($page > 1) $result[$i]['posturl']= rtrim($item['posturl'], '/') . "/page/$page/";
       }
-      return $result;
+    }
+    return $result;
   }
   
 }//class

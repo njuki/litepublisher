@@ -79,7 +79,7 @@ class tusers extends titems {
     $id = $this->db->add($item);
     $item['idgroups'] = $idgroups;
     $this->items[$id] = $item;
-      $this->setgroups($id, $item['idgroups']);
+    $this->setgroups($id, $item['idgroups']);
     
     tuserpages::i()->add($id);
     $this->added($id);
@@ -110,10 +110,10 @@ class tusers extends titems {
     
     $this->items[$id] = $item;
     $item['id'] = $id;
-
-      $this->setgroups($id, $item['idgroups']);
-      $item['idgroups'] = implode(',', $item['idgroups']);
-      $this->db->updateassoc($item);
+    
+    $this->setgroups($id, $item['idgroups']);
+    $item['idgroups'] = implode(',', $item['idgroups']);
+    $this->db->updateassoc($item);
     
     $pages = tuserpages::i();
     $pages->edit($id, $values);
@@ -122,18 +122,18 @@ class tusers extends titems {
   
   public function setgroups($id, array $idgroups) {
     $this->items[$id]['idgroups'] = $idgroups;
-      $db = $this->getdb($this->grouptable);
-      $db->delete("iduser = $id");
-      foreach ($idgroups as $idgroup) {
-        $db->add(array(
-        'iduser' => $id,
-        'idgroup' => $idgroup
-        ));
-      }
+    $db = $this->getdb($this->grouptable);
+    $db->delete("iduser = $id");
+    foreach ($idgroups as $idgroup) {
+      $db->add(array(
+      'iduser' => $id,
+      'idgroup' => $idgroup
+      ));
+    }
   }
   
   public function delete($id) {
-$this->getdb($this->grouptable)->delete('iduser = ' .(int)$id);
+    $this->getdb($this->grouptable)->delete('iduser = ' .(int)$id);
     tuserpages::i()->delete($id);
     return parent::delete($id);
   }
@@ -141,7 +141,7 @@ $this->getdb($this->grouptable)->delete('iduser = ' .(int)$id);
   public function emailexists($email) {
     if ($email == '') return false;
     if ($email == litepublisher::$options->email) return 1;
-      return $this->db->findid('email = '. dbquote($email));
+    return $this->db->findid('email = '. dbquote($email));
   }
   
   public function getpassword($id) {
@@ -154,23 +154,23 @@ $this->getdb($this->grouptable)->delete('iduser = ' .(int)$id);
   }
   
   public function approve($id) {
-      $this->db->setvalue($id, 'status', 'approved');
-      if (isset(            $this->items[$id])) $this->items[$id]['status'] = 'approved';
+    $this->db->setvalue($id, 'status', 'approved');
+    if (isset(            $this->items[$id])) $this->items[$id]['status'] = 'approved';
     $pages = tuserpages::i();
     if ($pages->createpage) $pages->addpage($id);
   }
   
   public function auth($email,$password) {
     $password = basemd5(sprintf('%s:%s:%s', $email,  litepublisher::$options->realm, $password));
-
-      $email = dbquote($email);
-      if (($a = $this->select("email = $email and password = '$password'", 'limit 1')) && (count($a) > 0)) {
-        $item = $this->getitem($a[0]);
-        if ($item['status'] == 'wait') $this->approve($item['id']);
-        return (int) $item['id'];
-      }
-return false;
-}
+    
+    $email = dbquote($email);
+    if (($a = $this->select("email = $email and password = '$password'", 'limit 1')) && (count($a) > 0)) {
+      $item = $this->getitem($a[0]);
+      if ($item['status'] == 'wait') $this->approve($item['id']);
+      return (int) $item['id'];
+    }
+    return false;
+  }
   
   public function authcookie($cookie) {
     $cookie = (string) $cookie;
@@ -185,10 +185,10 @@ return false;
   }
   
   public function findcookie($cookie) {
-      $cookie = dbquote($cookie);
-      if (($a = $this->select('cookie = ' . $cookie, 'limit 1')) && (count($a) > 0)) {
-        return (int) $a[0];
-      }
+    $cookie = dbquote($cookie);
+    if (($a = $this->select('cookie = ' . $cookie, 'limit 1')) && (count($a) > 0)) {
+      return (int) $a[0];
+    }
     return false;
   }
   
@@ -210,25 +210,25 @@ return false;
       $this->items[$id]['expired'] = $expired;
     }
     
-      $this->db->updateassoc(array(
-      'id' => $id,
-      'cookie' => $cookie,
-      'expired' => $expired
-      ));
+    $this->db->updateassoc(array(
+    'id' => $id,
+    'cookie' => $cookie,
+    'expired' => $expired
+    ));
   }
   
   public function optimize() {
-      $time = sqldate(strtotime('-1 day'));
-      $pagetable = litepublisher::$db->prefix . 'userpage';
-      $delete = $this->db->idselect("status = 'wait' and id in (select id from $pagetable where registered < '$time')");
-      if (count($delete) > 0) {
-        $this->db->delete(sprintf('id in (%s)', implode(',', $delete)));
-        $this->getdb($this->grouptable)->delete(sprintf('iduser in (%s)', implode(',', $delete)));
-        $pages = tuserpages::i();
-        foreach ($delete as $id) {
-          $pages->delete($id);
-        }
+    $time = sqldate(strtotime('-1 day'));
+    $pagetable = litepublisher::$db->prefix . 'userpage';
+    $delete = $this->db->idselect("status = 'wait' and id in (select id from $pagetable where registered < '$time')");
+    if (count($delete) > 0) {
+      $this->db->delete(sprintf('id in (%s)', implode(',', $delete)));
+      $this->getdb($this->grouptable)->delete(sprintf('iduser in (%s)', implode(',', $delete)));
+      $pages = tuserpages::i();
+      foreach ($delete as $id) {
+        $pages->delete($id);
       }
+    }
   }
   
 }//class

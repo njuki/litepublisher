@@ -55,8 +55,8 @@ class tadminreguser extends tadminform {
     $args->formtitle = $lang->regform;
     $args->data['$lang.email'] = 'email';
     $result = $this->widget;
-    if (isset($_GET['backurl'])) $result = str_replace(array('&backurl=', '&amp;backurl='), 
-'&amp;backurl=' . urlencode($_GET['backurl']), $result);
+    if (isset($_GET['backurl'])) $result = str_replace(array('&backurl=', '&amp;backurl='),
+    '&amp;backurl=' . urlencode($_GET['backurl']), $result);
     $result .= $html->adminform($form, $args);
     $this->callevent('oncontent', array(&$result));
     return $result;

@@ -13,8 +13,8 @@ class tthemeparser extends tevents {
   private $abouts;
   private $sidebar_index;
   private $pathmap;
-private $parsedtags;
-
+  private $parsedtags;
+  
   public static function i() {
     return getinstance(__class__);
   }
@@ -146,8 +146,8 @@ private $parsedtags;
       $theme->parent = $parent->name;
     }
     
-$this->parsedtags = array();
-
+    $this->parsedtags = array();
+    
     $s = self::getfile($filename);
     $this->parsetags($theme, $s);
     $this->afterparse($theme);
@@ -367,7 +367,7 @@ $this->parsedtags = array();
       }
       
       public function set_value($name, $value) {
-$this->parsedtags[] = $name;
+        $this->parsedtags[] = $name;
         //fix old ver
         switch ($name) {
           case 'content.menu':
@@ -568,31 +568,31 @@ $this->parsedtags[] = $name;
         }
         
         $templates['content.post.templatecomments.confirmform'] = str_replace('$lang.formhead', '$lang.checkspam', $templates['content.post.templatecomments.confirmform']);
-
-$regform = 'content.post.templatecomments.regform';
-if (!in_array($regform, $this->parsedtags) && in_array('content.admin.editor', $this->parsedtags)) {
-$editor = strtr($templates['content.admin.editor'], array(
-    '$lang.$name' => $this->replacelang ? tlocal::i('comment')->content : '$lang.content',
-    '$name' => 'content',
-    '$value' => ''
-));
-
-$templates[$regform] =  
-'								<div id="beforeregform"$mesg</div>
-<h4 id="respond">$lang.leavereply</h4>
-<form action="$site.url/send-comment.php" method="post" id="commentform">'
- . $editor .
-'<p>
-									<input type="hidden" name="postid" value="$postid" />
-									<input type="hidden" name="antispam" value="$antispam" />
-
-									<input type="submit" name="submitbutton" id="submitcomment" value="' 
-. ($this->replacelang ? tlocal::i()->send : '$lang.send' ) .
-'" /></p>
-								</form>';
-}
-}
-
+        
+        $regform = 'content.post.templatecomments.regform';
+        if (!in_array($regform, $this->parsedtags) && in_array('content.admin.editor', $this->parsedtags)) {
+          $editor = strtr($templates['content.admin.editor'], array(
+          '$lang.$name' => $this->replacelang ? tlocal::i('comment')->content : '$lang.content',
+          '$name' => 'content',
+          '$value' => ''
+          ));
+          
+          $templates[$regform] =
+          '								<div id="beforeregform"$mesg</div>
+          <h4 id="respond">$lang.leavereply</h4>
+          <form action="$site.url/send-comment.php" method="post" id="commentform">'
+          . $editor .
+          '<p>
+          <input type="hidden" name="postid" value="$postid" />
+          <input type="hidden" name="antispam" value="$antispam" />
+          
+          <input type="submit" name="submitbutton" id="submitcomment" value="'
+          . ($this->replacelang ? tlocal::i()->send : '$lang.send' ) .
+          '" /></p>
+          </form>';
+        }
+      }
+      
       public static function getmetaclasses($s) {
         $result = array('rss' => '', 'comments' => '', 'media' => '', 'foaf' => '', 'profile' => '', 'sitemap' => '');
         foreach (explode(',', $s) as $class) {
@@ -906,13 +906,13 @@ $templates[$regform] =
         'tag' => '$form',
         'replace' => ''
         ),
-
+        
         'content.post.templatecomments.regform' => array(
         'tag' => '$regform',
         'replace' => ''
         ),
         
-                'content.post.templatecomments.confirmform' => array(
+        'content.post.templatecomments.confirmform' => array(
         'tag' => '$confirmform',
         'replace' => ''
         ),

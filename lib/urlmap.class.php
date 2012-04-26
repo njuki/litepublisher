@@ -17,7 +17,7 @@ class turlmap extends titems {
   public $cache_enabled;
   public $argtree;
   public $is404;
-public $isredir;
+  public $isredir;
   public $adminpanel;
   public $mobile;
   protected $close_events;
@@ -68,25 +68,25 @@ public $isredir;
       litepublisher::$options->handexception($e);
     }
     if (!litepublisher::$debug && litepublisher::$options->ob_cache) {
-if ($this->isredir || count($this->close_events)) $this->close_connection();
-while (@ob_end_flush ());
-flush();
-//prevent output while client connected
-if ($this->isredir || count($this->close_events)) ob_start();
-}
+      if ($this->isredir || count($this->close_events)) $this->close_connection();
+      while (@ob_end_flush ());
+      flush();
+      //prevent output while client connected
+      if ($this->isredir || count($this->close_events)) ob_start();
+    }
     $this->afterrequest($this->url);
     $this->close();
   }
-
-public function close_connection() {
-ignore_user_abort(true);
-//$len = $this->isredir ? 0 : ob_get_length();
-$len = ob_get_length();
-header('Connection: close');
-header('Content-Length: ' . $len);
-header('Content-Encoding: none');
-//header('Accept-Ranges: bytes');
-}
+  
+  public function close_connection() {
+    ignore_user_abort(true);
+    //$len = $this->isredir ? 0 : ob_get_length();
+    $len = ob_get_length();
+    header('Connection: close');
+    header('Content-Length: ' . $len);
+    header('Content-Encoding: none');
+    //header('Accept-Ranges: bytes');
+  }
   
   private function dorequest($url) {
     if ($this->itemrequested = $this->finditem($url)){
@@ -95,29 +95,29 @@ header('Content-Encoding: none');
       $this->notfound404();
     }
   }
-
+  
   public function getidurl($id) {
-      if (!isset($this->items[$id])) {
-        $this->items[$id] = $this->db->getitem($id);
-      }
-      return $this->items[$id]['url'];
+    if (!isset($this->items[$id])) {
+      $this->items[$id] = $this->db->getitem($id);
+    }
+    return $this->items[$id]['url'];
   }
   
-
+  
   public function findurl($url) {
-      if ($result = $this->db->finditem('url = '. dbquote($url))) return $result;
+    if ($result = $this->db->finditem('url = '. dbquote($url))) return $result;
     return false;
   }
   
   public function urlexists($url) {
-      return $this->db->findid('url = '. dbquote($url));
+    return $this->db->findid('url = '. dbquote($url));
   }
   
   private function query($url) {
-      if ($item = $this->db->getassoc('url = '. dbquote($url). ' limit 1')) {
-        $this->items[$item['id']] = $item;
-        return $item;
-      }
+    if ($item = $this->db->getassoc('url = '. dbquote($url). ' limit 1')) {
+      $this->items[$item['id']] = $item;
+      return $item;
+    }
     return false;
   }
   
@@ -191,7 +191,7 @@ header('Content-Encoding: none');
   }
   
   public function getidcontext($id) {
-      $item = $this->getitem($id);
+    $item = $this->getitem($id);
     return $this->getcontext($item);
   }
   
@@ -214,7 +214,7 @@ header('Content-Encoding: none');
         case 403: return $this->forbidden();
       }
     } else {
-if ($this->isredir) return;
+      if ($this->isredir) return;
       $template = ttemplate::i();
       $s = $template->request($this->context);
     }
@@ -270,55 +270,55 @@ if ($this->isredir) return;
     if (empty($url)) $this->error('Empty url to add');
     if (empty($class)) $this->error('Empty class name of adding url');
     if (!in_array($type, array('normal','get','tree'))) $this->error(sprintf('Invalid url type %s', $type));
-
-      if ($item = $this->db->finditem('url = ' . dbquote($url))) $this->error(sprintf('Url "%s" already exists', $url));
-      $item= array(
-      'url' => $url,
-      'class' => $class,
-      'arg' => (string) $arg,
-      'type' => $type
-      );
-      $item['id'] = $this->db->add($item);
-      $this->items[$item['id']] = $item;
-      return $item['id'];
+    
+    if ($item = $this->db->finditem('url = ' . dbquote($url))) $this->error(sprintf('Url "%s" already exists', $url));
+    $item= array(
+    'url' => $url,
+    'class' => $class,
+    'arg' => (string) $arg,
+    'type' => $type
+    );
+    $item['id'] = $this->db->add($item);
+    $this->items[$item['id']] = $item;
+    return $item['id'];
   }
   
   public function delete($url) {
-      $url = dbquote($url);
-      if ($id = $this->db->findid('url = ' . $url)) {
-        $this->db->iddelete($id);
-      } else {
-        return false;
-      }
-
+    $url = dbquote($url);
+    if ($id = $this->db->findid('url = ' . $url)) {
+      $this->db->iddelete($id);
+    } else {
+      return false;
+    }
+    
     $this->clearcache();
     $this->deleted($id);
     return true;
   }
   
   public function deleteclass($class) {
-      if ($items =
-      $this->db->getitems("class = '$class'")) {
-        $this->db->delete("class = '$class'");
-        foreach ($items as $item) $this->deleted($item);
-      }
+    if ($items =
+    $this->db->getitems("class = '$class'")) {
+      $this->db->delete("class = '$class'");
+      foreach ($items as $item) $this->deleted($item);
+    }
     $this->clearcache();
   }
   
   public function deleteitem($id) {
-      if ($item = $this->db->getitem($id)) {
-        $this->db->iddelete($id);
-        $this->deleted($item);
+    if ($item = $this->db->getitem($id)) {
+      $this->db->iddelete($id);
+      $this->deleted($item);
     }
     $this->clearcache();
   }
   
   //for Archives
   public function GetClassUrls($class) {
-      $res = $this->db->query("select url from $this->thistable where class = '$class'");
-      return $this->db->res2id($res);
-}
-
+    $res = $this->db->query("select url from $this->thistable where class = '$class'");
+    return $this->db->res2id($res);
+  }
+  
   public function clearcache() {
     $path = litepublisher::$paths->cache;
     if ( $h = @opendir($path)) {
@@ -356,10 +356,10 @@ if ($this->isredir) return;
   }
   
   public function expiredclass($class) {
-      $items = $this->db->idselect("class = '$class'");
-      foreach ($items as $id) $this->setexpired($id);
-}  
-
+    $items = $this->db->idselect("class = '$class'");
+    foreach ($items as $id) $this->setexpired($id);
+  }
+  
   public function addredir($from, $to) {
     if ($from == $to) return;
     $Redir = tredirector::i();
@@ -373,19 +373,24 @@ if ($this->isredir) return;
     $self->deleteclass(get_class($obj));
     $self->unlock();
   }
-
-public function setonclose(array $a) {
-$this->close_events[] = $a;
-}
   
-public function onclose() {
-$this->close_events[] = func_get_args();
-}
-
+  public function setonclose(array $a) {
+    if (count($a) == 0) return;
+    $this->close_events[] = $a;
+  }
+  
+  public function onclose() {
+    $this->setonclose(func_get_args());
+  }
+  
   private function call_close_events() {
     foreach ($this->close_events as $a) {
       try {
-call_user_func_array(array_splice($a, 0, 2), $a);
+        $c = array_shift($a);
+        if (!is_callable($c)) {
+          $c = array($c, array_shift($a));
+        }
+        call_user_func_array($c, $a);
       } catch (Exception $e) {
         litepublisher::$options->handexception($e);
       }
@@ -409,29 +414,29 @@ call_user_func_array(array_splice($a, 0, 2), $a);
   
   public function redir($url, $status = 301) {
     litepublisher::$options->savemodified();
-$this->isredir = true;
-
-switch ($status) {
-case 301:
+    $this->isredir = true;
+    
+    switch ($status) {
+      case 301:
       header('HTTP/1.1 301 Moved Permanently', true, 301);
-break;
-
-case 302:
-    header('HTTP/1.1 302 Found', true, 302);
-break;
-
-case 307:
-    header('HTTP/1.1 307 Temporary Redirect', true, 307);
-break;
-}
-
+      break;
+      
+      case 302:
+      header('HTTP/1.1 302 Found', true, 302);
+      break;
+      
+      case 307:
+      header('HTTP/1.1 307 Temporary Redirect', true, 307);
+      break;
+    }
+    
     if (!strbegin($url, 'http://')) $url = litepublisher::$site->url . $url;
     header('Location: ' . $url);
   }
   
   public function setidurl($id, $url) {
-      $this->db->setvalue($id, 'url', $url);
-      if (isset($this->items[$id])) $this->items[$id]['url'] = $url;
+    $this->db->setvalue($id, 'url', $url);
+    if (isset($this->items[$id])) $this->items[$id]['url'] = $url;
   }
   
   public function getnextpage() {

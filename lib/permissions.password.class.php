@@ -19,11 +19,11 @@ class tpermpassword extends tperm {
     if ($this->password == '') return '';
     return sprintf('<?php %s::i(%d)->auth(); ?>', get_class($this), $this->id);
   }
-
-  public function hasperm($obj) {  
+  
+  public function hasperm($obj) {
     return $this->authcookie();
-}
-
+  }
+  
   public function getcookiename() {
     return 'permpassword_' .$this->id;
   }
@@ -54,19 +54,18 @@ class tpermpassword extends tperm {
     if (($cookie == '') || !strpos($cookie, '.')) return $this->redir();
     list($login, $password) = explode('.', $cookie);
     if ($password == md5($login . litepublisher::$secret . $this->password)) return true;
-}
-return false;
-}
-
+    return false;
+  }
+  
   public function auth() {
-if ($this->authcookie()) return true;
+    if ($this->authcookie()) return true;
     return $this->redir();
   }
   
   public function redir() {
     $url = litepublisher::$site->url . '/check-password.php' . litepublisher::$site->q;
     $url .= "idperm=$this->id&backurl=" . urlencode(litepublisher::$urlmap->url);
-litepublisher::$urlmap->redir($url, 307);
+    litepublisher::$urlmap->redir($url, 307);
   }
   
 }//class

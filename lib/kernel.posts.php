@@ -217,7 +217,7 @@ class tpost extends titem implements  itemplate {
   
   public static function i($id = 0) {
     $id = (int) $id;
-    if (dbversion && ($id > 0)) {
+    if ($id > 0) {
       if (isset(self::$instances['post'][$id]))     return self::$instances['post'][$id];
       if ($result = self::loadpost($id)) {
         self::$instances['post'][$id] = $result;
@@ -280,7 +280,7 @@ class tpost extends titem implements  itemplate {
     'filtered' => '',
     'excerpt' => '',
     'rss' => '',
-    'rawcontent' => dbversion ? false : '',
+    'rawcontent' => false,
     'keywords' => '',
     'description' => '',
     'head' => '',
@@ -289,7 +289,7 @@ class tpost extends titem implements  itemplate {
     'tags' => array(),
     'files' => array(),
     'status' => 'published',
-    'commentsenabled' => litepublisher::$options->commentsenabled,
+    'comments_status' => litepublisher::$options->comments_status,
     'pingenabled' => litepublisher::$options->pingenabled,
     'password' => '',
     'idview' => 1,
@@ -306,10 +306,6 @@ class tpost extends titem implements  itemplate {
       $coinstance->post = $this;
       $this->coinstances[]  = $coinstance;
     }
-  }
-  
-  public function getdbversion() {
-    return dbversion;
   }
   
   public function __get($name) {
@@ -363,7 +359,7 @@ class tpost extends titem implements  itemplate {
   }
   
   public function load() {
-    $result = dbversion? $this->LoadFromDB() : parent::load();
+    $result = $this->LoadFromDB();
     if ($result) {
       foreach ($this->coinstances as $coinstance) $coinstance->load();
     }
@@ -473,15 +469,8 @@ class tpost extends titem implements  itemplate {
   public function getprev() {
     if (!is_null($this->aprev)) return $this->aprev;
     $this->aprev = false;
-    if (dbversion) {
-      if ($id = $this->db->findid("status = 'published' and posted < '$this->sqldate' order by posted desc")) {
-        $this->aprev = self::i($id);
-      }
-    } else {
-      $posts = $this->factory->posts;
-      $keys = array_keys($posts->archives);
-      $i = array_search($this->id, $keys);
-      if ($i < count($keys) -1) $this->aprev = self::i($keys[$i + 1]);
+    if ($id = $this->db->findid("status = 'published' and posted < '$this->sqldate' order by posted desc")) {
+      $this->aprev = self::i($id);
     }
     return $this->aprev;
   }
@@ -489,16 +478,8 @@ class tpost extends titem implements  itemplate {
   public function getnext() {
     if (!is_null($this->anext)) return $this->anext;
     $this->anext = false;
-    if (dbversion) {
-      if ($id = $this->db->findid("status = 'published' and posted > '$this->sqldate' order by posted asc")) {
-        $this->anext = self::i($id);
-      }
-    } else {
-      $posts = $this->factory->posts;
-      $keys = array_keys($posts->archives);
-      $i = array_search($this->id, $keys);
-      if ($i > 0 ) $this->anext = self::i($keys[$i - 1]);
-      
+    if ($id = $this->db->findid("status = 'published' and posted > '$this->sqldate' order by posted asc")) {
+      $this->anext = self::i($id);
     }
     return $this->anext;
   }
@@ -718,11 +699,7 @@ class tpost extends titem implements  itemplate {
   public function setidview($id) {
     if ($id != $this->idview) {
       $this->data['idview'] = $id;
-      if ($this->dbversion) {
-        $this->db->setvalue($this->id, 'idview', $id);
-      } else {
-        $this->save();
-      }
+      $this->db->setvalue($this->id, 'idview', $id);
     }
   }
   
@@ -827,6 +804,14 @@ class tpost extends titem implements  itemplate {
     return $result;
   }
   
+  public function getcommentsenabled() {
+    return 'closed' != $this->data['comments_status'];
+  }
+  
+  public function setcommentsenabled($value) {
+    $this->data['comments_status'] = $value ? litepublisher::$options->comments_status : 'closed';
+  }
+  
   public function get_excerpt() {
     return $this->data['excerpt'];
   }
@@ -915,20 +900,19 @@ class tpost extends titem implements  itemplate {
   }
   
   public function getrawcontent() {
-    if (dbversion && ($this->id > 0) && ($this->data['rawcontent'] === false)) {
+    if (($this->id > 0) && ($this->data['rawcontent'] === false)) {
       $this->data['rawcontent'] = $this->rawdb->getvalue($this->id, 'rawcontent');
     }
     return $this->data['rawcontent'];
   }
   
   protected function getrawdb() {
-    litepublisher::$db->table = 'rawposts';
-    return litepublisher::$db;
+    return $this->getdb('rawposts');
   }
   
   public function getpage($i) {
     if ( isset($this->data['pages'][$i]))   return $this->data['pages'][$i];
-    if (dbversion && ($this->id > 0)) {
+    if ($this->id > 0) {
       if ($r = $this->getdb('pages')->getassoc("(id = $this->id) and (page = $i) limit 1")) {
         $s = $r['content'];
       } else {
@@ -943,7 +927,7 @@ class tpost extends titem implements  itemplate {
   public function addpage($s) {
     $this->data['pages'][] = $s;
     $this->data['pagescount'] = count($this->data['pages']);
-    if (dbversion && ($this->id > 0)) {
+    if ($this->id > 0) {
       $this->getdb('pages')->insert_a(array(
       'id' => $this->id,
       'page' => $this->data['pagescount'] -1,
@@ -955,7 +939,7 @@ class tpost extends titem implements  itemplate {
   public function deletepages() {
     $this->data['pages'] = array();
     $this->data['pagescount'] = 0;
-    if (dbversion && ($this->id > 0)) $this->getdb('pages')->iddelete($this->id);
+    if ($this->id > 0) $this->getdb('pages')->iddelete($this->id);
   }
   
   public function gethaspages() {
@@ -963,8 +947,7 @@ class tpost extends titem implements  itemplate {
   }
   
   public function getpagescount() {
-    if (dbversion) return $this->data['pagescount'] + 1;
-    return isset($this->data['pages']) ? count($this->data['pages']) + 1: 1;
+    return $this->data['pagescount'] + 1;
   }
   
   public function getcountpages() {
@@ -981,18 +964,6 @@ class tpost extends titem implements  itemplate {
     $url = $this->url;
     if (($c > 1) && !litepublisher::$options->comments_invert_order) $url = rtrim($url, '/') . "/page/$c/";
     return $url;
-  }
-  
-  public function setcommentsenabled($value) {
-    if ($value != $this->commentsenabled) {
-      if (!dbversion) $this->data['commentscount'] =  $this->comments->count;
-      $this->data['commentsenabled'] = $value;
-    }
-  }
-  
-  public function getcommentscount() {
-    if (!$this->commentsenabled || dbversion)  return $this->data['commentscount'];
-    return $this->comments->approvedcount;
   }
   
   public function clearcache() {
@@ -1112,7 +1083,7 @@ class tposts extends titems {
   }
   
   protected function create() {
-    $this->dbversion = dbversion;
+    $this->dbversion = true;
     parent::create();
     $this->table = 'posts';
     $this->childtable = '';
@@ -1122,18 +1093,12 @@ class tposts extends titems {
     $this->data['archivescount'] = 0;
     $this->data['revision'] = 0;
     $this->data['syncmeta'] = false;
-    if (!dbversion) $this->addmap('archives' , array());
     $this->addmap('itemcoclasses', array());
   }
   
   public function getitem($id) {
-    if (dbversion) {
-      if ($result = tpost::i($id)) return $result;
-      $this->error("Item $id not found in class ". get_class($this));
-    } else {
-      if (isset($this->items[$id])) return tpost::i($id);
-    }
-    return $this->error("Item $id not found in class ". get_class($this));
+    if ($result = tpost::i($id)) return $result;
+    $this->error("Item $id not found in class ". get_class($this));
   }
   
   public function finditems($where, $limit) {
@@ -1147,7 +1112,6 @@ class tposts extends titems {
   }
   
   public function loaditems(array $items) {
-    if (!dbversion || count($items) == 0) return;
     //exclude already loaded items
     if (isset(titem::$instances['post'])) {
       $items = array_diff($items, array_keys(titem::$instances['post']));
@@ -1227,11 +1191,7 @@ class tposts extends titems {
   }
   
   public function getcount() {
-    if (dbversion) {
-      return $this->db->getcount("status<> 'deleted'");
-    } else {
-      return count($this->items);
-    }
+    return $this->db->getcount("status<> 'deleted'");
   }
   
   public function getchildscount($where) {
@@ -1299,22 +1259,13 @@ class tposts extends titems {
     $post->url = $linkgen->addurl($post, $post->schemalink);
     $post->title = tcontentfilter::escape($post->title);
     $urlmap = turlmap::i();
-    if (dbversion) {
-      $id = $post->addtodb();
-      $post->idurl = $urlmap->add($post->url, get_class($post), (int) $post->id);
-      $post->db->setvalue($post->id, 'idurl', $post->idurl);
-    } else {
-      $post->id = ++$this->autoid;
-      $dir =litepublisher::$paths->data . 'posts' . DIRECTORY_SEPARATOR  . $post->id;
-      if (!is_dir($dir)) mkdir($dir, 0777);
-      chmod($dir, 0777);
-      $post->idurl = $urlmap->Add($post->url, get_class($post), $post->id);
-    }
+    $id = $post->addtodb();
+    $post->idurl = $urlmap->add($post->url, get_class($post), (int) $post->id);
+    $post->db->setvalue($post->id, 'idurl', $post->idurl);
     $post->onid();
     $this->lock();
     $this->updated($post);
     $this->cointerface('add', $post);
-    if (!$this->dbversion) $post->save();
     $this->unlock();
     $this->added($post->id);
     $this->changed();
@@ -1346,21 +1297,11 @@ class tposts extends titems {
   public function delete($id) {
     if (!$this->itemexists($id)) return false;
     $urlmap = turlmap::i();
-    if ($this->dbversion) {
-      $idurl = $this->db->getvalue($id, 'idurl');
-      $this->db->setvalue($id, 'status', 'deleted');
-      if ($this->childtable) {
-        $db = $this->getdb($this->childtable);
-        $db->delete("id = $id");
-      }
-    } else {
-      if ($post = tpost::i($id)) {
-        $idurl = $post->idurl;
-        $post->free();
-      }
-      titem::deletedir(litepublisher::$paths->data . 'posts'. DIRECTORY_SEPARATOR   . $id . DIRECTORY_SEPARATOR  );
-      unset($this->items[$id]);
-      $urlmap->deleteitem($idurl);
+    $idurl = $this->db->getvalue($id, 'idurl');
+    $this->db->setvalue($id, 'status', 'deleted');
+    if ($this->childtable) {
+      $db = $this->getdb($this->childtable);
+      $db->delete("id = $id");
     }
     
     $this->lock();
@@ -1376,13 +1317,6 @@ class tposts extends titems {
   
   
   public function updated(tpost $post) {
-    if (!$this->dbversion) {
-      $this->items[$post->id] = array(
-      'posted' => $post->posted
-      );
-      if   ($post->status != 'published') $this->items[$post->id]['status'] = $post->status;
-      if   ($post->author > 1) $this->items[$post->id]['author'] = $post->author;
-    }
     $this->PublishFuture();
     $this->UpdateArchives();
     $cron = tcron::i();
@@ -1390,18 +1324,7 @@ class tposts extends titems {
   }
   
   public function UpdateArchives() {
-    if ($this->dbversion) {
-      $this->archivescount = $this->db->getcount("status = 'published' and posted <= '" . sqldate() . "'");
-    } else {
-      $this->archives = array();
-      foreach ($this->items as $id => $item) {
-        if ((!isset($item['status']) || ($item['status'] == 'published')) &&(time() >= $item['posted'])) {
-          $this->archives[$id] = $item['posted'];
-        }
-      }
-      arsort($this->archives,  SORT_NUMERIC);
-      $this->archivescount = count($this->archives);
-    }
+    $this->archivescount = $this->db->getcount("status = 'published' and posted <= '" . sqldate() . "'");
   }
   
   public function dosinglecron($id) {
@@ -1422,79 +1345,45 @@ class tposts extends titems {
   }
   
   public function PublishFuture() {
-    if ($this->dbversion) {
-      if ($list = $this->db->idselect(sprintf('status = \'future\' and posted <= \'%s\' order by posted asc', sqldate()))) {
-        foreach( $list as $id) $this->publish($id);
-      }
-    } else {
-      foreach ($this->items as $id => $item) {
-        if (isset($item['status']) && ($item['status'] == 'future') && ($item['posted'] <= time())) $this->publish($id);
-      }
+    if ($list = $this->db->idselect(sprintf('status = \'future\' and posted <= \'%s\' order by posted asc', sqldate()))) {
+      foreach( $list as $id) $this->publish($id);
     }
   }
   
   public function getrecent($author, $count) {
     $author = (int) $author;
-    if (dbversion) {
-      $where = "status != 'deleted'";
-      if ($author > 1) $where .= " and author = $author";
-      return $this->finditems($where, ' order by posted desc limit ' . (int) $count);
-    }  else {
-      return array_slice(array_keys($this->archives), 0, $count);
-    }
+    $where = "status != 'deleted'";
+    if ($author > 1) $where .= " and author = $author";
+    return $this->finditems($where, ' order by posted desc limit ' . (int) $count);
   }
   
   public function getpage($author, $page, $perpage, $invertorder) {
     $author = (int) $author;
     $from = ($page - 1) * $perpage;
-    if (dbversion)  {
-      $where = "status = 'published'";
-      if ($author > 1) $where .= " and author = $author";
-      $order = $invertorder ? 'asc' : 'desc';
-      //      return $this->select($where, " order by posted $order limit $from, $perpage");
-      return $this->finditems($where,  " order by posted $order limit $from, $perpage");
-    } else {
-      $count = $this->archivescount;
-      if ($from > $count)  return array();
-      $to = min($from + $perpage , $count);
-      $result = array_keys($this->archives);
-      if ($invertorder) $result =array_reverse($result);
-      return array_slice($result, $from, $to - $from);
-    }
+    $where = "status = 'published'";
+    if ($author > 1) $where .= " and author = $author";
+    $order = $invertorder ? 'asc' : 'desc';
+    return $this->finditems($where,  " order by posted $order limit $from, $perpage");
   }
   
   public function GetPublishedRange($page, $perpage) {
     $count = $this->archivescount;
     $from = ($page - 1) * $perpage;
     if ($from > $count)  return array();
-    if (dbversion)  {
-      return $this->finditems("status = 'published'", " order by posted desc limit $from, $perpage");
-    } else {
-      $to = min($from + $perpage , $count);
-      return array_slice(array_keys($this->archives), $from, $to - $from);
-    }
+    
+    return $this->finditems("status = 'published'", " order by posted desc limit $from, $perpage");
   }
   
   public function stripdrafts(array $items) {
     if (count($items) == 0) return array();
-    if (dbversion) {
-      $list = implode(', ', $items);
-      return $this->db->idselect("status = 'published' and id in ($list)");
-    } else {
-      return array_intersect($items, array_keys($this->archives));
-    }
+    $list = implode(', ', $items);
+    return $this->db->idselect("status = 'published' and id in ($list)");
   }
   
   public function sortbyposted(array $items) {
     if (count($items) <= 1) return $items;
-    if (dbversion) {
-      $list = implode(', ', $items);
-      return $this->db->idselect("status = 'published' and id in ($list) order by posted desc");
-    }
-    /* надо выбрать опубликованные посты из items, потом отсортировать */
-    $result = array_intersect_key ($this->archives, array_combine($items, $items));
-    arsort($result,  SORT_NUMERIC);
-    return array_keys($result);
+    $list = implode(', ', $items);
+    return $this->db->idselect("status = 'published' and id in ($list) order by posted desc");
   }
   
   //coclasses
@@ -1567,14 +1456,14 @@ class tposttransform  {
   public $post;
   public static $arrayprops= array('categories', 'tags', 'files');
   public static $intprops= array('id', 'idurl', 'parent', 'author', 'revision', 'icon', 'commentscount', 'pingbackscount', 'pagescount', 'idview', 'idperm');
-  public static $boolprops= array('commentsenabled', 'pingenabled');
+  public static $boolprops= array('pingenabled');
   public static $props = array('id', 'idurl', 'parent', 'author', 'revision', 'class',
   //'created', 'modified',
   'posted',
   'title', 'title2', 'filtered', 'excerpt', 'rss', 'keywords', 'description', 'head', 'moretitle',
   'categories', 'tags', 'files',
   'password', 'idview', 'idperm', 'icon',
-  'status', 'commentsenabled', 'pingenabled',
+  'status', 'comments_status', 'pingenabled',
   'commentscount', 'pingbackscount', 'pagescount',
   );
   
@@ -1919,40 +1808,14 @@ class tcommontags extends titems implements  itemplate {
     $views = tviews::i();
     $idview = isset($views->defaults[$this->PermalinkIndex]) ? $views->defaults[$this->PermalinkIndex] : 1;
     
-    if ($this->dbversion)  {
-      $id = $this->db->add(array(
-      'idurl' => 0,
-      'customorder' => 0,
-      'parent' => $parent,
-      'title' => $title,
-      'idview' => $idview,
-      'idperm' => 0,
-      'icon' => 0,
-      'itemscount' => 0,
-      'includechilds' => $this->includechilds,
-      'includeparents' => $this->includeparents,
-      'invertorder' => false,
-      'lite' => $this->lite,
-      'liteperpage' => 1000
-      ));
-      $idurl =         $urlmap->add($url, get_class($this),  $id);
-      $this->db->setvalue($id, 'idurl', $idurl);
-    } else {
-      $id = ++$this->autoid;
-      $idurl =         $urlmap->add($url, get_class($this),  $id);
-    }
-    
-    $this->lock();
-    $this->items[$id] = array(
-    'id' => $id,
+    $item = array(
+    'idurl' => 0,
     'customorder' => 0,
     'parent' => $parent,
-    'idurl' =>         $idurl,
-    'url' =>$url,
     'title' => $title,
-    'icon' => 0,
     'idview' => $idview,
     'idperm' => 0,
+    'icon' => 0,
     'itemscount' => 0,
     'includechilds' => $this->includechilds,
     'includeparents' => $this->includeparents,
@@ -1960,8 +1823,12 @@ class tcommontags extends titems implements  itemplate {
     'lite' => $this->lite,
     'liteperpage' => 1000
     );
-    $this->unlock();
     
+    $id = $this->db->add($item);
+    $this->items[$id] = $item;
+    $idurl =         $urlmap->add($url, get_class($this),  $id);
+    $this->setvalue($id, 'idurl', $idurl);
+    $this->items[$id]['url'] = $url;
     $this->added($id);
     $this->changed();
     $urlmap->clearcache();
@@ -2091,8 +1958,11 @@ class tcommontags extends titems implements  itemplate {
       return 404;
     }
     
-    if ($this->lite && (litepublisher::$urlmap->page > 1)) {
-      return sprintf("<?php turlmap::redir301('%s');",$item['url']);
+    $perpage = (int) $item['lite'] ? (int) $item['liteperpage'] : litepublisher::$options->perpage;
+    $list = $this->getidposts();
+    $pages = ceil($ount ($list) / $perpage);
+    if (litepublisher::$urlmap->page > $pages) {
+      return sprintf("<?php litepublisher::$urlmap->redir('%s');",$item['url']);
     }
     
   }

@@ -53,14 +53,14 @@ class tcomments extends titems {
     'rawcontent' => $content,
     'hash' => basemd5($content)
     ));
-
-$this->added($id);    
+    
+    $this->added($id);
     return $id;
   }
   
   public function edit($id, $content) {
-  if (!$this->itemexists($id)) return false;
-$filtered = tcontentfilter::i()->filtercomment($content);
+    if (!$this->itemexists($id)) return false;
+    $filtered = tcontentfilter::i()->filtercomment($content);
     $this->db->setvalue($id, 'content', $filtered);
     $this->getdb($this->rawtable)->updateassoc(array(
     'id' => $id,
@@ -68,13 +68,13 @@ $filtered = tcontentfilter::i()->filtercomment($content);
     'rawcontent' => $content,
     'hash' => basemd5($content)
     ));
-
-if (isset($this->items[$id])) {
-$this->items[$id]['content'] = $filtered;
-$this->items[$id]['rawcontent'] = $content;
-}    
-
-$this->edited($id);
+    
+    if (isset($this->items[$id])) {
+      $this->items[$id]['content'] = $filtered;
+      $this->items[$id]['rawcontent'] = $content;
+    }
+    
+    $this->edited($id);
     return true;
   }
   
@@ -85,9 +85,9 @@ $this->edited($id);
   public function delete($id) {
     return $this->db->setvalue($id, 'status', 'deleted');
   }
-
+  
   public function postdeleted($idpost) {
-      $this->db->update("status = 'deleted'", "post = $idpost");
+    $this->db->update("status = 'deleted'", "post = $idpost");
   }
   
   public function setstatus($id, $status) {
@@ -101,7 +101,7 @@ $this->edited($id);
   public function select($where, $limit) {
     if ($where != '') $where .= ' and ';
     $table = $this->thistable;
-$authors = litepublisher::$db->users;
+    $authors = litepublisher::$db->users;
     $res = litepublisher::$db->query("select $table.*, $authors.name, $authors.email, $authors.website, $authors.trust from $table, $authors
     where $where $authors.id = $table.author $limit");
     
@@ -115,8 +115,8 @@ $authors = litepublisher::$db->users;
   public function getapprovedcount() {
     return $this->db->getcount("post = $this->pid and status = 'approved'");
   }
-
-//uses in import functions  
+  
+  //uses in import functions
   public function insert($idauthor, $content, $ip, $posted, $status) {
     $filtered = tcontentfilter::i()->filtercomment($content);
     $item = array(
@@ -144,8 +144,8 @@ $authors = litepublisher::$db->users;
     return $id;
   }
   
-    public function getmoderator() {
-return litepublisher::$options->ingroup('moderator');
+  public function getmoderator() {
+    return litepublisher::$options->ingroup('moderator');
   }
   
   public function getcontent() {
@@ -162,13 +162,13 @@ return litepublisher::$options->ingroup('moderator');
       $args->comment = '';
       $result .= $theme->parsearg($theme->templates['content.post.templatecomments.holdcomments'], $args);
     }
-
-return $result;
-
-/*    
+    
+    return $result;
+    
+    /*
     $args->comments = $result;
     return $theme->parsearg($theme->templates['content.post.templatecomments.moderateform'], $args);
-*/
+    */
   }
   
   public function getholdcontent($idauthor) {
@@ -179,7 +179,7 @@ return $result;
   private function getcontentwhere($status, $whereauthor) {
     $result = '';
     $post = tpost::i($this->pid);
-$theme = $post->theme;
+    $theme = $post->theme;
     if ($status == 'approved') {
       if (litepublisher::$options->commentpages ) {
         $page = litepublisher::$urlmap->page;
@@ -232,7 +232,7 @@ $theme = $post->theme;
     
     if ($status == 'hold') {
       $tml = $theme->templates['content.post.templatecomments.holdcomments'];
-$tml .= ttemplate::i()->getjavascript('$site.files$template.jsmerger_moderate');
+      $tml .= ttemplate::i()->getjavascript('$site.files$template.jsmerger_moderate');
     } else {
       $tml = $theme->templates['content.post.templatecomments.comments'];
     }
@@ -245,7 +245,7 @@ $tml .= ttemplate::i()->getjavascript('$site.files$template.jsmerger_moderate');
 }//class
 
 class tcomment extends tdata {
-private static $md5 = array();
+  private static $md5 = array();
   
   public function __construct($id = 0) {
     if (!isset($id)) return false;
@@ -340,13 +340,13 @@ private static $md5 = array();
   
   public function getmd5email() {
     $email = $this->data['email'];
-if ($email) {
-if (isset(self::$md5[$email])) return self::$md5[$email];
-$md5 = md5($email);
-self::$md5[$email] = $md5;
-return $md5;
-}
-return '';
+    if ($email) {
+      if (isset(self::$md5[$email])) return self::$md5[$email];
+      $md5 = md5($email);
+      self::$md5[$email] = $md5;
+      return $md5;
+    }
+    return '';
   }
   
   public function getgravatar() {

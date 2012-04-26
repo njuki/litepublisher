@@ -53,14 +53,27 @@ class tdboptimizer extends tevents {
     }
     
     //comments
-    $db->exec("delete from $db->rawcomments where id in
-    (select id from $db->comments where status = 'deleted')");
-    
-    $db->exec("delete from $db->comments where status = 'deleted'");
-    
-    $db->exec("delete from $db->comusers where id not in
+$db->table = 'comments';
+$items = $db->idselect("status = 'deleted'");
+      $deleted = sprintf('id in (%s)', implode(',', $items));
+$db->delete($deleted);
+$db->table = 'rawcomments');
+$db->delete($deleted);
+
+//divide one qury by parts
+/*
+    $db->exec("delete from $db->users where status = 'comuser' and id not in
     (select DISTINCT author from $db->comments)");
-    
+  */  
+
+    $from = 0;
+$db->table = 'users';
+    while ($items = $db->res2id($db->query("select id from $db->users where status = 'comuser' limit $from, 200"))) {
+$from += count($items);
+$comusers= implode(',', $items);
+      $deleted = $db->res2id($db->query("select author from $db->comments where
+
+}
     //subscribtions
     $db->exec("delete from $db->subscribers where post not in (select id from $db->posts)");
     $db->exec("delete from $db->subscribers where item not in (select id from $db->comusers)");

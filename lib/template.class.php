@@ -34,7 +34,7 @@ class ttemplate extends tevents_storage {
     'files' =>litepublisher::$site->files,
     'idurl' => litepublisher::$urlmap->itemrequested['id'],
     'jqueryui_version' => litepublisher::$site->jqueryui_version,
-'theme' => array()
+    'theme' => array()
     );
     $this->hover = true;
     $this->data['heads'] = '';

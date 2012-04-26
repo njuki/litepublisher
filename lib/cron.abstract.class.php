@@ -40,14 +40,14 @@ class tabstractcron extends tevents {
     if (($fh = @fopen($this->path .'cron.lok', 'w')) &&       flock($fh, LOCK_EX | LOCK_NB)) {
       try {
         set_time_limit(300);
-if (litepublisher::$debug) {
-        ignore_user_abort(true);
-} else {
-litepublisher::$urlmap->close_connection();
-}
-    if (ob_get_level()) ob_end_flush ();
-flush();
-
+        if (litepublisher::$debug) {
+          ignore_user_abort(true);
+        } else {
+          litepublisher::$urlmap->close_connection();
+        }
+        if (ob_get_level()) ob_end_flush ();
+        flush();
+        
         $this->sendexceptions();
         $this->log("started loop");
         $this->execute();
@@ -86,7 +86,7 @@ flush();
   }
   
   public function ping() {
-$p = parse_url(litepublisher::$site->url . $this->url);
+    $p = parse_url(litepublisher::$site->url . $this->url);
     $this->pinghost($p['host'], $p['path'] . (empty($p['query']) ? '' : '?' . $p['query']));
   }
   

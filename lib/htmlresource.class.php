@@ -417,7 +417,7 @@ class tautoform {
     $result = '';
     $lang = tlocal::i();
     $theme = ttheme::i();
-
+    
     foreach ($this->props as $prop) {
     $value = $prop['obj']->{$prop['propname']};
       switch ($prop['type']) {
@@ -435,7 +435,7 @@ class tautoform {
         break;
       }
       
-    $result .= strtr($theme->templates['content.admin.' . $prop['type']], array(
+      $result .= strtr($theme->templates['content.admin.' . $prop['type']], array(
     '$lang.$name' => empty($prop['title']) ? $lang->{$prop['propname']} : $prop['title'],
       '$name' => $prop['propname'],
       '$value' => $value
