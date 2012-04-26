@@ -38,7 +38,7 @@ class tcommentform extends tevents {
     $id = (int) $id;
     if ($id == 0) return false;
     $db = litepublisher::$db;
-    return $db->selectassoc("select id, idurl, idperm, status, comments_status, commentscount from $db->posts where id = $id");
+    return $db->selectassoc("select id, idurl, idperm, status, comstatus, commentscount from $db->posts where id = $id");
   }
   
   public function invalidate(array $shortpost) {
@@ -51,7 +51,7 @@ class tcommentform extends tevents {
       return $this->geterrorcontent($lang->commentondraft);
     }
     
-    if ($shortpost['comments_status'] == 'closed') {
+    if ($shortpost['comstatus'] == 'closed') {
       return $this->geterrorcontent($lang->commentsdisabled);
     }
     
@@ -83,7 +83,7 @@ class tcommentform extends tevents {
       if (!$confirmed && $cm->confirmlogged)  return $this->request_confirm($values, $shortpost);
       $iduser = litepublisher::$options->user;
     } else {
-      switch ($shortpost['comments_status']) {
+      switch ($shortpost['comstatus']) {
         case 'reg':
         return $this->geterrorcontent($lang->reg);
         
@@ -233,10 +233,11 @@ class tcommentform extends tevents {
         
         $values['url'] = isset($values['url']) ? tcontentfilter::escape(tcontentfilter::clean_website($values['url'])) : '';
         $values['subscribe'] = isset($values['subscribe']);
-        
-        
+
+/*        
         $subscribers = tsubscribers::i();
         $subscribers->update($post->id, $uid, $values['subscribe']);
+*/
       }
       
       public function sendresult($link, $cookies) {

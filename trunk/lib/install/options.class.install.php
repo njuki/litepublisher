@@ -58,7 +58,7 @@ function installoptions($email, $language) {
   $options->DefaultCommentStatus = 'approved';
   $options->commentsdisabled = false;
   $options->commentsenabled = true;
-  $options->comments_status = 'guest';
+  $options->comstatus = 'guest';
   $options->pingenabled = true;
   $options->commentpages = true;
   $options->commentsperpage = 100;

@@ -148,7 +148,7 @@ class tposteditor extends tadminmenu {
     if (isset($status)) {
       $post->status = $status == 'draft' ? 'draft' : 'published';
       if (dbversion) {
-        $post->comments_status = $comments_status;
+        $post->comstatus = $comstatus;
       } else {
         $post->commentsenabled = isset($commentsenabled);
       }

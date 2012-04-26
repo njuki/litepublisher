@@ -25,12 +25,12 @@ class Tadmincommentmanager extends tadminmenu {
     $cm = tcommentmanager::i();
     $options = litepublisher::$options;
     
-    $args->comments_status = tadminhtml::array2combo(array(
+    $args->comstatus = tadminhtml::array2combo(array(
     'closed' => $lang->closed,
     'reg' => $lang->reg,
     'guest' => $lang->guest,
     'comuser' => $lang->comuser
-    ), $options->comments_status);
+    ), $options->comstatus);
     
     $args->filtercommentstatus = $options->filtercommentstatus;
     $args->commentsapproved = $options->commentsapproved;
@@ -55,7 +55,7 @@ class Tadmincommentmanager extends tadminmenu {
     $args->confirmemail = $cm->confirmemail;
     
     $tabs->add($lang->options,
-    '[combo=comments_status]
+    '[combo=comstatus]
     [checkbox=filtercommentstatus]
     [checkbox=commentsapproved]
     [checkbox=checkduplicate]
@@ -100,7 +100,7 @@ class Tadmincommentmanager extends tadminmenu {
     $cm = tcommentmanager::i();
     $cm->lock();
     
-    $options->comments_status = $comments_status;
+    $options->comstatus = $comstatus;
     $options->filtercommentstatus =isset($filtercommentstatus);
     $options->commentsapproved = isset($commentsapproved);
     $options->checkduplicate = isset($checkduplicate);

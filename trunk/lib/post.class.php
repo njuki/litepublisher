@@ -90,7 +90,7 @@ class tpost extends titem implements  itemplate {
     'tags' => array(),
     'files' => array(),
     'status' => 'published',
-    'comments_status' => litepublisher::$options->comments_status,
+    'comstatus' => litepublisher::$options->comstatus,
     'pingenabled' => litepublisher::$options->pingenabled,
     'password' => '',
     'idview' => 1,
@@ -458,8 +458,8 @@ class tpost extends titem implements  itemplate {
   }
   
   public function gethead() {
-    // backward compatably with file version
-    $result = isset($this->data['head']) ? $this->data['head'] : '';
+    $result = $this->data['head'];
+$result .= ttemplate::i()->getjavascript('/js/litepublisher/moderate2.js');
     ttemplate::i()->ltoptions['idpost'] = $this->id;
     $theme = $this->theme;
     $result .= $theme->templates['head.post'];
@@ -606,11 +606,11 @@ class tpost extends titem implements  itemplate {
   }
   
   public function getcommentsenabled() {
-    return 'closed' != $this->data['comments_status'];
+    return 'closed' != $this->data['comstatus'];
   }
   
   public function setcommentsenabled($value) {
-    $this->data['comments_status'] = $value ? litepublisher::$options->comments_status : 'closed';
+    $this->data['comstatus'] = $value ? litepublisher::$options->comstatus : 'closed';
   }
   
   public function get_excerpt() {
