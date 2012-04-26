@@ -81,11 +81,11 @@ class tcommentmanager extends tevents_storage {
     $comments->getdb('posts')->setvalue($idpost, 'commentscount', $count);
     //update trust
     try {
-      $idauthor = $COMMENTS->GETVALUE($ID, 'AUTHOR');
-      $USERS = TUSERS::I();
-      IF ($THIS->trustlevel > INTVAL($USERS->GETVALUE($IDAUTHOR, 'TRUST'))) {
-        $TRUST = $comments->db->getcount("author = $idauthor and status = 'approved' limit " . ($THIS->trustlevel + 1));
-        $users->setvalue($idauthor, 'trust', $TRUST);
+      $idauthor = $comments->getvalue($id, 'author');
+      $users = tusers::i();
+      if ($this->trustlevel > intval($users->getvalue($idauthor, 'trust'))) {
+        $trust = $comments->db->getcount("author = $idauthor and status = 'approved' limit " . ($this->trustlevel + 1));
+        $users->setvalue($idauthor, 'trust', $trust);
       }
     } catch (Exception $e) {
     }
