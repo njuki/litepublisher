@@ -56,7 +56,7 @@ class tregservice extends tplugin {
   
   
   public function start_session() {
-tsession::init(1);
+    tsession::init(1);
     session_start();
   }
   
@@ -66,10 +66,10 @@ tsession::init(1);
     if (empty($_REQUEST['code'])) return 403;
     $this->start_session();
     if (empty($_REQUEST['state']) || empty($_SESSION['state']) ||
-   ($_REQUEST['state'] != $_SESSION['state'])) {
-    session_destroy();
-return 403;
-}
+    ($_REQUEST['state'] != $_SESSION['state'])) {
+      session_destroy();
+      return 403;
+    }
     session_destroy();
   }
   
@@ -114,8 +114,8 @@ return 403;
     $reguser =tregserviceuser::i();
     if (!empty($item['email'])) {
       if ($id = $users->emailexists($item['email'])) {
-$user = $users->getitem($id);        
-if (($user['status'] == 'wait') || ($user['status'] == 'comuser')) $users->approve($id);
+        $user = $users->getitem($id);
+        if (($user['status'] == 'wait') || ($user['status'] == 'comuser')) $users->approve($id);
       } elseif (litepublisher::$options->reguser) {
         $id = $users->add(array(
         'email' => $item['email'],
@@ -125,14 +125,14 @@ if (($user['status'] == 'wait') || ($user['status'] == 'comuser')) $users->appro
         $users->approve($id);
         if (isset($item['uid'])) $reguser->add($id, $this->name, $item['uid']);
       } else {
-//registration disabled
+        //registration disabled
         return 403;
-}
+      }
     } else {
       $uid = !empty($item['uid']) ? $item['uid'] : (!empty($item['website']) ? $item['website'] : '');
       if ($uid) {
         if ($id = $reguser->find($this->name, $uid)){
-//nothing
+          //nothing
         } elseif (litepublisher::$options->reguser) {
           $id = $users->add(array(
           'email' => '',
@@ -142,9 +142,9 @@ if (($user['status'] == 'wait') || ($user['status'] == 'comuser')) $users->appro
           $users->approve($id);
           $reguser->add($id, $this->name, $uid);
         } else {
-//registration disabled
-        return 403;
-}
+          //registration disabled
+          return 403;
+        }
       } else {
         //nothing found and hasnt email or uid
         return 403;
