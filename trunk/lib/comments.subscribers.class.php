@@ -14,7 +14,7 @@ class tsubscribers extends titemsposts {
   }
   
   protected function create() {
-    $this->dbversion = dbversion;
+    $this->dbversion = true;
     parent::create();
     $this->table = 'subscribers';
     $this->basename = 'subscribers';
@@ -34,22 +34,10 @@ class tsubscribers extends titemsposts {
   
   public function update($pid, $uid, $subscribed) {
     if ($subscribed == $this->exists($pid, $uid)) return;
-    if (dbversion) {
       $this->remove($pid, $uid);
-      $user = tcomusers::i()->getitem($uid);
+      $user = tusers::i()->getitem($uid);
       if (in_array($user['email'], $this->blacklist)) return;
       if ($subscribed) $this->add($pid, $uid);
-    } else {
-      if ($subscribed) {
-        $user = tcomusers::i($pid)->getitem($uid);
-        $subscribed = !in_array($user['email'], $this->blacklist);
-      }
-      if ($subscribed) {
-        $this->add($pid, $uid);
-      } else {
-        $this->remove($pid, $uid);
-      }
-    }
   }
   
   public function setenabled($value) {
@@ -82,7 +70,6 @@ class tsubscribers extends titemsposts {
     $this->data['blacklist'] = $a;
     $this->save();
     
-    if (dbversion) {
       $dblist = array();
       foreach ($a as $s) {
         if ($s == '') continue;
@@ -90,9 +77,8 @@ class tsubscribers extends titemsposts {
       }
       if (count($dblist) > 0) {
         $db = $this->db;
-        $db->delete("item in (select id from $db->comusers where email in (" . implode(',', $dblist) . '))');
+        $db->delete("item in (select id from $db->users where email in (" . implode(',', $dblist) . '))');
       }
-    }
   }
   
   public function sendmail($id, $idpost) {

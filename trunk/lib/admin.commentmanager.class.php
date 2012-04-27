@@ -53,7 +53,7 @@ class Tadmincommentmanager extends tadminmenu {
     $args->redir = $cm->redir;
     $args->nofollow = $cm->nofollow;
 
-    $tabs->add($lang->list, '
+    $tabs->add($lang->templates, '
     [checkbox=commentpages]
     [text=commentsperpage]
     [checkbox=comments_invert_order]
@@ -69,7 +69,7 @@ class Tadmincommentmanager extends tadminmenu {
     $args->confirmcomuser = $cm->confirmcomuser;
     $args->confirmemail = $cm->confirmemail;
 
-    $tabs->add($lang->rights, '
+    $tabs->add($lang->perms, '
     [checkbox=canedit]
     [checkbox=candelete]
     [checkbox=confirmlogged]

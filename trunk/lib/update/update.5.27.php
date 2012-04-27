@@ -55,8 +55,11 @@ unset(litepublisher::$classes->classes['comusers']);
   litepublisher::$options->comstatus = 'guest';
 
 $admin = tadminmenus::i();
-$admin->items[$admin->url2id('/admin/options/comments/')]['class'] = 'tadmincommentmanager';
+if ($id = $admin->url2id('/admin/options/comments/')) {
+$admin->items[$id]['class'] = 'Tadmincommentmanager';
 $admin->save();
+litepublisher::$urlmap->setvalue($admin->items[$id]['idurl'], 'class', 'Tadmincommentmanager');
+}
 
 tjsmerger::i()->deletefile('moderate', '/js/litepublisher/rpc.min.js');
 
