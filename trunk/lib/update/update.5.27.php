@@ -172,4 +172,6 @@ $man->alter('comments', "add KEY `author` (`author`)");
 
 $man->deletetable('comusers');
 $man->deletetable('commentskept');
+
+litepublisher::$options->savemodified();
 }

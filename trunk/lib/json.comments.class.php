@@ -25,8 +25,9 @@ class tjsoncomments extends tevents {
   
   public function comment_setstatus($args) {
     $this->auth();
-    $manager = tcommentmanager::i();
-return $manager->setstatus((int) $args['id'], $args['status']);
+$result = tcommentmanager::i()->setstatus((int) $args['id'], $args['status']);
+return $result;
+return array('result' => $result);
   }
   
   public function comment_edit(array $args) {

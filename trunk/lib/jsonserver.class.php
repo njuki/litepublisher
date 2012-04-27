@@ -64,7 +64,7 @@ class tjsonserver extends titems {
     } else {
       return 403;
     }
-    
+
     if (!isset($this->events[$method])) return 403;
     if (isset($args['litepubl_user'])) $_COOKIE['litepubl_user'] = $args['litepubl_user'];
     if (isset($args['litepubl_user_id'])) $_COOKIE['litepubl_user_id'] = $args['litepubl_user_id'];
