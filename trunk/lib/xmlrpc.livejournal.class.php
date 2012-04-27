@@ -105,7 +105,7 @@ class TXMLRPCLivejournal extends TXMLRPCAbstract {
     
     if (isset($struct['props'])) {
       $props = &$struct['props'];
-      $post->commentsenabled = $props['opt_nocomments'] ? false : true;
+      $post->comstatus = $props['opt_nocomments'] ? 'closed' : litepublisher::$options->comstatus;
       if ($props['opt_preformatted']) {
         $post->filtered = $struct['event'];
       }

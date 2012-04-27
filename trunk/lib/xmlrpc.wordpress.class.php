@@ -37,7 +37,6 @@ class TXMLRPCWordpress extends TXMLRPCMetaWeblog {
     "categories"			=> array(),
     "excerpt"				=> '',
     "text_more"				=> '',
-    //"mt_allow_comments"		=> $menu->commentsenabled ? 1 : 0,
     "mt_allow_comments"		=> 0,
     //"mt_allow_pings"		=> $menu->pingenabled ? 1 : 0,
     "mt_allow_pings"		=> 0,

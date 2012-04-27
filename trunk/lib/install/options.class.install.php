@@ -57,14 +57,12 @@ function installoptions($email, $language) {
   $options->filtercommentstatus = true;
   $options->DefaultCommentStatus = 'approved';
   $options->commentsdisabled = false;
-  $options->commentsenabled = true;
   $options->comstatus = 'guest';
   $options->pingenabled = true;
   $options->commentpages = true;
   $options->commentsperpage = 100;
   $options->checkduplicate = true;
   $options->defaultsubscribe = true;
-  $options->autocmtform = true;
   $options->comments_invert_order = false;
   
   $versions = strtoarray(file_get_contents(dirname(__file__) . DIRECTORY_SEPARATOR . 'versions.txt'));
