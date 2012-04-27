@@ -53,21 +53,21 @@ class ttemplatecomments extends tevents {
           case 'reg':
           $mesg = $this->reqlogin;
           if (litepublisher::$options->reguser) $mesg .= $this->regaccount;
-          $args->mesg = $this->fixmesg($mesg);
+          $args->mesg = $this->fixmesg($mesg, $theme);
           $result .= $theme->parsearg($theme->templates['content.post.templatecomments.regform'], $args);
           break;
           
           case 'guest':
           $mesg = $this->guest;
           if (litepublisher::$options->reguser) $mesg .= $this->regaccount;
-          $args->mesg = $this->fixmesg($mesg);
+          $args->mesg = $this->fixmesg($mesg, $theme);
           $result .= $theme->parsearg($theme->templates['content.post.templatecomments.regform'], $args);
           break;
           
           case 'comuser':
           $mesg = $this->comuser;
           if (litepublisher::$options->reguser) $mesg .= $this->regaccount;
-          $args->mesg = $this->fixmesg($mesg);
+          $args->mesg = $this->fixmesg($mesg, $theme);
           
           foreach (array('name', 'email', 'url') as $field) {
             $args->$field = "<?php echo (isset(\$_COOKIE['comuser_$field']) ? \$_COOKIE['comuser_$field'] : ''); ?>";
@@ -87,9 +87,9 @@ class ttemplatecomments extends tevents {
     return $result;
   }
   
-  public function fixmesg($mesg) {
-    return str_replace('backurl=', 'backurl=' . urlencode(litepublisher::$urlmap->url),
-    str_replace('&backurl=', '&amp;backurl=', $mesg));
+  public function fixmesg($mesg, $theme) {
+    return $theme->parse(str_replace('backurl=', 'backurl=' . urlencode(litepublisher::$urlmap->url),
+    str_replace('&backurl=', '&amp;backurl=', $mesg)));
   }
   
 } //class
