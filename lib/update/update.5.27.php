@@ -1,6 +1,8 @@
 <?php
 
 function update527() {
+litepublisher::$options->delete('autocmtform');
+litepublisher::$options->delete('commentsenabled');
 
 $cm = tcommentmanager::i();
 $data = new tdata();

@@ -167,8 +167,6 @@ class tajaxposteditor  extends tevents {
         'guest' => $lang->guest,
         'comuser' => $lang->comuser
         ), $post->comstatus);
-      } else {
-        $args->commentsenabled = $post->commentsenabled;
       }
       
       $args->pingenabled = $post->pingenabled;
@@ -180,8 +178,8 @@ class tajaxposteditor  extends tevents {
       $args->perms = tadminperms::getcombo($post->idperm);
       $args->password = $post->password;
       $result = $html->parsearg(
-      (dbversion ? '[combo=comstatus]' : '[checkbox=commentsenabled]') .
-      '[checkbox=pingenabled]
+      '[combo=comstatus]
+      [checkbox=pingenabled]
       [combo=status]
       $perms
       [password=password]

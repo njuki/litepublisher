@@ -213,7 +213,7 @@ class tcomments extends titems {
     
     $tml = strtr($theme->templates['content.post.templatecomments.comments.comment'], array(
     '$moderate' => $moderate,
-    '$quotebuttons' => $post->commentsenabled ? $theme->templates['content.post.templatecomments.comments.comment.quotebuttons'] : ''
+    '$quotebuttons' => $post->comstatus != 'closed' ? $theme->templates['content.post.templatecomments.comments.comment.quotebuttons'] : ''
     ));
     
     $index = $from;

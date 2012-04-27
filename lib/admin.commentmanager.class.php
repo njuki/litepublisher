@@ -18,13 +18,12 @@ class Tadmincommentmanager extends tadminmenu {
   
   public function getcontent() {
     $result = '';
+    $cm = tcommentmanager::i();
+    $options = litepublisher::$options;
     $html = $this->gethtml('commentmanager');
     $lang = tlocal::admin('commentmanager');
     $args = new targs();
     $tabs = new tuitabs();
-    $cm = tcommentmanager::i();
-    $options = litepublisher::$options;
-    
     $args->comstatus = tadminhtml::array2combo(array(
     'closed' => $lang->closed,
     'reg' => $lang->reg,
@@ -35,54 +34,60 @@ class Tadmincommentmanager extends tadminmenu {
     $args->filtercommentstatus = $options->filtercommentstatus;
     $args->commentsapproved = $options->commentsapproved;
     $args->checkduplicate = $options->checkduplicate;
-    $args->defaultsubscribe = $options->defaultsubscribe;
     $args->commentsdisabled  = $options->commentsdisabled;
-    $args->autocmtform  = $options->autocmtform;
     $args->pingenabled  = $options->pingenabled;
+
+    $tabs->add($lang->options, '
+    [combo=comstatus]
+    [checkbox=filtercommentstatus]
+    [checkbox=commentsapproved]
+    [checkbox=checkduplicate]
+    [checkbox=commentsdisabled]
+    [checkbox=pingenabled]
+');
+
     $args->commentpages  = $options->commentpages;
     $args->commentsperpage  = $options->commentsperpage;
     $args->comments_invert_order  = $options->comments_invert_order;
-    
-    $args->sendnotification = $cm->sendnotification;
     $args->hidelink =  $cm->hidelink;
     $args->redir = $cm->redir;
     $args->nofollow = $cm->nofollow;
+
+    $tabs->add($lang->list, '
+    [checkbox=commentpages]
+    [text=commentsperpage]
+    [checkbox=comments_invert_order]
+    [checkbox=hidelink]
+    [checkbox=redir]
+    [checkbox=nofollow]
+');
+
     $args->canedit = $cm->canedit;
     $args->candelete = $cm->candelete;
     $args->confirmlogged = $cm->confirmlogged;
     $args->confirmguest = $cm->confirmguest ;
     $args->confirmcomuser = $cm->confirmcomuser;
     $args->confirmemail = $cm->confirmemail;
-    
-    $tabs->add($lang->options,
-    '[combo=comstatus]
-    [checkbox=filtercommentstatus]
-    [checkbox=commentsapproved]
-    [checkbox=checkduplicate]
-    [checkbox=defaultsubscribe]
-    [checkbox=commentsdisabled]
-    [checkbox=autocmtform]
-    [checkbox=pingenabled]
-    [checkbox=commentpages]
-    [text=commentsperpage]
-    [checkbox=comments_invert_order]
-    [checkbox=sendnotification]
-    [checkbox=hidelink]
-    [checkbox=redir]
-    [checkbox=nofollow]
+
+    $tabs->add($lang->rights, '
     [checkbox=canedit]
     [checkbox=candelete]
-    
     [checkbox=confirmlogged]
     [checkbox=confirmguest]
     [checkbox=confirmcomuser]
     [checkbox=confirmemail]
     ');
     
-    
+        $args->sendnotification = $cm->sendnotification;
+    $args->defaultsubscribe = $options->defaultsubscribe;
     $args->locklist = tsubscribers::i()->locklist;
-    $tabs->add('E-Mail', '[editor=locklist]');
-    
+
+        $tabs->add($lang->subscribe, '
+    [checkbox=sendnotification]
+    [checkbox=defaultsubscribe]
+[editor=locklist]
+');
+
     $mesgtabs = new tuitabs();
     $tc = ttemplatecomments::i();
     foreach (array('logged', 'reqlogin', 'regaccount', 'guest', 'comuser') as $name) {
@@ -106,7 +111,6 @@ class Tadmincommentmanager extends tadminmenu {
     $options->checkduplicate = isset($checkduplicate);
     $options->defaultsubscribe = isset($defaultsubscribe);
     $options->commentsdisabled  = isset($commentsdisabled);
-    $options->autocmtform  = isset($autocmtform);
     $options->pingenabled  = isset($pingenabled);
     $options->commentpages  = isset($commentpages);
     $options->commentsperpage  = (int) trim($commentsperpage);

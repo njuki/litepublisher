@@ -473,7 +473,7 @@ $result .= ttemplate::i()->getjavascript('/js/litepublisher/moderate2.js');
       $result .= $theme->templates['head.post.next'];
     }
     
-    if ($this->commentsenabled && ($this->commentscount > 0) ) {
+    if ($this->hascomm) {
       $lang = tlocal::i('comment');
       $result .= $theme->templates['head.post.rss'];
     }
@@ -543,7 +543,7 @@ $result .= ttemplate::i()->getjavascript('/js/litepublisher/moderate2.js');
   }
   
   public function getrsslink() {
-    if ($this->commentsenabled && ($this->commentscount > 0)) {
+    if ($this->hascomm) {
       return $this->parsetml('content.post.rsslink');
     }
     return '';
@@ -575,7 +575,7 @@ $result .= ttemplate::i()->getjavascript('/js/litepublisher/moderate2.js');
   }
   
   public function getcommentslink() {
-    if (($this->commentscount == 0) && !$this->commentsenabled) return '';
+    if (($this->commentscount == 0) && ($this->comstatus == 'closed')) return '';
     return sprintf('<a href="%s%s#comments">%s</a>', litepublisher::$site->url, $this->getlastcommenturl(), $this->getcmtcount());
   }
   
@@ -594,7 +594,7 @@ $result .= ttemplate::i()->getjavascript('/js/litepublisher/moderate2.js');
     $countpages = $this->countpages;
     if ($countpages > 1) $result .= $this->theme->getpages($this->url, $page, $countpages);
     
-    if (($this->commentscount > 0) || $this->commentsenabled || ($this->pingbackscount > 0)) {
+    if (($this->commentscount > 0) || ($this->comstatus != 'closed') || ($this->pingbackscount > 0)) {
       if (($countpages > 1) && ($this->commentpages < $page)) {
         $result .= $this->getcommentslink();
       } else {
@@ -605,12 +605,8 @@ $result .= ttemplate::i()->getjavascript('/js/litepublisher/moderate2.js');
     return $result;
   }
   
-  public function getcommentsenabled() {
-    return 'closed' != $this->data['comstatus'];
-  }
-  
-  public function setcommentsenabled($value) {
-    $this->data['comstatus'] = $value ? litepublisher::$options->comstatus : 'closed';
+  public function gethascomm() {
+return ($this->data['comstatus'] != 'closed') && ((int) $this->data['commentscount'] > 0);
   }
   
   public function get_excerpt() {

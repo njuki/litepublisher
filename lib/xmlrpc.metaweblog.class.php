@@ -17,32 +17,34 @@ class TXMLRPCMetaWeblog extends TXMLRPCAbstract {
       if(!is_numeric($struct["mt_allow_comments"])) {
         switch($struct["mt_allow_comments"]) {
           case "closed":
-          $post->commentsenabled = false;
+          $post->comstatus = 'closed';
           break;
           case "open":
-          $post->commentsenabled = true;
+          $post->comstatus = 'guest';
           break;
           default:
-          $post->commentsenabled = litepublisher::$options->commentsenabled;
+          $post->comstatus = litepublisher::$options->constatus;
           break;
         }
       }
       else {
         switch((int) $struct["mt_allow_comments"]) {
           case 0:
-          $post->commentsenabled = false;
+          $post->comstatus = 'closed';
           break;
+
           case 1:
-          $post->commentsenabled = true;
+          $post->comstatus = 'guest';
           break;
+
           default:
-          $post->commentsenabled = litepublisher::$options->commentsenabled;
+          $post->comstatus = litepublisher::$options->constatus;
           break;
         }
       }
     }
     else {
-      $post->commentsenabled = litepublisher::$options->commentsenabled;
+      $post->constatus = litepublisher::$options->constatus;
     }
     
     if(isset($struct["mt_allow_pings"])) {
@@ -310,7 +312,7 @@ class TXMLRPCMetaWeblog extends TXMLRPCAbstract {
     'categories' => $categories->getnames($post->categories),
     'mt_excerpt' => $post->excerpt,
     'mt_text_more' => '',
-    'mt_allow_comments' => $post->commentsenabled ? 1 : 0,
+    'mt_allow_comments' => $post->constaytus != 'closed' ? 1 : 0,
     'mt_allow_pings' => $post->pingenabled ? 1 : 0,
     'mt_keywords' => $post->tagnames,
     'wp_slug' => $post->url,
