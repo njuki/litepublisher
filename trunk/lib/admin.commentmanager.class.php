@@ -80,11 +80,14 @@ class Tadmincommentmanager extends tadminmenu {
     
         $args->sendnotification = $cm->sendnotification;
     $args->defaultsubscribe = $options->defaultsubscribe;
-    $args->locklist = tsubscribers::i()->locklist;
+$subscribe = tsubscribers::i();
+    $args->locklist = $subscribe->locklist;
+    $args->subscribe_enabled = $subscribe->enabled;
 
         $tabs->add($lang->subscribe, '
     [checkbox=sendnotification]
     [checkbox=defaultsubscribe]
+[checkbox=subscribe_enabled]
 [editor=locklist]
 ');
 
@@ -129,6 +132,11 @@ class Tadmincommentmanager extends tadminmenu {
     }
     $tc->save();
     
-    tsubscribers::i()->locklist = $locklist;
+    $subscr = tsubscribers::i();
+$subscr->lock();
+$subscr->locklist = $locklist;
+$subscr->enabled = isset($subscribe_enabled);
+$subscr->unlock();
+
   }
 }//class
