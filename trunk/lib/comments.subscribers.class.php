@@ -110,14 +110,16 @@ class tsubscribers extends titemsposts {
     $body = $mailtemplate->subscribebody();
     $body .= sprintf("\n%s/admin/subscribers/%suserid=", litepublisher::$site->url, litepublisher::$site->q);
     
-    $comusers = tcomusers::i();
-    $comusers->loaditems($subscribers);
+    $users = tusers::i();
+    $users->loaditems($subscribers);
     foreach ($subscribers as $uid) {
-      $user = $comusers->getitem($uid);
-      if (empty($user['email'])) continue;
-      if ($user['email'] == $comment->email) continue;
-      if (in_array($user['email'], $this->blacklist)) continue;
-      tmailer::sendmail(litepublisher::$site->name, $this->fromemail,  $user['name'], $user['email'],
+      $user = $users->getitem($uid);
+if ($user['status'] == 'hold') continue;
+$email = $user['email'];
+      if (empty($email)) continue;
+      if ($email == $comment->email) continue;
+      if (in_array($email, $this->blacklist)) continue;
+      tmailer::sendmail(litepublisher::$site->name, $this->fromemail,  $user['name'], $email,
       $subject, $body . rawurlencode($user['cookie']));
     }
   }
