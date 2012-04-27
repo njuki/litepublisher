@@ -246,11 +246,12 @@ class tadminmoderator extends tadmincommoncomments {
   }
   
   private function deleteauthor($uid) {
-    $comusers = tcomusers::i();
-    if (!$comusers->itemexists($uid)) return false;
+    $users = tusers::i();
+    if (!$users->itemexists($uid)) return false;
+if ('comuser' != $users->getvalue($uid, 'status')) return false;
     $comments = tcomments::i();
     $comments->db->delete("author = $uid");
-    $comusers->delete($uid);
+    $users->delete($uid);
     return true;
   }
   
@@ -260,24 +261,24 @@ class tadminmoderator extends tadmincommoncomments {
       $args->id = 0;
       $args->name = '';
       $args->email = '';
-      $args->url = '';
+      $args->website = '';
       $args->subscribed = '';
     } else {
-      $comusers = tcomusers::i();
-      if (!$comusers->itemexists($id)) return $this->notfound;
-      $args->add($comusers->getitem($id));
+      $users = tusers::i();
+      if (!$users->itemexists($id)) return $this->notfound;
+      $args->add($users->getitem($id));
       $args->subscribed = $this->getsubscribed($id);
     }
     return $this->html->authorform($args);
   }
   
   private function getauthorslist() {
-    $comusers = tcomusers::i();
+    $users = tusers::i();
     $args = targs::i();
     $perpage = 20;
-    $total = $comusers->count;
+    $total = $users->db->getcount("status = 'comuser'");
     $from = $this->getfrom($perpage, $total);
-    $res = $comusers->db->query("select * from $comusers->thistable order by id desc limit $from, $perpage");
+    $res = $users->db->query("select * from $users->thistable where status = 'comuser' order by id desc limit $from, $perpage");
     $items = litepublisher::$db->res2assoc($res);
     $html = $this->html;
     $result = sprintf($html->h2->authorlisthead, $from, $from + count($items), $total);
@@ -297,8 +298,8 @@ class tadminmoderator extends tadmincommoncomments {
   private function getsubscribed($authorid) {
     $db = litepublisher::$db;
     $authorid = (int) $authorid;
-    $comusers = tcomusers::i();
-    if (!$comusers->itemexists($authorid))  return '';
+    $users = tusers::i();
+    if (!$users->itemexists($authorid))  return '';
     $html = $this->gethtml('moderator');
     $result = '';
     $res = $db->query("select $db->posts.id as id, $db->posts.title as title, $db->urlmap.url as url
@@ -383,9 +384,10 @@ class tadminmoderator extends tadmincommoncomments {
       case 'authors':
       if (isset($_REQUEST['action']) && $_REQUEST['action'] == 'edit') {
         $id = $this->idget();
-        $comusers = tcomusers::i();
-        if (!$comusers->itemexists($id)) return $this->notfound;
-        $comusers->edit($id, $_POST['name'], $_POST['url'], $_POST['email'], $_POST['ip']);
+        $users = tusers::i();
+        if (!$users->itemexists($id)) return $this->notfound;
+        if ('comuser' != $users->getvalue($id, 'status')) return $this->notfound;
+        $users->edit($id, $_POST);
         $subscribers = tsubscribers::i();
         $subscribed = $subscribers->getposts($id);
         $checked = array();
@@ -394,12 +396,10 @@ class tadminmoderator extends tadmincommoncomments {
           $checked [] = $idpost;
         }
         $unsub = array_diff($subscribed, $checked);
-        if (count($unsub) > 0) {
-          $subscribers->lock();
+        if (count($unsub)) {
           foreach ($unsub as $idpost) {
             $subscribers->delete($idpost, $id);
           }
-          $subscribers->unlock();
         }
         
         $result =  $this->html->h2->authoredited;

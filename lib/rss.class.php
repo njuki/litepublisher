@@ -153,7 +153,7 @@ class trss extends tevents {
     $this->domrss->CreateRoot($post->rsscomments, "$lang->onpost $post->title");
     $comments = tcomments::i($idpost);
     $comment = new tarray2prop();
-    if (dbversion) {
+
       $recent = $comments->select("post = $idpost and status = 'approved'",
       "order by $comments->thistable.posted desc limit ". litepublisher::$options->perpage);
       
@@ -163,27 +163,6 @@ class trss extends tevents {
         $comment->title = $post->title;
         $this->AddRSSComment($comment, $title . $comment->name);
       }
-    } else {
-      $from =max(0, count($comments->items) - litepublisher::$options->perpage);
-      $items = array_slice(array_keys($comments->items), $from, litepublisher::$options->perpage);
-      $items = array_reverse($items);
-      $comusers = tcomusers::i($idpost);
-      foreach ($items as $id) {
-        $item = $comments->items[$id];
-        $item['id'] = $id;
-        $author = $comusers->items[$item['author']];
-        $item['name'] = $author['name'];
-        $item['email'] = $author['email'];
-        $item['url'] = $author['url'];
-        
-        $comment->array = $item;
-        $comment->posturl = $post->url;
-        $comment->title = $post->title;
-        $this->AddRSSComment($comment, $title . $comment->name);
-      }
-    }
-    
-    
   }
   
   public function addpost(tpost $post) {
