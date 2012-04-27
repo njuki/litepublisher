@@ -232,7 +232,7 @@ class tcomments extends titems {
     
     if ($status == 'hold') {
       $tml = $theme->templates['content.post.templatecomments.holdcomments'];
-      $tml .= ttemplate::i()->getjavascript('$site.files$template.jsmerger_moderate');
+      $tml .= ttemplate::i()->getjavascript('$template.jsmerger_moderate');
     } else {
       $tml = $theme->templates['content.post.templatecomments.comments'];
     }
