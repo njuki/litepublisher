@@ -94,8 +94,8 @@ class tdata {
     return false;
   }
   
-  public function error($Msg) {
-    throw new Exception($Msg);
+  public function error($Msg, $code = 0) {
+    throw new Exception($Msg, $code);
   }
   
   public function getbasename() {

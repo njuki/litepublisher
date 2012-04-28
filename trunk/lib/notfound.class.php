@@ -21,7 +21,7 @@ class tforbidden extends tevents_itemplate implements itemplate {
 public function request($arg) {}
 public function gettitle() {}
   public function  httpheader() {
-    return "<?php Header( 'HTTP/1.0 403 Forbidden'); ?>" . turlmap::htmlheader(false);
+    return '<?php Header(\'HTTP/1.0 403 Forbidden\', true, 403); ?>' . turlmap::htmlheader(false);
   }
   
   public function getcont() {

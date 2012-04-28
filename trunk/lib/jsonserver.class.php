@@ -74,8 +74,12 @@ class tjsonserver extends titems {
     try {
       $result = $this->callevent($method, $a);
     } catch (Exception $e) {
+if (403 == $e->getCode()) {
+    $result = '<?php Header(\'HTTP/1.0 403 Forbidden\', true, 403); ?>';
+} else {
       //500 error
       $result = '<?php header(\'HTTP/1.1 500 Internal Server Error\', true, 500); ?>';
+}
       $result .= $e->getMessage();
       return $result;
     }
