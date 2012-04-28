@@ -15,9 +15,7 @@ class tcommentmanager extends tevents_storage {
   protected function create() {
     parent::create();
     $this->basename = 'commentmanager';
-    $this->addevents('added', 'deleted', 'edited', 'changed', 'approved',
-    'authoradded', 'authordeleted', 'authoredited',
-    'is_spamer', 'onstatus');
+    $this->addevents('onchanged', 'approved', 'comuseradded',     'is_spamer', 'oncreatestatus');
   }
   
   public function getcount() {
@@ -37,7 +35,7 @@ class tcommentmanager extends tevents_storage {
     
     if ($id) {
       $users->setvalue($id, 'status', 'comuser');
-      $this->authoradded($id);
+      $this->comuseradded($id);
     }
     return $id;
   }
@@ -46,21 +44,9 @@ class tcommentmanager extends tevents_storage {
     $status = $this->createstatus($idpost, $idauthor, $content, $ip);
     if (!$status) return false;
     $comments = tcomments::i();
-    $id = $comments->add($idpost, $idauthor,  $content, $status, $ip);
-    $this->dochanged($id, $idpost);
-    $this->added($id, $idpost);
-    $this->sendmail($id);
-    return $id;
+return $comments->add($idpost, $idauthor,  $content, $status, $ip);
   }
-  
-  public function edit($id, $content) {
-    $comments = tcomments::i();
-    if (!$comments->edit($id, $idauthor,  $content)) return false;
-    $this->dochanged($id, $idpost);
-    $this->edited($id, $idpost);
-    return true;
-  }
-  
+
   public function reply($idparent, $content) {
     $idauthor = 1; //admin
     $status = 'approved';
@@ -69,14 +55,15 @@ class tcommentmanager extends tevents_storage {
     $id = $comments->add($idpost, $idauthor,  $content, $status, '');
     $comments->setvalue($id, 'parent', $idreply);
     
-    $this->dochanged($id, $idpost);
+    $this->dochanged($id);
     $this->added($id, $idpost);
     //$this->sendmail($id, $idpost);
     return $id;
   }
   
-  private function dochanged($id, $idpost) {
+  public function changed($id) {
     $comments = tcomments::i();
+$idpost = $comments->getvalue($id, 'post');
     $count = $comments->db->getcount("post = $idpost and status = 'approved'");
     $comments->getdb('posts')->setvalue($idpost, 'commentscount', $count);
     //update trust
@@ -90,28 +77,7 @@ class tcommentmanager extends tevents_storage {
     } catch (Exception $e) {
     }
     
-    
-    $this->changed($id, $idpost);
-  }
-  
-  public function delete($id) {
-    $comments = tcomments::i();
-    if ($comments->delete($id)) {
-      $this->deleted($id, $idpost);
-      $this->dochanged($id, $idpost);
-      return true;
-    }
-    return false;
-  }
-  
-  public function setstatus($id, $status) {
-    if (!in_array($status, array('approved', 'hold', 'spam')))  return false;
-    $comments = tcomments::i($idpost);
-    if ($comments->setstatus($id, $status)) {
-      $this->dochanged($id, $idpost);
-      return true;
-    }
-    return false;
+    $this->onchanged($id);
   }
   
   public function sendmail($id) {
@@ -137,7 +103,7 @@ class tcommentmanager extends tevents_storage {
   }
   
   public function createstatus($idpost, $idauthor, $content, $ip) {
-    $status = $this->onstatus($idpost, $idauthor, $content, $ip);
+    $status = $this->oncreatestatus ($idpost, $idauthor, $content, $ip);
     if (false ===  $status) return false;
     if ($status == 'spam') return false;
     if (($status == 'hold') || ($status == 'approved')) return $status;

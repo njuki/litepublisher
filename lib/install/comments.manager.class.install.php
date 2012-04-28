@@ -14,13 +14,26 @@ function tcommentmanagerInstall($self) {
   $self->data['nofollow'] = false;
   $self->data['canedit'] =  true;
   $self->data['candelete'] =  true;
-  $self->data['idguest'] =  0;
-  
-  $self->data['confirmlogged'] = false;
-  $self->data['confirmguest'] = true;
-  $self->data['confirmcomuser'] = true;
-  $self->data['confirmemail'] = false;
+$self->data['confirmemail'] = false;
+$self->data['confirmlogged'] = false;
+$self->data['confirmguest'] = true;
+$self->data['confirmcomuser'] = true;
+
+    $self->data['idguest'] =  tusers::i()->add(array(
+'email' => '',
+'name' => tlocal::get('default', 'guest'),
+'status' => 'approved',
+'idgroups' => 'commentator'
+));
+
+$self->data['idgroups'] = tusergroups::i()->cleangroups('admin, editor, moderator, author, commentator, ticket');
   $self->save();
+
+$comments = tcomments::i();
+$comments->lock();
+$comments->changed = $self->changed;
+$comments->added = $self->sendmail;
+$comments->unlock();
 }
 
 function tcommentmanagerUninstall($self) {

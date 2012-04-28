@@ -19,21 +19,19 @@ class tjsoncomments extends tevents {
   public function comment_delete(array $args) {
     $this->auth();
     $id = (int) $args['id'];
-    $manager = tcommentmanager::i();
-    return $manager->delete($id);
+    return tcomments::i()->delete($id);
   }
   
   public function comment_setstatus($args) {
     $this->auth();
-$result = tcommentmanager::i()->setstatus((int) $args['id'], $args['status']);
-return $result;
-return array('result' => $result);
+return tcomments::i()->setstatus((int) $args['id'], $args['status']);
   }
   
   public function comment_edit(array $args) {
     $this->auth();
-    $manager = tcommentmanager::i();
-return $manager->edit((int) $args['id'], $args['content']);
+$content = trim($args['content']);
+if (empty($content)) return false;
+return tcomments::i()->edit((int) $args['id'], $content);
   }
   
 }//class

@@ -30,16 +30,32 @@ $spam->basename = 'spamfilter';
 $spam->load();
 if (isset($spam->data['events'])) {
 foreach ($spam->data['events'] as $eventname => $events) {
+if ($eventname == 'onstatus') $eventname = 'oncreatestatus';
 $cm->data['events'][$eventname] = $events;
 }
 }
 
+unset($cm->data['events']['approved']);
+unset($cm->data['events']['added']);
 $cm->save();
 
   tposts::unsub($cm);
   tposts::i()->addevent('deleted', 'tcomments', 'postdeleted');
 
+$comments = tcomments::i();
+$comments->lock();
+$comments->changed = $cm->changed;
+$comments->added = $cm->sendmail;
+
+$subscribers = tsubscribers::i();
+  $comments->added = $subscribers->sendmail;
+  $comments->onapproved = $subscribers->sendmail;
+$comments->unlock();
+
+tusers::i()->deleted = $subscribers->deleteitem;
+litepublisher::$classes->delete('tjsonserver');
 litepublisher::$classes->add('tjsonserver', 'jsonserver.class.php');
+litepublisher::$classes->delete('tjsoncomments');
 litepublisher::$classes->add('tjsoncomments', 'json.comments.class.php');
 litepublisher::$classes->add('Tadmincommentmanager', 'admin.commentmanager.class.php');
 litepublisher::$classes->add('tsession', 'session.class.php');

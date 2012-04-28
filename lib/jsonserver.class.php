@@ -81,7 +81,7 @@ class tjsonserver extends titems {
     }
     
     $this->callevent('aftercall', array(&$result, $args));
-    if (litepublisher::$debug) tfiler::log("response:\n".$Result, 'json.txt');
+    if (litepublisher::$debug) tfiler::log("response:\n".$result, 'json.txt');
     
     $js = json_encode($result);
     

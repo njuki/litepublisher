@@ -18,15 +18,17 @@ function tsubscribersInstall($self) {
   $posts = tposts::i();
   $posts->deleted = $self->deletepost;
   
-  $manager = tcommentmanager::i();
-  $manager->lock();
-  $manager->authordeleted = $self->deleteitem;
-  $manager->added = $self->sendmail;
-  $manager->approved = $self->sendmail;
-  $manager->unlock();
+  $comments = tcomments::i();
+  $comments->lock();
+  $comments->added = $self->sendmail;
+  $comments->onapproved = $self->sendmail;
+  $comments->unlock();
+
+tusers::i()->deleted = $self->deleteitem;
 }
 
 function tsubscribersUninstall($self) {
-  litepublisher::$classes->commentmanager->unbind($self);
-  litepublisher::$classes->posts->unbind($self);
+tcomments::i()->unbind($self);
+tusers::i()->unbind($self);
+tposts::i()->unbind($self);
 }

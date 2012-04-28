@@ -10,9 +10,8 @@ function tjsoncommentsInstall($self) {
   $json = tjsonserver::i();
   $json->lock();
   $json->addevent('comment_delete', get_class($self), 'comment_delete');
-  $json->addevent('comment_setstatus', get_class($self), 'comment_delete');
-  $json->addevent('comment_get', get_class($self), 'comment_delete');
-  $json->addevent('comment_edit', get_class($self), 'comment_delete');
+  $json->addevent('comment_setstatus', get_class($self), 'comment_setstatus');
+  $json->addevent('comment_edit', get_class($self), 'comment_edit');
   $json->unlock();
 }
 
