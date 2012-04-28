@@ -16,42 +16,41 @@ function get_get(name) {
 }
 
 (function( $ ){
-$.extend({
-  load_script: function( url, callback ) {
-    return $.ajax({
-      type: 'get',
-      url: url,
-      data: undefined,
-      success: callback,
-      dataType: "script",
-      cache: true
-    });
-  },
-  
-  load_css: function(url) {
-    $('<link rel="stylesheet" type="text/css" href="' + url + '" />').appendTo("head:first");
-  }  ,
-  
-  uiscript: false,
-  load_ui: function(fn) {
-    if (!$.uiscript) {
-      var dir = ltoptions.files + '/js/jquery/ui-' + ltoptions.jqueryui_version;
-      $.load_css(dir + '/redmond/jquery-ui-' + ltoptions.jqueryui_version + '.custom.css');
-      $.uiscript = $.load_script(dir + '/jquery-ui-' + ltoptions.jqueryui_version + '.custom.min.js');
+  $.extend({
+    load_script: function( url, callback ) {
+      return $.ajax({
+        type: 'get',
+        url: url,
+        data: undefined,
+        success: callback,
+        dataType: "script",
+        cache: true
+      });
+    },
+    
+    load_css: function(url) {
+      $('<link rel="stylesheet" type="text/css" href="' + url + '" />').appendTo("head:first");
+    }  ,
+    
+    uiscript: false,
+    load_ui: function(fn) {
+      if (!$.uiscript) {
+        var dir = ltoptions.files + '/js/jquery/ui-' + ltoptions.jqueryui_version;
+        $.load_css(dir + '/redmond/jquery-ui-' + ltoptions.jqueryui_version + '.custom.css');
+        $.uiscript = $.load_script(dir + '/jquery-ui-' + ltoptions.jqueryui_version + '.custom.min.js');
+      }
+      if ($.isFunction(fn)) $.uiscript.done(fn);
+    },
+    
+    litejson: function(data, errmesg, callback) {
+      var c = get_cookie("litepubl_user");
+      if (c != '') data.litepubl_user = c;
+      return jQuery.get(ltoptions.url + "/admin/jsonserver.php", data, callback, "json" )
+      .error( function(jq, textStatus, errorThrown) {
+        //jq.responseText
+        alert(errmesg);
+      });
     }
-    if ($.isFunction(fn)) $.uiscript.done(fn);
-  },
-
-litejson: function(data, errmesg, callback) {
-var c = get_cookie("litepubl_user");
-if (c != '') data.litepubl_user = c;
-//if (ltoptions.idpost !== undefined) data.idpost = ltoptions.idpost;
-return jQuery.get(ltoptions.url + "/admin/jsonserver.php", data, callback, "json" )
-        .error( function(jq, textStatus, errorThrown) {
-//jq.responseText 
-alert(errmesg);
-});
-}
-
-});
+    
+  });
 })( jQuery );
