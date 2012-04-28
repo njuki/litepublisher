@@ -22,7 +22,7 @@ class tcomments extends titems {
     $this->table = 'comments';
     $this->rawtable = 'rawcomments';
     $this->basename = 'comments';
-    $this->addevents('edited');
+    $this->addevents('edited', 'onstatus', 'changed', 'onapproved');
     $this->pid = 0;
   }
   
@@ -41,8 +41,8 @@ class tcomments extends titems {
     );
     
     $id = (int) $this->db->add($item);
-    $item['rawcontent'] = $content;
     $item['id'] = $id;
+    $item['rawcontent'] = $content;
     $this->items[$id] = $item;
     
     $this->getdb($this->rawtable)->add(array(
@@ -55,6 +55,7 @@ class tcomments extends titems {
     ));
     
     $this->added($id);
+    $this->changed($id);
     return $id;
   }
   
@@ -75,23 +76,38 @@ class tcomments extends titems {
     }
     
     $this->edited($id);
+    $this->changed($id);
     return true;
   }
   
-  public function getcomment($id) {
-    return new tcomment($id);
-  }
-  
   public function delete($id) {
-    return $this->db->setvalue($id, 'status', 'deleted');
+if (!$this->itemexists($id)) return false;
+$this->db->setvalue($id, 'status', 'deleted');
+    $this->deleted($id);
+    $this->changed($id);
+return true;
+  }
+
+  public function setstatus($id, $status) {
+    if (!in_array($status, array('approved', 'hold', 'spam')))  return false;
+if (!$this->itemexists($id)) return false;
+$old = $this->getvalue($id, 'status');
+if ($old != $status) {
+$this->setvalue($id, 'status', $status);
+    $this->onstatus($id, $old, $status);
+    $this->changed($id);
+if (($old == 'hold') && ($status == 'approved')) $this->onapproved($id);
+    return true;
+}
+return false;
   }
   
-  public function postdeleted($idpost) {
+    public function postdeleted($idpost) {
     $this->db->update("status = 'deleted'", "post = $idpost");
   }
-  
-  public function setstatus($id, $status) {
-    return $this->db->setvalue($id, 'status', $status);
+
+  public function getcomment($id) {
+    return new tcomment($id);
   }
   
   public function getcount($where = '') {
