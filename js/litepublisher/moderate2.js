@@ -1,46 +1,73 @@
 (function( $ ){
-  $.fn.moderatebuttons= function() {
-    return this.on("click", function() {
+  $.moderate = function(options) {
+if ("options" in this) $(this.options.approved +", " + this.options.hold).off("click.moderate");
+
+		this.options = $.extend({
+comment: "#comment-",
+approved: "#commentlist",
+hold: "#holdcommentlist",
+createhold: '<ol class="commentlist" id="holdcommentlist" start="1"></ol>',
+buttons:".moderationbuttons input:button",
+editor: "#comment"
+}, ltoptions.theme.comments, options);
+
+this.click = function() {
       var self = $(this);
       var action = self.data("moderate");
       var id = self.parent().data("idcomment");
-      $.moderate_comment(id, action);
+      $.moderate.setstatus(id, action);
       return false;
-    });
   };
-  
-  $.move_comment = function(id, status) {
-    var item =$("#comment-" + id);
-    var parent = status == "hold" ? $(ltoptions.theme.holdcommentlist) : $(ltoptions.theme.commentlist);
+
+//init
+    $(this.options.approved +", " + this.options.hold).on("click.moderate", $this.options.buttons, this.click);
+
+this.move= function(id, status) {
+var options = $.moderate.options;
+    var item =$(options.comment  + id);
+//create hold list if it isn't exists
+if (status == "hold") {
+     var parent = $(options.hold);
+if (parent.length == 0) {
+parent = $(options.createhold);
+$(options.approved).after(parent);
+}
+} else {
+    var parent =  $(options.approved);
+}
+
     parent.append(item);
   };
+
+this.error= function(mesg) {
+//todo: replace to ui dialog
+alert(mesg);
+};
   
-  $.moderate_comment = function (id, status) {
-    var idcomment = "#comment-" + id;
+  this.setstatus= function (id, status) {
+var options = $.moderate.options;
+    var idcomment = options.comment + id;
     switch (status) {
       case "delete":
       if (!confirm(lang.comments.confirmdelete)) return;
-    $.litejson({method: "comment_delete", id: id}, lang.comments.notdeleted,
+var mesg = lang.comments.notdeleted;
+    $.litejson({method: "comment_delete", id: id}, mesg,
       function(r){
+if (r == false) return $.moderate.error(mesg);
         $(idcomment).remove();
       });
       break;
       
       case "hold":
       case "approved":
-    $.litejson({method: "comment_setstatus", id: id, status: status}, lang.comments.notmoderated,
+var mesg = lang.comments.notmoderated;
+    $.litejson({method: "comment_setstatus", id: id, status: status}, mesg,
       function(r) {
 try {
-if (r == false) {
-alert('ho');
-} else {
-        $.move_comment(id, status);
-}
+if (r == false) return $.moderate.error(mesg);
+        $.moderate.move(id, status);
 } catch(e) { alert('error ' + e.message); }
-      })
-      .error( function(jq, textStatus, errorThrown) {
-        alert(jq.responseText);
-});
+      });
       break;
       
       case "edit":
@@ -72,11 +99,15 @@ if (content == "") return alert("empty content");
       alert("Unknown status " + status);
     }
   };
+
+};
   
   $(document).ready(function() {
-    $(".moderationbuttons input:button").moderatebuttons();
+    $.moderate(ltoptions.);
+
 $.load_script(ltoptions.files + "/js/plugins/tojson.min.js", function() {
 alert('json');
 });
   });
+
 })( jQuery );
