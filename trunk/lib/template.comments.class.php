@@ -47,6 +47,8 @@ class ttemplatecomments extends tevents {
       $result .=  sprintf('<?php if (litepublisher::$options->ingroups(array(%s))) { ?>', implode(',', tcommentmanager::i()->idgroups));
         $args->mesg = $this->logged;
         $result .= $theme->parsearg($theme->templates['content.post.templatecomments.regform'], $args);
+$template = ttemplate::i();
+$result .= $template->getjavascript($template->jsmerger_moderate);
       $result .= '<?php } else { ?>';
         
         switch ($post->comstatus) {
