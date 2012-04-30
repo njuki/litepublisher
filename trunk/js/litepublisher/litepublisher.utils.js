@@ -44,7 +44,12 @@ function get_get(name) {
     
     litejson: function(data, errmesg, callback) {
       var c = get_cookie("litepubl_user");
-      if (c != '') data.litepubl_user = c;
+      if (c != '') {
+data.litepubl_user = c;
+      c = get_cookie("litepubl_user_id");
+      if (c != '') data.litepubl_user_id = c;
+}
+
       return jQuery.get(ltoptions.url + "/admin/jsonserver.php", data, callback, "json" )
       .error( function(jq, textStatus, errorThrown) {
         //jq.responseText
