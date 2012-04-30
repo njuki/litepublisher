@@ -8,6 +8,8 @@ approved: "#commentlist",
 hold: "#holdcommentlist",
 createhold: '<ol class="commentlist" id="holdcommentlist" start="1"></ol>',
 buttons:".moderationbuttons input:button",
+button: '<input type="button" value="%%title%%" />',
+idbutton = "",
 editor: "#comment"
 }, ltoptions.theme.comments, options);
 
@@ -100,6 +102,25 @@ if (content == "") return alert("empty content");
     }
   };
 
+this.create_buttons = function() {
+var options = this.options;
+var approve = options.button.replace('%%title%%', lang.comments.approve);
+var hold = options.button.replace('%%title%%', lang.comments.hold);
+var delete = options.button.replace('%%title%%', lang.comments.delete);
+var edit = options.button.replace('%%title%%', lang.comments.edit);
+
+    $(options.buttons, options.approved +", " + options.hold).each(function() {
+var self = $(this);
+var id = self.data("idcomment");
+if (options.ismoder) {
+$(approve).appendTo(self).data("idcomment", id).data("moder", "approve").click(function() {
+});
+} else {
+if (options.canedit)
+if (options.candelete)
+}
+});
+};
 };
   
   $(document).ready(function() {
