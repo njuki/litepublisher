@@ -21,18 +21,19 @@ $cm = tcommentmanager::i();
 switch ($action) {
 case 'edit':
 if (!$cm->canedit) return false;
+if ('closed' == litepublisher::$db->getval('posts', $comments->getvalue($id, 'post'), 'comstatus')) return false;
 return $comments->getvalue($id, 'author') == litepublisher::$options->user;
 
 case 'delete':
 if (!$cm->candelete) return false;
+if ('closed' == litepublisher::$db->getval('posts', $comments->getvalue($id, 'post'), 'comstatus')) return false;
 return $comments->getvalue($id, 'author') == litepublisher::$options->user;
 }
 return false;
   }
 
-
 public function forbidden() {
-$this->error('Bad login/pass combination.', 403);
+$this->error('Forbidden', 403);
 }
   
   public function comment_delete(array $args) {

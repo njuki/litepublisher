@@ -270,6 +270,11 @@ class tdatabase {
     if($r = mysql_fetch_assoc($this->query("select id from $this->prefix$this->table where $where limit 1"))) return $r['id'];
     return false;
   }
+
+  public function getval($table, $id, $name) {
+    if ($r = mysql_fetch_assoc($this->query("select $name from $this->prefix$table where id = $id limit 1"))) return $r[$name];
+    return false;
+  }
   
   public function getvalue($id, $name) {
     if ($r = mysql_fetch_assoc($this->query("select $name from $this->prefix$this->table where id = $id limit 1"))) return $r[$name];
