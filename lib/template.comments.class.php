@@ -44,10 +44,18 @@ class ttemplatecomments extends tevents {
       $args->postid = $post->id;
       $args->antispam = base64_encode('superspamer' . strtotime ("+1 hour"));
       
-      $result .=  sprintf('<?php if (litepublisher::$options->ingroups(array(%s))) { ?>', implode(',', tcommentmanager::i()->idgroups));
+$cm = tcommentmanager::i();
+      $result .=  sprintf('<?php if (litepublisher::$options->ingroups(array(%s))) { ?>', implode(',', $cm->idgroups));
         $args->mesg = $this->logged;
         $result .= $theme->parsearg($theme->templates['content.post.templatecomments.regform'], $args);
 $template = ttemplate::i();
+$result .= sprintf('<script type="text/javascript">
+ ltoptions.theme.comments = $.extend(true, ltoptions.theme.comments, %s);
+ </script>', json_encode(array(
+'ismoder' => litepublisher::$options->ingroup('moderator'),
+'canedit' => $cm->canedit,
+'candelete' => $cm->candelete
+)));
 $result .= $template->getjavascript($template->jsmerger_moderate);
       $result .= '<?php } else { ?>';
         
