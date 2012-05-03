@@ -96,13 +96,23 @@ if (dbversion) litepublisher::$db = new tdatabase();
 tlocal::clearcache();
 //tjsmerger::i()->save();
 //litepublisher::$options->show_draft_post = true;
-//tupdater::i()->run(5.26);
-//include_once(dirname(__file__) . '/lib/update/update.tickets.5.24.php');
-//update524tickets();
+//tupdater::i()->run(5.27);
 
-//litepublisher::$classes->delete('tcategoriesmenu');
-//litepublisher::$classes->add('tajaxmenueditor', 'admin.menu.ajax.class.php');
-//tfiler::log(var_export($_SERVER, true));
+/*
+litepublisher::$classes->delete('tjsonserver');
+litepublisher::$classes->add('tjsonserver', 'jsonserver.class.php');
+
+litepublisher::$classes->items['tcommentform'][2] = 'comments.form.class.php';
+litepublisher::$classes->save();
+*/
+/*
+litepublisher::$urlmap->onclose(function() {
+echo "in close<br>";
+set_time_limit(200);
+sleep(50);
+tfiler::log(connection_status () . ' connection_status ');
+});
+*/
   if (!defined('litepublisher_mode')) {
     litepublisher::$urlmap->request(strtolower($_SERVER['HTTP_HOST']), $_SERVER['REQUEST_URI']);
   }
@@ -126,5 +136,3 @@ echo round(microtime(true) - litepublisher::$microtime, 2), "\n";
 */
 //tdebugproxy::showperformance();
 //echo json_encode(tlocal::$data);
-//dumpvar($_GET);
-//dumpvar($_SERVER);

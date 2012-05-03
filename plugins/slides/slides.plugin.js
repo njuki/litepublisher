@@ -8,7 +8,7 @@
   $(document).ready(function() {
     var images = $("a[rel^='prettyPhoto']");
 if (images.length  == 0 ) return;
-var dir = ltoptions.url + "/plugins/slides/";
+var dir = ltoptions.files + "/plugins/slides/";
 $.load_css(dir + "slides.css");
 /*
 $.load_script(dir + "jquery.easing.1.3.js");
