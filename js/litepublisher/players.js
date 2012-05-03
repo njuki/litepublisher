@@ -5,7 +5,6 @@
 * and GPL (gpl.txt) licenses.
 **/
 
-
 $(document).ready(function() {
   $(".videofile, .audiofile").one("click", function() {
     var comment = widget_findcomment(this, false);
