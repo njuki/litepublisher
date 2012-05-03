@@ -50,7 +50,6 @@ var options = $.moderate.options;
     var idcomment = options.comment + id;
     switch (status) {
       case "delete":
-return $.messagebox('noth', 'mesg');
 $.confirmbox(lang.comments.confirm, lang.comments.confirmdelete, lang.comments.yesdelete, lang.comments.nodelete, function(index) {
 if (index !=0) return;
 var mesg = lang.comments.notdeleted;
@@ -140,7 +139,6 @@ return this;
 };
   
   $(document).ready(function() {
-$.load_css(ltoptions.files + "/js/litepublisher/prettyphoto.dialog.css");
 $.load_script(ltoptions.files + "/js/plugins/tojson.min.js", function() {
 //alert($.toJSON (lang));
     $.moderate();
