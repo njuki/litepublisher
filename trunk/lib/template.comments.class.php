@@ -56,12 +56,7 @@ $result .= sprintf('<script type="text/javascript">
 'canedit' => $cm->canedit,
 'candelete' => $cm->candelete
 )));
-//$result .= $template->getjavascript($template->jsmerger_moderate);
-$result .= sprintf('<script type="text/javascript">
-var lang = $.extend(true, lang, {comments: %s});
- </script>', json_encode(
-tlocal::admin()->ini['comments']
-));
+$result .= $template->getjavascript($template->jsmerger_moderate);
 
 $result .= $template->getjavascript('/js/litepublisher/moderate2.js');
 $result .= $template->getjavascript('/js/litepublisher/prettyphoto.dialog.js');

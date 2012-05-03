@@ -14,7 +14,7 @@ width: 200
 });
 };
 
-$.comfirmbox= function(title, mesg, button_title1, button_title2, callback) {
+$.confirmbox= function(title, mesg, button_title1, button_title2, callback) {
 $.prettyPhotoDialog({
 title: title, 
 html: "<p>" + mesg + "</p>",
@@ -81,7 +81,7 @@ options.html +
 var tmp = $('<div></div>').appendTo('body').hide();
 var a = $("<a title=''></a>").appendTo(tmp);
 a.attr("href", "#" +id);
-
+alert(options.width);
 a.prettyPhoto({
 default_width: options.width,
 			opacity: 0.60, /* Value between 0 and 1 */
@@ -92,11 +92,14 @@ default_width: options.width,
       social_tools: false,
 
 						changepicturecallback: function(){
+//alert('change');
 div.remove();
 $(".pp_close").appendTo(".pp_inline .pp_dialog_title");
+return;
 for (var i =0, l= options.buttons.length;  i < l; i++) {
 $(".pp_dialog_btn_" + i).data("index", i).click(options.buttons[i].click);
 }
+$(".pp_dialog_btn_0").focus();
  },
 
 			callback: function(){
@@ -105,8 +108,9 @@ $(".pp_dialog_btn_" + i).data("index", i).click(options.buttons[i].click);
 });
 
 a.click();
-tmp.remove();
-
+//tmp.remove();
+alert('fater');
+return;	
 			$(document).off('keydown.prettyphotoDialog').on('keydown.prettyphotoDialog',function(e){
 if (e.keyCode == 27) {
 								$.prettyPhoto.close();
