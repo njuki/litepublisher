@@ -1,5 +1,5 @@
 (function( $ ){
-  $.moderate = function(options) {
+  $.moderate = new function(options) {
 try {
 		this.options = $.extend({
 comments: "#commentlist",
@@ -13,10 +13,12 @@ editor: "#comment"
 }, ltoptions.theme.comments, options);
 
 this.click = function() {
+try {
       var self = $(this);
       var action = self.data("moder");
       var id = self.data("idcomment");
       $.moderate.setstatus(id, action);
+} catch(e) { alert('error ' + e.message); }
       return false;
   };
 
@@ -42,18 +44,15 @@ this.error= function(mesg) {
 $.messagebox(mesg);
 };
 
-this.confirm_delete = function(callback) {
-$.confirmbox(lang["default"].confirm, lang.comments.confirmdelete, lang.comments.yesdelete, lang.comments.nodelete, function(index) {
-if (index ==0) callback();
-});
-};
-  
   this.setstatus= function (id, status) {
+//alert(id + ':' + status);
 var options = $.moderate.options;
     var idcomment = options.comment + id;
     switch (status) {
       case "delete":
-$.moderate.confirm_delete(function() {
+return $.messagebox('noth', 'mesg');
+$.confirmbox(lang.comments.confirm, lang.comments.confirmdelete, lang.comments.yesdelete, lang.comments.nodelete, function(index) {
+if (index !=0) return;
 var mesg = lang.comments.notdeleted;
     $.litejson({method: "comment_delete", id: id}, mesg,
       function(r){
@@ -109,10 +108,9 @@ location.hash = cc.substring(1);
 
 this.create_buttons = function() {
 var options = this.options;
-alert(options.button);
 var approve = options.button.replace('%%title%%', lang.comments.approve);
 var hold = options.button.replace('%%title%%', lang.comments.hold);
-var del = options.button.replace('%%title%%', lang.comments['delete']);
+var del = options.button.replace('%%title%%', lang.comments.del);
 var edit = options.button.replace('%%title%%', lang.comments.edit);
 
 var moderclick = this.click;
@@ -138,6 +136,7 @@ if (options.candelete) $(del).appendTo(self).data("idcomment", id).data("moder",
 
 this.create_buttons();
 } catch(e) { alert('error ' + e.message); }
+return this;
 };
   
   $(document).ready(function() {
