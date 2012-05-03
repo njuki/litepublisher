@@ -55,5 +55,16 @@ $content = trim($args['content']);
 if (empty($content)) return false;
 return tcomments::i()->edit(($id, $content);
   }
+
+  public function comment_getraw(array $args) {
+    $id = (int) $args['id'];
+if (!$this->auth($id, 'edit')) return $this->forbidden();
+$comments = tcomments::i();
+$raw = $comments->raw->getvalue($id, 'rawcontent');
+return array(
+'id' => $id,
+'rawcontent' => $raw
+);
+  }
   
-}//class
+  }//class

@@ -7,7 +7,7 @@
 **/
 
 function tblackipInstall($self) {
-  tcommentmanager::i()->onstatus = $self->filter;
+  tcommentmanager::i()->oncreatestatus = $self->filter;
 }
 
 function tblackipUninstall($self) {

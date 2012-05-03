@@ -5,6 +5,5 @@ include('index.php');
    litepublisher::$options->changepassword($password);
 litepublisher::$options->savemodified();
 echo "<pre>\n";
-echo litepublisher::$options->login;
+echo litepublisher::$options->email;
 echo "\n$password\n<br>new password";
-?>

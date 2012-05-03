@@ -1,5 +1,6 @@
 (function( $ ){
   $.moderate = function(options) {
+try {
 		this.options = $.extend({
 comments: "#commentlist",
 hold: "#holdcommentlist",
@@ -107,14 +108,15 @@ location.hash = cc.substring(1);
   };
 
 this.create_buttons = function() {
-var options = $.moderate.options;
+var options = this.options;
+alert(options.button);
 var approve = options.button.replace('%%title%%', lang.comments.approve);
 var hold = options.button.replace('%%title%%', lang.comments.hold);
 var del = options.button.replace('%%title%%', lang.comments['delete']);
 var edit = options.button.replace('%%title%%', lang.comments.edit);
 
-var moderclick = $.moderate.click;
-var iduser = $.get_cookie("litepubl_user_id");
+var moderclick = this.click;
+var iduser = get_cookie("litepubl_user_id");
 
     $(options.buttons, options.comments +", " + options.hold).each(function() {
 var self = $(this);
@@ -135,13 +137,14 @@ if (options.candelete) $(del).appendTo(self).data("idcomment", id).data("moder",
 };
 
 this.create_buttons();
+} catch(e) { alert('error ' + e.message); }
 };
   
   $(document).ready(function() {
-    $.moderate();
-
+$.load_css(ltoptions.files + "/js/litepublisher/prettyphoto.dialog.css");
 $.load_script(ltoptions.files + "/js/plugins/tojson.min.js", function() {
-alert('json');
+//alert($.toJSON (lang));
+    $.moderate();
 });
   });
 
