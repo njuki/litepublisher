@@ -18,7 +18,7 @@ $.confirmbox= function(title, mesg, button_title1, button_title2, callback) {
 $.prettyPhotoDialog({
 title: title, 
 html: "<p>" + mesg + "</p>",
-width: 200,
+//width: 200,
 buttons: [
 {
 title: button_title1,
@@ -81,7 +81,7 @@ options.html +
 var tmp = $('<div></div>').appendTo('body').hide();
 var a = $("<a title=''></a>").appendTo(tmp);
 a.attr("href", "#" +id);
-alert(options.width);
+
 a.prettyPhoto({
 default_width: options.width,
 			opacity: 0.60, /* Value between 0 and 1 */
@@ -94,8 +94,7 @@ default_width: options.width,
 						changepicturecallback: function(){
 //alert('change');
 div.remove();
-$(".pp_close").appendTo(".pp_inline .pp_dialog_title");
-return;
+//$(".pp_close").appendTo(".pp_inline .pp_dialog_title");
 for (var i =0, l= options.buttons.length;  i < l; i++) {
 $(".pp_dialog_btn_" + i).data("index", i).click(options.buttons[i].click);
 }
@@ -108,9 +107,8 @@ $(".pp_dialog_btn_0").focus();
 });
 
 a.click();
-//tmp.remove();
-alert('fater');
-return;	
+tmp.remove();
+
 			$(document).off('keydown.prettyphotoDialog').on('keydown.prettyphotoDialog',function(e){
 if (e.keyCode == 27) {
 								$.prettyPhoto.close();
@@ -119,4 +117,5 @@ if (e.keyCode == 27) {
 }
 });
 };
+
 })( jQuery );
