@@ -9,7 +9,8 @@
 $.messagebox = function(title, mesg) {
 $.prettyPhotoDialog({
 title: title, 
-html: "<p>" + mesg + "</p>"
+html: "<p>" + mesg + "</p>",
+width: 200
 });
 };
 
@@ -17,6 +18,7 @@ $.comfirmbox= function(title, mesg, button_title1, button_title2, callback) {
 $.prettyPhotoDialog({
 title: title, 
 html: "<p>" + mesg + "</p>",
+width: 200,
 buttons: [
 {
 title: button_title1,
@@ -52,6 +54,7 @@ $.prettyPhotoDialog = function(o) {
 		var options = $.extend({
 title: "",
 html: "",
+width: 300,
 buttons: [
 {
 title: "Ok",
@@ -80,7 +83,7 @@ var a = $("<a title=''></a>").appendTo(tmp);
 a.attr("href", "#" +id);
 
 a.prettyPhoto({
-default_width: 300,
+default_width: options.width,
 			opacity: 0.60, /* Value between 0 and 1 */
 			modal: true, /* If set to true, only the close button will close the window */
 			deeplinking: false, /* Allow prettyPhoto to update the url to enable deeplinking. */
