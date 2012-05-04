@@ -5,7 +5,7 @@ try {
 comments: "#commentlist",
 hold: "#holdcommentlist",
 comment: "#comment-",
-content: "commentcontent-",
+content: "#commentcontent-",
 createhold: '<ol class="commentlist" id="holdcommentlist" start="1"></ol>',
 buttons:".moderationbuttons",
 button: '<button type="button">%%title%%</button>',
@@ -58,6 +58,11 @@ var mesg = lang.comments.notdeleted;
 if (r == false) return $.moderate.error(mesg);
         $(idcomment).remove();
       });
+/*
+      .error( function(jq, textStatus, errorThrown) {
+        alert(jq.responseText);
+});
+*/
 });
       break;
       
@@ -74,13 +79,13 @@ if (r == false) return $.moderate.error(mesg);
       break;
       
       case "edit":
-    $.litejson({method: "comment_get", id: id}, lang.comments.errorrecieved,
+    $.litejson({method: "comment_getraw", id: id}, lang.comments.errorrecieved,
       function(resp){
-        try {
           var area = $($.moderate.options.editor);
           area.data("idcomment", id);
           area.data("savedtext", area.val());
           area.val(resp.rawcontent);
+area.focus();
           $("#commentform").one("submit", function() {
           var area = $($.moderate.options.editor);
 var content = $.trim(area.val());
@@ -88,15 +93,14 @@ if (content == "") return $.moderate.error(lang.comment.emptycontent);
           $.litejson({method: "comment_edit", id:area.data("idcomment"), content: content},
             lang.comments.notedited, function(r){
               area.val(area.data("savedtext"));
-var cc = $.moderate.options.content + result.id;
-              $(cc).html(result.content);
+var cc = $.moderate.options.content + r.id;
+              $(cc).html(r.content);
 location.hash = cc.substring(1);
+//} catch (e) { alert(e.message); }
             });
+        //} catch (e) { alert(e.message); }
             return false;
           });
-        } catch (e) {
-          alert(e.message);
-        }
       });
       break;
       

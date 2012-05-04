@@ -14,9 +14,9 @@ class tjsoncomments extends tevents {
   
   public function auth($id, $action) {
 if (!litepublisher::$options->user) return false;
-if (litepublisher::$options->ingroup('moderator')) return true;
-$comments = tcomments();
+$comments = tcomments::i();
 if (!$comments->itemexists($id)) return false;
+if (litepublisher::$options->ingroup('moderator')) return true;
 $cm = tcommentmanager::i();
 switch ($action) {
 case 'edit':
@@ -45,7 +45,7 @@ if (!$this->auth($id, 'delete')) return $this->forbidden();
   public function comment_setstatus($args) {
     $id = (int) $args['id'];
 if (!$this->auth($id, 'status')) return $this->forbidden();
-return tcomments::i()->setstatus(($id, $args['status']);
+return tcomments::i()->setstatus($id, $args['status']);
   }
   
   public function comment_edit(array $args) {
@@ -53,7 +53,15 @@ return tcomments::i()->setstatus(($id, $args['status']);
 if (!$this->auth($id, 'edit')) return $this->forbidden();
 $content = trim($args['content']);
 if (empty($content)) return false;
-return tcomments::i()->edit(($id, $content);
+$comments = tcomments::i();
+if ($comments->edit($id, $content)) {
+return array(
+'id' => $id,
+'content' => $comments->getvalue($id, 'content')
+);
+} else {
+return false;
+}
   }
 
   public function comment_getraw(array $args) {

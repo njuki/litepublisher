@@ -92,9 +92,8 @@ default_width: options.width,
       social_tools: false,
 
 						changepicturecallback: function(){
-//alert('change');
 div.remove();
-//$(".pp_close").appendTo(".pp_inline .pp_dialog_title");
+$(".pp_close").remove();
 for (var i =0, l= options.buttons.length;  i < l; i++) {
 $(".pp_dialog_btn_" + i).data("index", i).click(options.buttons[i].click);
 }
