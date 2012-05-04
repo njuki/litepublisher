@@ -45,14 +45,19 @@ class ttemplatecomments extends tevents {
       $args->antispam = base64_encode('superspamer' . strtotime ("+1 hour"));
       
 $cm = tcommentmanager::i();
-      $result .=  sprintf('<?php if (litepublisher::$options->ingroups(array(%s))) { ?>', implode(',', $cm->idgroups));
+      $result .=  sprintf('<?php if (litepublisher::$options->ingroups(array(%s))) {', implode(',', $cm->idgroups));
+//add hold list
+$result .= 'if ($ismoder = litepublisher::$options->ingroup(\'moderator\')) { ?>';
+        $result .= $theme->parsearg($theme->templates['content.post.templatecomments.holdcomments'], $args);
+$result .= '<?php } ?>';
+
         $args->mesg = $this->logged;
         $result .= $theme->parsearg($theme->templates['content.post.templatecomments.regform'], $args);
 $template = ttemplate::i();
 $result .= sprintf('<script type="text/javascript">
  ltoptions.theme.comments = $.extend(true, ltoptions.theme.comments, %s);
+ ltoptions.theme.comments.ismoder = <?php echo ($ismoder ? \'true\' : \'false\'); ?>;
  </script>', json_encode(array(
-'ismoder' => litepublisher::$options->ingroup('moderator'),
 'canedit' => $cm->canedit,
 'candelete' => $cm->candelete
 )));
