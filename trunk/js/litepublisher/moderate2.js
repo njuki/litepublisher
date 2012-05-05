@@ -1,8 +1,7 @@
 (function( $ ){
-  $.moderate = new function(options) {
-try {
-this.enabled = true;
-		this.options = $.extend({
+var moderate = {
+enabled : true,
+options: {
 comments: "#commentlist",
 hold: "#holdcommentlist",
 comment: "#comment-",
@@ -10,9 +9,9 @@ content: "#commentcontent-",
 buttons:".moderationbuttons",
 button: '<button type="button">%%title%%</button>',
 editor: "#comment"
-}, ltoptions.theme.comments, options);
+}, 
 
-this.setenabled = function(value) {
+setenabled: function(value) {
 if (value== this.enabled) return;
 this.enabled = value;
 if(value) {
@@ -20,43 +19,26 @@ $(this.options.buttons).show();
 } else {
 $(this.options.buttons).hide();
 }
-};
+},
 
-this.click = function() {
-if (!$.moderate.enabled) return false;
+click: function() {
+if (!moderate.enabled) return false;
 try {
       var self = $(this);
       var action = self.data("moder");
       var id = self.data("idcomment");
-      $.moderate.setstatus(id, action);
+      moderate.setstatus(id, action);
 } catch(e) { alert('error ' + e.message); }
       return false;
-  };
+  },
 
-this.move= function(id, status) {
-var options = $.moderate.options;
-    var item =$(options.comment  + id);
-//create hold list if it isn't exists
-if (status == "hold") {
-     var parent = $(options.hold);
-if (parent.length == 0) {
-parent = $(options.createhold);
-$(options.comments).after(parent);
-}
-} else {
-    var parent =  $(options.comments);
-}
-
-    parent.append(item);
-  };
-
-this.error= function(mesg) {
-$.moderate.setenabled(true);
+error: function(mesg) {
+moderate.setenabled(true);
 $.messagebox(mesg);
-};
+},
 
-  this.setstatus= function (id, status) {
-var options = $.moderate.options;
+  setstatus: function (id, status) {
+var options = moderate.options;
     var idcomment = options.comment + id;
     switch (status) {
       case "delete":
@@ -65,10 +47,10 @@ if (index !=0) return;
     $.litejson({method: "comment_delete", id: id}, function(r){
 if (r == false) return $.moderate.error(lang.comments.notdeleted);
         $(idcomment).remove();
-$.moderate.setenabled(true);
+moderate.setenabled(true);
       })
       .error( function(jq, textStatus, errorThrown) {
-$.moderate.error(lang.comments.notdeleted);
+moderate.error(lang.comments.notdeleted);
         //alert(jq.responseText);
 });
 });
@@ -78,16 +60,15 @@ $.moderate.error(lang.comments.notdeleted);
       case "approved":
     $.litejson({method: "comment_setstatus", id: id, status: status}, function(r) {
 try {
-if (r == false) return $.moderate.error(lang.comments.notmoderated);
-        $.moderate.move(id, status);
-$.moderate.setenabled(true);
+if (r == false) return moderate.error(lang.comments.notmoderated);
+    $(status == "hold" ? options.hold : options.comments).append($(options.comment  + id));
+moderate.setenabled(true);
 } catch(e) { alert('error ' + e.message); }
       })
       .error( function(jq, textStatus, errorThrown) {
 $.moderate.error(lang.comments.notmoderated);
         //alert(jq.responseText);
 });
-
       break;
       
       case "edit":
@@ -124,33 +105,32 @@ $.moderate.error(lang.comments.errorrecieved);
       default:
       alert("Unknown status " + status);
     }
-  };
+  },
 
-this.get_hold = function() {
-$().remove;
+get_hold: function() {
+//$().remove;
 $.litejson({method: "comments_get_hold", idpost: ltoptions.idpost}, function(r) {
-var options = $.moderate.options;
+var options = moderate.options;
 if (options.ismoder) {
 
 $(options.hold).remove();
 }
 $(options.comments).after(r.items);
-$.moderate.create_buttons(options.hold);
-}
+moderate.create_buttons(options.hold);
 })
       .error( function(jq, textStatus, errorThrown) {
-$.moderate.error(lang.comments.errorrecieved);
+moderate.error(lang.comments.errorrecieved);
 });
-};
+},
 
-this.create_buttons = function(where) {
-var options = this.options;
+create_buttons: function(where) {
+var options = moderate.options;
 var approve = options.button.replace('%%title%%', lang.comments.approve);
 var hold = options.button.replace('%%title%%', lang.comments.hold);
 var del = options.button.replace('%%title%%', lang.comments.del);
 var edit = options.button.replace('%%title%%', lang.comments.edit);
 
-var moderclick = this.click;
+var moderclick = moderate.click;
 var iduser = get_cookie("litepubl_user_id");
 
     $(options.buttons, where).each(function() {
@@ -169,13 +149,15 @@ if (options.candelete) $(del).appendTo(self).data("idcomment", id).data("moder",
 }
 }
 });
+}
 };
 
-this.create_buttons(options.comments +", " + options.hold);
-} catch(e) { alert('error ' + e.message); }
-return this;
+  $.moderate = function(options) {
+moderate.options = $.extend(moderate.options, ltoptions.theme.comments, options);
+moderate.create_buttons(moderate.options.comments +", " + moderate.options.hold);
+return this;  
 };
-  
+
   $(document).ready(function() {
 $.load_script(ltoptions.files + "/js/plugins/tojson.min.js", function() {
 //alert($.toJSON (lang));
