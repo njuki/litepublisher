@@ -43,6 +43,7 @@ function get_get(name) {
     },
     
     litejson: function(data, callback) {
+data.random = Math.random();
       var c = get_cookie("litepubl_user");
       if (c != '') {
 data.litepubl_user = c;

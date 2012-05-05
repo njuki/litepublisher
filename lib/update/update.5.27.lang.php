@@ -3,6 +3,7 @@
 function update527lang() {
 $lang = tlocal::admin('comments');
 $js = array(
+'error' => $lang->error,
 'del' => $lang->delete,
 'edit' => $lang->edit,
 'approve' => $lang->approve,
