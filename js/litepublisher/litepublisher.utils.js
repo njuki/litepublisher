@@ -42,7 +42,7 @@ function get_get(name) {
       if ($.isFunction(fn)) $.uiscript.done(fn);
     },
     
-    litejson: function(data, errmesg, callback) {
+    litejson: function(data, callback) {
       var c = get_cookie("litepubl_user");
       if (c != '') {
 data.litepubl_user = c;
@@ -50,11 +50,7 @@ data.litepubl_user = c;
       if (c != '') data.litepubl_user_id = c;
 }
 
-      return jQuery.get(ltoptions.url + "/admin/jsonserver.php", data, callback, "json" )
-      .error( function(jq, textStatus, errorThrown) {
-        //jq.responseText
-        alert(errmesg);
-      });
+      return jQuery.get(ltoptions.url + "/admin/jsonserver.php", data, callback, "json" );
     }
     
   });
