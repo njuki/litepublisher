@@ -50,6 +50,7 @@ $cm = tcommentmanager::i();
 $result .= 'if ($ismoder = litepublisher::$options->ingroup(\'moderator\')) { ?>';
 $args->comment = '';
         $result .= $theme->parsearg($theme->templates['content.post.templatecomments.holdcomments'], $args);
+$result .= '<h4 class="loadhold"><a href="">load hold comments</a></h4>';
 $result .= '<?php } ?>';
 
         $args->mesg = $this->logged;

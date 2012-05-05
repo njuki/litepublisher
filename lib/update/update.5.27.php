@@ -50,6 +50,9 @@ $comments->added = $cm->sendmail;
 $subscribers = tsubscribers::i();
   $comments->added = $subscribers->sendmail;
   $comments->onapproved = $subscribers->sendmail;
+
+$comments->changed = tcommentswidget::i()->changed;
+
 $comments->unlock();
 
 tusers::i()->deleted = $subscribers->deleteitem;

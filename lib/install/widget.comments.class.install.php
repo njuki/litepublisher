@@ -7,11 +7,9 @@
 **/
 
 function tcommentswidgetInstall($self) {
-  litepublisher::$classes->commentmanager->changed = $self->changed;
+tcomments::i()->changed = $self->changed;
 }
 
 function tcommentswidgetUninstall($self) {
-  litepublisher::$classes->commentmanager->unbind($self);
+tcomments::i()->unbind($self);
 }
-
-?>
