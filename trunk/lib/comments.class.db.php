@@ -165,34 +165,14 @@ return false;
   }
   
   public function getcontent() {
-    $result = $this->getcontentwhere('approved', '');
-    if (!$this->moderator) return $result;
-    $post = tpost::i($this->pid);
-    $theme = $post->theme;
-    tlocal::usefile('admin');
-    $args = new targs();
-    if ($post->commentpages == litepublisher::$urlmap->page) {
-      $result .= $this->getcontentwhere('hold', '');
-    } else {
-      //add empty list of hold comments
-      $args->comment = '';
-      $result .= $theme->parsearg($theme->templates['content.post.templatecomments.holdcomments'], $args);
-    }
-    
-    return $result;
-    
-    /*
-    $args->comments = $result;
-    return $theme->parsearg($theme->templates['content.post.templatecomments.moderateform'], $args);
-    */
+return $this->getcontentwhere('approved', '');
   }
   
   public function getholdcontent($idauthor) {
-    if (litepublisher::$options->admincookie) return '';
     return $this->getcontentwhere('hold', "and $this->thistable.author = $idauthor");
   }
   
-  private function getcontentwhere($status, $whereauthor) {
+  public function getcontentwhere($status, $where ) {
     $result = '';
     $post = tpost::i($this->pid);
     $theme = $post->theme;
@@ -212,7 +192,7 @@ return false;
     }
     
     $table = $this->thistable;
-    $items = $this->select("$table.post = $this->pid $whereauthor  and $table.status = '$status'",
+    $items = $this->select("$table.post = $this->pid $where and $table.status = '$status'",
     "order by $table.posted asc limit $from, $count");
     
     $args = targs::i();

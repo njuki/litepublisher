@@ -74,5 +74,21 @@ return array(
 'rawcontent' => $raw
 );
   }
+
+public function comments_get_hold(array $args) {
+if (!litepublisher::$options->user) return $this->forbidden();
+$idpost = (int) $args['idpost'];
+$comments = tcomments::i($idpost);
+
+if (litepublisher::$options->ingroup('moderator')) {
+$where = '';
+} else {
+$where = "and $comments->thistable.author = " . litepublisher::$options->user;
+}
+
+return array(
+'items' => $comments->getcontentwhere('hold', $where)
+);
+  }
   
   }//class

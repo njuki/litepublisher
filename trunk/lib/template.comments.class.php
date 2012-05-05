@@ -48,6 +48,7 @@ $cm = tcommentmanager::i();
       $result .=  sprintf('<?php if (litepublisher::$options->ingroups(array(%s))) {', implode(',', $cm->idgroups));
 //add hold list
 $result .= 'if ($ismoder = litepublisher::$options->ingroup(\'moderator\')) { ?>';
+$args->comment = '';
         $result .= $theme->parsearg($theme->templates['content.post.templatecomments.holdcomments'], $args);
 $result .= '<?php } ?>';
 

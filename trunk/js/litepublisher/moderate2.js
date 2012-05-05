@@ -1,4 +1,5 @@
 (function( $ ){
+  $.moderate = function(options) {
 var moderate = {
 enabled : true,
 options: {
@@ -34,7 +35,7 @@ try {
 
 error: function(mesg) {
 moderate.setenabled(true);
-$.messagebox(mesg);
+$.messagebox(lang.comments.error, mesg);
 },
 
   setstatus: function (id, status) {
@@ -45,7 +46,7 @@ var options = moderate.options;
 $.confirmbox(lang.comments.confirm, lang.comments.confirmdelete, lang.comments.yesdelete, lang.comments.nodelete, function(index) {
 if (index !=0) return;
     $.litejson({method: "comment_delete", id: id}, function(r){
-if (r == false) return $.moderate.error(lang.comments.notdeleted);
+if (r == false) return moderate.error(lang.comments.notdeleted);
         $(idcomment).remove();
 moderate.setenabled(true);
       })
@@ -66,39 +67,39 @@ moderate.setenabled(true);
 } catch(e) { alert('error ' + e.message); }
       })
       .error( function(jq, textStatus, errorThrown) {
-$.moderate.error(lang.comments.notmoderated);
-        //alert(jq.responseText);
+moderate.error(lang.comments.notmoderated);
+        alert(jq.responseText);
 });
       break;
       
       case "edit":
     $.litejson({method: "comment_getraw", id: id}, function(resp){
-          var area = $($.moderate.options.editor);
+          var area = $(moderate.options.editor);
           area.data("idcomment", id);
           area.data("savedtext", area.val());
           area.val(resp.rawcontent);
 area.focus();
           $("#commentform").one("submit", function() {
-          var area = $($.moderate.options.editor);
+          var area = $(moderate.options.editor);
 var content = $.trim(area.val());
-if (content == "") return $.moderate.error(lang.comment.emptycontent);
+if (content == "") return moderate.error(lang.comment.emptycontent);
           $.litejson({method: "comment_edit", id:area.data("idcomment"), content: content},
             function(r){
               area.val(area.data("savedtext"));
-var cc = $.moderate.options.content + r.id;
+var cc = moderate.options.content + r.id;
               $(cc).html(r.content);
 location.hash = cc.substring(1);
 //} catch (e) { alert(e.message); }
             })
       .error( function(jq, textStatus, errorThrown) {
-$.moderate.error(lang.comments.notedited);
+moderate.error(lang.comments.notedited);
 });
         //} catch (e) { alert(e.message); }
             return false;
           });
       })
       .error( function(jq, textStatus, errorThrown) {
-$.moderate.error(lang.comments.errorrecieved);
+moderate.error(lang.comments.errorrecieved);
 });
       break;
       
@@ -152,7 +153,6 @@ if (options.candelete) $(del).appendTo(self).data("idcomment", id).data("moder",
 }
 };
 
-  $.moderate = function(options) {
 moderate.options = $.extend(moderate.options, ltoptions.theme.comments, options);
 moderate.create_buttons(moderate.options.comments +", " + moderate.options.hold);
 return this;  
