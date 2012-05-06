@@ -108,16 +108,21 @@ moderate.error(lang.comments.errorrecieved);
     }
   },
 
-get_hold: function() {
-//$().remove;
+loadhold: function() {
+$(".loadhold").remove();
 $.litejson({method: "comments_get_hold", idpost: ltoptions.idpost}, function(r) {
+alert(r.items);
+try {
 var options = moderate.options;
 if (options.ismoder) {
-
-$(options.hold).remove();
+var approved = $(options.comments);
+var hold = $(options.hold);
+while (approved.next()[0] != hold[0]) approved.next().remove();
+hold.remove();
 }
 $(options.comments).after(r.items);
 moderate.create_buttons(options.hold);
+} catch(e) { alert('error ' + e.message); }
 })
       .error( function(jq, textStatus, errorThrown) {
 moderate.error(lang.comments.errorrecieved);
@@ -126,7 +131,7 @@ moderate.error(lang.comments.errorrecieved);
 
 create_buttons: function(where) {
 var options = moderate.options;
-var approve = options.button.replace('%%title%%', lang.comments.approve);
+var approved = options.button.replace('%%title%%', lang.comments.approve);
 var hold = options.button.replace('%%title%%', lang.comments.hold);
 var del = options.button.replace('%%title%%', lang.comments.del);
 var edit = options.button.replace('%%title%%', lang.comments.edit);
@@ -138,7 +143,7 @@ var iduser = get_cookie("litepubl_user_id");
 var self = $(this);
 var id = self.data("idcomment");
 if (options.ismoder) {
-$(approve).appendTo(self).data("idcomment", id).data("moder", "approve").click(moderclick);
+$(approved).appendTo(self).data("idcomment", id).data("moder", "approved").click(moderclick);
 $(hold).appendTo(self).data("idcomment", id).data("moder", "hold").click(moderclick);
 $(del).appendTo(self).data("idcomment", id).data("moder", "delete").click(moderclick);
 $(edit).appendTo(self).data("idcomment", id).data("moder", "edit").click(moderclick);
@@ -155,6 +160,10 @@ if (options.candelete) $(del).appendTo(self).data("idcomment", id).data("moder",
 
 moderate.options = $.extend(moderate.options, ltoptions.theme.comments, options);
 moderate.create_buttons(moderate.options.comments +", " + moderate.options.hold);
+$(".loadhold a").click(function() {
+moderate.loadhold();
+return false;
+});
 return this;  
 };
 

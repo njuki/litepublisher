@@ -99,6 +99,7 @@ tlocal::clearcache();
 //tupdater::i()->run(5.27);
 //include_once('lib/update/update.5.27.lang.php');
 //update527lang();
+
 /*
 litepublisher::$classes->delete('tjsonserver');
 litepublisher::$classes->add('tjsonserver', 'jsonserver.class.php');
