@@ -53,9 +53,13 @@ class tjsonserver extends titems {
   public function request($param) {
   //$this->addevent('comments_get_hold', 'tjsoncomments', 'comments_get_hold');
     $this->beforerequest();
-    if (isset($_REQUEST['method'])) {
-      $method = $_REQUEST['method'];
-      $args = $_REQUEST;
+    if (isset($_GET['method'])) {
+      $method = $_GET['method'];
+      $args = $_GET;
+    } elseif (isset($_POST['method'])) {
+tguard::post();
+      $method = $_POST['method'];
+      $args = $_POST;
     } elseif ($args = $this->get_json_args()) {
       if (isset($args['method'])) {
         $method = $args['method'];
@@ -72,8 +76,9 @@ class tjsonserver extends titems {
     $this->callevent('beforecall', $a);
     
     try {
+//tfiler::log(var_export($args, true));
       $result = $this->callevent($method, $a);
-//dumpvar($result);
+//tfiler::log(var_export($result, true));
     } catch (Exception $e) {
 if (403 == $e->getCode()) {
     $result = '<?php Header(\'HTTP/1.0 403 Forbidden\', true, 403); ?>';
