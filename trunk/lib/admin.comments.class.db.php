@@ -323,6 +323,7 @@ if ('comuser' != $users->getvalue($uid, 'status')) return false;
   
   public function processform() {
     $result = '';
+parent::processform();
     switch ($this->name) {
       case 'comments':
       case 'hold':

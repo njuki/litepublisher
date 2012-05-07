@@ -504,7 +504,7 @@ class ttablecolumns {
   
   public function add($tml, $title, $align, $show) {
     $class = 'col_' . ++$this->index;
-    if (isset($_POST[$this->changed_hidden])) $show  = isset($_POST["checkbox-showcolumn-$this->index"]);
+    //if (isset($_POST[$this->changed_hidden])) $show  = isset($_POST["checkbox-showcolumn-$this->index"]);
     $display = $show ? 'block' : 'none';
   $this->style .= ".$class { text-align: $align; display: $display; }\n";
     $this->checkboxes[]=  sprintf($this->checkbox_tml, $this->index, $show ? 'checked="checked"' : '', $title);
