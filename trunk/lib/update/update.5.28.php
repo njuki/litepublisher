@@ -1,7 +1,7 @@
 <?php
 
 function update528() {
-unset(tstorage::$data['commentmanager']);
+if (isset(tstorage::$data) {
 unset(tstorage::$data['comusers']);
 unset(tstorage::$data['postclasses']);
 
@@ -13,4 +13,5 @@ unset(tstorage::$data['posts\index']);
 }
 
 litepublisher::$options->save();
+}
 }

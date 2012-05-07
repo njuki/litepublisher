@@ -138,6 +138,7 @@ setcookie('tablecolumns', serialize($this->showcolumns), time() + 30000000, '/ad
 public function processform() {
     if (isset($_POST['changed_hidden'])) {
 //$l = $table->index;
+// 1 based index because jquery selector nth-child same indexed
 $l = 15;
 for ($i = 1; $i<= $l; $i++) {
       $this->showcolumns[$i] = isset($_POST["checkbox-showcolumn-$i"]);

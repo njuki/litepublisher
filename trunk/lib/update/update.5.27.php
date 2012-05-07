@@ -80,7 +80,12 @@ $admin->save();
 litepublisher::$urlmap->setvalue($admin->items[$id]['idurl'], 'class', 'Tadmincommentmanager');
 }
 
-tjsmerger::i()->deletefile('moderate', '/js/litepublisher/rpc.min.js');
+$js = tjsmerger::i();
+$js->lock();
+$js->deletefile('moderate', '/js/litepublisher/rpc.min.js');
+include_once(litepublisher::$paths->lib . 'install' . DIRECTORY_SEPARATOR  . 'jsmerger.class.install.php');
+set_moderate_lang($js);
+$js->unlock();
 
 ttemplatecomments::i()->install();
 
