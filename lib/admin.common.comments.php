@@ -23,21 +23,17 @@ class tadmincommoncomments extends tadminmenu {
   protected function create() {
     parent::create();
     $this->showcolumns = array();
-    tfilestorage::loadvar(litepublisher::$paths->data . 'commentscolumns.php', $this->showcolumns);
+    //tfilestorage::loadvar(litepublisher::$paths->data . 'commentscolumns.php', $this->showcolumns);
+if (isset($_COOKIE['tablecolumns'])) $this->showcolumns = unserialize($_COOKIE['tablecolumns']);
   }
   
   protected function saveshowcolumns() {
-    tfilestorage::savevar(litepublisher::$paths->data .'commentscolumns', $this->showcolumns);
+    //tfilestorage::savevar(litepublisher::$paths->data .'commentscolumns', $this->showcolumns);
+setcookie('tablecolumns', serialize($this->showcolumns), time() + 30000000, '/admin/comments', false);
   }
   
   protected function showcolumn($index, $default) {
-    if (isset($_POST['changed_hidden'])) {
-      $r = isset($_POST["checkbox-showcolumn-$index"]);
-      $this->showcolumns[$index] =$r;
-      return $r;
-    } else {
       return isset($this->showcolumns[$index])? $this->showcolumns[$index] : $default;
-    }
   }
   
   public function createtable() {
@@ -136,8 +132,18 @@ class tadmincommoncomments extends tadminmenu {
     $table->body . '</tr>';
     
     $table->checkboxes[]  = '</p>-->';
-    if (isset($_POST['changed_hidden'])) $this->saveshowcolumns();
     return $table;
   }
+
+public function processform() {
+    if (isset($_POST['changed_hidden'])) {
+//$l = $table->index;
+$l = 15;
+for ($i = 1; $i<= $l; $i++) {
+      $this->showcolumns[$i] = isset($_POST["checkbox-showcolumn-$i"]);
+}
+$this->saveshowcolumns();
+}
+}
   
 }//class
