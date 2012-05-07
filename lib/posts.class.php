@@ -27,7 +27,7 @@ class tposts extends titems {
     $this->table = 'posts';
     $this->childtable = '';
     $this->rawtable = 'rawposts';
-    $this->basename = 'posts'  . DIRECTORY_SEPARATOR  . 'index';
+    $this->basename = 'posts/index';
     $this->addevents('edited', 'changed', 'singlecron', 'beforecontent', 'aftercontent', 'beforeexcerpt', 'afterexcerpt', 'onselect');
     $this->data['archivescount'] = 0;
     $this->data['revision'] = 0;

@@ -318,7 +318,7 @@ class tfilestorage {
 }//class
 
 class tstorage extends tfilestorage {
-  private static $data;
+  public static $data;
   private static $modified;
   
   public static function save(tdata $obj) {
