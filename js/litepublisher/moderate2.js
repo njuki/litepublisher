@@ -160,6 +160,13 @@ return false;
         if (idauthor == iduser) {
           if (options.canedit) $(edit).appendTo(self).data("idcomment", id).data("moder", "edit").click(moderclick);
           if (options.candelete) $(del).appendTo(self).data("idcomment", id).data("moder", "delete").click(moderclick);
+if ((options.canedit ||options.candelete) && self.is(":hidden")) {
+$(show).insertBefore(self).one("click",  function() {
+$(this).next().show();
+$(this).remove();
+return false;
+});
+}
         }
       }
     });
