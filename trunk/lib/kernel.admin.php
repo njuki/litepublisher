@@ -744,7 +744,7 @@ class ttablecolumns {
   
   public function add($tml, $title, $align, $show) {
     $class = 'col_' . ++$this->index;
-    if (isset($_POST[$this->changed_hidden])) $show  = isset($_POST["checkbox-showcolumn-$this->index"]);
+    //if (isset($_POST[$this->changed_hidden])) $show  = isset($_POST["checkbox-showcolumn-$this->index"]);
     $display = $show ? 'block' : 'none';
   $this->style .= ".$class { text-align: $align; display: $display; }\n";
     $this->checkboxes[]=  sprintf($this->checkbox_tml, $this->index, $show ? 'checked="checked"' : '', $title);
@@ -964,14 +964,12 @@ class tajaxposteditor  extends tevents {
       case 'status':
       $args = new targs();
       if (dbversion) {
-        $args->comments_status= tadminhtml::array2combo(array(
+        $args->comstatus= tadminhtml::array2combo(array(
         'closed' => $lang->closed,
         'reg' => $lang->reg,
         'guest' => $lang->guest,
         'comuser' => $lang->comuser
-        ), $post->comments_status);
-      } else {
-        $args->commentsenabled = $post->commentsenabled;
+        ), $post->comstatus);
       }
       
       $args->pingenabled = $post->pingenabled;
@@ -983,8 +981,8 @@ class tajaxposteditor  extends tevents {
       $args->perms = tadminperms::getcombo($post->idperm);
       $args->password = $post->password;
       $result = $html->parsearg(
-      (dbversion ? '[combo=comments_status]' : '[checkbox=commentsenabled]') .
-      '[checkbox=pingenabled]
+      '[combo=comstatus]
+      [checkbox=pingenabled]
       [combo=status]
       $perms
       [password=password]
@@ -1308,12 +1306,7 @@ class tposteditor extends tadminmenu {
     
     if (isset($status)) {
       $post->status = $status == 'draft' ? 'draft' : 'published';
-      if (dbversion) {
-        $post->comments_status = $comments_status;
-      } else {
-        $post->commentsenabled = isset($commentsenabled);
-      }
-      
+      $post->comstatus = $comstatus;
       $post->pingenabled = isset($pingenabled);
       $post->idperm = (int) $idperm;
       if ($password != '') $post->password = $password;

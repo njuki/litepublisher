@@ -289,7 +289,7 @@ class tpost extends titem implements  itemplate {
     'tags' => array(),
     'files' => array(),
     'status' => 'published',
-    'comments_status' => litepublisher::$options->comments_status,
+    'comstatus' => litepublisher::$options->comstatus,
     'pingenabled' => litepublisher::$options->pingenabled,
     'password' => '',
     'idview' => 1,
@@ -657,8 +657,7 @@ class tpost extends titem implements  itemplate {
   }
   
   public function gethead() {
-    // backward compatably with file version
-    $result = isset($this->data['head']) ? $this->data['head'] : '';
+    $result = $this->data['head'];
     ttemplate::i()->ltoptions['idpost'] = $this->id;
     $theme = $this->theme;
     $result .= $theme->templates['head.post'];
@@ -672,7 +671,7 @@ class tpost extends titem implements  itemplate {
       $result .= $theme->templates['head.post.next'];
     }
     
-    if ($this->commentsenabled && ($this->commentscount > 0) ) {
+    if ($this->hascomm) {
       $lang = tlocal::i('comment');
       $result .= $theme->templates['head.post.rss'];
     }
@@ -742,7 +741,7 @@ class tpost extends titem implements  itemplate {
   }
   
   public function getrsslink() {
-    if ($this->commentsenabled && ($this->commentscount > 0)) {
+    if ($this->hascomm) {
       return $this->parsetml('content.post.rsslink');
     }
     return '';
@@ -774,7 +773,7 @@ class tpost extends titem implements  itemplate {
   }
   
   public function getcommentslink() {
-    if (($this->commentscount == 0) && !$this->commentsenabled) return '';
+    if (($this->commentscount == 0) && ($this->comstatus == 'closed')) return '';
     return sprintf('<a href="%s%s#comments">%s</a>', litepublisher::$site->url, $this->getlastcommenturl(), $this->getcmtcount());
   }
   
@@ -793,7 +792,7 @@ class tpost extends titem implements  itemplate {
     $countpages = $this->countpages;
     if ($countpages > 1) $result .= $this->theme->getpages($this->url, $page, $countpages);
     
-    if (($this->commentscount > 0) || $this->commentsenabled || ($this->pingbackscount > 0)) {
+    if (($this->commentscount > 0) || ($this->comstatus != 'closed') || ($this->pingbackscount > 0)) {
       if (($countpages > 1) && ($this->commentpages < $page)) {
         $result .= $this->getcommentslink();
       } else {
@@ -804,12 +803,8 @@ class tpost extends titem implements  itemplate {
     return $result;
   }
   
-  public function getcommentsenabled() {
-    return 'closed' != $this->data['comments_status'];
-  }
-  
-  public function setcommentsenabled($value) {
-    $this->data['comments_status'] = $value ? litepublisher::$options->comments_status : 'closed';
+  public function gethascomm() {
+    return ($this->data['comstatus'] != 'closed') && ((int) $this->data['commentscount'] > 0);
   }
   
   public function get_excerpt() {
@@ -1088,7 +1083,7 @@ class tposts extends titems {
     $this->table = 'posts';
     $this->childtable = '';
     $this->rawtable = 'rawposts';
-    $this->basename = 'posts'  . DIRECTORY_SEPARATOR  . 'index';
+    $this->basename = 'posts/index';
     $this->addevents('edited', 'changed', 'singlecron', 'beforecontent', 'aftercontent', 'beforeexcerpt', 'afterexcerpt', 'onselect');
     $this->data['archivescount'] = 0;
     $this->data['revision'] = 0;
@@ -1463,7 +1458,7 @@ class tposttransform  {
   'title', 'title2', 'filtered', 'excerpt', 'rss', 'keywords', 'description', 'head', 'moretitle',
   'categories', 'tags', 'files',
   'password', 'idview', 'idperm', 'icon',
-  'status', 'comments_status', 'pingenabled',
+  'status', 'comstatus', 'pingenabled',
   'commentscount', 'pingbackscount', 'pagescount',
   );
   

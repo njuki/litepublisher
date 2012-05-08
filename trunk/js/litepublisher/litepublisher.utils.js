@@ -43,14 +43,14 @@ function get_get(name) {
     },
     
     litejson: function(data, callback) {
-data.random = Math.random();
+      data.random = Math.random();
       var c = get_cookie("litepubl_user");
       if (c != '') {
-data.litepubl_user = c;
-      c = get_cookie("litepubl_user_id");
-      if (c != '') data.litepubl_user_id = c;
-}
-
+        data.litepubl_user = c;
+        c = get_cookie("litepubl_user_id");
+        if (c != '') data.litepubl_user_id = c;
+      }
+      
       return jQuery.get(ltoptions.url + "/admin/jsonserver.php", data, callback, "json" );
     }
     

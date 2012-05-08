@@ -36,7 +36,7 @@ class Tadmincommentmanager extends tadminmenu {
     $args->checkduplicate = $options->checkduplicate;
     $args->commentsdisabled  = $options->commentsdisabled;
     $args->pingenabled  = $options->pingenabled;
-
+    
     $tabs->add($lang->options, '
     [combo=comstatus]
     [checkbox=filtercommentstatus]
@@ -44,15 +44,15 @@ class Tadmincommentmanager extends tadminmenu {
     [checkbox=checkduplicate]
     [checkbox=commentsdisabled]
     [checkbox=pingenabled]
-');
-
+    ');
+    
     $args->commentpages  = $options->commentpages;
     $args->commentsperpage  = $options->commentsperpage;
     $args->comments_invert_order  = $options->comments_invert_order;
     $args->hidelink =  $cm->hidelink;
     $args->redir = $cm->redir;
     $args->nofollow = $cm->nofollow;
-
+    
     $tabs->add($lang->templates, '
     [checkbox=commentpages]
     [text=commentsperpage]
@@ -60,15 +60,15 @@ class Tadmincommentmanager extends tadminmenu {
     [checkbox=hidelink]
     [checkbox=redir]
     [checkbox=nofollow]
-');
-
+    ');
+    
     $args->canedit = $cm->canedit;
     $args->candelete = $cm->candelete;
     $args->confirmlogged = $cm->confirmlogged;
     $args->confirmguest = $cm->confirmguest ;
     $args->confirmcomuser = $cm->confirmcomuser;
     $args->confirmemail = $cm->confirmemail;
-
+    
     $tabs->add($lang->perms, '
     [checkbox=canedit]
     [checkbox=candelete]
@@ -78,22 +78,22 @@ class Tadmincommentmanager extends tadminmenu {
     [checkbox=confirmemail]
     ');
     
-        $args->sendnotification = $cm->sendnotification;
+    $args->sendnotification = $cm->sendnotification;
     $args->defaultsubscribe = $options->defaultsubscribe;
-$subscribe = tsubscribers::i();
+    $subscribe = tsubscribers::i();
     $args->locklist = $subscribe->locklist;
     $args->subscribe_enabled = $subscribe->enabled;
-
-        $tabs->add($lang->subscribe, '
+    
+    $tabs->add($lang->subscribe, '
     [checkbox=sendnotification]
     [checkbox=defaultsubscribe]
-[checkbox=subscribe_enabled]
-[editor=locklist]
-');
-
+    [checkbox=subscribe_enabled]
+    [editor=locklist]
+    ');
+    
     $mesgtabs = new tuitabs();
     $tc = ttemplatecomments::i();
-    foreach (array('logged', 'reqlogin', 'regaccount', 'guest', 'comuser') as $name) {
+    foreach (array('logged', 'reqlogin', 'regaccount', 'guest', 'comuser', 'loadhold') as $name) {
       $args->$name = $tc->$name;
       $mesgtabs->add($lang->$name, "[editor=$name]");
     }
@@ -127,16 +127,16 @@ $subscribe = tsubscribers::i();
     $cm->unlock();
     
     $tc = ttemplatecomments::i();
-    foreach (array('logged', 'reqlogin', 'regaccount', 'guest', 'comuser') as $name) {
+    foreach (array('logged', 'reqlogin', 'regaccount', 'guest', 'comuser', 'loadhold') as $name) {
       $tc->$name = $_POST[$name];
     }
     $tc->save();
     
     $subscr = tsubscribers::i();
-$subscr->lock();
-$subscr->locklist = $locklist;
-$subscr->enabled = isset($subscribe_enabled);
-$subscr->unlock();
-
+    $subscr->lock();
+    $subscr->locklist = $locklist;
+    $subscr->enabled = isset($subscribe_enabled);
+    $subscr->unlock();
+    
   }
 }//class

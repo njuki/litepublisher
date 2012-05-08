@@ -7,24 +7,24 @@
 **/
 
 function set_moderate_lang($self) {
-$lang = tlocal::admin('comments');
-$js = array(
-'error' => $lang->error,
-'del' => $lang->delete,
-'edit' => $lang->edit,
-'approve' => $lang->approve,
-'hold' => $lang->hold,
-'confirmdelete' => $lang->confirmdelete,
-'confirm' => $lang->confirm,
-'yesdelete' => $lang->yesdelete,
-'nodelete' => $lang->nodelete,
-'notdeleted' => $lang->notdeleted,
-'notmoderated' => $lang->notmoderated,
-'errorrecieved' => $lang->errorrecieved,
-'notedited' => $lang->notedited,
-);
-
-$self->addtext('moderate', 'lang', 
+  $lang = tlocal::admin('comments');
+  $js = array(
+  'error' => $lang->error,
+  'del' => $lang->delete,
+  'edit' => $lang->edit,
+  'approve' => $lang->approve,
+  'hold' => $lang->hold,
+  'confirmdelete' => $lang->confirmdelete,
+  'confirm' => $lang->confirm,
+  'yesdelete' => $lang->yesdelete,
+  'nodelete' => $lang->nodelete,
+  'notdeleted' => $lang->notdeleted,
+  'notmoderated' => $lang->notmoderated,
+  'errorrecieved' => $lang->errorrecieved,
+  'notedited' => $lang->notedited,
+  );
+  
+  $self->addtext('moderate', 'lang',
 sprintf('var lang = $.extend(true, lang, {comments: %s});', json_encode($js)));
 }
 
@@ -62,7 +62,7 @@ function tjsmergerInstall($self) {
   
   $section = 'moderate';
   $self->add($section, '/js/litepublisher/moderate.min.js');
-set_moderate_lang($self);
+  set_moderate_lang($self);
   
   tlocal::usefile('admin');
 $js = "var lang;\nif (lang == undefined) lang = {};\n";
@@ -73,7 +73,7 @@ $js = "var lang;\nif (lang == undefined) lang = {};\n";
   $lang = tlocal::admin();
   $self->addtext('default', 'widgetlang', $js . sprintf('lang.widgetlang= %s;',  json_encode($widgetlang)));
   $self->addtext('comments', 'lang', $js . sprintf('lang.comment = %s;',  json_encode($lang->ini['comment'])));
-
+  
   $self->unlock();
   
   $template = ttemplate::i();
@@ -84,5 +84,5 @@ $js = "var lang;\nif (lang == undefined) lang = {};\n";
 }
 
 function tjsmergerUninstall($self) {
-tupdater::i()->unbind($self);
+  tupdater::i()->unbind($self);
 }

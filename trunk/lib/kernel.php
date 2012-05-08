@@ -271,6 +271,11 @@ class tdatabase {
     return false;
   }
   
+  public function getval($table, $id, $name) {
+    if ($r = mysql_fetch_assoc($this->query("select $name from $this->prefix$table where id = $id limit 1"))) return $r[$name];
+    return false;
+  }
+  
   public function getvalue($id, $name) {
     if ($r = mysql_fetch_assoc($this->query("select $name from $this->prefix$this->table where id = $id limit 1"))) return $r[$name];
     return false;
@@ -433,8 +438,8 @@ class tdata {
     return false;
   }
   
-  public function error($Msg) {
-    throw new Exception($Msg);
+  public function error($Msg, $code = 0) {
+    throw new Exception($Msg, $code);
   }
   
   public function getbasename() {
@@ -461,7 +466,7 @@ class tdata {
     }
   }
   
-  protected function externalfunc($class, $func, $args) {
+  public function externalfunc($class, $func, $args) {
     if ($filename = litepublisher::$classes->getclassfilename($class, true)) {
       $externalname = basename($filename, '.php') . '.install.php';
       $dir = dirname($filename) . DIRECTORY_SEPARATOR;
@@ -657,7 +662,7 @@ class tfilestorage {
 }//class
 
 class tstorage extends tfilestorage {
-  private static $data;
+  public static $data;
   private static $modified;
   
   public static function save(tdata $obj) {
@@ -1945,7 +1950,7 @@ class turlmap extends titems {
       while (@ob_end_flush ());
       flush();
       //prevent output while client connected
-      //if ($this->isredir || count($this->close_events)) ob_start();
+      if ($this->isredir || count($this->close_events)) ob_start();
     }
     $this->afterrequest($this->url);
     $this->close();

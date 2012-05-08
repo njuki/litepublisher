@@ -23,6 +23,9 @@ function ttemplatecommentsInstall($self) {
   
   $self->data['comuser'] = sprintf('<p>%s</p>', sprintf($lang->comuser,
 '<a class="log-in" href="$site.url/admin/login/{$site.q}backurl=">' . $lang->log_in . '</a>'));
+
+  $self->data['loadhold'] = sprintf('<h4>%s</h4>', sprintf($lang->loadhold,
+'<a class="loadhold " href="$site.url/admin/comments/hold/">' . $lang->loadhold . '</a>'));
   
   $self->data['idgroups'] = tusergroups::i()->cleangroups('author, editor, moderator, ticket, commmentator');
   $self->save();

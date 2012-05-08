@@ -591,7 +591,13 @@ class tthemeparser extends tevents {
           '" /></p>
           </form>';
         }
-      }
+        
+        $comment = 'content.post.templatecomments.comments.comment';
+        $templates[$comment] = str_replace('$moderate',
+        '<div class="moderationbuttons" data-idcomment="$comment.id" data-idauthor="$comment.author"></div>',
+        $templates[$comment]);
+        
+      }//method
       
       public static function getmetaclasses($s) {
         $result = array('rss' => '', 'comments' => '', 'media' => '', 'foaf' => '', 'profile' => '', 'sitemap' => '');

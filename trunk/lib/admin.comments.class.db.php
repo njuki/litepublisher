@@ -248,7 +248,7 @@ class tadminmoderator extends tadmincommoncomments {
   private function deleteauthor($uid) {
     $users = tusers::i();
     if (!$users->itemexists($uid)) return false;
-if ('comuser' != $users->getvalue($uid, 'status')) return false;
+    if ('comuser' != $users->getvalue($uid, 'status')) return false;
     $comments = tcomments::i();
     $comments->db->delete("author = $uid");
     $users->delete($uid);
@@ -323,7 +323,7 @@ if ('comuser' != $users->getvalue($uid, 'status')) return false;
   
   public function processform() {
     $result = '';
-parent::processform();
+    parent::processform();
     switch ($this->name) {
       case 'comments':
       case 'hold':

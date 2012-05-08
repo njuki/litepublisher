@@ -51,13 +51,13 @@ class tjsonserver extends titems {
   }
   
   public function request($param) {
-  //$this->addevent('comments_get_hold', 'tjsoncomments', 'comments_get_hold');
+    //$this->addevent('comments_get_hold', 'tjsoncomments', 'comments_get_hold');
     $this->beforerequest();
     if (isset($_GET['method'])) {
       $method = $_GET['method'];
       $args = $_GET;
     } elseif (isset($_POST['method'])) {
-tguard::post();
+      tguard::post();
       $method = $_POST['method'];
       $args = $_POST;
     } elseif ($args = $this->get_json_args()) {
@@ -76,16 +76,16 @@ tguard::post();
     $this->callevent('beforecall', $a);
     
     try {
-//tfiler::log(var_export($args, true));
+      //tfiler::log(var_export($args, true));
       $result = $this->callevent($method, $a);
-//tfiler::log(var_export($result, true));
+      //tfiler::log(var_export($result, true));
     } catch (Exception $e) {
-if (403 == $e->getCode()) {
-    $result = '<?php Header(\'HTTP/1.0 403 Forbidden\', true, 403); ?>';
-} else {
-      //500 error
-      $result = '<?php header(\'HTTP/1.1 500 Internal Server Error\', true, 500); ?>';
-}
+      if (403 == $e->getCode()) {
+        $result = '<?php Header(\'HTTP/1.0 403 Forbidden\', true, 403); ?>';
+      } else {
+        //500 error
+        $result = '<?php header(\'HTTP/1.1 500 Internal Server Error\', true, 500); ?>';
+      }
       $result .= $e->getMessage();
       return $result;
     }

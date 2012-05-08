@@ -7,9 +7,9 @@
 **/
 
 function tcommentswidgetInstall($self) {
-tcomments::i()->changed = $self->changed;
+  tcomments::i()->changed = $self->changed;
 }
 
 function tcommentswidgetUninstall($self) {
-tcomments::i()->unbind($self);
+  tcomments::i()->unbind($self);
 }

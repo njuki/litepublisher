@@ -83,8 +83,6 @@ content.post.templatecomments.comments.count = [<h2>$count $lang.topost: $post.t
 
 content.post.templatecomments.comments = [
 <a id="comments"></a>
-$id = [commentlist]
-$idhold = [holdcommentlist]
 <ol id="commentlist" start="$from">$comment</ol>]
 
 content.post.templatecomments.holdcomments = [<h3 id="holdcomments">$lang.hold</h3>
@@ -94,14 +92,8 @@ content.post.templatecomments.comments.comment = [
 <li $class1=[class="hreview"] $class2=[class="hreview"] id="comment-$comment.id">
 <small class="dtreviewed date">$comment.date = [d M Y] <span class="time"> $lang.attime $comment.time</span></small> <em class="reviewer vcard">$comment.authorlink</em>
 <ins class="description" id="commentcontent-$comment.id">$comment.content
-<p class="moderate">$moderate $quotebuttons = [ <input type="button" value="$lang.reply" onclick="replycomment($comment.id,'$comment.name');" /><input type="button" value="$lang.quote" onclick="quotecomment($comment.id,'$comment.name');" />]</p></ins></li>]
-
-content.post.templatecomments.comments.comment.moderate = [
-<input type="button" value="M" rel="inlinewidget" /><!--<span class="moderationbuttons" data-idcomment="$comment.id">
-													  <input type="button" value="$lang.approve" data-moderate="approved" />
-  <input type="button" value="$lang.holdbutton" data-moderate="hold" />
-  <input type="button" value="$lang.delete" data-moderate="delete" />
-  <input type="button" value="$lang.edit" data-moderate="edit" /></span>-->]
+<p class="moderate"><span class="moderationbuttons hidden" data-idcomment="$comment.id" data-idauthor="$comment.author"></span>
+$quotebuttons = [ <input type="button" value="$lang.reply" onclick="replycomment($comment.id,'$comment.name');" /><input type="button" value="$lang.quote" onclick="quotecomment($comment.id,'$comment.name');" />]</p></ins></li>]
 
 content.post.templatecomments.pingbacks = [<h3>$lang.pingbacks</h3>
 <ol class="commentlist" start="1">$pingback = [<li id="pingback-$pingback.id"><a href="$pingback.url">$pingback.title</a></li>]</ol>
