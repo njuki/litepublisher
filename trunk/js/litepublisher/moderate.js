@@ -1,210 +1,192 @@
-/**
-* Lite Publisher
-* Copyright (C) 2010, 2012 Vladimir Yushko http://litepublisher.com/
-* Dual licensed under the MIT (mit.txt)
-* and GPL (gpl.txt) licenses.
-**/
-
-var commentclient;
-
-function createcommentclient() {
-  return new rpc.ServiceProxy(ltoptions.url + '/rpc.xml', {
-    asynchronous: true,
-    protocol: 'XML-RPC',
-    sanitize: false,
-    methods: [
-    'litepublisher.moderate',
-    'litepublisher.deletecomment',
-    'litepublisher.comments.setstatus',
-    'litepublisher.comments.add',
-    'litepublisher.comments.get',
-    'litepublisher.comments.edit',
-    'litepublisher.comments.reply',
-    'litepublisher.comments.getrecent'
-    ]
-    //callbackParamName: 'callback'
-  });
-}
-
-
-function movecomment(id, status) {
-  var item =document.getElementById("comment-" + id);
-  var idnewparent = ltoptions.commentsid;
-  if (status == 'hold') idnewparent = 'hold' + ltoptions.commentsid;
-  var newparent = document.getElementById(idnewparent);
-  newparent.appendChild(item.cloneNode(true));
-  item.parentNode.removeChild(item);
-}
-
-function deletecomment(id) {
-  if (!confirm(lang.comments.confirmdelete)) return;
-  if (commentclient == undefined) commentclient = createcommentclient();
-  commentclient.litepublisher.deletecomment( {
-    
-    params:['', '', id, ltoptions.idpost],
-    
-    onSuccess:function(result){
-      var item =document.getElementById("comment-" + id);
-      item.parentNode.removeChild(item);
-    },
-    
-    onException:function(errorObj){
-      alert(lang.comments.notdeleted);
-    },
-    
-  onComplete:function(responseObj){ }
-  } );
-}
-
-function setcommentstatus(id, status) {
-  if (commentclient == undefined) commentclient = createcommentclient();
-  commentclient.litepublisher.comments.setstatus( {
-    params:['', '', id, ltoptions.idpost, status],
-    
-    onSuccess:function(result){
-      movecomment(id, status);
-    },
-    
-    onException:function(errorObj){
-      alert(lang.comments.notmoderated);
-    },
-    
-  onComplete:function(responseObj){ }
-  } );
-}
-
-function moderate(list, action) {
-  if (action == 'delete') {
-    if (!confirm(lang.comments.confirmdelete)) return;
-  }
-  
-  if (commentclient == undefined) commentclient = createcommentclient();
-  commentclient.litepublisher.moderate( {
-    params:['', '', ltoptions.idpost, list, action],
-    
-    onSuccess:function(result){
-      for (var i = 0, n = list.length; i <n; i++) {
-        if (action == 'delete') {
-          var item =document.getElementById("comment-" + list[i]);
-          item.parentNode.removeChild(item);
+(function( $ ){
+  $.moderate = function(options) {
+    var moderate = {
+      enabled : true,
+      options: {
+        comments: "#commentlist",
+        hold: "#holdcommentlist",
+        comment: "#comment-",
+        content: "#commentcontent-",
+        buttons:".moderationbuttons",
+        button: '<button type="button">%%title%%</button>',
+        editor: "#comment"
+      },
+      
+      setenabled: function(value) {
+        if (value== this.enabled) return;
+        this.enabled = value;
+        if(value) {
+          $(this.options.buttons).show();
         } else {
-          movecomment(list[i], action);
+          $(this.options.buttons).hide();
         }
-      }
-    },
-    
-    onException:function(errorObj){
-      alert(lang.comments.notmoderated);
-    },
-    
-  onComplete:function(responseObj){ }
-  } );
-  
-}
-
-function submitmoderateform(form, action) {
-  var list = new Array();
-  for (var i = 0, n = form.elements.length; i < n; i++) {
-    var elem = form.elements[i];
-    if((elem.type == 'checkbox') && (elem.checked == true)) {
-      list.push(parseInt(elem.value));
-    }
-  }
-  moderate(list, action);
-}
-
-function editcomment(id) {
-  if (commentclient == undefined) commentclient = createcommentclient();
-  commentclient.litepublisher.comments.get( {
-    params:['', '', id, ltoptions.idpost],
-    
-    onSuccess:function(result){
-      try {
-        document.getElementById('name').value = result.name;
-        document.getElementById('email').value = result.email;
-        document.getElementById('url').value = result.url;
-        document.getElementById('comment').value = result.rawcontent;
-        
-        document.getElementById('commentform').onsubmit = submiteditcomment(id);
-        document.getElementById('name').focus();
-      } catch (e) {
-        alert(e.message);
-      }
-    },
-    
-    onException:function(errorObj){
-      alert(lang.comments.errorrecieved);
-    },
-    
-  onComplete:function(responseObj){ }
-  } );
-}
-
-function submiteditcomment(id) {
-  return function() {
-    commentclient.litepublisher.comments.edit( {
-      params:['', '', id, ltoptions.idpost, {
-        name: document.getElementById('name').value,
-        email: document.getElementById('email').value,
-        url: document.getElementById('url').value,
-        content: document.getElementById('comment').value
-      }],
-      
-      onSuccess:function(result){
-        document.getElementById('name').value = '';
-        document.getElementById('email').value = '';
-        document.getElementById('url').value = '';
-        var content = document.getElementById('comment').value;
-        document.getElementById('comment').value = '';
-        document.getElementById('commentform').onsubmit = null;
-        
-        var p = document.getElementById('commentcontent-' + id);
-        p.innerHTML = content;
-        document.getElementById('checkbox-comment-' + id).focus();
       },
       
-      onException:function(errorObj){
-        alert(lang.comments.notedited);
-      },
-      
-    onComplete:function(responseObj){ }
-    } );
-    
-    return false;
-  };
-}
-
-function sendreply() {
-  try {
-    var content =         document.getElementById('comment').value;
-    if (content == '') {
-      alert(lang.comment.emptycontent);
-      return;
-    }
-    
-    if (commentclient == undefined) commentclient = createcommentclient();
-    commentclient.litepublisher.comments.reply( {
-      params:['', '', 0, ltoptions.idpost, content],
-      
-      onSuccess:function(result){
+      click: function() {
+        if (!moderate.enabled) return false;
         try {
-          document.getElementById('comment').value = '';
-          window.location .reload(true);
-        } catch (e) {
-          alert(e.message);
-        }
-        
+          var self = $(this);
+          var action = self.data("moder");
+          var id = self.data("idcomment");
+          moderate.setstatus(id, action);
+      } catch(e) { alert('error ' + e.message); }
+        return false;
       },
       
-      onException:function(errorObj){
-        alert(lang.comments.notedited);
+      error: function(mesg) {
+        moderate.setenabled(true);
+        $.messagebox(lang.comments.error, mesg);
       },
       
-    onComplete:function(responseObj){ }
-    } );
-    
-  } catch (e) {
-    alert(e.message);
-  }
+      setstatus: function (id, status) {
+        var options = moderate.options;
+        var idcomment = options.comment + id;
+        switch (status) {
+          case "delete":
+          $.confirmbox(lang.comments.confirm, lang.comments.confirmdelete, lang.comments.yesdelete, lang.comments.nodelete, function(index) {
+            if (index !=0) return;
+          $.litejson({method: "comment_delete", id: id}, function(r){
+              if (r == false) return moderate.error(lang.comments.notdeleted);
+              $(idcomment).remove();
+              moderate.setenabled(true);
+            })
+            .error( function(jq, textStatus, errorThrown) {
+              moderate.error(lang.comments.notdeleted);
+              //alert(jq.responseText);
+            });
+          });
+          break;
+          
+          case "hold":
+          case "approved":
+        $.litejson({method: "comment_setstatus", id: id, status: status}, function(r) {
+            try {
+              if (r == false) return moderate.error(lang.comments.notmoderated);
+              $(status == "hold" ? options.hold : options.comments).append($(options.comment  + id));
+              moderate.setenabled(true);
+          } catch(e) { alert('error ' + e.message); }
+          })
+          .error( function(jq, textStatus, errorThrown) {
+            moderate.error(lang.comments.notmoderated);
+            alert(jq.responseText);
+          });
+          break;
+          
+          case "edit":
+        $.litejson({method: "comment_getraw", id: id}, function(resp){
+            var area = $(moderate.options.editor);
+            area.data("idcomment", id);
+            area.data("savedtext", area.val());
+            area.val(resp.rawcontent);
+            area.focus();
+            $("#commentform").one("submit", function() {
+              var area = $(moderate.options.editor);
+              var content = $.trim(area.val());
+              if (content == "") return moderate.error(lang.comment.emptycontent);
+            $.litejson({method: "comment_edit", id:area.data("idcomment"), content: content},
+              function(r){
+                area.val(area.data("savedtext"));
+                var cc = moderate.options.content + r.id;
+                $(cc).html(r.content);
+                location.hash = cc.substring(1);
+            //} catch (e) { alert(e.message); }
+            })
+            .error( function(jq, textStatus, errorThrown) {
+              moderate.error(lang.comments.notedited);
+            });
+        //} catch (e) { alert(e.message); }
+          return false;
+        });
+      })
+      .error( function(jq, textStatus, errorThrown) {
+        moderate.error(lang.comments.errorrecieved);
+      });
+      break;
+      
+      default:
+      alert("Unknown status " + status);
+    }
+  },
   
+  loadhold: function() {
+    $(".loadhold").remove();
+  $.litejson({method: "comments_get_hold", idpost: ltoptions.idpost}, function(r) {
+      alert(r.items);
+      try {
+        var options = moderate.options;
+        if (options.ismoder) {
+          var approved = $(options.comments);
+          var hold = $(options.hold);
+          while (approved.next()[0] != hold[0]) approved.next().remove();
+          hold.remove();
+        }
+        $(options.comments).after(r.items);
+        moderate.create_buttons(options.hold);
+    } catch(e) { alert('error ' + e.message); }
+    })
+    .error( function(jq, textStatus, errorThrown) {
+      moderate.error(lang.comments.errorrecieved);
+    });
+  },
+  
+  create_buttons: function(where) {
+    var options = moderate.options;
+    var approved = options.button.replace('%%title%%', lang.comments.approve);
+    var hold = options.button.replace('%%title%%', lang.comments.hold);
+    var del = options.button.replace('%%title%%', lang.comments.del);
+    var edit = options.button.replace('%%title%%', lang.comments.edit);
+var show = '<button type="button">E</button>';
+
+    var moderclick = moderate.click;
+    var iduser = get_cookie("litepubl_user_id");
+    
+    $(options.buttons, where).each(function() {
+      var self = $(this);
+      var id = self.data("idcomment");
+      if (options.ismoder) {
+        $(approved).appendTo(self).data("idcomment", id).data("moder", "approved").click(moderclick);
+        $(hold).appendTo(self).data("idcomment", id).data("moder", "hold").click(moderclick);
+        $(del).appendTo(self).data("idcomment", id).data("moder", "delete").click(moderclick);
+        $(edit).appendTo(self).data("idcomment", id).data("moder", "edit").click(moderclick);
+if (self.is(":hidden")) {
+$(show).insertBefore(self).one("click",  function() {
+$(this).next().show();
+$(this).remove();
+return false;
+});
 }
+      } else {
+        var idauthor = self.data("idauthor");
+        if (idauthor == iduser) {
+          if (options.canedit) $(edit).appendTo(self).data("idcomment", id).data("moder", "edit").click(moderclick);
+          if (options.candelete) $(del).appendTo(self).data("idcomment", id).data("moder", "delete").click(moderclick);
+if ((options.canedit ||options.candelete) && self.is(":hidden")) {
+$(show).insertBefore(self).one("click",  function() {
+$(this).next().show();
+$(this).remove();
+return false;
+});
+}
+        }
+      }
+    });
+  }
+};
+
+moderate.options = $.extend(moderate.options, ltoptions.theme.comments, options);
+moderate.create_buttons(moderate.options.comments +", " + moderate.options.hold);
+$(".loadhold").click(function() {
+  moderate.loadhold();
+  return false;
+});
+return this;
+};
+
+$(document).ready(function() {
+$.load_script(ltoptions.files + "/js/plugins/tojson.min.js", function() {
+  //alert($.toJSON (lang));
+  $.moderate();
+});
+});
+
+})( jQuery );
