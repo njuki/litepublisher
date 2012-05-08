@@ -79,10 +79,19 @@
             area.data("savedtext", area.val());
             area.val(resp.rawcontent);
             area.focus();
-            $("#commentform").one("submit", function() {
+
+$.onEscape(function() {
+            $("#commentform").off("submit.moderate");
+                area.val(area.data("savedtext"));
+});
+
+            $("#commentform").one("submit.moderate", function() {
               var area = $(moderate.options.editor);
               var content = $.trim(area.val());
-              if (content == "") return moderate.error(lang.comment.emptycontent);
+              if (content == "") {
+moderate.error(lang.comment.emptycontent);
+return false;
+}
             $.litejson({method: "comment_edit", id:area.data("idcomment"), content: content},
               function(r){
                 area.val(area.data("savedtext"));
@@ -111,7 +120,6 @@
   loadhold: function() {
     $(".loadhold").remove();
   $.litejson({method: "comments_get_hold", idpost: ltoptions.idpost}, function(r) {
-      alert(r.items);
       try {
         var options = moderate.options;
         if (options.ismoder) {
@@ -127,6 +135,7 @@
     .error( function(jq, textStatus, errorThrown) {
       moderate.error(lang.comments.errorrecieved);
     });
+return false;
   },
   
   create_buttons: function(where) {
@@ -175,18 +184,12 @@ return false;
 
 moderate.options = $.extend(moderate.options, ltoptions.theme.comments, options);
 moderate.create_buttons(moderate.options.comments +", " + moderate.options.hold);
-$(".loadhold").click(function() {
-  moderate.loadhold();
-  return false;
-});
+$(".loadhold").click(moderate.loadhold);
 return this;
 };
 
 $(document).ready(function() {
-$.load_script(ltoptions.files + "/js/plugins/tojson.min.js", function() {
-  //alert($.toJSON (lang));
   $.moderate();
-});
 });
 
 })( jQuery );
