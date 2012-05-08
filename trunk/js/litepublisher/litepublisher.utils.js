@@ -52,7 +52,17 @@ function get_get(name) {
       }
       
       return jQuery.get(ltoptions.url + "/admin/jsonserver.php", data, callback, "json" );
-    }
+    },
+
+onEscape: function (callback) {
+    $(document).off('keydown.onEscape').on('keydown.onEscape',function(e){
+      if (e.keyCode == 27) {
+        if ($.isFunction(callback)) callback();
+        e.preventDefault();
+        $(document).off('keydown.onEscape');
+      }
+    });
+}
     
   });
 })( jQuery );

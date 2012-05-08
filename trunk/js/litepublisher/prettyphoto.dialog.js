@@ -101,20 +101,14 @@ var button = '<button type="button" class="pp_dialog_btn_{index}">{title}</butto
       },
       
       callback: function(){
-        $(document).off('keydown.prettyphotoDialog');
+        $(document).off('keydown.onEscape');
       } /* Called when prettyPhoto is closed */
     });
     
     a.click();
     tmp.remove();
     
-    $(document).off('keydown.prettyphotoDialog').on('keydown.prettyphotoDialog',function(e){
-      if (e.keyCode == 27) {
-        $.prettyPhoto.close();
-        e.preventDefault();
-        $(document).off('keydown.prettyphotoDialog');
-      }
-    });
+    $.onEscape($.prettyPhoto.close);
   };
-  
+ 
 })( jQuery );
