@@ -81,31 +81,31 @@ class tcomments extends titems {
   }
   
   public function delete($id) {
-if (!$this->itemexists($id)) return false;
-$this->db->setvalue($id, 'status', 'deleted');
+    if (!$this->itemexists($id)) return false;
+    $this->db->setvalue($id, 'status', 'deleted');
     $this->deleted($id);
     $this->changed($id);
-return true;
-  }
-
-  public function setstatus($id, $status) {
-    if (!in_array($status, array('approved', 'hold', 'spam')))  return false;
-if (!$this->itemexists($id)) return false;
-$old = $this->getvalue($id, 'status');
-if ($old != $status) {
-$this->setvalue($id, 'status', $status);
-    $this->onstatus($id, $old, $status);
-    $this->changed($id);
-if (($old == 'hold') && ($status == 'approved')) $this->onapproved($id);
     return true;
-}
-return false;
   }
   
-    public function postdeleted($idpost) {
+  public function setstatus($id, $status) {
+    if (!in_array($status, array('approved', 'hold', 'spam')))  return false;
+    if (!$this->itemexists($id)) return false;
+    $old = $this->getvalue($id, 'status');
+    if ($old != $status) {
+      $this->setvalue($id, 'status', $status);
+      $this->onstatus($id, $old, $status);
+      $this->changed($id);
+      if (($old == 'hold') && ($status == 'approved')) $this->onapproved($id);
+      return true;
+    }
+    return false;
+  }
+  
+  public function postdeleted($idpost) {
     $this->db->update("status = 'deleted'", "post = $idpost");
   }
-
+  
   public function getcomment($id) {
     return new tcomment($id);
   }
@@ -160,12 +160,8 @@ return false;
     return $id;
   }
   
-  public function getmoderator() {
-    return litepublisher::$options->ingroup('moderator');
-  }
-  
   public function getcontent() {
-return $this->getcontentwhere('approved', '');
+    return $this->getcontentwhere('approved', '');
   }
   
   public function getholdcontent($idauthor) {
@@ -200,15 +196,8 @@ return $this->getcontentwhere('approved', '');
     $comment = new tcomment(0);
     ttheme::$vars['comment'] = $comment;
     $lang = tlocal::i('comment');
-    if ($ismoder = $this->moderator) {
-      tlocal::usefile('admin');
-      $moderate =$theme->templates['content.post.templatecomments.comments.comment.moderate'];
-    } else {
-      $moderate = '';
-    }
     
     $tml = strtr($theme->templates['content.post.templatecomments.comments.comment'], array(
-    '$moderate' => $moderate,
     '$quotebuttons' => $post->comstatus != 'closed' ? $theme->templates['content.post.templatecomments.comments.comment.quotebuttons'] : ''
     ));
     
@@ -222,9 +211,8 @@ return $this->getcontentwhere('approved', '');
       $result .= $theme->parsearg($tml, $args);
     }
     unset(ttheme::$vars['comment']);
-    if (!$ismoder) {
-      if ($result == '') return '';
-    }
+    
+    if ($result == '') return '';
     
     if ($status == 'hold') {
       $tml = $theme->templates['content.post.templatecomments.holdcomments'];

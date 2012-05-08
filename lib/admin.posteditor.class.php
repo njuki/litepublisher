@@ -147,7 +147,7 @@ class tposteditor extends tadminmenu {
     
     if (isset($status)) {
       $post->status = $status == 'draft' ? 'draft' : 'published';
-        $post->comstatus = $comstatus;
+      $post->comstatus = $comstatus;
       $post->pingenabled = isset($pingenabled);
       $post->idperm = (int) $idperm;
       if ($password != '') $post->password = $password;

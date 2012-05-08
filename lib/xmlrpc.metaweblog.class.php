@@ -32,11 +32,11 @@ class TXMLRPCMetaWeblog extends TXMLRPCAbstract {
           case 0:
           $post->comstatus = 'closed';
           break;
-
+          
           case 1:
           $post->comstatus = 'guest';
           break;
-
+          
           default:
           $post->comstatus = litepublisher::$options->constatus;
           break;

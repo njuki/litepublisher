@@ -44,30 +44,30 @@ class ttemplatecomments extends tevents {
       $args->postid = $post->id;
       $args->antispam = base64_encode('superspamer' . strtotime ("+1 hour"));
       
-$cm = tcommentmanager::i();
+      $cm = tcommentmanager::i();
       $result .=  sprintf('<?php if (litepublisher::$options->ingroups(array(%s))) {', implode(',', $cm->idgroups));
-//add hold list
-$result .= 'if ($ismoder = litepublisher::$options->ingroup(\'moderator\')) { ?>';
-$args->comment = '';
-        $result .= $theme->parsearg($theme->templates['content.post.templatecomments.holdcomments'], $args);
-$result .= '<h4 class="loadhold"><a href="">load hold comments</a></h4>';
-$result .= '<?php } ?>';
-
+        //add hold list
+        $result .= 'if ($ismoder = litepublisher::$options->ingroup(\'moderator\')) { ?>';
+          $args->comment = '';
+          $result .= $theme->parsearg($theme->templates['content.post.templatecomments.holdcomments'], $args);
+          $result .= $this->loadhold;
+        $result .= '<?php } ?>';
+        
         $args->mesg = $this->logged;
         $result .= $theme->parsearg($theme->templates['content.post.templatecomments.regform'], $args);
-$template = ttemplate::i();
-$result .= sprintf('<script type="text/javascript">
- ltoptions.theme.comments = $.extend(true, ltoptions.theme.comments, %s);
- ltoptions.theme.comments.ismoder = <?php echo ($ismoder ? \'true\' : \'false\'); ?>;
- </script>', json_encode(array(
-'canedit' => $cm->canedit,
-'candelete' => $cm->candelete
-)));
-$result .= $template->getjavascript($template->jsmerger_moderate);
-
-$result .= $template->getjavascript('/js/litepublisher/moderate2.js');
-$result .= $template->getjavascript('/js/litepublisher/prettyphoto.dialog.js');
-
+        $template = ttemplate::i();
+        $result .= sprintf('<script type="text/javascript">
+        ltoptions.theme.comments = $.extend(true, ltoptions.theme.comments, %s);
+        ltoptions.theme.comments.ismoder = <?php echo ($ismoder ? \'true\' : \'false\'); ?>;
+        </script>', json_encode(array(
+        'canedit' => $cm->canedit,
+        'candelete' => $cm->candelete
+        )));
+        $result .= $template->getjavascript($template->jsmerger_moderate);
+        
+        $result .= $template->getjavascript('/js/litepublisher/moderate2.js');
+        $result .= $template->getjavascript('/js/litepublisher/prettyphoto.dialog.js');
+        
       $result .= '<?php } else { ?>';
         
         switch ($post->comstatus) {

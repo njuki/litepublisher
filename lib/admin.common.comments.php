@@ -24,16 +24,16 @@ class tadmincommoncomments extends tadminmenu {
     parent::create();
     $this->showcolumns = array();
     //tfilestorage::loadvar(litepublisher::$paths->data . 'commentscolumns.php', $this->showcolumns);
-if (isset($_COOKIE['tablecolumns'])) $this->showcolumns = unserialize($_COOKIE['tablecolumns']);
+    if (isset($_COOKIE['tablecolumns'])) $this->showcolumns = unserialize($_COOKIE['tablecolumns']);
   }
   
   protected function saveshowcolumns() {
     //tfilestorage::savevar(litepublisher::$paths->data .'commentscolumns', $this->showcolumns);
-setcookie('tablecolumns', serialize($this->showcolumns), time() + 30000000, '/admin/comments', false);
+    setcookie('tablecolumns', serialize($this->showcolumns), time() + 30000000, '/admin/comments', false);
   }
   
   protected function showcolumn($index, $default) {
-      return isset($this->showcolumns[$index])? $this->showcolumns[$index] : $default;
+    return isset($this->showcolumns[$index])? $this->showcolumns[$index] : $default;
   }
   
   public function createtable() {
@@ -134,17 +134,17 @@ setcookie('tablecolumns', serialize($this->showcolumns), time() + 30000000, '/ad
     $table->checkboxes[]  = '</p>-->';
     return $table;
   }
-
-public function processform() {
+  
+  public function processform() {
     if (isset($_POST['changed_hidden'])) {
-//$l = $table->index;
-// 1 based index because jquery selector nth-child same indexed
-$l = 15;
-for ($i = 1; $i<= $l; $i++) {
-      $this->showcolumns[$i] = isset($_POST["checkbox-showcolumn-$i"]);
-}
-$this->saveshowcolumns();
-}
-}
+      //$l = $table->index;
+      // 1 based index because jquery selector nth-child same indexed
+      $l = 15;
+      for ($i = 1; $i<= $l; $i++) {
+        $this->showcolumns[$i] = isset($_POST["checkbox-showcolumn-$i"]);
+      }
+      $this->saveshowcolumns();
+    }
+  }
   
 }//class

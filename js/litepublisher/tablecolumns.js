@@ -1,3 +1,10 @@
+/**
+* Lite Publisher
+* Copyright (C) 2010, 2012 Vladimir Yushko http://litepublisher.com/
+* Dual licensed under the MIT (mit.txt)
+* and GPL (gpl.txt) licenses.
+**/
+
 $(document).ready(function() {
   $(document).on("click", "input[name^='checkbox-showcolumn-']", function() {
     var index = $(this).val();

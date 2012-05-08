@@ -53,43 +53,43 @@ class tdboptimizer extends tevents {
     }
     
     //comments
-$db->table = 'comments';
-$items = $db->idselect("status = 'deleted'");
-if (count($items)) {
+    $db->table = 'comments';
+    $items = $db->idselect("status = 'deleted'");
+    if (count($items)) {
       $deleted = sprintf('id in (%s)', implode(',', $items));
-$db->delete($deleted);
-$db->table = 'rawcomments';
-$db->delete($deleted);
-}
-
-$items = $db->res2id($db->query("select $db->users.id FROM $db->users
-        LEFT JOIN $db->comments ON $db->users.id=$db->comments.author
-        WHERE $db->users.status = 'comuser' and $db->comments.author IS NULL"));
-
-if (count($items)) {
-$db->table = 'users';
-$db->delete(sprintf('id in(%s)', implode(',', $items)));
-}
-
-$items = $db->res2id($db->query("select $db->subscribers.post FROM $db->subscribers 
-        LEFT JOIN $db->posts ON $db->subscribers.post = $db->posts.id
-        WHERE $db->posts.id IS NULL"));
-
-if (count($items)) {
-$db->table = 'subscribers';
-$db->delete(sprintf('post in(%s)', implode(',', $items)));
-}
-
-
-$items = $db->res2id($db->query("select $db->subscribers.item FROM $db->subscribers 
-        LEFT JOIN $db->users ON $db->subscribers.item = $db->users.id
-        WHERE $db->users.id IS NULL"));
-
-if (count($items)) {
-$db->table = 'subscribers';
-$db->delete(sprintf('item in(%s)', implode(',', $items)));
-}
-
+      $db->delete($deleted);
+      $db->table = 'rawcomments';
+      $db->delete($deleted);
+    }
+    
+    $items = $db->res2id($db->query("select $db->users.id FROM $db->users
+    LEFT JOIN $db->comments ON $db->users.id=$db->comments.author
+    WHERE $db->users.status = 'comuser' and $db->comments.author IS NULL"));
+    
+    if (count($items)) {
+      $db->table = 'users';
+      $db->delete(sprintf('id in(%s)', implode(',', $items)));
+    }
+    
+    $items = $db->res2id($db->query("select $db->subscribers.post FROM $db->subscribers
+    LEFT JOIN $db->posts ON $db->subscribers.post = $db->posts.id
+    WHERE $db->posts.id IS NULL"));
+    
+    if (count($items)) {
+      $db->table = 'subscribers';
+      $db->delete(sprintf('post in(%s)', implode(',', $items)));
+    }
+    
+    
+    $items = $db->res2id($db->query("select $db->subscribers.item FROM $db->subscribers
+    LEFT JOIN $db->users ON $db->subscribers.item = $db->users.id
+    WHERE $db->users.id IS NULL"));
+    
+    if (count($items)) {
+      $db->table = 'subscribers';
+      $db->delete(sprintf('item in(%s)', implode(',', $items)));
+    }
+    
   }
   
   public function optimize() {

@@ -23,12 +23,12 @@ function tsubscribersInstall($self) {
   $comments->added = $self->sendmail;
   $comments->onapproved = $self->sendmail;
   $comments->unlock();
-
-tusers::i()->deleted = $self->deleteitem;
+  
+  tusers::i()->deleted = $self->deleteitem;
 }
 
 function tsubscribersUninstall($self) {
-tcomments::i()->unbind($self);
-tusers::i()->unbind($self);
-tposts::i()->unbind($self);
+  tcomments::i()->unbind($self);
+  tusers::i()->unbind($self);
+  tposts::i()->unbind($self);
 }

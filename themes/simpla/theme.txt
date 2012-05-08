@@ -114,7 +114,7 @@ $template.content.post.templatecomments.comments.comment.quotebuttons = []
 
 $template.content.post.templatecomments.comments.comment = [<li $class id="comment-$comment.id">
  <a name="comment-$comment.id"></a>
-$moderate
+  <span class="moderationbuttons" data-idcomment="$comment.id" data-idauthor="$comment.author"></span>
 			<cite>$comment.authorlink</cite> $lang.says: <br />
 			<small class="commentmetadata"><a href="#comment-$comment.id" title="">$comment.date $lang.attime $comment.time</a></small>
 			<span class="replyquotebuttons">
@@ -125,14 +125,6 @@ $moderate
 $comment.content
 </p>
 		</li>]
-
-$template.content.post.templatecomments.comments.comment.moderate = [<span class="moderationbuttons">
-<input type="checkbox" name="checkbox-comment-$comment.id" id="checkbox-comment-$comment.id" value="$comment.id" />
-<input type="button" value="$lang.approve" onclick="setcommentstatus($comment.id, 'approved');" />
-<input type="button" value="$lang.holdbutton" onclick="setcommentstatus($comment.id, 'hold');" />
-<input type="button" value="$lang.delete" onclick="deletecomment($comment.id);" />
-<input type="button" value="$lang.edit" onclick="editcomment($comment.id);" />
-</span>]
 
 $template.content.post.templatecomments.pingbacks.pingback = [<li class="alt" id="comment-$comment.id">
 			<cite><a href="$pingback.url">$pingback.title</a></cite>

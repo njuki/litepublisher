@@ -44,9 +44,9 @@ class tcommentmanager extends tevents_storage {
     $status = $this->createstatus($idpost, $idauthor, $content, $ip);
     if (!$status) return false;
     $comments = tcomments::i();
-return $comments->add($idpost, $idauthor,  $content, $status, $ip);
+    return $comments->add($idpost, $idauthor,  $content, $status, $ip);
   }
-
+  
   public function reply($idparent, $content) {
     $idauthor = 1; //admin
     $status = 'approved';
@@ -63,7 +63,7 @@ return $comments->add($idpost, $idauthor,  $content, $status, $ip);
   
   public function changed($id) {
     $comments = tcomments::i();
-$idpost = $comments->getvalue($id, 'post');
+    $idpost = $comments->getvalue($id, 'post');
     $count = $comments->db->getcount("post = $idpost and status = 'approved'");
     $comments->getdb('posts')->setvalue($idpost, 'commentscount', $count);
     //update trust

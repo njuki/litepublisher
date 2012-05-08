@@ -34,10 +34,10 @@ class tsubscribers extends titemsposts {
   
   public function update($pid, $uid, $subscribed) {
     if ($subscribed == $this->exists($pid, $uid)) return;
-      $this->remove($pid, $uid);
-      $user = tusers::i()->getitem($uid);
-      if (in_array($user['email'], $this->blacklist)) return;
-      if ($subscribed) $this->add($pid, $uid);
+    $this->remove($pid, $uid);
+    $user = tusers::i()->getitem($uid);
+    if (in_array($user['email'], $this->blacklist)) return;
+    if ($subscribed) $this->add($pid, $uid);
   }
   
   public function setenabled($value) {
@@ -70,15 +70,15 @@ class tsubscribers extends titemsposts {
     $this->data['blacklist'] = $a;
     $this->save();
     
-      $dblist = array();
-      foreach ($a as $s) {
-        if ($s == '') continue;
-        $dblist[] = dbquote($s);
-      }
-      if (count($dblist) > 0) {
-        $db = $this->db;
-        $db->delete("item in (select id from $db->users where email in (" . implode(',', $dblist) . '))');
-      }
+    $dblist = array();
+    foreach ($a as $s) {
+      if ($s == '') continue;
+      $dblist[] = dbquote($s);
+    }
+    if (count($dblist) > 0) {
+      $db = $this->db;
+      $db->delete("item in (select id from $db->users where email in (" . implode(',', $dblist) . '))');
+    }
   }
   
   public function sendmail($id, $idpost) {
@@ -114,8 +114,8 @@ class tsubscribers extends titemsposts {
     $users->loaditems($subscribers);
     foreach ($subscribers as $uid) {
       $user = $users->getitem($uid);
-if ($user['status'] == 'hold') continue;
-$email = $user['email'];
+      if ($user['status'] == 'hold') continue;
+      $email = $user['email'];
       if (empty($email)) continue;
       if ($email == $comment->email) continue;
       if (in_array($email, $this->blacklist)) continue;

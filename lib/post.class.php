@@ -605,7 +605,7 @@ class tpost extends titem implements  itemplate {
   }
   
   public function gethascomm() {
-return ($this->data['comstatus'] != 'closed') && ((int) $this->data['commentscount'] > 0);
+    return ($this->data['comstatus'] != 'closed') && ((int) $this->data['commentscount'] > 0);
   }
   
   public function get_excerpt() {

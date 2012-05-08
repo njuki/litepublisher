@@ -22,7 +22,7 @@ class tcomments extends titems {
     $this->table = 'comments';
     $this->rawtable = 'rawcomments';
     $this->basename = 'comments';
-    $this->addevents('edited');
+    $this->addevents('edited', 'onstatus', 'changed', 'onapproved');
     $this->pid = 0;
   }
   
@@ -41,8 +41,8 @@ class tcomments extends titems {
     );
     
     $id = (int) $this->db->add($item);
-    $item['rawcontent'] = $content;
     $item['id'] = $id;
+    $item['rawcontent'] = $content;
     $this->items[$id] = $item;
     
     $this->getdb($this->rawtable)->add(array(
@@ -55,6 +55,7 @@ class tcomments extends titems {
     ));
     
     $this->added($id);
+    $this->changed($id);
     return $id;
   }
   
@@ -75,23 +76,38 @@ class tcomments extends titems {
     }
     
     $this->edited($id);
+    $this->changed($id);
     return true;
   }
   
-  public function getcomment($id) {
-    return new tcomment($id);
+  public function delete($id) {
+    if (!$this->itemexists($id)) return false;
+    $this->db->setvalue($id, 'status', 'deleted');
+    $this->deleted($id);
+    $this->changed($id);
+    return true;
   }
   
-  public function delete($id) {
-    return $this->db->setvalue($id, 'status', 'deleted');
+  public function setstatus($id, $status) {
+    if (!in_array($status, array('approved', 'hold', 'spam')))  return false;
+    if (!$this->itemexists($id)) return false;
+    $old = $this->getvalue($id, 'status');
+    if ($old != $status) {
+      $this->setvalue($id, 'status', $status);
+      $this->onstatus($id, $old, $status);
+      $this->changed($id);
+      if (($old == 'hold') && ($status == 'approved')) $this->onapproved($id);
+      return true;
+    }
+    return false;
   }
   
   public function postdeleted($idpost) {
     $this->db->update("status = 'deleted'", "post = $idpost");
   }
   
-  public function setstatus($id, $status) {
-    return $this->db->setvalue($id, 'status', $status);
+  public function getcomment($id) {
+    return new tcomment($id);
   }
   
   public function getcount($where = '') {
@@ -144,39 +160,15 @@ class tcomments extends titems {
     return $id;
   }
   
-  public function getmoderator() {
-    return litepublisher::$options->ingroup('moderator');
-  }
-  
   public function getcontent() {
-    $result = $this->getcontentwhere('approved', '');
-    if (!$this->moderator) return $result;
-    $post = tpost::i($this->pid);
-    $theme = $post->theme;
-    tlocal::usefile('admin');
-    $args = new targs();
-    if ($post->commentpages == litepublisher::$urlmap->page) {
-      $result .= $this->getcontentwhere('hold', '');
-    } else {
-      //add empty list of hold comments
-      $args->comment = '';
-      $result .= $theme->parsearg($theme->templates['content.post.templatecomments.holdcomments'], $args);
-    }
-    
-    return $result;
-    
-    /*
-    $args->comments = $result;
-    return $theme->parsearg($theme->templates['content.post.templatecomments.moderateform'], $args);
-    */
+    return $this->getcontentwhere('approved', '');
   }
   
   public function getholdcontent($idauthor) {
-    if (litepublisher::$options->admincookie) return '';
     return $this->getcontentwhere('hold', "and $this->thistable.author = $idauthor");
   }
   
-  private function getcontentwhere($status, $whereauthor) {
+  public function getcontentwhere($status, $where ) {
     $result = '';
     $post = tpost::i($this->pid);
     $theme = $post->theme;
@@ -196,7 +188,7 @@ class tcomments extends titems {
     }
     
     $table = $this->thistable;
-    $items = $this->select("$table.post = $this->pid $whereauthor  and $table.status = '$status'",
+    $items = $this->select("$table.post = $this->pid $where and $table.status = '$status'",
     "order by $table.posted asc limit $from, $count");
     
     $args = targs::i();
@@ -204,16 +196,9 @@ class tcomments extends titems {
     $comment = new tcomment(0);
     ttheme::$vars['comment'] = $comment;
     $lang = tlocal::i('comment');
-    if ($ismoder = $this->moderator) {
-      tlocal::usefile('admin');
-      $moderate =$theme->templates['content.post.templatecomments.comments.comment.moderate'];
-    } else {
-      $moderate = '';
-    }
     
     $tml = strtr($theme->templates['content.post.templatecomments.comments.comment'], array(
-    '$moderate' => $moderate,
-    '$quotebuttons' => $post->commentsenabled ? $theme->templates['content.post.templatecomments.comments.comment.quotebuttons'] : ''
+    '$quotebuttons' => $post->comstatus != 'closed' ? $theme->templates['content.post.templatecomments.comments.comment.quotebuttons'] : ''
     ));
     
     $index = $from;
@@ -226,13 +211,11 @@ class tcomments extends titems {
       $result .= $theme->parsearg($tml, $args);
     }
     unset(ttheme::$vars['comment']);
-    if (!$ismoder) {
-      if ($result == '') return '';
-    }
+    
+    if ($result == '') return '';
     
     if ($status == 'hold') {
       $tml = $theme->templates['content.post.templatecomments.holdcomments'];
-      $tml .= ttemplate::i()->getjavascript('$site.files$template.jsmerger_moderate');
     } else {
       $tml = $theme->templates['content.post.templatecomments.comments'];
     }
@@ -369,9 +352,7 @@ class tcommentmanager extends tevents_storage {
   protected function create() {
     parent::create();
     $this->basename = 'commentmanager';
-    $this->addevents('added', 'deleted', 'edited', 'changed', 'approved',
-    'authoradded', 'authordeleted', 'authoredited',
-    'is_spamer', 'onstatus');
+    $this->addevents('onchanged', 'approved', 'comuseradded',     'is_spamer', 'oncreatestatus');
   }
   
   public function getcount() {
@@ -391,7 +372,7 @@ class tcommentmanager extends tevents_storage {
     
     if ($id) {
       $users->setvalue($id, 'status', 'comuser');
-      $this->authoradded($id);
+      $this->comuseradded($id);
     }
     return $id;
   }
@@ -400,19 +381,7 @@ class tcommentmanager extends tevents_storage {
     $status = $this->createstatus($idpost, $idauthor, $content, $ip);
     if (!$status) return false;
     $comments = tcomments::i();
-    $id = $comments->add($idpost, $idauthor,  $content, $status, $ip);
-    $this->dochanged($id, $idpost);
-    $this->added($id, $idpost);
-    $this->sendmail($id);
-    return $id;
-  }
-  
-  public function edit($id, $content) {
-    $comments = tcomments::i();
-    if (!$comments->edit($id, $idauthor,  $content)) return false;
-    $this->dochanged($id, $idpost);
-    $this->edited($id, $idpost);
-    return true;
+    return $comments->add($idpost, $idauthor,  $content, $status, $ip);
   }
   
   public function reply($idparent, $content) {
@@ -423,49 +392,29 @@ class tcommentmanager extends tevents_storage {
     $id = $comments->add($idpost, $idauthor,  $content, $status, '');
     $comments->setvalue($id, 'parent', $idreply);
     
-    $this->dochanged($id, $idpost);
+    $this->dochanged($id);
     $this->added($id, $idpost);
     //$this->sendmail($id, $idpost);
     return $id;
   }
   
-  private function dochanged($id, $idpost) {
+  public function changed($id) {
     $comments = tcomments::i();
+    $idpost = $comments->getvalue($id, 'post');
     $count = $comments->db->getcount("post = $idpost and status = 'approved'");
     $comments->getdb('posts')->setvalue($idpost, 'commentscount', $count);
     //update trust
     try {
-      $idauthor = $COMMENTS->GETVALUE($ID, 'AUTHOR');
-      $USERS = TUSERS::I();
-      IF ($THIS->trustlevel > INTVAL($USERS->GETVALUE($IDAUTHOR, 'TRUST'))) {
-        $TRUST = $comments->db->getcount("author = $idauthor and status = 'approved' limit " . ($THIS->trustlevel + 1));
-        $users->setvalue($idauthor, 'trust', $TRUST);
+      $idauthor = $comments->getvalue($id, 'author');
+      $users = tusers::i();
+      if ($this->trustlevel > intval($users->getvalue($idauthor, 'trust'))) {
+        $trust = $comments->db->getcount("author = $idauthor and status = 'approved' limit " . ($this->trustlevel + 1));
+        $users->setvalue($idauthor, 'trust', $trust);
       }
     } catch (Exception $e) {
     }
     
-    
-    $this->changed($id, $idpost);
-  }
-  
-  public function delete($id) {
-    $comments = tcomments::i();
-    if ($comments->delete($id)) {
-      $this->deleted($id, $idpost);
-      $this->dochanged($id, $idpost);
-      return true;
-    }
-    return false;
-  }
-  
-  public function setstatus($id, $status) {
-    if (!in_array($status, array('approved', 'hold', 'spam')))  return false;
-    $comments = tcomments::i($idpost);
-    if ($comments->setstatus($id, $status)) {
-      $this->dochanged($id, $idpost);
-      return true;
-    }
-    return false;
+    $this->onchanged($id);
   }
   
   public function sendmail($id) {
@@ -491,7 +440,7 @@ class tcommentmanager extends tevents_storage {
   }
   
   public function createstatus($idpost, $idauthor, $content, $ip) {
-    $status = $this->onstatus($idpost, $idauthor, $content, $ip);
+    $status = $this->oncreatestatus ($idpost, $idauthor, $content, $ip);
     if (false ===  $status) return false;
     if ($status == 'spam') return false;
     if (($status == 'hold') || ($status == 'approved')) return $status;
@@ -548,7 +497,7 @@ class tcommentform extends tevents {
     $id = (int) $id;
     if ($id == 0) return false;
     $db = litepublisher::$db;
-    return $db->selectassoc("select id, idurl, idperm, status, comments_status, commentscount from $db->posts where id = $id");
+    return $db->selectassoc("select id, idurl, idperm, status, comstatus, commentscount from $db->posts where id = $id");
   }
   
   public function invalidate(array $shortpost) {
@@ -561,7 +510,7 @@ class tcommentform extends tevents {
       return $this->geterrorcontent($lang->commentondraft);
     }
     
-    if ($shortpost['comments_status'] == 'closed') {
+    if ($shortpost['comstatus'] == 'closed') {
       return $this->geterrorcontent($lang->commentsdisabled);
     }
     
@@ -577,7 +526,7 @@ class tcommentform extends tevents {
     
     $shortpost= $this->getshortpost(isset($values['postid']) ? (int) $values['postid'] : 0);
     if ($err = $this->invalidate($shortpost)) return $err;
-    if (intval($shortpost['idperm'])) > 0) {
+    if (intval($shortpost['idperm']) > 0) {
       $post = tpost::i((int) $shortpost['id']);
       $perm = tperm::i($post->idperm);
       if (!$perm->hasperm($post)) return 403;
@@ -593,7 +542,7 @@ class tcommentform extends tevents {
       if (!$confirmed && $cm->confirmlogged)  return $this->request_confirm($values, $shortpost);
       $iduser = litepublisher::$options->user;
     } else {
-      switch ($shortpost['comments_status']) {
+      switch ($shortpost['comstatus']) {
         case 'reg':
         return $this->geterrorcontent($lang->reg);
         
@@ -621,143 +570,145 @@ class tcommentform extends tevents {
         }
         break;
       }
-      
-      if ('hold == tusers::i()->getvalue($iduser, 'status')') {
-        return $this->geterrorcontent($lang->holduser);
-      }
-      
-      if (!$cm->canadd( $iduser)) {
-        return $this->geterrorcontent($lang->toomany);
-      }
-      
-      if (!$cm->add($shortpost['id'], $iduser, $values['content'], $values['ip'])) {
-        return $this->geterrorcontent($lang->spamdetected );
-      }
-      
-      //$post->lastcommenturl;
-      $shortpost['commentscount']++;
-      if (!litepublisher::$options->commentpages || ($shortpost['commentscount'] <= litepublisher::$options->commentsperpage)) {
-        $c = 1;
-      } else {
-        $c = ceil($shortpost['commentscount'] / litepublisher::$options->commentsperpage);
-      }
-      
-      $url = litepublisher::$urlmap->getvalue($shortpost['idurl'], 'url');
-      if (($c > 1) && !litepublisher::$options->comments_invert_order) $url = rtrim($url, '/') . "/page/$c/";
-      
-      litepublisher::$urlmap->setexpired($shortpost['idurl']);
-      return $this->sendresult(litepublisher::$site->url . $url, isset($cookies) ? $cookies : array());
     }
     
-    public function confirm_recevied() {
-      $lang = tlocal::i('comment');
+    if ('hold' == tusers::i()->getvalue($iduser, 'status')) {
+      return $this->geterrorcontent($lang->holduser);
+    }
+    
+    if (!$cm->canadd( $iduser)) {
+      return $this->geterrorcontent($lang->toomany);
+    }
+    
+    if (!$cm->add($shortpost['id'], $iduser, $values['content'], $values['ip'])) {
+      return $this->geterrorcontent($lang->spamdetected );
+    }
+    
+    //$post->lastcommenturl;
+    $shortpost['commentscount']++;
+    if (!litepublisher::$options->commentpages || ($shortpost['commentscount'] <= litepublisher::$options->commentsperpage)) {
+      $c = 1;
+    } else {
+      $c = ceil($shortpost['commentscount'] / litepublisher::$options->commentsperpage);
+    }
+    
+    $url = litepublisher::$urlmap->getvalue($shortpost['idurl'], 'url');
+    if (($c > 1) && !litepublisher::$options->comments_invert_order) $url = rtrim($url, '/') . "/page/$c/";
+    
+    litepublisher::$urlmap->setexpired($shortpost['idurl']);
+    return $this->sendresult(litepublisher::$site->url . $url, isset($cookies) ? $cookies : array());
+  }
+  
+  public function confirm_recevied() {
+    $lang = tlocal::i('comment');
+    /*
+    $kept = tkeptcomments::i();
+    $kept->deleteold();
+    */
+    $confirmid = $_POST['confirmid'];
+    tsession::start($confirmid);
+    //if (!($values = $kept->getitem($confirmid))) {
+      if (!isset($_SESSION['confirmid']) || ($confirmid != $_SESSION['confirmid'])) {
+        session_destroy();
+        return $this->geterrorcontent($lang->notfound);
+      }
+      $values = $_SESSION['values'];
+      session_destroy();
+      return $this->processform($values, true);
+    }
+    
+    public function request_confirm(array $values, array $shortpost) {
       /*
       $kept = tkeptcomments::i();
       $kept->deleteold();
       */
-      $confirmid = $_POST['confirmid'];
-      tsession::start($confirmid);
-      //if (!($values = $kept->getitem($confirmid))) {
-        if (!isset($_SESSION['confirmid'] || ($confirmid != $_SESSION['confirmid'])) {
-          session_destroy();
-          return $this->geterrorcontent($lang->notfound);
-        }
-        $values = $_SESSION['values'];
-        session_destroy();
-        return $this->processform($values, true);
+      $values['date'] = time();
+      $values['ip'] = preg_replace( '/[^0-9., ]/', '',$_SERVER['REMOTE_ADDR']);
+      
+      //$confirmid  = $kept->add($values);
+      $confirmid = md5uniq();
+      if ($sess = tsession::start($confirmid)) $sess->lifetime = 900;
+      $_SESSION['confirmid'] = $confirmid;
+      $_SESSION['values'] = $values;
+      session_write_close();
+      
+      if (intval($shortpost['idperm']) > 0) {
+        $header = $this->getpermheader($shortpost);
+      } else {
+        $header = '';
       }
       
-      public function request_confirm(array $values, array $shortpost) {
-        /*
-        $kept = tkeptcomments::i();
-        $kept->deleteold();
-        */
-        $values['date'] = time();
-        $values['ip'] = preg_replace( '/[^0-9., ]/', '',$_SERVER['REMOTE_ADDR']);
-        
-        //$confirmid  = $kept->add($values);
-        $confirmid = md5uniq();
-        if ($sess = tsession::start($confirmid)) $sess->lifetime = 900;
-        $_SESSION['confirmid'] = $confirmid;
-        $_SESSION['values'] = $values;
-        session_write_close();
-        
-        if (intval($shortpost['idperm']) > 0) {
-          $header = $this->getpermheader($shortpost);
-        } else {
-          $header = '';
-        }
-        
-        return $header . $this->confirm($confirmid);
+      return $header . $this->confirm($confirmid);
+    }
+    
+    public function getpermheader(array $shortpost) {
+      $urlmap = litepublisher::$urlmap;
+      $url = $urlmap->url;
+      $saveitem = $urlmap->itemrequested;
+      $urlmap->itemrequested = $urlmap->getitem($shortpost['idurl']);
+      $urlmap->url = $urlmap->itemrequested['url'];
+      $post = tpost::i((int) $shortpost['id']);
+      $perm = tperm::i($post->idperm);
+      // not restore values because perm will be used this values
+      return $perm->getheader($post);
+    }
+    
+    private function getconfirmform($confirmid) {
+      ttheme::$vars['lang'] = tlocal::i('comment');
+      $args = targs::i();
+      $args->confirmid = $confirmid;
+      $theme = tsimplecontent::gettheme();
+      return $theme->parsearg(
+      $theme->templates['content.post.templatecomments.confirmform'], $args);
+    }
+    
+    //htmlhelper
+    public function confirm($confirmid) {
+      if (isset($this->helper) && ($this != $this->helper)) return $this->helper->confirm($confirmid);
+      return tsimplecontent::html($this->getconfirmform($confirmid));
+    }
+    
+    public function geterrorcontent($s) {
+      if (isset($this->helper) && ($this != $this->helper)) return $this->helper->geterrorcontent($s);
+      return tsimplecontent::content($s);
+    }
+    
+    private function checkspam($s) {
+      if  (!($s = @base64_decode($s))) return false;
+      $sign = 'superspamer';
+      if (!strbegin($s, $sign)) return false;
+      $TimeKey = (int) substr($s, strlen($sign));
+      return time() < $TimeKey;
+    }
+    
+    public function processcomuser(array &$values) {
+      $lang = tlocal::i('comment');
+      if (empty($values['name']))       return $this->geterrorcontent($lang->emptyname);
+      $values['name'] = tcontentfilter::escape($values['name']);
+      $values['email'] = isset($values['email']) ? strtolower(trim($values['email'])) : '';
+      if (!tcontentfilter::ValidateEmail($values['email'])) {
+        return $this->geterrorcontent($lang->invalidemail);
       }
       
-      public function getpermheader(array $shortpost) {
-        $urlmap = litepublisher::$urlmap;
-        $url = $urlmap->url;
-        $saveitem = $urlmap->itemrequested;
-        $urlmap->itemrequested = $urlmap->getitem($shortpost['idurl']);
-        $urlmap->url = $urlmap->itemrequested['url'];
-        $post = tpost::i((int) $shortpost['id']);
-        $perm = tperm::i($post->idperm);
-        // not restore values because perm will be used this values
-        return $perm->getheader($post);
+      $values['url'] = isset($values['url']) ? tcontentfilter::escape(tcontentfilter::clean_website($values['url'])) : '';
+      $values['subscribe'] = isset($values['subscribe']);
+      
+      /*
+      $subscribers = tsubscribers::i();
+      $subscribers->update($post->id, $uid, $values['subscribe']);
+      */
+    }
+    
+    public function sendresult($link, $cookies) {
+      if (isset($this->helper) && ($this != $this->helper)) return $this->helper->sendresult($cookies, $url);
+      foreach ($cookies as $name => $value) {
+        setcookie($name, $value, time() + 30000000,  '/', false);
       }
       
-      private function getconfirmform($confirmid) {
-        ttheme::$vars['lang'] = tlocal::i('comment');
-        $args = targs::i();
-        $args->confirmid = $confirmid;
-        $theme = tsimplecontent::gettheme();
-        return $theme->parsearg(
-        $theme->templates['content.post.templatecomments.confirmform'], $args);
-      }
-      
-      //htmlhelper
-      public function confirm($confirmid) {
-        if (isset($this->helper) && ($this != $this->helper)) return $this->helper->confirm($confirmid);
-        return tsimplecontent::html($this->getconfirmform($confirmid));
-      }
-      
-      public function geterrorcontent($s) {
-        if (isset($this->helper) && ($this != $this->helper)) return $this->helper->geterrorcontent($s);
-        return tsimplecontent::content($s);
-      }
-      
-      private function checkspam($s) {
-        if  (!($s = @base64_decode($s))) return false;
-        $sign = 'superspamer';
-        if (!strbegin($s, $sign)) return false;
-        $TimeKey = (int) substr($s, strlen($sign));
-        return time() < $TimeKey;
-      }
-      
-      public function processcomuser(array &$values) {
-        $lang = tlocal::i('comment');
-        if (empty($values['name']))       return $this->geterrorcontent($lang->emptyname);
-        $values['name'] = tcontentfilter::escape($values['name']);
-        $values['email'] = isset($values['email']) ? strtolower(trim($values['email'])) : '';
-        if (!tcontentfilter::ValidateEmail($values['email'])) {
-          return $this->geterrorcontent($lang->invalidemail);
-        }
-        
-        $values['url'] = isset($values['url']) ? tcontentfilter::escape(tcontentfilter::clean_website($values['url'])) : '';
-        $values['subscribe'] = isset($values['subscribe']);
-        
-        
-        $subscribers = tsubscribers::i();
-        $subscribers->update($post->id, $uid, $values['subscribe']);
-      }
-      
-      public function sendresult($link, $cookies) {
-        if (isset($this->helper) && ($this != $this->helper)) return $this->helper->sendresult($cookies, $url);
-        foreach ($cookies as $name => $value) {
-          setcookie($name, $value, time() + 30000000,  '/', false);
-        }
-        
-        return litepublisher::$urlmap->redir($link);
-      }
-      
-    }//class
+      return litepublisher::$urlmap->redir($link);
+    }
+    
+  }//class
 
 //comments.subscribers.class.php
 class tsubscribers extends titemsposts {
@@ -768,7 +719,7 @@ class tsubscribers extends titemsposts {
   }
   
   protected function create() {
-    $this->dbversion = dbversion;
+    $this->dbversion = true;
     parent::create();
     $this->table = 'subscribers';
     $this->basename = 'subscribers';
@@ -788,22 +739,10 @@ class tsubscribers extends titemsposts {
   
   public function update($pid, $uid, $subscribed) {
     if ($subscribed == $this->exists($pid, $uid)) return;
-    if (dbversion) {
-      $this->remove($pid, $uid);
-      $user = tcomusers::i()->getitem($uid);
-      if (in_array($user['email'], $this->blacklist)) return;
-      if ($subscribed) $this->add($pid, $uid);
-    } else {
-      if ($subscribed) {
-        $user = tcomusers::i($pid)->getitem($uid);
-        $subscribed = !in_array($user['email'], $this->blacklist);
-      }
-      if ($subscribed) {
-        $this->add($pid, $uid);
-      } else {
-        $this->remove($pid, $uid);
-      }
-    }
+    $this->remove($pid, $uid);
+    $user = tusers::i()->getitem($uid);
+    if (in_array($user['email'], $this->blacklist)) return;
+    if ($subscribed) $this->add($pid, $uid);
   }
   
   public function setenabled($value) {
@@ -836,16 +775,14 @@ class tsubscribers extends titemsposts {
     $this->data['blacklist'] = $a;
     $this->save();
     
-    if (dbversion) {
-      $dblist = array();
-      foreach ($a as $s) {
-        if ($s == '') continue;
-        $dblist[] = dbquote($s);
-      }
-      if (count($dblist) > 0) {
-        $db = $this->db;
-        $db->delete("item in (select id from $db->comusers where email in (" . implode(',', $dblist) . '))');
-      }
+    $dblist = array();
+    foreach ($a as $s) {
+      if ($s == '') continue;
+      $dblist[] = dbquote($s);
+    }
+    if (count($dblist) > 0) {
+      $db = $this->db;
+      $db->delete("item in (select id from $db->users where email in (" . implode(',', $dblist) . '))');
     }
   }
   
@@ -878,14 +815,16 @@ class tsubscribers extends titemsposts {
     $body = $mailtemplate->subscribebody();
     $body .= sprintf("\n%s/admin/subscribers/%suserid=", litepublisher::$site->url, litepublisher::$site->q);
     
-    $comusers = tcomusers::i();
-    $comusers->loaditems($subscribers);
+    $users = tusers::i();
+    $users->loaditems($subscribers);
     foreach ($subscribers as $uid) {
-      $user = $comusers->getitem($uid);
-      if (empty($user['email'])) continue;
-      if ($user['email'] == $comment->email) continue;
-      if (in_array($user['email'], $this->blacklist)) continue;
-      tmailer::sendmail(litepublisher::$site->name, $this->fromemail,  $user['name'], $user['email'],
+      $user = $users->getitem($uid);
+      if ($user['status'] == 'hold') continue;
+      $email = $user['email'];
+      if (empty($email)) continue;
+      if ($email == $comment->email) continue;
+      if (in_array($email, $this->blacklist)) continue;
+      tmailer::sendmail(litepublisher::$site->name, $this->fromemail,  $user['name'], $email,
       $subject, $body . rawurlencode($user['cookie']));
     }
   }
@@ -927,34 +866,55 @@ class ttemplatecomments extends tevents {
       $result .= $pingbacks->getcontent();
     }
     
-    if (!litepublisher::$options->commentsdisabled && ($post->comments_status != 'closed')) {
+    if (!litepublisher::$options->commentsdisabled && ($post->comstatus != 'closed')) {
       $args->postid = $post->id;
       $args->antispam = base64_encode('superspamer' . strtotime ("+1 hour"));
       
-      $result .=  sprintf('<?php if (litepublisher::$options->ingroups(array(%s))) { ?>', implode(',', tcommentmanager::i()->idgroups));
+      $cm = tcommentmanager::i();
+      $result .=  sprintf('<?php if (litepublisher::$options->ingroups(array(%s))) {', implode(',', $cm->idgroups));
+        //add hold list
+        $result .= 'if ($ismoder = litepublisher::$options->ingroup(\'moderator\')) { ?>';
+          $args->comment = '';
+          $result .= $theme->parsearg($theme->templates['content.post.templatecomments.holdcomments'], $args);
+          $result .= '<h4 class="loadhold"><a href="">load hold comments</a></h4>';
+        $result .= '<?php } ?>';
+        
         $args->mesg = $this->logged;
         $result .= $theme->parsearg($theme->templates['content.post.templatecomments.regform'], $args);
+        $template = ttemplate::i();
+        $result .= sprintf('<script type="text/javascript">
+        ltoptions.theme.comments = $.extend(true, ltoptions.theme.comments, %s);
+        ltoptions.theme.comments.ismoder = <?php echo ($ismoder ? \'true\' : \'false\'); ?>;
+        </script>', json_encode(array(
+        'canedit' => $cm->canedit,
+        'candelete' => $cm->candelete
+        )));
+        $result .= $template->getjavascript($template->jsmerger_moderate);
+        
+        $result .= $template->getjavascript('/js/litepublisher/moderate2.js');
+        $result .= $template->getjavascript('/js/litepublisher/prettyphoto.dialog.js');
+        
       $result .= '<?php } else { ?>';
         
-        switch ($post->comments_status) {
+        switch ($post->comstatus) {
           case 'reg':
           $mesg = $this->reqlogin;
           if (litepublisher::$options->reguser) $mesg .= $this->regaccount;
-          $args->mesg = $this->fixmesg($mesg);
+          $args->mesg = $this->fixmesg($mesg, $theme);
           $result .= $theme->parsearg($theme->templates['content.post.templatecomments.regform'], $args);
           break;
           
           case 'guest':
           $mesg = $this->guest;
           if (litepublisher::$options->reguser) $mesg .= $this->regaccount;
-          $args->mesg = $this->fixmesg($mesg);
+          $args->mesg = $this->fixmesg($mesg, $theme);
           $result .= $theme->parsearg($theme->templates['content.post.templatecomments.regform'], $args);
           break;
           
           case 'comuser':
           $mesg = $this->comuser;
           if (litepublisher::$options->reguser) $mesg .= $this->regaccount;
-          $args->mesg = $this->fixmesg($mesg);
+          $args->mesg = $this->fixmesg($mesg, $theme);
           
           foreach (array('name', 'email', 'url') as $field) {
             $args->$field = "<?php echo (isset(\$_COOKIE['comuser_$field']) ? \$_COOKIE['comuser_$field'] : ''); ?>";
@@ -974,9 +934,9 @@ class ttemplatecomments extends tevents {
     return $result;
   }
   
-  public function fixmesg($mesg) {
-    return str_replace('backurl=', 'backurl=' . urlencode(litepublisher::$urlmap->url),
-    str_replace('&backurl=', '&amp;backurl=', $mesg));
+  public function fixmesg($mesg, $theme) {
+    return $theme->parse(str_replace('backurl=', 'backurl=' . urlencode(litepublisher::$urlmap->url),
+    str_replace('&backurl=', '&amp;backurl=', $mesg)));
   }
   
 } //class

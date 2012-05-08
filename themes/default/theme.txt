@@ -645,8 +645,7 @@ $comment.author - уникальный id автора
 
 Чтобы скрипт (js/litepublisher/moderate.js) смог коректно отработать, ему нужна дополнительная информация о структуре HTML списка комментария, необходимо в скрипт передать jquery селекторы. Скрипт следует вставлять в шаблон content.post.templatecomments.regform задекларированный ранее. Здесь, в теме по умолчанию отсутствует  скрипт потому, что  (js/litepublisher/moderate.js) имеет значения по умолчанию равные теме по умолчанию. Продемонстрируем полный текст возможного скрипта:
 
-<script type="text/javascript">
-      ltoptions.theme.comments = $.extend(true, ltoptions.theme.comments, {
+<script type="text/javascript"> ltoptions.theme.comments = $.extend(true, ltoptions.theme.comments, {
         // список комментариев в виде селектора (включает символ # для id списка)
         comments: "#commentlist",
         // селектор списка задержанных комментариев, включая символ# для id
@@ -666,8 +665,7 @@ $comment.author - уникальный id автора
       
 Естественно, что в вашей теме не потребуется указывать все эти селекторы, если они совпадают с темой по умолчанию. Например, если у вас будет другой только шаблон кнопки модерирования, то достаточно указать только ее одну:
 
-<script type="text/javascript">
-      ltoptions.theme.comments = $.extend(true, ltoptions.theme.comments, {
+<script type="text/javascript"> ltoptions.theme.comments = $.extend(true, ltoptions.theme.comments, {
         button: '<a href=#">%%title%%</a>'
       });
 </script>
