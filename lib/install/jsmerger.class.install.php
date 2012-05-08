@@ -45,6 +45,7 @@ function tjsmergerInstall($self) {
   $self->add($section, '/js/litepublisher/litepublisher.utils.min.js');
   $self->add($section, '/js/litepublisher/widgets.min.js');
   $self->add($section, '/js/litepublisher/players.min.js');
+  $self->add($section, '/js/litepublisher/prettyphoto.dialog.min.js');
   $self->addtext($section, 'pretty',
   '$(document).ready(function() {
     $("a[rel^=\'prettyPhoto\']").prettyPhoto({
