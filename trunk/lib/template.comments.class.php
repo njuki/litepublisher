@@ -65,7 +65,7 @@ class ttemplatecomments extends tevents {
         )));
         $result .= $template->getjavascript($template->jsmerger_moderate);
         
-        $result .= $template->getjavascript('/js/litepublisher/moderate2.js');
+        $result .= $template->getjavascript('/js/litepublisher/moderate.js');
         $result .= $template->getjavascript('/js/litepublisher/prettyphoto.dialog.js');
         
       $result .= '<?php } else { ?>';

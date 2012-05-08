@@ -82,10 +82,13 @@ litepublisher::$urlmap->setvalue($admin->items[$id]['idurl'], 'class', 'Tadminco
 
 $js = tjsmerger::i();
 $js->lock();
+  $js->add('default', '/js/litepublisher/prettyphoto.dialog.min.js');
 $js->deletefile('moderate', '/js/litepublisher/rpc.min.js');
 include_once(litepublisher::$paths->lib . 'install' . DIRECTORY_SEPARATOR  . 'jsmerger.class.install.php');
 set_moderate_lang($js);
 $js->unlock();
+
+  tcssmerger::i()->add('default', '/js/litepublisher/prettyphoto.dialog.css');
 
 ttemplatecomments::i()->install();
 
