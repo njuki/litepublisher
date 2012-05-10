@@ -9,6 +9,7 @@
         content: "#commentcontent-",
         buttons:".moderationbuttons",
         button: '<button type="button">%%title%%</button>',
+form: "#commentform",
         editor: "#comment"
       },
       
@@ -16,9 +17,9 @@
         if (value== this.enabled) return;
         this.enabled = value;
         if(value) {
-          $(this.options.buttons).show();
+          $(moderate.options.buttons).show();
         } else {
-          $(this.options.buttons).hide();
+          $(moderate.options.buttons).hide();
         }
       },
       
@@ -43,8 +44,9 @@
         var idcomment = options.comment + id;
         switch (status) {
           case "delete":
+moderate.setenabled(false);
           $.confirmbox(lang.comments.confirm, lang.comments.confirmdelete, lang.comments.yesdelete, lang.comments.nodelete, function(index) {
-            if (index !=0) return;
+            if (index !=0) return moderate.setenabled(true);
           $.litejson({method: "comment_delete", id: id}, function(r){
               if (r == false) return moderate.error(lang.comments.notdeleted);
               $(idcomment).remove();
@@ -59,6 +61,7 @@
           
           case "hold":
           case "approved":
+moderate.setenabled(false);
         $.litejson({method: "comment_setstatus", id: id, status: status}, function(r) {
             try {
               if (r == false) return moderate.error(lang.comments.notmoderated);
@@ -68,11 +71,12 @@
           })
           .error( function(jq, textStatus, errorThrown) {
             moderate.error(lang.comments.notmoderated);
-            alert(jq.responseText);
+            //alert(jq.responseText);
           });
           break;
           
           case "edit":
+moderate.setenabled(false);
         $.litejson({method: "comment_getraw", id: id}, function(resp){
             var area = $(moderate.options.editor);
             area.data("idcomment", id);
@@ -80,28 +84,28 @@
             area.val(resp.rawcontent);
             area.focus();
 
-$.onEscape(function() {
-            $("#commentform").off("submit.moderate");
-                area.val(area.data("savedtext"));
-});
-
-            $("#commentform").one("submit.moderate", function() {
-              var area = $(moderate.options.editor);
+$.onEscape(moderate.restore_submit);
+            $(options.form).off("submit.commentform").on("submit.moderate", function() {
+              var area = $(options.editor);
               var content = $.trim(area.val());
               if (content == "") {
+moderate.enabled = true;
 moderate.error(lang.comment.emptycontent);
+moderate.enabled = false;
 return false;
 }
+
             $.litejson({method: "comment_edit", id:area.data("idcomment"), content: content},
               function(r){
-                area.val(area.data("savedtext"));
-                var cc = moderate.options.content + r.id;
+                var cc = options.content + r.id;
                 $(cc).html(r.content);
+moderate.restore_submit();
                 location.hash = cc.substring(1);
             //} catch (e) { alert(e.message); }
             })
             .error( function(jq, textStatus, errorThrown) {
               moderate.error(lang.comments.notedited);
+moderate.restore_submit();
             });
         //} catch (e) { alert(e.message); }
           return false;
@@ -116,9 +120,19 @@ return false;
       alert("Unknown status " + status);
     }
   },
+
+restore_submit: function() {
+            var area = $(moderate.options.editor);
+                area.val(area.data("savedtext"));
+            $(moderate.options.form).off("submit.moderate");
+moderate.setenabled(true);
+if ("commentform" in $) {
+$.commentform();
+}
+},
   
   loadhold: function() {
-    $(".loadhold").remove();
+    $(".loadhold").parent().remove();
   $.litejson({method: "comments_get_hold", idpost: ltoptions.idpost}, function(r) {
       try {
         var options = moderate.options;
