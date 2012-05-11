@@ -36,7 +36,7 @@ form: "#commentform",
       
       error: function(mesg) {
         moderate.setenabled(true);
-        $.messagebox(lang.comments.error, mesg);
+$.messagebox(lang.comments.error, mesg);
       },
       
       setstatus: function (id, status) {
@@ -86,7 +86,7 @@ moderate.setenabled(false);
 
 $.onEscape(moderate.restore_submit);
             var form = $(options.form);
-            form.off("submit.commentform").on("submit.moderate", function() {
+            form.off("submit.confirmcomment").on("submit.moderate", function() {
 try {
               var area = $(options.editor);
               var content = $.trim(area.val());
@@ -132,8 +132,8 @@ restore_submit: function() {
                 area.val(area.data("savedtext"));
             $(moderate.options.form).off("submit.moderate");
 moderate.setenabled(true);
-if ("commentform" in $) {
-$.commentform();
+if ("confirmcomment" in $) {
+$.confirmcomment();
 }
 },
   
