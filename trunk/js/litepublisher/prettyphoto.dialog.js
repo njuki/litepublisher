@@ -7,7 +7,7 @@
 
 (function( $ ){
   $.messagebox = function(title, mesg) {
-    $.prettyPhotoDialog({
+    return $.prettyPhotoDialog({
       title: title,
       html: "<p>" + mesg + "</p>",
       width: 200
@@ -15,7 +15,7 @@
   };
   
   $.confirmbox= function(title, mesg, button_title1, button_title2, callback) {
-    $.prettyPhotoDialog({
+    return $.prettyPhotoDialog({
       title: title,
       html: "<p>" + mesg + "</p>",
       //width: 200,
@@ -55,6 +55,7 @@
       title: "",
       html: "",
       width: 300,
+close: function() {},
       buttons: [
       {
         title: "Ok",
@@ -102,6 +103,7 @@ var button = '<button type="button" class="pp_dialog_btn_{index}">{title}</butto
       
       callback: function(){
         $(document).off('keydown.onEscape');
+if ($.isFunction(options.close)) options.close();
       } /* Called when prettyPhoto is closed */
     });
     
@@ -109,6 +111,7 @@ var button = '<button type="button" class="pp_dialog_btn_{index}">{title}</butto
     tmp.remove();
     
     $.onEscape($.prettyPhoto.close);
+return options;
   };
  
 })( jQuery );
