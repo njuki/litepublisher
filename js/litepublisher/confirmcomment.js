@@ -14,16 +14,26 @@ return $("input[name='" + name + "']", options.form);
 },
 
 error: function(field, mesg) {
-        $.messagebox(lang.comments.error, mesg)
-.close = function() {
+        var m = $.messagebox(lang.comments.error, mesg);
+if (field) m.close = function() {
 form.get(field).focus);
 };
 },
 
 confirm: function(data) {
-          $.confirmbox(data.title, data.title, lang.comment.robot, lang.comment.human, function(index) {
+          $.confirmbox(lang.comments.confirm, data.title, lang.comment.robot, lang.comment.human, function(index) {
             if (index !=1) return;
-form.sendconfirm(data.confirmid);
+$.litejson({method: "comment_confirm", confirmid: data.confirmid}, function (resp) {
+try {
+form.success(data);
+} catch(e) { form.error(e.message, false); }
+})
+.error(function(msg) {
+form.error(msg, false);
+});
+},
+
+
   } );
 },
 
@@ -43,25 +53,24 @@ return true;
 },
 
 validate: function() {
-if (form.empty("name") || form.empty("email") || !form.validemail() ) return false;
-if ("" == $.trim(form.get("content").val())) {
+if ("" == $.trim(get$(options.editor).val())) {
 form.error("content", lang.comment.emptycontent);
 return false;
 }
+if (form.empty("name") || form.empty("email") || !form.validemail() ) return false;
 return true;
 },
 
 send: function() {
 var inputs = $(":input", options.form);
-var values = {};
+var values = {method: "comment_add"};
 inputs.each(function() {
 var self = $(this);
 values[self.attr("name")] = self.val();
 self.attr("disabled", "disabled");
 });
 
-$.post(ltoptions.url + "/ajaxform.htm", values,
-function (resp) {
+$.litejsontype("post", $values, function (resp) {
 try {
 switch (resp.code) {
 case 'confirm':
@@ -73,39 +82,18 @@ form.success(data);
 break;
 
 default: //error
-form.error(data.msg, false);
+form.error(false, data.msg);
 break;
 }
 } catch(e) { form.error(e.message, false); }
 })
-.error(function(msg) {
-form.error(msg, false);
+            .error( function(jq, textStatus, errorThrown) {
+form.error(false, jq.responseText);
 })
 .complete(function() {
 inputs.removeAttr("disabled");
 });
 
-},
-
-sendconfirm: function(confirmid) {
-$.post(ltoptions.url + "/ajaxform.htm", 
-{confirmid: confirmid},
-function (resp) {
-try {
-switch (resp.code) {
-case 'success':
-form.success(data);
-break;
-
-default: //error
-form.error(data.msg, false);
-break;
-}
-} catch(e) { form.error(e.message, false); }
-})
-.error(function(msg) {
-form.error(msg, false);
-});
 },
 
 success: function(data) {
