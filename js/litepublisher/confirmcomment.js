@@ -1,7 +1,7 @@
 (function( $ ){
   $.confirmcomment = function(opt) {
 var options= $.extend({
-form: "#commentform",
+form: "#form",
         editor: "#comment"
       }, ltoptions.theme.comments, opt);
 
@@ -13,17 +13,6 @@ if (name == 'content') return $(options.editor);
 return $("input[name='" + name + "']", options.form);
 },
 
-init: function() {
-//ctrl+enter
-$(options.editor).on("keydown.confirmcomment", function (e) {
-  if (e.ctrlKey && ((e.keyCode == 13) || (e.keyCode == 10))) {
-$(options.form).submit();
-}
-});
-
-$(options.form).on("submit.confirmcomment", form.submit);
-},
-
 error: function(field, mesg) {
         $.messagebox(lang.comments.error, mesg)
 .close = function() {
@@ -32,32 +21,10 @@ form.get(field).focus);
 },
 
 confirm: function(data) {
-$.load_ui(function() {
-if (!commentform.confirm_dialog) {
-commentform.confirm_dialog= $('<div class="ui-helper-hidden" title="' + data.title + '"><h4>' + data.title + '</h4></div>')
-.appendTo($("input[name='name']").closest("form"));
-}
-
-$(commentform.confirm_dialog).dialog( {
-    autoOpen: true,
-    modal: true,
-    buttons: [
-    {
-      text: lang.comment.robot,
-      click: function() {
-        $(this).dialog("close");
-      }
-    } ,
-
-    {
-      text: lang.comment.human,
-      click: function() {
-        $(this).dialog("close");
-commentform.sendconfirm(data.confirmid);
-      }
-    } ]
+          $.confirmbox(data.title, data.title, lang.comment.robot, lang.comment.human, function(index) {
+            if (index !=1) return;
+form.sendconfirm(data.confirmid);
   } );
-});
 },
 
 empty: function(name) {
@@ -84,71 +51,60 @@ return false;
 return true;
 },
 
-submit: function() {
-if (!commentform.validate()) return false;
-commentform.set_cookie("name");
-commentform.set_cookie("email");
-commentform.set_cookie("url");
-commentform.update_subscribe();
-commentform.send();
-return false;
-},
-
 send: function() {
-var form = $("input[name='name']").closest("form");
+var inputs = $(":input", options.form);
 var values = {};
-$("input, textarea, checkbox", form).each(function() {
-values[$(this).attr("name")] = $(this).val();
-$(this).attr("disabled", true);
+inputs.each(function() {
+var self = $(this);
+values[self.attr("name")] = self.val();
+self.attr("disabled", "disabled");
 });
 
-$.post(ltoptions.url + "/ajaxcommentform.htm", values,
+$.post(ltoptions.url + "/ajaxform.htm", values,
 function (resp) {
 try {
-var data = $.parseJSON(resp);
-switch (data.code) {
+switch (resp.code) {
 case 'confirm':
-commentform.confirm(data);
+form.confirm(data);
 break;
 
 case 'success':
-commentform.success(data);
+form.success(data);
 break;
 
 default: //error
-commentform.error(data.msg, false);
+form.error(data.msg, false);
 break;
 }
-} catch(e) { commentform.error(e.message, false); }
+} catch(e) { form.error(e.message, false); }
 })
 .error(function(msg) {
-commentform.error(msg, false);
+form.error(msg, false);
 })
 .complete(function() {
-$("input, textarea, checkbox", form).attr("disabled", false);
+inputs.removeAttr("disabled");
 });
 
 },
 
 sendconfirm: function(confirmid) {
-$.post(ltoptions.url + "/ajaxcommentform.htm", 
+$.post(ltoptions.url + "/ajaxform.htm", 
 {confirmid: confirmid},
 function (resp) {
 try {
-var data = $.parseJSON(resp);
-switch (data.code) {
+switch (resp.code) {
 case 'success':
-commentform.success(data);
+form.success(data);
 break;
 
 default: //error
-commentform.error(data.msg, false);
+form.error(data.msg, false);
 break;
 }
-} catch(e) { commentform.error(e.message, false); }
+} catch(e) { form.error(e.message, false); }
 })
 .error(function(msg) {
-commentform.error(msg, false);
+form.error(msg, false);
 });
 },
 
@@ -156,6 +112,24 @@ success: function(data) {
 set_cookie('userid', data.userid);
 window.location = data.posturl;
 }
+};
+
+//init
+//ctrl+enter
+$(options.editor).off("keydown.confirmcomment").on("keydown.confirmcomment", function (e) {
+  if (e.ctrlKey && ((e.keyCode == 13) || (e.keyCode == 10))) {
+$(options.form).submit();
+},
+
+submit: function() {
+if (form.validate()) form.send();
+return false;
+}
+});
+
+$(options.form).off("submit.confirmcomment").on("submit.confirmcomment", form.submit);
+};
+
 $(document).ready(function() {
 $.confirmcomment();
 });
