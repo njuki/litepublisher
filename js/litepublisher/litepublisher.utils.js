@@ -41,17 +41,27 @@ function get_get(name) {
       }
       if ($.isFunction(fn)) $.uiscript.done(fn);
     },
-    
+
     litejson: function(data, callback) {
-      data.random = Math.random();
+    return $.litejsontype("get", data, callback);
+},
+    
+    litejsontype: function(type, data, callback) {
       var c = get_cookie("litepubl_user");
       if (c != '') {
         data.litepubl_user = c;
         c = get_cookie("litepubl_user_id");
         if (c != '') data.litepubl_user_id = c;
       }
-      
-      return jQuery.get(ltoptions.url + "/admin/jsonserver.php", data, callback, "json" );
+if (type != "post") type = "get";
+		return $.ajax({
+			type: type,
+			url: ltoptions.url + "/admin/jsonserver.php",
+			data: data,
+			success: callback,
+			dataType: "json",
+cache: false
+		});
     },
 
 onEscape: function (callback) {

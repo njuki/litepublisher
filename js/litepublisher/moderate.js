@@ -85,7 +85,9 @@ moderate.setenabled(false);
             area.focus();
 
 $.onEscape(moderate.restore_submit);
-            $(options.form).off("submit.commentform").on("submit.moderate", function() {
+            var form = $(options.form);
+            form.off("submit.commentform").on("submit.moderate", function() {
+try {
               var area = $(options.editor);
               var content = $.trim(area.val());
               if (content == "") {
@@ -94,20 +96,24 @@ moderate.error(lang.comment.emptycontent);
 moderate.enabled = false;
 return false;
 }
+$(":input", form).attr("disabled", "disabled");
 
-            $.litejson({method: "comment_edit", id:area.data("idcomment"), content: content},
-              function(r){
+            $.litejsontype("post", {method: "comment_edit", id: area.data("idcomment"), content: content}, function(r){
+try {
+$(":input", form).removeAttr("disabled");
                 var cc = options.content + r.id;
                 $(cc).html(r.content);
 moderate.restore_submit();
                 location.hash = cc.substring(1);
-            //} catch (e) { alert(e.message); }
+            } catch (e) { alert(e.message); }
             })
             .error( function(jq, textStatus, errorThrown) {
+$(":input", form).removeAttr("disabled");
               moderate.error(lang.comments.notedited);
 moderate.restore_submit();
             });
-        //} catch (e) { alert(e.message); }
+
+        } catch (e) { alert(e.message); }
           return false;
         });
       })
