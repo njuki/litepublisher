@@ -1,40 +1,25 @@
 (function( $ ){
   $.confirmcomment = function(opt) {
 var options= $.extend({
+"confirmcomment": true,
 form: "#form",
         editor: "#comment"
       }, ltoptions.theme.comments, opt);
 
 var form= {
-fields: ["name", "email", "url"],
-
 get: function(name) {
 if (name == 'content') return $(options.editor);
 return $("input[name='" + name + "']", options.form);
 },
 
-error: function(field, mesg) {
-        var m = $.messagebox(lang.comments.error, mesg);
-if (field) m.close = function() {
+error: function(mesg) {
+return $.messagebox(lang.dialog.error, mesg);
+},
+
+error_field: function(field, mesg) {
+form.error(mesg).close = function() {
 form.get(field).focus);
 };
-},
-
-confirm: function(data) {
-          $.confirmbox(lang.comments.confirm, data.title, lang.comment.robot, lang.comment.human, function(index) {
-            if (index !=1) return;
-$.litejson({method: "comment_confirm", confirmid: data.confirmid}, function (resp) {
-try {
-form.success(data);
-} catch(e) { form.error(e.message, false); }
-})
-.error(function(msg) {
-form.error(msg, false);
-});
-},
-
-
-  } );
 },
 
 empty: function(name) {
@@ -54,7 +39,7 @@ return true;
 
 validate: function() {
 if ("" == $.trim(get$(options.editor).val())) {
-form.error("content", lang.comment.emptycontent);
+form.error_field("content", lang.comment.emptycontent);
 return false;
 }
 if (form.empty("name") || form.empty("email") || !form.validemail() ) return false;
@@ -74,33 +59,56 @@ $.litejsontype("post", $values, function (resp) {
 try {
 switch (resp.code) {
 case 'confirm':
-form.confirm(data);
+form.confirm(resp.confirmid);
 break;
 
 case 'success':
-form.success(data);
+form.success(resp);
 break;
 
 default: //error
-form.error(false, data.msg);
+form.error(resp.msg);
 break;
 }
-} catch(e) { form.error(e.message, false); }
+} catch(e) { form.error(e.message); }
 })
             .error( function(jq, textStatus, errorThrown) {
-form.error(false, jq.responseText);
+form.error(jq.responseText);
 })
 .complete(function() {
 inputs.removeAttr("disabled");
 });
+},
 
+confirm: function(confirmid) {
+          $.confirmbox(lang.dialog.confirm, lang.comment.checkspam , lang.comment.robot, lang.comment.human, function(index) {
+            if (index !=1) return;
+$.litejsontype("post", {method: "comment_confirm", confirmid: confirmid}, form.success)
+            .error( function(jq, textStatus, errorThrown) {
+form.error(jq.responseText);
+});
+});
 },
 
 success: function(data) {
-set_cookie('userid', data.userid);
-window.location = data.posturl;
+if ("cookies" in data) {
+var name = "";
+for (name in data.cookies) {
+set_cookie(name, data.cookies[name]);
 }
-};
+}
+window.location = data.posturl;
+},
+
+submit: function() {
+if (!form.validate()) return false;
+if (options.confirmcomment) {
+form.send();
+return false;
+}
+}
+
+}; //form
 
 //init
 //ctrl+enter
@@ -108,12 +116,6 @@ $(options.editor).off("keydown.confirmcomment").on("keydown.confirmcomment", fun
   if (e.ctrlKey && ((e.keyCode == 13) || (e.keyCode == 10))) {
 $(options.form).submit();
 },
-
-submit: function() {
-if (form.validate()) form.send();
-return false;
-}
-});
 
 $(options.form).off("submit.confirmcomment").on("submit.confirmcomment", form.submit);
 };
