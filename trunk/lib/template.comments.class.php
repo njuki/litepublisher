@@ -61,7 +61,9 @@ class ttemplatecomments extends tevents {
         ltoptions.theme.comments.ismoder = <?php echo ($ismoder ? \'true\' : \'false\'); ?>;
         </script>', json_encode(array(
         'canedit' => $cm->canedit,
-        'candelete' => $cm->candelete
+        'candelete' => $cm->candelete,
+'confirmcomment' => $cm->confirmreg,
+'comuser' => false
         )));
 
         $result .= $template->getjavascript($template->jsmerger_moderate);
@@ -77,6 +79,13 @@ class ttemplatecomments extends tevents {
           break;
           
           case 'guest':
+        $result .= sprintf('<script type="text/javascript">ltoptions.theme.comments = $.extend(true, ltoptions.theme.comments, %s);</script>',
+ json_encode(array(
+'confirmcomment' => $cm->confirmguest,
+'comuser' => false
+        )));
+
+
           $mesg = $this->guest;
           if (litepublisher::$options->reguser) $mesg .= $this->regaccount;
           $args->mesg = $this->fixmesg($mesg, $theme);
@@ -84,6 +93,12 @@ class ttemplatecomments extends tevents {
           break;
           
           case 'comuser':
+        $result .= sprintf('<script type="text/javascript">ltoptions.theme.comments = $.extend(true, ltoptions.theme.comments, %s);</script>',
+ json_encode(array(
+'confirmcomment' => $cm->confirmcomuser,
+'comuser' => true
+        )));
+
           $mesg = $this->comuser;
           if (litepublisher::$options->reguser) $mesg .= $this->regaccount;
           $args->mesg = $this->fixmesg($mesg, $theme);

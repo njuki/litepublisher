@@ -87,6 +87,13 @@ $js->deletefile('moderate', '/js/litepublisher/rpc.min.js');
 include_once(litepublisher::$paths->lib . 'install' . DIRECTORY_SEPARATOR  . 'jsmerger.class.install.php');
 set_moderate_lang($js);
 tplugins::i()->delete('ajaxcommentform');
+  $js->addtext('default', 'dialog', "var lang;\nif (lang == undefined) lang = {};\n" . sprintf('lang.dialog = %s;',  json_encode(
+array(
+  'error' => $lang->error,
+  'confirm' => $lang->confirm
+  )
+)));
+
 $js->unlock();
 
   tcssmerger::i()->add('default', '/js/litepublisher/prettyphoto.dialog.css');
