@@ -62,7 +62,7 @@ class ttemplatecomments extends tevents {
         </script>', json_encode(array(
         'canedit' => $cm->canedit,
         'candelete' => $cm->candelete,
-'confirmcomment' => $cm->confirmreg,
+'confirmcomment' => ($post->idperm == 0) && $cm->confirmreg,
 'comuser' => false
         )));
 
@@ -81,10 +81,9 @@ class ttemplatecomments extends tevents {
           case 'guest':
         $result .= sprintf('<script type="text/javascript">ltoptions.theme.comments = $.extend(true, ltoptions.theme.comments, %s);</script>',
  json_encode(array(
-'confirmcomment' => $cm->confirmguest,
+'confirmcomment' => ($post->idperm == 0) && $cm->confirmguest,
 'comuser' => false
         )));
-
 
           $mesg = $this->guest;
           if (litepublisher::$options->reguser) $mesg .= $this->regaccount;
@@ -95,7 +94,7 @@ class ttemplatecomments extends tevents {
           case 'comuser':
         $result .= sprintf('<script type="text/javascript">ltoptions.theme.comments = $.extend(true, ltoptions.theme.comments, %s);</script>',
  json_encode(array(
-'confirmcomment' => $cm->confirmcomuser,
+'confirmcomment' => ($post->idperm == 0) && $cm->confirmcomuser,
 'comuser' => true
         )));
 
