@@ -18,7 +18,7 @@ return $.messagebox(lang.dialog.error, mesg);
 
 error_field: function(field, mesg) {
 form.error(mesg).close = function() {
-form.get(field).focus);
+form.get(field).focus();
 };
 },
 
@@ -115,7 +115,8 @@ return false;
 $(options.editor).off("keydown.confirmcomment").on("keydown.confirmcomment", function (e) {
   if (e.ctrlKey && ((e.keyCode == 13) || (e.keyCode == 10))) {
 $(options.form).submit();
-},
+}
+});
 
 $(options.form).off("submit.confirmcomment").on("submit.confirmcomment", form.submit);
 };
