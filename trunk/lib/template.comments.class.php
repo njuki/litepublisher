@@ -63,11 +63,9 @@ class ttemplatecomments extends tevents {
         'canedit' => $cm->canedit,
         'candelete' => $cm->candelete
         )));
+
         $result .= $template->getjavascript($template->jsmerger_moderate);
-        
         $result .= $template->getjavascript('/js/litepublisher/moderate.js');
-        $result .= $template->getjavascript('/js/litepublisher/prettyphoto.dialog.js');
-        
       $result .= '<?php } else { ?>';
         
         switch ($post->comstatus) {

@@ -14,6 +14,8 @@ function tjsoncommentsInstall($self) {
   $json->addevent('comment_edit', get_class($self), 'comment_edit');
   $json->addevent('comment_getraw', get_class($self), 'comment_getraw');
   $json->addevent('comments_get_hold', get_class($self), 'comments_get_hold');
+  $json->addevent('comment_add', get_class($self), 'comment_add');
+  $json->addevent('comment_confirm', get_class($self), 'comment_confirm');
   $json->unlock();
 }
 

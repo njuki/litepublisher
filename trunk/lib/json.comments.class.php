@@ -91,4 +91,39 @@ class tjsoncomments extends tevents {
     );
   }
   
+  public function comment_add(array $args) {
+    $commentform = tcommentform::i();
+    $commentform->helper = $this;
+return $commentform->request(null);
+}
+
+  public function comment_confirm(array $args) {
+    $commentform = tcommentform::i();
+    $commentform->helper = $this;
+return $commentform->request(null);
+}
+
+  //commentform helper
+  public function confirm($confirmid) {
+    return array(
+    'confirmid' => $confirmid,
+    'code' => 'confirm',
+    );
+  }
+  
+  public function geterrorcontent($s) {
+    return array(
+    'msg' => $s,
+    'code' => 'error'
+    );
+  }
+  
+  public function sendresult($url, $cookies) {
+return array(
+'cookies' => $cookies,
+'posturl' => $url,
+'code' => 'success';
+);
+  }
+  
 }//class
