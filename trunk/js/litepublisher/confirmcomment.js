@@ -1,7 +1,8 @@
 (function( $ ){
   $.confirmcomment = function(opt) {
 var options= $.extend({
-"confirmcomment": true,
+confirmcomment: true,
+comuser: false,
 form: "#form",
         editor: "#comment"
       }, ltoptions.theme.comments, opt);
@@ -23,26 +24,32 @@ form.get(field).focus();
 },
 
 empty: function(name) {
-if ("" != $.trim(form.get(name).val())) return false;
-form.error(name, lang.comment.emptyname);
-return true;
+var s = form.get(name).val();
+return $.trim(s) == "";
 },
 
 validemail: function() {
+var s = $.trim(form.get("email").val());
+if (s == "") return false;
 var filter = /^([a-zA-Z0-9_\.\-])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$/;
-if (!filter.test(form.get("email").val())) {
-form.error("email", lang.comment.invalidemail);
-return false;
-}
-return true;
+return filter.test(s);
 },
 
 validate: function() {
 if ("" == $.trim(get$(options.editor).val())) {
 form.error_field("content", lang.comment.emptycontent);
 return false;
+} else if (options.comuser) {
+if (form.empty("name")) {
+form.error_field("name", lang.comment.emptyname);
+return false;
 }
-if (form.empty("name") || form.empty("email") || !form.validemail() ) return false;
+
+if (!form.validemail()) {
+form.error_field("email", lang.comment.invalidemail);
+return false;
+}
+}
 return true;
 },
 

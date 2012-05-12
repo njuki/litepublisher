@@ -36,7 +36,7 @@ form: "#commentform",
       
       error: function(mesg) {
         moderate.setenabled(true);
-$.messagebox(lang.comments.error, mesg);
+$.messagebox(lang.dialog.error, mesg);
       },
       
       setstatus: function (id, status) {
@@ -45,7 +45,7 @@ $.messagebox(lang.comments.error, mesg);
         switch (status) {
           case "delete":
 moderate.setenabled(false);
-          $.confirmbox(lang.comments.confirm, lang.comments.confirmdelete, lang.comments.yesdelete, lang.comments.nodelete, function(index) {
+          $.confirmbox(lang.dialog.confirm, lang.comments.confirmdelete, lang.comments.yesdelete, lang.comments.nodelete, function(index) {
             if (index !=0) return moderate.setenabled(true);
           $.litejson({method: "comment_delete", id: id}, function(r){
               if (r == false) return moderate.error(lang.comments.notdeleted);
