@@ -7,14 +7,19 @@
 **/
 
 class tguard {
+//prevent double call post()
+private static $posted = false;
   
   public static function post() {
+if (is_bool(self::$posted)) return self::$posted;
+self::$posted = false;
     if (!isset($_POST) || (count($_POST) == 0)) return false;
     if (get_magic_quotes_gpc()) {
       foreach ($_POST as $name => $value) {
         $_POST[$name] = stripslashes($_POST[$name]);
       }
     }
+self::posted = true;
     return true;
   }
   
