@@ -6,7 +6,7 @@
 * and GPL (gpl.txt) licenses.
 **/
 
-function turlmapInstall($self) {
+function tuseroptionsInstall($self) {
   $manager = tdbmanager ::i();
-  $manager->CreateTable('urlmap', file_get_contents(dirname(__file__) . DIRECTORY_SEPARATOR . 'urlmap.sql'));
+  $manager->CreateTable($self->table, file_get_contents(dirname(__file__) . DIRECTORY_SEPARATOR . 'useroptions.sql'));
 }

@@ -64,6 +64,7 @@ litepublisher::$classes->add('Tadmincommentmanager', 'admin.commentmanager.class
 litepublisher::$classes->add('tsession', 'session.class.php');
 litepublisher::$classes->items['tusers'][0] = 'kernel.php';
 litepublisher::$classes->items['tusergroups'][0] = 'kernel.php';
+litepublisher::$classes->add('tuseroptions', 'user.options.class.php');
 
 unset(litepublisher::$classes->items['tspamfilter']);
 unset(litepublisher::$classes->classes['spamfilter']);
