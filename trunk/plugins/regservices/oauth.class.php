@@ -28,7 +28,7 @@ $this->urllist= array(
     'access' => 'https://api.twitter.com/oauth/access_token',
     //'callback' => litepublisher::$site->url . '/twitter-oauth1callback.php'
 'callback' => ''
-    ));
+    );
   }
   
   //to override in child classes
