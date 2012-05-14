@@ -101,7 +101,6 @@ tfiler::log(var_export($_GET, true));
     header('Content-Length: ". strlen($js) . "');
     header('Content-Type: text/javascript');
     //header('Content-Type: application/json');
-    //header('Content-Disposition: attachment; filename=response.js');
     header('Date: ".date('r') . "');
     Header( 'Cache-Control: no-cache, must-revalidate');
     Header( 'Pragma: no-cache');

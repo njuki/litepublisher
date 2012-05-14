@@ -113,6 +113,10 @@ class Tadmincommentmanager extends tadminmenu {
     $options->commentsapproved = isset($commentsapproved);
     $options->checkduplicate = isset($checkduplicate);
     $options->defaultsubscribe = isset($defaultsubscribe);
+useroptions = tuseroptions::i();
+$useroptions->defvalues['subscribe'] = $options->defaultsubscribe;
+$useroptions->save();
+
     $options->commentsdisabled  = isset($commentsdisabled);
     $options->pingenabled  = isset($pingenabled);
     $options->commentpages  = isset($commentpages);
