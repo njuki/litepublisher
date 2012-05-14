@@ -19,12 +19,16 @@ function tregservicesInstall($self) {
   litepublisher::$classes->add('tregserviceuser', 'service.class.php', $name);
   litepublisher::$classes->add('tgoogleregservice', 'google.service.php', $name);
   litepublisher::$classes->add('tfacebookregservice', 'facebook.service.php', $name);
+  litepublisher::$classes->add('ttwitterregservice', 'twitter.service.php', $name);
   litepublisher::$classes->add('tmailruregservice', 'mailru.service.php', $name);
   litepublisher::$classes->add('tyandexregservice', 'yandex.service.php', $name);
   litepublisher::$classes->add('tvkontakteregservice', 'vkontakte.service.php', $name);
   
+  litepublisher::$classes->add('toauth', 'oauth.class.php', $name);
+
   $self->add(tgoogleregservice::i());
   $self->add(tfacebookregservice::i());
+  $self->add(ttwitterregservice::i());
   $self->add(tmailruregservice::i());
   $self->add(tyandexregservice::i());
   $self->add(tvkontakteregservice::i());
@@ -55,11 +59,10 @@ function tregservicesUninstall($self) {
   }
   
   litepublisher::$classes->delete('tregserviceuser');
+  litepublisher::$classes->delete('toauth');
   
   tfiler::delete(litepublisher::$paths->data . 'regservices', true, true);
   
-  if (dbversion) {
     tusers::i()->unbind('tregserviceuser');
     tdbmanager::i()->deletetable('regservices');
-  }
 }
