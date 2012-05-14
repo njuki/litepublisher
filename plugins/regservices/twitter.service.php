@@ -33,8 +33,8 @@ return false;
 
 public function getoauth() {
 $oauth = new toauth();
-$aouth->urllist['callback'] = litepublisher::$site->url . $this->url;
-$aouth->key = $this->client_id;
+$oauth->urllist['callback'] = litepublisher::$site->url . $this->url;
+$oauth->key = $this->client_id;
 $oauth->secret = $this->client_secret;
 return $oauth;
 }
