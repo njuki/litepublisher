@@ -6,37 +6,35 @@
 * and GPL (gpl.txt) licenses.
 **/
 
-class toauth extends tevents {
+class toauth extends tdata {
   public $urllist;
-  /*
   public $key;
   public $secret;
   public $token;
   public $tokensecret;
-  */
   public $timeout;
   
   protected function create() {
     parent::create();
     $this->basename = 'oauth';
-    $this->data['key'] = '';
-    $this->data['secret'] = '';
-    $this->data['token'] = '';
-    $this->data['tokensecret'] = '';
+    $this->key = '';
+    $this->secret = '';
+    $this->token = '';
+    $this->tokensecret = '';
     $this->timeout = 2;
-    $this->addmap('urllist',  array(
+$this->urllist= array(
     'request' => 'https://api.twitter.com/oauth/request_token',
     'authorize' => 'https://api.twitter.com/oauth/authorize',
     'access' => 'https://api.twitter.com/oauth/access_token',
-    'callback' => litepublisher::$site->url . '/twitter-oauth1callback.php'
+    //'callback' => litepublisher::$site->url . '/twitter-oauth1callback.php'
+'callback' => ''
     ));
   }
   
   //to override in child classes
-
 public function settokens($token, $secret) {
-$this->data['token'] = $token;
-$this->data['tokensecret '] = $secret;
+$this->token = $token;
+$this->tokensecret  = $secret;
 return $token && $secret;
 }
 
@@ -157,7 +155,7 @@ return $token && $secret;
   
   public function get_token(array $keys){
     if ($bits = $this->getbits($this->get_url($keys, $this->urllist['request']))) {
-      return $this->settokens($bits['oauth_token'], $bits['oauth_token_secret']);
+      if ($this->settokens($bits['oauth_token'], $bits['oauth_token_secret'])) return $bits;
     }
     return false;
   }
@@ -206,36 +204,25 @@ return $token && $secret;
   
   public function getrequesttoken() {
     $keys = $this->getkeys();
-    if ($this->get_token($keys)) {
-      $keys['oauth_token'] = $this->token;
+    if ($tokens = $this->get_token($keys)) {
+return $tokens;
+/*
+      $keys['oauth_token'] = $tokens['oauth_token'];
       if ($this->getaccess($keys)) return true;
-tsession::start(md5($this->token));
-      $_SESSION['tokens'] = array(
-      'token' => $this->token,
-      'secret' => $this->tokensecret
-      );
-      session_write_close();
-      return $this->urllist['authorize'] . sprintf('?oauth_token=%s&&oauth_callback=%s',
-      rawurlencode($this->token), rawurlencode($this->urllist['callback']));
+*/
     }
     return false;
   }
+
+public function get_authorize_url() {
+      return $this->urllist['authorize'] . sprintf('?oauth_token=%s&&oauth_callback=%s',
+      rawurlencode($this->token), rawurlencode($this->urllist['callback']));
+}
   
   public function getaccesstoken() {
-    tsession::start(md5($_GET['oauth_token']));
-    if (!isset($_SESSION['tokens'])) {
-      session_destroy();
-return false;
-}
-
-    $tokens = $_SESSION['tokens'];
-    $this->token = $tokens['token'];
-    $this->tokensecret = $tokens['secret'];
     $keys = $this->getkeys();
     $keys['oauth_token'] = $this->token;
     if ($result = $this->getaccess($keys)) {
-      session_destroy();
-      $this->save();
       return $result;
     }
     return false;
@@ -272,26 +259,9 @@ return false;
   }
   
   public function get_data($url) {
+    $keys = $this->getkeys();
     $keys['oauth_token'] = $this->token;
-$url = $this->get_url($keys, $url);
+return http::get($this->get_url($keys, $url));
+}
 
-    $authorization = $this->getauthorization($keys, $url);
-    $headers = array('Authorization: OAuth '. $authorization);
-    $headers = array_merge($headers, $this->getextraheaders());
-    
-    $ch = curl_init();
-    curl_setopt($ch, CURLOPT_URL, $url);
-    curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
-    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);
-    curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
-    curl_setopt($ch, CURLOPT_HEADER, false);
-    curl_setopt($ch, CURLOPT_TIMEOUT, $this->timeout);
-    
-    $response = curl_exec($ch);
-    $headers = curl_getinfo($ch);
-    curl_close($ch);
-    if ($headers['http_code'] != '200') return false;
-    return $response;
-  }
-  
 }//class
