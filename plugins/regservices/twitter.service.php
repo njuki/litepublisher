@@ -21,7 +21,14 @@ class ttwitterregservice extends tregservice {
   }
   
   public function getauthurl() {
-return $this->oauth->getrequesttoken();
+$oauth = $this->getoauth();
+if ($tokens = $oauth->getrequesttoken()) {
+    tsession::start(md5($tokens['oauth_token']));
+$_SESSION['tokens'] = $tokens;
+    session_write_close();
+return $oauth->get_authorize_url();
+}
+return false;
   }
 
 public function getoauth() {
@@ -36,13 +43,19 @@ return $oauth;
   public function request($arg) {
     $this->cache = false;
       if (empty($_GET['oauth_token'])) return 403;
+    tsession::start(md5($_GET['oauth_token']));
+    if (!isset($_SESSION['tokens'])) {
+      session_destroy();
+return 403;
+}
+
+    $tokens = $_SESSION['tokens'];
+      session_destroy();
 $oauth = $this->getoauth();
-$tokens  = $oauth->getaccesstoken();
-        if ($tokens  ) {
-$keys = array(
-'oauth_token' => $tokens['oauth_token']
-);
-		if ($r = http::get($oauth->geturl($keys, 'https://api.twitter.com/1/account/verify_credentials.json'))) {
+    $oauth->settokens($tokens['oauth_token'], $tokens['oauth_token_secret']);
+
+        if ($tokens  = $oauth->getaccesstoken()) {
+		if ($r = $oauth->get_data('https://api.twitter.com/1/account/verify_credentials.json')) {
         $info = json_decode($r);
         return $this->adduser(array(
 'id' => $info->id,
