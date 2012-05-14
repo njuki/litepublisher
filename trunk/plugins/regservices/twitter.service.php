@@ -26,33 +26,28 @@ return $this->oauth->getrequesttoken();
 
 public function getoauth() {
 $oauth = new toauth();
-$oauth->set(
-
-'callback' => litepublisher::$site->url . $this->url
-);
+$aouth->urllist['callback'] = litepublisher::$site->url . $this->url;
+$aouth->key = $this->client_id;
+$oauth->secret = $this->client_secret;
 return $oauth;
 }
   
   //handle callback
   public function request($arg) {
-    if ($err = parent::request($arg)) return $err;
-    $code = $_REQUEST['code'];
-    $resp = self::http_post('https://accounts.google.com/o/oauth2/token', array(
-    'code' => $code,
-    'client_id' => $this->client_id,
-    'client_secret' => $this->client_secret,
-    'redirect_uri' => litepublisher::$site->url . $this->url,
-    'grant_type' => 'authorization_code'
-    ));
-    
-    if ($resp) {
-      $tokens  = json_decode($resp);
-      if ($r = http::get('https://www.googleapis.com/oauth2/v1/userinfo?access_token=' . $tokens->access_token)) {
+    $this->cache = false;
+      if (empty($_GET['oauth_token'])) return 403;
+$oauth = $this->getoauth();
+$tokens  = $oauth->getaccesstoken();
+        if ($tokens  ) {
+$keys = array(
+'oauth_token' => $tokens['oauth_token']
+);
+		if ($r = http::get($oauth->geturl($keys, 'https://api.twitter.com/1/account/verify_credentials.json'))) {
         $info = json_decode($r);
         return $this->adduser(array(
-        'email' => isset($info->email) ? $info->email : '',
+'id' => $info->id,
         'name' => $info->name,
-        'website' => isset($info->link) ? $info->link : ''
+        'website' => 'http://twitter.com/account/redirect_by_id?id='.$info->id_str
         ));
       }
     }
