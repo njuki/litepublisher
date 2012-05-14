@@ -50,12 +50,11 @@ class tregservice extends tplugin {
     $response = curl_exec($ch);
     $headers = curl_getinfo($ch);
     curl_close($ch);
-    if ($headers['http_code'] != "200") return false;
+    if ($headers['http_code'] != '200') return false;
     return $response;
   }
   
-  
-  public function start_session() {
+    public function start_session() {
     tsession::init(1);
     session_start();
   }
