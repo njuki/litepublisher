@@ -65,6 +65,15 @@ litepublisher::$classes->add('tsession', 'session.class.php');
 litepublisher::$classes->items['tusers'][0] = 'kernel.php';
 litepublisher::$classes->items['tusergroups'][0] = 'kernel.php';
 litepublisher::$classes->add('tuseroptions', 'user.options.class.php');
+if (litepublisher::$classes->exists('tregservice')) {
+  litepublisher::$classes->add('toauth', 'oauth.class.php', 'regservices');
+  litepublisher::$classes->add('ttwitterregservice', 'twitter.service.php', 'regservices');
+  tregservices::i()->add(ttwitterregservice::i());
+$man = tdbmanager::i();
+$man->alter('regservices', "drop index service");
+$man->addenum('regservices', 'service', 'twitter');
+$man->alter('regservices', "add KEY (`service`, `uid`)");
+}
 
 unset(litepublisher::$classes->items['tspamfilter']);
 unset(litepublisher::$classes->classes['spamfilter']);
