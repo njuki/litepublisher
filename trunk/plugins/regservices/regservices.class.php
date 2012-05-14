@@ -69,6 +69,7 @@ if (!isset($_COOKIE['litepubl_cookie_test'])) return 403;
     $service = getinstance($this->items[$id]);
     if (!$service->valid) return 403;
     $url = $service->getauthurl();
+if (!$url) return 403;
     if (!empty($_GET['backurl'])) setcookie('backurl', $_GET['backurl'], time() + 8 * 3600, litepublisher::$site->subdir . '/', false);
     
     return litepublisher::$urlmap->redir($url);
