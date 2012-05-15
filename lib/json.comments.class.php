@@ -122,7 +122,7 @@ return $commentform->request(null);
 return array(
 'cookies' => $cookies,
 'posturl' => $url,
-'code' => 'success';
+'code' => 'success'
 );
   }
   

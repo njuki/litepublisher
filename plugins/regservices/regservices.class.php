@@ -56,7 +56,7 @@ class tregservices extends titems {
   public function request($arg) {
     $this->cache = false;
 // hook for clien disabled cookies
-if (!isset($_GET['cookietest']) {
+if (!isset($_GET['cookietest'])) {
        setcookie('litepubl_cookie_test', 'test', time() + 8000, litepublisher::$site->subdir . '/', false);
     return litepublisher::$urlmap->redir(litepublisher::$urlmap->url . '&cookietest=true');
 }
