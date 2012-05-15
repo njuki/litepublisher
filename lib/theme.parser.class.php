@@ -569,9 +569,9 @@ class tthemeparser extends tevents {
         
         $templates['content.post.templatecomments.confirmform'] = str_replace('$lang.formhead', '$lang.checkspam', $templates['content.post.templatecomments.confirmform']);
 
-        $templates['content.post.templatecomments.form'] = str_replace(
+        $templates['content.post.templatecomments.form'] = trim(str_replace(
 '<script type="text/javascript" src="$site.files$template.jsmerger_comments"></script>', '',
-        $templates['content.post.templatecomments.form']);
+        $templates['content.post.templatecomments.form']));
 
         $regform = 'content.post.templatecomments.regform';
         if (!in_array($regform, $this->parsedtags) && in_array('content.admin.editor', $this->parsedtags)) {

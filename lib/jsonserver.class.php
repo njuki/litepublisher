@@ -78,9 +78,9 @@ class tjsonserver extends titems {
     
     try {
 tfiler::log(var_export($_GET, true));
-      //tfiler::log(var_export($args, true));
+      tfiler::log(var_export($args, true));
       $result = $this->callevent($method, $a);
-      //tfiler::log(var_export($result, true));
+      tfiler::log(var_export($result, true));
     } catch (Exception $e) {
       if (403 == $e->getCode()) {
         $result = '<?php Header(\'HTTP/1.0 403 Forbidden\', true, 403); ?>';
