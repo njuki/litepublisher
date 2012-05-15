@@ -147,7 +147,7 @@ class tcommentform extends tevents {
     $kept->deleteold();
     */
     $confirmid = $_POST['confirmid'];
-    tsession::start($confirmid);
+    tsession::start(md5($confirmid));
     //if (!($values = $kept->getitem($confirmid))) {
       if (!isset($_SESSION['confirmid']) || ($confirmid != $_SESSION['confirmid'])) {
         session_destroy();
@@ -168,18 +168,17 @@ class tcommentform extends tevents {
       
       //$confirmid  = $kept->add($values);
       $confirmid = md5uniq();
-      if ($sess = tsession::start($confirmid)) $sess->lifetime = 900;
+      if ($sess = tsession::start(md5($confirmid))) $sess->lifetime = 900;
       $_SESSION['confirmid'] = $confirmid;
       $_SESSION['values'] = $values;
       session_write_close();
       
       if (intval($shortpost['idperm']) > 0) {
         $header = $this->getpermheader($shortpost);
-      } else {
-        $header = '';
+      return $header . $this->confirm($confirmid);
       }
       
-      return $header . $this->confirm($confirmid);
+      return $this->confirm($confirmid);
     }
     
     public function getpermheader(array $shortpost) {
