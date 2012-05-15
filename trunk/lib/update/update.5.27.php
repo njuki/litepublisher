@@ -90,6 +90,7 @@ $admin->save();
 litepublisher::$urlmap->setvalue($admin->items[$id]['idurl'], 'class', 'Tadmincommentmanager');
 }
 
+$lang = tlocal::admin();
 $js = tjsmerger::i();
 $js->lock();
   $js->add('default', '/js/litepublisher/prettyphoto.dialog.min.js');

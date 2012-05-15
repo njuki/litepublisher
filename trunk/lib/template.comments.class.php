@@ -41,6 +41,7 @@ class ttemplatecomments extends tevents {
     }
     
     if (!litepublisher::$options->commentsdisabled && ($post->comstatus != 'closed')) {
+        $result .= ttemplate::i()->getjavascript('/js/litepublisher/confirmcomment.js');
       $args->postid = $post->id;
       $args->antispam = base64_encode('superspamer' . strtotime ("+1 hour"));
       
@@ -62,10 +63,11 @@ class ttemplatecomments extends tevents {
         </script>', json_encode(array(
         'canedit' => $cm->canedit,
         'candelete' => $cm->candelete,
-'confirmcomment' => ($post->idperm == 0) && $cm->confirmreg,
+'confirmcomment' => ($post->idperm == 0) && $cm->confirmlogged,
 'comuser' => false
         )));
 
+        $result .= $template->getjavascript($template->jsmerger_comments);
         $result .= $template->getjavascript($template->jsmerger_moderate);
         $result .= $template->getjavascript('/js/litepublisher/moderate.js');
       $result .= '<?php } else { ?>';
@@ -79,12 +81,7 @@ class ttemplatecomments extends tevents {
           break;
           
           case 'guest':
-        $result .= sprintf('<script type="text/javascript">ltoptions.theme.comments = $.extend(true, ltoptions.theme.comments, %s);</script>',
- json_encode(array(
-'confirmcomment' => ($post->idperm == 0) && $cm->confirmguest,
-'comuser' => false
-        )));
-
+$result .= $this->getjs(($post->idperm == 0) && $cm->confirmguest, false);
           $mesg = $this->guest;
           if (litepublisher::$options->reguser) $mesg .= $this->regaccount;
           $args->mesg = $this->fixmesg($mesg, $theme);
@@ -92,12 +89,7 @@ class ttemplatecomments extends tevents {
           break;
           
           case 'comuser':
-        $result .= sprintf('<script type="text/javascript">ltoptions.theme.comments = $.extend(true, ltoptions.theme.comments, %s);</script>',
- json_encode(array(
-'confirmcomment' => ($post->idperm == 0) && $cm->confirmcomuser,
-'comuser' => true
-        )));
-
+$result .= $this->getjs(($post->idperm == 0) && $cm->confirmcomuser, true);
           $mesg = $this->comuser;
           if (litepublisher::$options->reguser) $mesg .= $this->regaccount;
           $args->mesg = $this->fixmesg($mesg, $theme);
@@ -124,5 +116,17 @@ class ttemplatecomments extends tevents {
     return $theme->parse(str_replace('backurl=', 'backurl=' . urlencode(litepublisher::$urlmap->url),
     str_replace('&backurl=', '&amp;backurl=', $mesg)));
   }
+
+public function getjs($confirmcomment, $comuser) {
+        $result = sprintf('<script type="text/javascript">ltoptions.theme.comments = $.extend(true, ltoptions.theme.comments, %s);</script>',
+ json_encode(array(
+'confirmcomment' => $confirmcomment,
+'comuser' => $comuser
+        )));
+
+$template = ttemplate::I();
+        $result .= $template->getjavascript($template->jsmerger_comments);
+return  $result;
+}
   
 } //class

@@ -1,9 +1,10 @@
+return;
 (function( $ ){
   $.confirmcomment = function(opt) {
 var options= $.extend({
 confirmcomment: true,
 comuser: false,
-form: "#form",
+form: "#commentform",
         editor: "#comment"
       }, ltoptions.theme.comments, opt);
 
@@ -36,7 +37,8 @@ return filter.test(s);
 },
 
 validate: function() {
-if ("" == $.trim(get$(options.editor).val())) {
+alert('vali');
+if ("" == $.trim($(options.editor).val())) {
 form.error_field("content", lang.comment.emptycontent);
 return false;
 } else if (options.comuser) {
@@ -54,15 +56,16 @@ return true;
 },
 
 send: function() {
-var inputs = $(":input", options.form);
+alert("send");
 var values = {method: "comment_add"};
+var inputs = $(":input", options.form);
 inputs.each(function() {
 var self = $(this);
 values[self.attr("name")] = self.val();
 self.attr("disabled", "disabled");
 });
 
-$.litejsontype("post", $values, function (resp) {
+$.litejsontype("post", values, function (resp) {
 try {
 switch (resp.code) {
 case 'confirm':
@@ -108,11 +111,15 @@ window.location = data.posturl;
 },
 
 submit: function() {
+alert('sub');
+try {
 if (!form.validate()) return false;
 if (options.confirmcomment) {
 form.send();
 return false;
 }
+} catch(e) { alert(e.message); }
+return false;
 }
 
 }; //form
@@ -124,6 +131,7 @@ $(options.editor).off("keydown.confirmcomment").on("keydown.confirmcomment", fun
 $(options.form).submit();
 }
 });
+
 
 $(options.form).off("submit.confirmcomment").on("submit.confirmcomment", form.submit);
 };

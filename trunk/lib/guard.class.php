@@ -19,7 +19,7 @@ self::$posted = false;
         $_POST[$name] = stripslashes($_POST[$name]);
       }
     }
-self::posted = true;
+self::$posted = true;
     return true;
   }
   
