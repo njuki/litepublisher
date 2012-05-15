@@ -8,6 +8,7 @@
 
 function tuseroptionsInstall($self) {
 $self->defvalues['subscribe'] = litepublisher::$options->defaultsubscribe ? 'enabled' : 'disabled';
+$self->defvalues['authorpost_subscribe'] = true;
 $self->save();
 
   $manager = tdbmanager ::i();

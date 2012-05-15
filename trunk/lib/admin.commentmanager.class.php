@@ -79,18 +79,24 @@ class Tadmincommentmanager extends tadminmenu {
     ');
     
     $args->sendnotification = $cm->sendnotification;
+$args->comuser_subscribe = $cm->comuser_subscribe;
     $args->defaultsubscribe = $options->defaultsubscribe;
     $subscribe = tsubscribers::i();
     $args->locklist = $subscribe->locklist;
     $args->subscribe_enabled = $subscribe->enabled;
     
-    $tabs->add($lang->subscribe, '
+    $tab = new tuitabs();
+    $tab->add($lang->options, '
     [checkbox=sendnotification]
     [checkbox=defaultsubscribe]
     [checkbox=subscribe_enabled]
-    [editor=locklist]
-    ');
+[checkbox=comuser_subscribe]
+');
+
+    $tab->add($lang->locklist, '[editor=locklist]');
     
+    $tabs->add($lang->subscribe, $tab->get());
+
     $mesgtabs = new tuitabs();
     $tc = ttemplatecomments::i();
     foreach (array('logged', 'reqlogin', 'regaccount', 'guest', 'comuser', 'loadhold') as $name) {
@@ -127,6 +133,8 @@ $useroptions->save();
     $cm->hidelink =  isset($hidelink);
     $cm->redir = isset($redir);
     $cm->nofollow = isset($nofollow);
+
+$cm->comuser_subscribe = isset($comuser_subscribe);
     
     $cm->unlock();
     
