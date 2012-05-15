@@ -77,10 +77,10 @@ class tjsonserver extends titems {
     $this->callevent('beforecall', $a);
     
     try {
-tfiler::log(var_export($_GET, true));
-      tfiler::log(var_export($args, true));
+//tfiler::log(var_export($_GET, true));
+      //tfiler::log(var_export($args, true));
       $result = $this->callevent($method, $a);
-      tfiler::log(var_export($result, true));
+      //tfiler::log(var_export($result, true));
     } catch (Exception $e) {
       if (403 == $e->getCode()) {
         $result = '<?php Header(\'HTTP/1.0 403 Forbidden\', true, 403); ?>';
@@ -94,7 +94,7 @@ tfiler::log(var_export($_GET, true));
     
     $this->callevent('aftercall', array(&$result, $args));
     $js = json_encode($result);
-    if (litepublisher::$debug) tfiler::log("response:\n".$js, 'json.txt');
+    //if (litepublisher::$debug) tfiler::log("response:\n".$js, 'json.txt');
     
     return "<?php
     header('Connection: close');

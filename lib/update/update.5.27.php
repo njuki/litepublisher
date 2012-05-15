@@ -16,6 +16,8 @@ $cm->data['confirmlogged'] = false;
 $cm->data['confirmguest'] = true;
 $cm->data['confirmcomuser'] = true;
 
+  $cm->data['comuser_subscribe'] = true;
+
     $cm->data['idguest'] =  tusers::i()->add(array(
 'email' => '',
 'name' => tlocal::get('default', 'guest'),

@@ -14,11 +14,13 @@ function tcommentmanagerInstall($self) {
   $self->data['nofollow'] = false;
   $self->data['canedit'] =  true;
   $self->data['candelete'] =  true;
-  $self->data['confirmemail'] = false;
+
   $self->data['confirmlogged'] = false;
   $self->data['confirmguest'] = true;
   $self->data['confirmcomuser'] = true;
+  $self->data['confirmemail'] = false;
   
+  $self->data['comuser_subscribe'] = true;
   $self->data['idguest'] =  tusers::i()->add(array(
   'email' => '',
   'name' => tlocal::get('default', 'guest'),
