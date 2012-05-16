@@ -41,7 +41,6 @@ class ttemplatecomments extends tevents {
     }
     
     if (!litepublisher::$options->commentsdisabled && ($post->comstatus != 'closed')) {
-        $result .= ttemplate::i()->getjavascript('/js/litepublisher/confirmcomment.js');
       $args->postid = $post->id;
       $args->antispam = base64_encode('superspamer' . strtotime ("+1 hour"));
       
@@ -126,6 +125,7 @@ public function getjs($confirmcomment, $comuser) {
 
 $template = ttemplate::I();
         $result .= $template->getjavascript($template->jsmerger_comments);
+        //$result .= $template->getjavascript('/js/litepublisher/confirmcomment.js');
 return  $result;
 }
   

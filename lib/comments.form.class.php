@@ -124,6 +124,11 @@ class tcommentform extends tevents {
     if (!$cm->add($shortpost['id'], $iduser, $values['content'], $values['ip'])) {
       return $this->geterrorcontent($lang->spamdetected );
     }
+
+if (('comuser' == $shortpost['comstatus']) && $cm->comuser_subscribe) {
+      $subscribers = tsubscribers::i();
+      $subscribers->update($shortpost['id'], $iduser , $values['subscribe']);
+}
     
     //$post->lastcommenturl;
     $shortpost['commentscount']++;
@@ -232,11 +237,6 @@ class tcommentform extends tevents {
       
       $values['url'] = isset($values['url']) ? tcontentfilter::escape(tcontentfilter::clean_website($values['url'])) : '';
       $values['subscribe'] = isset($values['subscribe']);
-      
-      /*
-      $subscribers = tsubscribers::i();
-      $subscribers->update($post->id, $uid, $values['subscribe']);
-      */
     }
     
     public function sendresult($link, $cookies) {

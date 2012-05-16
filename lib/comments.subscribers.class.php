@@ -44,14 +44,14 @@ class tsubscribers extends titemsposts {
     if ($this->enabled != $value) {
       $this->data['enabled'] = $value;
       $this->save();
-      $manager = litepublisher::$classes->commentmanager;
+      $comments = tcomments::i();
       if ($value) {
-        $manager->lock();
-        $manager->added = $this->sendmail;
-        $manager->approved = $this->sendmail;
-        $manager->unlock();
+        $comments->lock();
+        $comments->added = $this->sendmail;
+        $comments->onapproved = $this->sendmail;
+        $comments->unlock();
       } else {
-        $manager->unbind($this);
+        $comments->unbind($this);
       }
     }
   }
@@ -81,15 +81,13 @@ class tsubscribers extends titemsposts {
     }
   }
   
-  public function sendmail($id, $idpost) {
+  public function sendmail($id) {
     if (!$this->enabled) return;
-    $comments = tcomments::i($idpost);
+    $comments = tcomments::i();
     if (!$comments->itemexists($id)) return;
     $item = $comments->getitem($id);
-    if (dbversion) {
       if (($item['status'] != 'approved')) return;
-    }
-    
+
     tcron::i()->add('single', get_class($this),  'cronsendmail', (int) $id);
   }
   

@@ -56,7 +56,7 @@ class tcommentmanager extends tevents_storage {
     $comments->setvalue($id, 'parent', $idreply);
     
     $this->dochanged($id);
-    $this->added($id, $idpost);
+    //$this->added($id, $idpost);
     //$this->sendmail($id, $idpost);
     return $id;
   }
