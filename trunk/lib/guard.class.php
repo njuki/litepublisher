@@ -8,8 +8,8 @@
 
 class tguard {
 //prevent double call post()
-private static $posted = false;
-  
+private static $posted;  
+
   public static function post() {
 if (is_bool(self::$posted)) return self::$posted;
 self::$posted = false;

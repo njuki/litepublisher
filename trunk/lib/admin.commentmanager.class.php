@@ -119,7 +119,7 @@ $args->comuser_subscribe = $cm->comuser_subscribe;
     $options->commentsapproved = isset($commentsapproved);
     $options->checkduplicate = isset($checkduplicate);
     $options->defaultsubscribe = isset($defaultsubscribe);
-useroptions = tuseroptions::i();
+$useroptions = tuseroptions::i();
 $useroptions->defvalues['subscribe'] = $options->defaultsubscribe;
 $useroptions->save();
 
@@ -143,7 +143,7 @@ $cm->comuser_subscribe = isset($comuser_subscribe);
       $tc->$name = $_POST[$name];
     }
     $tc->save();
-    
+
     $subscr = tsubscribers::i();
     $subscr->lock();
     $subscr->locklist = $locklist;

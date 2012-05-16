@@ -9,20 +9,19 @@
 function ttemplatecommentsInstall($self) {
   tlocal::usefile('install');
   $lang = tlocal::i('beforecommentsform');
+$login = '<a class="log-in" href="$site.url/admin/login/{$site.q}backurl=">' . $lang->log_in . '</a>';
+
   $self->data['logged'] = sprintf('<p>%s</p>', sprintf($lang->logged,
   '<?php echo litepublisher::$site->getuserlink(); ?>', ' <a class="logout" href="$site.url/admin/logout/">' . $lang->logout . '</a> '));
   
-  $self->data['reqlogin'] = sprintf('<p>%s</p>', sprintf($lang->reqlogin,
-'<a class="log-in" href="$site.url/admin/login/{$site.q}backurl=">' . $lang->log_in . '</a>'));
+  $self->data['reqlogin'] = sprintf('<p>%s</p>', sprintf($lang->reqlogin,$login));
   
-  $self->data['guest'] = sprintf('<p>%s</p>', sprintf($lang->guest,
-'<a class="log-in" href="$site.url/admin/login/{$site.q}backurl=">' . $lang->log_in . '</a>'));
+  $self->data['guest'] = sprintf('<p>%s</p>', sprintf($lang->guest, $login));
   
   $self->data['regaccount'] = sprintf('<p>%s</p>', sprintf($lang->regaccount,
-'<a class="registration" href="$site.url/admin/reguser/{$site.q}backurl=">' . $lang->regaccount . '</a>'));
+'<a class="registration" href="$site.url/admin/reguser/{$site.q}backurl=">' . $lang->signup . '</a>'));
   
-  $self->data['comuser'] = sprintf('<p>%s</p>', sprintf($lang->comuser,
-'<a class="log-in" href="$site.url/admin/login/{$site.q}backurl=">' . $lang->log_in . '</a>'));
+  $self->data['comuser'] = sprintf('<p>%s</p>', sprintf($lang->comuser, $login));
 
   $self->data['loadhold'] = sprintf('<h4>%s</h4>', sprintf($lang->loadhold,
 '<a class="loadhold " href="$site.url/admin/comments/hold/">' . $lang->loadhold . '</a>'));
