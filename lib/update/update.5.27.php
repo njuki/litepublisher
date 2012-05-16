@@ -44,6 +44,7 @@ litepublisher::$urlmap->setvalue(litepublisher::$urlmap->urlexists('/comusers.ht
 
   tposts::unsub($cm);
   tposts::i()->addevent('deleted', 'tcomments', 'postdeleted');
+  tposts::i()->addevent('added', 'tsubscribers', 'postadded');
 
 $comments = tcomments::i();
 $comments->lock();
@@ -59,6 +60,7 @@ $comments->changed = tcommentswidget::i()->changed;
 $comments->unlock();
 
 tusers::i()->deleted = $subscribers->deleteitem;
+
 litepublisher::$classes->delete('tjsonserver');
 litepublisher::$classes->add('tjsonserver', 'jsonserver.class.php');
 litepublisher::$classes->delete('tjsoncomments');

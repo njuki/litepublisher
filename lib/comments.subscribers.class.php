@@ -46,15 +46,28 @@ class tsubscribers extends titemsposts {
       $this->save();
       $comments = tcomments::i();
       if ($value) {
+  tposts::i()->added = $this->postadded;
+
         $comments->lock();
         $comments->added = $this->sendmail;
         $comments->onapproved = $this->sendmail;
         $comments->unlock();
       } else {
         $comments->unbind($this);
+  tposts::i()->delete_event_class('added', get_class($this));
       }
     }
   }
+
+public function postadded($idpost) {
+$post = tpost::i($idpost);
+if ($post->author <= 1) return;
+
+$useroptions = tuseroptions::i();
+if ('enabled' == $useroptions->getvalue($post->author, 'authorpost_subscribe')) {
+$this->add($idpost, $post->author);
+}
+}
   
   public function getlocklist() {
     return implode("\n", $this->blacklist);
@@ -123,5 +136,3 @@ class tsubscribers extends titemsposts {
   }
   
 }//class
-
-?>

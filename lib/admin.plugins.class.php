@@ -24,7 +24,6 @@ class tadminplugins extends tadminmenu {
     $link = tadminhtml::getadminlink($this->url,'plugin=');
     $plugins = tplugins::i();
     foreach ($this->names as $name) {
-if (in_array($name, $plugins->deprecated)) continue;
       $about = tplugins::getabout($name);
       if (isset($plugins->items[$name]) && !empty($about['adminclassname'])) {
         $result .= sprintf('<li><a href="%s%s">%s</a></li>', $link, $name, $about['name']);
@@ -55,6 +54,7 @@ if (in_array($name, $plugins->deprecated)) continue;
       $result .= $html->formhead();
       $args = targs::i();
       foreach ($this->names as $name) {
+if (in_array($name, $plugins->deprecated)) continue;
         $about = tplugins::getabout($name);
         $args->add($about);
         $args->name = $name;
