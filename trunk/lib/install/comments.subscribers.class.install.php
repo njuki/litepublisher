@@ -16,6 +16,7 @@ function tsubscribersInstall($self) {
   $self->save();
   
   $posts = tposts::i();
+  $posts->added = $self->postadded;
   $posts->deleted = $self->deletepost;
   
   $comments = tcomments::i();
