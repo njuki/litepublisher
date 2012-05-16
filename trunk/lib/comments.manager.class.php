@@ -125,4 +125,15 @@ class tcommentmanager extends tevents_storage {
     return $comments->raw->findid("hash = '$hash'");
   }
   
+  public function request($arg) {
+    $id = isset($_GET['id']) ? (int) $_GET['id'] : 1;
+$users = tusers::i();
+    if (!$users->itemexists($id)) return "<?php litepublisher::$urlmap->redir('/');";;
+    $item = $users->getitem($id);
+    $url = $item['website'];
+    if (!strpos($url, '.')) $url = litepublisher::$site->url . '/';
+    if (!strbegin($url, 'http://')) $url = 'http://' . $url;
+    return "<?php litepublisher::$urlmap->redir('$url');";
+  }
+
 }//class

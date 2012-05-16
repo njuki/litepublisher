@@ -103,8 +103,7 @@ class turlmap extends titems {
     return $this->items[$id]['url'];
   }
   
-  
-  public function findurl($url) {
+    public function findurl($url) {
     if ($result = $this->db->finditem('url = '. dbquote($url))) return $result;
     return false;
   }

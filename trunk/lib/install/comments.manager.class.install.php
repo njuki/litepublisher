@@ -36,8 +36,12 @@ function tcommentmanagerInstall($self) {
   $comments->changed = $self->changed;
   $comments->added = $self->sendmail;
   $comments->unlock();
+
+  litepublisher::$urlmap->addget('/comusers.htm', get_class($self));
+  
+trobotstxt ::i()->AddDisallow('/comusers.htm');
 }
 
 function tcommentmanagerUninstall($self) {
-  
+    turlmap::unsub($self);
 }
