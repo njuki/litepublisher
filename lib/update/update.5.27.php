@@ -40,6 +40,7 @@ $cm->data['events'][$eventname] = $events;
 unset($cm->data['events']['approved']);
 unset($cm->data['events']['added']);
 $cm->save();
+litepublisher::$urlmap->setvalue(litepublisher::$urlmap->urlexists('/comusers.htm'), 'class', 'tcommentmanager');
 
   tposts::unsub($cm);
   tposts::i()->addevent('deleted', 'tcomments', 'postdeleted');
