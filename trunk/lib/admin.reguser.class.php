@@ -43,6 +43,7 @@ class tadminreguser extends tadminform {
   public function getcontent() {
 $result = '';
     $html = $this->html;
+$lang = tlocal::admin('users');
     if ($this->registered) return $html->waitconfirm();
     if ($this->logged) return $html->logged();
     
@@ -52,7 +53,7 @@ $confirm = $_GET['confirm'];
       $email = $_GET['email'];
     tsession::start('reguser-' . md5($email));
       if (!isset($_SESSION['email']) || ($email != $_SESSION['email']) || ($confirm != $_SESSION['confirm'])) {
-        if (!isset($_SESSION['email']) session_destroy();
+        if (!isset($_SESSION['email'])) session_destroy();
         return $html->h4->invalidregdata;
       }
 
@@ -68,11 +69,11 @@ $backurl = $_SESSION['backurl'];
         session_destroy();
     if ($id) {
 $loginurl = litepublisher::$site->url . '/admin/login/';
-if (backurl) {
-$loginurl .=  litepublisher::$site->q == '?' '?' : '&amp;';
+if ($backurl) {
+$loginurl .=  litepublisher::$site->q == '?' ? '?' : '&amp;';
 $loginurl .= 'backurl=' .urlencode($backurl);
 }
-    return $this->html->h4->successreg;
+    return $this->html->h4($lang->successreg . " <a href=\"$loginurl\">$lang->login</a>");
 }
 
 $result .= $html->h4->invalidregdata;
@@ -96,7 +97,7 @@ $result .= $html->h4->invalidregdata;
   
   public function processform() {
     extract($_POST, EXTR_SKIP);
-    if (!tcontentfilter::ValidateEmail($email)) return sprintf('<p><strong>%s</strong></p>' tlocal::get('comment', 'invalidemail'));
+    if (!tcontentfilter::ValidateEmail($email)) return sprintf('<p><strong>%s</strong></p>', tlocal::get('comment', 'invalidemail'));
     $users = tusers::i();
     if ($users->emailexists($email)) return $this->html->h2->invalidregdata;
     tsession::start('reguser-' . md5($email));
@@ -111,10 +112,10 @@ $_SESSION['backurl'] = isset($_GET['backurl']) ? $_GET['backurl'] : '';
 
     $args = new targs();
     $args->name = $name;
-$args->email = urlencode($email);
+$args->email = $email;
 $args->confirm = $confirm;
     $args->password = $password;
-    $args->confirmurl = litepublisher::$site->url . '/admin/reguser/' . litepublisher::$site->q . 'email';
+    $args->confirmurl = litepublisher::$site->url . '/admin/reguser/' . litepublisher::$site->q . 'email=' . urlencode($email);
 
     $mailtemplate = tmailtemplate::i($this->section);
     $subject = $mailtemplate->subject($args);

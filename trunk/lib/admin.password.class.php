@@ -29,7 +29,7 @@ class tadminpassword extends tadminform {
       $confirm = $_GET['confirm'];
       tsession::start('password-restore-' .md5($email));
       if (!isset($_SESSION['email']) || ($email != $_SESSION['email']) || ($confirm != $_SESSION['confirm'])) {
-        if (!isset($_SESSION['email']) session_destroy();
+        if (!isset($_SESSION['email'])) session_destroy();
         return $html->h4->notfound;
       }
       session_destroy();
