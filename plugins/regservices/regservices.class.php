@@ -51,6 +51,13 @@ class tregservices extends titems {
     $admin = tadminreguser::i();
     $admin->widget = $this->widget;
     $admin->save();
+
+$tc = ttemplatecomments::i();
+if ($i = strpos($tc->regaccount, $this->widget_title)) {
+$tc->regaccount = substr($tc->regaccount, 0, $i);
+}
+$tc->regaccount .= $this->widget;
+$tc->save();
   }
   
   public function request($arg) {

@@ -94,6 +94,7 @@ if (dbversion) litepublisher::$db = new tdatabase();
   litepublisher::$urlmap = turlmap::i();
 //ttheme::clearcache();
 tlocal::clearcache();
+litepublisher::$urlmap->clearcache();
 //tjsmerger::i()->save();
 //litepublisher::$options->show_draft_post = true;
 //tupdater::i()->run(5.27);

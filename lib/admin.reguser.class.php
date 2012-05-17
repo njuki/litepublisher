@@ -39,6 +39,7 @@ private $backurl;
   public function request($arg) {
     if (!litepublisher::$options->usersenabled || !litepublisher::$options->reguser) return 403;
 parent::request($arg);
+
 if (!empty($_GET['confirm'])) {
 $confirm = $_GET['confirm'];
       $email = $_GET['email'];
@@ -49,7 +50,7 @@ $this->regstatus = 'error';
 return;
       }
 
-$backurl = $_SESSION['backurl'];
+$this->backurl = $_SESSION['backurl'];
 
     $users = tusers::i();    
     $id = $users->add(array(
@@ -59,14 +60,16 @@ $backurl = $_SESSION['backurl'];
     ));
 
         session_destroy();
-    if ($id) {
-$loginurl = litepublisher::$site->url . '/admin/login/';
-if ($backurl) {
-$loginurl .=  litepublisher::$site->q == '?' ? '?' : '&amp;';
-$loginurl .= 'backurl=' .urlencode($backurl);
-}
-    return $this->html->h4($lang->successreg . " <a href=\"$loginurl\">$lang->login</a>");
+if ($id) {
 $this->regstatus = 'ok';
+    $expired = time() + 1210000;
+    $cookie = md5uniq();
+    litepublisher::$options->user = $id;
+litepublisher::$options->updategroup();
+    litepublisher::$options->setcookies($cookie, $expired);
+} else {
+$this->regstatus = 'error';
+}
 }
   }
   
@@ -74,20 +77,23 @@ $this->regstatus = 'ok';
 $result = '';
     $html = $this->html;
 $lang = tlocal::admin('users');
-    if ($this->registered) return $html->waitconfirm();
     if ($this->logged) return $html->logged();
     
     $args = targs::i();
+
 if ($this->regstatus) {
 switch ($this->regstatus) {
-case 'error':
-$result .= $html->h4->invalidregdata;
+case 'ok':
+if (!$this->backurl) $this->backurl =  tusergroups::i()->gethome(litepublisher::$options->group);
+if (!strbegin($this->backurl, 'http://')) $this->backurl = litepublisher::$site->url . $this->backurl;
+$args->backurl = $this->backurl;
+    return $html->successreg($args);
 
 case 'mail':
-break;
+return $html->h4->waitconfirm;
 
-case 'ok':
-return;
+case 'error':
+$result .= $html->h4->invalidregdata;
 } 
 }
 
@@ -103,6 +109,7 @@ return;
     if (isset($_GET['backurl'])) $result = str_replace(array('&backurl=', '&amp;backurl='),
     '&amp;backurl=' . urlencode($_GET['backurl']), $result);
     $result .= $html->adminform($form, $args);
+$result = str_replace(' action=""',' action="' . litepublisher::$site->url . '/admin/reguser/"', $result);
     $this->callevent('oncontent', array(&$result));
     return $result;
   }

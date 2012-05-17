@@ -73,7 +73,7 @@ class tusers extends titems {
     'expired' => sqldate(),
     'idgroups' => implode(',', $idgroups),
     'trust' => 0,
-    'status' => isset($values['status'] ? $values['status'] : 'approved',
+    'status' => isset($values['status']) ? $values['status'] : 'approved',
     );
     
     $id = $this->db->add($item);
