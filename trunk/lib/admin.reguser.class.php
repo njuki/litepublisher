@@ -7,7 +7,8 @@
 **/
 
 class tadminreguser extends tadminform {
-  private $registered;
+  private $regstatus;
+private $backurl;
   
   public static function i() {
     return getinstance(__class__);
@@ -19,12 +20,7 @@ class tadminreguser extends tadminform {
     $this->addevents('oncontent');
     $this->data['widget'] = '';
     $this->section = 'users';
-    $this->registered = false;
-  }
-  
-  public function request($arg) {
-    if (!litepublisher::$options->usersenabled || !litepublisher::$options->reguser) return 403;
-    return parent::request($arg);
+    $this->regstatus = false;
   }
   
   public function gettitle() {
@@ -39,22 +35,18 @@ class tadminreguser extends tadminform {
       return $auth->auth();
     }
   }
-  
-  public function getcontent() {
-$result = '';
-    $html = $this->html;
-$lang = tlocal::admin('users');
-    if ($this->registered) return $html->waitconfirm();
-    if ($this->logged) return $html->logged();
-    
-    $args = targs::i();
+
+  public function request($arg) {
+    if (!litepublisher::$options->usersenabled || !litepublisher::$options->reguser) return 403;
+parent::request($arg);
 if (!empty($_GET['confirm'])) {
 $confirm = $_GET['confirm'];
       $email = $_GET['email'];
     tsession::start('reguser-' . md5($email));
       if (!isset($_SESSION['email']) || ($email != $_SESSION['email']) || ($confirm != $_SESSION['confirm'])) {
         if (!isset($_SESSION['email'])) session_destroy();
-        return $html->h4->invalidregdata;
+$this->regstatus = 'error';
+return;
       }
 
 $backurl = $_SESSION['backurl'];
@@ -74,10 +66,30 @@ $loginurl .=  litepublisher::$site->q == '?' ? '?' : '&amp;';
 $loginurl .= 'backurl=' .urlencode($backurl);
 }
     return $this->html->h4($lang->successreg . " <a href=\"$loginurl\">$lang->login</a>");
+$this->regstatus = 'ok';
 }
-
+  }
+  
+  public function getcontent() {
+$result = '';
+    $html = $this->html;
+$lang = tlocal::admin('users');
+    if ($this->registered) return $html->waitconfirm();
+    if ($this->logged) return $html->logged();
+    
+    $args = targs::i();
+if ($this->regstatus) {
+switch ($this->regstatus) {
+case 'error':
 $result .= $html->h4->invalidregdata;
+
+case 'mail':
+break;
+
+case 'ok':
+return;
 } 
+}
 
     $form = '';
     foreach (array('email', 'name') as $name) {
@@ -96,10 +108,15 @@ $result .= $html->h4->invalidregdata;
   }
   
   public function processform() {
+$this->regstatus = 'error';
     extract($_POST, EXTR_SKIP);
+$email = strtolower(trim($email));
     if (!tcontentfilter::ValidateEmail($email)) return sprintf('<p><strong>%s</strong></p>', tlocal::get('comment', 'invalidemail'));
     $users = tusers::i();
-    if ($users->emailexists($email)) return $this->html->h2->invalidregdata;
+    if ($id = $users->emailexists($email)) {
+if ('comuser' != $users->getvalue($id, 'status')) return $this->html->h4->invalidregdata;
+}
+
     tsession::start('reguser-' . md5($email));
 $_SESSION['email'] = $email;
 $_SESSION['name'] = $name;
@@ -124,7 +141,7 @@ $args->confirm = $confirm;
     tmailer::sendmail(litepublisher::$site->name, litepublisher::$options->fromemail,
     $name, $email, $subject, $body);
 
-$this->registered = true;
+$this->regstatus = 'mail';
 }
 
 }//class

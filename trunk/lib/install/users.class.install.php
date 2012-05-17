@@ -7,7 +7,6 @@
 **/
 
 function tusersInstall($self) {
-  if ($self->dbversion) {
     $manager = tdbmanager::i();
     $dir = dirname(__file__) . DIRECTORY_SEPARATOR;
     $manager->CreateTable($self->table, file_get_contents($dir .'users.sql'));
@@ -26,15 +25,8 @@ function tusersInstall($self) {
     ));
     
     $self->setgroups($id, array(1));
-  }
-  
-  $cron = tcron::i();
-  $cron->addnightly(get_class($self), 'optimize', null);
 }
 
 function tusersUninstall($self) {
-  $cron = tcron::i();
-  $cron->deleteclass(get_class($self));
+//delete table
 }
-
-?>

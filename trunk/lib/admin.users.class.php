@@ -32,7 +32,7 @@ class tadminusers extends tadminmenu {
         $result .= $this->notfound();
       } else {
         $statuses = array();
-        foreach (array('approved', 'hold', 'lock', 'wait')as $name) {
+        foreach (array('approved', 'hold','comuser') as $name) {
           $statuses[$name] = $lang->$name;
         }
         
@@ -66,8 +66,7 @@ class tadminusers extends tadminmenu {
       $tabs->add($lang->groups, tadmingroups::getgroups(array()));
       
       $result .= $html->adminform($tabs->get(), $args);
-      
-    }
+          }
     
     //table
     $perpage = 20;

@@ -73,7 +73,7 @@ class tusers extends titems {
     'expired' => sqldate(),
     'idgroups' => implode(',', $idgroups),
     'trust' => 0,
-    'status' => $groups->ingroup(litepublisher::$options->user, 'admin') ? 'approved' : 'wait'
+    'status' => isset($values['status'] ? $values['status'] : 'approved',
     );
     
     $id = $this->db->add($item);
@@ -154,8 +154,7 @@ class tusers extends titems {
   }
   
   public function approve($id) {
-    $this->db->setvalue($id, 'status', 'approved');
-    if (isset(            $this->items[$id])) $this->items[$id]['status'] = 'approved';
+    $this->setvalue($id, 'status', 'approved');
     $pages = tuserpages::i();
     if ($pages->createpage) $pages->addpage($id);
   }
@@ -215,20 +214,6 @@ class tusers extends titems {
     'cookie' => $cookie,
     'expired' => $expired
     ));
-  }
-  
-  public function optimize() {
-    $time = sqldate(strtotime('-1 day'));
-    $pagetable = litepublisher::$db->prefix . 'userpage';
-    $delete = $this->db->idselect("status = 'wait' and id in (select id from $pagetable where registered < '$time')");
-    if (count($delete) > 0) {
-      $this->db->delete(sprintf('id in (%s)', implode(',', $delete)));
-      $this->getdb($this->grouptable)->delete(sprintf('iduser in (%s)', implode(',', $delete)));
-      $pages = tuserpages::i();
-      foreach ($delete as $id) {
-        $pages->delete($id);
-      }
-    }
   }
   
 }//class

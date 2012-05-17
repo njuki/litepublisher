@@ -230,5 +230,7 @@ $man->alter('comments', "add KEY `author` (`author`)");
 $man->deletetable('comusers');
 $man->deletetable('commentskept');
 
+tcron::i()->deleteclass('tusers');
+
 litepublisher::$options->savemodified();
 }
