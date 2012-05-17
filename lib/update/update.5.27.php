@@ -42,6 +42,8 @@ unset($cm->data['events']['added']);
 $cm->save();
 litepublisher::$urlmap->setvalue(litepublisher::$urlmap->urlexists('/comusers.htm'), 'class', 'tcommentmanager');
 
+litepublisher::$urlmap->setvalue(litepublisher::$urlmap->urlexists('/admin/reguser/'), 'type', 'get');
+
   tposts::unsub($cm);
   tposts::i()->addevent('deleted', 'tcomments', 'postdeleted');
   tposts::i()->addevent('added', 'tsubscribers', 'postadded');
@@ -69,7 +71,10 @@ litepublisher::$classes->add('Tadmincommentmanager', 'admin.commentmanager.class
 litepublisher::$classes->add('tsession', 'session.class.php');
 litepublisher::$classes->items['tusers'][0] = 'kernel.php';
 litepublisher::$classes->items['tusergroups'][0] = 'kernel.php';
+
+litepublisher::$classes->delete('tuseroptions');
 litepublisher::$classes->add('tuseroptions', 'user.options.class.php');
+
 if (litepublisher::$classes->exists('tregservice')) {
   litepublisher::$classes->add('toauth', 'oauth.class.php', 'regservices');
   litepublisher::$classes->add('ttwitterregservice', 'twitter.service.php', 'regservices');
@@ -139,6 +144,7 @@ $db->table = 'usergroup';
 $man = tdbmanager::i();
 //$man->alter($table, "add `includeparents` boolean default " . ($tags->includeparents ? 'true' : 'false'));
 $man->delete_enum('users', 'status', 'lock');
+$man->delete_enum('users', 'status', 'wait');
 $man->addenum('users', 'status', 'comuser');
 
 $man->alter('posts', "add `comstatus` enum('closed','reg','guest','comuser') default 'comuser'");
