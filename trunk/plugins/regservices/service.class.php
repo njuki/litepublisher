@@ -114,14 +114,13 @@ class tregservice extends tplugin {
     if (!empty($item['email'])) {
       if ($id = $users->emailexists($item['email'])) {
         $user = $users->getitem($id);
-        if (($user['status'] == 'wait') || ($user['status'] == 'comuser')) $users->approve($id);
+        if ($user['status'] == 'comuser') $users->approve($id);
       } elseif (litepublisher::$options->reguser) {
         $id = $users->add(array(
         'email' => $item['email'],
         'name' => $item['name'],
         'website' => isset($item['website']) ? tcontentfilter::clean_website($item['website']) : ''
         ));
-        $users->approve($id);
         if (isset($item['uid'])) $reguser->add($id, $this->name, $item['uid']);
       } else {
         //registration disabled
@@ -153,14 +152,14 @@ class tregservice extends tplugin {
     $expired = time() + 1210000;
     $cookie = md5uniq();
     litepublisher::$options->user = $id;
+litepublisher::$options->updategroup();
     litepublisher::$options->setcookies($cookie, $expired);
-    $groups = tusergroups::i();
-    if ($groups->ingroup($id, 'admin')) setcookie('litepubl_user_flag', 'true', $expired, litepublisher::$site->subdir . '/', false);
+    if (litepublisher::$options->ingroup('admin')) setcookie('litepubl_user_flag', 'true', $expired, litepublisher::$site->subdir . '/', false);
     if (!empty($_COOKIE['backurl'])) {
       $backurl = $_COOKIE['backurl'];
     } else {
       $user = $users->getitem($id);
-      $backurl =  $groups->gethome($user['idgroups'][0]);
+      $backurl =  $tusergroups::i()->gethome($user['idgroups'][0]);
     }
     
     return litepublisher::$urlmap->redir($backurl);

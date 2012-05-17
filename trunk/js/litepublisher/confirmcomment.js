@@ -1,4 +1,3 @@
-return;
 (function( $ ){
   $.confirmcomment = function(opt) {
 var options= $.extend({
@@ -37,7 +36,6 @@ return filter.test(s);
 },
 
 validate: function() {
-alert('vali');
 if ("" == $.trim($(options.editor).val())) {
 form.error_field("content", lang.comment.emptycontent);
 return false;
@@ -111,7 +109,6 @@ window.location = data.posturl;
 },
 
 submit: function() {
-alert('sub');
 try {
 if (!form.validate()) return false;
 if (options.confirmcomment) {
