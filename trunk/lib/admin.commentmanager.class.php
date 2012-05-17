@@ -81,6 +81,8 @@ class Tadmincommentmanager extends tadminmenu {
     $args->sendnotification = $cm->sendnotification;
 $args->comuser_subscribe = $cm->comuser_subscribe;
     $args->defaultsubscribe = $options->defaultsubscribe;
+$useroptions = tuseroptions::i();
+$args->authorpost_subscribe = $useroptions->defvalues['authorpost_subscribe'] == 'enabled';
     $subscribe = tsubscribers::i();
     $args->locklist = $subscribe->locklist;
     $args->subscribe_enabled = $subscribe->enabled;
@@ -90,6 +92,7 @@ $args->comuser_subscribe = $cm->comuser_subscribe;
     [checkbox=sendnotification]
     [checkbox=defaultsubscribe]
     [checkbox=subscribe_enabled]
+[checkbox=authorpost_subscribe]
 [checkbox=comuser_subscribe]
 ');
 
@@ -121,6 +124,7 @@ $args->comuser_subscribe = $cm->comuser_subscribe;
     $options->defaultsubscribe = isset($defaultsubscribe);
 $useroptions = tuseroptions::i();
 $useroptions->defvalues['subscribe'] = $options->defaultsubscribe;
+$useroptions->defvalues['authorpost_subscribe'] = isset($authorpost_subscribe) ? 'enabled' : 'disabled';
 $useroptions->save();
 
     $options->commentsdisabled  = isset($commentsdisabled);

@@ -432,6 +432,12 @@ class turlmap extends titems {
     if (!strbegin($url, 'http://')) $url = litepublisher::$site->url . $url;
     header('Location: ' . $url);
   }
+
+  public function seturlvalue($url, $name, $value) {
+if ($id = $this->urlexists($url)) {
+$this->setvalue($id, $name, $value);
+}
+}
   
   public function setidurl($id, $url) {
     $this->db->setvalue($id, 'url', $url);

@@ -46,6 +46,19 @@ class tadminreguser extends tadminform {
     if ($this->logged) return $html->logged();
     
     $args = targs::i();
+if (!empty($_GET['confirm'])) {
+$confirm = $_GET['confirm'];
+      $email = $_GET['email'];
+    tsession::start('reguser-' . md5($email));
+      if (!isset($_SESSION['email']) || ($email != $_SESSION['email']) || ($confirm != $_SESSION['confirm'])) {
+        if (!isset($_SESSION['email']) session_destroy();
+        return $html->h4->notfound;
+      }
+
+        session_destroy();
+}
+      session_write_close();
+} else {
     $form = '';
     foreach (array('email', 'name') as $name) {
       $args->$name = isset($_POST[$name]) ? $_POST[$name] : '';
@@ -58,6 +71,7 @@ class tadminreguser extends tadminform {
     if (isset($_GET['backurl'])) $result = str_replace(array('&backurl=', '&amp;backurl='),
     '&amp;backurl=' . urlencode($_GET['backurl']), $result);
     $result .= $html->adminform($form, $args);
+}
     $this->callevent('oncontent', array(&$result));
     return $result;
   }

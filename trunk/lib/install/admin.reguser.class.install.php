@@ -7,12 +7,9 @@
 **/
 
 function tadminreguserInstall($self) {
-  $urlmap = turlmap::i();
-  $urlmap->add('/admin/reguser/', get_class($self), null, 'normal');
+  litepublisher::$urlmap->addget('/admin/reguser/', get_class($self));
 }
 
 function tadminreguserUninstall($self) {
   turlmap::unsub($self);
 }
-
-?>
