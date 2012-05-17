@@ -17,13 +17,14 @@ class tadminuserpages extends tadminmenu {
   }
   
   public function getiduser() {
-    if (tusergroups::i()->ingroup(litepublisher::$options->user, 'admin')) {
+    if (litepublisher::$options->ingroup('admin')) {
       $id = $this->idget();
     } else {
       $id = litepublisher::$options->user;
     }
     
-    if (tusers::i()->itemexists($id)) return $id;
+$users = tusers::i();
+    if ($users->itemexists($id) && ('approved' == $users->getvalue($id, 'status'))) return $id;
     return false;
   }
   

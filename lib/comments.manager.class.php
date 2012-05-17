@@ -29,12 +29,11 @@ class tcommentmanager extends tevents_storage {
     'email' => strtolower(trim($email)),
     'name' => $name,
     'website' => tcontentfilter::clean_website($website),
-    'ip' => $ip,
+'status' => 'comuser',
     'idgroups' => 'commentator'
     ));
     
     if ($id) {
-      $users->setvalue($id, 'status', 'comuser');
       $this->comuseradded($id);
     }
     return $id;
