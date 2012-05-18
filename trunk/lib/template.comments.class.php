@@ -53,7 +53,9 @@ class ttemplatecomments extends tevents {
           $result .= $this->loadhold;
         $result .= '<?php } ?>';
         
-        $args->mesg = $this->logged;
+        $mesg = $this->logged;
+if ($cm->canedit || $cm->candelete) $mesg .= $this->adminpanel;
+          $args->mesg = $this->fixmesg($mesg, $theme);
         $result .= $theme->parsearg($theme->templates['content.post.templatecomments.regform'], $args);
         $template = ttemplate::i();
         $result .= sprintf('<script type="text/javascript">

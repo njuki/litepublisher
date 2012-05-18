@@ -75,6 +75,7 @@ if ($this->newreg) $result .=$html->nmewreg();
     if (count($items) == 0) return $html->h4->nosubscribtions;
 tposts::i()->loaditems($items);
     $args->email = tusers::i()->getvalue($this->iduser, 'email');
+$args->default_subscribe = tuseroptions::i()->getvalue($this->iduser, 'subscribe') == 'enabled';
     $result .=$html->formhead($args);
     foreach ($items as $postid) {
       $post = tpost::i($postid);
@@ -88,6 +89,8 @@ tposts::i()->loaditems($items);
   }
   
   public function processform() {
+tuseroptions::i()->setvalue($this->iduser, 'subscribe', isset($_POST['default_subscribe']) ? 'enabled' : 'disabled');
+
     $subscribers = tsubscribers::i();
     foreach ($_POST as $name => $value) {
       if (strbegin($name, 'postid-')) {

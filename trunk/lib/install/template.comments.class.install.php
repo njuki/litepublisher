@@ -13,6 +13,9 @@ $login = '<a class="log-in" href="$site.url/admin/login/{$site.q}backurl=">' . $
 
   $self->data['logged'] = sprintf('<p>%s</p>', sprintf($lang->logged,
   '<?php echo litepublisher::$site->getuserlink(); ?>', ' <a class="logout" href="$site.url/admin/logout/">' . $lang->logout . '</a> '));
+
+  $self->data['adminpanel'] = sprintf('<p>%s</p>', sprintf($lang->adminpanel,
+'<a class="admin-panel" href="$site.url/admin/comments/">' . $lang->controlpanel . '</a>'));
   
   $self->data['reqlogin'] = sprintf('<p>%s</p>', sprintf($lang->reqlogin,$login));
   
