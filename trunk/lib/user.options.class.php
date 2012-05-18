@@ -48,7 +48,7 @@ return $item[$name];
 public function setvalue($id, $name, $value) {
 $id = (int) $id;
 $item = $this->getitem($id);
-if ($value != $item[$name]) {
+if ($value === $item[$name]) return;
 $this->items[$id][$name] = $value;
 $item[$name] = $value;
 $item['id'] = $id;
@@ -58,7 +58,6 @@ $this->db->updateassoc($item);
 } else {
 $this->db->insert_a($item);
 array_splice($this->defitems, $i, 1);
-}
 }
 }
 

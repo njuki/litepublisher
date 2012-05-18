@@ -119,8 +119,9 @@ $this->add($idpost, $post->author);
     $mailtemplate = tmailtemplate::i('comments');
     $subject = $mailtemplate->subscribesubj ();
     $body = $mailtemplate->subscribebody();
-    $body .= sprintf("\n%s/admin/subscribers/%suserid=", litepublisher::$site->url, litepublisher::$site->q);
-    
+    $body .= "\n";
+$adminurl = litepublisher::$site->url . '/admin/subscribers/';
+   
     $users = tusers::i();
     $users->loaditems($subscribers);
     foreach ($subscribers as $uid) {
@@ -130,8 +131,19 @@ $this->add($idpost, $post->author);
       if (empty($email)) continue;
       if ($email == $comment->email) continue;
       if (in_array($email, $this->blacklist)) continue;
+
+$admin =  $adminurl;
+if ('comuser' == $user['status']) {
+$admin .= litepublisher::$site->q . 'auth=';
+if (empty($user['cookie'])) {
+$user['cookie'] = md5uniq();
+$users->setvalue($user['id'], 'cookie', $user['cookie']);
+}
+$admin .= rawurlencode($user['cookie']);
+}
+
       tmailer::sendmail(litepublisher::$site->name, $this->fromemail,  $user['name'], $email,
-      $subject, $body . rawurlencode($user['cookie']));
+      $subject, $body . $admin);
     }
   }
   
