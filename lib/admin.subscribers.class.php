@@ -7,6 +7,8 @@
 **/
 
 class tadminsubscribers extends tadminform {
+private $iduser;
+private $newreg;
   
   public static function i() {
     return getinstance(__class__);
@@ -15,18 +17,65 @@ class tadminsubscribers extends tadminform {
   protected function create() {
     parent::create();
     $this->section = 'subscribers';
+$this->iduser = false;
+$this->newreg = false;
   }
+
+public function request($arg) {
+$this->cache = false;
+if (!($this->iduser = litepublisher::$options->user)) {
+//trick - hidden registration of comuser. Auth by get
+$users = tusers::i();
+if (isset($_GET['auth']) && ($cookie = trim($_GET['auth']))) {
+if ($this->iduser = $users->findcookie($cookie)) {
+if ('comuser' == $users->getvalue($this->iduser)) {
+// bingo!
+$this->newreg = true;
+$item = $users->getitem($this->iduser);
+$item['status'] = 'approved';
+$item['password'] = '';
+$item['idgroups'] =  'commentator';
+
+$cookie = md5uniq();
+    $expired = time() + 1210000;
+
+$item['cookie'] = basemd5($cookie . litepublisher::$secret);
+$item['expired'] = sqldate($expired);
+$users->edit($item);
+
+litepublisher::$options->user = $this->iduser;
+litepublisher::$options->updategroup();
+
+    setcookie('litepubl_user_id', $this->iduser, $expired, litepublisher::$site->subdir . '/', false);
+    setcookie('litepubl_user', $cookie, $expired, litepublisher::$site->subdir . '/', false);
+} else {
+$this->iduser = false;
+}
+}
+}
+}
+
+if (!$this->iduser) {
+$url = litepublisher::$site->url . '/admin/login/' . litepublisher::$site->q . 'backurl=' . rawurlencode('/admin/subscribers/');
+return litepublisher::$urlmap->redir($url);
+}
+
+if ('hold' == tusers::i()->getvalue($this->iduser, 'status')) return 403;
+return parent::request($arg);
+}
   
   public function getcontent() {
+$result = '';
     $html= $this->html;
     $args = targs::i();
-    $comusers = tcomusers::i();
-    if (!($user = $comusers->fromcookie($_GET['userid']))) return $html->h2->nosubscribtions  ;
+if ($this->newreg) $result .=$html->nmewreg();
+
     $subscribers=  tsubscribers::i();
-    $items = $subscribers->getposts($user['id']);
-    if (count($items) == 0) return $html->h2->nosubscribtions;
-    $args->email = $user['email'];
-    $result =$html->formhead($args);
+    $items = $subscribers->getposts($this->iduser);
+    if (count($items) == 0) return $html->h4->nosubscribtions;
+tposts::i()->loaditems($items);
+    $args->email = tusers::i()->getvalue($this->iduser, 'email');
+    $result .=$html->formhead($args);
     foreach ($items as $postid) {
       $post = tpost::i($postid);
       ttheme::$vars['post'] = $post;
@@ -39,20 +88,14 @@ class tadminsubscribers extends tadminform {
   }
   
   public function processform() {
-    $comusers = tcomusers::i();
-    if (!($user = $comusers->fromcookie($_GET['userid']))) return '';
     $subscribers = tsubscribers::i();
-    $subscribers->lock();
     foreach ($_POST as $name => $value) {
       if (strbegin($name, 'postid-')) {
-        $subscribers->remove($value, $user['id']);
+        $subscribers->remove((int) $value, $this->iduser);
       }
     }
-    $subscribers->unlock();
-    
-    return $this->html->h2->unsubscribed;
+
+    return $this->html->h4->unsubscribed;
   }
   
 }//class
-
-?>

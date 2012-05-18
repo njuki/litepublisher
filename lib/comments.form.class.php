@@ -112,8 +112,9 @@ class tcommentform extends tevents {
         break;
       }
     }
-    
-    if ('hold' == tusers::i()->getvalue($iduser, 'status')) {
+
+$user = tusers::i()->getitem($iduser);    
+    if ('hold' == $user['status']) {
       return $this->geterrorcontent($lang->holduser);
     }
     
@@ -125,9 +126,24 @@ class tcommentform extends tevents {
       return $this->geterrorcontent($lang->spamdetected );
     }
 
+//subscribe by email
+switch ($user['status']) {
+case 'approved':
+if ($user['email'] != '') {
+// subscribe if its first comment
+if (1 == tcomments::i()->db->getcount("post = {$shortpost['id']} and author = $iduser")) {
+if ('enabled' == tuseroptions::i()->getvalue($iduser, 'subscribe')) {
+tsubscribers::i()->update($shortpost['id'], $iduser , true);
+}
+}
+}
+break;
+
+case 'comuser':
 if (('comuser' == $shortpost['comstatus']) && $cm->comuser_subscribe) {
-      $subscribers = tsubscribers::i();
-      $subscribers->update($shortpost['id'], $iduser , $values['subscribe']);
+tsubscribers::i()->update($shortpost['id'], $iduser , $values['subscribe']);
+}
+break;
 }
     
     //$post->lastcommenturl;
