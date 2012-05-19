@@ -43,7 +43,7 @@ $cm->save();
 litepublisher::$urlmap->setvalue(litepublisher::$urlmap->urlexists('/comusers.htm'), 'class', 'tcommentmanager');
 
 litepublisher::$urlmap->setvalue(litepublisher::$urlmap->urlexists('/admin/reguser/'), 'type', 'get');
-
+litepublisher::$urlmap->setvalue(litepublisher::$urlmap->urlexists('/admin/logout/'), 'type', 'get');
   tposts::unsub($cm);
   tposts::i()->addevent('deleted', 'tcomments', 'postdeleted');
   tposts::i()->addevent('added', 'tsubscribers', 'postadded');

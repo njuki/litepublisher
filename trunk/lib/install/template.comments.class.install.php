@@ -11,20 +11,21 @@ function ttemplatecommentsInstall($self) {
   $lang = tlocal::i('beforecommentsform');
 $login = '<a class="log-in" href="$site.url/admin/login/{$site.q}backurl=">' . $lang->log_in . '</a>';
 
-  $self->data['logged'] = sprintf('<p>%s</p>', sprintf($lang->logged,
-  '<?php echo litepublisher::$site->getuserlink(); ?>', ' <a class="logout" href="$site.url/admin/logout/">' . $lang->logout . '</a> '));
+  $self->data['logged'] = sprintf($lang->logged,
+  '<?php echo litepublisher::$site->getuserlink(); ?>', 
+' <a class="logout" href="$site.url/admin/logout/{$site.q}backurl=">' . $lang->logout . '</a> ');
 
-  $self->data['adminpanel'] = sprintf('<p>%s</p>', sprintf($lang->adminpanel,
-'<a class="admin-panel" href="$site.url/admin/comments/">' . $lang->controlpanel . '</a>'));
+  $self->data['adminpanel'] = sprintf($lang->adminpanel,
+'<a class="admin-panel" href="$site.url/admin/comments/">' . $lang->controlpanel . '</a>');
   
-  $self->data['reqlogin'] = sprintf('<p>%s</p>', sprintf($lang->reqlogin,$login));
+  $self->data['reqlogin'] = sprintf($lang->reqlogin,$login);
   
-  $self->data['guest'] = sprintf('<p>%s</p>', sprintf($lang->guest, $login));
+  $self->data['guest'] = sprintf($lang->guest, $login);
   
-  $self->data['regaccount'] = sprintf('<p>%s</p>', sprintf($lang->regaccount,
-'<a class="registration" href="$site.url/admin/reguser/{$site.q}backurl=">' . $lang->signup . '</a>'));
+  $self->data['regaccount'] = sprintf($lang->regaccount,
+'<a class="registration" href="$site.url/admin/reguser/{$site.q}backurl=">' . $lang->signup . '</a>');
   
-  $self->data['comuser'] = sprintf('<p>%s</p>', sprintf($lang->comuser, $login));
+  $self->data['comuser'] = sprintf($lang->comuser, $login);
 
   $self->data['loadhold'] = sprintf('<h4>%s</h4>', sprintf($lang->loadhold,
 '<a class="loadhold " href="$site.url/admin/comments/hold/">' . $lang->loadhold . '</a>'));

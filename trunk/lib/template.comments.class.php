@@ -54,45 +54,32 @@ class ttemplatecomments extends tevents {
         $result .= '<?php } ?>';
         
         $mesg = $this->logged;
-if ($cm->canedit || $cm->candelete) $mesg .= $this->adminpanel;
+if ($cm->canedit || $cm->candelete) $mesg .= "\n" . $this->adminpanel;
           $args->mesg = $this->fixmesg($mesg, $theme);
         $result .= $theme->parsearg($theme->templates['content.post.templatecomments.regform'], $args);
-        $template = ttemplate::i();
-        $result .= sprintf('<script type="text/javascript">
-        ltoptions.theme.comments = $.extend(true, ltoptions.theme.comments, %s);
-        ltoptions.theme.comments.ismoder = <?php echo ($ismoder ? \'true\' : \'false\'); ?>;
-        </script>', json_encode(array(
-        'canedit' => $cm->canedit,
-        'candelete' => $cm->candelete,
-'confirmcomment' => ($post->idperm == 0) && $cm->confirmlogged,
-'comuser' => false
-        )));
-
-        $result .= $template->getjavascript($template->jsmerger_comments);
-        $result .= $template->getjavascript($template->jsmerger_moderate);
-        $result .= $template->getjavascript('/js/litepublisher/moderate.js');
+$result .= $this->getjs(($post->idperm == 0) && $cm->confirmlogged, 'logged');
       $result .= '<?php } else { ?>';
         
         switch ($post->comstatus) {
           case 'reg':
           $mesg = $this->reqlogin;
-          if (litepublisher::$options->reguser) $mesg .= $this->regaccount;
+          if (litepublisher::$options->reguser) $mesg .= "\n" . $this->regaccount;
           $args->mesg = $this->fixmesg($mesg, $theme);
           $result .= $theme->parsearg($theme->templates['content.post.templatecomments.regform'], $args);
           break;
           
           case 'guest':
-$result .= $this->getjs(($post->idperm == 0) && $cm->confirmguest, false);
+$result .= $this->getjs(($post->idperm == 0) && $cm->confirmguest, 'guest');
           $mesg = $this->guest;
-          if (litepublisher::$options->reguser) $mesg .= $this->regaccount;
+          if (litepublisher::$options->reguser) $mesg .= "\n" . $this->regaccount;
           $args->mesg = $this->fixmesg($mesg, $theme);
           $result .= $theme->parsearg($theme->templates['content.post.templatecomments.regform'], $args);
           break;
           
           case 'comuser':
-$result .= $this->getjs(($post->idperm == 0) && $cm->confirmcomuser, true);
+$result .= $this->getjs(($post->idperm == 0) && $cm->confirmcomuser, 'comuser');
           $mesg = $this->comuser;
-          if (litepublisher::$options->reguser) $mesg .= $this->regaccount;
+          if (litepublisher::$options->reguser) $mesg .= "\n" . $this->regaccount;
           $args->mesg = $this->fixmesg($mesg, $theme);
           
           foreach (array('name', 'email', 'url') as $field) {
@@ -118,16 +105,26 @@ $result .= $this->getjs(($post->idperm == 0) && $cm->confirmcomuser, true);
     str_replace('&backurl=', '&amp;backurl=', $mesg)));
   }
 
-public function getjs($confirmcomment, $comuser) {
-        $result = sprintf('<script type="text/javascript">ltoptions.theme.comments = $.extend(true, ltoptions.theme.comments, %s);</script>',
+public function getjs($confirmcomment, $logstatus) {
+$cm = tcommentmanager::i();
+        $result = sprintf('<script type="text/javascript">
+ltoptions.theme.comments = $.extend(true, ltoptions.theme.comments, %s%s);
+</script>',
  json_encode(array(
 'confirmcomment' => $confirmcomment,
-'comuser' => $comuser
-        )));
+'comuser' => 'comuser' == $logstatus,
+        'canedit' => $cm->canedit,
+        'candelete' => $cm->candelete,
+        )),
+$logstatus == 'logged' ? ', {ismoder: <?php echo ($ismoder ? \'true\' : \'false\'); ?>}' : '');
 
 $template = ttemplate::I();
         $result .= $template->getjavascript($template->jsmerger_comments);
-        //$result .= $template->getjavascript('/js/litepublisher/confirmcomment.js');
+
+        $result .= $template->getjavascript('/js/litepublisher/confirmcomment.js');
+        $result .= $template->getjavascript($template->jsmerger_moderate);
+        $result .= $template->getjavascript('/js/litepublisher/moderate.js');
+
 return  $result;
 }
   

@@ -7,11 +7,8 @@
 **/
 
 function tadminloginInstall($self) {
-  $urlmap = turlmap::i();
-  $urlmap->lock();
-  $urlmap->addget('/admin/login/', get_class($self));
-  $urlmap->add('/admin/logout/', get_class($self), 'out', 'normal');
-  $urlmap->unlock();
+  litepublisher::$urlmap->addget('/admin/login/', get_class($self));
+  litepublisher::$urlmap->add('/admin/logout/', get_class($self), 'out', 'get');
 }
 
 function tadminloginUninstall($self) {
