@@ -573,7 +573,7 @@ $form = 'content.post.templatecomments.form';
         $templates[$form] = trim(str_replace(
 '<script type="text/javascript" src="$site.files$template.jsmerger_comments"></script>', '',
         $templates[$form]));
-if (!strpos($templates[$form], '$mesg')) $templates[$form] = '<div id="before-commentform"><p>$mesg</p></div>' . $templates[$form];
+if (!strpos($templates[$form], '$mesg')) $templates[$form] = '<div id="before-commentform">$mesg</div>' . $templates[$form];
 
         $regform = 'content.post.templatecomments.regform';
         if (!in_array($regform, $this->parsedtags) && in_array('content.admin.editor', $this->parsedtags)) {
@@ -584,7 +584,7 @@ if (!strpos($templates[$form], '$mesg')) $templates[$form] = '<div id="before-co
           ));
           
           $templates[$regform] =
-          '								<div id="beforeregform"><p>$mesg</p></div>
+          '								<div id="before-commentform">$mesg</div>
           <h4 id="respond">$lang.leavereply</h4>
           <form action="$site.url/send-comment.php" method="post" id="commentform">'
           . $editor .

@@ -57,9 +57,9 @@ $videos = [$video = [<a href="$link" class="videofile" rel="video" id="videofile
 content.post.templatecomments.closed = [<p class="center red">$lang.closed</p>]
 
 content.post.templatecomments.form = [
-<script type="text/javascript" src="$site.files$template.jsmerger_comments"></script>
+<div id="before-commentform">$mesg</div>
 <h3>$lang.leavereply</h3>
-<form action="$options.url/send-comment.php" method="post" id="commentform">
+<form action="$site.url/send-comment.php" method="post" id="commentform">
 <p><input type="text" name="name" id="name" value="$name" size="22" /> <label for="name">$lang.name</label><br/>
 <input type="text" name="email" id="email" value="$email" size="22" /> <label for="email">$lang.email</label><br/>
 <input type="text" name="url" id="url" value="$url" size="22" /> <label for="url">$lang.url</label></p>
@@ -69,6 +69,18 @@ content.post.templatecomments.form = [
 <input type="hidden" name="postid" value="$postid" />
 <input type="hidden" name="antispam" value="$antispam" />
 <input name="submitbutton" type="submit" id="submitbutton" value="$lang.send" /></p>
+</form>
+]
+
+content.post.templatecomments.regform = [
+<div id="before-commentform">$mesg</div>
+<h3>$lang.leavereply</h3>
+<form action="$site.url/send-comment.php" method="post" id="commentform">
+<textarea name="content" id="comment" rows="10" cols="62%"></textarea>
+<p>
+<input type="hidden" name="postid" value="$postid" />
+<input type="hidden" name="antispam" value="$antispam" />
+<input name="submitbutton" type="submit" id="submit_button" value="$lang.send" /></p>
 </form>
 ]
 
@@ -152,7 +164,7 @@ $subitems = [<ul>$item</ul>]
 sidebar.submenu.items.item = [<li><a rel="$rel" href="$link" title="$title">$icon$text</a>$subitems</li>]
 sidebar.categories.items.item = [<li><a rel="$rel" href="$link" title="$lang.category: $text">$icon$text $subcount</a>$subitems</li>]
 sidebar.archives.items.item = [<li><a rel="$rel" href="$link" title="$lang.archive: $text">$text $subcount</a></li>]
-sidebar.tags.items.item = [<li><a rel="$rel" href="$options.url$url" title="$lang.tag: $title">$title $subcount</a></li>]
+sidebar.tags.items.item = [<li><a rel="$rel" href="$site.url$url" title="$lang.tag: $title">$title $subcount</a></li>]
 sidebar.links.items.item = [<li><a rel="$rel" href="$link" title="$title">$text</a></li>]
 sidebar.posts.items.item = [<li><a href="$post.link" title="$lang.permalink: $post.title">$post.title</a></li>]
 sidebar.comments.items.item = [<li><a href="$link#comment-$id" title="$onrecent: $title">$name: <cite>$content...</cite></a></li>]
@@ -169,7 +181,7 @@ $subitems = [<ul>$item</ul>]
 sidebar1.submenu.items.item = [<li><a rel="$rel" href="$link" title="$title">$icon$text</a>$subitems</li>]
 sidebar1.categories.items.item = [<li><a rel="$rel" href="$link" title="$lang.category: $text">$icon$text $subcount</a>$subitems</li>]
 sidebar1.archives.items.item = [<li><a rel="$rel" href="$link" title="$lang.archive: $text">$text $subcount</a></li>]
-sidebar1.tags.items.item = [<li><a rel="$rel" href="$options.url$url" title="$lang.tag: $title">$title $subcount</a></li>]
+sidebar1.tags.items.item = [<li><a rel="$rel" href="$site.url$url" title="$lang.tag: $title">$title $subcount</a></li>]
 sidebar1.links.items.item = [<li><a rel="$rel" href="$link" title="$title">$text</a></li>]
 sidebar1.posts.items.item = [<li><a href="$post.link" title="$lang.permalink: $post.title">$post.title</a></li>]
 sidebar1.comments.items.item = [<li><a href="$link#comment-$id" title="$onrecent: $title">$name: <cite>$content...</cite></a></li>]

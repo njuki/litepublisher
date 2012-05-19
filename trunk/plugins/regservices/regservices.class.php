@@ -54,9 +54,9 @@ class tregservices extends titems {
 
 $tc = ttemplatecomments::i();
 if ($i = strpos($tc->regaccount, $this->widget_title)) {
-$tc->regaccount = substr($tc->regaccount, 0, $i);
+$tc->regaccount = trim(substr($tc->regaccount, 0, $i));
 }
-$tc->regaccount .= $this->widget;
+$tc->regaccount .= "\n" . $this->widget;
 $tc->save();
   }
   
