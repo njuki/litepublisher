@@ -27,7 +27,7 @@ if (!($this->iduser = litepublisher::$options->user)) {
 //trick - hidden registration of comuser. Auth by get
 $users = tusers::i();
 if (isset($_GET['auth']) && ($cookie = trim($_GET['auth']))) {
-if ($this->iduser = $users->findcookie($cookie)) {
+if (($this->iduser = $users->findcookie($cookie)) && litepublisher::$options->reguser) {
 if ('comuser' == $users->getvalue($this->iduser)) {
 // bingo!
 $this->newreg = true;

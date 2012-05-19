@@ -104,10 +104,6 @@ $lang = tlocal::admin();
 $js = tjsmerger::i();
 $js->lock();
   $js->add('default', '/js/litepublisher/prettyphoto.dialog.min.js');
-$js->deletefile('moderate', '/js/litepublisher/rpc.min.js');
-include_once(litepublisher::$paths->lib . 'install' . DIRECTORY_SEPARATOR  . 'jsmerger.class.install.php');
-set_moderate_lang($js);
-tplugins::i()->delete('ajaxcommentform');
   $js->addtext('default', 'dialog', "var lang;\nif (lang == undefined) lang = {};\n" . sprintf('lang.dialog = %s;',  json_encode(
 array(
   'error' => $lang->error,
@@ -115,7 +111,19 @@ array(
   )
 )));
 
+    $js->add('comments', '/js/litepublisher/confirmcomment.min.js');
+  $js->add('comments', '/js/litepublisher/moderate.min.js');
+include_once(litepublisher::$paths->lib . 'install' . DIRECTORY_SEPARATOR  . 'jsmerger.class.install.php');
+set_comments_lang($js);
+
+tplugins::i()->delete('ajaxcommentform');
+unset($js->items['moderate']);
 $js->unlock();
+
+$template = ttemplate::i();
+@unlink(litepublisher::$paths->home . ltrim($template->jsmerger_moderate, '/'));
+unset($template->data['jsmerger_moderate']);
+$template->save();
 
   tcssmerger::i()->add('default', '/js/litepublisher/prettyphoto.dialog.css');
 

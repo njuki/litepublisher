@@ -45,9 +45,10 @@ class tredirector extends titems {
     
     //redir version js files
     if (preg_match('/^\/files\/js\/(\w*+)\.(\d*+)\.js$/', $url, $m)) {
-      $name = 'jsmerger_' . $m[1];
+$name = $m[1] == 'moderator' ? 'comments' : $m[1];
+      $prop = 'jsmerger_' . $name;
       $template = ttemplate::i();
-      if (isset($template->$name)) return $template->$name;
+      if (isset($template->$prop)) return $template->$prop;
     }
     
     if (preg_match('/^\/files\/js\/(\w*+)\.(\d*+)\.css$/', $url, $m)) {
