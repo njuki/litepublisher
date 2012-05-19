@@ -6,9 +6,15 @@
 * and GPL (gpl.txt) licenses.
 **/
 
-function set_moderate_lang($self) {
+function set_comments_lang($self) {
   $lang = tlocal::admin('comments');
-  $js = array(
+  $self->addtext('comments', 'lang',
+sprintf('var lang = $.extend(true, lang, {
+comment: %s,
+comments: %s
+});', 
+json_encode($lang->ini['comment']),
+json_encode(array(
   'del' => $lang->delete,
   'edit' => $lang->edit,
   'approve' => $lang->approve,
@@ -20,10 +26,8 @@ function set_moderate_lang($self) {
   'notmoderated' => $lang->notmoderated,
   'errorrecieved' => $lang->errorrecieved,
   'notedited' => $lang->notedited,
-  );
-  
-  $self->addtext('moderate', 'lang',
-sprintf('var lang = $.extend(true, lang, {comments: %s});', json_encode($js)));
+  ))
+));
 }
 
 function tjsmergerInstall($self) {
@@ -58,10 +62,9 @@ function tjsmergerInstall($self) {
   
   $section = 'comments';
   $self->add($section, '/js/litepublisher/comments.min.js');
-  
-  $section = 'moderate';
+    $self->add($section, '/js/litepublisher/confirmcomment.min.js');
   $self->add($section, '/js/litepublisher/moderate.min.js');
-  set_moderate_lang($self);
+  set_comments_lang($self);
   
   tlocal::usefile('admin');
 $js = "var lang;\nif (lang == undefined) lang = {};\n";
@@ -78,8 +81,6 @@ array(
   )
 )));
 
-  $self->addtext('comments', 'lang', $js . sprintf('lang.comment = %s;',  json_encode($lang->ini['comment'])));
-  
   $self->unlock();
   
   $template = ttemplate::i();
