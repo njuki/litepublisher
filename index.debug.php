@@ -100,6 +100,7 @@ litepublisher::$urlmap->clearcache();
 //tupdater::i()->run(5.27);
 //ttemplatecomments ::i()->install();
 //tregservices::i()->update_widget();
+//tcommentform::i()->oncomuser = tregservices::i()->oncomuser;
 
 //include_once('lib/update/update.5.27.lang.php');
 //update527lang();
