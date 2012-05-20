@@ -243,5 +243,16 @@ $man->deletetable('commentskept');
 
 tcron::i()->deleteclass('tusers');
 
+if (litepublisher::$classes->exists('tticket')) {
+$tickets = ttickets::i();
+$tickets->data['idcomauthor'] =  tusers::i()->add(array(
+'email' => '',
+'name' => tlocal::get('ticket', 'comname'),
+'status' => 'approved',
+'idgroups' => 'commentator'
+));
+$tickets->save();
+}
+
 litepublisher::$options->savemodified();
 }
