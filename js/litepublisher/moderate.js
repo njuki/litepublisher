@@ -52,7 +52,7 @@ moderate.setenabled(false);
               $(idcomment).remove();
               moderate.setenabled(true);
             })
-            .error( function(jq, textStatus, errorThrown) {
+            .fail( function(jq, textStatus, errorThrown) {
               moderate.error(lang.comments.notdeleted);
               //alert(jq.responseText);
             });
@@ -69,7 +69,7 @@ moderate.setenabled(false);
               moderate.setenabled(true);
           } catch(e) { alert('error ' + e.message); }
           })
-          .error( function(jq, textStatus, errorThrown) {
+          .fail( function(jq, textStatus, errorThrown) {
             moderate.error(lang.comments.notmoderated);
             //alert(jq.responseText);
           });
@@ -107,7 +107,7 @@ moderate.restore_submit();
                 location.hash = cc.substring(1);
             } catch (e) { alert(e.message); }
             })
-            .error( function(jq, textStatus, errorThrown) {
+            .fail( function(jq, textStatus, errorThrown) {
 $(":input", form).removeAttr("disabled");
               moderate.error(lang.comments.notedited);
 moderate.restore_submit();
@@ -117,7 +117,7 @@ moderate.restore_submit();
           return false;
         });
       })
-      .error( function(jq, textStatus, errorThrown) {
+      .fail( function(jq, textStatus, errorThrown) {
         moderate.error(lang.comments.errorrecieved);
       });
       break;
@@ -152,7 +152,7 @@ $.confirmcomment();
         moderate.create_buttons(options.hold);
     } catch(e) { alert('error ' + e.message); }
     })
-    .error( function(jq, textStatus, errorThrown) {
+    .fail( function(jq, textStatus, errorThrown) {
       moderate.error(lang.comments.errorrecieved);
     });
 return false;
@@ -209,7 +209,8 @@ return this;
 };
 
 $(document).ready(function() {
-  $.moderate();
+//only logged users
+if (get_cookie("litepubl_user_id")) $.moderate();
 });
 
 })( jQuery );
