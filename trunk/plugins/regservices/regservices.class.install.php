@@ -49,10 +49,12 @@ function tregservicesInstall($self) {
   }
   
   litepublisher::$urlmap->addget($self->url, get_class($self));
+tcommentform::i()->oncomuser = $self->oncomuser;
   litepublisher::$urlmap->clearcache();
 }
 
 function tregservicesUninstall($self) {
+tcommentform::i()->unbind($self);
   turlmap::unsub($self);
   foreach ($self->items as $id => $classname) {
     litepublisher::$classes->delete($classname);

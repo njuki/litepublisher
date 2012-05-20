@@ -7,6 +7,8 @@
 **/
 
 class tregservice extends tplugin {
+public $sessdata;
+public $session_id ;
   
   public static function i() {
     return getinstance(__class__);
@@ -20,6 +22,8 @@ class tregservice extends tplugin {
     $this->data['url'] = '';
     $this->data['client_id'] = '';
     $this->data['client_secret'] = '';
+$this->sessdata = array();
+$this->session_id  = '';
   }
   
   public function getbasename() {
@@ -57,6 +61,7 @@ class tregservice extends tplugin {
     public function start_session() {
     tsession::init(1);
     session_start();
+$this->session_id  = session_id();
   }
   
   //handle callback
@@ -69,6 +74,7 @@ class tregservice extends tplugin {
       session_destroy();
       return 403;
     }
+$this->sessdata = isset($_SESSION['sessdata']) ? $_SESSION['sessdata'] : array();
     session_destroy();
   }
   
@@ -76,6 +82,7 @@ class tregservice extends tplugin {
     $this->start_session();
     $state = md5(mt_rand() . litepublisher::$secret. microtime());
     $_SESSION['state'] = $state;
+$_SESSION['sessdata'] = $this->sessdata;
     session_write_close();
     return $state;
   }

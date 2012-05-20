@@ -82,4 +82,44 @@ if (!$url) return 403;
     return litepublisher::$urlmap->redir($url);
   }
   
+
+public function oncomuser(array $values, $comfirmed) {
+//ignore $comfirmed, always return redirect
+$form = tcommentform::i();
+        if ($err = $form->processcomuser($values)) return $err;
+$email = strtolower(trim($values['email']));
+$host = substr($email, strpos($email, '@'));
+switch ($host) {
+case 'gmail.com':
+$name = 'google';
+break;
+
+case 'yandex.ru':
+$name = 'yandex';
+break;
+
+case 'mail.ru':
+case 'inbox.ru':
+case 'list.ru':
+case 'bk.ru':
+$name = 'mailru';
+break;
+
+default:
+return false;
+}
+ 
+    if (!isset($this->items[$name])) return false;
+    $service = getinstance($this->items[$name]);
+    if (!$service->valid) return false;
+$service->sessdata['comuser'] = $values;
+    $url = $service->getauthurl();
+if (!$url) return false;
+
+    return $form->sendresult($url, array(
+ini_get('session.name') => $service->session_id 
+'backurl' =>'',
+));
+}
+
 }//class
