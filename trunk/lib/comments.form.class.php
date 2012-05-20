@@ -78,6 +78,8 @@ $this->addevents('oncomuser');
     if (litepublisher::$options->checkduplicate && $cm->checkduplicate($shortpost['id'], $values['content']) ) {
       return $this->geterrorcontent($lang->duplicate);
     }
+
+unset($values['submitbutton']);
     
     if (!$confirmed) $values['ip'] = preg_replace( '/[^0-9., ]/', '',$_SERVER['REMOTE_ADDR']);
     if (litepublisher::$options->ingroups($cm->idgroups)) {
@@ -259,7 +261,7 @@ break;
     }
     
     public function sendresult($link, $cookies) {
-      if (isset($this->helper) && ($this != $this->helper)) return $this->helper->sendresult($cookies, $url);
+      if (isset($this->helper) && ($this != $this->helper)) return $this->helper->sendresult($link, $cookies);
       foreach ($cookies as $name => $value) {
         setcookie($name, $value, time() + 30000000,  '/', false);
       }

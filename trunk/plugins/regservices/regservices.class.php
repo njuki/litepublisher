@@ -87,7 +87,7 @@ public function oncomuser(array $values, $comfirmed) {
 $form = tcommentform::i();
         if ($err = $form->processcomuser($values)) return $err;
 $email = strtolower(trim($values['email']));
-$host = substr($email, strpos($email, '@'));
+$host = substr($email, strpos($email, '@') + 1);
 switch ($host) {
 case 'gmail.com':
 $name = 'google';
