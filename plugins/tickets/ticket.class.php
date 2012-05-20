@@ -122,12 +122,9 @@ class tticket extends tpost {
     
     $lang = tlocal::i('ticket');
     $content = sprintf($lang->statechanged, $lang->$old, $lang->$state);
-    $email = litepublisher::$options->fromemail;
-    
-    $comusers = tcomusers::i();
-    $idauthor = $comusers->add($lang->comname, $email, '', '');
-    $this->comments->add($idauthor,  $content, 'approved', '');
-    $this->commentscount = $this->comments->db->getcount("post = $this->id and status = 'approved'");
+
+    $this->comments->add($this->id, ttickets::i()->idcomauthor,  $content, 'approved', '');
+    //$this->commentscount = $this->comments->db->getcount("post = $this->id and status = 'approved'");
   }
   
 }//class

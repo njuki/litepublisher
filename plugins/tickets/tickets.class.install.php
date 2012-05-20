@@ -7,13 +7,19 @@
 **/
 
 function tticketsInstall($self) {
-  if (!dbversion) die("Ticket  system only for database version");
-  $self->data['cats'] = array();
-  $self->save();
-  
   $dirname = basename(dirname(__file__));
   $merger = tlocalmerger::i();
   $merger->addplugin(tplugins::getname(__file__));
+  
+  $self->data['cats'] = array();
+$self->data['idcomauthor'] =  tusers::i()->add(array(
+'email' => '',
+'name' => tlocal::get('ticket', 'comname'),
+'status' => 'approved',
+'idgroups' => 'commentator'
+));
+
+  $self->save();
   
   $dir = dirname(__file__) . DIRECTORY_SEPARATOR . 'resource' . DIRECTORY_SEPARATOR;
   $filter = tcontentfilter::i();
