@@ -42,7 +42,7 @@ class tsession {
     if (tfilestorage::$memcache) {
       return getinstance(__class__);
     } else {
-      ini_set('session.gc_probability', 1);
+      //ini_set('session.gc_probability', 1);
     }
   }
   

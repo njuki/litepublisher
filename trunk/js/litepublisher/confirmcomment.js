@@ -80,10 +80,10 @@ break;
 }
 } catch(e) { form.error(e.message); }
 })
-            .error( function(jq, textStatus, errorThrown) {
+            .fail( function(jq, textStatus, errorThrown) {
 form.error(jq.responseText);
 })
-.complete(function() {
+.always(function() {
 inputs.removeAttr("disabled");
 });
 },
@@ -92,7 +92,7 @@ confirm: function(confirmid) {
           $.confirmbox(lang.dialog.confirm, lang.comment.checkspam , lang.comment.robot, lang.comment.human, function(index) {
             if (index !=1) return;
 $.litejsontype("post", {method: "comment_confirm", confirmid: confirmid}, form.success)
-            .error( function(jq, textStatus, errorThrown) {
+            .fail( function(jq, textStatus, errorThrown) {
 form.error(jq.responseText);
 });
 });
@@ -100,8 +100,7 @@ form.error(jq.responseText);
 
 success: function(data) {
 if ("cookies" in data) {
-var name = "";
-for (name in data.cookies) {
+for (var name in data.cookies) {
 set_cookie(name, data.cookies[name]);
 }
 }

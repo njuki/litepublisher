@@ -82,7 +82,6 @@ if (!$url) return 403;
     return litepublisher::$urlmap->redir($url);
   }
   
-
 public function oncomuser(array $values, $comfirmed) {
 //ignore $comfirmed, always return redirect
 $form = tcommentform::i();
@@ -118,7 +117,6 @@ if (!$url) return false;
 
     return $form->sendresult($url, array(
 ini_get('session.name') => $service->session_id 
-'backurl' =>'',
 ));
 }
 

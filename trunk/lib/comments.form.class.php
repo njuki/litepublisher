@@ -17,6 +17,7 @@ class tcommentform extends tevents {
     parent::create();
     $this->basename ='commentform';
     $this->cache = false;
+$this->addevents('oncomuser');
   }
   
   public function request($arg) {
@@ -93,6 +94,8 @@ class tcommentform extends tevents {
         break;
         
         case 'comuser':
+//hook in regservices social plugin
+if ($r = $this->oncomuser($values, $confirmed)) return $r;
         if (!$confirmed && $cm->confirmcomuser)  return $this->request_confirm($values, $shortpost);
         if ($err = $this->processcomuser($values)) return $err;
         
