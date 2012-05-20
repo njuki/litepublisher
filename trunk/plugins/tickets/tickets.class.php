@@ -17,6 +17,7 @@ class ttickets extends tposts {
     parent::create();
     $this->childtable = 'tickets';
     $this->addmap('cats', array());
+$this->data['idcomauthor'] = 0;
   }
   
   public function newpost() {
