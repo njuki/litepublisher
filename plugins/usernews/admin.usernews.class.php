@@ -17,7 +17,7 @@ class tadminusernews {
     $about = tplugins::getabout(tplugins::getname(__file__));
     $args = targs::i();
     $form = '';
-    foreach (array('_changeposts', '_canupload', '_candeletefile', 'autosubscribe', 'insertsource') as $name) {
+    foreach (array('_changeposts', '_canupload', '_candeletefile', 'insertsource') as $name) {
       $args->$name = $plugin->data[$name];
       $args->data["\$lang.$name"] = $about[$name];
       $form .= "[checkbox=$name]";
@@ -36,7 +36,7 @@ class tadminusernews {
   
   public function processform() {
     $plugin = tusernews::i();
-    foreach (array('_changeposts', '_canupload', '_candeletefile', 'autosubscribe', 'insertsource') as $name) {
+    foreach (array('_changeposts', '_canupload', '_candeletefile', 'insertsource') as $name) {
       $plugin->data[$name] = isset($_POST[$name]);
     }
     foreach (array('sourcetml') as $name) {

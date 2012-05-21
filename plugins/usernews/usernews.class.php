@@ -17,7 +17,6 @@ class tusernews extends tplugin {
     $this->data['_changeposts'] = false;
     $this->data['_canupload'] = true;
     $this->data['_candeletefile'] = true;
-    $this->data['autosubscribe'] = true;
     $this->data['insertsource'] = true;
     $this->data['sourcetml'] = '<h4><a href="%1$s">%1$s</a></h4>';
   }
@@ -84,16 +83,6 @@ class tusernews extends tplugin {
       $id = $posts->add($post);
       $_GET['id'] = $id;
       $_POST['id'] = $id;
-      
-      if ($this->autosubscribe) {
-        $pages = tuserpages::i();
-        $uitem = $pages->getitem(litepublisher::$options->user);
-        $comusers = tcomusers::i();
-        $uid = $comusers->add($uitem['name'], $uitem['email'], $uitem['website'], '');
-        $comusers->setvalue($uid, 'cookie', tusers::i()->getvalue($uitem['id'], 'cookie'));
-        $subscribers = tsubscribers::i();
-        $subscribers->add($id, $uid);
-      }
     } else {
       $posts->edit($post);
     }
