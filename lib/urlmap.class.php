@@ -162,10 +162,22 @@ class turlmap extends titems {
   
   private function getcachefile(array $item) {
     if (!$this->cachefilename) {
-      if ($item['type'] == 'normal') {
+switch ($item['type']) {
+case 'normal':
         $this->cachefilename =  sprintf('%s-%d.php', $item['id'], $this->page);
-      } else {
+break;
+
+case 'usernormal':
+        $this->cachefilename =  sprintf('%s-page-%d-user-%d.php', $item['id'], $this->page, litepublisher::$options->user);
+break;
+
+case 'userget':
+        $this->cachefilename = sprintf('%s-page-%d-user%d-get-%s.php', $item['id'], $this->page, litepublisher::$options->user, md5($_SERVER['REQUEST_URI']));
+break;
+
+default: //get
         $this->cachefilename = sprintf('%s-%d-%s.php', $item['id'], $this->page, md5($_SERVER['REQUEST_URI']));
+break;
       }
     }
     return litepublisher::$paths->cache . $this->cachefilename;

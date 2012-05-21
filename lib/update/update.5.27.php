@@ -166,10 +166,12 @@ $db->table = 'usergroup';
         ));
 
 $man = tdbmanager::i();
-//$man->alter($table, "add `includeparents` boolean default " . ($tags->includeparents ? 'true' : 'false'));
 $man->delete_enum('users', 'status', 'lock');
 $man->delete_enum('users', 'status', 'wait');
 $man->addenum('users', 'status', 'comuser');
+
+$man->addenum('urlmap', 'type', 'usernormal');
+$man->addenum('urlmap', 'type', 'userget');
 
 $man->alter('posts', "add `comstatus` enum('closed','reg','guest','comuser') default 'comuser'");
 
