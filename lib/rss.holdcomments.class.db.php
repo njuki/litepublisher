@@ -44,21 +44,33 @@ class trssholdcomments extends tevents {
   }
   
   public function request($arg) {
-    if (isset($_GET['key']) && ($this->key != '') && ($this->key == $_GET['key'])) {
+if (!litepublisher::$options->user || ('hold' == tusers::i()->getvalue(litepblisher::$options->user))) return 403;
       $result = '<?php turlmap::sendxml(); ?>';
       $rss = trss::i();
       $rss->domrss = new tdomrss;
       $this->dogetholdcomments($rss);
       $result .= $rss->domrss->GetStripedXML();
       return $result;
-    }
-    return 404;
   }
   
   private function dogetholdcomments($rss) {
     $rss->domrss->CreateRoot(litepublisher::$site->url . $this->rssurl, tlocal::get('comment', 'onrecent') . ' '. litepublisher::$site->name);
-    $manager = tcommentmanager::i();
-    $recent = $manager->getrecent($this->count, 'hold');
+
+
+    $db = litepublisher::$db;
+$author = litepublisher::$options->ingroup('moderator') ? '' : sprintf(%s.' author = %d and ', $db->comments, litepublisher::$options->user);
+    $result = $db->res2assoc($db->query("select $db->comments.*,
+    $db->users.name as name, $db->users.email as email, $db->users.website as website,
+    $db->posts.title as title, $db->posts.commentscount as commentscount,
+    $db->urlmap.url as posturl
+    from $db->comments, $db->users, $db->posts, $db->urlmap
+    where $db->comments.status = 'hold' and $author
+    $db->users.id = $db->comments.author and
+    $db->posts.id = $db->comments.post and
+    $db->urlmap.id = $db->posts.idurl and
+    $db->posts.status = 'published' and
+    order by $db->comments.posted desc limit $this->count"));
+    
     $title = tlocal::get('comment', 'onpost') . ' ';
     $comment = new tarray2prop();
     ttheme::$vars['comment'] = $comment;
@@ -69,8 +81,10 @@ class trssholdcomments extends tevents {
       $html->section = 'comments';
       $tml = $html->rsstemplate;
     }
+
     $tml = str_replace('$adminurl', '/admin/comments/'. litepublisher::$site->q . 'id=$comment.id&action', $tml);
     $lang = tlocal::admin('comments');
+
     foreach ($recent  as $item) {
       $comment->array = $item;
       $comment->content = $theme->parse($tml);
