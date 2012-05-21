@@ -7,14 +7,34 @@
 **/
 
 class tadminmoderator extends tadmincommoncomments {
+private $moder;
   
   public static function i($id = 0) {
     return parent::iteminstance(__class__, $id);
   }
-  
+
+public function canrequest() {
+$this->moder = litepublisher::$options->ingroup('moderator');
+ }
+
+public function can($id, $action) {
+if ($this->moder) return true;
+if (litepublisher::$options->user != tcomments::i()->getvalue($id, 'author')) return false;
+$cm = tcommentmanager::i();
+switch ($action) {
+case 'edit':
+return $cm->canedit;
+
+case 'delete':
+return $cm->candelete;
+}
+return false;
+}
+
   public function getcontent() {
     $result = '';
         $comments = tcomments::i();
+$cm = tcommentmanager::i();
     $lang = $this->lang;
     $html = $this->html;
     
@@ -25,28 +45,34 @@ class tadminmoderator extends tadmincommoncomments {
       if ($action = $this->action) {
         $id = $this->idget();
         if (!$comments->itemexists($id)) return $this->notfound;
+
         switch($action) {
           case 'delete':
+if (!$this->can($id, 'delete')) return $html->h4->forbidden;
           if(!$this->confirmed) return $this->confirmdelete($id);
           $comments->delete($id);
           $result .= $html->h4->successmoderated;
           break;
           
           case 'hold':
+if (!$this->moder) return $html->h4->forbidden;
           $comments->setstatus($id, 'hold');
           $result .= $this->moderated($id);
           break;
           
           case 'approve':
+if (!$this->moder) return $html->h4->forbidden;
           $comments->setstatus($id, 'approved');
           $result .= $this->moderated($id);
           break;
           
           case 'edit':
+if (!$this->can($id, 'edit')) return $html->h4->forbidden;
           $result .= $this->editcomment($id);
           break;
           
           case 'reply':
+if (!$this->can($id, 'edit')) return $html->h4->forbidden;
           $result .= $this->reply($id);
           break;
         }
@@ -120,9 +146,11 @@ class tadminmoderator extends tadmincommoncomments {
     $perpage = 20;
     // get total count
     $status = $kind == 'hold' ? 'hold' : 'approved';
-    $total = $comments->db->getcount("status = '$status'");
+$where = "$comments->thistable.status = '$status'";
+if ($this->moder) $where .= " and $comments->thistable.author = " . litepublisher::$options->user;
+    $total = $comments->db->getcount($where);
     $from = $this->getfrom($perpage, $total);
-    $list = $comments->select("$comments->thistable.status = '$status'", "order by $comments->thistable.posted desc limit $from, $perpage");
+    $list = $comments->select($where, "order by $comments->thistable.posted desc limit $from, $perpage");
     $html = $this->html;
     $result .= sprintf($html->h4->listhead, $from, $from + count($list), $total);
     $table = $this->createtable();
@@ -146,8 +174,9 @@ class tadminmoderator extends tadmincommoncomments {
     $result .= $theme->getpages($this->url, litepublisher::$urlmap->page, ceil($total/$perpage));
     return $result;
   }
+
   private function moderated($id) {
-    $result = $this->html->h2->successmoderated;
+    $result = $this->html->h4->successmoderated;
     $result .= $this->getinfo($id);
     return $result;
   }
@@ -253,19 +282,21 @@ class tadminmoderator extends tadmincommoncomments {
   public function processform() {
     $result = '';
     parent::processform();
+          $comments = tcomments::i();      
     switch ($this->name) {
       case 'comments':
       case 'hold':
-          $comments = tcomments::i();      
       if (isset($_REQUEST['action'])) {
         switch ($_REQUEST['action']) {
           case 'reply':
+if (!$this->moder) return $this->html->h4->forbidden;
           $item = $comments->getitem($this->idget() );
           $post = tpost::i( (int) $item['post']);
           $this->manager->reply($this->idget(), $post->id, $_POST['content']);
           return litepublisher::$urlmap->redir($post->lastcommenturl);
           
           case 'edit':
+if (!$this->can($id, 'edit')) return $this->html->h4->forbidden;
           $comments->edit($this->idget(), $_POST['content']);
           break;
         }
@@ -275,11 +306,10 @@ class tadminmoderator extends tadmincommoncomments {
           if (!is_numeric($id))  continue;
           if (!strbegin($key, 'checkbox-item-')) continue;
           $id = (int) $id;
-          if ($idpost = $comments->getvalue($id, 'post')) {
             if ($status == 'delete') {
-              $comments->delete($id, $idpost);
+if ($this->can($id, 'delete')) $comments->delete($id);
             } else {
-              $comments->setstatus($id, $status);
+              if ($this->moder) $comments->setstatus($id, $status);
             }
           }
         }
