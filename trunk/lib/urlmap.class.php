@@ -205,9 +205,11 @@ class turlmap extends titems {
   }
   
   protected function GenerateHTML(array $item) {
-    $this->context = $this->getcontext($item);
+$context = $this->getcontext($item);
+    $this->context  = $context;
+
     //special handling for rss
-    if (method_exists($this->context, 'request') && ($s = $this->context->request($item['arg']))) {
+    if (method_exists($context, 'request') && ($s = $context->request($item['arg']))) {
       switch ($s) {
         case 404: return $this->notfound404();
         case 403: return $this->forbidden();
@@ -215,11 +217,11 @@ class turlmap extends titems {
     } else {
       if ($this->isredir) return;
       $template = ttemplate::i();
-      $s = $template->request($this->context);
+      $s = $template->request($context);
     }
     //dumpstr($s);
     eval('?>'. $s);
-    if ($this->cache_enabled && $this->context->cache) {
+    if ($this->cache_enabled && $context->cache) {
       $cachefile = $this->getcachefile($item);
       file_put_contents($cachefile, $s);
       chmod($cachefile, 0666);

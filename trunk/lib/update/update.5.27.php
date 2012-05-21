@@ -68,6 +68,7 @@ litepublisher::$classes->add('tjsonserver', 'jsonserver.class.php');
 litepublisher::$classes->delete('tjsoncomments');
 litepublisher::$classes->add('tjsoncomments', 'json.comments.class.php');
 litepublisher::$classes->add('Tadmincommentmanager', 'admin.commentmanager.class.php');
+litepublisher::$classes->add('tadmincomusers', 'admin.comments.users.class.php');
 litepublisher::$classes->add('tadminpingbacks', 'admin.pingbacks.class.php');
 litepublisher::$classes->add('tsession', 'session.class.php');
 litepublisher::$classes->items['tusers'][0] = 'kernel.php';
@@ -100,13 +101,20 @@ unset(litepublisher::$classes->classes['comusers']);
 $admin = tadminmenus::i();
 if ($id = $admin->url2id('/admin/options/comments/')) {
 $admin->items[$id]['class'] = 'Tadmincommentmanager';
+litepublisher::$urlmap->setvalue($admin->items[$id]['idurl'], 'class', 'Tadmincommentmanager');
+}
 
 if ($id = $admin->url2id('/admin/comments/pingback/')) {
 $admin->items[$id]['class'] = 'Tadminpingbacks';
+litepublisher::$urlmap->setvalue($admin->items[$id]['idurl'], 'class', 'Tadminpingbacks');
+}
+
+if ($id = $admin->url2id('/admin/comments/authors/')) {
+$admin->items[$id]['class'] = 'tadmincomusers';
+litepublisher::$urlmap->setvalue($admin->items[$id]['idurl'], 'class', 'tadmincomusers');
+}
 
 $admin->save();
-litepublisher::$urlmap->setvalue($admin->items[$id]['idurl'], 'class', 'Tadmincommentmanager');
-}
 
 $lang = tlocal::admin();
 $js = tjsmerger::i();
