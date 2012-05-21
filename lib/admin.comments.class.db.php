@@ -14,6 +14,7 @@ class tadminmoderator extends tadmincommoncomments {
   
   public function getcontent() {
     $result = '';
+        $comments = tcomments::i();
     $lang = $this->lang;
     $html = $this->html;
     
@@ -23,22 +24,21 @@ class tadminmoderator extends tadmincommoncomments {
       
       if ($action = $this->action) {
         $id = $this->idget();
-        $comments = tcomments::i();
         if (!$comments->itemexists($id)) return $this->notfound;
         switch($action) {
           case 'delete':
           if(!$this->confirmed) return $this->confirmdelete($id);
-          $this->manager->delete($id, 0);
-          $result .= $html->h2->successmoderated;
+          $comments->delete($id);
+          $result .= $html->h4->successmoderated;
           break;
           
           case 'hold':
-          $this->manager->setstatus($id, 0, 'hold');
+          $comments->setstatus($id, 'hold');
           $result .= $this->moderated($id);
           break;
           
           case 'approve':
-          $this->manager->setstatus($id, 0, 'approved');
+          $comments->setstatus($id, 'approved');
           $result .= $this->moderated($id);
           break;
           
@@ -53,36 +53,6 @@ class tadminmoderator extends tadmincommoncomments {
       }
       
       $result .= $this->getlist($this->name);
-      return $result;
-      
-      case 'pingback':
-      if ($action = $this->action) {
-        $id = $this->idget();
-        $pingbacks = tpingbacks::i();
-        if (!$pingbacks->itemexists($id)) return $this->notfound;
-        switch($action) {
-          case 'delete':
-          if(!$this->confirmed) return $this->confirmdelete($id);
-          $pingbacks->delete($id);
-          $result .= $html->h2->successmoderated;
-          break;
-          
-          case 'hold':
-          $pingbacks->setstatus($id, false);
-          $result .= $html->h2->successmoderated;
-          break;
-          
-          case 'approve':
-          $pingbacks->setstatus($id, true);
-          $result .= $html->h2->successmoderated;
-          break;
-          
-          case 'edit':
-          $result .= $this->editpingback($id);
-          break;
-        }
-      }
-      $result .= $this->getpingbackslist();
       return $result;
       
       case 'authors':
@@ -176,47 +146,6 @@ class tadminmoderator extends tadmincommoncomments {
     $result .= $theme->getpages($this->url, litepublisher::$urlmap->page, ceil($total/$perpage));
     return $result;
   }
-  
-  private function getpingbackslist() {
-    $result = '';
-    $pingbacks = tpingbacks::i();
-    $perpage = 20;
-    $total = $pingbacks->getcount();
-    $from = $this->getfrom($perpage, $total);
-    $items = $pingbacks->db->getitems("status <> 'deleted' order by posted desc limit $from, $perpage");
-    $html = $this->html;
-    $result .= sprintf($html->h2->pingbackhead, $from, $from + count($items), $total);
-    $result .= $html->pingbackheader();
-    $args = targs::i();
-    $args->adminurl = $this->adminurl;
-    foreach ($items as $item) {
-      $args->add($item);
-      $args->idpost = $item['post'];
-      unset($args->data['$post']);
-      $args->website = sprintf('<a href="%1$s">%1$s</a>', $item['url']);
-      $args->localstatus = tlocal::get('commentstatus', $item['status']);
-      $args->date = tlocal::date(strtotime($item['posted']));
-      $post = tpost::i($item['post']);
-      ttheme::$vars['post'] = $post;
-      $args->posttitle =$post->title;
-      $args->postlink = $post->link;
-      $result .=$html->pingbackitem($args);
-    }
-    $result .= $html->tablefooter();
-    $result = $html->fixquote($result);
-    
-    $theme = ttheme::i();
-    $result .= $theme->getpages($this->url, litepublisher::$urlmap->page, ceil($total/$perpage));
-    return $result;
-  }
-  
-  private function editpingback($id) {
-    $pingbacks = tpingbacks::i();
-    $args = targs::i();
-    $args->add($pingbacks->getitem($id));
-    return $this->html->pingbackedit($args);
-  }
-  
   private function moderated($id) {
     $result = $this->html->h2->successmoderated;
     $result .= $this->getinfo($id);
@@ -327,24 +256,20 @@ class tadminmoderator extends tadmincommoncomments {
     switch ($this->name) {
       case 'comments':
       case 'hold':
-      
+          $comments = tcomments::i();      
       if (isset($_REQUEST['action'])) {
         switch ($_REQUEST['action']) {
           case 'reply':
-          $comments = tcomments::i();
           $item = $comments->getitem($this->idget() );
           $post = tpost::i( (int) $item['post']);
           $this->manager->reply($this->idget(), $post->id, $_POST['content']);
           return litepublisher::$urlmap->redir($post->lastcommenturl);
           
           case 'edit':
-          $comments = tcomments::i();
           $comments->edit($this->idget(), $_POST['content']);
           break;
         }
       } else {
-        $manager = $this->manager;
-        $comments = tcomments::i(0);
         $status = isset($_POST['approve']) ? 'approved' : (isset($_POST['hold']) ? 'hold' : 'delete');
         foreach ($_POST as $key => $id) {
           if (!is_numeric($id))  continue;
@@ -352,34 +277,14 @@ class tadminmoderator extends tadmincommoncomments {
           $id = (int) $id;
           if ($idpost = $comments->getvalue($id, 'post')) {
             if ($status == 'delete') {
-              $manager->delete($id, $idpost);
+              $comments->delete($id, $idpost);
             } else {
-              $manager->setstatus($id, $idpost, $status);
+              $comments->setstatus($id, $status);
             }
           }
         }
       }
-      $result = $this->html->h2->successmoderated;
-      break;
-      
-      case 'pingback':
-      $pingbacks = tpingbacks::i();
-      if (isset($_REQUEST['action']) && $_REQUEST['action'] == 'edit') {
-        extract($_POST, EXTR_SKIP);
-        $pingbacks->edit($this->idget(), $title, $url);
-      } else {
-        $status = isset($_POST['approve']) ? 'approve' : (isset($_POST['hold']) ? 'hold' : 'delete');
-        foreach ($_POST as $id => $value) {
-          if (!is_numeric($id))  continue;
-          $id = (int) $id;
-          if ($status == 'delete') {
-            $pingbacks->delete($id);
-          } else {
-            $pingbacks->setstatus($id, $status == 'approve');
-          }
-        }
-      }
-      $result = $this->html->h2->successmoderated;
+      $result = $this->html->h4->successmoderated;
       break;
       
       case 'authors':
