@@ -68,6 +68,7 @@ litepublisher::$classes->add('tjsonserver', 'jsonserver.class.php');
 litepublisher::$classes->delete('tjsoncomments');
 litepublisher::$classes->add('tjsoncomments', 'json.comments.class.php');
 litepublisher::$classes->add('Tadmincommentmanager', 'admin.commentmanager.class.php');
+litepublisher::$classes->add('tadminpingbacks', 'admin.pingbacks.class.php');
 litepublisher::$classes->add('tsession', 'session.class.php');
 litepublisher::$classes->items['tusers'][0] = 'kernel.php';
 litepublisher::$classes->items['tusergroups'][0] = 'kernel.php';
@@ -99,6 +100,10 @@ unset(litepublisher::$classes->classes['comusers']);
 $admin = tadminmenus::i();
 if ($id = $admin->url2id('/admin/options/comments/')) {
 $admin->items[$id]['class'] = 'Tadmincommentmanager';
+
+if ($id = $admin->url2id('/admin/comments/pingback/')) {
+$admin->items[$id]['class'] = 'Tadminpingbacks';
+
 $admin->save();
 litepublisher::$urlmap->setvalue($admin->items[$id]['idurl'], 'class', 'Tadmincommentmanager');
 }
