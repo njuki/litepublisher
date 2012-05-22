@@ -280,7 +280,7 @@ class ttheme extends tevents {
     return $this->parse($this->templates['content.notfound']);
   }
   
-  public function getpages($url, $page, $count) {
+  public function getpages($url, $page, $count, $params = '') {
     if (!(($count > 1) && ($page >=1) && ($page <= $count)))  return '';
     $args = targs::i();
     $args->count = $count;
@@ -327,7 +327,9 @@ class ttheme extends tevents {
     $a = array();
     foreach ($items as $i) {
       $args->page = $i;
-      $args->link = $i == 1 ? $url : $pageurl .$i . '/';
+$link = $i == 1 ? $url : $pageurl .$i . '/';
+if ($params) $link .= litepublisher::$site->q . $params;
+      $args->link = $link;
       $a[] = $this->parsearg(($i == $page ? $currenttml : $tml), $args);
     }
     

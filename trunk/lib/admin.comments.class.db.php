@@ -131,7 +131,9 @@ if ($this->iduser) $where .= " and $comments->thistable.author = $this->iduser";
     $result .= $table->build($body, $html->tablebuttons());
     
     $theme = ttheme::i();
-    $result .= $theme->getpages($this->url, litepublisher::$urlmap->page, ceil($total/$perpage));
+
+    $result .= $theme->getpages($this->url, litepublisher::$urlmap->page, ceil($total/$perpage),
+($this->iduser ? "iduser=$this->iduser" : ''));
     return $result;
   }
 

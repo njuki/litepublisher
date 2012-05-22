@@ -14,11 +14,11 @@ class tadmincomusers extends tadminmenu {
 
   public function getcontent() {
     $result = '';
+$this->basename = 'authors';
     $users = tusers::i();
-        $comments = tcomments::i();
     $lang = $this->lang;
     $html = $this->html;
-    
+
       if ('delete' == $this->action) {
         $id = $this->idget();
 if (!$users->itemexists($id)) return $this->notfound();
@@ -34,14 +34,18 @@ if (!$users->itemexists($id)) return $this->notfound();
     $res = $users->db->query("select * from $users->thistable where status = 'comuser' order by id desc limit $from, $perpage");
     $items = litepublisher::$db->res2assoc($res);
 
-    $result = sprintf($html->h24>listhead, $from, $from + count($items), $total);
-    $result .= $html->authorheader();
+    $result .= sprintf($html->h4->listhead, $from, $from + count($items), $total);
+    $args->tablehead = $html->header();
     $args->adminurl = $this->adminurl;
+$args->editurl = tadminhtml::getadminlink('/admin/users/', 'id');
+$tablebody = '';
     foreach ($items as $id => $item) {
       $args->add($item);
-      $result .= $html->item($args);
+      $tablebody .= $html->item($args);
     }
-    $result .= $html->footer;
+
+$args->tablebody = $tablebody;
+    $result .= $html->table($args);
     
     $theme = ttheme::i();
     $result .= $theme->getpages($this->url, litepublisher::$urlmap->page, ceil($total/$perpage));
@@ -54,7 +58,7 @@ if (!$users->itemexists($id)) return $this->notfound();
     if ('comuser' != $users->getvalue($uid, 'status')) return false;
     $comments = tcomments::i();
     $comments->db->delete("author = $uid");
-    $users->delete($uid);
+    $users->setvalue($uid, 'status', 'hold');
     return true;
   }
   
@@ -85,13 +89,10 @@ if (!$users->itemexists($id)) return $this->notfound();
   }
   
   public function processform() {
+return '';
     $result = '';
       if (isset($_REQUEST['action']) && $_REQUEST['action'] == 'edit') {
         $id = $this->idget();
-        $users = tusers::i();
-        if (!$users->itemexists($id)) return $this->notfound;
-        if ('comuser' != $users->getvalue($id, 'status')) return $this->notfound;
-        $users->edit($id, $_POST);
         $subscribers = tsubscribers::i();
         $subscribed = $subscribers->getposts($id);
         $checked = array();
@@ -108,7 +109,6 @@ if (!$users->itemexists($id)) return $this->notfound();
         
         $result =  $this->html->h2->authoredited;
       }
-      break;
   }
   
 }//class
