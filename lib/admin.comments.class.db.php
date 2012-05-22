@@ -8,6 +8,7 @@
 
 class tadminmoderator extends tadmincommoncomments {
 private $moder;
+private $iduser;
   
   public static function i($id = 0) {
     return parent::iteminstance(__class__, $id);
@@ -15,6 +16,7 @@ private $moder;
 
 public function canrequest() {
 $this->moder = litepublisher::$options->ingroup('moderator');
+$this->iduser = $this->moder ? (isset($_GET['iduser']) ? (int) $_GET['iduser'] : 0) : litepublisher::$options->user;
  }
 
 public function can($id, $action) {
@@ -105,7 +107,7 @@ if (!$this->can($id, 'edit')) return $html->h4->forbidden;
     // get total count
     $status = $kind == 'hold' ? 'hold' : 'approved';
 $where = "$comments->thistable.status = '$status'";
-if ($this->moder) $where .= " and $comments->thistable.author = " . litepublisher::$options->user;
+if ($this->iduser) $where .= " and $comments->thistable.author = $this->iduser";
     $total = $comments->db->getcount($where);
     $from = $this->getfrom($perpage, $total);
     $list = $comments->select($where, "order by $comments->thistable.posted desc limit $from, $perpage");

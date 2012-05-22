@@ -14,31 +14,40 @@ class tadmincomusers extends tadminmenu {
 
   public function getcontent() {
     $result = '';
+    $users = tusers::i();
         $comments = tcomments::i();
     $lang = $this->lang;
     $html = $this->html;
     
-      $lang->section = 'comments';
-      if ($action = $this->action) {
+      if ('delete' == $this->action) {
         $id = $this->idget();
-        switch ($action) {
-          case 'delete':
-          if (!$this->confirmed) return $this->getconfirmform($id, $lang->authorconfirmdelete);
+if (!$users->itemexists($id)) return $this->notfound();
+          if (!$this->confirmed) return $html->confirmdelete($id, $this->adminurl, $lang->confirmdelete);
           if (!$this->deleteauthor($id)) return $this->notfount;
-          $result .= $this->html->h2->authordeleted;
-          break;
-          
-          case 'edit':
-          $result .= $this->editauthor($id);
-        }
-      } else {
-        $result .= $this->editauthor(0);
-      }
-      
-      $result .= $this->getauthorslist();
-      return $result;
+          $result .= $html->h4->deleted;
 }
 
+    $args = new targs();
+    $perpage = 20;
+    $total = $users->db->getcount("status = 'comuser'");
+    $from = $this->getfrom($perpage, $total);
+    $res = $users->db->query("select * from $users->thistable where status = 'comuser' order by id desc limit $from, $perpage");
+    $items = litepublisher::$db->res2assoc($res);
+
+    $result = sprintf($html->h24>listhead, $from, $from + count($items), $total);
+    $result .= $html->authorheader();
+    $args->adminurl = $this->adminurl;
+    foreach ($items as $id => $item) {
+      $args->add($item);
+      $result .= $html->item($args);
+    }
+    $result .= $html->footer;
+    
+    $theme = ttheme::i();
+    $result .= $theme->getpages($this->url, litepublisher::$urlmap->page, ceil($total/$perpage));
+    return $result;
+  }
+  
   private function deleteauthor($uid) {
     $users = tusers::i();
     if (!$users->itemexists($uid)) return false;
@@ -47,46 +56,6 @@ class tadmincomusers extends tadminmenu {
     $comments->db->delete("author = $uid");
     $users->delete($uid);
     return true;
-  }
-  
-  private function editauthor($id) {
-    $args = targs::i();
-    if ($id == 0) {
-      $args->id = 0;
-      $args->name = '';
-      $args->email = '';
-      $args->website = '';
-      $args->subscribed = '';
-    } else {
-      $users = tusers::i();
-      if (!$users->itemexists($id)) return $this->notfound;
-      $args->add($users->getitem($id));
-      $args->subscribed = $this->getsubscribed($id);
-    }
-    return $this->html->authorform($args);
-  }
-  
-  private function getauthorslist() {
-    $users = tusers::i();
-    $args = targs::i();
-    $perpage = 20;
-    $total = $users->db->getcount("status = 'comuser'");
-    $from = $this->getfrom($perpage, $total);
-    $res = $users->db->query("select * from $users->thistable where status = 'comuser' order by id desc limit $from, $perpage");
-    $items = litepublisher::$db->res2assoc($res);
-    $html = $this->html;
-    $result = sprintf($html->h2->authorlisthead, $from, $from + count($items), $total);
-    $result .= $html->authorheader();
-    $args->adminurl = $this->adminurl;
-    foreach ($items as $id => $item) {
-      $args->add($item);
-      $result .= $html->authoritem($args);
-    }
-    $result .= $html->authorfooter;
-    
-    $theme = ttheme::i();
-    $result .= $theme->getpages($this->url, litepublisher::$urlmap->page, ceil($total/$perpage));
-    return $result;
   }
   
   private function getsubscribed($authorid) {

@@ -14,18 +14,18 @@ class tadminpingbacks extends tadminmenu {
   
   public function getcontent() {
    $result = '';
+        $pingbacks = tpingbacks::i();
     $lang = $this->lang;
     $html = $this->html;
     
       if ($action = $this->action) {
         $id = $this->idget();
-        $pingbacks = tpingbacks::i();
         if (!$pingbacks->itemexists($id)) return $this->notfound;
         switch($action) {
           case 'delete':
-          if(!$this->confirmed) return $this->confirmdelete($id);
+          if(!$this->confirmed) return $this->html->confirmdelete($id, $this->adminurl, $lang->confirmdelete );
           $pingbacks->delete($id);
-          $result .= $html->h2->successmoderated;
+          $result .= $html->h4->successmoderated;
           break;
           
           case 'hold':
@@ -86,6 +86,7 @@ class tadminpingbacks extends tadminmenu {
     $args->add($pingbacks->getitem($id));
     return $this->html->pingbackedit($args);
   }
+
   public function processform() {
       $pingbacks = tpingbacks::i();
       if (isset($_REQUEST['action']) && $_REQUEST['action'] == 'edit') {
@@ -103,8 +104,8 @@ class tadminpingbacks extends tadminmenu {
           }
         }
       }
-      $result = $this->html->h2->successmoderated;
-return $result;
+
+return $this->html->h4->successmoderated;
 }
 
 }//class
