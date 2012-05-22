@@ -66,23 +66,25 @@ $comments->unlock();
 
 tusers::i()->deleted = $subscribers->deleteitem;
 
-litepublisher::$classes->delete('tjsonserver');
-litepublisher::$classes->add('tjsonserver', 'jsonserver.class.php');
-litepublisher::$classes->delete('tjsoncomments');
-litepublisher::$classes->add('tjsoncomments', 'json.comments.class.php');
-litepublisher::$classes->add('Tadmincommentmanager', 'admin.commentmanager.class.php');
-litepublisher::$classes->add('tadmincomusers', 'admin.comments.users.class.php');
-litepublisher::$classes->add('tadminpingbacks', 'admin.pingbacks.class.php');
-litepublisher::$classes->add('tsession', 'session.class.php');
-litepublisher::$classes->items['tusers'][0] = 'kernel.php';
-litepublisher::$classes->items['tusergroups'][0] = 'kernel.php';
+$classes = litepublisher::$classes;
+$classes->delete('tjsonserver');
+$classes->add('tjsonserver', 'jsonserver.class.php');
+$classes->delete('tjsoncomments');
+$classes->add('tjsoncomments', 'json.comments.class.php');
+$classes->add('Tadmincommentmanager', 'admin.commentmanager.class.php');
+$classes->add('tadmincomusers', 'admin.comments.users.class.php');
+$classes->add('tadminpingbacks', 'admin.pingbacks.class.php');
+$classes->add('tsession', 'session.class.php');
 
-litepublisher::$classes->delete('tuseroptions');
-litepublisher::$classes->add('tuseroptions', 'user.options.class.php');
+$classes->items['tusers'][0] = 'kernel.php';
+$classes->items['tusergroups'][0] = 'kernel.php';
 
-if (litepublisher::$classes->exists('tregservice')) {
-  litepublisher::$classes->add('toauth', 'oauth.class.php', 'regservices');
-  litepublisher::$classes->add('ttwitterregservice', 'twitter.service.php', 'regservices');
+$classes->delete('tuseroptions');
+$classes->add('tuseroptions', 'user.options.class.php');
+
+if ($classes->exists('tregservice')) {
+  $classes->add('toauth', 'oauth.class.php', 'regservices');
+  $classes->add('ttwitterregservice', 'twitter.service.php', 'regservices');
 $reg = tregservices::i();
 $reg->add(ttwitterregservice::i());
 $man = tdbmanager::i();
@@ -93,11 +95,13 @@ $man->alter('regservices', "add KEY (`service`, `uid`)");
 tcommentform::i()->oncomuser = $reg->oncomuser;
 }
 
-unset(litepublisher::$classes->items['tspamfilter']);
-unset(litepublisher::$classes->classes['spamfilter']);
-unset(litepublisher::$classes->items['tkeptcomments']);
-unset(litepublisher::$classes->items['tcomusers']);
-unset(litepublisher::$classes->classes['comusers']);
+unset($classes->items['tspamfilter']);
+unset($classes->classes['spamfilter']);
+unset($classes->items['tkeptcomments']);
+unset($classes->items['tcomusers']);
+unset($classes->classes['comusers']);
+
+$classes->save();
 
   litepublisher::$options->comstatus = 'guest';
 
@@ -108,10 +112,9 @@ litepublisher::$urlmap->setvalue($admin->items[$id]['idurl'], 'class', 'Tadminco
 }
 
 if ($id = $admin->url2id('/admin/comments/pingback/')) {
-$admin->items[$id]['class'] = 'Tadminpingbacks';
-litepublisher::$urlmap->setvalue($admin->items[$id]['idurl'], 'class', 'Tadminpingbacks');
+$admin->items[$id]['class'] = 'tadminpingbacks';
+litepublisher::$urlmap->setvalue($admin->items[$id]['idurl'], 'class', 'tadminpingbacks');
 }
-dumpvar($id);
 
 if ($id = $admin->url2id('/admin/comments/authors/')) {
 $admin->items[$id]['class'] = 'tadmincomusers';
@@ -274,7 +277,7 @@ $man->deletetable('commentskept');
 
 tcron::i()->deleteclass('tusers');
 
-if (litepublisher::$classes->exists('tticket')) {
+if ($classes->exists('tticket')) {
 $tickets = ttickets::i();
 $tickets->data['idcomauthor'] =  tusers::i()->add(array(
 'email' => '',
