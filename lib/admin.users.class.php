@@ -72,15 +72,17 @@ class tadminusers extends tadminmenu {
     $perpage = 20;
     $count = $users->count;
     $from = $this->getfrom($perpage, $count);
-    if ($users->dbversion) {
+$where = '';
+if (!empty($_GET['idgroup'])) {
       $idgroup = (int) tadminhtml::getparam('idgroup', 0);
+if ($groups->itemexists($idgroup)) {
       $grouptable = litepublisher::$db->prefix . $users->grouptable;
-      $where = $groups->itemexists($idgroup) ? "$users->thistable.id in (select iduser from $grouptable where idgroup = $idgroup)" : '';
+      $where =  "$users->thistable.id in (select iduser from $grouptable where idgroup = $idgroup)";
+}
+}
+
       $items = $users->select($where, " order by id desc limit $from, $perpage");
       if (!$items) $items = array();
-    } else {
-      $items = array_slice(array_keys($users->items), $from, $perpage);
-    }
     
     $args->adminurl = $this->adminurl;
     $args->formtitle = $lang->userstable;
@@ -88,6 +90,7 @@ class tadminusers extends tadminmenu {
     $html->get_table_checkbox('user'),
     array('left', $lang->edit, sprintf('<a href="%s=$id&action=edit">$name</a>', $this->adminurl)),
     $html->get_table_item('status'),
+    array('left', $lang->comments, sprintf('<a href="%s">%s</a>', tadminhtml::getadminlink('/admin/comments/', 'iduser=$id'), $lang->comments)),
     array('left', $lang->page, sprintf('<a href="%s">%s</a>', tadminhtml::getadminlink('/admin/users/pages/', 'id=$id'), $lang->page)),
     $html->get_table_link('delete', $this->adminurl)
     ));
