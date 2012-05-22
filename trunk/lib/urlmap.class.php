@@ -192,7 +192,7 @@ break;
         return;
       }
     }
-    
+
     if (class_exists($item['class']))  {
       return $this->GenerateHTML($item);
     } else {
