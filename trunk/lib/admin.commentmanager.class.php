@@ -61,7 +61,17 @@ class Tadmincommentmanager extends tadminmenu {
     [checkbox=redir]
     [checkbox=nofollow]
     ');
-    
+   
+$rss =  trssholdcomments::i();
+$args->rsscount = $rss->count;
+$args->rsstemplate = $rss->template;
+
+    $tabs->add($lang->holdrss, '
+<h4><a href="$site.url/rss/holdcomments.xml">$lang.holdrss</a></h4>
+[text=rsscount]
+[editor=rsstemplate]
+');
+
     $args->canedit = $cm->canedit;
     $args->candelete = $cm->candelete;
     $args->confirmlogged = $cm->confirmlogged;
@@ -154,5 +164,10 @@ $cm->comuser_subscribe = isset($comuser_subscribe);
     $subscr->enabled = isset($subscribe_enabled);
     $subscr->unlock();
     
+$rss =  trssholdcomments::i();
+$rss->count = rsscount;
+$rss->template = rsstemplate;
+$rss->save();
   }
+
 }//class

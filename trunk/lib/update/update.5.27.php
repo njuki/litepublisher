@@ -59,6 +59,9 @@ $subscribers = tsubscribers::i();
 
 $comments->changed = tcommentswidget::i()->changed;
 
+$comments->changed = trss::i()->commentschanged;
+$comments->changed = trssholdcomments::i()->commentschanged;
+
 $comments->unlock();
 
 tusers::i()->deleted = $subscribers->deleteitem;
@@ -108,10 +111,21 @@ if ($id = $admin->url2id('/admin/comments/pingback/')) {
 $admin->items[$id]['class'] = 'Tadminpingbacks';
 litepublisher::$urlmap->setvalue($admin->items[$id]['idurl'], 'class', 'Tadminpingbacks');
 }
+dumpvar($id);
 
 if ($id = $admin->url2id('/admin/comments/authors/')) {
 $admin->items[$id]['class'] = 'tadmincomusers';
 litepublisher::$urlmap->setvalue($admin->items[$id]['idurl'], 'class', 'tadmincomusers');
+}
+
+$admin->deleteurl('/admin/comments/holdrss/');
+
+if ($id = $admin->url2id('/admin/comments/hold/')) {
+$admin->items[$id]['group'] = 'commentator';
+}
+
+if ($id = $admin->url2id('/admin/comments/')) {
+$admin->items[$id]['group'] = 'commentator';
 }
 
 $admin->save();
@@ -137,9 +151,11 @@ unset($js->items['moderate']);
 $js->unlock();
 
 $template = ttemplate::i();
+if (isset($template->jsmerger_moderate)) {
 @unlink(litepublisher::$paths->home . ltrim($template->jsmerger_moderate, '/'));
 unset($template->data['jsmerger_moderate']);
 $template->save();
+}
 
   tcssmerger::i()->add('default', '/js/litepublisher/prettyphoto.dialog.css');
 

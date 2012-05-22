@@ -21,10 +21,9 @@ function tadminmenusInstall($self) {
     $self->createitem($posts, 'staticpages', 'editor', 'tadminstaticpages');
   }
   
-  $moder = $self->createitem(0, 'comments', 'moderator', 'tadminmoderator');
+  $moder = $self->createitem(0, 'comments', 'commentator', 'tadminmoderator');
   {
-    $self->createitem($moder, 'hold', 'moderator', 'tadminmoderator');
-    if (dbversion) $self->createitem($moder, 'holdrss', 'moderator', 'tadminmoderator');
+    $self->createitem($moder, 'hold', 'commentator', 'tadminmoderator');
     $self->createitem($moder, 'authors', 'moderator', 'tadminmoderator');
     $self->createitem($moder, 'pingback', 'moderator', 'tadminpingbacks');
   }
