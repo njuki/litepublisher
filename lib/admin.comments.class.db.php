@@ -37,11 +37,6 @@ return false;
 $cm = tcommentmanager::i();
     $lang = $this->lang;
     $html = $this->html;
-    
-    switch ($this->name) {
-      case 'comments':
-      case 'hold':
-      
       if ($action = $this->action) {
         $id = $this->idget();
         if (!$comments->itemexists($id)) return $this->notfound;
@@ -76,26 +71,10 @@ if (!$this->can($id, 'edit')) return $html->h4->forbidden;
           $result .= $this->reply($id);
           break;
         }
-      }
+}
       
       $result .= $this->getlist($this->name);
       return $result;
-      
-      case 'holdrss':
-      $rss = trssholdcomments::i();
-      $args = targs::i();
-      $args->rssurl = $rss->rssurl;
-      $args->key = $rss->key;
-      $args->count = $rss->count;
-      $args->rsstemplate = $rss->template;
-      $args->formtitle = $lang->rssurl . sprintf(' <a href="%1$s">%1$s</a>', litepublisher::$site->url . $rss->rssurl);
-      
-      return $html->adminform('
-      [text=key]
-      [text=count]
-      [editor=rsstemplate]',
-      $args);
-    }
   }
   
   private function editcomment($id) {
@@ -185,9 +164,6 @@ if ($this->moder) $where .= " and $comments->thistable.author = " . litepublishe
     $result = '';
     parent::processform();
           $comments = tcomments::i();      
-    switch ($this->name) {
-      case 'comments':
-      case 'hold':
       if (isset($_REQUEST['action'])) {
         switch ($_REQUEST['action']) {
           case 'reply':
@@ -200,9 +176,10 @@ if (!$this->moder) return $this->html->h4->forbidden;
           case 'edit':
 if (!$this->can($id, 'edit')) return $this->html->h4->forbidden;
           $comments->edit($this->idget(), $_POST['content']);
-          break;
+      return $this->html->h4->successmoderated;
         }
-      } else {
+}
+
         $status = isset($_POST['approve']) ? 'approved' : (isset($_POST['hold']) ? 'hold' : 'delete');
         foreach ($_POST as $key => $id) {
           if (!is_numeric($id))  continue;
@@ -214,26 +191,8 @@ if ($this->can($id, 'delete')) $comments->delete($id);
               if ($this->moder) $comments->setstatus($id, $status);
             }
           }
-        }
-      }
-      $result = $this->html->h4->successmoderated;
-      break;
-      
-      
-      case 'holdrss':
-      extract($_POST, EXTR_SKIP);
-      $rss = trssholdcomments::i();
-      $rss->lock();
-      $rss->key = $key;
-      $rss->count = (int) $count;
-      $rss->template = $rsstemplate;
-      $rss->unlock();
-      $result = '';
-      break;
-    }
-    
-    litepublisher::$urlmap->clearcache();
-    return $result;
+
+      return $this->html->h4->successmoderated;
   }
   
   public static function refilter() {

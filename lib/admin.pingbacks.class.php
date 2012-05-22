@@ -13,6 +13,7 @@ class tadminpingbacks extends tadminmenu {
   }
   
   public function getcontent() {
+echo "ping<br>";
     $result = '';
     $lang = $this->lang;
     $html = $this->html;

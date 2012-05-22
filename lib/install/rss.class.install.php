@@ -7,16 +7,13 @@
 **/
 
 function trssInstall($self) {
-  $urlmap = turlmap::i();
-  $urlmap->lock();
-  $urlmap->add('/rss.xml', get_class($self), 'posts');
-  $self->idcomments = $urlmap->add('/comments.xml', get_class($self), 'comments');
-  $self->idpostcomments =   $urlmap->add('/comments/', get_class($self), null, 'tree');
-  $urlmap->add('/rss/categories/', get_class($self), 'categories', 'tree');
-  $urlmap->add('/rss/tags/', get_class($self), 'tags', 'tree');
-  $urlmap->unlock();
-  
-  litepublisher::$classes->commentmanager->changed = $self->commentschanged;
+  litepublisher::$urlmap->add('/rss.xml', get_class($self), 'posts');
+  $self->idcomments = litepublisher::$urlmap->add('/comments.xml', get_class($self), 'comments');
+  $self->idpostcomments =   litepublisher::$urlmap->add('/comments/', get_class($self), null, 'tree');
+  litepublisher::$urlmap->add('/rss/categories/', get_class($self), 'categories', 'tree');
+  litepublisher::$urlmap->add('/rss/tags/', get_class($self), 'tags', 'tree');
+
+tcomments::i()->changed = $self->commentschanged;
   $self->save();
   
   $meta = tmetawidget::i();
@@ -28,12 +25,10 @@ function trssInstall($self) {
 
 function trssUninstall($self) {
   turlmap::unsub($self);
-  litepublisher::$classes->commentmanager->unbind($self);
+tcomments::i()->unbind($self);
   $meta = tmetawidget::i();
   $meta->lock();
   $meta->delete('rss');
   $meta->delete('comments');
   $meta->unlock();
 }
-
-?>
