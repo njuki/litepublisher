@@ -55,10 +55,6 @@ class tpost extends titem implements  itemplate {
     return new $class();
   }
   
-  public function getdbversion() {
-    return true;
-  }
-  
   protected function create() {
     $this->table = 'posts';
     //last binding, like cache
@@ -161,8 +157,7 @@ class tpost extends titem implements  itemplate {
   }
   
   public function load() {
-    $result = $this->LoadFromDB();
-    if ($result) {
+    if ($result = $this->LoadFromDB()) {
       foreach ($this->coinstances as $coinstance) $coinstance->load();
     }
     return $result;
@@ -203,7 +198,8 @@ class tpost extends titem implements  itemplate {
   }
   
   public function save() {
-    parent::save();
+    if ($this->lockcount > 0) return;
+$this->SaveToDB();
     foreach ($this->coinstances as $coinstance) $coinstance->save();
   }
   
