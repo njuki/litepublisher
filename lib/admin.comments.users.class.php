@@ -7,44 +7,44 @@
 **/
 
 class tadmincomusers extends tadminmenu {
-
+  
   public static function i($id = 0) {
     return parent::iteminstance(__class__, $id);
   }
-
+  
   public function getcontent() {
     $result = '';
-$this->basename = 'authors';
+    $this->basename = 'authors';
     $users = tusers::i();
     $lang = $this->lang;
     $html = $this->html;
-
-      if ('delete' == $this->action) {
-        $id = $this->idget();
-if (!$users->itemexists($id)) return $this->notfound();
-          if (!$this->confirmed) return $html->confirmdelete($id, $this->adminurl, $lang->confirmdelete);
-          if (!$this->deleteauthor($id)) return $this->notfount;
-          $result .= $html->h4->deleted;
-}
-
+    
+    if ('delete' == $this->action) {
+      $id = $this->idget();
+      if (!$users->itemexists($id)) return $this->notfound();
+      if (!$this->confirmed) return $html->confirmdelete($id, $this->adminurl, $lang->confirmdelete);
+      if (!$this->deleteauthor($id)) return $this->notfount;
+      $result .= $html->h4->deleted;
+    }
+    
     $args = new targs();
     $perpage = 20;
     $total = $users->db->getcount("status = 'comuser'");
     $from = $this->getfrom($perpage, $total);
     $res = $users->db->query("select * from $users->thistable where status = 'comuser' order by id desc limit $from, $perpage");
     $items = litepublisher::$db->res2assoc($res);
-
+    
     $result .= sprintf($html->h4->listhead, $from, $from + count($items), $total);
     $args->tablehead = $html->header();
     $args->adminurl = $this->adminurl;
-$args->editurl = tadminhtml::getadminlink('/admin/users/', 'id');
-$tablebody = '';
+    $args->editurl = tadminhtml::getadminlink('/admin/users/', 'id');
+    $tablebody = '';
     foreach ($items as $id => $item) {
       $args->add($item);
       $tablebody .= $html->item($args);
     }
-
-$args->tablebody = $tablebody;
+    
+    $args->tablebody = $tablebody;
     $result .= $html->table($args);
     
     $theme = ttheme::i();
@@ -89,26 +89,26 @@ $args->tablebody = $tablebody;
   }
   
   public function processform() {
-return '';
+    return '';
     $result = '';
-      if (isset($_REQUEST['action']) && $_REQUEST['action'] == 'edit') {
-        $id = $this->idget();
-        $subscribers = tsubscribers::i();
-        $subscribed = $subscribers->getposts($id);
-        $checked = array();
-        foreach ($_POST as $idpost => $value) {
-          if (!is_numeric($idpost))  continue;
-          $checked [] = $idpost;
-        }
-        $unsub = array_diff($subscribed, $checked);
-        if (count($unsub)) {
-          foreach ($unsub as $idpost) {
-            $subscribers->delete($idpost, $id);
-          }
-        }
-        
-        $result =  $this->html->h2->authoredited;
+    if (isset($_REQUEST['action']) && $_REQUEST['action'] == 'edit') {
+      $id = $this->idget();
+      $subscribers = tsubscribers::i();
+      $subscribed = $subscribers->getposts($id);
+      $checked = array();
+      foreach ($_POST as $idpost => $value) {
+        if (!is_numeric($idpost))  continue;
+        $checked [] = $idpost;
       }
+      $unsub = array_diff($subscribed, $checked);
+      if (count($unsub)) {
+        foreach ($unsub as $idpost) {
+          $subscribers->delete($idpost, $id);
+        }
+      }
+      
+      $result =  $this->html->h2->authoredited;
+    }
   }
   
 }//class

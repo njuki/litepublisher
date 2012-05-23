@@ -327,8 +327,8 @@ class ttheme extends tevents {
     $a = array();
     foreach ($items as $i) {
       $args->page = $i;
-$link = $i == 1 ? $url : $pageurl .$i . '/';
-if ($params) $link .= litepublisher::$site->q . $params;
+      $link = $i == 1 ? $url : $pageurl .$i . '/';
+      if ($params) $link .= litepublisher::$site->q . $params;
       $args->link = $link;
       $a[] = $this->parsearg(($i == $page ? $currenttml : $tml), $args);
     }

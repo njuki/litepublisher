@@ -115,10 +115,10 @@ class tusergroups extends titems {
       case 'moderator':
       if (($group == 'subscriber') || ($group == 'author')) return true;
       break;
-
-case 'author':
+      
+      case 'author':
       if ($group == 'commentator') return true;
-break;
+      break;
       
       case 'subeditor':
       if (in_array($group, array('author', 'subscriber', 'moderator'))) return true;

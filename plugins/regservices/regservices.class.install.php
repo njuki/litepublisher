@@ -25,7 +25,7 @@ function tregservicesInstall($self) {
   litepublisher::$classes->add('tvkontakteregservice', 'vkontakte.service.php', $name);
   
   litepublisher::$classes->add('toauth', 'oauth.class.php', $name);
-
+  
   $self->add(tgoogleregservice::i());
   $self->add(tfacebookregservice::i());
   $self->add(ttwitterregservice::i());
@@ -49,12 +49,12 @@ function tregservicesInstall($self) {
   }
   
   litepublisher::$urlmap->addget($self->url, get_class($self));
-tcommentform::i()->oncomuser = $self->oncomuser;
+  tcommentform::i()->oncomuser = $self->oncomuser;
   litepublisher::$urlmap->clearcache();
 }
 
 function tregservicesUninstall($self) {
-tcommentform::i()->unbind($self);
+  tcommentform::i()->unbind($self);
   turlmap::unsub($self);
   foreach ($self->items as $id => $classname) {
     litepublisher::$classes->delete($classname);
@@ -65,6 +65,6 @@ tcommentform::i()->unbind($self);
   
   tfiler::delete(litepublisher::$paths->data . 'regservices', true, true);
   
-    tusers::i()->unbind('tregserviceuser');
-    tdbmanager::i()->deletetable('regservices');
+  tusers::i()->unbind('tregserviceuser');
+  tdbmanager::i()->deletetable('regservices');
 }

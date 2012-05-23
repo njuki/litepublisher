@@ -39,20 +39,20 @@ class trssholdcomments extends tevents {
   }
   
   public function request($arg) {
-if (!litepublisher::$options->user) return 403;
-      $result = '<?php turlmap::sendxml(); ?>';
-      $rss = trss::i();
-      $rss->domrss = new tdomrss;
-      $this->dogetholdcomments($rss);
-      $result .= $rss->domrss->GetStripedXML();
-      return $result;
+    if (!litepublisher::$options->user) return 403;
+    $result = '<?php turlmap::sendxml(); ?>';
+    $rss = trss::i();
+    $rss->domrss = new tdomrss;
+    $this->dogetholdcomments($rss);
+    $result .= $rss->domrss->GetStripedXML();
+    return $result;
   }
   
   private function dogetholdcomments($rss) {
     $rss->domrss->CreateRoot(litepublisher::$site->url . $this->url, tlocal::get('comment', 'onrecent') . ' '. litepublisher::$site->name);
-
+    
     $db = litepublisher::$db;
-$author = litepublisher::$options->ingroup('moderator') ? '' : sprintf('%s.author = %d and ', $db->comments, litepublisher::$options->user);
+    $author = litepublisher::$options->ingroup('moderator') ? '' : sprintf('%s.author = %d and ', $db->comments, litepublisher::$options->user);
     $recent = $db->res2assoc($db->query("select $db->comments.*,
     $db->users.name as name, $db->users.email as email, $db->users.website as website,
     $db->posts.title as title, $db->posts.commentscount as commentscount,
@@ -62,7 +62,7 @@ $author = litepublisher::$options->ingroup('moderator') ? '' : sprintf('%s.autho
     $db->users.id = $db->comments.author and
     $db->posts.id = $db->comments.post and
     $db->urlmap.id = $db->posts.idurl and
-    $db->posts.status = 'published' 
+    $db->posts.status = 'published'
     order by $db->comments.posted desc limit $this->count"));
     
     $title = tlocal::get('comment', 'onpost') . ' ';
@@ -75,12 +75,12 @@ $author = litepublisher::$options->ingroup('moderator') ? '' : sprintf('%s.autho
       $html->section = 'comments';
       $tml = $html->rsstemplate;
     }
-
+    
     $tml = str_replace('$adminurl', '/admin/comments/'. litepublisher::$site->q . 'id=$comment.id&action', $tml);
     $lang = tlocal::admin('comments');
-
+    
     foreach ($recent  as $item) {
-if ($item['website']) $item['website'] = sprintf('<a href="%1$s">%1$s</a>', $item['website']);
+      if ($item['website']) $item['website'] = sprintf('<a href="%1$s">%1$s</a>', $item['website']);
       $comment->array = $item;
       $comment->content = $theme->parse($tml);
       $rss->AddRSSComment($comment, $title . $comment->title);

@@ -9,11 +9,11 @@
 function trssholdcommentsInstall($self) {
   $self->idurl = litepublisher::$urlmap->add($self->url, get_class($self), null, 'usernormal');
   $self->save();
-
-tcomments::i()->changed = $self->commentschanged;
+  
+  tcomments::i()->changed = $self->commentschanged;
 }
 
 function trssholdcommentsUninstall($self) {
   turlmap::unsub($self);
-tcomments::i()->unbind($self);
+  tcomments::i()->unbind($self);
 }

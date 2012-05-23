@@ -8,7 +8,7 @@
 
 class tadminreguser extends tadminform {
   private $regstatus;
-private $backurl;
+  private $backurl;
   
   public static function i() {
     return getinstance(__class__);
@@ -35,68 +35,68 @@ private $backurl;
       return $auth->auth();
     }
   }
-
+  
   public function request($arg) {
     if (!litepublisher::$options->usersenabled || !litepublisher::$options->reguser) return 403;
-parent::request($arg);
-
-if (!empty($_GET['confirm'])) {
-$confirm = $_GET['confirm'];
+    parent::request($arg);
+    
+    if (!empty($_GET['confirm'])) {
+      $confirm = $_GET['confirm'];
       $email = $_GET['email'];
-    tsession::start('reguser-' . md5($email));
+      tsession::start('reguser-' . md5($email));
       if (!isset($_SESSION['email']) || ($email != $_SESSION['email']) || ($confirm != $_SESSION['confirm'])) {
         if (!isset($_SESSION['email'])) session_destroy();
-$this->regstatus = 'error';
-return;
+        $this->regstatus = 'error';
+        return;
       }
-
-$this->backurl = $_SESSION['backurl'];
-
-    $users = tusers::i();    
-    $id = $users->add(array(
-    'password' => $_SESSION['password'],
-    'name' => $_SESSION['name'],
-    'email' => $_SESSION['email']
-    ));
-
-        session_destroy();
-if ($id) {
-$this->regstatus = 'ok';
-    $expired = time() + 1210000;
-    $cookie = md5uniq();
-    litepublisher::$options->user = $id;
-litepublisher::$options->updategroup();
-    litepublisher::$options->setcookies($cookie, $expired);
-} else {
-$this->regstatus = 'error';
-}
-}
+      
+      $this->backurl = $_SESSION['backurl'];
+      
+      $users = tusers::i();
+      $id = $users->add(array(
+      'password' => $_SESSION['password'],
+      'name' => $_SESSION['name'],
+      'email' => $_SESSION['email']
+      ));
+      
+      session_destroy();
+      if ($id) {
+        $this->regstatus = 'ok';
+        $expired = time() + 1210000;
+        $cookie = md5uniq();
+        litepublisher::$options->user = $id;
+        litepublisher::$options->updategroup();
+        litepublisher::$options->setcookies($cookie, $expired);
+      } else {
+        $this->regstatus = 'error';
+      }
+    }
   }
   
   public function getcontent() {
-$result = '';
+    $result = '';
     $html = $this->html;
-$lang = tlocal::admin('users');
+    $lang = tlocal::admin('users');
     if ($this->logged) return $html->logged();
     
     $args = targs::i();
-
-if ($this->regstatus) {
-switch ($this->regstatus) {
-case 'ok':
-if (!$this->backurl) $this->backurl =  tusergroups::i()->gethome(litepublisher::$options->group);
-if (!strbegin($this->backurl, 'http://')) $this->backurl = litepublisher::$site->url . $this->backurl;
-$args->backurl = $this->backurl;
-    return $html->successreg($args);
-
-case 'mail':
-return $html->h4->waitconfirm;
-
-case 'error':
-$result .= $html->h4->invalidregdata;
-} 
-}
-
+    
+    if ($this->regstatus) {
+      switch ($this->regstatus) {
+        case 'ok':
+        if (!$this->backurl) $this->backurl =  tusergroups::i()->gethome(litepublisher::$options->group);
+        if (!strbegin($this->backurl, 'http://')) $this->backurl = litepublisher::$site->url . $this->backurl;
+        $args->backurl = $this->backurl;
+        return $html->successreg($args);
+        
+        case 'mail':
+        return $html->h4->waitconfirm;
+        
+        case 'error':
+        $result .= $html->h4->invalidregdata;
+      }
+    }
+    
     $form = '';
     foreach (array('email', 'name') as $name) {
       $args->$name = isset($_POST[$name]) ? $_POST[$name] : '';
@@ -109,46 +109,46 @@ $result .= $html->h4->invalidregdata;
     if (isset($_GET['backurl'])) $result = str_replace(array('&backurl=', '&amp;backurl='),
     '&amp;backurl=' . urlencode($_GET['backurl']), $result);
     $result .= $html->adminform($form, $args);
-$result = str_replace(' action=""',' action="' . litepublisher::$site->url . '/admin/reguser/"', $result);
+    $result = str_replace(' action=""',' action="' . litepublisher::$site->url . '/admin/reguser/"', $result);
     $this->callevent('oncontent', array(&$result));
     return $result;
   }
   
   public function processform() {
-$this->regstatus = 'error';
+    $this->regstatus = 'error';
     extract($_POST, EXTR_SKIP);
-$email = strtolower(trim($email));
+    $email = strtolower(trim($email));
     if (!tcontentfilter::ValidateEmail($email)) return sprintf('<p><strong>%s</strong></p>', tlocal::get('comment', 'invalidemail'));
     $users = tusers::i();
     if ($id = $users->emailexists($email)) {
-if ('comuser' != $users->getvalue($id, 'status')) return $this->html->h4->invalidregdata;
-}
-
+      if ('comuser' != $users->getvalue($id, 'status')) return $this->html->h4->invalidregdata;
+    }
+    
     tsession::start('reguser-' . md5($email));
-$_SESSION['email'] = $email;
-$_SESSION['name'] = $name;
-$confirm = md5(mt_rand() . litepublisher::$secret. microtime());
+    $_SESSION['email'] = $email;
+    $_SESSION['name'] = $name;
+    $confirm = md5(mt_rand() . litepublisher::$secret. microtime());
     $_SESSION['confirm'] = $confirm;
     $password = md5uniq();
-$_SESSION['password'] = $password;
-$_SESSION['backurl'] = isset($_GET['backurl']) ? $_GET['backurl'] : '';
-      session_write_close();
-
+    $_SESSION['password'] = $password;
+    $_SESSION['backurl'] = isset($_GET['backurl']) ? $_GET['backurl'] : '';
+    session_write_close();
+    
     $args = new targs();
     $args->name = $name;
-$args->email = $email;
-$args->confirm = $confirm;
+    $args->email = $email;
+    $args->confirm = $confirm;
     $args->password = $password;
     $args->confirmurl = litepublisher::$site->url . '/admin/reguser/' . litepublisher::$site->q . 'email=' . urlencode($email);
-
+    
     $mailtemplate = tmailtemplate::i($this->section);
     $subject = $mailtemplate->subject($args);
     $body = $mailtemplate->body($args);
-
+    
     tmailer::sendmail(litepublisher::$site->name, litepublisher::$options->fromemail,
     $name, $email, $subject, $body);
-
-$this->regstatus = 'mail';
-}
-
+    
+    $this->regstatus = 'mail';
+  }
+  
 }//class

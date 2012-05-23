@@ -59,7 +59,7 @@ class tpost extends titem implements  itemplate {
     $this->table = 'posts';
     //last binding, like cache
     $this->childtable = call_user_func_array(array(get_class($this), 'getchildtable'), array());
-
+    
     $this->data= array(
     'id' => 0,
     'idview' => 1,
@@ -95,8 +95,8 @@ class tpost extends titem implements  itemplate {
     'pagescount' => 0,
     'pages' => array()
     );
-
-    $this->data['childdata'] = &$this->childdata;    
+    
+    $this->data['childdata'] = &$this->childdata;
     $this->factory = litepublisher::$classes->getfactory($this);
     $posts = $this->factory->posts;
     foreach ($posts->itemcoclasses as $class) {

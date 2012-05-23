@@ -51,7 +51,7 @@ class tjsonserver extends titems {
   }
   
   public function request($param) {
-//sleep(20);
+    //sleep(20);
     //$this->addevent('comments_get_hold', 'tjsoncomments', 'comments_get_hold');
     $this->beforerequest();
     if (isset($_GET['method'])) {
@@ -77,10 +77,10 @@ class tjsonserver extends titems {
     $this->callevent('beforecall', $a);
     
     try {
-//tfiler::log(var_export($_GET, true));
+      //tfiler::log(var_export($_GET, true));
       //tfiler::log(var_export($args, true));
       $result = $this->callevent($method, $a);
-//dumpvar($result);
+      //dumpvar($result);
       //tfiler::log(var_export($result, true));
     } catch (Exception $e) {
       if (403 == $e->getCode()) {

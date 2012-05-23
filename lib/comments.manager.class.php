@@ -29,7 +29,7 @@ class tcommentmanager extends tevents_storage {
     'email' => strtolower(trim($email)),
     'name' => $name,
     'website' => tcontentfilter::clean_website($website),
-'status' => 'comuser',
+    'status' => 'comuser',
     'idgroups' => 'commentator'
     ));
     
@@ -126,7 +126,7 @@ class tcommentmanager extends tevents_storage {
   
   public function request($arg) {
     $id = isset($_GET['id']) ? (int) $_GET['id'] : 1;
-$users = tusers::i();
+    $users = tusers::i();
     if (!$users->itemexists($id)) return "<?php litepublisher::$urlmap->redir('/');";;
     $item = $users->getitem($id);
     $url = $item['website'];
@@ -134,5 +134,5 @@ $users = tusers::i();
     if (!strbegin($url, 'http://')) $url = 'http://' . $url;
     return "<?php litepublisher::$urlmap->redir('$url');";
   }
-
+  
 }//class

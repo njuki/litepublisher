@@ -54,10 +54,10 @@ class ttemplatecomments extends tevents {
         $result .= '<?php } ?>';
         
         $mesg = $this->logged;
-if ($cm->canedit || $cm->candelete) $mesg .= "\n" . $this->adminpanel;
-          $args->mesg = $this->fixmesg($mesg, $theme);
+        if ($cm->canedit || $cm->candelete) $mesg .= "\n" . $this->adminpanel;
+        $args->mesg = $this->fixmesg($mesg, $theme);
         $result .= $theme->parsearg($theme->templates['content.post.templatecomments.regform'], $args);
-$result .= $this->getjs(($post->idperm == 0) && $cm->confirmlogged, 'logged');
+        $result .= $this->getjs(($post->idperm == 0) && $cm->confirmlogged, 'logged');
       $result .= '<?php } else { ?>';
         
         switch ($post->comstatus) {
@@ -69,7 +69,7 @@ $result .= $this->getjs(($post->idperm == 0) && $cm->confirmlogged, 'logged');
           break;
           
           case 'guest':
-$result .= $this->getjs(($post->idperm == 0) && $cm->confirmguest, 'guest');
+          $result .= $this->getjs(($post->idperm == 0) && $cm->confirmguest, 'guest');
           $mesg = $this->guest;
           if (litepublisher::$options->reguser) $mesg .= "\n" . $this->regaccount;
           $args->mesg = $this->fixmesg($mesg, $theme);
@@ -77,7 +77,7 @@ $result .= $this->getjs(($post->idperm == 0) && $cm->confirmguest, 'guest');
           break;
           
           case 'comuser':
-$result .= $this->getjs(($post->idperm == 0) && $cm->confirmcomuser, 'comuser');
+          $result .= $this->getjs(($post->idperm == 0) && $cm->confirmcomuser, 'comuser');
           $mesg = $this->comuser;
           if (litepublisher::$options->reguser) $mesg .= "\n" . $this->regaccount;
           $args->mesg = $this->fixmesg($mesg, $theme);
@@ -104,28 +104,30 @@ $result .= $this->getjs(($post->idperm == 0) && $cm->confirmcomuser, 'comuser');
     return $theme->parse(str_replace('backurl=', 'backurl=' . urlencode(litepublisher::$urlmap->url),
     str_replace('&backurl=', '&amp;backurl=', $mesg)));
   }
-
-public function getjs($confirmcomment, $logstatus) {
-$cm = tcommentmanager::i();
-        $result = sprintf('<script type="text/javascript">
-ltoptions.theme.comments = $.extend(true, ltoptions.theme.comments, %s%s);
-</script>',
- json_encode(array(
-'confirmcomment' => $confirmcomment,
-'comuser' => 'comuser' == $logstatus,
-        'canedit' => $cm->canedit,
-        'candelete' => $cm->candelete,
-        )),
-$logstatus == 'logged' ? ', {ismoder: <?php echo ($ismoder ? \'true\' : \'false\'); ?>}' : '');
-
-$template = ttemplate::I();
-        $result .= $template->getjavascript($template->jsmerger_comments);
-
-        $result .= $template->getjavascript('/js/litepublisher/confirmcomment.js');
-        $result .= $template->getjavascript($template->jsmerger_moderate);
-        $result .= $template->getjavascript('/js/litepublisher/moderate.js');
-
-return  $result;
-}
+  
+  public function getjs($confirmcomment, $logstatus) {
+    $cm = tcommentmanager::i();
+    $result = sprintf('<script type="text/javascript">
+    ltoptions.theme.comments = $.extend(true, ltoptions.theme.comments, %s%s);
+    </script>',
+    json_encode(array(
+    'confirmcomment' => $confirmcomment,
+    'comuser' => 'comuser' == $logstatus,
+    'canedit' => $cm->canedit,
+    'candelete' => $cm->candelete,
+    )),
+  $logstatus == 'logged' ? ', {ismoder: <?php echo ($ismoder ? \'true\' : \'false\'); ?>}' : '');
+    
+    $template = ttemplate::I();
+    $result .= $template->getjavascript($template->jsmerger_comments);
+    return  $result;
+    /*
+    $result .= $template->getjavascript('/js/litepublisher/confirmcomment.js');
+    $result .= $template->getjavascript($template->jsmerger_moderate);
+    $result .= $template->getjavascript('/js/litepublisher/moderate.js');
+    
+    return  $result;
+    */
+  }
   
 } //class

@@ -146,8 +146,8 @@ class toptions extends tevents_storage {
     } catch (Exception $e) {
       return false;
     }
-
-if ('hold' == $item['status']) return false;    
+    
+    if ('hold' == $item['status']) return false;
     return ($cookie == $item['cookie']) && (strtotime($item['expired']) > time());
   }
   

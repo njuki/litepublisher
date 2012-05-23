@@ -22,22 +22,22 @@ class toauth extends tdata {
     $this->token = '';
     $this->tokensecret = '';
     $this->timeout = 2;
-$this->urllist= array(
+    $this->urllist= array(
     'request' => 'https://api.twitter.com/oauth/request_token',
     'authorize' => 'https://api.twitter.com/oauth/authorize',
     'access' => 'https://api.twitter.com/oauth/access_token',
     //'callback' => litepublisher::$site->url . '/twitter-oauth1callback.php'
-'callback' => ''
+    'callback' => ''
     );
   }
   
   //to override in child classes
-public function settokens($token, $secret) {
-$this->token = $token;
-$this->tokensecret  = $secret;
-return $token && $secret;
-}
-
+  public function settokens($token, $secret) {
+    $this->token = $token;
+    $this->tokensecret  = $secret;
+    return $token && $secret;
+  }
+  
   public function getkeys() {
     return array();
   }
@@ -46,7 +46,7 @@ return $token && $secret;
     return array();
   }
   
-    private function getsign($keys, $url, $method='GET'){
+  private function getsign($keys, $url, $method='GET'){
     $parsed = parse_url($url);
     if (isset($parsed['query'])){
       parse_str($parsed['query'], $query);
@@ -205,19 +205,19 @@ return $token && $secret;
   public function getrequesttoken() {
     $keys = $this->getkeys();
     if ($tokens = $this->get_token($keys)) {
-return $tokens;
-/*
+      return $tokens;
+      /*
       $keys['oauth_token'] = $tokens['oauth_token'];
       if ($this->getaccess($keys)) return true;
-*/
+      */
     }
     return false;
   }
-
-public function get_authorize_url() {
-      return $this->urllist['authorize'] . sprintf('?oauth_token=%s&&oauth_callback=%s',
-      rawurlencode($this->token), rawurlencode($this->urllist['callback']));
-}
+  
+  public function get_authorize_url() {
+    return $this->urllist['authorize'] . sprintf('?oauth_token=%s&&oauth_callback=%s',
+    rawurlencode($this->token), rawurlencode($this->urllist['callback']));
+  }
   
   public function getaccesstoken() {
     $keys = $this->getkeys();
@@ -230,9 +230,9 @@ public function get_authorize_url() {
   
   public function postdata($postdata, $url) {
     $keys = array(
-'oauth_token' => $this->token
-);
-
+    'oauth_token' => $this->token
+    );
+    
     $authorization = $this->getauthorization($keys, $url);
     $headers = array(
     'Authorization: OAuth '. $authorization,
@@ -261,7 +261,7 @@ public function get_authorize_url() {
   public function get_data($url) {
     $keys = $this->getkeys();
     $keys['oauth_token'] = $this->token;
-return http::get($this->get_url($keys, $url));
-}
-
+    return http::get($this->get_url($keys, $url));
+  }
+  
 }//class

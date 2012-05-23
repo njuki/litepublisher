@@ -61,17 +61,17 @@ class Tadmincommentmanager extends tadminmenu {
     [checkbox=redir]
     [checkbox=nofollow]
     ');
-   
-$rss =  trssholdcomments::i();
-$args->rsscount = $rss->count;
-$args->rsstemplate = $rss->template;
-
+    
+    $rss =  trssholdcomments::i();
+    $args->rsscount = $rss->count;
+    $args->rsstemplate = $rss->template;
+    
     $tabs->add($lang->holdrss, '
-<h4><a href="$site.url/rss/holdcomments.xml">$lang.holdrss</a></h4>
-[text=rsscount]
-[editor=rsstemplate]
-');
-
+    <h4><a href="$site.url/rss/holdcomments.xml">$lang.holdrss</a></h4>
+    [text=rsscount]
+    [editor=rsstemplate]
+    ');
+    
     $args->canedit = $cm->canedit;
     $args->candelete = $cm->candelete;
     $args->confirmlogged = $cm->confirmlogged;
@@ -89,10 +89,10 @@ $args->rsstemplate = $rss->template;
     ');
     
     $args->sendnotification = $cm->sendnotification;
-$args->comuser_subscribe = $cm->comuser_subscribe;
+    $args->comuser_subscribe = $cm->comuser_subscribe;
     $args->defaultsubscribe = $options->defaultsubscribe;
-$useroptions = tuseroptions::i();
-$args->authorpost_subscribe = $useroptions->defvalues['authorpost_subscribe'] == 'enabled';
+    $useroptions = tuseroptions::i();
+    $args->authorpost_subscribe = $useroptions->defvalues['authorpost_subscribe'] == 'enabled';
     $subscribe = tsubscribers::i();
     $args->locklist = $subscribe->locklist;
     $args->subscribe_enabled = $subscribe->enabled;
@@ -102,14 +102,14 @@ $args->authorpost_subscribe = $useroptions->defvalues['authorpost_subscribe'] ==
     [checkbox=sendnotification]
     [checkbox=defaultsubscribe]
     [checkbox=subscribe_enabled]
-[checkbox=authorpost_subscribe]
-[checkbox=comuser_subscribe]
-');
-
+    [checkbox=authorpost_subscribe]
+    [checkbox=comuser_subscribe]
+    ');
+    
     $tab->add($lang->locklist, '[editor=locklist]');
     
     $tabs->add($lang->subscribe, $tab->get());
-
+    
     $mesgtabs = new tuitabs();
     $tc = ttemplatecomments::i();
     foreach (array('logged', 'reqlogin', 'regaccount', 'guest', 'comuser', 'loadhold') as $name) {
@@ -132,11 +132,11 @@ $args->authorpost_subscribe = $useroptions->defvalues['authorpost_subscribe'] ==
     $options->commentsapproved = isset($commentsapproved);
     $options->checkduplicate = isset($checkduplicate);
     $options->defaultsubscribe = isset($defaultsubscribe);
-$useroptions = tuseroptions::i();
-$useroptions->defvalues['subscribe'] = $options->defaultsubscribe;
-$useroptions->defvalues['authorpost_subscribe'] = isset($authorpost_subscribe) ? 'enabled' : 'disabled';
-$useroptions->save();
-
+    $useroptions = tuseroptions::i();
+    $useroptions->defvalues['subscribe'] = $options->defaultsubscribe;
+    $useroptions->defvalues['authorpost_subscribe'] = isset($authorpost_subscribe) ? 'enabled' : 'disabled';
+    $useroptions->save();
+    
     $options->commentsdisabled  = isset($commentsdisabled);
     $options->pingenabled  = isset($pingenabled);
     $options->commentpages  = isset($commentpages);
@@ -147,8 +147,8 @@ $useroptions->save();
     $cm->hidelink =  isset($hidelink);
     $cm->redir = isset($redir);
     $cm->nofollow = isset($nofollow);
-
-$cm->comuser_subscribe = isset($comuser_subscribe);
+    
+    $cm->comuser_subscribe = isset($comuser_subscribe);
     
     $cm->unlock();
     
@@ -157,17 +157,17 @@ $cm->comuser_subscribe = isset($comuser_subscribe);
       $tc->$name = $_POST[$name];
     }
     $tc->save();
-
+    
     $subscr = tsubscribers::i();
     $subscr->lock();
     $subscr->locklist = $locklist;
     $subscr->enabled = isset($subscribe_enabled);
     $subscr->unlock();
     
-$rss =  trssholdcomments::i();
-$rss->count = rsscount;
-$rss->template = rsstemplate;
-$rss->save();
+    $rss =  trssholdcomments::i();
+    $rss->count = rsscount;
+    $rss->template = rsstemplate;
+    $rss->save();
   }
-
+  
 }//class

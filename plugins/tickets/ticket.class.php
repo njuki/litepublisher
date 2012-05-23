@@ -122,7 +122,7 @@ class tticket extends tpost {
     
     $lang = tlocal::i('ticket');
     $content = sprintf($lang->statechanged, $lang->$old, $lang->$state);
-
+    
     $this->comments->add($this->id, ttickets::i()->idcomauthor,  $content, 'approved', '');
     //$this->commentscount = $this->comments->db->getcount("post = $this->id and status = 'approved'");
   }

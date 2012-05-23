@@ -54,7 +54,7 @@ class tadminplugins extends tadminmenu {
       $result .= $html->formhead();
       $args = targs::i();
       foreach ($this->names as $name) {
-if (in_array($name, $plugins->deprecated)) continue;
+        if (in_array($name, $plugins->deprecated)) continue;
         $about = tplugins::getabout($name);
         $args->add($about);
         $args->name = $name;

@@ -103,7 +103,7 @@ class turlmap extends titems {
     return $this->items[$id]['url'];
   }
   
-    public function findurl($url) {
+  public function findurl($url) {
     if ($result = $this->db->finditem('url = '. dbquote($url))) return $result;
     return false;
   }
@@ -162,22 +162,22 @@ class turlmap extends titems {
   
   private function getcachefile(array $item) {
     if (!$this->cachefilename) {
-switch ($item['type']) {
-case 'normal':
+      switch ($item['type']) {
+        case 'normal':
         $this->cachefilename =  sprintf('%s-%d.php', $item['id'], $this->page);
-break;
-
-case 'usernormal':
+        break;
+        
+        case 'usernormal':
         $this->cachefilename =  sprintf('%s-page-%d-user-%d.php', $item['id'], $this->page, litepublisher::$options->user);
-break;
-
-case 'userget':
+        break;
+        
+        case 'userget':
         $this->cachefilename = sprintf('%s-page-%d-user%d-get-%s.php', $item['id'], $this->page, litepublisher::$options->user, md5($_SERVER['REQUEST_URI']));
-break;
-
-default: //get
+        break;
+        
+        default: //get
         $this->cachefilename = sprintf('%s-%d-%s.php', $item['id'], $this->page, md5($_SERVER['REQUEST_URI']));
-break;
+        break;
       }
     }
     return litepublisher::$paths->cache . $this->cachefilename;
@@ -192,7 +192,7 @@ break;
         return;
       }
     }
-
+    
     if (class_exists($item['class']))  {
       return $this->GenerateHTML($item);
     } else {
@@ -217,9 +217,9 @@ break;
   }
   
   protected function GenerateHTML(array $item) {
-$context = $this->getcontext($item);
+    $context = $this->getcontext($item);
     $this->context  = $context;
-
+    
     //special handling for rss
     if (method_exists($context, 'request') && ($s = $context->request($item['arg']))) {
       switch ($s) {
@@ -282,7 +282,7 @@ $context = $this->getcontext($item);
   public function add($url, $class, $arg, $type = 'normal') {
     if (empty($url)) $this->error('Empty url to add');
     if (empty($class)) $this->error('Empty class name of adding url');
-    if (!in_array($type, array('normal','get','tree'))) $this->error(sprintf('Invalid url type %s', $type));
+    if (!in_array($type, array('normal','get','tree', 'usernormal', 'userget'))) $this->error(sprintf('Invalid url type %s', $type));
     
     if ($item = $this->db->finditem('url = ' . dbquote($url))) $this->error(sprintf('Url "%s" already exists', $url));
     $item= array(
@@ -446,12 +446,12 @@ $context = $this->getcontext($item);
     if (!strbegin($url, 'http://')) $url = litepublisher::$site->url . $url;
     header('Location: ' . $url);
   }
-
+  
   public function seturlvalue($url, $name, $value) {
-if ($id = $this->urlexists($url)) {
-$this->setvalue($id, $name, $value);
-}
-}
+    if ($id = $this->urlexists($url)) {
+      $this->setvalue($id, $name, $value);
+    }
+  }
   
   public function setidurl($id, $url) {
     $this->db->setvalue($id, 'url', $url);

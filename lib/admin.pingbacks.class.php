@@ -13,40 +13,40 @@ class tadminpingbacks extends tadminmenu {
   }
   
   public function getcontent() {
-   $result = '';
-        $pingbacks = tpingbacks::i();
+    $result = '';
+    $pingbacks = tpingbacks::i();
     $lang = $this->lang;
     $html = $this->html;
     
-      if ($action = $this->action) {
-        $id = $this->idget();
-        if (!$pingbacks->itemexists($id)) return $this->notfound;
-        switch($action) {
-          case 'delete':
-          if(!$this->confirmed) return $this->html->confirmdelete($id, $this->adminurl, $lang->confirmdelete );
-          $pingbacks->delete($id);
-          $result .= $html->h4->successmoderated;
-          break;
-          
-          case 'hold':
-          $pingbacks->setstatus($id, false);
-          $result .= $html->h2->successmoderated;
-          break;
-          
-          case 'approve':
-          $pingbacks->setstatus($id, true);
-          $result .= $html->h2->successmoderated;
-          break;
-          
-          case 'edit':
-          $result .= $this->editpingback($id);
-          break;
-        }
+    if ($action = $this->action) {
+      $id = $this->idget();
+      if (!$pingbacks->itemexists($id)) return $this->notfound;
+      switch($action) {
+        case 'delete':
+        if(!$this->confirmed) return $this->html->confirmdelete($id, $this->adminurl, $lang->confirmdelete );
+        $pingbacks->delete($id);
+        $result .= $html->h4->successmoderated;
+        break;
+        
+        case 'hold':
+        $pingbacks->setstatus($id, false);
+        $result .= $html->h2->successmoderated;
+        break;
+        
+        case 'approve':
+        $pingbacks->setstatus($id, true);
+        $result .= $html->h2->successmoderated;
+        break;
+        
+        case 'edit':
+        $result .= $this->editpingback($id);
+        break;
       }
-      $result .= $this->getpingbackslist();
-      return $result;
-}
-
+    }
+    $result .= $this->getpingbackslist();
+    return $result;
+  }
+  
   private function getpingbackslist() {
     $result = '';
     $pingbacks = tpingbacks::i();
@@ -86,26 +86,26 @@ class tadminpingbacks extends tadminmenu {
     $args->add($pingbacks->getitem($id));
     return $this->html->pingbackedit($args);
   }
-
+  
   public function processform() {
-      $pingbacks = tpingbacks::i();
-      if (isset($_REQUEST['action']) && $_REQUEST['action'] == 'edit') {
-        extract($_POST, EXTR_SKIP);
-        $pingbacks->edit($this->idget(), $title, $url);
-      } else {
-        $status = isset($_POST['approve']) ? 'approve' : (isset($_POST['hold']) ? 'hold' : 'delete');
-        foreach ($_POST as $id => $value) {
-          if (!is_numeric($id))  continue;
-          $id = (int) $id;
-          if ($status == 'delete') {
-            $pingbacks->delete($id);
-          } else {
-            $pingbacks->setstatus($id, $status == 'approve');
-          }
+    $pingbacks = tpingbacks::i();
+    if (isset($_REQUEST['action']) && $_REQUEST['action'] == 'edit') {
+      extract($_POST, EXTR_SKIP);
+      $pingbacks->edit($this->idget(), $title, $url);
+    } else {
+      $status = isset($_POST['approve']) ? 'approve' : (isset($_POST['hold']) ? 'hold' : 'delete');
+      foreach ($_POST as $id => $value) {
+        if (!is_numeric($id))  continue;
+        $id = (int) $id;
+        if ($status == 'delete') {
+          $pingbacks->delete($id);
+        } else {
+          $pingbacks->setstatus($id, $status == 'approve');
         }
       }
-
-return $this->html->h4->successmoderated;
-}
-
+    }
+    
+    return $this->html->h4->successmoderated;
+  }
+  
 }//class

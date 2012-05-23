@@ -9,12 +9,12 @@
 function set_comments_lang($self) {
   $lang = tlocal::admin('comments');
   $self->addtext('comments', 'lang',
-sprintf('var lang = $.extend(true, lang, {
-comment: %s,
-comments: %s
-});', 
-json_encode($lang->ini['comment']),
-json_encode(array(
+  sprintf('var lang = $.extend(true, lang, {
+    comment: %s,
+    comments: %s
+  });',
+  json_encode($lang->ini['comment']),
+  json_encode(array(
   'del' => $lang->delete,
   'edit' => $lang->edit,
   'approve' => $lang->approve,
@@ -27,7 +27,7 @@ json_encode(array(
   'errorrecieved' => $lang->errorrecieved,
   'notedited' => $lang->notedited,
   ))
-));
+  ));
 }
 
 function tjsmergerInstall($self) {
@@ -62,7 +62,7 @@ function tjsmergerInstall($self) {
   
   $section = 'comments';
   $self->add($section, '/js/litepublisher/comments.min.js');
-    $self->add($section, '/js/litepublisher/confirmcomment.min.js');
+  $self->add($section, '/js/litepublisher/confirmcomment.min.js');
   $self->add($section, '/js/litepublisher/moderate.min.js');
   set_comments_lang($self);
   
@@ -75,12 +75,12 @@ $js = "var lang;\nif (lang == undefined) lang = {};\n";
   $lang = tlocal::admin();
   $self->addtext('default', 'widgetlang', $js . sprintf('lang.widgetlang= %s;',  json_encode($widgetlang)));
   $self->addtext('default', 'dialog', $js . sprintf('lang.dialog = %s;',  json_encode(
-array(
+  array(
   'error' => $lang->error,
   'confirm' => $lang->confirm
   )
-)));
-
+  )));
+  
   $self->unlock();
   
   $template = ttemplate::i();

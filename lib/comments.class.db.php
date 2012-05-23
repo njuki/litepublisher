@@ -241,6 +241,7 @@ class tcomment extends tdata {
   public function setid($id) {
     $comments = tcomments::i();
     $this->data = $comments->getitem($id);
+    if (!isset($this->data['name'])) $this->data = $this->data + tusers::i()->getitem($this->data['author']);
   }
   
   public function save() {

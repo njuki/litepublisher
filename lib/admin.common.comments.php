@@ -60,7 +60,7 @@ class tadmincommoncomments extends tadminmenu {
     $this->showcolumn($table->index + 1, false));
     
     $table->add(
-    '<a href="$site.url/admin/users/{$site.q}id=$comment.author&action=edit">$comment.name</a>',
+  '<a href="$site.url/admin/users/{$site.q}id=$comment.author&action=edit">$comment.name</a>',
     $lang->author,
     'left',
     $this->showcolumn($table->index + 1, true));

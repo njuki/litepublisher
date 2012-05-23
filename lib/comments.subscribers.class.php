@@ -46,28 +46,28 @@ class tsubscribers extends titemsposts {
       $this->save();
       $comments = tcomments::i();
       if ($value) {
-  tposts::i()->added = $this->postadded;
-
+        tposts::i()->added = $this->postadded;
+        
         $comments->lock();
         $comments->added = $this->sendmail;
         $comments->onapproved = $this->sendmail;
         $comments->unlock();
       } else {
         $comments->unbind($this);
-  tposts::i()->delete_event_class('added', get_class($this));
+        tposts::i()->delete_event_class('added', get_class($this));
       }
     }
   }
-
-public function postadded($idpost) {
-$post = tpost::i($idpost);
-if ($post->author <= 1) return;
-
-$useroptions = tuseroptions::i();
-if ('enabled' == $useroptions->getvalue($post->author, 'authorpost_subscribe')) {
-$this->add($idpost, $post->author);
-}
-}
+  
+  public function postadded($idpost) {
+    $post = tpost::i($idpost);
+    if ($post->author <= 1) return;
+    
+    $useroptions = tuseroptions::i();
+    if ('enabled' == $useroptions->getvalue($post->author, 'authorpost_subscribe')) {
+      $this->add($idpost, $post->author);
+    }
+  }
   
   public function getlocklist() {
     return implode("\n", $this->blacklist);
@@ -99,8 +99,8 @@ $this->add($idpost, $post->author);
     $comments = tcomments::i();
     if (!$comments->itemexists($id)) return;
     $item = $comments->getitem($id);
-      if (($item['status'] != 'approved')) return;
-
+    if (($item['status'] != 'approved')) return;
+    
     tcron::i()->add('single', get_class($this),  'cronsendmail', (int) $id);
   }
   
@@ -120,8 +120,8 @@ $this->add($idpost, $post->author);
     $subject = $mailtemplate->subscribesubj ();
     $body = $mailtemplate->subscribebody();
     $body .= "\n";
-$adminurl = litepublisher::$site->url . '/admin/subscribers/';
-   
+    $adminurl = litepublisher::$site->url . '/admin/subscribers/';
+    
     $users = tusers::i();
     $users->loaditems($subscribers);
     foreach ($subscribers as $uid) {
@@ -131,17 +131,17 @@ $adminurl = litepublisher::$site->url . '/admin/subscribers/';
       if (empty($email)) continue;
       if ($email == $comment->email) continue;
       if (in_array($email, $this->blacklist)) continue;
-
-$admin =  $adminurl;
-if ('comuser' == $user['status']) {
-$admin .= litepublisher::$site->q . 'auth=';
-if (empty($user['cookie'])) {
-$user['cookie'] = md5uniq();
-$users->setvalue($user['id'], 'cookie', $user['cookie']);
-}
-$admin .= rawurlencode($user['cookie']);
-}
-
+      
+      $admin =  $adminurl;
+      if ('comuser' == $user['status']) {
+        $admin .= litepublisher::$site->q . 'auth=';
+        if (empty($user['cookie'])) {
+          $user['cookie'] = md5uniq();
+          $users->setvalue($user['id'], 'cookie', $user['cookie']);
+        }
+        $admin .= rawurlencode($user['cookie']);
+      }
+      
       tmailer::sendmail(litepublisher::$site->name, $this->fromemail,  $user['name'], $email,
       $subject, $body . $admin);
     }

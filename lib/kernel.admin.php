@@ -168,7 +168,7 @@ public function save() { return true; }
 public function canrequest() { }
   
   protected function doprocessform() {
-    if (isset($_POST) && (count($_POST) > 0)) {
+    if (tguard::post()) {
       litepublisher::$urlmap->clearcache();
     }
     return parent::doprocessform();

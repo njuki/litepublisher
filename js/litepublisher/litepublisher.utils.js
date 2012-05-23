@@ -41,10 +41,10 @@ function get_get(name) {
       }
       if ($.isFunction(fn)) $.uiscript.done(fn);
     },
-
+    
     litejson: function(data, callback) {
-    return $.litejsontype("get", data, callback);
-},
+      return $.litejsontype("get", data, callback);
+    },
     
     litejsontype: function(type, data, callback) {
       var c = get_cookie("litepubl_user");
@@ -53,26 +53,26 @@ function get_get(name) {
         c = get_cookie("litepubl_user_id");
         if (c != '') data.litepubl_user_id = c;
       }
-if (type != "post") type = "get";
-		return $.ajax({
-			type: type,
-			url: ltoptions.url + "/admin/jsonserver.php",
-			data: data,
-			success: callback,
-			dataType: "json",
-cache: false
-		});
+      if (type != "post") type = "get";
+      return $.ajax({
+        type: type,
+        url: ltoptions.url + "/admin/jsonserver.php",
+        data: data,
+        success: callback,
+        dataType: "json",
+        cache: false
+      });
     },
-
-onEscape: function (callback) {
-    $(document).off('keydown.onEscape').on('keydown.onEscape',function(e){
-      if (e.keyCode == 27) {
-        if ($.isFunction(callback)) callback();
-        e.preventDefault();
-        $(document).off('keydown.onEscape');
-      }
-    });
-}
+    
+    onEscape: function (callback) {
+      $(document).off('keydown.onEscape').on('keydown.onEscape',function(e){
+        if (e.keyCode == 27) {
+          if ($.isFunction(callback)) callback();
+          e.preventDefault();
+          $(document).off('keydown.onEscape');
+        }
+      });
+    }
     
   });
 })( jQuery );
