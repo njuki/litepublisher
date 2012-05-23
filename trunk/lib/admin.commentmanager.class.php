@@ -165,8 +165,8 @@ class Tadmincommentmanager extends tadminmenu {
     $subscr->unlock();
     
     $rss =  trssholdcomments::i();
-    $rss->count = rsscount;
-    $rss->template = rsstemplate;
+    $rss->count = $rsscount;
+    $rss->template = $rsstemplate;
     $rss->save();
   }
   

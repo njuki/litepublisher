@@ -13,4 +13,3 @@ function tajaxposteditorInstall($self) {
 function tajaxposteditorUninstall($self) {
   turlmap::unsub($self);
 }
-?>
