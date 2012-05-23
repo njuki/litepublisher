@@ -287,4 +287,5 @@ $tickets->save();
 }
 
 litepublisher::$options->savemodified();
+ttheme::clearcache();
 }

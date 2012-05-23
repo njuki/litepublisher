@@ -55,6 +55,10 @@ class tpost extends titem implements  itemplate {
     return new $class();
   }
   
+  public function getdbversion() {
+    return true;
+  }
+  
   protected function create() {
     $this->table = 'posts';
     //last binding, like cache
