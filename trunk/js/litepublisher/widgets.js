@@ -11,7 +11,7 @@ function widget_load(node, id, sidebar) {
   if (! comment) return alert('Widget not found');
   $.get(ltoptions.url + '/getwidget.htm',
 {id: id, sidebar: sidebar, themename: ltoptions.theme.name, idurl: ltoptions.idurl},
-    function (html) {
+  function (html) {
     var content = $(html);
     $(comment).replaceWith(content);
     widget_add(node, content);
@@ -57,10 +57,10 @@ $(document).ready(function() {
     widget_inline(this);
     return false;
   });
-
-
+  
+  
   $(".inlinewidget, .ajaxwidget").each(function() {
-    var a = $('<a class="expandwidget" href="">' + lang.widgetlang.expand + '</a>');  
+    var a = $('<a class="expandwidget" href="">' + lang.widgetlang.expand + '</a>');
     $(this).append(a);
     a.one("click", function() {
       if ($(this).parent().hasClass("inlinewidget")) {
@@ -79,5 +79,5 @@ $(document).ready(function() {
     });
     
   });
-
+  
 });

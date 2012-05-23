@@ -1611,7 +1611,7 @@ class toptions extends tevents_storage {
       if (!$this->finduser($iduser, $cookie)) return false;
     } elseif ($iduser = $this->findcookie($cookie)) {
       //fix prev versions
-      if ($iiduser == 1) {
+      if ($iduser == 1) {
         $expired = $this->expired;
       } else {
         $item = tusers::i()->getitem($iduser);
@@ -1638,6 +1638,7 @@ class toptions extends tevents_storage {
       return false;
     }
     
+    if ('hold' == $item['status']) return false;
     return ($cookie == $item['cookie']) && (strtotime($item['expired']) > time());
   }
   
@@ -1981,7 +1982,6 @@ class turlmap extends titems {
     return $this->items[$id]['url'];
   }
   
-  
   public function findurl($url) {
     if ($result = $this->db->finditem('url = '. dbquote($url))) return $result;
     return false;
@@ -2041,10 +2041,22 @@ class turlmap extends titems {
   
   private function getcachefile(array $item) {
     if (!$this->cachefilename) {
-      if ($item['type'] == 'normal') {
+      switch ($item['type']) {
+        case 'normal':
         $this->cachefilename =  sprintf('%s-%d.php', $item['id'], $this->page);
-      } else {
+        break;
+        
+        case 'usernormal':
+        $this->cachefilename =  sprintf('%s-page-%d-user-%d.php', $item['id'], $this->page, litepublisher::$options->user);
+        break;
+        
+        case 'userget':
+        $this->cachefilename = sprintf('%s-page-%d-user%d-get-%s.php', $item['id'], $this->page, litepublisher::$options->user, md5($_SERVER['REQUEST_URI']));
+        break;
+        
+        default: //get
         $this->cachefilename = sprintf('%s-%d-%s.php', $item['id'], $this->page, md5($_SERVER['REQUEST_URI']));
+        break;
       }
     }
     return litepublisher::$paths->cache . $this->cachefilename;
@@ -2084,9 +2096,11 @@ class turlmap extends titems {
   }
   
   protected function GenerateHTML(array $item) {
-    $this->context = $this->getcontext($item);
+    $context = $this->getcontext($item);
+    $this->context  = $context;
+    
     //special handling for rss
-    if (method_exists($this->context, 'request') && ($s = $this->context->request($item['arg']))) {
+    if (method_exists($context, 'request') && ($s = $context->request($item['arg']))) {
       switch ($s) {
         case 404: return $this->notfound404();
         case 403: return $this->forbidden();
@@ -2094,11 +2108,11 @@ class turlmap extends titems {
     } else {
       if ($this->isredir) return;
       $template = ttemplate::i();
-      $s = $template->request($this->context);
+      $s = $template->request($context);
     }
     //dumpstr($s);
     eval('?>'. $s);
-    if ($this->cache_enabled && $this->context->cache) {
+    if ($this->cache_enabled && $context->cache) {
       $cachefile = $this->getcachefile($item);
       file_put_contents($cachefile, $s);
       chmod($cachefile, 0666);
@@ -2147,7 +2161,7 @@ class turlmap extends titems {
   public function add($url, $class, $arg, $type = 'normal') {
     if (empty($url)) $this->error('Empty url to add');
     if (empty($class)) $this->error('Empty class name of adding url');
-    if (!in_array($type, array('normal','get','tree'))) $this->error(sprintf('Invalid url type %s', $type));
+    if (!in_array($type, array('normal','get','tree', 'usernormal', 'userget'))) $this->error(sprintf('Invalid url type %s', $type));
     
     if ($item = $this->db->finditem('url = ' . dbquote($url))) $this->error(sprintf('Url "%s" already exists', $url));
     $item= array(
@@ -2312,6 +2326,12 @@ class turlmap extends titems {
     header('Location: ' . $url);
   }
   
+  public function seturlvalue($url, $name, $value) {
+    if ($id = $this->urlexists($url)) {
+      $this->setvalue($id, $name, $value);
+    }
+  }
+  
   public function setidurl($id, $url) {
     $this->db->setvalue($id, 'url', $url);
     if (isset($this->items[$id])) $this->items[$id]['url'] = $url;
@@ -2461,7 +2481,7 @@ class tusers extends titems {
     'expired' => sqldate(),
     'idgroups' => implode(',', $idgroups),
     'trust' => 0,
-    'status' => $groups->ingroup(litepublisher::$options->user, 'admin') ? 'approved' : 'wait'
+    'status' => isset($values['status']) ? $values['status'] : 'approved',
     );
     
     $id = $this->db->add($item);
@@ -2542,8 +2562,7 @@ class tusers extends titems {
   }
   
   public function approve($id) {
-    $this->db->setvalue($id, 'status', 'approved');
-    if (isset(            $this->items[$id])) $this->items[$id]['status'] = 'approved';
+    $this->setvalue($id, 'status', 'approved');
     $pages = tuserpages::i();
     if ($pages->createpage) $pages->addpage($id);
   }
@@ -2603,20 +2622,6 @@ class tusers extends titems {
     'cookie' => $cookie,
     'expired' => $expired
     ));
-  }
-  
-  public function optimize() {
-    $time = sqldate(strtotime('-1 day'));
-    $pagetable = litepublisher::$db->prefix . 'userpage';
-    $delete = $this->db->idselect("status = 'wait' and id in (select id from $pagetable where registered < '$time')");
-    if (count($delete) > 0) {
-      $this->db->delete(sprintf('id in (%s)', implode(',', $delete)));
-      $this->getdb($this->grouptable)->delete(sprintf('iduser in (%s)', implode(',', $delete)));
-      $pages = tuserpages::i();
-      foreach ($delete as $id) {
-        $pages->delete($id);
-      }
-    }
   }
   
 }//class
@@ -2730,6 +2735,10 @@ class tusergroups extends titems {
       
       case 'moderator':
       if (($group == 'subscriber') || ($group == 'author')) return true;
+      break;
+      
+      case 'author':
+      if ($group == 'commentator') return true;
       break;
       
       case 'subeditor':

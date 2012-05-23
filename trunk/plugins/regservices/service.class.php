@@ -7,8 +7,8 @@
 **/
 
 class tregservice extends tplugin {
-public $sessdata;
-public $session_id ;
+  public $sessdata;
+  public $session_id ;
   
   public static function i() {
     return getinstance(__class__);
@@ -22,8 +22,8 @@ public $session_id ;
     $this->data['url'] = '';
     $this->data['client_id'] = '';
     $this->data['client_secret'] = '';
-$this->sessdata = array();
-$this->session_id  = '';
+    $this->sessdata = array();
+    $this->session_id  = '';
   }
   
   public function getbasename() {
@@ -58,10 +58,10 @@ $this->session_id  = '';
     return $response;
   }
   
-    public function start_session() {
+  public function start_session() {
     tsession::init(1);
     session_start();
-$this->session_id  = session_id();
+    $this->session_id  = session_id();
   }
   
   //handle callback
@@ -74,7 +74,7 @@ $this->session_id  = session_id();
       session_destroy();
       return 403;
     }
-$this->sessdata = isset($_SESSION['sessdata']) ? $_SESSION['sessdata'] : array();
+    $this->sessdata = isset($_SESSION['sessdata']) ? $_SESSION['sessdata'] : array();
     session_destroy();
   }
   
@@ -82,7 +82,7 @@ $this->sessdata = isset($_SESSION['sessdata']) ? $_SESSION['sessdata'] : array()
     $this->start_session();
     $state = md5(mt_rand() . litepublisher::$secret. microtime());
     $_SESSION['state'] = $state;
-$_SESSION['sessdata'] = $this->sessdata;
+    $_SESSION['sessdata'] = $this->sessdata;
     session_write_close();
     return $state;
   }
@@ -159,14 +159,14 @@ $_SESSION['sessdata'] = $this->sessdata;
     $expired = time() + 1210000;
     $cookie = md5uniq();
     litepublisher::$options->user = $id;
-litepublisher::$options->updategroup();
+    litepublisher::$options->updategroup();
     litepublisher::$options->setcookies($cookie, $expired);
     if (litepublisher::$options->ingroup('admin')) setcookie('litepubl_user_flag', 'true', $expired, litepublisher::$site->subdir . '/', false);
-
-if (isset($this->sessdata['comuser'])) {
-return tcommentform::i()->processform($this->sessdata['comuser'], true);
-}
-
+    
+    if (isset($this->sessdata['comuser'])) {
+      return tcommentform::i()->processform($this->sessdata['comuser'], true);
+    }
+    
     if (!empty($_COOKIE['backurl'])) {
       $backurl = $_COOKIE['backurl'];
     } else {

@@ -873,7 +873,7 @@ class ttheme extends tevents {
     return $this->parse($this->templates['content.notfound']);
   }
   
-  public function getpages($url, $page, $count) {
+  public function getpages($url, $page, $count, $params = '') {
     if (!(($count > 1) && ($page >=1) && ($page <= $count)))  return '';
     $args = targs::i();
     $args->count = $count;
@@ -920,7 +920,9 @@ class ttheme extends tevents {
     $a = array();
     foreach ($items as $i) {
       $args->page = $i;
-      $args->link = $i == 1 ? $url : $pageurl .$i . '/';
+      $link = $i == 1 ? $url : $pageurl .$i . '/';
+      if ($params) $link .= litepublisher::$site->q . $params;
+      $args->link = $link;
       $a[] = $this->parsearg(($i == $page ? $currenttml : $tml), $args);
     }
     
@@ -1807,14 +1809,19 @@ class twidgetscache extends titems {
 
 //guard.class.php
 class tguard {
+  //prevent double call post()
+  private static $posted;
   
   public static function post() {
+    if (is_bool(self::$posted)) return self::$posted;
+    self::$posted = false;
     if (!isset($_POST) || (count($_POST) == 0)) return false;
     if (get_magic_quotes_gpc()) {
       foreach ($_POST as $name => $value) {
         $_POST[$name] = stripslashes($_POST[$name]);
       }
     }
+    self::$posted = true;
     return true;
   }
   

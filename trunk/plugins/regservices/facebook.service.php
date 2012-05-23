@@ -56,7 +56,7 @@ class tfacebookregservice extends tregservice {
     
     return $this->errorauth();
   }
-
+  
   protected function getadmininfo($lang) {
     return array(
     'regurl' => 'https://developers.facebook.com/apps',

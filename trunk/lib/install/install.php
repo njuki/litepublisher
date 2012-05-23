@@ -22,4 +22,3 @@ if (litepublisher::$options instanceof toptions) {
   }
 }
 exit();
-?>

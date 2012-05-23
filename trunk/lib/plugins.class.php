@@ -8,7 +8,7 @@
 
 class tplugins extends TItems {
   public static $abouts;
-public $deprecated;
+  public $deprecated;
   
   public static function i() {
     return getinstance(__class__);
@@ -18,7 +18,7 @@ public $deprecated;
     $this->dbversion = false;
     parent::create();
     $this->basename = 'plugins' . DIRECTORY_SEPARATOR  . 'index';
-$this->deprecated = array('ajaxcommentform');
+    $this->deprecated = array('ajaxcommentform');
   }
   
   public static function getabout($name) {

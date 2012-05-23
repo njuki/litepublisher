@@ -23,7 +23,7 @@ class tadminuserpages extends tadminmenu {
       $id = litepublisher::$options->user;
     }
     
-$users = tusers::i();
+    $users = tusers::i();
     if ($users->itemexists($id) && ('approved' == $users->getvalue($id, 'status'))) return $id;
     return false;
   }
@@ -54,15 +54,15 @@ $users = tusers::i();
       $tabs->add('SEO', '[text=url] [text=keywords] [text=description] [editor=head]');
     }
     $tabs->add($lang->text, '[editor=rawcontent]');
-
-$opt = tuseroptions::i()->getitem($id);
-$args->subscribe = $opt['subscribe'] == 'enabled';
-$args->authorpost_subscribe = $opt['authorpost_subscribe'] == 'enabled';
+    
+    $opt = tuseroptions::i()->getitem($id);
+    $args->subscribe = $opt['subscribe'] == 'enabled';
+    $args->authorpost_subscribe = $opt['authorpost_subscribe'] == 'enabled';
     $tabs->add($lang->options, '
-[checkbox=subscribe]
-[checkbox=authorpost_subscribe]
-');
-
+    [checkbox=subscribe]
+    [checkbox=authorpost_subscribe]
+    ');
+    
     return $html->adminform($tabs->get(), $args);
   }
   
@@ -89,10 +89,10 @@ $args->authorpost_subscribe = $opt['authorpost_subscribe'] == 'enabled';
     'name' => $name,
     'website' => tcontentfilter::clean_website($website),
     ));
-
-$useroptions = tuseroptions::i();
-$useroptions->setvalue($id, 'subscribe', isset($subscribe) ? 'enabled' : 'disabled');
-$useroptions->setvalue($id, 'authorpost_subscribe', isset($authorpost_subscribe) ? 'enabled' : 'disabled');
+    
+    $useroptions = tuseroptions::i();
+    $useroptions->setvalue($id, 'subscribe', isset($subscribe) ? 'enabled' : 'disabled');
+    $useroptions->setvalue($id, 'authorpost_subscribe', isset($authorpost_subscribe) ? 'enabled' : 'disabled');
   }
   
   public function getuserlist() {

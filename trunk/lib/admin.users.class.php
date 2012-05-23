@@ -66,23 +66,23 @@ class tadminusers extends tadminmenu {
       $tabs->add($lang->groups, tadmingroups::getgroups(array()));
       
       $result .= $html->adminform($tabs->get(), $args);
-          }
+    }
     
     //table
     $perpage = 20;
     $count = $users->count;
     $from = $this->getfrom($perpage, $count);
-$where = '';
-if (!empty($_GET['idgroup'])) {
+    $where = '';
+    if (!empty($_GET['idgroup'])) {
       $idgroup = (int) tadminhtml::getparam('idgroup', 0);
-if ($groups->itemexists($idgroup)) {
-      $grouptable = litepublisher::$db->prefix . $users->grouptable;
-      $where =  "$users->thistable.id in (select iduser from $grouptable where idgroup = $idgroup)";
-}
-}
-
-      $items = $users->select($where, " order by id desc limit $from, $perpage");
-      if (!$items) $items = array();
+      if ($groups->itemexists($idgroup)) {
+        $grouptable = litepublisher::$db->prefix . $users->grouptable;
+        $where =  "$users->thistable.id in (select iduser from $grouptable where idgroup = $idgroup)";
+      }
+    }
+    
+    $items = $users->select($where, " order by id desc limit $from, $perpage");
+    if (!$items) $items = array();
     
     $args->adminurl = $this->adminurl;
     $args->formtitle = $lang->userstable;

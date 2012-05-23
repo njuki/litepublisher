@@ -10,29 +10,29 @@
 function installoptions($email, $language) {
   $options = toptions::i();
   $options->lock();
-  if (dbversion) {
-    $usehost = isset($_REQUEST['usehost']) ? ($_REQUEST['usehost'] == '1') : false;
-    $options->data['dbconfig'] = array(
-    'driver' => 'mysql',
-    'host' => $usehost ? $_REQUEST['dbhost'] : 'localhost',
-    'port' => $usehost ? (int) $_REQUEST['dbport'] : 0,
-    'dbname' => $_REQUEST['dbname'],
-    'login' => $_REQUEST['dblogin'],
-    'password' => base64_encode(str_rot13 ($_REQUEST['dbpassword'])),
-    'prefix' => $_REQUEST['dbprefix']
-    );
-    try {
-      litepublisher::$db= new tdatabase();
-    } catch (Exception $e) {
-      die($e->GetMessage());
+  $usehost = isset($_REQUEST['usehost']) ? ($_REQUEST['usehost'] == '1') : false;
+  $options->data['dbconfig'] = array(
+  'driver' => 'mysql',
+  'host' => $usehost ? $_REQUEST['dbhost'] : 'localhost',
+  'port' => $usehost ? (int) $_REQUEST['dbport'] : 0,
+  'dbname' => $_REQUEST['dbname'],
+  'login' => $_REQUEST['dblogin'],
+  'password' => base64_encode(str_rot13 ($_REQUEST['dbpassword'])),
+  'prefix' => $_REQUEST['dbprefix']
+  );
+  try {
+    litepublisher::$db= new tdatabase();
+  } catch (Exception $e) {
+    die($e->GetMessage());
+  }
+  
+  $db = litepublisher::$db;
+  $list = $db->res2array($db->query("show tables from " . $options->dbconfig['dbname']));
+  foreach ($list as $row) {
+    $table = $row[0];
+    if (strbegin($table, $db->prefix)) {
+      $db->exec('DROP TABLE IF EXISTS ' . $table);
     }
-    /*
-    $db = litepublisher::$db;
-    $list = $db->res2array($db->query("show tables from " . $options->dbconfig['dbname']));
-    foreach ($list as $row) {
-      $db->exec("DROP TABLE IF EXISTS ". $row[0]);
-    }
-    */
   }
   
   $options->language = $language;

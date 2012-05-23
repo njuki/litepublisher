@@ -55,7 +55,7 @@
       title: "",
       html: "",
       width: 300,
-close: function() {},
+    close: function() {},
       buttons: [
       {
         title: "Ok",
@@ -103,7 +103,7 @@ var button = '<button type="button" class="pp_dialog_btn_{index}">{title}</butto
       
       callback: function(){
         $(document).off('keydown.onEscape');
-if ($.isFunction(options.close)) options.close();
+        if ($.isFunction(options.close)) options.close();
       } /* Called when prettyPhoto is closed */
     });
     
@@ -111,7 +111,7 @@ if ($.isFunction(options.close)) options.close();
     tmp.remove();
     
     $.onEscape($.prettyPhoto.close);
-return options;
+    return options;
   };
- 
+  
 })( jQuery );

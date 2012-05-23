@@ -291,9 +291,19 @@ class tinstaller extends tdata {
     $cats = tcategories::i();
     $cats->setvalue($post->categories[0], 'icon', $icons->getid('news'));
     
-    $comusers = tcomusers::i($post->id);
-    $userid = $comusers->add($lang->author, $lang->email, $lang->homeurl, '127.0.0.1');
-    litepublisher::$classes->commentmanager->addcomment($post->id, $userid,$lang->postcomment, '127.0.0.1');
+    $cm = tcommentmanager::i();
+    $users = tusers::i();
+    $cm->idguest =  $users->add(array(
+    'email' => '',
+    'name' => tlocal::get('default', 'guest'),
+    'status' => 'hold',
+    'idgroups' => 'commentator'
+    ));
+    
+    $cm->save();
+    $users->setvalue($cm->idguest, 'status', 'approved');
+    
+    tcomments::i()->add($post->id, $cm->idguest,$lang->postcomment, 'approved', '127.0.0.1');
     
     $plugins = tplugins::i();
     $plugins->lock();
