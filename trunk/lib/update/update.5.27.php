@@ -81,7 +81,7 @@ $classes->items['tusergroups'][0] = 'kernel.php';
 
 $classes->delete('tuseroptions');
 $classes->add('tuseroptions', 'user.options.class.php');
-
+ttemplatecomments::i()->install();
 if ($classes->exists('tregservice')) {
   $classes->add('toauth', 'oauth.class.php', 'regservices');
   $classes->add('ttwitterregservice', 'twitter.service.php', 'regservices');
@@ -161,8 +161,6 @@ $template->save();
 }
 
   tcssmerger::i()->add('default', '/js/litepublisher/prettyphoto.dialog.css');
-
-ttemplatecomments::i()->install();
 
 $db = litepublisher::$db;
 $db->table = 'users';
