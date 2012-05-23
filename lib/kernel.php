@@ -1612,7 +1612,7 @@ class toptions extends tevents_storage {
     } elseif ($iduser = $this->findcookie($cookie)) {
       //fix prev versions
       if ($iduser == 1) {
-        $expired = $this->expired;
+        $expired = $this->cookieexpired;
       } else {
         $item = tusers::i()->getitem($iduser);
         $expired = strtotime($item['expired']);
