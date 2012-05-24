@@ -7,6 +7,7 @@
 **/
 
 class tusergroups extends titems {
+public $defaults;
   
   public static function i() {
     return getinstance(__class__);
@@ -15,7 +16,7 @@ class tusergroups extends titems {
   protected function create() {
     parent::create();
     $this->basename = 'usergroups';
-    $this->data['defaultgroup'] = 'nobody';
+    $this->addmap('defaults', array());
     $this->addevents('onhasright');
   }
   

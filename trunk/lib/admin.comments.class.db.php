@@ -174,7 +174,7 @@ class tadminmoderator extends tadmincommoncomments {
         if (!$this->moder) return $this->html->h4->forbidden;
         $item = $comments->getitem($this->idget() );
         $post = tpost::i( (int) $item['post']);
-        $this->manager->reply($this->idget(), $post->id, $_POST['content']);
+        $this->manager->reply($this->idget(), $_POST['content']);
         return litepublisher::$urlmap->redir($post->lastcommenturl);
         
         case 'edit':

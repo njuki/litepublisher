@@ -1,7 +1,7 @@
 <?php
 
 function update528() {
-if (isset(tstorage::$data) {
+if (isset(tstorage::$data)) {
 unset(tstorage::$data['comusers']);
 unset(tstorage::$data['postclasses']);
 
@@ -37,13 +37,18 @@ $groups->items[$groupnames['author']]['parents'] = array($groupnames['editor']);
 $groups->items[$groupnames['commentator']]['parents'] = array($groupnames['moderator'], $groupnames['author']);
 if (isset($groupnames['ticket'])) {
 $groups->items[$groupnames['author']]['parents'][] = $groupnames['ticket'];
+$groups->items[$groupnames['commentator']]['parents'][] = $groupnames['ticket'];
 }
 
 foreach ($groups->items as $id => $group) {
 $parentgroups[$id] = $group['parents'];
 }
 
+$groups->data['defaults'] = array($groups->getidgroup($groups->data['defaultgroup']));
+unset($groups->data['defaultgroup']);
+$groups->save();
+
 litepublisher::$options->save();
 
-litepublisher::$classes->add(tusersman', 'usersman.class.php');
+litepublisher::$classes->add('tusersman', 'usersman.class.php');
   }
