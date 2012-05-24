@@ -15,6 +15,14 @@ unset(tstorage::$data['posts\index']);
 litepublisher::$options->save();
 }
 
-tadmingroups ::i()->update_groupnames();
+$groups = tusergroups::i();
+foreach ($groups->items as $id => $group) {
+$groups->items[$id]['parents'] = array();
+}
+
+$groups->items[$author]['parents'] = array($editor);
+$groups->items[$commentator]['parents'] = array($moderator, $author);
+
+$groups->save();
 
 }
