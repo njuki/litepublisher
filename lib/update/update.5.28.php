@@ -14,4 +14,7 @@ unset(tstorage::$data['posts\index']);
 
 litepublisher::$options->save();
 }
+
+tadmingroups ::i()->update_groupnames();
+
 }
