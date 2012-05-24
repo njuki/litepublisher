@@ -59,7 +59,7 @@ litepublisher::$options->data['parentgroups'] = array();
 $parentgroups = &litepublisher::$options->data['parentgroups'];
 
 foreach ($this->items as $id => $group) {
-$names = explode($group['name']);
+$names = explode(',', $group['name']);
 foreach ($names as $name) {
 if ($name = trim($name)) $groupnames[$name] = $id;
 }
@@ -69,54 +69,8 @@ litepublisher::$options->save();
   }
   
     public function getidgroup($name) {
-    return $this->IndexOf('name', trim($name));
-  }
-  
-  public function cleangroup($v) {
-    if (is_string($v)) $v = trim($v);
-    if (is_numeric($v)) {
-      $id = (int) $v;
-      if ($this->itemexists($id)) return $id;
-    } else {
-      return $this->getidgroup($v);
-    }
-    return false;
-  }
-  
-  public function cleangroups($v) {
-    if (is_array($v)) return $this->checkgroups(array_unique($v));
-    
-    if(is_string($v)) {
-      $v = trim($v);
-      if (strpos($v, ',')) return $this->checkgroups(explode(',', $v));
-    }
-    if ($id = $this->cleangroup($v)) return array($id);
-  }
-  
-  protected function checkgroups(array $a) {
-    $result = array();
-    foreach ($a as $val) {
-      if ($id = $this->cleangroup($val)) $result[] = $id;
-    }
-    
-    return array_unique($result);
-  }
-  
-  public function ingroup($iduser, $groupname) {
-    $iduser = (int) $iduser;
-    if ($iduser == 0) return false;
-    $idgroup = $this->getidgroup($groupname);
-    $item = tusers::i()->getitem($iduser);
-    return in_array($idgroup, $item['idgroups']);
-  }
-  
-  // $iduser, $groupname1, $groupname2...
-  public function ingroups() {
-    $args= func_get_args();
-    $iduser = array_shift ($args);
-    $item = tusers::i()->getitem($iduser);
-    $groups = $this->checkgroups($args);
-    return count(array_intersect($item['idgroups'], $groups)) > 0;
+$name = trim($name);
+    return isset(litepublisher::$options->groupnames[$name]) ? litepublisher::$options->groupnames[$name] : false;
   }
   
   public function hasright($who, $group) {

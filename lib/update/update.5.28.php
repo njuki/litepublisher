@@ -20,9 +20,30 @@ foreach ($groups->items as $id => $group) {
 $groups->items[$id]['parents'] = array();
 }
 
-$groups->items[$author]['parents'] = array($editor);
-$groups->items[$commentator]['parents'] = array($moderator, $author);
+//update() {
+litepublisher::$options->data['groupnames'] = array();
+$groupnames = &litepublisher::$options->data['groupnames'];
+litepublisher::$options->data['parentgroups'] = array();
+$parentgroups = &litepublisher::$options->data['parentgroups'];
 
-$groups->save();
-
+foreach ($groups->items as $id => $group) {
+$names = explode(',', $group['name']);
+foreach ($names as $name) {
+if ($name = trim($name)) $groupnames[$name] = $id;
 }
+}
+
+$groups->items[$groupnames['author']]['parents'] = array($groupnames['editor']);
+$groups->items[$groupnames['commentator']]['parents'] = array($groupnames['moderator'], $groupnames['author']);
+if (isset($groupnames['ticket'])) {
+$groups->items[$groupnames['author']]['parents'][] = $groupnames['ticket'];
+}
+
+foreach ($groups->items as $id => $group) {
+$parentgroups[$id] = $group['parents'];
+}
+
+litepublisher::$options->save();
+
+litepublisher::$classes->add(tusersman', 'usersman.class.php');
+  }

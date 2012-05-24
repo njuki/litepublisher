@@ -51,73 +51,12 @@ class tusers extends titems {
   }
   
   public function add(array $values) {
-    $email = trim($values['email']);
-    if ( $this->emailexists($email)) return false;
-    $groups = tusergroups::i();
-    if (isset($values['idgroups'])) {
-      $idgroups = $groups->cleangroups($values['idgroups']);
-      if (count($idgroups) == 0) $idgroups = array($groups->getidgroup($groups->defaultgroup));
-    } else {
-      $idgroups = array($groups->getidgroup($groups->defaultgroup));
-    }
-    
-    $password = empty($values['password']) ? md5uniq() : $values['password'];
-    $password = basemd5(sprintf('%s:%s:%s', $email,  litepublisher::$options->realm, $password));
-    
-    $item = array(
-    'email' => $email,
-    'name' =>isset($values['name']) ? trim($values['name']) : '',
-    'website' => isset($values['website']) ? trim($values['website']) : '',
-    'password' => $password,
-    'cookie' =>  md5uniq(),
-    'expired' => sqldate(),
-    'idgroups' => implode(',', $idgroups),
-    'trust' => 0,
-    'status' => isset($values['status']) ? $values['status'] : 'approved',
-    );
-    
-    $id = $this->db->add($item);
-    $item['idgroups'] = $idgroups;
-    $this->items[$id] = $item;
-    $this->setgroups($id, $item['idgroups']);
-    
-    tuserpages::i()->add($id);
-    $this->added($id);
-    return $id;
+return tusersman::i()->add($values);
   }
   
   public function edit($id, array $values) {
-    if (!$this->itemexists($id)) return false;
-    $item = $this->getitem($id);
-    foreach ($item as $k => $v) {
-      if (!isset($values[$k])) continue;
-      switch ($k) {
-        case 'password':
-        if ($values['password'] != '') {
-          $item['password'] = basemd5(sprintf('%s:%s:%s', $values['email'],  litepublisher::$options->realm, $values['password']));
-        }
-        break;
-        
-        case 'idgroups':
-        $groups = tusergroups::i();
-        $item['idgroups'] = $groups->cleangroups($values['idgroups']);
-        break;
-        
-        default:
-        $item[$k] = trim($values[$k]);
-      }
-    }
+return tusersman::i()->edit($id, $values);
     
-    $this->items[$id] = $item;
-    $item['id'] = $id;
-    
-    $this->setgroups($id, $item['idgroups']);
-    $item['idgroups'] = implode(',', $item['idgroups']);
-    $this->db->updateassoc($item);
-    
-    $pages = tuserpages::i();
-    $pages->edit($id, $values);
-    return true;
   }
   
   public function setgroups($id, array $idgroups) {
