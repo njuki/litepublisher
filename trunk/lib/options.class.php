@@ -7,6 +7,7 @@
 **/
 
 class toptions extends tevents_storage {
+public $groupnames;
   public $group;
   public $idgroups;
   protected $_user;
@@ -31,15 +32,14 @@ class toptions extends tevents_storage {
     $this->errorlog = '';
     $this->group = '';
     $this->idgroups = array();
+$this->addmap('groupnames', array());
   }
   
   public function afterload() {
     parent::afterload();
     date_default_timezone_set($this->timezone);
     $this->gmt = date('Z');
-    if (!defined('dbversion')) {
-      define('dbversion', isset($this->data['dbconfig']));
-    }
+    if (!defined('dbversion')) define('dbversion', true);
   }
   
   public function savemodified() {
@@ -256,7 +256,10 @@ class toptions extends tevents_storage {
   public function ingroup($groupname) {
     //admin has all rights
     if ($this->user == 1) return true;
-    if (in_array(1, $this->idgroups)) return true;
+    if (in_array($this->groupnames['admin'], $this->idgroups)) return true;
+$idgroup = $this->groupnames[$groupname];
+    if (in_array($idgroup, $this->idgroups)) return true;
+//if user in group which is parent of $idgroup
     return tusergroups::i()->ingroup($this->user, $groupname);
   }
   

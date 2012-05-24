@@ -93,6 +93,20 @@ class tadmingroups extends tadminmenu {
       }
       break;
     }
+$this->update_groupnames();
+}
+
+public function update_groupnames() {
+litepublisher::$options->data['groupnames'] = array();
+$groupnames = &litepublisher::$options->data['groupnames'];
+$groups = tusergroups::i();
+foreach ($groups->items as $id => $group) {
+$names = explode($group['name']);
+foreach ($names as $name) {
+if ($name = trim($name)) $groupnames[$name] = $id;
+}
+}
+litepublisher::$options->save();
   }
   
 }//class
