@@ -11,13 +11,13 @@ function tusergroupsInstall($self) {
   $lang = tlocal::i('initgroups');
   $self->lock();
   $self->add('admin', $lang->admin, '/admin/');
-  $self->add('editor', $lang->editor, '/admin/posts/');
-  $self->add('author', $lang->author, '/admin/posts/');
-  $self->add('moderator', $lang->moderator, '/admin/comments/');
-  $self->add('commentator', $lang->commentator, '/admin/comments/');
+  $editor = $self->add('editor', $lang->editor, '/admin/posts/');
+  $author = $self->add('author', $lang->author, '/admin/posts/');
+  $moder = $self->add('moderator', $lang->moderator, '/admin/comments/');
+  $commentator = $self->add('commentator', $lang->commentator, '/admin/comments/');
+
+$self->items[$author]['parents'] = array($editor);
+$self->items[$commentator]['parents'] = array($moderator, $author);
+
   $self->unlock();
-
-
-
-
 }
