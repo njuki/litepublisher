@@ -31,7 +31,7 @@ class tadmingroups extends tadminmenu {
   public function getcontent() {
     $groups = tusergroups::i();
     $html = $this->html;
-    $lang = tlocal::i('users');
+    $lang = tlocal::admin('users');
     $args = targs::i();
     $adminurl = $this->adminurl;
     $result = "<h4><a href='$adminurl=0&action=add'>$lang->addgroup</a></h4>";
@@ -45,7 +45,14 @@ class tadmingroups extends tadminmenu {
       $args->home = '';
       $args->action = 'add';
       $args->formtitle = $lang->editgroup;
-      $result .= $html->adminform('[text=title] [text=name] [text=home] [hidden=action]', $args);
+      $result .= $html->adminform('
+[text=title]
+ [text=name]
+ [text=home]
+ [hidden=action]'
+. $html->h4->parentgroups .
+ self::getgroups(array())
+, $args);
       break;
       
       case 'edit':
@@ -54,7 +61,15 @@ class tadmingroups extends tadminmenu {
       $args->id = $id;
       $args->action = 'edit';
       $args->formtitle = $lang->editgroup;
-      $result .= $html->adminform('[text=title] [text=name] [text=home] [hidden=id] [hidden=action]', $args);
+      $result .= $html->adminform('
+[text=title]
+ [text=name]
+ [text=home]
+ [hidden=id]
+ [hidden=action]'
+. $html->h4->parentgroups .
+ self::getgroups($groups->items[$id]['parents'])
+, $args);
       break;
       
       case 'delete':
@@ -72,23 +87,25 @@ class tadmingroups extends tadminmenu {
   }
   
   public function processform() {
-    extract($_POST, EXTR_SKIP);
     $groups = tusergroups::i();
     switch ($this->action) {
       case 'add':
-      $id = $groups->add($name, $title, $home);
+$groups->lock();
+      $id = $groups->add($_POST['name'], $_POST['title'], $_POST['home']);
+        $groups->items[$id]['parents'] = tadminhtml::check2array('idgroup-');
+$groups->unlock();
       $_POST['id'] = $id;
       $_GET['id'] = $id;
       $_GET['action'] = 'edit';
       break;
       
       case 'edit':
+$id = $this->idget();
       if ($groups->itemexists($id)) {
-        $groups->items[$id] = array(
-        'name' => $name,
-        'title' => $title,
-        'home' => $home
-        );
+foreach (array('name', 'title', 'home') as $name) {
+$groups->items[$id][$name] = $_POST[$name];
+}
+        $groups->items[$id]['parents'] = tadminhtml::check2array('idgroup-');
         $groups->save();
       }
       break;

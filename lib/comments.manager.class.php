@@ -48,11 +48,10 @@ class tcommentmanager extends tevents_storage {
   
   public function reply($idparent, $content) {
     $idauthor = 1; //admin
-    $status = 'approved';
     $comments = tcomments::i();
     $idpost = $comments->getvalue($idparent, 'post');
-    $id = $comments->add($idpost, $idauthor,  $content, $status, '');
-    $comments->setvalue($id, 'parent', $idreply);
+    $id = $comments->add($idpost, $idauthor,  $content, 'approved', '');
+    $comments->setvalue($id, 'parent', $idparent);
     
     $this->dochanged($id);
     //$this->added($id, $idpost);

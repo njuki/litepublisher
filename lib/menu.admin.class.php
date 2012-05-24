@@ -71,8 +71,9 @@ class tadminmenus extends tmenus {
   public function getchilds($id) {
     if ($id == 0) {
       $result = array();
+$options = litepublisher::$options;
       foreach ($this->tree as $iditem => $items) {
-        if ($this->hasright($this->items[$iditem]['group']))
+        if ($options->hasgroup($this->items[$iditem]['group']))
         $result[] = $iditem;
       }
       return $result;
@@ -98,7 +99,7 @@ class tadminmenus extends tmenus {
   }
   
   public function exclude($id) {
-    if (!$this->hasright($this->items[$id]['group'])) return  true;
+    if (!litepublisher::$options->hasgroup($this->items[$id]['group'])) return  true;
     return $this->onexclude($id);
   }
   
@@ -142,10 +143,7 @@ public function save() { return true; }
       if (!$auth->Auth())  return $auth->headers();
     }
     
-    if (litepublisher::$options->group != 'admin') {
-      $groups = tusergroups::i();
-      if (!$groups->hasright(litepublisher::$options->group, $group)) return 403;
-    }
+      if (!litepublisher::$options->hasgroup($group)) return 403;
   }
   
   public function request($id) {

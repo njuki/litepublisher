@@ -22,24 +22,17 @@ class tadminuseroptions extends tadminmenu {
     $pages = tuserpages::i();
     $args->createpage = $pages->createpage;
     $args->lite = $pages->lite;
-    
-    $groups = tusergroups::i();
-    $g = array();
-    foreach ($groups->items as $id => $item) {
-      $g[$item['name']]  = $item['title'];
-    }
-    
-    $args->defaultgroup =tadminhtml::array2combo($g, $groups->defaultgroup);
-    
+   
     $linkgen = tlinkgenerator::i();
     $args->linkschema = $linkgen->data['user'];
     
     return $html->adminform(
-    '[combo=defaultgroup]
-    [checkbox=createpage]
+    '[[checkbox=createpage]
     [checkbox=lite]
-    [text=linkschema]',
-    $args);
+    [text=linkschema]'
+. $html->h4->defaultgroups .
+ tadmingroups::getgroups(tusergroups::i()->defaults)
+    , $args);
   }
   
   public function processform() {
@@ -49,7 +42,7 @@ class tadminuseroptions extends tadminmenu {
     $pages->save();
     
     $groups = tusergroups::i();
-    $groups->defaultgroup = $_POST['defaultgroup'];
+    $groups->defaults = tadminhtml::check2array('idgroup-');
     $groups->save();
     
     $linkgen = tlinkgenerator::i();
