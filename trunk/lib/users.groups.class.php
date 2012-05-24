@@ -24,7 +24,8 @@ class tusergroups extends titems {
     $this->items[++$this->autoid] = array(
     'name' => $name,
     'title' => $title,
-    'home' => $home
+    'home' => $home,
+'parents' => array()
     );
     $this->save();
     return $this->autoid;
@@ -36,7 +37,6 @@ class tusergroups extends titems {
     $this->save();
     
     $users = tusers::i();
-    if (dbversion) {
       $db = $users->db;
       $items = $db->res2assoc($users->getdb($users->grouptable)->select("idgroup = $id"));
       $users->getdb($users->grouptable)->delete("idgroup = $id");
@@ -45,15 +45,30 @@ class tusergroups extends titems {
         $idgroups = $db->res2id($db->query("select idgroup from $db->prefix$users->grouptable where iduser = $iduser"));
         $users->db->setvalue($iduser, 'idgroups', implode(',', $idgroups));
       }
-    } else {
-      foreach ($users->items as &$item) {
-        array_delete_value($item['idgroups'], $id);
-      }
-      $users->save();
-    }
+  }
+
+public function save() {
+parent::save(); $this->update();
+    if ($this->lockcount == 0) $this->update();
+}
+
+public function update() {
+litepublisher::$options->data['groupnames'] = array();
+$groupnames = &litepublisher::$options->data['groupnames'];
+litepublisher::$options->data['parentgroups'] = array();
+$parentgroups = &litepublisher::$options->data['parentgroups'];
+
+foreach ($this->items as $id => $group) {
+$names = explode($group['name']);
+foreach ($names as $name) {
+if ($name = trim($name)) $groupnames[$name] = $id;
+}
+$parentgroups[$id] = $group['parents'];
+}
+litepublisher::$options->save();
   }
   
-  public function getidgroup($name) {
+    public function getidgroup($name) {
     return $this->IndexOf('name', trim($name));
   }
   
