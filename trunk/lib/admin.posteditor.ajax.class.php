@@ -61,11 +61,11 @@ class tajaxposteditor  extends tevents {
   }
   
   public static function auth() {
-    if (!litepublisher::$options->cookieenabled) return self::error403();
-    if (!litepublisher::$options->user) return self::error403();
-    if (litepublisher::$options->group != 'admin') {
-      $groups = tusergroups::i();
-      if (!$groups->hasright(litepublisher::$options->group, 'author')) return self::error403();
+$options = litepublisher::$options;
+    if (!$options->cookieenabled) return self::error403();
+    if (!$options->user) return self::error403();
+    if (!$options->hasgroup('editor')) {
+      if (!$options->hasgroup('author')) return self::error403();
     }
   }
   
@@ -86,14 +86,12 @@ class tajaxposteditor  extends tevents {
     }
     if ($err = self::auth()) return $err;
     $this->idpost = tadminhtml::idparam();
-    $this->isauthor = 'author' == litepublisher::$options->group;
+    $this->isauthor = litepublisher::$options->ingroup('author');
     if ($this->idpost > 0) {
       $posts = tposts::i();
       if (!$posts->itemexists($this->idpost)) return self::error403();
-      $groupname = litepublisher::$options->group;
-      if ($groupname != 'admin') {
-        $groups = tusergroups::i();
-        if (!$groups->hasright($groupname, 'editor') and  $groups->hasright($groupname, 'author')) {
+      if (!litepublisher::$options->hasgroup('editor')) {
+        if (litepublisher::$options->hasgroup('author')) {
           $this->isauthor = true;
           $post = tpost::i($this->idpost);
           if (litepublisher::$options->user != $post->author) return self::error403();

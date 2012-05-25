@@ -17,7 +17,6 @@ public $defaults;
     parent::create();
     $this->basename = 'usergroups';
     $this->addmap('defaults', array());
-    $this->addevents('onhasright');
   }
   
   public function add($name, $title, $home) {
@@ -72,31 +71,6 @@ litepublisher::$options->save();
     public function getidgroup($name) {
 $name = trim($name);
     return isset(litepublisher::$options->groupnames[$name]) ? litepublisher::$options->groupnames[$name] : false;
-  }
-  
-  public function hasright($who, $group) {
-    if ($who == $group) return  true;
-    if (($who == 'admin') || ($group == 'nobody')) return true;
-    switch ($who) {
-      case 'editor':
-      if ($group == 'author') return true;
-      break;
-      
-      case 'moderator':
-      if (($group == 'subscriber') || ($group == 'author')) return true;
-      break;
-      
-      case 'author':
-      if ($group == 'commentator') return true;
-      break;
-      
-      case 'subeditor':
-      if (in_array($group, array('author', 'subscriber', 'moderator'))) return true;
-      break;
-    }
-    
-    if ($this->onhasright($who, $group)) return true;
-    return false;
   }
   
   public function gethome($name) {

@@ -46,9 +46,13 @@ $parentgroups[$id] = $group['parents'];
 
 $groups->data['defaults'] = array($groups->getidgroup($groups->data['defaultgroup']));
 unset($groups->data['defaultgroup']);
+
+unset($groups->data['events']['onhasright']);
 $groups->save();
 
 litepublisher::$options->save();
 
+litepublisher::$classes->items['tusergroups'][0] = 'users.groups.class.php';
+unset(litepublisher::$classes->items['tusergroups'][2]);
 litepublisher::$classes->add('tusersman', 'usersman.class.php');
   }

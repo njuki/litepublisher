@@ -15,10 +15,8 @@ class tadminposts extends tadminmenu {
   
   public function canrequest() {
     $this->isauthor = false;
-    $groupname = litepublisher::$options->group;
-    if ($groupname != 'admin') {
-      $groups = tusergroups::i();
-      $this->isauthor =  !$groups->hasright($groupname, 'editor') &&  $groups->hasright($groupname, 'author');
+    if (!litepublisher::$options->hasgroup('editor')) {
+      $this->isauthor =   litepublisher::$options->hasgroup('author');
     }
   }
   

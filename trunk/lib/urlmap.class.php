@@ -92,6 +92,7 @@ class turlmap extends titems {
     if ($this->itemrequested = $this->finditem($url)){
       return $this->printcontent($this->itemrequested);
     } else {
+echo "'$url'<br>";
       $this->notfound404();
     }
   }

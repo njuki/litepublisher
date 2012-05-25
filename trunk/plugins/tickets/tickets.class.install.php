@@ -109,9 +109,10 @@ function tticketsInstall($self) {
   
   $groups = tusergroups  ::i();
   $groups->lock();
-  $groups->add('ticket', 'Tickets', '/admin/tickets/editor/');
-  $groups->defaultgroup = 'ticket';
-  $groups->onhasright = $self->hasright;
+  $idticket = $groups->add('ticket', 'Tickets', '/admin/tickets/editor/');
+  $groups->defaults = array($idticket, $groups->getidgroup('author'));
+$groups->items[litepublisher::$options->groupnames['author']]['parents'][] = $idticket;
+$groups->items[litepublisher::$options->groupnames['commentator']]['parents'][] = $idticket;
   $groups->unlock();
 }
 

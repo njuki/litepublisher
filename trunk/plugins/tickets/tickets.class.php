@@ -77,10 +77,6 @@ class ttickets extends tposts {
     }
   }
   
-  public function hasright($who, $group) {
-    return ($who == 'ticket') &&($group == 'author');
-  }
-  
   public function onexclude($id) {
     if (litepublisher::$options->group == 'ticket') {
       $admin = tadminmenus::i();
