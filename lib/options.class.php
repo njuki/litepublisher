@@ -279,14 +279,6 @@ class toptions extends tevents_storage {
     return count(array_intersect($this->idgroups, $this->parentgroups[$idgroup]));
   }
   
-  public function getcommentsapproved() {
-    return $this->DefaultCommentStatus  == 'approved';
-  }
-  
-  public function setcommentsapproved($value) {
-    $this->DefaultCommentStatus  = $value ? 'approved' : 'hold';
-  }
-  
   public function handexception($e) {
     /*
     echo "<pre>\n";

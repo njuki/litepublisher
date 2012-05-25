@@ -31,15 +31,15 @@ class Tadmincommentmanager extends tadminmenu {
     'comuser' => $lang->comuser
     ), $options->comstatus);
     
-    $args->filtercommentstatus = $options->filtercommentstatus;
-    $args->commentsapproved = $options->commentsapproved;
-    $args->checkduplicate = $options->checkduplicate;
+    $args->filterstatus = $cm->filterstatus;
+    $args->commentsapproved = $cm->defstatus == 'approved';
+    $args->checkduplicate = $cm->checkduplicate;
     $args->commentsdisabled  = $options->commentsdisabled;
     $args->pingenabled  = $options->pingenabled;
     
     $tabs->add($lang->options, '
     [combo=comstatus]
-    [checkbox=filtercommentstatus]
+    [checkbox=filterstatus]
     [checkbox=commentsapproved]
     [checkbox=checkduplicate]
     [checkbox=commentsdisabled]
@@ -128,9 +128,9 @@ class Tadmincommentmanager extends tadminmenu {
     $cm->lock();
     
     $options->comstatus = $comstatus;
-    $options->filtercommentstatus =isset($filtercommentstatus);
-    $options->commentsapproved = isset($commentsapproved);
-    $options->checkduplicate = isset($checkduplicate);
+    $cm->filterstatus =isset($filterstatus);
+    $cm->defstatus = isset($commentsapproved) ? 'approved' : 'hold';
+    $cm->checkduplicate = isset($checkduplicate);
     $options->defaultsubscribe = isset($defaultsubscribe);
     $useroptions = tuseroptions::i();
     $useroptions->defvalues['subscribe'] = $options->defaultsubscribe;

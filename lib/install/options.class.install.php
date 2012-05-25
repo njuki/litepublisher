@@ -54,14 +54,11 @@ function installoptions($email, $language) {
   $options->compress = false;
   $options->filetime_offset = tfiler::get_filetime_offset();
   $options->data['perpage'] = 10;
-  $options->filtercommentstatus = true;
-  $options->DefaultCommentStatus = 'approved';
   $options->commentsdisabled = false;
   $options->comstatus = 'guest';
   $options->pingenabled = true;
   $options->commentpages = true;
   $options->commentsperpage = 100;
-  $options->checkduplicate = true;
   $options->defaultsubscribe = true;
   $options->comments_invert_order = false;
   
