@@ -79,7 +79,7 @@ class tsingletagwidget extends  twidget {
   
   public function getcontent($id, $sidebar) {
     if (!isset($this->items[$id])) return '';
-$item = $this->items[$id];
+    $item = $this->items[$id];
     $items = $this->tags->get_sorted_posts($item['idtag'], $item['maxcount'], $item['invertorder']);
     if (count($items) == 0) return '';
     
