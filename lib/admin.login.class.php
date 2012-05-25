@@ -60,6 +60,7 @@ class tadminlogin extends tadminform {
     $expired = isset($_POST['remember']) ? time() + 1210000 : time() + 8*3600;
     $cookie = md5uniq();
     litepublisher::$options->setcookies($cookie, $expired);
+
     if (isset($_GET['backurl'])) {
       $url = $_GET['backurl'];
     } else {
