@@ -71,7 +71,7 @@ $classes->delete('tjsonserver');
 $classes->add('tjsonserver', 'jsonserver.class.php');
 $classes->delete('tjsoncomments');
 $classes->add('tjsoncomments', 'json.comments.class.php');
-$classes->add('Tadmincommentmanager', 'admin.commentmanager.class.php');
+$classes->add('tadmincommentmanager', 'admin.commentmanager.class.php');
 $classes->add('tadmincomusers', 'admin.comments.users.class.php');
 $classes->add('tadminpingbacks', 'admin.pingbacks.class.php');
 $classes->add('tsession', 'session.class.php');
@@ -107,8 +107,8 @@ $classes->save();
 
 $admin = tadminmenus::i();
 if ($id = $admin->url2id('/admin/options/comments/')) {
-$admin->items[$id]['class'] = 'Tadmincommentmanager';
-litepublisher::$urlmap->setvalue($admin->items[$id]['idurl'], 'class', 'Tadmincommentmanager');
+$admin->items[$id]['class'] = 'tadmincommentmanager';
+litepublisher::$urlmap->setvalue($admin->items[$id]['idurl'], 'class', 'tadmincommentmanager');
 }
 
 if ($id = $admin->url2id('/admin/comments/pingback/')) {

@@ -82,8 +82,23 @@ unset(litepublisher::$options->data['checkduplicate']);
 $cm->data['defstatus'] = litepublisher::$options->DefaultCommentStatus;
 unset(litepublisher::$options->data['DefaultCommentStatus']);
 
+unset(litepublisher::$options->data['defaultsubscribe']);
+
 $cm->save();
 }
 
+if (isset(litepublisher::$classes->items['Tadmincommentmanager'])) {
+litepublisher::$classes->items['tadmincommentmanager'] = litepublisher::$classes->items['Tadmincommentmanager'];
+unset(litepublisher::$classes->items['Tadmincommentmanager']);
+}
+
+$admin = tadminmenus::i();
+if ($id = $admin->url2id('/admin/options/comments/')) {
+$admin->items[$id]['class'] = 'tadmincommentmanager';
+litepublisher::$urlmap->setvalue($admin->items[$id]['idurl'], 'class', 'tadmincommentmanager');
+}
+$admin->save();
+
+litepublisher::$options->save();
 litepublisher::$options->savemodified();
   }

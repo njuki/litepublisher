@@ -6,7 +6,7 @@
 * and GPL (gpl.txt) licenses.
 **/
 
-class Tadmincommentmanager extends tadminmenu {
+class tadmincommentmanager extends tadminmenu {
   
   public static function i($id = 0) {
     return parent::iteminstance(__class__, $id);
@@ -90,9 +90,11 @@ class Tadmincommentmanager extends tadminmenu {
     
     $args->sendnotification = $cm->sendnotification;
     $args->comuser_subscribe = $cm->comuser_subscribe;
-    $args->defaultsubscribe = $options->defaultsubscribe;
+
     $useroptions = tuseroptions::i();
+    $args->defaultsubscribe = $useroptions->defvalues['subscribe'] == 'enabled';
     $args->authorpost_subscribe = $useroptions->defvalues['authorpost_subscribe'] == 'enabled';
+
     $subscribe = tsubscribers::i();
     $args->locklist = $subscribe->locklist;
     $args->subscribe_enabled = $subscribe->enabled;
@@ -131,9 +133,9 @@ class Tadmincommentmanager extends tadminmenu {
     $cm->filterstatus =isset($filterstatus);
     $cm->defstatus = isset($commentsapproved) ? 'approved' : 'hold';
     $cm->checkduplicate = isset($checkduplicate);
-    $options->defaultsubscribe = isset($defaultsubscribe);
+
     $useroptions = tuseroptions::i();
-    $useroptions->defvalues['subscribe'] = $options->defaultsubscribe;
+    $useroptions->defvalues['subscribe'] = isset($defaultsubscribe) ? 'enabled' : 'disabled';
     $useroptions->defvalues['authorpost_subscribe'] = isset($authorpost_subscribe) ? 'enabled' : 'disabled';
     $useroptions->save();
     

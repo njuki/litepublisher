@@ -86,7 +86,7 @@ class ttemplatecomments extends tevents {
             $args->$field = "<?php echo (isset(\$_COOKIE['comuser_$field']) ? \$_COOKIE['comuser_$field'] : ''); ?>";
           }
           
-          $args->subscribe = litepublisher::$options->defaultsubscribe;
+          $args->subscribe = false;
           $args->content = '';
           
           $result .= $theme->parsearg($theme->templates['content.post.templatecomments.form'], $args);

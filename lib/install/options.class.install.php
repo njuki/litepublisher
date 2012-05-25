@@ -59,7 +59,6 @@ function installoptions($email, $language) {
   $options->pingenabled = true;
   $options->commentpages = true;
   $options->commentsperpage = 100;
-  $options->defaultsubscribe = true;
   $options->comments_invert_order = false;
   
   $versions = strtoarray(file_get_contents(dirname(__file__) . DIRECTORY_SEPARATOR . 'versions.txt'));
