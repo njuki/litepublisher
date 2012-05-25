@@ -7,7 +7,8 @@
 **/
 
 function tuseroptionsInstall($self) {
-  $self->defvalues['subscribe'] = litepublisher::$options->defaultsubscribe ? 'enabled' : 'disabled';
+  $self->defvalues['subscribe'] = 'enabled';
+if (isset(litepublisher::$options->defaultsubscribe)) $self->defvalues['subscribe'] = litepublisher::$options->defaultsubscribe ? 'enabled' : 'disabled';
   $self->defvalues['authorpost_subscribe'] = 'enabled';
   $self->save();
   
