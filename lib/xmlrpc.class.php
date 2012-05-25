@@ -155,7 +155,7 @@ class TXMLRPCAbstract extends tevents {
   
   public static function canedit($email, $password, $idpost) {
     if (litepublisher::$options->auth($email, $password))  {
-if (litepublisher::$options->hasgroup('editor')) return true;
+      if (litepublisher::$options->hasgroup('editor')) return true;
       if (litepublisher::$options->hasgroup('author')) {
         if ($idpost == 0) return true;
         $post = tpost::i($idpost);

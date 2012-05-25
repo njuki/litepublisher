@@ -7,8 +7,8 @@
 **/
 
 class toptions extends tevents_storage {
-public $groupnames;
-public $parentgroups;
+  public $groupnames;
+  public $parentgroups;
   public $group;
   public $idgroups;
   protected $_user;
@@ -33,8 +33,8 @@ public $parentgroups;
     $this->errorlog = '';
     $this->group = '';
     $this->idgroups = array();
-$this->addmap('groupnames', array());
-$this->addmap('parentgroups', array());
+    $this->addmap('groupnames', array());
+    $this->addmap('parentgroups', array());
   }
   
   public function afterload() {
@@ -259,26 +259,26 @@ $this->addmap('parentgroups', array());
     //admin has all rights
     if ($this->user == 1) return true;
     if (in_array($this->groupnames['admin'], $this->idgroups)) return true;
-$groupname = trim($groupname);
-if ($groupname == 'admin') return false;
-if (!isset($this->groupnames[$groupname])) $this->error(sprintf('The "%s" group not found', $groupname));
-$idgroup = $this->groupnames[$groupname];
-return in_array($idgroup, $this->idgroups);
+    $groupname = trim($groupname);
+    if ($groupname == 'admin') return false;
+    if (!isset($this->groupnames[$groupname])) $this->error(sprintf('The "%s" group not found', $groupname));
+    $idgroup = $this->groupnames[$groupname];
+    return in_array($idgroup, $this->idgroups);
   }
   
   public function ingroups(array $idgroups) {
-if ($this->ingroup('admin')) return true;
+    if ($this->ingroup('admin')) return true;
     return count(array_intersect($this->idgroups, $idgroups));
   }
-
-public function hasgroup($groupname) {
-if ($this->ingroup($groupname)) return true;
-// if group is children of user groups
-$idgroup = $this->groupnames[$groupname];
-if (!isset($this->parentgroups[$idgroup])) return false;
+  
+  public function hasgroup($groupname) {
+    if ($this->ingroup($groupname)) return true;
+    // if group is children of user groups
+    $idgroup = $this->groupnames[$groupname];
+    if (!isset($this->parentgroups[$idgroup])) return false;
     return count(array_intersect($this->idgroups, $this->parentgroups[$idgroup]));
-}
-
+  }
+  
   public function getcommentsapproved() {
     return $this->DefaultCommentStatus  == 'approved';
   }

@@ -66,7 +66,7 @@ class tadminmenus extends tmenus {
   public function getchilds($id) {
     if ($id == 0) {
       $result = array();
-$options = litepublisher::$options;
+      $options = litepublisher::$options;
       foreach ($this->tree as $iditem => $items) {
         if ($options->hasgroup($this->items[$iditem]['group']))
         $result[] = $iditem;
@@ -138,7 +138,7 @@ public function save() { return true; }
       if (!$auth->Auth())  return $auth->headers();
     }
     
-      if (!litepublisher::$options->hasgroup($group)) return 403;
+    if (!litepublisher::$options->hasgroup($group)) return 403;
   }
   
   public function request($id) {

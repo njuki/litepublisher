@@ -46,13 +46,13 @@ class tadmingroups extends tadminmenu {
       $args->action = 'add';
       $args->formtitle = $lang->editgroup;
       $result .= $html->adminform('
-[text=title]
- [text=name]
- [text=home]
- [hidden=action]'
-. $html->h4->parentgroups .
- self::getgroups(array())
-, $args);
+      [text=title]
+      [text=name]
+      [text=home]
+      [hidden=action]'
+      . $html->h4->parentgroups .
+      self::getgroups(array())
+      , $args);
       break;
       
       case 'edit':
@@ -62,14 +62,14 @@ class tadmingroups extends tadminmenu {
       $args->action = 'edit';
       $args->formtitle = $lang->editgroup;
       $result .= $html->adminform('
-[text=title]
- [text=name]
- [text=home]
- [hidden=id]
- [hidden=action]'
-. $html->h4->parentgroups .
- self::getgroups($groups->items[$id]['parents'])
-, $args);
+      [text=title]
+      [text=name]
+      [text=home]
+      [hidden=id]
+      [hidden=action]'
+      . $html->h4->parentgroups .
+      self::getgroups($groups->items[$id]['parents'])
+      , $args);
       break;
       
       case 'delete':
@@ -90,26 +90,26 @@ class tadmingroups extends tadminmenu {
     $groups = tusergroups::i();
     switch ($this->action) {
       case 'add':
-$groups->lock();
+      $groups->lock();
       $id = $groups->add($_POST['name'], $_POST['title'], $_POST['home']);
-        $groups->items[$id]['parents'] = tadminhtml::check2array('idgroup-');
-$groups->unlock();
+      $groups->items[$id]['parents'] = tadminhtml::check2array('idgroup-');
+      $groups->unlock();
       $_POST['id'] = $id;
       $_GET['id'] = $id;
       $_GET['action'] = 'edit';
       break;
       
       case 'edit':
-$id = $this->idget();
+      $id = $this->idget();
       if ($groups->itemexists($id)) {
-foreach (array('name', 'title', 'home') as $name) {
-$groups->items[$id][$name] = $_POST[$name];
-}
+        foreach (array('name', 'title', 'home') as $name) {
+          $groups->items[$id][$name] = $_POST[$name];
+        }
         $groups->items[$id]['parents'] = tadminhtml::check2array('idgroup-');
         $groups->save();
       }
       break;
     }
-}
-
+  }
+  
 }//class

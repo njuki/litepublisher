@@ -7,13 +7,13 @@
 **/
 
 class tusersman extends tdata {
-
+  
   public static function i() {
     return getinstance(__class__);
   }
   
   public function add(array $values) {
-$users = tusers::i();
+    $users = tusers::i();
     $email = trim($values['email']);
     if ( $this->emailexists($email)) return false;
     $groups = tusergroups::i();
@@ -50,7 +50,7 @@ $users = tusers::i();
   }
   
   public function edit($id, array $values) {
-$users = tusers::i();
+    $users = tusers::i();
     if (!$users->itemexists($id)) return false;
     $item = $users->getitem($id);
     foreach ($item as $k => $v) {

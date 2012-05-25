@@ -126,6 +126,11 @@ class tdatabase {
     return mysql_real_escape_string($s);
   }
   
+  public function settable($table) {
+    $this->table = $table;
+    return $this;
+  }
+  
   public function select($where) {
     if ($where != '') $where = 'where '. $where;
     return $this->query("SELECT * FROM $this->prefix$this->table $where");
@@ -1498,6 +1503,8 @@ function getinstance($class) {
 
 //options.class.php
 class toptions extends tevents_storage {
+  public $groupnames;
+  public $parentgroups;
   public $group;
   public $idgroups;
   protected $_user;
@@ -1522,15 +1529,15 @@ class toptions extends tevents_storage {
     $this->errorlog = '';
     $this->group = '';
     $this->idgroups = array();
+    $this->addmap('groupnames', array());
+    $this->addmap('parentgroups', array());
   }
   
   public function afterload() {
     parent::afterload();
     date_default_timezone_set($this->timezone);
     $this->gmt = date('Z');
-    if (!defined('dbversion')) {
-      define('dbversion', isset($this->data['dbconfig']));
-    }
+    if (!defined('dbversion')) define('dbversion', true);
   }
   
   public function savemodified() {
@@ -1747,14 +1754,25 @@ class toptions extends tevents_storage {
   public function ingroup($groupname) {
     //admin has all rights
     if ($this->user == 1) return true;
-    if (in_array(1, $this->idgroups)) return true;
-    return tusergroups::i()->ingroup($this->user, $groupname);
+    if (in_array($this->groupnames['admin'], $this->idgroups)) return true;
+    $groupname = trim($groupname);
+    if ($groupname == 'admin') return false;
+    if (!isset($this->groupnames[$groupname])) $this->error(sprintf('The "%s" group not found', $groupname));
+    $idgroup = $this->groupnames[$groupname];
+    return in_array($idgroup, $this->idgroups);
   }
   
   public function ingroups(array $idgroups) {
-    //admin has all rights
-    if ($this->user == 1) return true;
+    if ($this->ingroup('admin')) return true;
     return count(array_intersect($this->idgroups, $idgroups));
+  }
+  
+  public function hasgroup($groupname) {
+    if ($this->ingroup($groupname)) return true;
+    // if group is children of user groups
+    $idgroup = $this->groupnames[$groupname];
+    if (!isset($this->parentgroups[$idgroup])) return false;
+    return count(array_intersect($this->idgroups, $this->parentgroups[$idgroup]));
   }
   
   public function getcommentsapproved() {
@@ -1971,6 +1989,7 @@ class turlmap extends titems {
     if ($this->itemrequested = $this->finditem($url)){
       return $this->printcontent($this->itemrequested);
     } else {
+      echo "'$url'<br>";
       $this->notfound404();
     }
   }
@@ -2459,73 +2478,12 @@ class tusers extends titems {
   }
   
   public function add(array $values) {
-    $email = trim($values['email']);
-    if ( $this->emailexists($email)) return false;
-    $groups = tusergroups::i();
-    if (isset($values['idgroups'])) {
-      $idgroups = $groups->cleangroups($values['idgroups']);
-      if (count($idgroups) == 0) $idgroups = array($groups->getidgroup($groups->defaultgroup));
-    } else {
-      $idgroups = array($groups->getidgroup($groups->defaultgroup));
-    }
-    
-    $password = empty($values['password']) ? md5uniq() : $values['password'];
-    $password = basemd5(sprintf('%s:%s:%s', $email,  litepublisher::$options->realm, $password));
-    
-    $item = array(
-    'email' => $email,
-    'name' =>isset($values['name']) ? trim($values['name']) : '',
-    'website' => isset($values['website']) ? trim($values['website']) : '',
-    'password' => $password,
-    'cookie' =>  md5uniq(),
-    'expired' => sqldate(),
-    'idgroups' => implode(',', $idgroups),
-    'trust' => 0,
-    'status' => isset($values['status']) ? $values['status'] : 'approved',
-    );
-    
-    $id = $this->db->add($item);
-    $item['idgroups'] = $idgroups;
-    $this->items[$id] = $item;
-    $this->setgroups($id, $item['idgroups']);
-    
-    tuserpages::i()->add($id);
-    $this->added($id);
-    return $id;
+    return tusersman::i()->add($values);
   }
   
   public function edit($id, array $values) {
-    if (!$this->itemexists($id)) return false;
-    $item = $this->getitem($id);
-    foreach ($item as $k => $v) {
-      if (!isset($values[$k])) continue;
-      switch ($k) {
-        case 'password':
-        if ($values['password'] != '') {
-          $item['password'] = basemd5(sprintf('%s:%s:%s', $values['email'],  litepublisher::$options->realm, $values['password']));
-        }
-        break;
-        
-        case 'idgroups':
-        $groups = tusergroups::i();
-        $item['idgroups'] = $groups->cleangroups($values['idgroups']);
-        break;
-        
-        default:
-        $item[$k] = trim($values[$k]);
-      }
-    }
+    return tusersman::i()->edit($id, $values);
     
-    $this->items[$id] = $item;
-    $item['id'] = $id;
-    
-    $this->setgroups($id, $item['idgroups']);
-    $item['idgroups'] = implode(',', $item['idgroups']);
-    $this->db->updateassoc($item);
-    
-    $pages = tuserpages::i();
-    $pages->edit($id, $values);
-    return true;
   }
   
   public function setgroups($id, array $idgroups) {
@@ -2622,139 +2580,6 @@ class tusers extends titems {
     'cookie' => $cookie,
     'expired' => $expired
     ));
-  }
-  
-}//class
-
-//users.groups.class.php
-class tusergroups extends titems {
-  
-  public static function i() {
-    return getinstance(__class__);
-  }
-  
-  protected function create() {
-    parent::create();
-    $this->basename = 'usergroups';
-    $this->data['defaultgroup'] = 'nobody';
-    $this->addevents('onhasright');
-  }
-  
-  public function add($name, $title, $home) {
-    if ($id = $this->getidgroup($name)) return $id;
-    $this->items[++$this->autoid] = array(
-    'name' => $name,
-    'title' => $title,
-    'home' => $home
-    );
-    $this->save();
-    return $this->autoid;
-  }
-  
-  public function delete($id) {
-    if (!isset($this->items[$id])) return false;
-    unset($this->items[$id]);
-    $this->save();
-    
-    $users = tusers::i();
-    if (dbversion) {
-      $db = $users->db;
-      $items = $db->res2assoc($users->getdb($users->grouptable)->select("idgroup = $id"));
-      $users->getdb($users->grouptable)->delete("idgroup = $id");
-      foreach ($items as $item) {
-        $iduser = $item['iduser'];
-        $idgroups = $db->res2id($db->query("select idgroup from $db->prefix$users->grouptable where iduser = $iduser"));
-        $users->db->setvalue($iduser, 'idgroups', implode(',', $idgroups));
-      }
-    } else {
-      foreach ($users->items as &$item) {
-        array_delete_value($item['idgroups'], $id);
-      }
-      $users->save();
-    }
-  }
-  
-  public function getidgroup($name) {
-    return $this->IndexOf('name', trim($name));
-  }
-  
-  public function cleangroup($v) {
-    if (is_string($v)) $v = trim($v);
-    if (is_numeric($v)) {
-      $id = (int) $v;
-      if ($this->itemexists($id)) return $id;
-    } else {
-      return $this->getidgroup($v);
-    }
-    return false;
-  }
-  
-  public function cleangroups($v) {
-    if (is_array($v)) return $this->checkgroups(array_unique($v));
-    
-    if(is_string($v)) {
-      $v = trim($v);
-      if (strpos($v, ',')) return $this->checkgroups(explode(',', $v));
-    }
-    if ($id = $this->cleangroup($v)) return array($id);
-  }
-  
-  protected function checkgroups(array $a) {
-    $result = array();
-    foreach ($a as $val) {
-      if ($id = $this->cleangroup($val)) $result[] = $id;
-    }
-    
-    return array_unique($result);
-  }
-  
-  public function ingroup($iduser, $groupname) {
-    $iduser = (int) $iduser;
-    if ($iduser == 0) return false;
-    $idgroup = $this->getidgroup($groupname);
-    $item = tusers::i()->getitem($iduser);
-    return in_array($idgroup, $item['idgroups']);
-  }
-  
-  // $iduser, $groupname1, $groupname2...
-  public function ingroups() {
-    $args= func_get_args();
-    $iduser = array_shift ($args);
-    $item = tusers::i()->getitem($iduser);
-    $groups = $this->checkgroups($args);
-    return count(array_intersect($item['idgroups'], $groups)) > 0;
-  }
-  
-  public function hasright($who, $group) {
-    if ($who == $group) return  true;
-    if (($who == 'admin') || ($group == 'nobody')) return true;
-    switch ($who) {
-      case 'editor':
-      if ($group == 'author') return true;
-      break;
-      
-      case 'moderator':
-      if (($group == 'subscriber') || ($group == 'author')) return true;
-      break;
-      
-      case 'author':
-      if ($group == 'commentator') return true;
-      break;
-      
-      case 'subeditor':
-      if (in_array($group, array('author', 'subscriber', 'moderator'))) return true;
-      break;
-    }
-    
-    if ($this->onhasright($who, $group)) return true;
-    return false;
-  }
-  
-  public function gethome($name) {
-    if ($id = $this->cleangroup($name)) {
-      return isset($this->items[$id]['home']) ? $this->items[$id]['home'] : '/admin/';
-    }
-    return '/admin/';
   }
   
 }//class

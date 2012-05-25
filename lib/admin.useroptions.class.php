@@ -22,7 +22,7 @@ class tadminuseroptions extends tadminmenu {
     $pages = tuserpages::i();
     $args->createpage = $pages->createpage;
     $args->lite = $pages->lite;
-   
+    
     $linkgen = tlinkgenerator::i();
     $args->linkschema = $linkgen->data['user'];
     
@@ -30,8 +30,8 @@ class tadminuseroptions extends tadminmenu {
     '[[checkbox=createpage]
     [checkbox=lite]
     [text=linkschema]'
-. $html->h4->defaults.
- tadmingroups::getgroups(tusergroups::i()->defaults)
+    . $html->h4->defaults.
+    tadmingroups::getgroups(tusergroups::i()->defaults)
     , $args);
   }
   
