@@ -24,8 +24,17 @@ $cm->data['confirmcomuser'] = true;
 'status' => 'approved',
 'idgroups' => 'commentator'
 ));
-
-$cm->data['idgroups'] = tusergroups::i()->cleangroups('admin, editor, moderator, author, commentator, ticket');
+$groups = tusergroups::i();
+if (method_exists($groups, 'cleangroups')) {
+$cm->data['idgroups'] = $groups->cleangroups('admin, editor, moderator, author, commentator, ticket');
+} else {
+$cm->data['idgroups'] = array();
+foreach ($groups->items as $idgroup => $group) {
+if (in_array($group['name'], array('admin, editor, moderator, author, commentator, ticket'))) {
+$cm->data['idgroups'][] = $idgroup;
+}
+}
+}
 
 $spam = new tdata();
 $spam->basename = 'spamfilter';

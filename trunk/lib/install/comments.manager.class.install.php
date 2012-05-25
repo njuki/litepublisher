@@ -7,10 +7,10 @@
 **/
 
 function tcommentmanagerInstall($self) {
-$self->data['filterstatus'] = true;
+  $self->data['filterstatus'] = true;
   $self->data['checkduplicate'] = true;
   $self->data['defstatus'] = 'approved';
-
+  
   $self->data['sendnotification'] =  true;
   $self->data['trustlevel'] = 2;
   $self->data['hidelink'] = false;
@@ -27,7 +27,10 @@ $self->data['filterstatus'] = true;
   $self->data['comuser_subscribe'] = true;
   
   $self->data['idguest'] =  0; //create user in installer after create users table
-  $self->data['idgroups'] = tusergroups::i()->cleangroups('admin, editor, moderator, author, commentator, ticket');
+
+$groups = litepublisher::$options->groupnames;
+  $self->data['idgroups'] = array($groups['admin'], $groups['editor'], $groups['moderator'], $groups['author'], $groups['commentator']);
+
   $self->save();
   
   $comments = tcomments::i();

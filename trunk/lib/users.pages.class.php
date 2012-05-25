@@ -127,12 +127,12 @@ class tuserpages extends titems implements itemplate {
     $perpage = $this->lite ? 1000 : litepublisher::$options->perpage;
     $posts = litepublisher::$classes->posts;
     $from = (litepublisher::$urlmap->page - 1) * $perpage;
-
-      $poststable = $posts->thistable;
-      $count = $posts->db->getcount("$poststable.status = 'published' and $poststable.author = $this->id");
-      $items = $posts->select("$poststable.status = 'published' and $poststable.author = $this->id",
-      "order by $poststable.posted desc limit $from, $perpage");
-      $result .= $theme->getposts($items, $this->lite);
+    
+    $poststable = $posts->thistable;
+    $count = $posts->db->getcount("$poststable.status = 'published' and $poststable.author = $this->id");
+    $items = $posts->select("$poststable.status = 'published' and $poststable.author = $this->id",
+    "order by $poststable.posted desc limit $from, $perpage");
+    $result .= $theme->getposts($items, $this->lite);
     $result .=$theme->getpages($item['url'], litepublisher::$urlmap->page, ceil($count / $perpage));
     return $result;
   }

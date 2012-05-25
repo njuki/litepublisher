@@ -142,41 +142,20 @@ class titemsposts extends titems {
   }
   
   public function getposts($iditem) {
-    if (dbversion) {
-      return litepublisher::$db->res2id(litepublisher::$db->query("select post from $this->thistable where item = $iditem"));
-    } else {
-      $result = array();
-      foreach ($this->items as $id => $item) {
-        if (in_array($iditem, $item)) $result[] = $id;
-      }
-      return $result;
-    }
+    return litepublisher::$db->res2id(litepublisher::$db->query("select post from $this->thistable where item = $iditem"));
   }
   
   public function getpostscount($ititem) {
-    $items = $this->getposts($ititem);
-    $posts = tposts::i();
-    $items = $posts->stripdrafts($items);
-    return count($items);
+    $db = $this->getdb('posts');
+    return $db->getcount("$db->posts.status = 'published' and id in (select post from $this->thistable where item = $ititem)");
   }
   
   public function updateposts(array $list, $propname) {
-    if (dbversion) {
-      $db = $this->db;
-      foreach ($list as $idpost) {
-        $items = $this->getitems($idpost);
-        $db->table = 'posts';
-        $db->setvalue($idpost, $propname, implode(', ', $items));
-      }
-    } else {
-      foreach ($list as $idpost) {
-        $items = $this->items[$idpost];
-        $post = tpost::i($idpost);
-        if ($items != $post->$propname) {
-          $post->$propname = $items;
-          $post->Save();
-        }
-      }
+    $db = $this->db;
+    foreach ($list as $idpost) {
+      $items = $this->getitems($idpost);
+      $db->table = 'posts';
+      $db->setvalue($idpost, $propname, implode(', ', $items));
     }
   }
   
@@ -1358,24 +1337,10 @@ class tposts extends titems {
     return $this->finditems($where,  " order by posted $order limit $from, $perpage");
   }
   
-  public function GetPublishedRange($page, $perpage) {
-    $count = $this->archivescount;
-    $from = ($page - 1) * $perpage;
-    if ($from > $count)  return array();
-    
-    return $this->finditems("status = 'published'", " order by posted desc limit $from, $perpage");
-  }
-  
   public function stripdrafts(array $items) {
     if (count($items) == 0) return array();
     $list = implode(', ', $items);
     return $this->db->idselect("status = 'published' and id in ($list)");
-  }
-  
-  public function sortbyposted(array $items) {
-    if (count($items) <= 1) return $items;
-    $list = implode(', ', $items);
-    return $this->db->idselect("status = 'published' and id in ($list) order by posted desc");
   }
   
   //coclasses
@@ -1678,6 +1643,7 @@ class tcommontags extends titems implements  itemplate {
     if (!$this->dbversion)  $this->data['itemsposts'] = array();
     $this->itemsposts = new titemspostsowner ($this);
     $this->all_loaded = false;
+    $this->_idposts = array();
   }
   
   public function loadall() {
@@ -1763,27 +1729,19 @@ class tcommontags extends titems implements  itemplate {
   
   private function updatecount(array $items) {
     if (count($items) == 0) return;
-    if ($this->dbversion) {
-      $db = litepublisher::$db;
-      //next queries update values
-      $items = implode(',', $items);
-      $thistable = $this->thistable;
-      $itemstable = $this->itemsposts->thistable;
-      $poststable = $db->posts;
-      $list = $db->res2assoc($db->query("select $itemstable.item as id, count($itemstable.item)as itemscount from $itemstable, $poststable
-      where $itemstable.item in ($items)  and $itemstable.post = $poststable.id and $poststable.status = 'published'
-      group by $itemstable.item"));
-      
-      $db->table = $this->table;
-      foreach ($list as $item) {
-        $db->setvalue($item['id'], 'itemscount', $item['itemscount']);
-      }
-    } else {
-      $this->lock();
-      foreach ($items as $id) {
-        $this->items[$id]['itemscount'] = $this->itemsposts->getpostscount($id);
-      }
-      $this->unlock();
+    $db = litepublisher::$db;
+    //next queries update values
+    $items = implode(',', $items);
+    $thistable = $this->thistable;
+    $itemstable = $this->itemsposts->thistable;
+    $poststable = $db->posts;
+    $list = $db->res2assoc($db->query("select $itemstable.item as id, count($itemstable.item)as itemscount from $itemstable, $poststable
+    where $itemstable.item in ($items)  and $itemstable.post = $poststable.id and $poststable.status = 'published'
+    group by $itemstable.item"));
+    
+    $db->table = $this->table;
+    foreach ($list as $item) {
+      $db->setvalue($item['id'], 'itemscount', $item['itemscount']);
     }
   }
   
@@ -1951,8 +1909,8 @@ class tcommontags extends titems implements  itemplate {
     }
     
     $perpage = (int) $item['lite'] ? (int) $item['liteperpage'] : litepublisher::$options->perpage;
-    $list = $this->getidposts();
-    $pages = ceil($ount ($list) / $perpage);
+    $list = $this->getidposts($id);
+    $pages = ceil(count ($list) / $perpage);
     if (litepublisher::$urlmap->page > $pages) {
       return sprintf("<?php litepublisher::$urlmap->redir('%s');",$item['url']);
     }
@@ -2026,60 +1984,50 @@ class tcommontags extends titems implements  itemplate {
       $result = '';
     }
     
-    $list = $this->getidposts();
+    $list = $this->getidposts($this->id);
     $item = $this->getitem($this->id);
     $result .= $theme->getpostsnavi($list, (int) $item['lite'], $item['url'], $item['itemscount'], $item['liteperpage']);
     return $result;
   }
   
-  public function getidposts() {
-    if (isset($this->_idposts)) return $this->_idposts;
-    $item = $this->getitem($this->id);
+  public function get_sorted_posts($id, $count, $invert) {
+    $itemstable  = $this->itemsposts->thistable;
+    $posts = tposts::i();
+    $poststable = $posts->thistable;
+    $order = $invert ? 'asc' : 'desc';
+    return $posts->select("$poststable.status = 'published' and $poststable.id in
+    (select DISTINCT post from $itemstable  where $itemstable .item = $id)",
+    "order by $poststable.posted $order limit 0, $count");
+  }
+  
+  public function getidposts($id) {
+    if (isset($this->_idposts[$id])) return $this->_idposts[$id];
+    $item = $this->getitem($id);
+    
     $includeparents = (int) $item['includeparents'];
     $includechilds = (int) $item['includechilds'];
     $perpage = (int) $item['lite'] ? $item['liteperpage'] : litepublisher::$options->perpage;
     $posts = litepublisher::$classes->posts;
     
-    if ($this->dbversion) {
-      if ($includeparents || $includechilds) {
-        $this->loadall();
-        $all = array($this->id);
-        if ($includeparents) $all = array_merge($all, $this->getparents($this->id));
-        if ($includechilds) $all = array_merge($all, $this->getchilds($this->id));
-        $tags = sprintf('in (%s)', implode(',', $all));
-      } else {
-        $tags = " = $this->id";
-      }
-      
-      $from = (litepublisher::$urlmap->page - 1) * $perpage;
-      $itemstable  = $this->itemsposts->thistable;
-      $poststable = $posts->thistable;
-      $order = (int) $item['invertorder'] ? 'asc' : 'desc';
-      $this->_idposts = $posts->select("$poststable.status = 'published' and $poststable.id in
-      (select DISTINCT post from $itemstable  where $itemstable .item $tags)",
-      "order by $poststable.posted $order limit $from, $perpage");
+    if ($includeparents || $includechilds) {
+      $this->loadall();
+      $all = array($id);
+      if ($includeparents) $all = array_merge($all, $this->getparents($id));
+      if ($includechilds) $all = array_merge($all, $this->getchilds($id));
+      $tags = sprintf('in (%s)', implode(',', $all));
     } else {
-      $items = $this->itemsposts->getposts($this->id);
-      if ($includeparents) {
-        $parents = $this->getparents($this->id);
-        foreach ($parents as $id) {
-          $items = array_merge($items, array_diff($this->itemsposts->getposts($id), $items));
-        }
-      }
-      
-      if ($includechilds) {
-        $childs = $this->getchilds($this->id);
-        foreach ($childs as $id) {
-          $items = array_merge($items, array_diff($this->itemsposts->getposts($id), $items));
-        }
-      }
-      
-      $items = $posts->stripdrafts($items);
-      $items = $posts->sortbyposted($items);
-      if ($item['invertorder']) $items = array_reverse($items);
-      $this->_idposts = array_slice($items, (litepublisher::$urlmap->page - 1) * $perpage, $perpage);
+      $tags = " = $id";
     }
-    return $this->_idposts;
+    
+    $from = (litepublisher::$urlmap->page - 1) * $perpage;
+    $itemstable  = $this->itemsposts->thistable;
+    $poststable = $posts->thistable;
+    $order = (int) $item['invertorder'] ? 'asc' : 'desc';
+    $this->_idposts[$id] = $posts->select("$poststable.status = 'published' and $poststable.id in
+    (select DISTINCT post from $itemstable  where $itemstable .item $tags)",
+    "order by $poststable.posted $order limit $from, $perpage");
+    
+    return $this->_idposts[$id];
   }
   
   public function getparents($id) {$result = array();
