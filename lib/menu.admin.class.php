@@ -63,11 +63,6 @@ class tadminmenus extends tmenus {
     ));
   }
   
-  public function hasright($group) {
-    $groups = tusergroups::i();
-    return $groups->hasright(litepublisher::$options->group, $group);
-  }
-  
   public function getchilds($id) {
     if ($id == 0) {
       $result = array();

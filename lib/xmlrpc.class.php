@@ -148,19 +148,15 @@ class TXMLRPCAbstract extends tevents {
   
   public static function auth($email, $password, $group) {
     if (litepublisher::$options->auth($email, $password))  {
-      if ((litepublisher::$options->group == 'admin') || (litepublisher::$options->group == $group) || ($group == 'nobody')) return true;
-      $groups = tusergroups::i();
-      if ($groups->hasright(litepublisher::$options->group, $group)) return true;
+      if ((litepublisher::$options->hasgroup($group)) return true;
     }
     throw new Exception('Bad login/pass combination.', 403);
   }
   
   public static function canedit($email, $password, $idpost) {
     if (litepublisher::$options->auth($email, $password))  {
-      $group = litepublisher::$options->group;
-      if (($group == 'admin') || ($group == 'editor')) return true;
-      $groups = tusergroups::i();
-      if ($groups->hasright($group, 'author')) {
+if (litepublisher::$options->hasgroup('editor')) return true;
+      if (litepublisher::$options->hasgroup('author')) {
         if ($idpost == 0) return true;
         $post = tpost::i($idpost);
         return $post->author == litepublisher::$options->user;

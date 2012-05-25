@@ -71,7 +71,8 @@ try {
   } else {
     require_once(litepublisher::$paths->lib . 'kernel.php');
   }
-  
+
+define('dbversion', true);  
   /*
   if (class_exists('Memcache')) {
     tfilestorage::$memcache =  new Memcache;
@@ -84,7 +85,7 @@ try {
   litepublisher::$options = toptions::i();
   litepublisher::$site = tsite::i();
   if (!litepublisher::$options->installed) require_once(litepublisher::$paths->lib .'install' . DIRECTORY_SEPARATOR . 'install.php');
-  if (dbversion) litepublisher::$db = tdatabase::i();
+ litepublisher::$db = tdatabase::i();
   
   litepublisher::$urlmap = turlmap::i();
   if (!defined('litepublisher_mode')) {

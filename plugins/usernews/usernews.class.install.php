@@ -18,7 +18,7 @@ function tusernewsInstall($self) {
   $adminoptions->usersenabled = true;
   
   $groups = tusergroups  ::i();
-  $groups->defaultgroup = 'author';
+  $groups->defaults = array($groups->getidgroup('author'));
   $groups->save();
   
   $rights = tauthor_rights::i();
