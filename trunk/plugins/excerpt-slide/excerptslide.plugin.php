@@ -78,10 +78,10 @@ class texcerptslide extends  twidget {
   
   public function getcontent($id, $sidebar) {
     if (!isset($this->items[$id])) return '';
-$item = $this->items[$id];
+    $item = $this->items[$id];
     $items = $this->tags->get_sorted_posts($item['idtag'], $item['maxcount'], $item['invertorder']);
     if (count($items) == 0) return '';
-
+    
     $theme = ttheme::i();
     return $theme->getpostswidgetcontent($items, $sidebar,
     '<li class="excerptslide"><a class="excerptslide_link" href="">$post.title</a> $post.excerptcontent</li>');
