@@ -75,7 +75,7 @@ class tcommentform extends tevents {
     }
     
     $cm = tcommentmanager::i();
-    if (litepublisher::$options->checkduplicate && $cm->checkduplicate($shortpost['id'], $values['content']) ) {
+    if ($cm->checkduplicate && $cm->is_duplicate($shortpost['id'], $values['content']) ) {
       return $this->geterrorcontent($lang->duplicate);
     }
     

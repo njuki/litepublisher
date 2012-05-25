@@ -7,6 +7,10 @@
 **/
 
 function tcommentmanagerInstall($self) {
+$self->data['filterstatus'] = true;
+  $self->data['checkduplicate'] = true;
+  $self->data['defstatus'] = 'approved';
+
   $self->data['sendnotification'] =  true;
   $self->data['trustlevel'] = 2;
   $self->data['hidelink'] = false;

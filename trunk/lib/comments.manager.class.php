@@ -105,8 +105,8 @@ class tcommentmanager extends tevents_storage {
     if (false ===  $status) return false;
     if ($status == 'spam') return false;
     if (($status == 'hold') || ($status == 'approved')) return $status;
-    if (!litepublisher::$options->filtercommentstatus) return litepublisher::$options->DefaultCommentStatus;
-    if (litepublisher::$options->DefaultCommentStatus == 'approved') return 'approved';
+    if (!$this->filterstatus) return $this->defstatus;
+    if ($this->defstatus == 'approved') return 'approved';
     
     if ($this->trusted($idauthor)) return  'approved';
     return 'hold';
@@ -116,7 +116,7 @@ class tcommentmanager extends tevents_storage {
     return !$this->is_spamer($idauthor);
   }
   
-  public function checkduplicate($idpost, $content) {
+  public function is_duplicate($idpost, $content) {
     $comments = tcomments::i($idpost);
     $content = trim($content);
     $hash = basemd5($content);

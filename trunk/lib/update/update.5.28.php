@@ -71,5 +71,19 @@ $data->basename = 'cron';
 $data->save();
 
 litepublisher::$classes->save();
+if (isset(litepublisher::$options->data['filtercommentstatus'])) {
+$cm = tcommentmanager::i();
+$cm->data['filterstatus'] = litepublisher::$options->filtercommentstatus;
+unset(litepublisher::$options->data['filtercommentstatus']);
+
+$cm->data['checkduplicate'] = litepublisher::$options->checkduplicate;
+unset(litepublisher::$options->data['checkduplicate']);
+
+$cm->data['defstatus'] = litepublisher::$options->DefaultCommentStatus;
+unset(litepublisher::$options->data['DefaultCommentStatus']);
+
+$cm->save();
+}
+
 litepublisher::$options->savemodified();
   }
