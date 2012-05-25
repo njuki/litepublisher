@@ -16,6 +16,7 @@ litepublisher::$options->save();
 }
 
 $groups = tusergroups::i();
+if (!isset($groups->data['defaults'])) {
 foreach ($groups->items as $id => $group) {
 $groups->items[$id]['parents'] = array();
 }
@@ -49,10 +50,26 @@ unset($groups->data['defaultgroup']);
 
 unset($groups->data['events']['onhasright']);
 $groups->save();
+}
 
 litepublisher::$options->save();
 
 litepublisher::$classes->items['tusergroups'][0] = 'users.groups.class.php';
 unset(litepublisher::$classes->items['tusergroups'][2]);
 litepublisher::$classes->add('tusersman', 'usersman.class.php');
+litepublisher::$classes->items['tsitemap'][0] = 'sitemap.class.php';
+if (!litepublisher::$urlmap->urlexists('/sitemap.xml')) {
+tsitemap::i()->install();
+}
+unset(litepublisher::$classes->items['tabstractcron']);
+litepublisher::$classes->items['tcron'][0] = 'cron.class.php';
+
+$data = new tdata();
+$data->basename = 'cron' . DIRECTORY_SEPARATOR . 'index';
+$data->load();
+$data->basename = 'cron';
+$data->save();
+
+litepublisher::$classes->save();
+litepublisher::$options->savemodified();
   }
