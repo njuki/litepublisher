@@ -142,44 +142,23 @@ class titemsposts extends titems {
   }
   
   public function getposts($iditem) {
-    if (dbversion) {
       return litepublisher::$db->res2id(litepublisher::$db->query("select post from $this->thistable where item = $iditem"));
-    } else {
-      $result = array();
-      foreach ($this->items as $id => $item) {
-        if (in_array($iditem, $item)) $result[] = $id;
-      }
-      return $result;
-    }
   }
   
   public function getpostscount($ititem) {
-    $items = $this->getposts($ititem);
-    $posts = tposts::i();
-    $items = $posts->stripdrafts($items);
-    return count($items);
+$db = $this->getdb('posts');
+      return $db->getcount("$db->posts.status = 'published' and id in (select post from $this->thistable where item = $ititem)");
   }
   
   public function updateposts(array $list, $propname) {
-    if (dbversion) {
       $db = $this->db;
       foreach ($list as $idpost) {
         $items = $this->getitems($idpost);
         $db->table = 'posts';
         $db->setvalue($idpost, $propname, implode(', ', $items));
       }
-    } else {
-      foreach ($list as $idpost) {
-        $items = $this->items[$idpost];
-        $post = tpost::i($idpost);
-        if ($items != $post->$propname) {
-          $post->$propname = $items;
-          $post->Save();
-        }
-      }
-    }
-  }
-  
+}
+
 }//class
 
 class titemspostsowner extends titemsposts {
