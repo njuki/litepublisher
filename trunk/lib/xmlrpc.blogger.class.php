@@ -68,9 +68,9 @@ class TXMLRPCBlogger  extends TXMLRPCAbstract {
     $this->auth($login, $password, 'author');
     
     $posts = tposts::i();
-    $Items = $Posts->GetPublishedRange(0, (int) $count);
-    
-    foreach ($Items as $id) {
+    $Items = $posts->finditems("status = 'published'", " order by posted desc limit 0, " . intval($count));
+
+      foreach ($Items as $id) {
       $Post = tpost::i($id);
       $categories = implode(',', $Post->categories);
       $content  = '<title>'.$Post->title . '</title>';

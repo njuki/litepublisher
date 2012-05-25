@@ -305,24 +305,10 @@ class tposts extends titems {
     return $this->finditems($where,  " order by posted $order limit $from, $perpage");
   }
   
-  public function GetPublishedRange($page, $perpage) {
-    $count = $this->archivescount;
-    $from = ($page - 1) * $perpage;
-    if ($from > $count)  return array();
-    
-    return $this->finditems("status = 'published'", " order by posted desc limit $from, $perpage");
-  }
-  
   public function stripdrafts(array $items) {
     if (count($items) == 0) return array();
     $list = implode(', ', $items);
     return $this->db->idselect("status = 'published' and id in ($list)");
-  }
-  
-  public function sortbyposted(array $items) {
-    if (count($items) <= 1) return $items;
-    $list = implode(', ', $items);
-    return $this->db->idselect("status = 'published' and id in ($list) order by posted desc");
   }
   
   //coclasses
