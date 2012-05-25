@@ -67,10 +67,10 @@ class thomepage extends tmenu  {
       $this->data['archcount'] = $posts->archivescount;
       $result = $posts->getpage(0, litepublisher::$urlmap->page, $perpage, $this->invertorder);
     } else {
-        $order = $this->invertorder ? 'asc' : 'desc';
-        $result = $posts->select($this->getwhere(),
-        'order by ' . $posts->thistable . ".posted $order limit $from, $perpage");
-}        
+      $order = $this->invertorder ? 'asc' : 'desc';
+      $result = $posts->select($this->getwhere(),
+      'order by ' . $posts->thistable . ".posted $order limit $from, $perpage");
+    }
     $this->callevent('ongetitems', array(&$result));
     return $result;
   }

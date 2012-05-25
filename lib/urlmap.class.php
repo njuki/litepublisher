@@ -89,10 +89,10 @@ class turlmap extends titems {
   }
   
   private function dorequest($url) {
+//echo "'$url'<br>";
     if ($this->itemrequested = $this->finditem($url)){
       return $this->printcontent($this->itemrequested);
     } else {
-      echo "'$url'<br>";
       $this->notfound404();
     }
   }
@@ -193,7 +193,7 @@ class turlmap extends titems {
         return;
       }
     }
-
+    
     if (class_exists($item['class']))  {
       return $this->GenerateHTML($item);
     } else {

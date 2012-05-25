@@ -443,8 +443,8 @@ class tcommentmanager extends tevents_storage {
     if (false ===  $status) return false;
     if ($status == 'spam') return false;
     if (($status == 'hold') || ($status == 'approved')) return $status;
-    if (!litepublisher::$options->filtercommentstatus) return litepublisher::$options->DefaultCommentStatus;
-    if (litepublisher::$options->DefaultCommentStatus == 'approved') return 'approved';
+    if (!$this->filterstatus) return $this->defstatus;
+    if ($this->defstatus == 'approved') return 'approved';
     
     if ($this->trusted($idauthor)) return  'approved';
     return 'hold';
@@ -454,7 +454,7 @@ class tcommentmanager extends tevents_storage {
     return !$this->is_spamer($idauthor);
   }
   
-  public function checkduplicate($idpost, $content) {
+  public function is_duplicate($idpost, $content) {
     $comments = tcomments::i($idpost);
     $content = trim($content);
     $hash = basemd5($content);
@@ -544,7 +544,7 @@ class tcommentform extends tevents {
     }
     
     $cm = tcommentmanager::i();
-    if (litepublisher::$options->checkduplicate && $cm->checkduplicate($shortpost['id'], $values['content']) ) {
+    if ($cm->checkduplicate && $cm->is_duplicate($shortpost['id'], $values['content']) ) {
       return $this->geterrorcontent($lang->duplicate);
     }
     
@@ -960,7 +960,7 @@ class ttemplatecomments extends tevents {
             $args->$field = "<?php echo (isset(\$_COOKIE['comuser_$field']) ? \$_COOKIE['comuser_$field'] : ''); ?>";
           }
           
-          $args->subscribe = litepublisher::$options->defaultsubscribe;
+          $args->subscribe = false;
           $args->content = '';
           
           $result .= $theme->parsearg($theme->templates['content.post.templatecomments.form'], $args);

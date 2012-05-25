@@ -7,9 +7,9 @@
 **/
 
 class tcron extends tevents {
-    public static $pinged = false;
+  public static $pinged = false;
   public $disableadd;
-
+  
   public static function i() {
     return getinstance(__class__);
   }
@@ -24,17 +24,17 @@ class tcron extends tevents {
     $this->disableadd = false;
     $this->table = 'cron';
   }
-
+  
   protected function geturl() {
     return '/croncron.htm' . litepublisher::$site->q . "cronpass=$this->password";
   }
-
-public function getlockpath() {
-if ($result = $this->path) {
-if (is_dir($result)) return $result;
-}
-return litepublisher::$paths->data;
-}
+  
+  public function getlockpath() {
+    if ($result = $this->path) {
+      if (is_dir($result)) return $result;
+    }
+    return litepublisher::$paths->data;
+  }
   
   public function request($arg) {
     if (!isset($_GET['cronpass']) || ($this->password != $_GET['cronpass'])) return 403;
@@ -101,8 +101,8 @@ return litepublisher::$paths->data;
       }
     }
   }
-
- public function add($type, $class, $func, $arg = null) {
+  
+  public function add($type, $class, $func, $arg = null) {
     if (!preg_match('/^single|hour|day|week$/', $type)) $this->error("Unknown cron type $type");
     if ($this->disableadd) return false;
     $id = $this->doadd($type, $class, $func, $arg);
@@ -157,8 +157,8 @@ return litepublisher::$paths->data;
     $class = self::get_class_name($c);
     $this->db->delete("class = '$class'");
   }
-
- public static function pingonshutdown() {
+  
+  public static function pingonshutdown() {
     if (self::$pinged) return;
     self::$pinged = true;
     register_shutdown_function(array(tcron::i(), 'ping'));
@@ -192,7 +192,7 @@ return litepublisher::$paths->data;
     flush();
     if (litepublisher::$debug) tfiler::log($s, 'cron.log');
   }
-
+  
 }//class
 
 ?>

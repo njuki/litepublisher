@@ -148,7 +148,7 @@ class TXMLRPCAbstract extends tevents {
   
   public static function auth($email, $password, $group) {
     if (litepublisher::$options->auth($email, $password))  {
-      if ((litepublisher::$options->hasgroup($group)) return true;
+      if (litepublisher::$options->hasgroup($group)) return true;
     }
     throw new Exception('Bad login/pass combination.', 403);
   }

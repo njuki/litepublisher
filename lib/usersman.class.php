@@ -15,10 +15,10 @@ class tusersman extends tdata {
   public function add(array $values) {
     $users = tusers::i();
     $email = trim($values['email']);
-    if ( $this->emailexists($email)) return false;
+    if ( $users->emailexists($email)) return false;
     $groups = tusergroups::i();
     if (isset($values['idgroups'])) {
-      $idgroups = $groups->cleangroups($values['idgroups']);
+      $idgroups = $this->cleangroups($values['idgroups']);
       if (count($idgroups) == 0) $idgroups = $groups->defaults;
     } else {
       $idgroups = $groups->defaults;
@@ -64,7 +64,7 @@ class tusersman extends tdata {
         
         case 'idgroups':
         $groups = tusergroups::i();
-        $item['idgroups'] = $groups->cleangroups($values['idgroups']);
+        $item['idgroups'] = $this->cleangroups($values['idgroups']);
         break;
         
         default:

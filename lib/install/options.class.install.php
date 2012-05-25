@@ -26,12 +26,14 @@ function installoptions($email, $language) {
     die($e->GetMessage());
   }
   
-  $db = litepublisher::$db;
-  $list = $db->res2array($db->query("show tables from " . $options->dbconfig['dbname']));
-  foreach ($list as $row) {
-    $table = $row[0];
-    if (strbegin($table, $db->prefix)) {
-      $db->exec('DROP TABLE IF EXISTS ' . $table);
+  if (litepublisher::$debug) {
+    $db = litepublisher::$db;
+    $list = $db->res2array($db->query("show tables from " . $options->dbconfig['dbname']));
+    foreach ($list as $row) {
+      $table = $row[0];
+      if (strbegin($table, $db->prefix)) {
+        $db->exec('DROP TABLE IF EXISTS ' . $table);
+      }
     }
   }
   

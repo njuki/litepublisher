@@ -7,7 +7,7 @@
 **/
 
 function tsitemapInstall($self) {
-tcron::i()->addnightly(get_class($self),  'Cron', null);
+  tcron::i()->addnightly(get_class($self),  'Cron', null);
   
   litepublisher::$urlmap->add('/sitemap.xml', get_class($self), 'xml');
   litepublisher::$urlmap->add('/sitemap.htm', get_class($self), null);
@@ -25,7 +25,7 @@ tcron::i()->addnightly(get_class($self),  'Cron', null);
 
 function tsitemapUninstall($self) {
   turlmap::unsub($self);
-tcron::i()->deleteclass($self);
+  tcron::i()->deleteclass($self);
   $meta = tmetawidget::i();
   $meta->delete('sitemap');
 }
