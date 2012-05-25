@@ -19,9 +19,9 @@ $users = tusers::i();
     $groups = tusergroups::i();
     if (isset($values['idgroups'])) {
       $idgroups = $groups->cleangroups($values['idgroups']);
-      if (count($idgroups) == 0) $idgroups = array($groups->getidgroup($groups->defaultgroup));
+      if (count($idgroups) == 0) $idgroups = $groups->defaults;
     } else {
-      $idgroups = array($groups->getidgroup($groups->defaultgroup));
+      $idgroups = $groups->defaults;
     }
     
     $password = empty($values['password']) ? md5uniq() : $values['password'];
