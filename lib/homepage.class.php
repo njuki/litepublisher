@@ -67,38 +67,13 @@ class thomepage extends tmenu  {
       $this->data['archcount'] = $posts->archivescount;
       $result = $posts->getpage(0, litepublisher::$urlmap->page, $perpage, $this->invertorder);
     } else {
-      if (dbversion) {
         $order = $this->invertorder ? 'asc' : 'desc';
         $result = $posts->select($this->getwhere(),
         'order by ' . $posts->thistable . ".posted $order limit $from, $perpage");
-      } else {
-        $catsposts = tcategories::i()->itemsposts;
-        if (count($include) == 0) {
-          $result = array_keys($posts->archives);
-        } else {
-          $result = array();
-          foreach ($include as $id) {
-            $result = array_merge($result, array_diff($catsposts->getposts($id), $result));
-          }
-        }
-        
-        foreach ($exclude as $id) {
-          $result = array_diff($result, array_intersect($catsposts->getposts($id), $result));
-        }
-        
-        $result = $posts->stripdrafts($result);
-        $result = $posts->sortbyposted($result);
-        if ($this->invertorder)       $result = array_reverse($result);
-        $this->data['archcount'] = count($result);
-        $result = array_slice($result, (litepublisher::$urlmap->page - 1) * $perpage, $perpage);
-      }
-    }
-    
+}        
     $this->callevent('ongetitems', array(&$result));
     return $result;
   }
-  
-  
   
   public function getwhere() {
     $result = '';

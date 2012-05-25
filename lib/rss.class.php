@@ -108,10 +108,7 @@ class trss extends tevents {
   public function gettagrss(tcommontags $tags, $id) {
     $this->domrss->CreateRoot(litepublisher::$site->url. litepublisher::$urlmap->url, $tags->getvalue($id, 'title'));
     
-    $items = $tags->itemsposts->getposts($id);
-    $posts = litepublisher::$classes->posts;
-    $items = $posts->stripdrafts($items);
-    $items = $posts->sortbyposted($items);
+    $items = $tags->getidposts($id);
     $this->getrssposts(array_slice($items, 0, litepublisher::$options->perpage));
   }
   

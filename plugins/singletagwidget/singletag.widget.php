@@ -79,21 +79,10 @@ class tsingletagwidget extends  twidget {
   
   public function getcontent($id, $sidebar) {
     if (!isset($this->items[$id])) return '';
-    $items = $this->tags->itemsposts->getposts($this->items[$id]['idtag']);
+$item = $this->items[$id];
+    $items = $this->tags->get_sorted_posts($item['idtag'], $item['maxcount'], $item['invertorder']);
     if (count($items) == 0) return '';
-    $posts = litepublisher::$classes->posts;
-    $items = $posts->stripdrafts($items);
-    $items = $posts->sortbyposted($items);
     
-    if ($this->items[$id]['invertorder']) {
-      $items = array_reverse($items);
-      $items = array_slice($items, 0 - $this->items[$id]['maxcount']);
-    } else {
-      $items = array_slice($items, 0, $this->items[$id]['maxcount']);
-      
-    }
-    
-    if (count($items) == 0) return '';
     $theme = ttheme::i();
     return $theme->getpostswidgetcontent($items, $sidebar, '');
   }
