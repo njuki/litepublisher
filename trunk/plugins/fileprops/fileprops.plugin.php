@@ -16,7 +16,7 @@ class tfilepropsplugin extends tplugin {
     $this->cache = false;
     if (!litepublisher::$options->cookieenabled) return 403;
     if (!litepublisher::$options->authcookie()) return 403;
-if (!litepublisher::$options->hasgroup('editor')) {
+    if (!litepublisher::$options->hasgroup('editor')) {
       if (!litepublisher::$options->hasgroup('author')) return 403;
     }
     

@@ -125,11 +125,11 @@ class tdatabase {
   public function escape($s) {
     return mysql_real_escape_string($s);
   }
-
-public function settable($table) {
-$this->table = $table;
-return $this;
-}
+  
+  public function settable($table) {
+    $this->table = $table;
+    return $this;
+  }
   
   public function select($where) {
     if ($where != '') $where = 'where '. $where;

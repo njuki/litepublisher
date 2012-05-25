@@ -51,11 +51,11 @@ class tusers extends titems {
   }
   
   public function add(array $values) {
-return tusersman::i()->add($values);
+    return tusersman::i()->add($values);
   }
   
   public function edit($id, array $values) {
-return tusersman::i()->edit($id, $values);
+    return tusersman::i()->edit($id, $values);
     
   }
   

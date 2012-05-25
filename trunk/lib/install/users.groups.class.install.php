@@ -15,9 +15,9 @@ function tusergroupsInstall($self) {
   $author = $self->add('author', $lang->author, '/admin/posts/');
   $moder = $self->add('moderator', $lang->moderator, '/admin/comments/');
   $commentator = $self->add('commentator', $lang->commentator, '/admin/comments/');
-
-$self->items[$author]['parents'] = array($editor);
-$self->items[$commentator]['parents'] = array($moderator, $author);
-
+  
+  $self->items[$author]['parents'] = array($editor);
+  $self->items[$commentator]['parents'] = array($moderator, $author);
+  
   $self->unlock();
 }

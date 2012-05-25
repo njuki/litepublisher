@@ -111,8 +111,8 @@ function tticketsInstall($self) {
   $groups->lock();
   $idticket = $groups->add('ticket', 'Tickets', '/admin/tickets/editor/');
   $groups->defaults = array($idticket, $groups->getidgroup('author'));
-$groups->items[litepublisher::$options->groupnames['author']]['parents'][] = $idticket;
-$groups->items[litepublisher::$options->groupnames['commentator']]['parents'][] = $idticket;
+  $groups->items[litepublisher::$options->groupnames['author']]['parents'][] = $idticket;
+  $groups->items[litepublisher::$options->groupnames['commentator']]['parents'][] = $idticket;
   $groups->unlock();
 }
 

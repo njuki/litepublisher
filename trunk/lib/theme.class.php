@@ -551,8 +551,8 @@ class targs {
   }
   
   public function __set($name, $value) {
-if (!is_string($name)) return;
-if ($name == '') return;
+    if (!is_string($name)) return;
+    if ($name == '') return;
     if (is_bool($value)) {
       $value = $value ? 'checked="checked"' : '';
     }
