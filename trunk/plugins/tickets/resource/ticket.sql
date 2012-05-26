@@ -10,6 +10,5 @@
   `reproduced` tinyint(1) default '0',
   `code` longtext NOT NULL,
 
-  PRIMARY KEY  (`id`,`type`),
-  KEY `type` (`type`),
+  PRIMARY KEY  (`id`),
   KEY `state` (`state`)
