@@ -220,9 +220,30 @@ class tcontentfilter extends tevents {
   }
   
   public static function escape($s) {
-    return self::quote(htmlspecialchars(trim(strip_tags($s))));
+    return strtr(trim(strip_tags($s) array(
+'"' => '&quot;',
+ "'" => '&#039;',
+ '\\'=> '&#092;',
+ '$' => '&#36;',
+ '%' => '&#37;',
+ '_' => '&#95;',
+'>' => '',
+'<' => ''
+))));
   }
-  
+
+  public static function unescape($s) {
+    return strtr($s, array(
+'&quot;' => '"',
+'&#039;' =>  "'", 
+'&#092;' => '\\',
+ '&#36;' => '$',
+ '&#37;' => '%',
+ '&#95;' =>'_'
+
+
+));
+  }
   // uset in tthemeparser
   public static function getidtag($tag, $s) {
     if (preg_match("/<$tag\\s*.*?id\\s*=\\s*['\"]([^\"'>]*)/i", $s, $m)) {
