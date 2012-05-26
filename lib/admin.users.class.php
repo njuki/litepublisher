@@ -47,8 +47,8 @@ class tadminusers extends tadminmenu {
         $tabs->add($lang->groups, '[combo=status]' .
         tadmingroups::getgroups($item['idgroups']));
         $tabs->add('Cookie', '[text=cookie] [text=expired] [text=registered] [text=trust]');
-
-$args->password = '';        
+        
+        $args->password = '';
         $result .= $html->adminform($tabs->get(), $args);
       }
       break;

@@ -525,7 +525,7 @@ class tdata {
   
   public function afterload() {
     foreach ($this->coinstances as $coinstance) {
-      $coinstance->afterload();
+      if (method_exists($coinstance, 'afterload')) $coinstance->afterload();
     }
   }
   
@@ -1978,6 +1978,7 @@ class turlmap extends titems {
   }
   
   private function dorequest($url) {
+    //echo "'$url'<br>";
     if ($this->itemrequested = $this->finditem($url)){
       return $this->printcontent($this->itemrequested);
     } else {

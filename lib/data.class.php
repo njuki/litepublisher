@@ -176,7 +176,7 @@ class tdata {
   
   public function afterload() {
     foreach ($this->coinstances as $coinstance) {
-      $coinstance->afterload();
+      if (method_exists($coinstance, 'afterload')) $coinstance->afterload();
     }
   }
   

@@ -27,10 +27,10 @@ function tcommentmanagerInstall($self) {
   $self->data['comuser_subscribe'] = true;
   
   $self->data['idguest'] =  0; //create user in installer after create users table
-
-$groups = litepublisher::$options->groupnames;
+  
+  $groups = litepublisher::$options->groupnames;
   $self->data['idgroups'] = array($groups['admin'], $groups['editor'], $groups['moderator'], $groups['author'], $groups['commentator']);
-
+  
   $self->save();
   
   $comments = tcomments::i();

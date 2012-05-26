@@ -479,6 +479,10 @@ class tpost extends titem implements  itemplate {
     }
   }
   
+  public function settitle($title) {
+    $this->data['title'] = tcontentfilter::escape(tcontentfilter::unescape($title));
+  }
+  
   public function gettheme() {
     ttheme::$vars['post'] = $this;
     if (isset($this->_theme)) return $this->_theme;
@@ -1228,7 +1232,6 @@ class tposts extends titems {
     
     $linkgen = tlinkgenerator::i();
     $post->url = $linkgen->addurl($post, $post->schemalink);
-    $post->title = tcontentfilter::escape($post->title);
     $urlmap = turlmap::i();
     $id = $post->addtodb();
     $post->idurl = $urlmap->add($post->url, get_class($post), (int) $post->id);
@@ -1248,7 +1251,6 @@ class tposts extends titems {
     $this->beforechange($post);
     $linkgen = tlinkgenerator::i();
     $linkgen->editurl($post, $post->schemalink);
-    $post->title = tcontentfilter::escape($post->title);
     if ($post->posted <= time()) {
       if ($post->status == 'future') $post->status = 'published';
     } else {

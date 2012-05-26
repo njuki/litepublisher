@@ -97,7 +97,7 @@ tlocal::clearcache();
 litepublisher::$urlmap->clearcache();
 //tjsmerger::i()->save();
 //litepublisher::$options->show_draft_post = true;
-//tupdater::i()->run(5.28);
+//tupdater::i()->run(5.27);
 //ttemplatecomments ::i()->install();
 //tregservices::i()->update_widget();
 //tcommentform::i()->oncomuser = tregservices::i()->oncomuser;

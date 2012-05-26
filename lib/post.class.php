@@ -300,10 +300,10 @@ class tpost extends titem implements  itemplate {
       }
     }
   }
-
-public function settitle($title) {
-$this->data['title'] = tcontentfilter::escape(tcontentfilter::unescape($title));
-}
+  
+  public function settitle($title) {
+    $this->data['title'] = tcontentfilter::escape(tcontentfilter::unescape($title));
+  }
   
   public function gettheme() {
     ttheme::$vars['post'] = $this;

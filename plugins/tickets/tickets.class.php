@@ -38,7 +38,7 @@ class ttickets extends tposts {
     } elseif (count($cats) > 1) {
       $cats = array($cats[0]);
     }
-
+    
     $post->categories = $cats;
   }
   
