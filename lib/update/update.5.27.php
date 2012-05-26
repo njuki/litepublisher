@@ -18,13 +18,14 @@ $cm->data['confirmcomuser'] = true;
 
   $cm->data['comuser_subscribe'] = true;
 
-    $cm->data['idguest'] =  tusers::i()->add(array(
-'email' => '',
-'name' => tlocal::get('default', 'guest'),
-'status' => 'approved',
-'idgroups' => 'commentator'
-));
 $groups = tusergroups::i();
+if ($idgroup = $groups->indexOf('name', 'subscriber')) {
+$groups->items[$idgroup]['name'] = 'commentator';
+$groups->save();
+} else {
+$idgroup = $groups->indexOf('name', 'commentator');
+}
+
 if (method_exists($groups, 'cleangroups')) {
 $cm->data['idgroups'] = $groups->cleangroups('admin, editor, moderator, author, commentator, ticket');
 } else {
@@ -35,6 +36,14 @@ $cm->data['idgroups'][] = $idgroup;
 }
 }
 }
+
+    $cm->data['idguest'] =  tusers::i()->add(array(
+'email' => '',
+'name' => tlocal::get('default', 'guest'),
+'status' => 'approved',
+'idgroups' => 'commentator'
+));
+
 
 $spam = new tdata();
 $spam->basename = 'spamfilter';
@@ -204,15 +213,6 @@ $man->alter('posts', "add `comstatus` enum('closed','reg','guest','comuser') def
 $db->table = 'posts';
 $db->update("comstatus = 'closed'", "commentsenabled = 0");
 $man->alter('posts', "drop commentsenabled");
-
-$groups = tusergroups::i();
-if ($idgroup = $groups->getidgroup('subscriber')) {
-$groups->items[$idgroup]['name'] = 'commentator';
-$groups->save();
-} else {
-$idgroup = $groups->getidgroup('commentator');
-}
-
 $man->alter('comments', "add tmp int unsigned NOT NULL default '0'");
 
 // $map for subscribers

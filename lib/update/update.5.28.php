@@ -101,4 +101,24 @@ $admin->save();
 
 litepublisher::$options->save();
 litepublisher::$options->savemodified();
+
+$db = litepublisher::$db;
+$db->table = 'posts';
+    $from = 0;
+    while ($a = $db->res2assoc($db->query("select id, title from $db->posts where status <> 'deleted' limit $from, 500"))) {
+$from += count($a);
+      foreach ($a as $item) {
+$title = htmlspecialchars_decode (strtr ($item['title'], array(
+'&quot;' => '"',
+'&#039;' =>  "'", 
+'&#092;' => '\\',
+ '&#36;' => '$',
+ '&#37;' => '%',
+ '&#95;' =>'_'
+)));
+
+$db->setvalue($item['id'], 'title', $title);
+}
+}
+
   }
