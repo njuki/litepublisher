@@ -117,6 +117,7 @@ $title = htmlspecialchars_decode (strtr ($item['title'], array(
  '&#95;' =>'_'
 )));
 
+$title = tcontentfilter::escape($title);
 $db->setvalue($item['id'], 'title', $title);
 }
 }

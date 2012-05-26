@@ -19,6 +19,8 @@ $cm->data['confirmcomuser'] = true;
   $cm->data['comuser_subscribe'] = true;
 
 $groups = tusergroups::i();
+require_once(litepublisher::$paths->lib . 'usersman.class.php');
+$groups->coinstances[] = new tusersman();
 if ($idgroup = $groups->indexOf('name', 'subscriber')) {
 $groups->items[$idgroup]['name'] = 'commentator';
 $groups->save();
@@ -26,16 +28,7 @@ $groups->save();
 $idgroup = $groups->indexOf('name', 'commentator');
 }
 
-if (method_exists($groups, 'cleangroups')) {
 $cm->data['idgroups'] = $groups->cleangroups('admin, editor, moderator, author, commentator, ticket');
-} else {
-$cm->data['idgroups'] = array();
-foreach ($groups->items as $idgroup => $group) {
-if (in_array($group['name'], array('admin, editor, moderator, author, commentator, ticket'))) {
-$cm->data['idgroups'][] = $idgroup;
-}
-}
-}
 
     $cm->data['idguest'] =  tusers::i()->add(array(
 'email' => '',
@@ -95,7 +88,7 @@ $classes->add('tadminpingbacks', 'admin.pingbacks.class.php');
 $classes->add('tsession', 'session.class.php');
 
 $classes->items['tusers'][0] = 'kernel.php';
-$classes->items['tusergroups'][0] = 'kernel.php';
+$classes->items['tusergroups'][0] = 'users.groups.class.php';
 
 $classes->delete('tuseroptions');
 $classes->add('tuseroptions', 'user.options.class.php');
