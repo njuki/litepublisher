@@ -220,16 +220,16 @@ class tcontentfilter extends tevents {
   }
   
   public static function escape($s) {
-    return strtr(trim(strip_tags($s) array(
+    return strtr(trim(strip_tags($s)), array(
 '"' => '&quot;',
  "'" => '&#039;',
  '\\'=> '&#092;',
  '$' => '&#36;',
  '%' => '&#37;',
  '_' => '&#95;',
-'>' => '',
-'<' => ''
-))));
+'<' => '&lt;',
+'>' => '&gt;',
+));
   }
 
   public static function unescape($s) {
@@ -239,9 +239,9 @@ class tcontentfilter extends tevents {
 '&#092;' => '\\',
  '&#36;' => '$',
  '&#37;' => '%',
- '&#95;' =>'_'
-
-
+ '&#95;' =>'_',
+'&lt;' => '<',
+'&gt;' => '>'
 ));
   }
   // uset in tthemeparser
