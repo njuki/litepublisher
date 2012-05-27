@@ -8,13 +8,11 @@
 
 class tpolls extends tplugin {
   public $items;
-  public $votes1;
-public $votes2;
+  public $voted1;
+public $voted2;
   public $templateitems;
   public $templates;
   public $types;
-  private $id;
-  private $curvote;
   
   public static function i() {
     return getinstance(__class__);
@@ -24,8 +22,8 @@ public $votes2;
     parent::create();
     $this->items = array();
     $this->table = 'polls';
-    $this->votes1 = 'pollvotes';
-    $this->votes2 = 'pollvotes2';
+    $this->voted1 = 'pollvotes';
+    $this->voted2 = 'pollvoted2';
 
     $this->addevents('added', 'deleted', 'edited');
     $this->data['garbage'] = true;
@@ -39,8 +37,6 @@ public $votes2;
     $this->addmap('templateitems', $a);
     $this->addmap('templates', $a);
     
-    $this->id = 0;
-    $this->curvote = 0;
   }
   
   public function getvotes() {
@@ -95,16 +91,15 @@ public $votes2;
   public function addvote($id, $iduser, $vote) {
     if (!$this->itemexists($id)) return  false;
     $vote = (int) $vote;
-    $db = $this->getdb($this->votes1);
+    $db = $this->getdb($this->voted1);
     $db->add(array(
     'id' => $id,
     'user' => $iduser,
-    'vote' => $vote
     ));
     
     $item = $this->getitem($id);
     $votes = explode(',', $item['votes']);
-    $table = $db->prefix . $this->votes1;
+    $table = $db->prefix . $this->voted1;
     $res = $db->query("select vote as vote, count(user) as count from $table
     where id = $id group by vote order by vote asc");
     
@@ -121,7 +116,7 @@ public $votes2;
   }
   
   public function add($title, $status, $type, array $items) {
-returntpollsman::i()->add($title, $status, $type, $items);
+return tpollsman::i()->add($title, $status, $type, $items);
 }
 
   public function edit($id, $title, $status, $type, array $items) {
@@ -129,14 +124,14 @@ return tpollsman::i()->edit($id, $title, $status, $type, $items);
 }
 
   public function hasvote($idpoll, $iduser) {
-    $idpoll = (int) $idpoll;
-    $iduser = (int) $iduser;
-    return $this->getdb($this->votes1)->findid("id = $idpoll and user = $iduser");
+$q = sprintf('id = %d and user = %d', (int) $idpoll, (int) $iduser);
+    if ($this->getdb($this->voted1)->findid($q)) return true;
+return $this->getdb($this->voted2)->findid($q);
   }
   
   public function delete($id) {
     $this->db->iddelete($id);
-    $this->getdb($this->votes1)->iddelete($id);
+    $this->getdb($this->voted1)->iddelete($id);
   }
   
   public function gethtml($id, $full) {
