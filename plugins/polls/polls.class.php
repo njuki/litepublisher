@@ -346,15 +346,28 @@ $replace .= "status={$item['status']}\ntype={$item['type']}\ntitle={$item['title
       $.load_script(ltoptions.files + "/plugins/polls/polls.client.js");
     });');
   }
+
+public function err($mesg) {
+tlocal::usefile('polls');
+$lang = tlocal::i('poll');
+
+return array(
+'code' => 'error',
+'message' => $lang->$mesg
+);
+}
   
 public function polls_sendvote(array $args) {
       extract($args, EXTR_SKIP);
-$iduser = litepublisher::user;
-if (!$iduser) return 403;
       if (!isset($idpoll) || !isset($vote)) return 403;
-    if (!$this->itemexists($idpoll)) return $this->error('poll not found', 404);
-
-    if ($this->hasvote($idpoll, $iduser)) return $this->error($this->voted, 403);
+$idpoll = (int) $idpoll;
+if ($idpoll == 0) return 403;
+$vote = (int) $vote;
+$iduser = litepublisher::user;
+if (!$iduser) return $this->err('notauth');
+    if (!$this->itemexists($idpoll)) return $this->err('notfound');
+if ('closed' == $this->getvalue($idpoll)) return $this->err('closed');
+    if ($this->hasvote($idpoll, $iduser)) return $this->err('voted');
 
     return $this->addvote($idpoll, $iduser, (int) $vote);
   }
