@@ -114,10 +114,10 @@ class trss extends tevents {
   
   public function GetRecentComments() {
     $this->domrss->CreateRoot(litepublisher::$site->url . '/comments.xml', tlocal::get('comment', 'onrecent') . ' '. litepublisher::$site->name);
-    $manager = tcommentmanager::i();
-    $recent = $manager->getrecent(litepublisher::$options->perpage);
+
     $title = tlocal::get('comment', 'onpost') . ' ';
     $comment = new tarray2prop();
+$recent = tcommentswidget::i()->getrecent(litepublisher::$options->perpage);
     foreach ($recent  as $item) {
       $comment->array = $item;
       $this->AddRSSComment($comment, $title . $comment->title);
@@ -149,10 +149,11 @@ class trss extends tevents {
     $title = $lang->from . ' ';
     $this->domrss->CreateRoot($post->rsscomments, "$lang->onpost $post->title");
     $comments = tcomments::i($idpost);
+$comtable = $comments->thistable;
     $comment = new tarray2prop();
     
-    $recent = $comments->select("post = $idpost and status = 'approved'",
-    "order by $comments->thistable.posted desc limit ". litepublisher::$options->perpage);
+    $recent = $comments->select("$comtable.post = $idpost and $comtable.status = 'approved'",
+    "order by $comtable.posted desc limit ". litepublisher::$options->perpage);
     
     foreach ($recent  as $id) {
       $comment->array = $comments->getitem($id);
