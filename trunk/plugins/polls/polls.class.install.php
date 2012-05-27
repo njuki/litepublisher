@@ -23,18 +23,11 @@ $res = dirname(__file__) .DIRECTORY_SEPARATOR . 'resource' . DIRECTORY_SEPARATOR
   $self->templates['microformat'] = $theme->replacelang($templates['microformat']['rate'], $lang);
   $self->save();
 
-
-  
-  $manager = tdbmanager::i();
+    $manager = tdbmanager::i();
   $manager->createtable($self->table, file_get_contents($res . 'polls.sql');
-  
-  $manager->createtable($self->votestable,
-  'id int UNSIGNED NOT NULL default 0,
-  user int UNSIGNED NOT NULL default 0,
-  vote int UNSIGNED NOT NULL default 0,
-  PRIMARY KEY(id, user)
-  ');
-  
+  $manager->createtable($self->votes1, file_get_contents($res . 'votes.sql'));
+  $manager->createtable($self->votes2, file_get_contents($res . 'votes.sql'));
+
   $json = tjsonserver::i();
   $json->addevent('polls_sendvote', get_class($self), 'polls_sendvote');
 
@@ -75,5 +68,6 @@ litepublisher::$classes->delete('tpollsman');
 
     $manager = tdbmanager::i();
   $manager->deletetable($self->table);
-  $manager->deletetable($self->votestable);
+  $manager->deletetable($self->votes1);
+  $manager->deletetable($self->votes2);
 }

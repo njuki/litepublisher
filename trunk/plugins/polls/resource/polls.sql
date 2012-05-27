@@ -1,4 +1,4 @@
-  id int(10) unsigned NOT NULL auto_increment,
+id int unsigned NOT NULL auto_increment,
   rate tinyint unsigned NOT NULL default '0',
   status enum('opened','closed') default 'opened',
   type enum('star', 'radio','button','link','custom') default 'star',

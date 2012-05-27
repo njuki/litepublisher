@@ -8,7 +8,7 @@
 
 class tpolls extends tplugin {
   public $items;
-  public $votestable;
+  public $votes1;
 public $votes2;
   public $templateitems;
   public $templates;
@@ -24,8 +24,9 @@ public $votes2;
     parent::create();
     $this->items = array();
     $this->table = 'polls';
-    $this->votestable = 'pollvotes';
+    $this->votes1 = 'pollvotes';
     $this->votes2 = 'pollvotes2';
+
     $this->addevents('added', 'deleted', 'edited');
     $this->data['garbage'] = true;
     $this->data['deftitle'] = 'new poll';
@@ -94,7 +95,7 @@ public $votes2;
   public function addvote($id, $iduser, $vote) {
     if (!$this->itemexists($id)) return  false;
     $vote = (int) $vote;
-    $db = $this->getdb($this->votestable);
+    $db = $this->getdb($this->votes1);
     $db->add(array(
     'id' => $id,
     'user' => $iduser,
@@ -103,7 +104,7 @@ public $votes2;
     
     $item = $this->getitem($id);
     $votes = explode(',', $item['votes']);
-    $table = $db->prefix . $this->votestable;
+    $table = $db->prefix . $this->votes1;
     $res = $db->query("select vote as vote, count(user) as count from $table
     where id = $id group by vote order by vote asc");
     
@@ -130,12 +131,12 @@ return tpollsman::i()->edit($id, $title, $status, $type, $items);
   public function hasvote($idpoll, $iduser) {
     $idpoll = (int) $idpoll;
     $iduser = (int) $iduser;
-    return $this->getdb($this->votestable)->findid("id = $idpoll and user = $iduser");
+    return $this->getdb($this->votes1)->findid("id = $idpoll and user = $iduser");
   }
   
   public function delete($id) {
     $this->db->iddelete($id);
-    $this->getdb($this->votestable)->iddelete($id);
+    $this->getdb($this->votes1)->iddelete($id);
   }
   
   public function gethtml($id, $full) {
