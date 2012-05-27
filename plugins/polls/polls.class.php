@@ -22,6 +22,7 @@ public $voted2;
     parent::create();
     $this->items = array();
     $this->table = 'polls';
+$this->votes = 'votes';
     $this->voted1 = 'pollvotes';
     $this->voted2 = 'pollvoted2';
 
@@ -41,8 +42,7 @@ public $voted2;
   
   public function getvotes() {
     $item = $this->getitem($this->id);
-    $votes = explode(',', $item['votes']);
-    if ($this->curvote >= count($votes)) return 0;
+
     return $votes[$this->curvote++];
   }
   
