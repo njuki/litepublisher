@@ -7,7 +7,10 @@
 **/
 
 function tpollsInstall($self) {
-  if (!dbversion) die("Plugin can be installed only on database version");
+$name = basename(dirname(__file__));
+litepublisher::$classes->add('tpollsfilter', 'polls.filter.php', $name);
+litepublisher::$classes->add('tpollsman', 'polls.man.php', $name);
+
   $about = tplugins::getabout(tplugins::getname(__file__));
   $self->deftitle = $about['title'];
   $self->voted = $about['votedmesg'];
@@ -71,11 +74,17 @@ function tpollsInstall($self) {
   $jsmerger->unlock();
 
     tcssmerger::i()->addstyle(dirname(__file__) . '/stars.min.css');
+
+tlocalmerger::i()->add('polls', "plugins/$name/resource/" . litepublisher::$options->language . ".ini");
 }
 
 function tpollsUninstall($self) {
     tcssmerger::i()->deletestyle(dirname(__file__) . '/stars.min.css');
   tjsonserver::i()->unbind($self);
+
+$lm = tlocalmerger::i();
+unset($lm->items['polls']);
+$lm->save();
 
   $posts = tposts::i();
   $posts->lock();
@@ -100,44 +109,11 @@ function tpollsUninstall($self) {
   $jsmerger->deletefile('default', '/plugins/polls/polls.client.min.js');
   $jsmerger->deletetext('default', 'poll');
   $jsmerger->unlock();
-  
-  $manager = tdbmanager::i();
+
+litepublisher::$classes->delete('tpollsfilter');
+litepublisher::$classes->delete('tpollsman');
+
+    $manager = tdbmanager::i();
   $manager->deletetable($self->table);
   $manager->deletetable($self->votestable);
-}
-
-
-function finddeletedpols($self) {
-  $signs = $self->db->selectassoc("select id, hash from $self->thistable");
-  if (!$signs) return array();
-  $db = litepublisher::$db;
-  $posts = tposts::i();
-  $db->table = $posts->rawtable;
-  $deleted = array();
-  foreach ($signs as $item) {
-    $hash = $item['hash'];
-    if (!$db->findid("locate('$hash', rawcontent) > 0")) $deleted[] = $item['id'];
-    sleep(2);
-  }
-  
-  return $deleted;
-}
-
-function tpollsDeletedeleted($self, array $deleted) {
-  if (count($deleted) > 0) {
-    $items = sprintf('(%s)', implode(',', $deleted));
-    $self->db->delete("id in $items");
-    $self->getdb($self->votestable)->delete("id in $items");
-    sleep(2);
-  }
-}
-
-function tpollsOptimize($self) {
-  if ($self->garbage) {
-    $deleted = finddeletedpols($self);
-    if (count($deleted) > 0) tpollsDeletedeleted($self, $deleted);
-  }
-  
-  $db = $self->getdb($self->userstable);
-  $db->delete("id not in (select distinct user from $db->prefix$self->votestable)");
 }
