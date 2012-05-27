@@ -65,14 +65,15 @@ function tpollsInstall($self) {
   litepublisher::$classes->save();
   
   litepublisher::$options->parsepost = true;
+
+  $json = tjsonserver::i();
+  $json->lock();
+  $json->addevent('comment_delete', get_class($self), 'comment_delete');
+  $json->addevent('comment_setstatus', get_class($self), 'comment_setstatus');
+$json->unlock();
   
-  litepublisher::$urlmap->addget('/ajaxpollserver.htm', get_class($self));
-  
-  /*
-  $template = ttemplate::i();
-  $template->addtohead(getpollhead());
-  */
-  $jsmerger = tjsmerger::i();
+
+    $jsmerger = tjsmerger::i();
   $jsmerger->lock();
   $jsmerger->add('default', '/plugins/polls/polls.client.min.js');
   $jsmerger->addtext('default', 'poll',
@@ -80,9 +81,14 @@ function tpollsInstall($self) {
   if ($("*[id^=\'pollform_\']").length) { window.pollclient.init(); }
   });');
   $jsmerger->unlock();
+
+    tcssmerger::i()->addstyle(dirname(__file__) . '/stars.min.css');
 }
 
 function tpollsUninstall($self) {
+    tcssmerger::i()->deletestyle(dirname(__file__) . '/stars.min.css');
+  tjsonserver::i()->unbind($self);
+
   $posts = tposts::i();
   $posts->lock();
   $posts->syncmeta = false;
@@ -92,7 +98,6 @@ function tpollsUninstall($self) {
   litepublisher::$db->table = 'postsmeta';
   litepublisher::$db->delete("name = 'poll'");
   
-  turlmap::unsub($self);
   unset(litepublisher::$classes->classes['poll']);
   litepublisher::$classes->save();
   
