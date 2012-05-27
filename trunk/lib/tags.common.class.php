@@ -300,7 +300,7 @@ class tcommontags extends titems implements  itemplate {
     $list = $this->getidposts($id);
     $pages = ceil(count ($list) / $perpage);
     if (litepublisher::$urlmap->page > $pages) {
-      return sprintf("<?php litepublisher::$urlmap->redir('%s');",$item['url']);
+      return sprintf('<?php litepublisher::$urlmap->redir(\'%s\'); ?>',$item['url']);
     }
     
   }
