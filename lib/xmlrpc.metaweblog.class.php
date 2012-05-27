@@ -23,7 +23,7 @@ class TXMLRPCMetaWeblog extends TXMLRPCAbstract {
           $post->comstatus = 'guest';
           break;
           default:
-          $post->comstatus = litepublisher::$options->constatus;
+          $post->comstatus = litepublisher::$options->comstatus;
           break;
         }
       }
@@ -38,13 +38,13 @@ class TXMLRPCMetaWeblog extends TXMLRPCAbstract {
           break;
           
           default:
-          $post->comstatus = litepublisher::$options->constatus;
+          $post->comstatus = litepublisher::$options->comstatus;
           break;
         }
       }
     }
     else {
-      $post->constatus = litepublisher::$options->constatus;
+      $post->comstatus = litepublisher::$options->comstatus;
     }
     
     if(isset($struct["mt_allow_pings"])) {

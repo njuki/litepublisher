@@ -25,7 +25,7 @@ class tadmincommoncomments extends tadminmenu {
     $this->showcolumns = array();
     //tfilestorage::loadvar(litepublisher::$paths->data . 'commentscolumns.php', $this->showcolumns);
     if (isset($_COOKIE['tablecolumns'])) $this->showcolumns = unserialize($_COOKIE['tablecolumns']);
-if (!in_array(true, $this->showcolumns)) $this->showcolumns = array();
+    if (!in_array(true, $this->showcolumns)) $this->showcolumns = array();
   }
   
   protected function saveshowcolumns() {

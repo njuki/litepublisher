@@ -83,8 +83,8 @@ class tcommentmanager extends tevents_storage {
   public function send_mail($id) {
     $comments = tcomments::i();
     $comment = $comments->getcomment($id);
-//ignore admin comments
-if ($comment->author == 1) return;
+    //ignore admin comments
+    if ($comment->author == 1) return;
     ttheme::$vars['comment'] = $comment;
     $args = targs::i();
     $adminurl = litepublisher::$site->url . '/admin/comments/'. litepublisher::$site->q . "id=$id";
