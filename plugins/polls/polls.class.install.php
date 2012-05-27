@@ -23,27 +23,19 @@ function tpollsInstall($self) {
   
   $manager = tdbmanager::i();
   $manager->createtable($self->table,
-  "  `id` int(10) unsigned NOT NULL auto_increment,
-  `rate` tinyint unsigned NOT NULL default '0',
-  `status` enum('opened','closed') default 'opened',
-  `type` enum('star', 'radio','button','link','custom') default 'star',
-  `hash` char(22) NOT NULL,
-  `title` text NOT NULL,
-  `items` text NOT NULL,
-  `votes` text NOT NULL,
+  "  id int(10) unsigned NOT NULL auto_increment,
+  rate tinyint unsigned NOT NULL default '0',
+  status enum('opened','closed') default 'opened',
+  type enum('star', 'radio','button','link','custom') default 'star',
+  hash char(22) NOT NULL,
+  title text NOT NULL,
+  items text NOT NULL,
+  votes text NOT NULL,
   
-  PRIMARY KEY  (`id`),
-  KEY `rate` (`rate`),
-  KEY `hash` (`hash`)
+  PRIMARY KEY  ( id),
+  KEY rate (rate),
+  KEY hash (hash)
   ");
-  
-  $manager->createtable($self->userstable,
-  'id int UNSIGNED NOT NULL auto_increment,
-  cookie char(22) NOT NULL,
-  
-  PRIMARY KEY(id),
-  key cookie(cookie)
-  ');
   
   $manager->createtable($self->votestable,
   'id int UNSIGNED NOT NULL default 0,
@@ -67,11 +59,7 @@ function tpollsInstall($self) {
   litepublisher::$options->parsepost = true;
 
   $json = tjsonserver::i();
-  $json->lock();
-  $json->addevent('comment_delete', get_class($self), 'comment_delete');
-  $json->addevent('comment_setstatus', get_class($self), 'comment_setstatus');
-$json->unlock();
-  
+  $json->addevent('polls_sendvote', get_class($self), 'polls_sendvote');
 
     $jsmerger = tjsmerger::i();
   $jsmerger->lock();
@@ -107,10 +95,6 @@ function tpollsUninstall($self) {
   $filter = tcontentfilter::i();
   $filter->unbind($self);
   
-  /*
-  $template = ttemplate::i();
-  $template->deletefromhead(getpollhead());
-  */
   $jsmerger = tjsmerger::i();
   $jsmerger->lock();
   $jsmerger->deletefile('default', '/plugins/polls/polls.client.min.js');
@@ -119,7 +103,6 @@ function tpollsUninstall($self) {
   
   $manager = tdbmanager::i();
   $manager->deletetable($self->table);
-  $manager->deletetable($self->userstable);
   $manager->deletetable($self->votestable);
 }
 

@@ -8,8 +8,8 @@
 
 class tpolls extends tplugin {
   public $items;
-  public $userstable;
   public $votestable;
+public $votes2;
   public $templateitems;
   public $templates;
   public $types;
@@ -24,8 +24,8 @@ class tpolls extends tplugin {
     parent::create();
     $this->items = array();
     $this->table = 'polls';
-    $this->userstable = 'pollusers';
     $this->votestable = 'pollvotes';
+    $this->votes2 = 'pollvotes2';
     $this->addevents('added', 'deleted', 'edited');
     $this->data['garbage'] = true;
     $this->data['deftitle'] = 'new poll';
@@ -347,50 +347,15 @@ $replace .= "status={$item['status']}\ntype={$item['type']}\ntitle={$item['title
     });');
   }
   
-  protected static function error403($msg= 'Forbidden') {
-    return '<?php header(\'HTTP/1.1 403 Forbidden\', true, 403); ?>' . turlmap::htmlheader(false) . $msg;
-  }
-  
-  public function request($arg) {
-    $this->cache = false;
-    if (empty($_GET['action'])) return self::error403();
-    switch ($_GET['action']) {
-      case 'getcookie':
-      $result = $this->getcookie(isset($_GET['cookie']) ? $_GET['cookie'] : '');
-      break;
-      
-      case 'sendvote':
-      extract($_GET, EXTR_SKIP);
-      if (!isset($idpoll) || !isset($cookie) || !isset($vote)) return self::eror403();
-      try {
-        $items = $this->sendvote($idpoll, $vote, $cookie);
-      } catch (Exception $e) {
-        return self::error403();
-      }
-      $result = implode(',', $items);
-      break;
-      
-      default:
-      $result = var_export($_GET, true);
-    }
-    
-    return turlmap::htmlheader(false) . $result;
-  }
-  
-  public function getcookie($cookie) {
-    if (($cookie != '') && ( $iduser = $this->getdb($this->userstable)->findid('cookie = ' .dbquote(substr($cookie, 0, 32))))) {
-      return $cookie;
-    }
-    $cookie = md5uniq();
-    $this->getdb($this->userstable)->add(array('cookie' => $cookie));
-    return $cookie;
-  }
-  
-  public function sendvote($idpoll, $vote, $cookie) {
-    if (!$this->itemexists($idpoll)) return $this->error("poll not found", 404);
-    $iduser = $this->getdb($this->userstable)->findid('cookie = ' .dbquote($cookie));
-    if (!$iduser) return $this->error("User not found", 404);
+public function polls_sendvote(array $args) {
+      extract($args, EXTR_SKIP);
+$iduser = litepublisher::user;
+if (!$iduser) return 403;
+      if (!isset($idpoll) || !isset($vote)) return 403;
+    if (!$this->itemexists($idpoll)) return $this->error('poll not found', 404);
+
     if ($this->hasvote($idpoll, $iduser)) return $this->error($this->voted, 403);
+
     return $this->addvote($idpoll, $iduser, (int) $vote);
   }
   
