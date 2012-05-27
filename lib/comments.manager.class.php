@@ -52,10 +52,6 @@ class tcommentmanager extends tevents_storage {
     $idpost = $comments->getvalue($idparent, 'post');
     $id = $comments->add($idpost, $idauthor,  $content, 'approved', '');
     $comments->setvalue($id, 'parent', $idparent);
-    
-    $this->dochanged($id);
-    //$this->added($id, $idpost);
-    //$this->sendmail($id, $idpost);
     return $id;
   }
   
@@ -87,6 +83,8 @@ class tcommentmanager extends tevents_storage {
   public function send_mail($id) {
     $comments = tcomments::i();
     $comment = $comments->getcomment($id);
+//ignore admin comments
+if ($comment->author == 1) return;
     ttheme::$vars['comment'] = $comment;
     $args = targs::i();
     $adminurl = litepublisher::$site->url . '/admin/comments/'. litepublisher::$site->q . "id=$id";
