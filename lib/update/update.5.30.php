@@ -10,5 +10,11 @@ $self->templates['star'] = '<h4>$title</h4>
 
 $self->save();
 
+  $json = tjsonserver::i();
+  $json->addevent('polls_sendvote', get_class($self), 'polls_sendvote');
+
+$man = tdbmanager::i();
+$man->deletetable('pollusers');
+
 }
 }
