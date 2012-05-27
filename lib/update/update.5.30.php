@@ -30,5 +30,15 @@ $man->alter('pollvotes', 'drop vote');
   $man->createtable($self->voted2, file_get_contents($res . 'votes.sql'));
 $man->alter($self->table, "drop index hash");
 $man->alter($self->table, "drop hash");
+
+$votestable = $man->prefix . $self->votes;
+foreach ($a as $item) {
+    $votes = explode(',', $item['votes']);
+foreach ($votes as $i => $count) {
+        $db->exec("INSERT INTO $votestable (id, item, votes) values $idpoll,$i,$count");
+}
+}
+
+
 }
 }
