@@ -6,8 +6,8 @@
 * and GPL (gpl.txt) licenses.
 **/
 
-class tpolls extends tplugin {
-  public $items;
+class tpolls extends titems {
+public $votes;
   public $voted1;
 public $voted2;
   public $templateitems;
@@ -19,14 +19,15 @@ public $voted2;
   }
   
   protected function create() {
+$this->dbversion = true;
     parent::create();
-    $this->items = array();
+$this->basename = 'plugins' . DIRECTORY_SEPARATOR . 'tpolls';
     $this->table = 'polls';
 $this->votes = 'votes';
     $this->voted1 = 'pollvotes';
     $this->voted2 = 'pollvoted2';
+    $this->addevents('edited');
 
-    $this->addevents('added', 'deleted', 'edited');
     $this->data['garbage'] = true;
     $this->data['deftitle'] = 'new poll';
     $this->data['deftype'] = 'star';
@@ -37,84 +38,17 @@ $this->votes = 'votes';
     $a = array_combine($this->types, array_fill(0, count($this->types), ''));
     $this->addmap('templateitems', $a);
     $this->addmap('templates', $a);
-    
   }
-  
-  public function getvotes() {
-    $item = $this->getitem($this->id);
 
-    return $votes[$this->curvote++];
-  }
-  
-  public function getitem($id) {
-    if (isset($this->items[$id])) return $this->items[$id];
-    if ($this->select("$this->thistable.id = $id", 'limit 1')) return $this->items[$id];
-    return $this->error("Item $id not found in class ". get_class($this));
-  }
-  
-  public function select($where, $limit) {
-    if ($where != '') $where = 'where '. $where;
-    $res = $this->db->query("SELECT * FROM $this->thistable $where $limit");
-    return $this->res2items($res);
-  }
-  
-  public function res2items($res) {
-    if (!$res) return false;
-    $result = array();
-    
-    while ($item = litepublisher::$db->fetchassoc($res)) {
-      $id = $item['id'];
-      $result[] = $id;
-      $this->items[$id] = $item;
+  public function load() {
+    return tfilestorage::load($this);
     }
-    return $result;
-  }
-  
-  public function itemexists($id) {
-    if (isset($this->items[$id])) return true;
-    try {
-      return $this->getitem($id);
-    } catch (Exception $e) {
-      return false;
-    }
-    return false;
-  }
-  
-  public function getrate(array $votes){
-    $sum = 0;
-    foreach ($votes as $i => $count) {
-      $sum += ($i + 1) * $count;
-    }
-    return (int) round($sum / count($votes) * 10);
-  }
-  
-  public function addvote($id, $iduser, $vote) {
-    if (!$this->itemexists($id)) return  false;
-    $vote = (int) $vote;
-    $db = $this->getdb($this->voted1);
-    $db->add(array(
-    'id' => $id,
-    'user' => $iduser,
-    ));
-    
-    $item = $this->getitem($id);
-    $votes = explode(',', $item['votes']);
-    $table = $db->prefix . $this->voted1;
-    $res = $db->query("select vote as vote, count(user) as count from $table
-    where id = $id group by vote order by vote asc");
-    
-    while($item = $db->fetchassoc($res)) {
-      $votes[$item['vote']] = $item['count'];
-    }
-    
-    $this->db->updateassoc(array(
-    'id' => $id,
-    'rate' => $this->getrate($votes),
-    'votes' =>  implode(',', $votes)
-    ));
-    return $votes;
-  }
-  
+
+  public function save() {
+    if ($this->lockcount > 0) return;
+      return tfilestorage::save($this);
+    } else {
+
   public function add($title, $status, $type, array $items) {
 return tpollsman::i()->add($title, $status, $type, $items);
 }
@@ -199,6 +133,41 @@ if ('closed' == $this->getvalue($idpoll)) return $this->err('closed');
     if ($this->hasvote($idpoll, $iduser)) return $this->err('voted');
 
     return $this->addvote($idpoll, $iduser, (int) $vote);
+  }
+  
+  public function addvote($id, $iduser, $vote) {
+$result = array(
+'code' => 'success',
+'id' => $id,
+'total' => 0,
+'rate' => 0,
+'votes' => array()
+);
+
+$db = litepublisher::$db;
+$db->query(sprintf('INSERT INTO %s%s (id, user) values %d,%d', $db->prefix, $this->voted1, $id, $iduser));
+$db->query(sprintf('update %s%s set votes = votes + 1 where id = %d and item = %d', $db->prefix, $this->votes, $id, (int) $vote));
+
+//update stat
+$a = $db->res2assoc($db->query(sprintf('select * from %s%s where id = %d', $db->prefix, $this->votes, $id)));
+$sum= 0;
+foreach ($a as $v) {
+$index = (int) $v['item'];
+$voted = (int) $v['voted'];
+$result['total'] += $voted;
+$result['votes'][$index] = $voted;
+      $sum += ($index + 1) * $voted;
+}
+    $result['rate'] = (int) round($sum / count($a) * 10);
+
+        $this->db->updateassoc(array(
+    'id' => $id,
+    'rate' => $result['rate'],
+'total' => $result['total'],
+    'votes' =>  implode(',', $result['votes'])
+    ));
+
+    return $result;
   }
   
 }//class
