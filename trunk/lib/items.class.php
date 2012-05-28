@@ -31,6 +31,7 @@ class titems extends tevents {
   }
   
   public function save() {
+    if ($this->lockcount > 0) return;
     if ($this->dbversion) {
       return tstorage::save($this);
     } else {

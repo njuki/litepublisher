@@ -27,18 +27,31 @@ litepublisher::$classes->add('tpollsman', 'polls.man.php', $name);
 $man = tdbmanager::i();
 $man->deletetable('pollusers');
 $man->alter('pollvotes', 'drop vote');
-  $man->createtable($self->voted2, file_get_contents($res . 'votes.sql'));
+$man->query("rename table $db->pollvotes to $db->pollusers1");
+  $man->createtable($self->users2, file_get_contents($res . 'users.sql'));
+  $man->createtable($self->votes, file_get_contents($res . 'votes.sql'));
 $man->alter($self->table, "drop index hash");
 $man->alter($self->table, "drop hash");
+  $man->alter($self->table, "add total int UNSIGNED NOT NULL default 0 after id");
+  $man->alter($self->table, "add KEY total(total)");
 
-$votestable = $man->prefix . $self->votes;
+$db = litepublisher::$db;
+$votestable = $db->prefix . $self->votes;
+$db->table = $self->table;
+    $from = 0;
+    while ($a = $db->res2assoc($db->query("select id, votes from $self->thistable limit $from, 500"))) {
+$from += count($a);
 foreach ($a as $item) {
+$idpoll = (int) $item['id'];
+$total = 0;
     $votes = explode(',', $item['votes']);
-foreach ($votes as $i => $count) {
+foreach ($votes as $index => $count) {
+$total += $count;
         $db->exec("INSERT INTO $votestable (id, item, votes) values $idpoll,$i,$count");
 }
+$self->db->setvalue($idpoll, 'total', $total);
 }
-
-
+}
+$man->alter($self->table, "drop votes");
 }
 }
