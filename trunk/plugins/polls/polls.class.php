@@ -58,12 +58,6 @@ return tpollsman::i()->add($title, $status, $type, $items);
 return tpollsman::i()->edit($id, $title, $status, $type, $items);
 }
 
-  public function hasvote($idpoll, $iduser) {
-$q = sprintf('id = %d and user = %d', (int) $idpoll, (int) $iduser);
-    if ($this->getdb($this->users1)->findid($q)) return true;
-return $this->getdb($this->users2)->findid($q);
-  }
-  
   public function delete($id) {
     $this->db->iddelete($id);
     $this->getdb($this->users1)->iddelete($id);
@@ -134,6 +128,12 @@ if ('closed' == $this->getvalue($idpoll)) return $this->err('closed');
     if ($this->hasvote($idpoll, $iduser)) return $this->err('voted');
 
     return $this->addvote($idpoll, $iduser, (int) $vote);
+  }
+  
+  public function hasvote($idpoll, $iduser) {
+$q = sprintf('id = %d and user = %d', (int) $idpoll, (int) $iduser);
+    if ($this->getdb($this->users1)->findid($q)) return true;
+return $this->getdb($this->users2)->findid($q);
   }
   
   public function addvote($id, $iduser, $vote) {

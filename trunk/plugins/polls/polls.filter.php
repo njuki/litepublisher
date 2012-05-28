@@ -7,8 +7,6 @@
 **/
 
 class tpollsfilter extends tplugin {
-  private $id;
-  private $curvote;
   
   public static function i() {
     return getinstance(__class__);
@@ -18,25 +16,6 @@ class tpollsfilter extends tplugin {
     parent::create();
     $this->data['garbage'] = true;
     $this->data['defadd'] = false;
-    $this->data['voted'] = '';
-   
-    $this->id = 0;
-    $this->curvote = 0;
-  }
-  
-  public function __get($name) {
-    if (strbegin($name, 'start_')) {
-      $id = (int) substr($name, strlen('start_'));
-      if (($id > 0) && $this->itemexists($id)) {
-        $this->id = $id;
-        $this->curvote = 0;
-        ttheme::$vars['pull'] = $this;
-      }
-      return '';
-    }
-    if ($name == 'end') return '';
-    
-    return parent::__get($name);
   }
   
   private function extractitems($s) {
