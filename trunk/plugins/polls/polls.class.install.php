@@ -45,7 +45,7 @@ $res = dirname(__file__) .DIRECTORY_SEPARATOR . 'resource' . DIRECTORY_SEPARATOR
 
 tlocalmerger::i()->add('polls', "plugins/$name/resource/" . litepublisher::$options->language . ".ini");
 
-litepublisher::$classes->add('tpollsfilter', 'polls.filter.php', $name);
+litepublisher::$classes->add('tpolltemplates', 'polls.templates.php', $name);
 litepublisher::$classes->add('tpollsman', 'polls.man.php', $name);
 
 }
@@ -64,7 +64,7 @@ $lm->save();
   $jsmerger->deletetext('default', 'poll');
   $jsmerger->unlock();
 
-litepublisher::$classes->delete('tpollsfilter');
+litepublisher::$classes->delete('tpolltemplates');
 litepublisher::$classes->delete('tpollsman');
 
     $manager = tdbmanager::i();
