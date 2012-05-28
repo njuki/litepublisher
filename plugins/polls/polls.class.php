@@ -8,8 +8,8 @@
 
 class tpolls extends titems {
 public $votes;
-  public $voted1;
-public $voted2;
+  public $users1;
+public $users2;
   public $templateitems;
   public $templates;
   public $types;
@@ -23,9 +23,10 @@ $this->dbversion = true;
     parent::create();
 $this->basename = 'plugins' . DIRECTORY_SEPARATOR . 'tpolls';
     $this->table = 'polls';
-$this->votes = 'votes';
-    $this->voted1 = 'pollvotes';
-    $this->voted2 = 'pollvoted2';
+$this->votes = 'pollvotes';
+    $this->users1 = 'pollusers1';
+    $this->users2 = 'pollusers2';
+
     $this->addevents('edited');
 
     $this->data['garbage'] = true;
@@ -59,13 +60,13 @@ return tpollsman::i()->edit($id, $title, $status, $type, $items);
 
   public function hasvote($idpoll, $iduser) {
 $q = sprintf('id = %d and user = %d', (int) $idpoll, (int) $iduser);
-    if ($this->getdb($this->voted1)->findid($q)) return true;
-return $this->getdb($this->voted2)->findid($q);
+    if ($this->getdb($this->users1)->findid($q)) return true;
+return $this->getdb($this->users2)->findid($q);
   }
   
   public function delete($id) {
     $this->db->iddelete($id);
-    $this->getdb($this->voted1)->iddelete($id);
+    $this->getdb($this->users1)->iddelete($id);
   }
   
   public function gethtml($id, $full) {
@@ -145,7 +146,7 @@ $result = array(
 );
 
 $db = litepublisher::$db;
-$db->query(sprintf('INSERT INTO %s%s (id, user) values %d,%d', $db->prefix, $this->voted1, $id, $iduser));
+$db->query(sprintf('INSERT INTO %s%s (id, user) values %d,%d', $db->prefix, $this->users1, $id, $iduser));
 $db->query(sprintf('update %s%s set votes = votes + 1 where id = %d and item = %d', $db->prefix, $this->votes, $id, (int) $vote));
 
 //update stat
@@ -164,7 +165,6 @@ $result['votes'][$index] = $voted;
     'id' => $id,
     'rate' => $result['rate'],
 'total' => $result['total'],
-    'votes' =>  implode(',', $result['votes'])
     ));
 
     return $result;
