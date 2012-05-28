@@ -25,8 +25,9 @@ $res = dirname(__file__) .DIRECTORY_SEPARATOR . 'resource' . DIRECTORY_SEPARATOR
 
     $manager = tdbmanager::i();
   $manager->createtable($self->table, file_get_contents($res . 'polls.sql');
-  $manager->createtable($self->voted1, file_get_contents($res . 'votes.sql'));
-  $manager->createtable($self->voted2, file_get_contents($res . 'votes.sql'));
+  $manager->createtable($self->users1, file_get_contents($res . 'users.sql'));
+  $manager->createtable($self->users2, file_get_contents($res . 'users2.sql'));
+  $manager->createtable($self->votes, file_get_contents($res . 'votes.sql'));
 
   $json = tjsonserver::i();
   $json->addevent('polls_sendvote', get_class($self), 'polls_sendvote');
@@ -68,6 +69,7 @@ litepublisher::$classes->delete('tpollsman');
 
     $manager = tdbmanager::i();
   $manager->deletetable($self->table);
-  $manager->deletetable($self->voted1);
-  $manager->deletetable($self->voted2);
+  $manager->deletetable($self->users1);
+  $manager->deletetable($self->users2);
+  $manager->deletetable($self->votes);
 }
