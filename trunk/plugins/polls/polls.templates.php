@@ -7,7 +7,7 @@
 **/
 
 class tpolltemplates extends titems {
-  
+
   public static function i() {
     return getinstance(__class__);
   }
@@ -15,30 +15,14 @@ class tpolltemplates extends titems {
   protected function create() {
 $this->dbversion = false;
     parent::create();
+$this->basename = 'polls' . DIRECTORY_SEPARATOR . 'templates';
+
     $this->data['defadd'] = false;
   }
 
-public function add() {
-    $result = '';
-    $items = explode("\n", $poll['items']);
-    $votes = explode(',', $poll['votes']);
-    $theme = ttheme::i();
-    $args = targs::i();
-    $args->id = $id;
-    $args->title = $poll['title'];
-    if (!$full) $args->votes = '&#36;poll.votes';
-    $tml = $this->templateitems[$poll['type']];
-    foreach ($items as $index => $item) {
-      $args->checked = 0 == $index;
-      $args->index = $index;
-      $args->item = $item;
-      if ($full) $args->votes = $votes[$index];
-      $result .= $theme->parsearg($tml, $args);
-    }
-    $args->items = $full ? $result : sprintf('&#36;poll.start_%d %s &#36;poll.end', $id, $result);
-    $tml = $this->templates[$poll['type']];
-    $result = $theme->parsearg($tml, $args);
-    
+public function add($type, $title, array $items) {
+$types = tpolltypes::i();
+
     if ($poll['rate'] > 0) {
       $args->votes = array_sum($votes);
       $args->rate =1 + $poll['rate'] / 10;
@@ -47,9 +31,17 @@ public function add() {
       $result .= $theme->parsearg($this->templates['microformat'], $args);
     }
     
-    return str_replace(array("'", '&#36;'), array('"', '$'),
-$result);
+$this->items[++$this->autoid] = array(
+'type' => $type,
+'title' => $title,
+'items' => $items,
+'opened' => $opened,
+'closed' => $closed
+);
+$this->save();
+return $this->autoid;
 }  
+
   public function setdefadd($v) {
     if ($v == $this->defadd) return;
     $this->data['defadd'] = $v;

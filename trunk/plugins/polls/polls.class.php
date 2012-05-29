@@ -10,10 +10,8 @@ class tpolls extends titems {
 public $votes;
   public $users1;
 public $users2;
-  public $templateitems;
   public $templates;
-  public $types;
-  
+
   public static function i() {
     return getinstance(__class__);
   }
@@ -21,18 +19,16 @@ public $users2;
   protected function create() {
 $this->dbversion = true;
     parent::create();
+    $this->addevents('edited');
 $this->basename = 'polls' . DIRECTORY_SEPARATOR . 'index';
     $this->table = 'polls';
 $this->votes = 'pollvotes';
     $this->users1 = 'pollusers1';
     $this->users2 = 'pollusers2';
 
-    $this->addevents('edited');
 $this->data['default_template'] = 1;
+
     $this->data['defadd'] = false;
-
-    $this->types = array('star', 'radio', 'button', 'link', 'custom');
-
   }
 
   public function load() {
@@ -80,8 +76,10 @@ $this->templates[$idtemplate] = $item;
   
   public function gethtml($id) {
     $item = $this->getitem($id);
+$args = new targs();
+$args->add($item);
 $tml = $this->gettemplate($item['idtemplate']);
-return str_replace('$id', $id, $tml[$item['status']]);
+return ttheme::i()->parsearg($tml, $args);
   }
   
   public function gethead() {
