@@ -9,7 +9,6 @@
   background: url(star-matrix.gif) no-repeat 0 0;
 }
 .fav{width:16px;}
-/* add these classes to the ul to effect the change to the correct number of stars */
 .star_0 {background-position:0 0}
 .star_1 {background-position:0 -16px}
 .star_2 {background-position:0 -32px}
@@ -19,9 +18,7 @@
 li.indicator {display: none;}
 ul.rating li, ul.fav li  {
   cursor: pointer;
- /*ie5 mac doesn't like it if the list is floated\*/
   float:left;
-  /* end hide*/
   text-indent:-999em;
 }
 ul.rating li.indicator {float: right; text-indent: 0; position: relative; left: 18px;}

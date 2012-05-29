@@ -20,28 +20,6 @@ $this->basename = 'polls' . DIRECTORY_SEPARATOR . 'templates';
     $this->data['defadd'] = false;
   }
 
-public function add($type, $title, array $items) {
-$types = tpolltypes::i();
-
-    if ($poll['rate'] > 0) {
-      $args->votes = array_sum($votes);
-      $args->rate =1 + $poll['rate'] / 10;
-      $args->worst = 1;
-      $args->best = count($items);
-      $result .= $theme->parsearg($this->templates['microformat'], $args);
-    }
-    
-$this->items[++$this->autoid] = array(
-'type' => $type,
-'title' => $title,
-'items' => $items,
-'opened' => $opened,
-'closed' => $closed
-);
-$this->save();
-return $this->autoid;
-}  
-
   public function setdefadd($v) {
     if ($v == $this->defadd) return;
     $this->data['defadd'] = $v;

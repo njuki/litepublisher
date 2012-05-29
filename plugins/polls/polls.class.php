@@ -10,7 +10,7 @@ class tpolls extends titems {
 public $votes;
   public $users1;
 public $users2;
-  public $templates;
+  public $tml_items;
 
   public static function i() {
     return getinstance(__class__);
@@ -25,8 +25,10 @@ $this->basename = 'polls' . DIRECTORY_SEPARATOR . 'index';
 $this->votes = 'pollvotes';
     $this->users1 = 'pollusers1';
     $this->users2 = 'pollusers2';
+$this->tml_items = array();
+$this->data['autoid_tml'] = 0;
 
-$this->data['default_template'] = 1;
+$this->data['default_tml'] = 1;
 
     $this->data['defadd'] = false;
   }
@@ -58,33 +60,50 @@ return litepublisher::$paths->data . 'polls' . DIRECTORY_SEPARATOR . $name;
 }
 
 public function loadfile($name) {
-      if (tfilestorage::loadvar($this->getfilename($idtemplate, $v)) return $v;
+      if (tfilestorage::loadvar($this->getfilename($idtml, $v)) return $v;
 return false;
 }
 
-public function gettemplate($idtemplate) {
-if (!isset(4this->templates[$idtemplate])) {
-$this->templates[$idtemplate] = $this->loadfile($idtemplate);
+public function get_tml($id_tml) {
+if (!isset($this->tml_items[$id_tml])) {
+$this->tml_items[$id_tml] = $this->loadfile($id_tml);
 }
-return $this->templates[$idtemplate];
+return $this->tml_items[$id_tml];
 }
 
-public function settemplate($idtemplate, $item) {
-$this->templates[$idtemplate] = $item;
-      tfilestorage::savevar($this->getfilename($idtemplate), $item);
+public function set_tml($id_tml, array $item) {
+$this->tml_items[$id_tml] = $item;
+      tfilestorage::savevar($this->getfilename($id_tml), $item);
 }
   
   public function gethtml($id) {
     $item = $this->getitem($id);
 $args = new targs();
 $args->add($item);
-$tml = $this->gettemplate($item['idtemplate']);
+$tml = $this->get_tml($item['id_tml']);
 return ttheme::i()->parsearg($tml, $args);
   }
+
+public function add_tml($type, $title, array $items) {
+$this->edit_tml(++$this->data['autoid_tml'], $type, $title, $items);
+$this->save();
+return $this->data['autoid_tml'];
+}
+
+public function edit_tml($id_tml, $type, $title, array $items) {
+$this->set_tml($id_tml, $tml);
+}
+
+public function delete_tml($id_tml) {
+$this->db->update("id_tml = 1", "id_tml = $id_tml");
+$filename = $this->getfilename($id_tml);
+@unlink($filename . '.php');
+@unlink($filename . '.bak.php');
+}
   
   public function gethead() {
-    $template = ttemplate::i();
-    return $template->getready('if ($("*[id^=\'pollform_\']").length) {
+    $tml = ttml::i();
+    return $tml->getready('if ($("*[id^=\'pollform_\']").length) {
       $.load_script(ltoptions.files + "/plugins/polls/polls.client.js");
     });');
   }
