@@ -9,6 +9,9 @@
 function tpollsInstall($self) {
 $name = basename(dirname(__file__));
 $res = dirname(__file__) .DIRECTORY_SEPARATOR . 'resource' . DIRECTORY_SEPARATOR;
+$dir = litepublisher::$paths->data . 'polls';
+@mkdir($dir, 0777);
+@chmod($dir, 0777);
 
   $about = tplugins::getabout(tplugins::getname(__file__));
   $self->deftitle = $about['title'];
@@ -72,4 +75,7 @@ litepublisher::$classes->delete('tpollsman');
   $manager->deletetable($self->users1);
   $manager->deletetable($self->users2);
   $manager->deletetable($self->votes);
+
+$dir = litepublisher::$paths->data . 'polls';
+tfiler::delete($dir, true, true);
 }

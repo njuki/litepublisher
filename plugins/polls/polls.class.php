@@ -21,24 +21,18 @@ public $users2;
   protected function create() {
 $this->dbversion = true;
     parent::create();
-$this->basename = 'plugins' . DIRECTORY_SEPARATOR . 'tpolls';
+$this->basename = 'polls' . DIRECTORY_SEPARATOR . 'index';
     $this->table = 'polls';
 $this->votes = 'pollvotes';
     $this->users1 = 'pollusers1';
     $this->users2 = 'pollusers2';
 
     $this->addevents('edited');
-
-    $this->data['garbage'] = true;
-    $this->data['deftitle'] = 'new poll';
-    $this->data['deftype'] = 'star';
-    $this->data['defitems'] = 'Yes,No';
+$this->data['default_template'] = 1;
     $this->data['defadd'] = false;
-    $this->data['voted'] = '';
+
     $this->types = array('star', 'radio', 'button', 'link', 'custom');
-    $a = array_combine($this->types, array_fill(0, count($this->types), ''));
-    $this->addmap('templateitems', $a);
-    $this->addmap('templates', $a);
+
   }
 
   public function load() {
@@ -62,40 +56,32 @@ return tpollsman::i()->edit($id, $title, $status, $type, $items);
     $this->db->iddelete($id);
     $this->getdb($this->users1)->iddelete($id);
   }
+
+public function getfilename($name) {
+return litepublisher::$paths->data . 'polls' . DIRECTORY_SEPARATOR . $name;
+}
+
+public function loadfile($name) {
+      if (tfilestorage::loadvar($this->getfilename($idtemplate, $v)) return $v;
+return false;
+}
+
+public function gettemplate($idtemplate) {
+if (!isset(4this->templates[$idtemplate])) {
+$this->templates[$idtemplate] = $this->loadfile($idtemplate);
+}
+return $this->templates[$idtemplate];
+}
+
+public function settemplate($idtemplate, $item) {
+$this->templates[$idtemplate] = $item;
+      tfilestorage::savevar($this->getfilename($idtemplate), $item);
+}
   
-  public function gethtml($id, $full) {
-    $result = '';
-    $dialog = $this->geterror_dialog();
-    $poll = $this->getitem($id);
-    $items = explode("\n", $poll['items']);
-    $votes = explode(',', $poll['votes']);
-    $theme = ttheme::i();
-    $args = targs::i();
-    $args->id = $id;
-    $args->title = $poll['title'];
-    if (!$full) $args->votes = '&#36;poll.votes';
-    $tml = $this->templateitems[$poll['type']];
-    foreach ($items as $index => $item) {
-      $args->checked = 0 == $index;
-      $args->index = $index;
-      $args->item = $item;
-      if ($full) $args->votes = $votes[$index];
-      $result .= $theme->parsearg($tml, $args);
-    }
-    $args->items = $full ? $result : sprintf('&#36;poll.start_%d %s &#36;poll.end', $id, $result);
-    $tml = $this->templates[$poll['type']];
-    $result = $theme->parsearg($tml, $args);
-    
-    if ($poll['rate'] > 0) {
-      $args->votes = array_sum($votes);
-      $args->rate =1 + $poll['rate'] / 10;
-      $args->worst = 1;
-      $args->best = count($items);
-      $result .= $theme->parsearg($this->templates['microformat'], $args);
-    }
-    
-    return str_replace(array("'", '&#36;'), array('"', '$'),
-    $dialog . $result);
+  public function gethtml($id) {
+    $item = $this->getitem($id);
+$tml = $this->gettemplate($item['idtemplate']);
+return str_replace('$id', $id, $tml[$item['status']]);
   }
   
   public function gethead() {

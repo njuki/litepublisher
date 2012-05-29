@@ -17,33 +17,39 @@ $this->dbversion = false;
     parent::create();
     $this->data['defadd'] = false;
   }
-  
-  private function extractitems($s) {
-    $result = array();
-    $lines = explode("\n", $s);
-    foreach ($lines as $name) {
-      $name = trim($name);
-      if (($name == '')  || ($name[0] == '[')) continue;
-      $result[] = $name;
+
+public function add() {
+    $result = '';
+    $items = explode("\n", $poll['items']);
+    $votes = explode(',', $poll['votes']);
+    $theme = ttheme::i();
+    $args = targs::i();
+    $args->id = $id;
+    $args->title = $poll['title'];
+    if (!$full) $args->votes = '&#36;poll.votes';
+    $tml = $this->templateitems[$poll['type']];
+    foreach ($items as $index => $item) {
+      $args->checked = 0 == $index;
+      $args->index = $index;
+      $args->item = $item;
+      if ($full) $args->votes = $votes[$index];
+      $result .= $theme->parsearg($tml, $args);
     }
-    return $result;
-  }
-  
-  private function extractvalues($s) {
-    $result = array();
-    $lines = explode("\n", $s);
-    foreach ($lines as $line) {
-      $line = trim($line);
-      if (($line == '')  || ($line[0] == '[')) continue;
-      if ($i = strpos($line, '=')) {
-        $name = trim(substr($line, 0, $i));
-        $value = trim(substr($line, $i + 1));
-        if (($name != '') && ($value != '')) $result[$name] = $value;
-      }
+    $args->items = $full ? $result : sprintf('&#36;poll.start_%d %s &#36;poll.end', $id, $result);
+    $tml = $this->templates[$poll['type']];
+    $result = $theme->parsearg($tml, $args);
+    
+    if ($poll['rate'] > 0) {
+      $args->votes = array_sum($votes);
+      $args->rate =1 + $poll['rate'] / 10;
+      $args->worst = 1;
+      $args->best = count($items);
+      $result .= $theme->parsearg($this->templates['microformat'], $args);
     }
-    return $result;
-  }
-  
+    
+    return str_replace(array("'", '&#36;'), array('"', '$'),
+$result);
+}  
   public function setdefadd($v) {
     if ($v == $this->defadd) return;
     $this->data['defadd'] = $v;
