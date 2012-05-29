@@ -91,7 +91,8 @@ return $this->data['autoid_tml'];
 }
 
 public function edit_tml($id_tml, $type, $title, array $items) {
-$this->set_tml($id_tml, $tml);
+$tml_item = tpolltypes::i()->build($type, $title, $items);
+$this->set_tml($id_tml, $tml_item);
 }
 
 public function delete_tml($id_tml) {
