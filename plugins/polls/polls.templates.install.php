@@ -8,6 +8,11 @@
 
 function tpolltemplatesInstall($self) {
 tcontentfilter::i()->beforefilter = $self->filter;
+
+$self->lock();
+    $self->data['types'] = array('star', 'radio', 'button', 'link', 'custom');
+
+$self->unlock();
 }
 
 function tpolltemplatesUninstall($self) {
