@@ -10,20 +10,24 @@ class tpullitems extends tdata {
 protected $perpull;
 protected $pull;
 protected $modified;
+protected $ongetitem;
 
   public static function i() {
     return getinstance(__class__);
   }
   
-  protected function create() {
-    parent::create();
-$this->perpull = 50;
+  public function __construct($basename, $perpull, $ongetitem) {
+    parent::__construct();
+$this->basename = $basename;
+$this->perpull = $perpull;
+$this->ongetitem = $ongetitem;
 $this->pull = array();
 $this->modified = array();
 }
 
 public function getitem($id) {
-$this->error('Call abastract method getitem in class' . get_class($this));
+return call_user_func_array($this->ongetitem, array($id));
+//$this->error('Call abastract method getitem in class' . get_class($this));
 }
 
 public function getfilename($idpull) {
