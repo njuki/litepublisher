@@ -42,8 +42,8 @@ $this->data['default_tml'] = 1;
       return tfilestorage::save($this);
     } else {
 
-  public function add($title, $status, $type, array $items) {
-return tpollsman::i()->add($title, $status, $type, $items);
+  public function add($id_tml) {
+return tpollsman::i()->add($$id_tml);
 }
 
   public function edit($id, $title, $status, $type, array $items) {
@@ -52,7 +52,9 @@ return tpollsman::i()->edit($id, $title, $status, $type, $items);
 
   public function delete($id) {
     $this->db->iddelete($id);
+    $this->getdb($this->votes)->iddelete($id);
     $this->getdb($this->users1)->iddelete($id);
+    $this->getdb($this->users2)->iddelete($id);
   }
 
 public function getfilename($name) {
@@ -60,7 +62,7 @@ return litepublisher::$paths->data . 'polls' . DIRECTORY_SEPARATOR . $name;
 }
 
 public function loadfile($name) {
-      if (tfilestorage::loadvar($this->getfilename($idtml, $v)) return $v;
+      if (tfilestorage::loadvar($this->getfilename($name, $v)) return $v;
 return false;
 }
 
