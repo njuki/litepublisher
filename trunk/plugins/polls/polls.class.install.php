@@ -14,17 +14,8 @@ $dir = litepublisher::$paths->data . 'polls';
 @chmod($dir, 0777);
 
   $about = tplugins::getabout(tplugins::getname(__file__));
-  $self->deftitle = $about['title'];
-  $self->voted = $about['votedmesg'];
-  $self->defitems = $about['items'];
-  
-  $templates = parse_ini_file($res . 'templates.ini',  true);
-  $self->templateitems = $templates['item'];
-  $self->templates = $templates['items'];
   $theme = ttheme::i();
   $lang = tplugins::getlangabout(__file__);
-  $self->templates['microformat'] = $theme->replacelang($templates['microformat']['rate'], $lang);
-  $self->save();
 
     $manager = tdbmanager::i();
   $manager->createtable($self->table, file_get_contents($res . 'polls.sql');
@@ -48,9 +39,8 @@ $dir = litepublisher::$paths->data . 'polls';
 
 tlocalmerger::i()->add('polls', "plugins/$name/resource/" . litepublisher::$options->language . ".ini");
 
-litepublisher::$classes->add('tpolltemplates', 'polls.templates.php', $name);
+litepublisher::$classes->add('tpoltypes', 'poll.types.php', $name);
 litepublisher::$classes->add('tpollsman', 'polls.man.php', $name);
-
 }
 
 function tpollsUninstall($self) {
@@ -67,7 +57,7 @@ $lm->save();
   $jsmerger->deletetext('default', 'poll');
   $jsmerger->unlock();
 
-litepublisher::$classes->delete('tpolltemplates');
+litepublisher::$classes->delete('tpolltypes');
 litepublisher::$classes->delete('tpollsman');
 
     $manager = tdbmanager::i();
