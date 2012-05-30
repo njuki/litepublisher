@@ -1,7 +1,13 @@
 <?php
 
 function update530() {
+litepublisher::$classes->add('tpullitems', 'items.pull.class.php');
+
 if (litepublisher::$classes->exists('tpolls')) {
+$data = new tdata();
+$data->basename = 'plugins'. DIRECTORY_SEPARATOR . 'tpolls';
+$data->load();
+
 $res = litepublisher::$paths->plugins . 'polls' . DIRECTORY_SEPARATOR . 'resource' . DIRECTORY_SEPARATOR;
     tcssmerger::i()->addstyle(dirname(__file__) . '/stars.min.css');
   litepublisher::$urlmap->delete('/ajaxpollserver.htm');
@@ -21,7 +27,7 @@ tcron::i()->deleteclass(get_class($self));
 tlocalmerger::i()->add('polls', "plugins/polls/resource/" . litepublisher::$options->language . ".ini");
 
 $name = 'polls';
-litepublisher::$classes->add('tpollsfilter', 'polls.filter.php', $name);
+litepublisher::$classes->add('tpolltemplates', 'polls.templates.php', $name);
 litepublisher::$classes->add('tpollsman', 'polls.man.php', $name);
 
 $man = tdbmanager::i();
