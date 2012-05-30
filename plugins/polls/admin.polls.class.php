@@ -64,5 +64,24 @@ class tadminpolls {
     $plugin->unlock();
     return '';
   }
-  
-}
+ 
+  public function setadddtopost($v) {
+$man = tpollsman();
+    if ($v == $man->addtopost) return;
+    $man->data['addtopost'] = $v;
+    $man->save();
+
+    $posts = tposts::i();
+    if ($v) {
+      $posts->added = $man->postadded;
+      $posts->deleted = $man->postdeleted;
+      $posts->aftercontent = $man->afterpost;
+      $posts->syncmeta = true;
+    } else {
+      $posts->delete_event_class('added', get_class($man));
+      $posts->delete_event_class('deleted', get_class($man));
+      $posts->delete_event_class('aftercontent', get_class($man));
+    }
+  }
+ 
+}//class
