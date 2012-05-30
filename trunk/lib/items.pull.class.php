@@ -16,18 +16,17 @@ protected $ongetitem;
     return getinstance(__class__);
   }
   
-  public function __construct($basename, $perpull, $ongetitem) {
-    parent::__construct();
-$this->basename = $basename;
-$this->perpull = $perpull;
-$this->ongetitem = $ongetitem;
+  protected function create() {
+    parent::create();
+$this->basename = 'pullitems';
+$this->perpull = 50;
 $this->pull = array();
 $this->modified = array();
 }
 
 public function getitem($id) {
-return call_user_func_array($this->ongetitem, array($id));
-//$this->error('Call abastract method getitem in class' . get_class($this));
+if (isset($this->ongetitem)) return call_user_func_array($this->ongetitem, array($id));
+$this->error('Call abastract method getitem in class' . get_class($this));
 }
 
 public function getfilename($idpull) {
@@ -35,7 +34,7 @@ return litepublisher::$paths->cache . $this->basename . '.pull.' . $idpull;
 }
 
 public function loadpull($idpull) {
-      if (tfilestorage::loadvar($this->getfilename($idpull, $v)) {
+      if (tfilestorage::loadvar($this->getfilename($idpull), $v)) {
 $this->pull[$idpull] = $v;
 } else {
 $this->pull[$idpull] = array();
@@ -54,7 +53,7 @@ public function savemodified($idpull) {
 }
 
 public function getidpull($id) {
-$idpull = int) floor ($id /$this->perpull);
+$idpull = (int) floor ($id /$this->perpull);
 if (!isset($this->pull[$idpull])) $this->loadpull($idpull);
 return $idpull;
 }
