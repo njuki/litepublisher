@@ -18,11 +18,11 @@ $this->dbversion = false;
 $this->basename = 'polls' . DIRECTORY_SEPARATOR . 'types';
   }
 
-public function set($type, $tmlitem, $tmlitems) {
-$this->items[$type] = array(
-'item' => $tmlitem,
-'items' => $tmlitems
-);
+public function set(array $item) {
+if (!isset($item['result'])) $item['result'] = $this->result;
+if (!isset($item['itemresult'])) $item['result'] = $this->itemresult;
+
+$this->items[$item['type']] = $item;
 $this->save();
 }
 
@@ -47,29 +47,31 @@ if (count($items) == 0) $this->error('Empty poll items');
     $args->id = '$id';
 $args->type = $type;
     $args->title = $title;
-    $tmlitem = $this->getvalue($type, 'item');
+    $tmlitem = $this->items[$type]['item'];
+    $itemresult = $this->items[$type]['itemresult'];
 $pollitems = '';
+$resultitems = '';
     foreach ($items as $index => $itemtext) {
       $args->checked = 0 == $index;
       $args->index = $index;
       $args->indexplus = $index + 1;
       $args->text = $itemtext;
       $pollitems .= $theme->parsearg($tmlitem, $args);
+      $resultitems .= $theme->parsearg($itemresult, $args);
     }
 
 $args->items = $pollitems;
+$args->resultitems = $resultitems;
 $args->id = '$id';
 $args->type = $type;
     $args->title = $title;
-
-$tmlitems = $this->getvalue($type, 'items');
-$tml = $theme->parsearg($tmlitems, $args);
 
 return array(
 'type' => $type,
 'title' => $title,
 'items' => $items,
-'tml' => $tml
+'tml' => $theme->parsearg($this->items[$type]['items'], $args),
+'result' => $theme->parsearg($this->items[$type]['result'], $args)
 ));
 }  
 
