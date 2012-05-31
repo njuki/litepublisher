@@ -34,9 +34,30 @@ $dir = litepublisher::$paths->data . 'polls';
     tcssmerger::i()->addstyle(dirname(__file__) . '/stars.min.css');
 
 tlocalmerger::i()->addplugin($name);
+$lang = tlocal::admin('polls');
 
 litepublisher::$classes->add('tpoltypes', 'poll.types.php', $name);
 litepublisher::$classes->add('tpollsman', 'polls.man.php', $name);
+litepublisher::$classes->add('tadminpolltemplates', 'admin.poll.templates.php', $name);
+litepublisher::$classes->add('tadminpolltypes', 'admin.poll.types.php', $name);
+
+  $adminmenus = tadminmenus::i();
+  $adminmenus->lock();
+  
+  $parent = $adminmenus->createitem($adminmenus->url2id('/admin/plugins/'),
+ 'polls', 'editor', 'tadminpolls');
+  $adminmenus->items[$parent]['title'] = $lang->polls;
+  
+  $idmenu = $adminmenus->createitem($parent, 'templates', 'editor', 'tadminpolltemplates');
+  $adminmenus->items[$idmenu]['title'] = $lang->templates;
+  
+  $idmenu = $adminmenus->createitem($parent, 'prototypes', 'editor', 'tadminpolltypes');
+  $adminmenus->items[$idmenu]['title'] = $lang->prototypes;
+  
+  $idmenu = $adminmenus->createitem($parent, 'options', 'admin', 'tadminpolls');
+  $adminmenus->items[$idmenu]['title'] = $lang->options;
+  
+  $adminmenus->unlock();
 }
 
 function tpollsUninstall($self) {
@@ -50,8 +71,12 @@ tlocalmerger::i()->deleteplugin(tplugins::getname(__file__));
   $jsmerger->deletetext('default', 'poll');
   $jsmerger->unlock();
 
+tadminmenus::i()->deletetree($adminmenus->url2id('/admin/plugins/polls/'));
+
 litepublisher::$classes->delete('tpolltypes');
 litepublisher::$classes->delete('tpollsman');
+litepublisher::$classes->delete('tadminpolltemplates');
+litepublisher::$classes->delete('tadminpolltypes');
 
     $manager = tdbmanager::i();
   $manager->deletetable($self->table);
