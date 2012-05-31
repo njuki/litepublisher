@@ -40,6 +40,8 @@ litepublisher::$classes->add('tpoltypes', 'poll.types.php', $name);
 litepublisher::$classes->add('tpollsman', 'polls.man.php', $name);
 litepublisher::$classes->add('tadminpolltemplates', 'admin.poll.templates.php', $name);
 litepublisher::$classes->add('tadminpolltypes', 'admin.poll.types.php', $name);
+litepublisher::$classes->add('tadminpolloptions', 'admin.polloptions.class.php', $name);
+litepublisher::$classes->add('tadminpolls', 'admin.polls.class.php', $name);
 
   $adminmenus = tadminmenus::i();
   $adminmenus->lock();
@@ -54,7 +56,7 @@ litepublisher::$classes->add('tadminpolltypes', 'admin.poll.types.php', $name);
   $idmenu = $adminmenus->createitem($parent, 'prototypes', 'editor', 'tadminpolltypes');
   $adminmenus->items[$idmenu]['title'] = $lang->prototypes;
   
-  $idmenu = $adminmenus->createitem($parent, 'options', 'admin', 'tadminpolls');
+  $idmenu = $adminmenus->createitem($parent, 'options', 'admin', 'tadminpolloptions');
   $adminmenus->items[$idmenu]['title'] = $lang->options;
   
   $adminmenus->unlock();
@@ -77,6 +79,8 @@ litepublisher::$classes->delete('tpolltypes');
 litepublisher::$classes->delete('tpollsman');
 litepublisher::$classes->delete('tadminpolltemplates');
 litepublisher::$classes->delete('tadminpolltypes');
+litepublisher::$classes->delete('tadminpolloptions');
+litepublisher::$classes->delete('tadminpolls');
 
     $manager = tdbmanager::i();
   $manager->deletetable($self->table);
