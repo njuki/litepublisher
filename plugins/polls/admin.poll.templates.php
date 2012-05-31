@@ -23,6 +23,7 @@ $lang = tlocal::admin('polls');
     $html = tadminhtml::i();
     $args = new targs();
 $dir = litepublisher::$paths->data . 'polls';
+$adminurl = $this->adminurl;
 
 if ($action = $this->action) {
 $id = $this->idget();
@@ -34,7 +35,7 @@ case 'delete':
 unset($polls->tml_items[$id]);
       $result .= $html->h4->deleted;
 } else {
-$result .= $html->confirmdelete($id, $this->adminurl, $lang->confirmdelete);
+$result .= $html->confirmdelete($id, $adminurl, $lang->confirmdelete);
 }
 break;
 
@@ -56,7 +57,7 @@ break;
 
 case 'add':
 $types = array_keys(tpolltypes::i()->items);
-$args->type = tadminhtml::array2combo(array_combine($types), $types[0]);
+$args->type = tadminhtml::array2combo(array_combine($types, $types), $types[0]);
 
 $args->title= '';
 $args->newitems = '';
@@ -70,8 +71,9 @@ break;
 }
 }
 
+$result .= $html->h3("<a href='$adminurl=0&amp;action=add'>$lang->addtemplate</a>");
 $result .= $html->h4->alltemplates;
-$args->adminurl = $this->adminurl;
+$args->adminurl = $adminurl;
 $table = '';
 $tr = '<tr>
 <td><a href="$adminurl=$id&amp;action=edit">$title</a></td>
