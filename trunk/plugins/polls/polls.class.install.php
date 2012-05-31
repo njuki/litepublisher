@@ -13,10 +13,6 @@ $dir = litepublisher::$paths->data . 'polls';
 @mkdir($dir, 0777);
 @chmod($dir, 0777);
 
-  $about = tplugins::getabout(tplugins::getname(__file__));
-  $theme = ttheme::i();
-  $lang = tplugins::getlangabout(__file__);
-
     $manager = tdbmanager::i();
   $manager->createtable($self->table, file_get_contents($res . 'polls.sql');
   $manager->createtable($self->users1, file_get_contents($res . 'users.sql'));
@@ -37,7 +33,7 @@ $dir = litepublisher::$paths->data . 'polls';
 
     tcssmerger::i()->addstyle(dirname(__file__) . '/stars.min.css');
 
-tlocalmerger::i()->add('polls', "plugins/$name/resource/" . litepublisher::$options->language . ".ini");
+tlocalmerger::i()->addplugin($name);
 
 litepublisher::$classes->add('tpoltypes', 'poll.types.php', $name);
 litepublisher::$classes->add('tpollsman', 'polls.man.php', $name);
@@ -46,10 +42,7 @@ litepublisher::$classes->add('tpollsman', 'polls.man.php', $name);
 function tpollsUninstall($self) {
     tcssmerger::i()->deletestyle(dirname(__file__) . '/stars.min.css');
   tjsonserver::i()->unbind($self);
-
-$lm = tlocalmerger::i();
-unset($lm->items['polls']);
-$lm->save();
+tlocalmerger::i()->deleteplugin(tplugins::getname(__file__));
 
   $jsmerger = tjsmerger::i();
   $jsmerger->lock();
