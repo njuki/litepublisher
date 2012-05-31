@@ -79,12 +79,8 @@ $tr = '<tr>
 <td><a href="$adminurl=$id&amp;action=edit">$title</a></td>
 <td><a href=$adminurl=$id&amp;action=delete">$lang.delete</a></td>
 </tr>';
-
-$filelist = tfiler::getfiles($dir);
-      foreach($filelist as $filename) {
-if (preg_match('/^(\d*+)\.php$/', $filename, $m)) {
-$id = (int) $m[1];
-$tml = $polls->get_tml($id);
+$polls->loadall_tml();
+foreach ($polls->tml_items as $id => $tml) {
 $args->id = $id;
 $args->title = $tml['title'];
 $table .= $html->parsearg($tr, $args);
