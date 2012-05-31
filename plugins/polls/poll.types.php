@@ -26,18 +26,6 @@ $this->items[$item['type']] = $item;
 $this->save();
 }
 
-public function getmicroformat($idpoll) {
-$item = tpolls::i()->getitem($idpoll);
-    if ($item['rate'] ==  0) return '';
-
-$args = new targs();
-      $args->votes = $item['total'];
-      $args->rate =1 + $poll['rate'] / 10;
-      $args->worst = 1;
-      $args->best = count($items);
-return ttheme::i()->parsearg($this->tml_microformat, $args);
-}
-    
 public function build($type, $title, array $items) {
 if (!isset($this->items[$type])) $this->error(sprintf('The "%s" type not exists', $type));
 if (count($items) == 0) $this->error('Empty poll items');
@@ -51,11 +39,11 @@ $args->type = $type;
     $itemresult = $this->items[$type]['itemresult'];
 $pollitems = '';
 $resultitems = '';
-    foreach ($items as $index => $itemtext) {
+    foreach ($items as $index => $text) {
       $args->checked = 0 == $index;
       $args->index = $index;
       $args->indexplus = $index + 1;
-      $args->text = $itemtext;
+      $args->text = $text;
       $pollitems .= $theme->parsearg($tmlitem, $args);
       $resultitems .= $theme->parsearg($itemresult, $args);
     }
@@ -65,6 +53,10 @@ $args->resultitems = $resultitems;
 $args->id = '$id';
 $args->type = $type;
     $args->title = $title;
+
+      $args->rate ='$rate';
+      $args->worst = 1;
+      $args->best = count($items);
 
 return array(
 'type' => $type,

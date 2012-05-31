@@ -1,0 +1,12 @@
+<div class="hreview-aggregate">
+<span class="item"><span class="fn"><span class="value-title" title="$title" /></span></span>
+$lang.rating
+   <span class="rating"> 
+      $lang.average:
+         <span class="average">$rate</span> 
+<span class="best"><span class="value-title" title="$best"/></span>
+<span class="worst"><span class="value-title" title="$worst"/></span>
+</span> 
+$lang.total:
+   <span class="votes">$total</span>
+</div>
