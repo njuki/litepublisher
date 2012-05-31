@@ -19,9 +19,8 @@ class tadminpolltypes extends tadminmenu {
   public function getcontent() {
 $result = '';
     $types = tpolltypes::i();
-tlocal::usefile('polls');
-$lang = tlocal::i('polls');
     $html = tadminhtml::i();
+$lang = tlocal::admin('polls');
     $args = new targs();
 
 $type = isset($_GET['type'] ? $_GET['type'] : '';

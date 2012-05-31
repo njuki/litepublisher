@@ -13,75 +13,108 @@ class tadminpolls extends tadminmenu {
   }
   
   public function getcontent() {
-    $plugin = tpolls::i();
+$result = '';
+$polls = tpolls::i();
     $html = tadminhtml::i();
-    $args = targs::i();
-    $about = tplugins::localabout(dirname(__file__));
-    foreach ($about as $name => $value) {
-      $args->data["\$lang.$name"] = $value;
-    }
-    
-    $args->deftitle = $plugin->deftitle;
-    $args->defitems = $plugin->defitems;
-    $args->deftype = tadminhtml::array2combo(array_combine($plugin->types, $plugin->types), $plugin->deftype);
-    $args->defadd = $plugin->defadd;
-    $args->voted = $plugin->voted;
-    $form = '[text=voted]';
-    $form .= sprintf('<h4>%s</h4>', $about['defoptions']);
-    $form .= '[combo=deftype] [text=deftitle] [text=defitems] [checkbox=defadd] ';
-    
-    $form .= sprintf('<h4>%s</h4>', $about['templateitems']);
-    foreach ($plugin->types as $name) {
-      $item = $name . 'item';
-      $items = $name . 'items';
-      $args->$item = $plugin->templateitems[$name];
-      $args->$items = $plugin->templates[$name];
-      $form .= "[editor=$item]\n[editor=$items]\n";
-    }
-    
-    $args->microformat = $plugin->templates['microformat'];
-    $form .= '[editor=microformat]';
-    
-    $args->formtitle = $about['formtitle'];
-    return $html->adminform($form, $args);
+$lang = tlocal::admin('polls');
+    $args = new targs();
+
+$adminurl = $this->adminurl;
+
+if ($action = $this->action) {
+$id = $this->idget();
+switch ($action) {
+case 'delete':
+      if ($this->confirmed) {
+      $result .= $html->h4->deleted;
+} else {
+$result .= $html->confirmdelete($id, $adminurl, $lang->confirmdelete);
+}
+break;
+
+case 'edit':
+if ($tml = $polls->get_tml($id)) {
+$args->add($tml);
+$args->id = $id;
+//$args->items = implode("\n", $tml['items']);
+    $tabs = new tuitabs();
+    //$tabs->add($lang->pollitems, "[editor=items]");
+    $tabs->add($lang->tml, "[editor=tml]");
+    $tabs->add($lang->result, "[editor=result]");
+
+    $args->formtitle = $lang->edittemplate;
+    $result .= $html->adminform('[text=title]' .
+$tabs->get(), $args);
+}
+break;
+
+case 'add':
+$types = array_keys(tpolltypes::i()->items);
+$args->type = tadminhtml::array2combo(array_combine($types, $types), $types[0]);
+
+$args->title= '';
+$args->newitems = '';
+    $args->formtitle = $lang->newtemplate;
+    $result .= $html->adminform(
+'[text=title]
+[combo=type]
+[editor=newitems]',
+$args);
+break;
+}
+}
+
+$result .= $html->h3("<a href='$adminurl=0&amp;action=add'>$lang->addtemplate</a>");
+$result .= $html->h4->alltemplates;
+$args->adminurl = $adminurl;
+$table = '';
+$tr = '<tr>
+<td><a href="$adminurl=$id&amp;action=edit">$title</a></td>
+<td><a href=$adminurl=$id&amp;action=delete">$lang.delete</a></td>
+</tr>';
+$polls->loadall_tml();
+foreach ($polls->tml_items as $id => $tml) {
+$args->id = $id;
+$args->title = $tml['title'];
+$table .= $html->parsearg($tr, $args);
+}
+}
+
+$head = "<tr>
+<th>$lang->edit</th>
+<th>$lang->delete</th>
+</tr>";
+
+$result .= $html->gettable($head, $table);
+return $result;    
   }
   
   public function processform() {
-    extract($_POST);
-    $plugin = tpolls::i();
-    $plugin->lock();
-    $plugin->deftitle = $deftitle;
-    $plugin->deftype = $deftype;
-    $plugin->defitems = trim($defitems);
-    $plugin->voted = $voted;
-    $plugin->defadd = isset($defadd);
-    
-    foreach ($plugin->types as $name) {
-      $plugin->templateitems[$name] = $_POST[$name . 'item'];
-      $plugin->templates[$name] = $_POST[$name . 'items'];
-    }
-    $plugin->templates['microformat'] = $_POST['microformat'];
-    $plugin->unlock();
-    return '';
-  }
- 
-  public function setadddtopost($v) {
-$man = tpollsman();
-    if ($v == $man->addtopost) return;
-    $man->data['addtopost'] = $v;
-    $man->save();
+    $polls = tpolls::i();
+if ($action = $this->action) {
+switch ($action) {
+case 'edit':
+$id = $this->idget();
+if ($tml = $polls->get_tml($id)) {
+$tml['tml'] = $_POST['tml'];
+$tml['result'] = $_POST['result'];
+$polls->set_tml($id, $tml);
+}
+break;
 
-    $posts = tposts::i();
-    if ($v) {
-      $posts->added = $man->postadded;
-      $posts->deleted = $man->postdeleted;
-      $posts->aftercontent = $man->afterpost;
-      $posts->syncmeta = true;
-    } else {
-      $posts->delete_event_class('added', get_class($man));
-      $posts->delete_event_class('deleted', get_class($man));
-      $posts->delete_event_class('aftercontent', get_class($man));
-    }
-  }
- 
+case 'add':
+$type = $_POST['type'];
+$title = tcontentfilter::escape($_POST['title']);
+$items = strtoarray(str_replace(array("\r\n", "\r"), "\n", trim($_POST['newitems'])));
+$items = array_unique($items);
+array_delete_value($items, '');
+if (count($items) == 0) return $this->html->empty;
+$id = $polls->add_tml($type, $title, $items);
+return litepublisher::$urlmap->redir($this->adminurl . '=' . $id . '&action=edit');
+break;
+
+}
+}
+}
+
 }//class
