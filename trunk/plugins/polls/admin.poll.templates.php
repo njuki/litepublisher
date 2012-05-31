@@ -6,7 +6,7 @@
 * and GPL (gpl.txt) licenses.
 **/
 
-class tadminpolltemplatesextends tadminmenu {
+class tadminpolltemplates extends tadminmenu {
   
   public static function i($id = 0) {
     return parent::iteminstance(__class__, $id);
