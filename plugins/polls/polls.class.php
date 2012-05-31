@@ -52,6 +52,7 @@ return tpollsman::i()->edit($id, $title, $status, $type, $items);
     $this->getdb($this->votes)->iddelete($id);
     $this->getdb($this->users1)->iddelete($id);
     $this->getdb($this->users2)->iddelete($id);
+    $this->getdb('postsmeta')->delete("name = 'poll' and value = '$id'");
   }
 
 public function loadall_tml() {

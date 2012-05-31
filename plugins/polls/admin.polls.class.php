@@ -26,6 +26,7 @@ $id = $this->idget();
 switch ($action) {
 case 'delete':
       if ($this->confirmed) {
+$polls->delete($id);
       $result .= $html->h4->deleted;
 } else {
 $result .= $html->confirmdelete($id, $adminurl, $lang->confirmdelete);
@@ -33,7 +34,7 @@ $result .= $html->confirmdelete($id, $adminurl, $lang->confirmdelete);
 break;
 
 case 'edit':
-if ($tml = $polls->get_tml($id)) {
+if ($polls->itemexists($id)) {
 $args->add($tml);
 $args->id = $id;
 //$args->items = implode("\n", $tml['items']);
@@ -72,12 +73,19 @@ $tr = '<tr>
 <td><a href="$adminurl=$id&amp;action=edit">$title</a></td>
 <td><a href=$adminurl=$id&amp;action=delete">$lang.delete</a></td>
 </tr>';
-$polls->loadall_tml();
-foreach ($polls->tml_items as $id => $tml) {
+
+$perpage = 20;
+$count = $polls->db->getcount();
+      $from = $this->getfrom($perpage, $count);
+$items = $polls->select('', " order by id desc limit $from, $perpage");
+//$votes = $polls->db->res2items($polls->getdb($polls->votes)->select(sprintf('id in (%s)', implode(',', $items))));
+foreach ($items as $id) {
+$item = $polls->getitem($id);
 $args->id = $id;
+$args->add($item);
+$tml = $polls->get_tml($item['id_tml']);
 $args->title = $tml['title'];
 $table .= $html->parsearg($tr, $args);
-}
 }
 
 $head = "<tr>
@@ -86,6 +94,10 @@ $head = "<tr>
 </tr>";
 
 $result .= $html->gettable($head, $table);
+
+    $theme = ttheme::i();
+    $result .= $theme->getpages($this->url, litepublisher::$urlmap->page, ceil($count/$perpage));
+
 return $result;    
   }
   
