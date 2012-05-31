@@ -19,8 +19,7 @@ class tadminpolltemplatesextends tadminmenu {
   public function getcontent() {
 $result = '';
     $polls = tpolls::i();
-tlocal::usefile('polls');
-$lang = tlocal::i('polls');
+$lang = tlocal::admin('polls');
     $html = tadminhtml::i();
     $args = new targs();
 

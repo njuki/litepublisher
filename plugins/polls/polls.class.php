@@ -112,7 +112,6 @@ $filename = $this->getfilename($id_tml);
   }
 
 public function err($mesg) {
-tlocal::usefile('polls');
 $lang = tlocal::i('poll');
 
 return array(
