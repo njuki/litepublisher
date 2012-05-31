@@ -26,11 +26,8 @@ $this->votes = 'pollvotes';
     $this->users1 = 'pollusers1';
     $this->users2 = 'pollusers2';
 $this->tml_items = array();
+
 $this->data['autoid_tml'] = 0;
-
-$this->data['default_tml'] = 1;
-
-    $this->data['defadd'] = false;
   }
 
   public function load() {
@@ -56,6 +53,10 @@ return tpollsman::i()->edit($id, $title, $status, $type, $items);
     $this->getdb($this->users1)->iddelete($id);
     $this->getdb($this->users2)->iddelete($id);
   }
+
+public function loadall_tml() {
+tpollsman::I()->loadall_tml();
+}
 
 public function getfilename($name) {
 return litepublisher::$paths->data . 'polls' . DIRECTORY_SEPARATOR . $name;
