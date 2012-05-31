@@ -22,17 +22,45 @@ $result = '';
 $lang = tlocal::admin('polls');
     $html = tadminhtml::i();
     $args = new targs();
+$dir = litepublisher::$paths->data . 'polls';
 
+if ($action = $this->action) {
 $id = $this->idget();
-if ($tml = $polls->get_tml($id)) {
-$args->id = $id;
-    $tabs = new tuitabs();
-foreach ($tml as $name => $value) {
-$args->$name = $value;
-    $tabs->add($lang->$name, "[editor=$name]");
+switch ($action) {
+case 'delete':
+      if ($this->confirmed) {
+@unlink($dir .DIRECTORY_SEPARATOR . "$id.php");
+@unlink($dir .DIRECTORY_SEPARATOR . "$id.bak.php");
+unset($polls->tml_items[$id]);
+      $result .= $html->h4->deleted;
+} else {
+$result .= $html->confirmdelete($id, $this->adminurl, $lang->confirmdelete);
 }
-    $args->formtitle = $lang->edittype;
-    $result .= $html->adminform($tabs->get(), $args);
+break;
+
+case 'edit':
+$tml = $polls->get_tml($id);
+break;
+
+case 'add':
+$tml = array(
+);
+break;
+}
+
+if (isset($tml) && ($tml !== false)) {
+$args->add($tml);
+$args->id = $id;
+$args->items = implode("\n", $tml['items']);
+    $tabs = new tuitabs();
+    $tabs->add($lang->items, "[editor=items]");
+    $tabs->add($lang->tml, "[editor=tml]");
+    $tabs->add($lang->result, "[editor=result]");
+
+    $args->formtitle = $lang->edittemplate;
+    $result .= $html->adminform('[text=title]' .
+$tabs->get(), $args);
+}
 }
 
 $result .= $html->h4->alltemplates;
@@ -43,7 +71,7 @@ $tr = '<tr>
 <td><a href=$adminurl=$id&amp;action=delete">$lang.delete</a></td>
 </tr>';
 
-$filelist = tfiler::getfiles(litepublisher::$paths->data . 'polls');
+$filelist = tfiler::getfiles($dir);
       foreach($filelist as $filename) {
 if (preg_match('/^(\d*+)\.php$/', $filename, $m)) {
 $id = (int) $m[1];
