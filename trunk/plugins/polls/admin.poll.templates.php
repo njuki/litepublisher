@@ -39,27 +39,34 @@ $result .= $html->confirmdelete($id, $this->adminurl, $lang->confirmdelete);
 break;
 
 case 'edit':
-$tml = $polls->get_tml($id);
-break;
-
-case 'add':
-$tml = array(
-);
-break;
-}
-
-if (isset($tml) && ($tml !== false)) {
+if ($tml = $polls->get_tml($id)) {
 $args->add($tml);
 $args->id = $id;
-$args->items = implode("\n", $tml['items']);
+//$args->items = implode("\n", $tml['items']);
     $tabs = new tuitabs();
-    $tabs->add($lang->items, "[editor=items]");
+    //$tabs->add($lang->pollitems, "[editor=items]");
     $tabs->add($lang->tml, "[editor=tml]");
     $tabs->add($lang->result, "[editor=result]");
 
     $args->formtitle = $lang->edittemplate;
     $result .= $html->adminform('[text=title]' .
 $tabs->get(), $args);
+}
+break;
+
+case 'add':
+$types = array_keys(tpolltypes::i()->items);
+$args->type = tadminhtml::array2combo(array_combine($types), $types[0]);
+
+$args->title= '';
+$args->newitems = '';
+    $args->formtitle = $lang->newtemplate;
+    $result .= $html->adminform(
+'[text=title]
+[combo=type]
+[editor=newitems]',
+$args);
+break;
 }
 }
 
@@ -93,15 +100,30 @@ return $result;
   
   public function processform() {
     $polls = tpolls::i();
- $type = isset($_GET['type'] ? $_GET['type'] : '';
-if (isset($polls->items[$type])) {
-foreach ($polls->items[$type] as $name => $value) {
-if (isset($_POST[$name])) $polls->items[$type][$name] = $_POST[$name];
+if ($action = $this->action) {
+switch ($action) {
+case 'edit':
+$id = $this->idget();
+if ($tml = $polls->get_tml($id)) {
+$tml['tml'] = $_POST['tml'];
+$tml['result'] = $_POST['result'];
+$polls->set_tml($id, $tml);
 }
-$polls->save();
+break;
+
+case 'add':
+$type = $_POST['type'];
+$title = tcontentfilter::escape($_POST['title']);
+$items = strtoarray(str_replace(array("\r\n", "\r"), "\n", trim($_POST['newitems'])));
+$items = array_unique($items);
+array_delete_value($items, '');
+if (count($items) == 0) return $this->html->empty;
+$id = $polls->add_tml($type, $title, $items);
+return litepublisher::$urlmap->redir($this->adminurl . '=' . $id . '&action=edit');
+break;
+
+}
+}
 }
 
-    return '';
-  }
- 
 }//class
