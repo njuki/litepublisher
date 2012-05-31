@@ -11,7 +11,24 @@ class tadminpolls extends tadminmenu {
   public static function i($id = 0) {
     return parent::iteminstance(__class__, $id);
   }
-  
+
+public function setargs(targs $args, $status, $id_perm) {
+$lang = tlocal::admin('polls');
+$polls = tpolls::i();
+$args->status = tadminhtml::array2combo(array(
+'opened' => $lang->opened,
+'closed' => $lang->closed
+), $status);
+
+$polls->loadall_tml();
+$tml_items = array();
+foreach ($polls->tml_items as $id => $tml) {
+$tml_items[$id] = $tml['title'];
+}
+
+$args->id_tml = tadminhtml::array2combo($tml_items, $id_tml);
+}
+
   public function getcontent() {
 $result = '';
 $polls = tpolls::i();
@@ -34,28 +51,23 @@ $result .= $html->confirmdelete($id, $adminurl, $lang->confirmdelete);
 break;
 
 case 'edit':
-if ($polls->itemexists($id)) {
-$args->add($tml);
+if (!$polls->itemexists($id)) {
+$result .= $this->notfound();
+} else {
+$item = $polls->getitem($id);
+$this->setargs($args, $item['status'], $item['id_tml']);
 $args->id = $id;
-//$args->items = implode("\n", $tml['items']);
-    $tabs = new tuitabs();
-    //$tabs->add($lang->pollitems, "[editor=items]");
-    $tabs->add($lang->tml, "[editor=tml]");
-    $tabs->add($lang->result, "[editor=result]");
-
-    $args->formtitle = $lang->edittemplate;
-    $result .= $html->adminform('[text=title]' .
-$tabs->get(), $args);
+    $args->formtitle = $lang->editpoll;
+    $result .= $html->adminform(
+'[combo=status]
+[combo=id_tml]
+', $args);
 }
 break;
 
 case 'add':
-$types = array_keys(tpolltypes::i()->items);
-$args->type = tadminhtml::array2combo(array_combine($types, $types), $types[0]);
+$this->setargs($args, 'opened', tpollsman::i()->pullpost);
 
-$args->title= '';
-$args->newitems = '';
-    $args->formtitle = $lang->newtemplate;
     $result .= $html->adminform(
 '[text=title]
 [combo=type]
