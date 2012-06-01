@@ -174,6 +174,7 @@ $result['votes'][$index] = $voted;
 'total' => $result['total'],
     ));
 
+tpullpolls::i()->set($id, $result);
     return $result;
   }
   
