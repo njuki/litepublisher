@@ -19,8 +19,8 @@ $this->basename = 'polls' . DIRECTORY_SEPARATOR . 'types';
   }
 
 public function set(array $item) {
-if (!isset($item['result'])) $item['result'] = $this->result;
-if (!isset($item['itemresult'])) $item['result'] = $this->itemresult;
+if (!isset($item['closed'])) $item['closed'] = $this->closed;
+if (!isset($item['itemclosed'])) $item['itemclosed'] = $this->itemclosed;
 
 $this->items[$item['type']] = $item;
 $this->save();
@@ -30,26 +30,26 @@ public function build($type, $title, array $items) {
 if (!isset($this->items[$type])) $this->error(sprintf('The "%s" type not exists', $type));
 if (count($items) == 0) $this->error('Empty poll items');
 
+$item = $this->items[$type];
     $theme = ttheme::i();
     $args = new targs();
     $args->id = '$id';
 $args->type = $type;
     $args->title = $title;
-    $tmlitem = $this->items[$type]['item'];
-    $itemresult = $this->items[$type]['itemresult'];
-$pollitems = '';
-$resultitems = '';
+
+$opened = '';
+$closed = '';
     foreach ($items as $index => $text) {
       $args->checked = 0 == $index;
       $args->index = $index;
       $args->indexplus = $index + 1;
       $args->text = $text;
-      $pollitems .= $theme->parsearg($tmlitem, $args);
-      $resultitems .= $theme->parsearg($itemresult, $args);
+      $opened .= $theme->parsearg($item['item'], $args);
+      $closed .= $theme->parsearg($item['itemclosed'], $args);
     }
 
-$args->items = $pollitems;
-$args->resultitems = $resultitems;
+$args->items = $opened;
+$args->closed = $closed;
 $args->id = '$id';
 $args->type = $type;
     $args->title = $title;
@@ -62,8 +62,8 @@ return array(
 'type' => $type,
 'title' => $title,
 'items' => $items,
-'tml' => $theme->parsearg($this->items[$type]['items'], $args),
-'result' => $theme->parsearg($this->items[$type]['result'], $args)
+'opened' => $theme->parsearg($item['opened'], $args),
+'closed' => $theme->parsearg($item['closed'], $args)
 ));
 }  
 
