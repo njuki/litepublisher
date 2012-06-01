@@ -82,10 +82,25 @@ $this->tml_items[$id_tml] = $item;
   
   public function gethtml($id) {
     $item = $this->getitem($id);
-$args = new targs();
-$args->add($item);
 $tml = $this->get_tml($item['id_tml']);
-return ttheme::i()->parsearg($tml, $args);
+$args = new targs();
+$theme = ttheme::i();
+if ($item['status'] == 'opened') {
+//inject php into html
+$result = sprintf('<?php $poll = tpullpoll::i()->get(%d); ?>', $id);
+$args->total = '<?php echo $poll[\'total\']; ?>';
+$args->rate = '<?php echo $poll[\'rate\'] / 10; ?>';
+if (strpos($tml['closed'], '$votes')) {
+}
+$result .= $theme->parsearg($tml['opened'] . $tml['closed'], $args);
+} else {
+$args->add($item);
+if (strpos($tml['closed'], '$votes')) {
+}
+$result = $theme->parsearg($tml['closed'], $args);
+}
+
+return $result;
   }
 
 public function add_tml($type, $title, array $items) {

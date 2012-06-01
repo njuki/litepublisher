@@ -60,6 +60,9 @@ litepublisher::$classes->add('tadminpolls', 'admin.polls.class.php', $name);
   $adminmenus->items[$idmenu]['title'] = $lang->options;
   
   $adminmenus->unlock();
+
+//add sample templates
+$self->add_tml('button',  $lang->poll, array($lang->yesword, $lang->noword));
 }
 
 function tpollsUninstall($self) {
