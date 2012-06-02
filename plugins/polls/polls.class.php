@@ -79,6 +79,16 @@ public function set_tml($id_tml, array $item) {
 $this->tml_items[$id_tml] = $item;
       tfilestorage::savevar($this->getfilename($id_tml), $item);
 }
+
+public function get_item_votes($id) {
+$result = array();
+$db = litepublisher::$db;
+$a = $db>res2assoc($db->query(sprintf('select * from %s%s where id = %d', $db->prefix, $this->votes, $id)));
+foreach ($a as $v) {
+$result[(int) $v['item']] = (int) $v['voted'];
+}
+return $result;
+}
   
   public function gethtml($id) {
     $item = $this->getitem($id);
@@ -91,12 +101,21 @@ $result = sprintf('<?php $poll = tpullpoll::i()->get(%d); ?>', $id);
 $args->total = '<?php echo $poll[\'total\']; ?>';
 $args->rate = '<?php echo $poll[\'rate\'] / 10; ?>';
 if (strpos($tml['closed'], '$votes')) {
+foreach ($tml[items'] as $index => $text) {
+$args->__set('votes' . $index, sprintf('<?php echo $poll[\'votes\'][%d]; ?>', $index));
 }
+}
+
 $result .= $theme->parsearg($tml['opened'] . $tml['closed'], $args);
 } else {
 $args->add($item);
 if (strpos($tml['closed'], '$votes')) {
+$votes = $this->get_item_votes($id);
+foreach ($votes as $i => $v) {
+$args->__set('votes' . $i, $v);
 }
+}
+
 $result = $theme->parsearg($tml['closed'], $args);
 }
 

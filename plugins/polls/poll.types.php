@@ -44,6 +44,7 @@ $closed = '';
       $args->index = $index;
       $args->indexplus = $index + 1;
       $args->text = $text;
+$args->votes = '$votes' . $index;
       $opened .= $theme->parsearg($item['item'], $args);
       $closed .= $theme->parsearg($item['itemclosed'], $args);
     }
