@@ -15,6 +15,7 @@ $self->data['itemclosed'] = '';
 
 $ini = parse_ini_file($res . 'types.ini',  true);
 foreach ($ini as $type => $item) {
+foreach ($item as $k => $v) $item[$k] = str_replace("'", '"', $v);
 $item['type'] = $type;
 $item['item'] = $theme->replacelang($item['item'], $lang);
 $item['opened'] = $theme->replacelang($item['opened'], $lang);
