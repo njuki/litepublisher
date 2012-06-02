@@ -12,21 +12,23 @@ class tadminpolls extends tadminmenu {
     return parent::iteminstance(__class__, $id);
   }
 
-public function setargs(targs $args, $status, $id_perm) {
+public function getcombostatus($status) {
 $lang = tlocal::admin('polls');
-$polls = tpolls::i();
-$args->status = tadminhtml::array2combo(array(
+return tadminhtml::array2combo(array(
 'opened' => $lang->opened,
 'closed' => $lang->closed
 ), $status);
+}
 
+public function getcombotml($id_tml) {
+$polls = tpolls::i();
 $polls->loadall_tml();
 $tml_items = array();
 foreach ($polls->tml_items as $id => $tml) {
 $tml_items[$id] = $tml['title'];
 }
 
-$args->id_tml = tadminhtml::array2combo($tml_items, $id_tml);
+return tadminhtml::array2combo($tml_items, $id_tml);
 }
 
   public function getcontent() {
@@ -35,7 +37,6 @@ $polls = tpolls::i();
     $html = tadminhtml::i();
 $lang = tlocal::admin('polls');
     $args = new targs();
-
 $adminurl = $this->adminurl;
 
 if ($action = $this->action) {
@@ -55,7 +56,8 @@ if (!$polls->itemexists($id)) {
 $result .= $this->notfound();
 } else {
 $item = $polls->getitem($id);
-$this->setargs($args, $item['status'], $item['id_tml']);
+$args->status = $this->getcombostatus($item['status']);
+$args->id_tml = $this->getcombotml($item['id_tml']);
 $args->id = $id;
     $args->formtitle = $lang->editpoll;
     $result .= $html->adminform(
@@ -66,13 +68,28 @@ $args->id = $id;
 break;
 
 case 'add':
-$this->setargs($args, 'opened', tpollsman::i()->pullpost);
-
+$args->status = $this->getcombostatus('opened');
+$args->id_tml = $this->getcombotml(tpollsman::i()->pullpost);
+    $args->formtitle = $lang->addpoll;
     $result .= $html->adminform(
-'[text=title]
+'[combo=status]
+[combo=id_tml]
+', $args);
+break;
+
+case 'create':
+$args->status = $this->getcombostatus('opened');
+$args->title = '';
+$types = array_keys(tpolltypes::i()->items);
+$args->type = tadminhtml::array2combo(array_combine($types, $types), $types[0]);
+$args->newitems = '';
+    $args->formtitle = $lang->createpoll;
+    $result .= $html->adminform(
+'[combo=status]
+[text=title]
 [combo=type]
 [editor=newitems]',
-$args);
+', $args);
 break;
 }
 }
@@ -127,16 +144,17 @@ $polls->set_tml($id, $tml);
 break;
 
 case 'add':
-$type = $_POST['type'];
-$title = tcontentfilter::escape($_POST['title']);
-$items = strtoarray(str_replace(array("\r\n", "\r"), "\n", trim($_POST['newitems'])));
-$items = array_unique($items);
-array_delete_value($items, '');
-if (count($items) == 0) return $this->html->empty;
-$id = $polls->add_tml($type, $title, $items);
+$id = $polls->add($_POST[id_tml'], $_POST['status']);
 return litepublisher::$urlmap->redir($this->adminurl . '=' . $id . '&action=edit');
-break;
 
+case 'create':
+if ($id_tml = tadminpolltemplates::i()->addtml()) {
+$id = $polls->add($id_tml, $_POST['status']);
+return litepublisher::$urlmap->redir($this->adminurl . '=' . $id . '&action=edit');
+} else {
+return $this->html->empty;
+}
+break;
 }
 }
 }

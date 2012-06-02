@@ -110,18 +110,24 @@ $polls->set_tml($id, $tml);
 break;
 
 case 'add':
+if ($id = $this->addtml()) {
+return litepublisher::$urlmap->redir($this->adminurl . '=' . $id . '&action=edit');
+} else {
+return $this->html->empty;
+}
+break;
+}
+}
+}
+
+public function addtml() {
 $type = $_POST['type'];
 $title = tcontentfilter::escape($_POST['title']);
 $items = strtoarray(str_replace(array("\r\n", "\r"), "\n", trim($_POST['newitems'])));
 $items = array_unique($items);
 array_delete_value($items, '');
-if (count($items) == 0) return $this->html->empty;
-$id = $polls->add_tml($type, $title, $items);
-return litepublisher::$urlmap->redir($this->adminurl . '=' . $id . '&action=edit');
-break;
-
-}
-}
+if (count($items) == 0) return false;
+return tpolls::i()->add_tml($type, $title, $items);
 }
 
 }//class
