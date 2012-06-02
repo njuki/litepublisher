@@ -64,19 +64,13 @@ class tadminposts extends tadminmenu {
     $result = '';
     $posts = tposts::i();
     $perpage = 20;
-    if (dbversion) {
       $where = "status <> 'deleted' ";
       if ($this->isauthor) $where .= ' and author = ' . litepublisher::$options->user;
       $count = $posts->db->getcount($where);
       $from = $this->getfrom($perpage, $count);
       $items = $posts->select($where, " order by posted desc limit $from, $perpage");
       if (!$items) $items = array();
-    } else {
-      $count = $posts->count;
-      $from = $this->getfrom($perpage, $count);
-      $items = array_slice($posts->items, $from, $perpage, true);
-      $items = array_reverse (array_keys($items));
-    }
+
     $html = $this->html;
     $result .=sprintf($html->h2->count, $from, $from + count($items), $count);
     $result .= $html->listhead();

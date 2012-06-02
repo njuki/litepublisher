@@ -42,7 +42,6 @@ class tcommontags extends titems implements  itemplate {
   }
   
   public function select($where, $limit) {
-    if (!$this->dbversion) $this->error('Select method must be called ffrom database version');
     if ($where != '') $where .= ' and ';
     $db = litepublisher::$db;
     $table = $this->thistable;
