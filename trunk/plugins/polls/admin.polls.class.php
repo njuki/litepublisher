@@ -94,8 +94,11 @@ break;
 }
 }
 
-$result .= $html->h3("<a href='$adminurl=0&amp;action=add'>$lang->addtemplate</a>");
-$result .= $html->h4->alltemplates;
+$result .= "<ul>
+<li><a href='$adminurl=0&amp;action=add'>$lang->addpoll</a></li>
+<li><a href='$adminurl=0&amp;action=create'>$lang->createpoll</a></li>
+</ul>";
+
 $args->adminurl = $adminurl;
 $table = '';
 $tr = '<tr>
@@ -107,7 +110,7 @@ $perpage = 20;
 $count = $polls->db->getcount();
       $from = $this->getfrom($perpage, $count);
 $items = $polls->select('', " order by id desc limit $from, $perpage");
-//$votes = $polls->db->res2items($polls->getdb($polls->votes)->select(sprintf('id in (%s)', implode(',', $items))));
+    $result .=sprintf($html->h4->count, $from, $from + count($items), $count);
 foreach ($items as $id) {
 $item = $polls->getitem($id);
 $args->id = $id;
@@ -135,12 +138,7 @@ return $result;
 if ($action = $this->action) {
 switch ($action) {
 case 'edit':
-$id = $this->idget();
-if ($tml = $polls->get_tml($id)) {
-$tml['tml'] = $_POST['tml'];
-$tml['result'] = $_POST['result'];
-$polls->set_tml($id, $tml);
-}
+$polls->edit($this->idget(), $_POST[id_tml'], $_POST['status']);
 break;
 
 case 'add':
