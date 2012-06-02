@@ -39,12 +39,16 @@ $this->data['autoid_tml'] = 0;
       return tfilestorage::save($this);
     } else {
 
-  public function add($id_tml) {
-return tpollsman::i()->add($$id_tml);
+  public function add($id_tml, $status) {
+return tpollsman::i()->add($$id_tml, $status);
 }
 
-  public function edit($id, $title, $status, $type, array $items) {
-return tpollsman::i()->edit($id, $title, $status, $type, $items);
+  public function edit($id, $id_tml, $status) {
+return tpollsman::i()->edit($id, $id_tml, $status);
+}
+
+public function setstatus($id, $status) {
+$this->setvalue($id, 'status', $status);
 }
 
   public function delete($id) {

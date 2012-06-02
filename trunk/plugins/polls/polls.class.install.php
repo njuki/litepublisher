@@ -38,6 +38,7 @@ $lang = tlocal::admin('polls');
 
 litepublisher::$classes->add('tpoltypes', 'poll.types.php', $name);
 litepublisher::$classes->add('tpollsman', 'polls.man.php', $name);
+litepublisher::$classes->add('tpullpolls', 'pullpolls.class.php', $name);
 litepublisher::$classes->add('tadminpolltemplates', 'admin.poll.templates.php', $name);
 litepublisher::$classes->add('tadminpolltypes', 'admin.poll.types.php', $name);
 litepublisher::$classes->add('tadminpolloptions', 'admin.polloptions.class.php', $name);
@@ -84,6 +85,7 @@ tadminmenus::i()->deletetree($adminmenus->url2id('/admin/plugins/polls/'));
 
 litepublisher::$classes->delete('tpolltypes');
 litepublisher::$classes->delete('tpollsman');
+litepublisher::$classes->delete('tpullpolls');
 litepublisher::$classes->delete('tadminpolltemplates');
 litepublisher::$classes->delete('tadminpolltypes');
 litepublisher::$classes->delete('tadminpolloptions');
