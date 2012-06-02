@@ -1,6 +1,8 @@
 <?php
 
 function update530() {
+litepublisher::$classes->data['memcache'] = false;
+litepublisher::$classes->data['revision_memcache'] = 1;
 litepublisher::$classes->add('tpullitems', 'items.pull.class.php');
 
 if (litepublisher::$classes->exists('tpolls')) {
@@ -27,8 +29,11 @@ tcron::i()->deleteclass(get_class($self));
 tlocalmerger::i()->add('polls', "plugins/polls/resource/" . litepublisher::$options->language . ".ini");
 
 $name = 'polls';
-litepublisher::$classes->add('tpolltemplates', 'polls.templates.php', $name);
+litepublisher::$classes->add('tpoltypes', 'poll.types.php', $name);
 litepublisher::$classes->add('tpollsman', 'polls.man.php', $name);
+litepublisher::$classes->add('tadminpolltemplates', 'admin.poll.templates.php', $name);
+litepublisher::$classes->add('tadminpolltypes', 'admin.poll.types.php', $name);
+litepublisher::$classes->add('tadminpolloptions', 'admin.polloptions.class.php', $name);
 
 $man = tdbmanager::i();
 $man->deletetable('pollusers');
