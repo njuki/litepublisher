@@ -62,7 +62,11 @@ litepublisher::$classes->add('tadminpolls', 'admin.polls.class.php', $name);
   $adminmenus->unlock();
 
 //add sample templates
-$self->add_tml('button',  $lang->poll, array($lang->yesword, $lang->noword));
+$mam = tpollsman::i();
+$man->lock();
+$man->pollpost = $self->add_tml('star',  $lang->fivestars, array(1, 2, 3, 4, 5));
+$self->add_tml('bigbutton',  $lang->poll, array($lang->yesword, $lang->noword));
+$man->unlock();
 }
 
 function tpollsUninstall($self) {
