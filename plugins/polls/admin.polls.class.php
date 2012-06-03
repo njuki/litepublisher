@@ -55,6 +55,7 @@ case 'edit':
 if (!$polls->itemexists($id)) {
 $result .= $this->notfound();
 } else {
+$result .= sprintf($html->h4->shorttag, $id);
 $item = $polls->getitem($id);
 $args->status = $this->getcombostatus($item['status']);
 $args->id_tml = $this->getcombotml($item['id_tml']);
