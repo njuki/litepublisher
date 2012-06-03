@@ -85,7 +85,6 @@ $args->id = $id;
 $args->title = $tml['title'];
 $table .= $html->parsearg($tr, $args);
 }
-}
 
 $head = "<tr>
 <th>$lang->edit</th>

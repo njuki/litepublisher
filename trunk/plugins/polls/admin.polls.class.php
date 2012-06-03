@@ -89,7 +89,7 @@ $args->newitems = '';
 '[combo=status]
 [text=title]
 [combo=type]
-[editor=newitems]',
+[editor=newitems]
 ', $args);
 break;
 }
@@ -139,11 +139,11 @@ return $result;
 if ($action = $this->action) {
 switch ($action) {
 case 'edit':
-$polls->edit($this->idget(), $_POST[id_tml'], $_POST['status']);
+$polls->edit($this->idget(), $_POST['id_tml'], $_POST['status']);
 break;
 
 case 'add':
-$id = $polls->add($_POST[id_tml'], $_POST['status']);
+$id = $polls->add($_POST['id_tml'], $_POST['status']);
 return litepublisher::$urlmap->redir($this->adminurl . '=' . $id . '&action=edit');
 
 case 'create':

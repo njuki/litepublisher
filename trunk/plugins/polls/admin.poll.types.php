@@ -23,7 +23,7 @@ $result = '';
 $lang = tlocal::admin('polls');
     $args = new targs();
 
-$type = isset($_GET['type'] ? $_GET['type'] : '';
+$type = isset($_GET['type']) ? $_GET['type'] : '';
 if (isset($types->items[$type])) {
 $args->type = $type;
     $tabs = new tuitabs();
@@ -48,7 +48,7 @@ return $result;
   
   public function processform() {
     $types = tpolltypes::i();
- $type = isset($_GET['type'] ? $_GET['type'] : '';
+ $type = isset($_GET['type']) ? $_GET['type'] : '';
 if (isset($types->items[$type])) {
 foreach ($types->items[$type] as $name => $value) {
 if (isset($_POST[$name])) $types->items[$type][$name] = $_POST[$name];
