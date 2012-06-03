@@ -19,8 +19,8 @@ class tadminpolltemplates extends tadminmenu {
   public function getcontent() {
 $result = '';
     $polls = tpolls::i();
-$lang = tlocal::admin('polls');
     $html = tadminhtml::i();
+$lang = tlocal::admin('polls');
     $args = new targs();
 $dir = litepublisher::$paths->data . 'polls';
 $adminurl = $this->adminurl;
@@ -42,13 +42,13 @@ break;
 case 'edit':
 if ($tml = $polls->get_tml($id)) {
 $args->add($tml);
+$args->title = tcontentfilter::unescape($tml['title']);
 $args->id = $id;
 //$args->items = implode("\n", $tml['items']);
     $tabs = new tuitabs();
     //$tabs->add($lang->pollitems, "[editor=items]");
-    $tabs->add($lang->tml, "[editor=tml]");
-    $tabs->add($lang->result, "[editor=result]");
-
+    $tabs->add($lang->opened, "[editor=opened]");
+    $tabs->add($lang->closed, "[editor=closed]");
     $args->formtitle = $lang->edittemplate;
     $result .= $html->adminform('[text=title]' .
 $tabs->get(), $args);
@@ -102,8 +102,9 @@ switch ($action) {
 case 'edit':
 $id = $this->idget();
 if ($tml = $polls->get_tml($id)) {
-$tml['tml'] = $_POST['tml'];
-$tml['result'] = $_POST['result'];
+$tml['title'] = tcontentfilter::escape($_POST['title']);
+$tml['opened'] = $_POST['opened'];
+$tml['closed'] = $_POST['closed'];
 $polls->set_tml($id, $tml);
 }
 break;

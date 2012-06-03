@@ -20,6 +20,7 @@ $lang = tlocal::admin('polls');
 //note to open admin menus
 $result = $html->h3->noteoptions;
 
+$polls = tpolls::i();
 $man = tpollsman::i();
        $args->addtopost = $man->addtopost;
 
@@ -50,7 +51,7 @@ $this->setadddtopost(isset($_POST['addtopost']));
   }
  
   public function setadddtopost($v) {
-$man = tpollsman();
+$man = tpollsman::i();
     if ($v == $man->addtopost) return;
     $man->data['addtopost'] = $v;
     $man->save();
