@@ -28,9 +28,7 @@ tjsonserver::i()->addevent('polls_sendvote', get_class($self), 'polls_sendvote')
   $jsmerger->lock();
   $jsmerger->add('default', '/plugins/polls/polls.client.min.js');
 $jsmerger->addtext('default', 'poll',
-  sprintf('var lang = $.extend(true, lang, {
-    poll: %s,
-  });',
+  sprintf('var lang = $.extend(true, lang, {poll: %s});',
   json_encode(array(
   'voted' => $lang->voted,
 ))

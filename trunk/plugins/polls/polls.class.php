@@ -40,7 +40,7 @@ $this->data['autoid_tml'] = 0;
 }
 
   public function add($id_tml, $status) {
-return tpollsman::i()->add($$id_tml, $status);
+return tpollsman::i()->add($id_tml, $status);
 }
 
   public function edit($id, $id_tml, $status) {

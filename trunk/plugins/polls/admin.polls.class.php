@@ -70,7 +70,7 @@ break;
 
 case 'add':
 $args->status = $this->getcombostatus('opened');
-$args->id_tml = $this->getcombotml(tpollsman::i()->pullpost);
+$args->id_tml = $this->getcombotml(tpollsman::i()->pollpost);
     $args->formtitle = $lang->addpoll;
     $result .= $html->adminform(
 '[combo=status]
