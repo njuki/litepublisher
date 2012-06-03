@@ -37,7 +37,7 @@ $this->data['autoid_tml'] = 0;
   public function save() {
     if ($this->lockcount > 0) return;
       return tfilestorage::save($this);
-    } else {
+}
 
   public function add($id_tml, $status) {
 return tpollsman::i()->add($$id_tml, $status);
@@ -68,7 +68,7 @@ return litepublisher::$paths->data . 'polls' . DIRECTORY_SEPARATOR . $name;
 }
 
 public function loadfile($name) {
-      if (tfilestorage::loadvar($this->getfilename($name, $v)) return $v;
+      if (tfilestorage::loadvar($this->getfilename($name), $v)) return $v;
 return false;
 }
 
@@ -105,7 +105,7 @@ $result = sprintf('<?php $poll = tpullpoll::i()->get(%d); ?>', $id);
 $args->total = '<?php echo $poll[\'total\']; ?>';
 $args->rate = '<?php echo $poll[\'rate\'] / 10; ?>';
 if (strpos($tml['closed'], '$votes')) {
-foreach ($tml[items'] as $index => $text) {
+foreach ($tml['items'] as $index => $text) {
 $args->__set('votes' . $index, sprintf('<?php echo $poll[\'votes\'][%d]; ?>', $index));
 }
 }
@@ -144,13 +144,6 @@ $filename = $this->getfilename($id_tml);
 @unlink($filename . '.bak.php');
 }
   
-  public function gethead() {
-    $tml = ttml::i();
-    return $tml->getready('if ($("*[id^=\'pollform_\']").length) {
-      $.load_script(ltoptions.files + "/plugins/polls/polls.client.js");
-    });');
-  }
-
 public function err($mesg) {
 $lang = tlocal::i('poll');
 
