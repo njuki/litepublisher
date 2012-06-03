@@ -1,40 +1,47 @@
 (function( $ ){
-$.pollclient = function() {
-
-  var pollclient = {
+$.pollclient = {
 enabled: true,
     voted : [],
 init: function () {
 $(".pollitem").click(function() {
-      pollclient.clickvote($(this).data("idpoll"), $(this).data["index"));
+var self =$(this);
+      $.pollclient.clickvote(self.data("idpoll"), self.data("index"), self.closest(".activepoll"));
       return false;
     });
     
 $(".submit-radio-poll").click(function() {
-      var vote = $("input:radio:checked", $(this).closest(".activepoll")).val();
-      pollclient.clickvote($(this).data("idpoll"), vote);
+var self =$(this);
+var owner = self.closest(".activepoll");
+      var vote = $("input:radio:checked", owner).val();
+      $.pollclient.clickvote(self.data("idpoll"), vote, owner);
       return false;
     });
   },
   
-  pollclient.clickvote = function(idpoll, vote) {
-if ($.inArray(idpoll, pollclient.voted) >= 0) return pollclient.error(lang.poll.voted);
-        pollclient.setenabled(false);
-    pollclient.voted.push(idpoll);
+  clickvote: function(idpoll, vote, holder) {
+if ($.inArray(idpoll, this.voted) >= 0) return this.error(lang.poll.voted);
+        this.setenabled(false);
+   this.voted.push(idpoll);
 $.litejson({method: "polls_sendvote", id: idpoll, vote: vote}, function(r) {
-if (r.code == "error") return pollclient.error(r.message);
-        pollclient.setenabled(true);
+if (r.code == "error") return $.pollclient.error(r.message);
+        $.pollclient.setenabled(true);
 //update results
-      }
+var pollresult = holder.next(".poll-result");
+$(".votes", holder).text(r.total);
+$(".average", holder).text(r.rate);
+$(".poll-votes", holder).each(function() {
+var index = $(this).data("index");
+if (index in r.votes) $(this).text(r.votes[index]);
+});
     })
     .fail( function(jq, textStatus, errorThrown) {
       //alert('error ' + jq.responseText );
-      pollclient.error();
+      $.pollclient.error();
     });
   },
   
       error: function(mesg) {
-        pollclient.setenabled(true);
+        $.pollclient.setenabled(true);
         $.messagebox(lang.dialog.error, mesg);
       },
 
@@ -46,5 +53,12 @@ if (r.code == "error") return pollclient.error(r.message);
         } else {
                     $(":input", ".activepoll").removeAttr("disabled");
         }
-      },
-      
+      }
+};
+
+  $(document).ready(function() {
+    //only logged users
+    if (get_cookie("litepubl_user_id")) $.pollclient.init();
+  });
+  
+})( jQuery );
