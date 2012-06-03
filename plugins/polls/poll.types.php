@@ -18,7 +18,7 @@ $this->dbversion = false;
 $this->basename = 'polls' . DIRECTORY_SEPARATOR . 'types';
   }
 
-public function set(array $item) {
+public function add(array $item) {
 if (!isset($item['closed'])) $item['closed'] = $this->closed;
 if (!isset($item['itemclosed'])) $item['itemclosed'] = $this->itemclosed;
 
@@ -65,7 +65,7 @@ return array(
 'items' => $items,
 'opened' => $theme->parsearg($item['opened'], $args),
 'closed' => $theme->parsearg($item['closed'], $args)
-));
+);
 }  
 
 }//class
