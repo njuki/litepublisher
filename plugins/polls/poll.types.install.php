@@ -6,7 +6,7 @@
 * and GPL (gpl.txt) licenses.
 **/
 
-function tpoltypesInstall($self) {
+function tpolltypesInstall($self) {
 $lang = tlocal::i('polls');
 $theme = ttheme::i();
 $res = dirname(__file__) .DIRECTORY_SEPARATOR . 'resource' . DIRECTORY_SEPARATOR;

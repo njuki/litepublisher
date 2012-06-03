@@ -40,7 +40,7 @@ $jsmerger->addtext('default', 'poll',
 
     tcssmerger::i()->addstyle(dirname(__file__) . '/stars.min.css');
 $lang = tlocal::admin('polls');
-litepublisher::$classes->add('tpoltypes', 'poll.types.php', $name);
+litepublisher::$classes->add('tpolltypes', 'poll.types.php', $name);
 litepublisher::$classes->add('tpollsman', 'polls.man.php', $name);
 litepublisher::$classes->add('tpullpolls', 'pullpolls.class.php', $name);
 litepublisher::$classes->add('tadminpolltemplates', 'admin.poll.templates.php', $name);
@@ -67,7 +67,7 @@ litepublisher::$classes->add('tadminpolls', 'admin.polls.class.php', $name);
   $adminmenus->unlock();
 
 //add sample templates
-$mam = tpollsman::i();
+$man = tpollsman::i();
 $man->lock();
 $man->pollpost = $self->add_tml('star',  $lang->fivestars, array(1, 2, 3, 4, 5));
 $self->add_tml('bigbutton',  $lang->poll, array($lang->yesword, $lang->noword));

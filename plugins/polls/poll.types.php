@@ -6,7 +6,7 @@
 * and GPL (gpl.txt) licenses.
 **/
 
-class tpoltypes extends titems {
+class tpolltypes extends titems {
 
   public static function i() {
     return getinstance(__class__);
