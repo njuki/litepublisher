@@ -63,6 +63,10 @@ $total += $count;
 $self->db->setvalue($idpoll, 'total', $total);
 }
 }
+
 $man->alter($self->table, "drop votes");
+$man->alter($self->table, "drop title");
+$man->alter($self->table, "drop type");
+$man->alter($self->table, "drop items");
 }
 }

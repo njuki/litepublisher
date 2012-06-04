@@ -244,6 +244,15 @@ class tcontentfilter extends tevents {
     '&gt;' => '>'
     ));
   }
+
+public static function remove_scripts($s) {
+      $s = preg_replace('/\<\?.*?\?\>/ims', '', $s);
+      $s = preg_replace('/\<script(.*?)script(\s*)\>/ims', '', $s);
+      $s = preg_replace('/\[html(.*?)html\]/ims', '', $s);
+      $s = preg_replace('/\[html(.*?)/ims', '', $s);
+return $s;
+}
+
   // uset in tthemeparser
   public static function getidtag($tag, $s) {
     if (preg_match("/<$tag\\s*.*?id\\s*=\\s*['\"]([^\"'>]*)/i", $s, $m)) {

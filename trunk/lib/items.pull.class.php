@@ -19,7 +19,7 @@ protected $ongetitem;
   protected function create() {
     parent::create();
 $this->basename = 'pullitems';
-$this->perpull = 50;
+$this->perpull = 20;
 $this->pull = array();
 $this->modified = array();
 }

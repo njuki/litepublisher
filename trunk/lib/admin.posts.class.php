@@ -72,7 +72,7 @@ class tadminposts extends tadminmenu {
       if (!$items) $items = array();
 
     $html = $this->html;
-    $result .=sprintf($html->h2->count, $from, $from + count($items), $count);
+    $result .=sprintf($html->h4->count, $from, $from + count($items), $count);
     $result .= $html->listhead();
     $args = targs::i();
     $args->adminurl = $this->adminurl;
