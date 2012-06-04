@@ -159,7 +159,7 @@ tfilestorage::$memcache->set($filename, $s, false, 3600);
         return litepublisher::$paths->lib . $filename;
       }
       $filename = trim($item[1], DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR . $filename;
-      if (file_exists($filename))  return $filename;
+      //if (file_exists($filename))  return $filename;
       //may be is subdir?
       if (file_exists(litepublisher::$paths->plugins . $filename)) return litepublisher::$paths->plugins . $filename;
       if (file_exists(litepublisher::$paths->themes . $filename)) return litepublisher::$paths->themes . $filename;
