@@ -42,15 +42,18 @@ break;
 case 'edit':
 if ($tml = $polls->get_tml($id)) {
 $args->add($tml);
-$args->title = tcontentfilter::unescape($tml['title']);
 $args->id = $id;
+$args->name = tcontentfilter::unescape($tml['name']);
+$args->title = tcontentfilter::unescape($tml['title']);
 //$args->items = implode("\n", $tml['items']);
     $tabs = new tuitabs();
     //$tabs->add($lang->pollitems, "[editor=items]");
     $tabs->add($lang->opened, "[editor=opened]");
     $tabs->add($lang->closed, "[editor=closed]");
     $args->formtitle = $lang->edittemplate;
-    $result .= $html->adminform('[text=title]' .
+    $result .= $html->adminform('
+[text=name]
+[text=title]' .
 $tabs->get(), $args);
 }
 break;
@@ -59,11 +62,13 @@ case 'add':
 $types = array_keys(tpolltypes::i()->items);
 $args->type = tadminhtml::array2combo(array_combine($types, $types), $types[0]);
 
+$args->name = '';
 $args->title= '';
 $args->newitems = '';
     $args->formtitle = $lang->newtemplate;
     $result .= $html->adminform(
-'[text=title]
+'[text=name]
+[text=title]
 [combo=type]
 [editor=newitems]',
 $args);
@@ -76,12 +81,13 @@ $result .= $html->h4->alltemplates;
 $args->adminurl = $adminurl;
 $table = '';
 $tr = '<tr>
-<td><a href="$adminurl=$id&amp;action=edit">$title</a></td>
+<td><a href="$adminurl=$id&amp;action=edit">$name</a></td>
 <td><a href=$adminurl=$id&amp;action=delete">$lang.delete</a></td>
 </tr>';
 $polls->loadall_tml();
 foreach ($polls->tml_items as $id => $tml) {
 $args->id = $id;
+$args->name = $tml['name'];
 $args->title = $tml['title'];
 $table .= $html->parsearg($tr, $args);
 }
@@ -102,6 +108,7 @@ switch ($action) {
 case 'edit':
 $id = $this->idget();
 if ($tml = $polls->get_tml($id)) {
+$tml['name'] = tcontentfilter::escape($_POST['name']);
 $tml['title'] = tcontentfilter::escape($_POST['title']);
 $tml['opened'] = $_POST['opened'];
 $tml['closed'] = $_POST['closed'];
@@ -122,12 +129,13 @@ break;
 
 public function addtml() {
 $type = $_POST['type'];
+$name = tcontentfilter::escape($_POST['name']);
 $title = tcontentfilter::escape($_POST['title']);
 $items = strtoarray(str_replace(array("\r\n", "\r"), "\n", trim($_POST['newitems'])));
 $items = array_unique($items);
 array_delete_value($items, '');
 if (count($items) == 0) return false;
-return tpolls::i()->add_tml($type, $title, $items);
+return tpolls::i()->add_tml($type, $name, $title, $items);
 }
 
 }//class
