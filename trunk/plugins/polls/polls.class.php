@@ -87,9 +87,9 @@ $this->tml_items[$id_tml] = $item;
 public function get_item_votes($id) {
 $result = array();
 $db = litepublisher::$db;
-$a = $db>res2assoc($db->query(sprintf('select * from %s%s where id = %d', $db->prefix, $this->votes, $id)));
+$a = $db->res2assoc($db->query(sprintf('select * from %s%s where id = %d', $db->prefix, $this->votes, $id)));
 foreach ($a as $v) {
-$result[(int) $v['item']] = (int) $v['voted'];
+$result[(int) $v['item']] = (int) $v['votes'];
 }
 return $result;
 }
@@ -98,10 +98,11 @@ return $result;
     $item = $this->getitem($id);
 $tml = $this->get_tml($item['id_tml']);
 $args = new targs();
+$args->id = $id;
 $theme = ttheme::i();
 if ($item['status'] == 'opened') {
 //inject php into html
-$result = sprintf('<?php $poll = tpullpoll::i()->get(%d); ?>', $id);
+$result = sprintf('<?php $poll = tpullpolls::i()->get(%d); ?>', $id);
 $args->total = '<?php echo $poll[\'total\']; ?>';
 $args->rate = '<?php echo $poll[\'rate\'] / 10; ?>';
 if (strpos($tml['closed'], '$votes')) {
@@ -155,14 +156,14 @@ return array(
   
 public function polls_sendvote(array $args) {
       extract($args, EXTR_SKIP);
-      if (!isset($idpoll) || !isset($vote)) return 403;
+      if (!isset($idpoll) || !isset($vote)) return $this->error('Invalid data', 403);
 $idpoll = (int) $idpoll;
-if ($idpoll == 0) return 403;
+if ($idpoll == 0) return $this->error('Invalid data', 403);
 $vote = (int) $vote;
-$iduser = litepublisher::user;
+$iduser = litepublisher::$options->user;
 if (!$iduser) return $this->err('notauth');
     if (!$this->itemexists($idpoll)) return $this->err('notfound');
-if ('closed' == $this->getvalue($idpoll)) return $this->err('closed');
+if ('closed' == $this->getvalue($idpoll, 'status')) return $this->err('closed');
     if ($this->hasvote($idpoll, $iduser)) return $this->err('voted');
 
     return $this->addvote($idpoll, $iduser, (int) $vote);
@@ -170,6 +171,7 @@ if ('closed' == $this->getvalue($idpoll)) return $this->err('closed');
   
   public function hasvote($idpoll, $iduser) {
 $q = sprintf('id = %d and user = %d', (int) $idpoll, (int) $iduser);
+$this->getdb($this->users1)->delete($q);
     if ($this->getdb($this->users1)->findid($q)) return true;
 return $this->getdb($this->users2)->findid($q);
   }
@@ -184,7 +186,7 @@ $result = array(
 );
 
 $db = litepublisher::$db;
-$db->query(sprintf('INSERT INTO %s%s (id, user) values %d,%d', $db->prefix, $this->users1, $id, $iduser));
+$db->query(sprintf('INSERT INTO %s%s (id, user) values (%d,%d)', $db->prefix, $this->users1, $id, $iduser));
 $db->query(sprintf('update %s%s set votes = votes + 1 where id = %d and item = %d', $db->prefix, $this->votes, $id, (int) $vote));
 
 //update stat
@@ -192,12 +194,12 @@ $a = $db->res2assoc($db->query(sprintf('select * from %s%s where id = %d', $db->
 $sum= 0;
 foreach ($a as $v) {
 $index = (int) $v['item'];
-$voted = (int) $v['voted'];
+$voted = (int) $v['votes'];
 $result['total'] += $voted;
 $result['votes'][$index] = $voted;
       $sum += ($index + 1) * $voted;
 }
-    $result['rate'] = (int) round($sum / count($a) * 10);
+    $result['rate'] = (int) round($sum / $result['total'] * 10);
 
         $this->db->updateassoc(array(
     'id' => $id,
@@ -206,6 +208,7 @@ $result['votes'][$index] = $voted;
     ));
 
 tpullpolls::i()->set($id, $result);
+$result['rate'] = (string) ($result['rate'] / 10);
     return $result;
   }
   
