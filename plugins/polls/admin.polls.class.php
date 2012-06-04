@@ -25,7 +25,7 @@ $polls = tpolls::i();
 $polls->loadall_tml();
 $tml_items = array();
 foreach ($polls->tml_items as $id => $tml) {
-$tml_items[$id] = $tml['title'];
+$tml_items[$id] = $tml['name'];
 }
 
 return tadminhtml::array2combo($tml_items, $id_tml);
@@ -80,6 +80,7 @@ break;
 
 case 'create':
 $args->status = $this->getcombostatus('opened');
+$args->status = '';
 $args->title = '';
 $types = array_keys(tpolltypes::i()->items);
 $args->type = tadminhtml::array2combo(array_combine($types, $types), $types[0]);
@@ -87,6 +88,7 @@ $args->newitems = '';
     $args->formtitle = $lang->createpoll;
     $result .= $html->adminform(
 '[combo=status]
+[text=name]
 [text=title]
 [combo=type]
 [editor=newitems]
@@ -103,7 +105,7 @@ $result .= "<ul>
 $args->adminurl = $adminurl;
 $table = '';
 $tr = '<tr>
-<td><a href="$adminurl=$id&amp;action=edit">$title</a></td>
+<td><a href="$adminurl=$id&amp;action=edit">$name</a></td>
 <td><a href=$adminurl=$id&amp;action=delete">$lang.delete</a></td>
 </tr>';
 
@@ -117,6 +119,7 @@ $item = $polls->getitem($id);
 $args->id = $id;
 $args->add($item);
 $tml = $polls->get_tml($item['id_tml']);
+$args->name = $tml['name'];
 $args->title = $tml['title'];
 $table .= $html->parsearg($tr, $args);
 }

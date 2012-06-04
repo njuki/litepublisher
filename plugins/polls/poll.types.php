@@ -26,7 +26,7 @@ $this->items[$item['type']] = $item;
 $this->save();
 }
 
-public function build($type, $title, array $items) {
+public function build($type, $name, $title, array $items) {
 if (!isset($this->items[$type])) $this->error(sprintf('The "%s" type not exists', $type));
 if (count($items) == 0) $this->error('Empty poll items');
 
@@ -61,6 +61,7 @@ $args->type = $type;
 
 return array(
 'type' => $type,
+'name' => $name,
 'title' => $title,
 'items' => $items,
 'opened' => $theme->parsearg($item['opened'], $args),

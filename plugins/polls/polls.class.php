@@ -127,14 +127,14 @@ $result = $theme->parsearg($tml['closed'], $args);
 return $result;
   }
 
-public function add_tml($type, $title, array $items) {
-$this->edit_tml(++$this->data['autoid_tml'], $type, $title, $items);
+public function add_tml($type, $name, $title, array $items) {
+$this->edit_tml(++$this->data['autoid_tml'], $type, $name, $title, $items);
 $this->save();
 return $this->data['autoid_tml'];
 }
 
-public function edit_tml($id_tml, $type, $title, array $items) {
-$tml_item = tpolltypes::i()->build($type, $title, $items);
+public function edit_tml($id_tml, $type, $name, $title, array $items) {
+$tml_item = tpolltypes::i()->build($type, $name, $title, $items);
 $this->set_tml($id_tml, $tml_item);
 }
 

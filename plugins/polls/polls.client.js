@@ -22,17 +22,18 @@ var owner = self.closest(".activepoll");
 if ($.inArray(idpoll, this.voted) >= 0) return this.error(lang.poll.voted);
         this.setenabled(false);
    this.voted.push(idpoll);
-$.litejson({method: "polls_sendvote", id: idpoll, vote: vote}, function(r) {
+$.litejson({method: "polls_sendvote", idpoll: idpoll, vote: vote}, function(r) {
 if (r.code == "error") return $.pollclient.error(r.message);
         $.pollclient.setenabled(true);
 //update results
 var pollresult = holder.next(".poll-result");
-$(".votes", holder).text(r.total);
-$(".average", holder).text(r.rate);
-$(".poll-votes", holder).each(function() {
+$(".votes", pollresult).text(r.total);
+$(".average", pollresult).text(r.rate);
+$(".poll-votes", pollresult).each(function() {
 var index = $(this).data("index");
 if (index in r.votes) $(this).text(r.votes[index]);
 });
+      //} catch(e) { alert('error ' + e.message); }
     })
     .fail( function(jq, textStatus, errorThrown) {
       //alert('error ' + jq.responseText );
