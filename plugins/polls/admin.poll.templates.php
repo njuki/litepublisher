@@ -35,7 +35,7 @@ if ($id == $man->pullpost) return $html->h4->deletepullpost;
 @unlink($dir .DIRECTORY_SEPARATOR . "$id.php");
 @unlink($dir .DIRECTORY_SEPARATOR . "$id.bak.php");
 unset($polls->tml_items[$id]);
-$polls->db->update('id_tml = ' $man->pullpost, "id_tml = $id");
+$polls->db->update('id_tml = ' . $man->pullpost, "id_tml = $id");
       $result .= $html->h4->deleted;
 } else {
 $result .= $html->confirmdelete($id, $adminurl, $lang->confirmdelete);
