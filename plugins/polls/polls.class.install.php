@@ -68,7 +68,7 @@ litepublisher::$classes->add('tadminpolls', 'admin.polls.class.php', $name);
 $man = tpollsman::i();
 $man->lock();
 $man->pollpost = $self->add_tml('star',  $lang->fivestars, $lang->poll, array(1, 2, 3, 4, 5));
-$self->add_tml('bigbutton',  $lang->likepoll, $lang->poll, array($lang->yesbtn, $lang->nobtn));
+$self->add_tml('bigbutton',  $lang->likepoll, $lang->poll, array($lang->like, $lang->unlike));
 $man->unlock();
 }
 

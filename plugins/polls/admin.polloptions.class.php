@@ -27,7 +27,7 @@ $man = tpollsman::i();
 $items = array();
 $polls->loadall_tml();
 foreach ($polls->tml_items as $id => $tml) {
-$items[$id] = $tml['title'];
+$items[$id] = $tml['name'];
 }
 
 $args->pollpost = tadminhtml::array2combo($items, $man->pollpost);
