@@ -8,7 +8,7 @@
 
 function tpollsmanInstall($self) {
 tcontentfilter::i()->beforefilter = $self->filter;
-tcron::i()->addweekly(get_class($self), 'optimize', null);
+tcron::i()->addnightly(get_class($self), 'optimize', null);
 }
 
 function tpollsmanUninstall($self) {
