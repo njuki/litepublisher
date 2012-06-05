@@ -37,35 +37,37 @@ $item = $this->items[$type];
 $args->type = $type;
     $args->title = $title;
 
-$opened = '';
-$closed = '';
+$open = '';
+$close = '';
     foreach ($items as $index => $text) {
       $args->checked = 0 == $index;
       $args->index = $index;
       $args->indexplus = $index + 1;
       $args->text = $text;
 $args->votes = '$votes' . $index;
-      $opened .= $theme->parsearg($item['item'], $args);
-      $closed .= $theme->parsearg($item['itemclosed'], $args);
+      $open .= $theme->parsearg($item['item'], $args);
+      $close .= $theme->parsearg($item['itemclosed'], $args);
     }
 
-$args->items = $opened;
-$args->closed = $closed;
 $args->id = '$id';
 $args->type = $type;
     $args->title = $title;
-
       $args->rate ='$rate';
       $args->worst = 1;
       $args->best = count($items);
+
+$args->items = $open;
+$opened = $theme->parsearg($item['opened'], $args);
+$args->items = $close;
+$closed = $theme->parsearg($item['closed'], $args);
 
 return array(
 'type' => $type,
 'name' => $name,
 'title' => $title,
 'items' => $items,
-'opened' => $theme->parsearg($item['opened'], $args),
-'closed' => $theme->parsearg($item['closed'], $args)
+'opened' => $opened,
+'closed' => $closed
 );
 }  
 
