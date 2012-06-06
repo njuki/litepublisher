@@ -22,33 +22,28 @@ return ltoptions.download_site + '/admin/service/upload/' + q + args;
 }
 
 function siteurl_dialog(fn) {
-$.load_ui(function() {
-if ($._url_dialog == undefined) {
-$("#siteurl_dialog").dialog( {
-autoOpen: false,
-modal: true,
+$.prettyPhotoDialog({
+title: ltoptions.siteurl_dialog.title,
+html: ltoptions.siteurl_dialog.html,
 buttons: [
 {
-        text: "Ok",
+        title: "Ok",
         click: function() {
- $(this).dialog("close"); 
-var url = $.trim($("#text_download_site").val());
+var url = $.trim($("input[name='text_download_site']").val());
+          $.prettyPhoto.close();
 if (url != '') set_cookie('download_site', url);
 update_siteurl(url);
 if ($.isFunction(fn)) fn();
 }
     },
 {
-        text: "Cancel",
-        click: function() { $(this).dialog("close"); }
+        title: lang.dialog.Cancel,
+        click: function() {
+          $.prettyPhoto.close();
+}
     }
 ]
 } );
-$._url_dialog = true;
-}
-$("#siteurl_dialog").dialog( "open" );
-$("#text_download_site").focus();
-    });
 }
 
 function download_item_clicked() {
