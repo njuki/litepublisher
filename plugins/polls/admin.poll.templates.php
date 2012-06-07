@@ -30,12 +30,12 @@ $id = $this->idget();
 switch ($action) {
 case 'delete':
 $man = tpollsman::i();
-if ($id == $man->pullpost) return $html->h4->deletepullpost;
+if ($id == $man->pollpost) return $html->h4->deletepullpost;
       if ($this->confirmed) {
 @unlink($dir .DIRECTORY_SEPARATOR . "$id.php");
 @unlink($dir .DIRECTORY_SEPARATOR . "$id.bak.php");
 unset($polls->tml_items[$id]);
-$polls->db->update('id_tml = ' . $man->pullpost, "id_tml = $id");
+$polls->db->update('id_tml = ' . $man->pollpost, "id_tml = $id");
       $result .= $html->h4->deleted;
 } else {
 $result .= $html->confirmdelete($id, $adminurl, $lang->confirmdelete);
@@ -85,7 +85,7 @@ $args->adminurl = $adminurl;
 $table = '';
 $tr = '<tr>
 <td><a href="$adminurl=$id&amp;action=edit">$name</a></td>
-<td><a href=$adminurl=$id&amp;action=delete">$lang.delete</a></td>
+<td><a href="$adminurl=$id&amp;action=delete">$lang.delete</a></td>
 </tr>';
 $polls->loadall_tml();
 foreach ($polls->tml_items as $id => $tml) {
