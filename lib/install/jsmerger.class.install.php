@@ -77,7 +77,10 @@ $js = "var lang;\nif (lang == undefined) lang = {};\n";
   $self->addtext('default', 'dialog', $js . sprintf('lang.dialog = %s;',  json_encode(
   array(
   'error' => $lang->error,
-  'confirm' => $lang->confirm
+  'confirm' => $lang->confirm,
+'cancel' => $lang->cancel,
+'yes' => $lang->yesword,
+'no' => $lang->noword,
   )
   )));
   
