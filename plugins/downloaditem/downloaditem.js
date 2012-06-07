@@ -1,9 +1,18 @@
 /**
 * Lite Publisher
-* Copyright (C) 2010, 2011 Vladimir Yushko http://litepublisher.com/
+* Copyright (C) 2010, 2012 Vladimir Yushko http://litepublisher.com/
 * Dual licensed under the MIT (mit.txt)
 * and GPL (gpl.txt) licenses.
 **/
+
+(function( $ ){
+$(document).ready(function() {
+var links = $("a[rel='theme'], a[rel='plugin']");
+if (links.length) {
+// save file url's
+links.each(function() {
+$(this).data("url", $(this).attr("href"));
+});
 
 function get_download_site() {
 var result = '';
@@ -37,7 +46,7 @@ if ($.isFunction(fn)) fn();
 }
     },
 {
-        title: lang.dialog.Cancel,
+        title: lang.dialog.cancel,
         click: function() {
           $.prettyPhoto.close();
 }
@@ -79,25 +88,20 @@ $(this).attr("href", get_download_item(fileurl, type));
 }
 }
 
-function init_download_items() {
-try {
+//try {
 $("#change_url").click(function() {
 siteurl_dialog();
 return false;
-});
-
-// save file url's
-$("a[rel='theme'], a[rel='plugin']").each(function() {
-$(this).data("url", $(this).attr("href"));
 });
 
 if (url = get_download_site()) {
 update_siteurl(url);
 } else {
 ltoptions.download_site = '';
-$("a[rel='theme'], a[rel='plugin']").click(download_item_clicked);
+links.click(download_item_clicked);
 }
-} catch(e) { alert('ex' + e.message); }
-}
+//} catch(e) { alert('ex' + e.message); }
 
-$(document).ready(init_download_items);
+}
+});
+})( jQuery );

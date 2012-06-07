@@ -89,18 +89,8 @@ function tdownloaditemsInstall($self) {
   }
   $menus->unlock();
   
-  /*
-  $template = ttemplate::i();
-  $template->addtohead(getd_download_js());
-  */
-  
-  $jsmerger = tjsmerger::i();
-  $jsmerger->addtext('default', 'downloaditem', '$(document).ready(function() {
-    if ($("a[rel=\'theme\'], a[rel=\'plugin\']").length) {
-      $.load_script(ltoptions.files + "/plugins/downloaditem/downloaditem.min.js");
-    }
-  });');
-  
+tjsmerger::i()->add('default', '/plugins/downloaditem/downloaditem.min.js');
+
   $parser = tthemeparser::i();
   $parser->parsed = $self->themeparsed;
   ttheme::clearcache();
@@ -125,7 +115,6 @@ function tdownloaditemsUninstall($self) {
   $parser->unbind($self);
   ttheme::clearcache();
   
-  
   $classes = litepublisher::$classes;
   $classes->lock();
   $classes->delete('tdownloaditem');
@@ -135,14 +124,6 @@ function tdownloaditemsUninstall($self) {
   $classes->delete('tdownloaditemcounter');
   $classes->delete('taboutparser');
   $classes->unlock();
-  
-  /*
-  if (class_exists('tpolls')) {
-    $polls = tpolls::i();
-    $polls->garbage = true;
-    $polls->save();
-  }
-  */
   
   $merger = tlocalmerger::i();
   $merger->deleteplugin(tplugins::getname(__file__));
@@ -159,12 +140,8 @@ function tdownloaditemsUninstall($self) {
   }
   $optimizer->unlock();
   
-  /*
-  $template = ttemplate::i();
-  $template->deletefromhead(getd_download_js());
-  */
-  $jsmerger = tjsmerger::i();
-  $jsmerger->deletetext('default', 'downloaditem');
+tjsmerger::i()->deletefile('default', '/plugins/downloaditem/downloaditem.min.js');
+
   litepublisher::$options->delete('downloaditem_themetag');
   litepublisher::$options->delete('downloaditem_plugintag');
   litepublisher::$options->savemodified();
@@ -182,7 +159,7 @@ function getd_download_js() {
 }
 
 function add_downloaditems_to_theme($theme) {
-  if (empty($theme->templates['custom']['downloadexcerpt'])) {
+ if (empty($theme->templates['custom']['downloadexcerpt'])) {
     $dir = dirname(__file__) . DIRECTORY_SEPARATOR . 'resource' . DIRECTORY_SEPARATOR;
     ttheme::$vars['lang'] = tlocal::admin('downloaditems');
     $custom = &$theme->templates['custom'];
@@ -190,7 +167,7 @@ function add_downloaditems_to_theme($theme) {
     $lang = tlocal::i('downloaditems');
     $custom['downloadexcerpt'] = $theme->replacelang(file_get_contents($dir . 'downloadexcerpt.tml'), $lang);
     $custom['siteform'] = $theme->parse(file_get_contents($dir . 'siteform.tml'));
-    
+
     //admin
     $admin = &$theme->templates['customadmin'];
     $admin['downloadexcerpt'] = array(

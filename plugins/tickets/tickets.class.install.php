@@ -40,9 +40,6 @@ tlocalmerger::i()->addplugin(tplugins::getname(__file__));
   //install polls if its needed
   $plugins = tplugins::i();
   if (!isset($plugins->items['polls'])) $plugins->add('polls');
-  $polls = tpolls::i();
-  $polls->garbage = false;
-  $polls->save();
   
   litepublisher::$classes->Add('tticket', 'ticket.class.php', $dirname);
   //litepublisher::$classes->Add('tticketsmenu', 'tickets.menu.class.php', $dirname);
@@ -144,12 +141,6 @@ function tticketsUninstall($self) {
   litepublisher::$classes->delete('tticketsmenu');
   */
   litepublisher::$classes->unlock();
-  
-  if (class_exists('tpolls')) {
-    $polls = tpolls::i();
-    $polls->garbage = true;
-    $polls->save();
-  }
   
   $manager = tdbmanager ::i();
   $manager->deletetable($self->childtable);
