@@ -50,9 +50,9 @@ if (index in r.votes) $(this).text(r.votes[index]);
         if (value== this.enabled) return;
         this.enabled = value;
         if(value) {
-                $(":input", ".activepoll").attr("disabled", "disabled");
-        } else {
                     $(":input", ".activepoll").removeAttr("disabled");
+        } else {
+                $(":input", ".activepoll").attr("disabled", "disabled");
         }
       }
 };
