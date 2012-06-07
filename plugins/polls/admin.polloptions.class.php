@@ -31,11 +31,13 @@ $items[$id] = $tml['name'];
 }
 
 $args->pollpost = tadminhtml::array2combo($items, $man->pollpost);
+$args->lifetime = $man->lifetime;
     $args->formtitle = $lang->Options;
     $result .= $html->adminform(
 '
 [checkbox=addtopost]
 [combo=pollpost]
+[text=lifetime]
 ', $args);
 
 return $result;
@@ -46,6 +48,7 @@ return $result;
 $man->lock();
 $man->pollpost = (int) $_POST['pollpost'];
 $this->setadddtopost(isset($_POST['addtopost']));
+$man->lifetime = (int) $_POST['lifetime'];
     $man->unlock();
     return '';
   }
