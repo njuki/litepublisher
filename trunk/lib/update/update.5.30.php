@@ -4,6 +4,29 @@ function update530() {
 litepublisher::$classes->data['memcache'] = false;
 litepublisher::$classes->data['revision_memcache'] = 1;
 litepublisher::$classes->add('tpullitems', 'items.pull.class.php');
+litepublisher::$options->savemodified();
+
+$lang = tlocal::i();
+$js = tjsmerger::i();
+$js->lock();
+  $js->addtext('default', 'dialog', "var lang;\nif (lang == undefined) lang = {};\n" . sprintf('lang.dialog = %s;',  json_encode(
+array(
+  'error' => $lang->error,
+  'confirm' => $lang->confirm,
+'cancel' => $lang->cancel,
+'yes' => $lang->yesword,
+'no' => $lang->noword,
+  )
+)));
+if (litepublisher::$classes->exists('tdownloaditems')) {
+  $js->deletetext('default', 'downloaditem');
+$js->add('default', '/plugins/downloaditem/downloaditem.min.js');
+$view = tview::i();
+$view->data['custom'] = array();
+$view->save();
+}
+
+$js->unlock();
 
 if (litepublisher::$classes->exists('tpolls')) {
 $self = tpolls::i();
@@ -14,7 +37,7 @@ tcron::i()->deleteclass(get_class($self));
 $man = tdbmanager::i();
 $man->deletetable('pollusers');
 $man->deletetable('pollvotes');
-$man->query("rename table $db->polls to $db->oldpolls");
+$man->query("rename table $man->polls to $man->oldpolls");
 
 $self->install();
 
@@ -34,9 +57,9 @@ $sum = 0;
 foreach ($votes as $index => $count) {
 $total += $count;
       $sum += ($index + 1) * $count;
-        $db->exec("INSERT INTO $votestable (id, item, votes) values ($idpoll,$i,$count)");
+        $db->exec("INSERT INTO $votestable (id, item, votes) values ($idpoll,$index,$count)");
 }
-$rate = (int) round($sum / $total * 10);
+$rate = $total == 0 ? 0 : (int) round($sum / $total * 10);
 $self->db->insert_a(array(
 'id' => $idpoll,
 'id_tml' => $id_tml,
@@ -53,6 +76,7 @@ if (litepublisher::$classes->exists('ttickets')) {
 $self->db->update("status = 'closed'", "id in (
 select poll from $db->tickets where $db->tickets.state = 'fixed'
 )");
+$man->alter('tickets', 'drop votes');
 }
 }
 }
