@@ -199,8 +199,7 @@ $result['total'] += $voted;
 $result['votes'][$index] = $voted;
       $sum += ($index + 1) * $voted;
 }
-    $result['rate'] = (int) round($sum / $result['total'] * 10);
-
+    $result['rate'] = $result['total'] == 0 ? 0 : (int) round($sum / $result['total'] * 10);
         $this->db->updateassoc(array(
     'id' => $id,
     'rate' => $result['rate'],
