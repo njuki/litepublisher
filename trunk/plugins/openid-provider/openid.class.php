@@ -63,7 +63,7 @@ class topenid extends tevents {
   }
   
   private function LoadBigMath() {
-    require_once(dirname(__file__) . DIRECTORY_SEPARATOR . 'bigmath.php');
+        litepublisher::$classes->include_file(litepublisher::$paths->plugins . 'openid-provider' . DIRECTORY_SEPARATOR . 'bigmath.php');
     if (!extension_loaded('bcmath')) {
       if (!@dl('bcmath.'. PHP_SHLIB_SUFFIX) && !@dl('php_bcmath.'. PHP_SHLIB_SUFFIX)) {
         if (!extension_loaded('gmp')) {
