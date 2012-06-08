@@ -347,22 +347,22 @@ content.post.filelist = [
 								<ul id="files-$post.id">
 
 $files = [
-  $file = [<li><a href="$link" title="$title">$description</a></li>]
+  $file = [<li><a href="$link" data-idfile="$id" title="$title">$description</a></li>]
 ]
 
 $images= [
-  $image = [<li><a rel="prettyPhoto[gallery-$post.id]" href="$link" class="photo">$preview</a></li>]
+  $image = [<li><a rel="prettyPhoto[gallery-$post.id]" href="$link" class="photo" data-idfile="$id">$preview</a></li>]
 
   $preview = [<img src="$preview.link" height="$preview.height" width="$preview.width" title="$title" alt="$title" />]
 ]
 
 $audios = [
-   $audio = [<li><a href="$link" class="audiofile" rel="audio" id="audiofile-$id" title="$lang.play $title">$lang.playaudio $title</a>
+   $audio = [<li><a href="$link" class="audiofile" rel="audio" data-idfile="$id" title="$lang.play $title">$lang.playaudio $title</a>
 <!--$player--></li>]
 ]
 
 $videos = [
-   $video = [<li><a href="$link" class="videofile" rel="video" id="videofile-$id" title="$lang.playvideo $title">$lang.playvideo $title</a>
+   $video = [<li><a href="$link" class="videofile" rel="video" data-idfile="$id" title="$lang.playvideo $title">$lang.playvideo $title</a>
 <!--$player--></li>]
 ]
 								</ul>
