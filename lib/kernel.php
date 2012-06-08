@@ -1468,7 +1468,7 @@ class tclasses extends titems {
         if ($s =  tfilestorage::$memcache->get($filename)) {
           $i = strpos($s, ';');
           $revision = substr($s, 0, $i);
-          if ($revision == $this->memcache_revision) {
+          if ($revision == $this->revision_memcache) {
             eval(substr($s, $i + 1));
             return;
           }
