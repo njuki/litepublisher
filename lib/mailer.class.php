@@ -117,7 +117,7 @@ class TSMTPMailer extends tevents {
   public function Mail($fromname,  $fromemail, $toname, $toemail, $subj, $body) {
     $result = false;
     $options =     litepublisher::$options;
-    include_once(litepublisher::$paths->libinclude . 'class-smtp.php');
+    litepublisher::$classes->include_file(litepublisher::$paths->libinclude . 'class-smtp.php');
     $smtp = new SMTP();
     if($smtp->Connect($this->host, $this->port, 10)) {
       $smtp->Hello($_SERVER['SERVER_NAME']);
