@@ -7,21 +7,21 @@
 **/
 
 class tpullpolls extends tpullitems {
-
+  
   public static function i() {
     return getinstance(__class__);
   }
   
   protected function create() {
     parent::create();
-$this->basename = 'pullpolls';
-}
-
-public function getitem($id) {
-$polls = tpolls::i();
-$item = $polls->getitem($id);
-$item['votes'] = $polls->get_item_votes($id);
-return $item;
-}
-
+    $this->basename = 'pullpolls';
+  }
+  
+  public function getitem($id) {
+    $polls = tpolls::i();
+    $item = $polls->getitem($id);
+    $item['votes'] = $polls->get_item_votes($id);
+    return $item;
+  }
+  
 }//class

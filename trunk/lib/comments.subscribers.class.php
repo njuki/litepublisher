@@ -105,7 +105,7 @@ class tsubscribers extends titemsposts {
   }
   
   public function cronsendmail($id) {
-    $comments = tcomments::i($pid);
+    $comments = tcomments::i();
     try {
       $item = $comments->getitem($id);
     } catch (Exception $e) {

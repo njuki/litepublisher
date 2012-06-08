@@ -166,11 +166,11 @@ class tupdater extends tevents {
       return  false;
     }
     
-if (litepublisher::$classes->memcache) {
-litepublisher::$classes->revision_memcache++;
-litepublisher::$classes->save();
-}
-
+    if (litepublisher::$classes->memcache) {
+      litepublisher::$classes->revision_memcache++;
+      litepublisher::$classes->save();
+    }
+    
     if (!$backuper->upload($s, 'tar')) {
       $this->result = $backuper->result;
       return false;

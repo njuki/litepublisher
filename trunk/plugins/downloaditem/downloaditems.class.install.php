@@ -89,8 +89,8 @@ function tdownloaditemsInstall($self) {
   }
   $menus->unlock();
   
-tjsmerger::i()->add('default', '/plugins/downloaditem/downloaditem.min.js');
-
+  tjsmerger::i()->add('default', '/plugins/downloaditem/downloaditem.min.js');
+  
   $parser = tthemeparser::i();
   $parser->parsed = $self->themeparsed;
   ttheme::clearcache();
@@ -140,8 +140,8 @@ function tdownloaditemsUninstall($self) {
   }
   $optimizer->unlock();
   
-tjsmerger::i()->deletefile('default', '/plugins/downloaditem/downloaditem.min.js');
-
+  tjsmerger::i()->deletefile('default', '/plugins/downloaditem/downloaditem.min.js');
+  
   litepublisher::$options->delete('downloaditem_themetag');
   litepublisher::$options->delete('downloaditem_plugintag');
   litepublisher::$options->savemodified();
@@ -159,7 +159,7 @@ function getd_download_js() {
 }
 
 function add_downloaditems_to_theme($theme) {
- if (empty($theme->templates['custom']['downloadexcerpt'])) {
+  if (empty($theme->templates['custom']['downloadexcerpt'])) {
     $dir = dirname(__file__) . DIRECTORY_SEPARATOR . 'resource' . DIRECTORY_SEPARATOR;
     ttheme::$vars['lang'] = tlocal::admin('downloaditems');
     $custom = &$theme->templates['custom'];
@@ -167,7 +167,7 @@ function add_downloaditems_to_theme($theme) {
     $lang = tlocal::i('downloaditems');
     $custom['downloadexcerpt'] = $theme->replacelang(file_get_contents($dir . 'downloadexcerpt.tml'), $lang);
     $custom['siteform'] = $theme->parse(file_get_contents($dir . 'siteform.tml'));
-
+    
     //admin
     $admin = &$theme->templates['customadmin'];
     $admin['downloadexcerpt'] = array(
