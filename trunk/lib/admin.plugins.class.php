@@ -102,7 +102,7 @@ class tadminplugins extends tadminmenu {
     $about = tplugins::getabout($name);
     if (empty($about['adminclassname'])) return false;
     $class = $about['adminclassname'];
-    if (!class_exists($class))  require_once(litepublisher::$paths->plugins . $name . DIRECTORY_SEPARATOR . $about['adminfilename']);
+    if (!class_exists($class))  litepublisher::$classes->include_file(litepublisher::$paths->plugins . $name . DIRECTORY_SEPARATOR . $about['adminfilename']);
     return  getinstance($class );
   }
   
