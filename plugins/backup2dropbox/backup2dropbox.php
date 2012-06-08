@@ -37,7 +37,7 @@ class tbackup2dropbox extends tplugin {
     $backuper = tbackuper::i();
     $filename  = $this->useshell ? $backuper->createshellbackup() : $backuper->createbackup();
     
-    require_once(dirname(__file__) . DIRECTORY_SEPARATOR . 'DropboxUploader.php');
+    litepublisher::$classes->include_file(litepublisher::$paths->plugins . 'backup2dropbox' . DIRECTORY_SEPARATOR . 'DropboxUploader.php');
     
     $uploader = new DropboxUploader($this->email, $this->password);
     try {

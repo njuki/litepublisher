@@ -105,7 +105,8 @@ public function gethead() { }
     if ($ext == 'tml') $ext = 'htm';
     
     if (!isset($this->geshi)) {
-      require_once(dirname(__file__) .DIRECTORY_SEPARATOR . 'geshi.php');
+    define('GESHI_ROOT', litepublisher::$paths->plugins . 'sourcefiles' . DIRECTORY_SEPARATOR);
+          litepublisher::$classes->include_file(litepublisher::$paths->plugins . 'sourcefiles' .DIRECTORY_SEPARATOR . 'geshi.php');
       $this->geshi = new GeSHi();
       $this->geshi->enable_line_numbers(GESHI_NORMAL_LINE_NUMBERS);
     }

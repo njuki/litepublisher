@@ -16,8 +16,7 @@ class tmarkdownplugin extends tplugin {
   protected function create() {
     parent::create();
     $this->data['deletep'] = true;
-    
-    require_once(dirname(__file__) . DIRECTORY_SEPARATOR . 'markdown.parser.class.php');
+    litepublisher::$classes->include_file(litepublisher::$paths->plugins . 'markdown' . DIRECTORY_SEPARATOR . 'markdown.parser.class.php');
     $this->parser = new Markdown_Parser();
   }
   
