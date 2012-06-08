@@ -18,6 +18,7 @@ class tclasses extends titems {
   public $remap;
   public $factories;
   public $instances;
+private $included_files;
   
   public static function i() {
     if (!isset(litepublisher::$classes)) {
@@ -45,6 +46,7 @@ class tclasses extends titems {
     if (function_exists('spl_autoload_register')) spl_autoload_register(array($this, '_autoload'));
     $this->data['memcache'] = false;
     $this->data['revision_memcache'] = 1;
+$this->included_files = array();
   }
   
   public function load() {
@@ -122,7 +124,18 @@ class tclasses extends titems {
   
   public function _autoload($class) {
     if ($filename = $this->getclassfilename($class)) {
-      if (!litepublisher::$debug && isset(tfilestorage::$memcache) && $this->memcache) {
+$this->include_file($filename);
+}}
+}
+
+public function include_file($filename) {
+      if (!isset(tfilestorage::$memcache) || litepublisher::$debug  || !$this->memcache) {
+        if (file_exists($filename)) require_once($filename);
+return;
+}
+
+if (in_array($filename, $this->included_files)) return;
+$this->included_files[] = $filename;
         if ($s =  tfilestorage::$memcache->get($filename)) {
           $i = strpos($s, ';');
           $revision = substr($s, 0, $i);
@@ -144,11 +157,6 @@ class tclasses extends titems {
           $s = $this->revision_memcache . ';' . ltrim($s);
           tfilestorage::$memcache->set($filename, $s, false, 3600);
         }
-      } else {
-        if (file_exists($filename)) require_once($filename);
-      }
-    }
-    return false;
   }
   
   public function getclassfilename($class, $debug = false) {

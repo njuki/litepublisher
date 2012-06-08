@@ -23,15 +23,15 @@ class tbackuper extends tevents {
   }
   
   public static function include_tar() {
-    require_once(litepublisher::$paths->libinclude . 'tar.class.php');
+    litepublisher::$classes->include_file(litepublisher::$paths->libinclude . 'tar.class.php');
   }
   
   public static function include_zip() {
-    require_once(litepublisher::$paths->libinclude . 'zip.lib.php');
+    litepublisher::$classes->include_file(litepublisher::$paths->libinclude . 'zip.lib.php');
   }
   
   public static function include_unzip() {
-    require_once(litepublisher::$paths->libinclude . 'strunzip.lib.php');
+    litepublisher::$classes->include_file(litepublisher::$paths->libinclude . 'strunzip.lib.php');
   }
   
   protected function create() {
