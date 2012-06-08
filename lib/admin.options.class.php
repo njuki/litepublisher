@@ -127,6 +127,7 @@ class Tadminoptions extends tadminmenu {
       $args->admincache = $options->admincache;
       $args->ob_cache = $options->ob_cache;
       $args->compress = $options->compress;
+      $args->memcache_classes = litepublisher::$classes->memcache;
       break;
       
       case 'catstags':
@@ -264,6 +265,7 @@ class Tadminoptions extends tadminmenu {
       if (isset($clearcache)) {
         ttheme::clearcache();
       } else {
+        litepublisher::$classes->memcache = isset($memcache_classes);
         $options->lock();
         $options->cache = isset($cache );
         $options->admincache = isset($admincache );

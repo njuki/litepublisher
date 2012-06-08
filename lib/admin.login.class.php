@@ -92,12 +92,12 @@ class tadminlogin extends tadminform {
     $html->lostpass();
     
     if (litepublisher::$options->usersenabled && litepublisher::$options->reguser) {
-      $lang = tlocal::i('users');
+      $lang = tlocal::admin('users');
       $args->formtitle = $lang->regform;
       $args->email = '';
       $args->name = '';
       $form = $html->adminform('[text=email] [text=name]', $args);
-      $result .= str_replace('action=""', 'action="'. litepublisher::$site->url . '/admin/reguser/', $form);
+      $result .= str_replace('action=""', sprintf('action="%s/admin/reguser/"', litepublisher::$site->url), $form);
     }
     $this->callevent('oncontent', array(&$result));
     return $result;

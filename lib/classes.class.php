@@ -43,8 +43,8 @@ class tclasses extends titems {
     $this->addmap('factories', array());
     $this->instances = array();
     if (function_exists('spl_autoload_register')) spl_autoload_register(array($this, '_autoload'));
-$this->data['memcache'] = false;
-$this->data['revision_memcache'] = 1;
+    $this->data['memcache'] = false;
+    $this->data['revision_memcache'] = 1;
   }
   
   public function load() {
@@ -122,31 +122,31 @@ $this->data['revision_memcache'] = 1;
   
   public function _autoload($class) {
     if ($filename = $this->getclassfilename($class)) {
-if (!litepublisher::$debug && isset(tfilestorage::$memcache) && $this->memcache) {
-      if ($s =  tfilestorage::$memcache->get($filename)) {
-$i = strpos($s, ';');
-$revision = substr($s, 0, $i);
-if ($revision == $this->memcache_revision) {
-eval(substr($s, $i + 1));
-return;
-}
-tfilestorage::$memcache->delete($filename);
-}
-
-      if (file_exists($filename)) {
-$s = file_get_contents($filename);
-eval('?>' . $s);
-//strip php tag and copyright in head
-if (strbegin($s, '<?php')) $s = substr($s, 5);
-if (strend($s, '?>')) $s = substr($s, 0, -2);
-$s = trim($s);
-if (strbegin($s, '/*')) $s = substr($s, strpos($s, '*/') + 2);
-$s = $this->revision_memcache . ';' . ltrim($s);
-tfilestorage::$memcache->set($filename, $s, false, 3600);
-}
-} else {
-      if (file_exists($filename)) require_once($filename);
-}
+      if (!litepublisher::$debug && isset(tfilestorage::$memcache) && $this->memcache) {
+        if ($s =  tfilestorage::$memcache->get($filename)) {
+          $i = strpos($s, ';');
+          $revision = substr($s, 0, $i);
+          if ($revision == $this->memcache_revision) {
+            eval(substr($s, $i + 1));
+            return;
+          }
+          tfilestorage::$memcache->delete($filename);
+        }
+        
+        if (file_exists($filename)) {
+          $s = file_get_contents($filename);
+          eval('?>' . $s);
+          //strip php tag and copyright in head
+          if (strbegin($s, '<?php')) $s = substr($s, 5);
+          if (strend($s, '?>')) $s = substr($s, 0, -2);
+          $s = trim($s);
+          if (strbegin($s, '/*')) $s = substr($s, strpos($s, '*/') + 2);
+          $s = $this->revision_memcache . ';' . ltrim($s);
+          tfilestorage::$memcache->set($filename, $s, false, 3600);
+        }
+      } else {
+        if (file_exists($filename)) require_once($filename);
+      }
     }
     return false;
   }

@@ -7,18 +7,18 @@
 **/
 
 function tpollsmanInstall($self) {
-tcontentfilter::i()->beforefilter = $self->filter;
-tcron::i()->addnightly(get_class($self), 'optimize', null);
+  tcontentfilter::i()->beforefilter = $self->filter;
+  tcron::i()->addnightly(get_class($self), 'optimize', null);
 }
 
 function tpollsmanUninstall($self) {
-tcontentfilter::i()->unbind($self);
-tcron::i()->deleteclass(get_class($self));
-
+  tcontentfilter::i()->unbind($self);
+  tcron::i()->deleteclass(get_class($self));
+  
   $posts = tposts::i();
   $posts->syncmeta = false;
   $posts->unbind($self);
-
+  
   litepublisher::$db->table = 'postsmeta';
   litepublisher::$db->delete("name = 'poll'");
 }

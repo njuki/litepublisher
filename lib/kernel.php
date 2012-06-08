@@ -1046,7 +1046,6 @@ class tevents_storage extends tevents {
   
 }//class
 
-
 class tcoevents extends tevents {
   private $owner;
   
@@ -1104,6 +1103,7 @@ class titems extends tevents {
   }
   
   public function save() {
+    if ($this->lockcount > 0) return;
     if ($this->dbversion) {
       return tstorage::save($this);
     } else {
@@ -1385,6 +1385,8 @@ class tclasses extends titems {
     $this->addmap('factories', array());
     $this->instances = array();
     if (function_exists('spl_autoload_register')) spl_autoload_register(array($this, '_autoload'));
+    $this->data['memcache'] = false;
+    $this->data['revision_memcache'] = 1;
   }
   
   public function load() {
@@ -1462,7 +1464,31 @@ class tclasses extends titems {
   
   public function _autoload($class) {
     if ($filename = $this->getclassfilename($class)) {
-      if (file_exists($filename)) require_once($filename);
+      if (!litepublisher::$debug && isset(tfilestorage::$memcache) && $this->memcache) {
+        if ($s =  tfilestorage::$memcache->get($filename)) {
+          $i = strpos($s, ';');
+          $revision = substr($s, 0, $i);
+          if ($revision == $this->memcache_revision) {
+            eval(substr($s, $i + 1));
+            return;
+          }
+          tfilestorage::$memcache->delete($filename);
+        }
+        
+        if (file_exists($filename)) {
+          $s = file_get_contents($filename);
+          eval('?>' . $s);
+          //strip php tag and copyright in head
+          if (strbegin($s, '<?php')) $s = substr($s, 5);
+          if (strend($s, '?>')) $s = substr($s, 0, -2);
+          $s = trim($s);
+          if (strbegin($s, '/*')) $s = substr($s, strpos($s, '*/') + 2);
+          $s = $this->revision_memcache . ';' . ltrim($s);
+          tfilestorage::$memcache->set($filename, $s, false, 3600);
+        }
+      } else {
+        if (file_exists($filename)) require_once($filename);
+      }
     }
     return false;
   }
@@ -1475,7 +1501,7 @@ class tclasses extends titems {
         return litepublisher::$paths->lib . $filename;
       }
       $filename = trim($item[1], DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR . $filename;
-      if (file_exists($filename))  return $filename;
+      //if (file_exists($filename))  return $filename;
       //may be is subdir?
       if (file_exists(litepublisher::$paths->plugins . $filename)) return litepublisher::$paths->plugins . $filename;
       if (file_exists(litepublisher::$paths->themes . $filename)) return litepublisher::$paths->themes . $filename;
@@ -2574,6 +2600,76 @@ class tusers extends titems {
     'cookie' => $cookie,
     'expired' => $expired
     ));
+  }
+  
+}//class
+
+//items.pull.class.php
+class tpullitems extends tdata {
+  protected $perpull;
+  protected $pull;
+  protected $modified;
+  protected $ongetitem;
+  
+  public static function i() {
+    return getinstance(__class__);
+  }
+  
+  protected function create() {
+    parent::create();
+    $this->basename = 'pullitems';
+    $this->perpull = 20;
+    $this->pull = array();
+    $this->modified = array();
+  }
+  
+  public function getitem($id) {
+    if (isset($this->ongetitem)) return call_user_func_array($this->ongetitem, array($id));
+    $this->error('Call abastract method getitem in class' . get_class($this));
+  }
+  
+  public function getfilename($idpull) {
+    return litepublisher::$paths->cache . $this->basename . '.pull.' . $idpull;
+  }
+  
+  public function loadpull($idpull) {
+    if (tfilestorage::loadvar($this->getfilename($idpull), $v)) {
+      $this->pull[$idpull] = $v;
+    } else {
+      $this->pull[$idpull] = array();
+    }
+  }
+  
+  public function savepull($idpull) {
+    if (!isset($this->modified[$idpull])) {
+      litepublisher::$urlmap->onclose = array($this, 'savemodified', $idpull);
+      $this->modified[$idpull] = true;
+    }
+  }
+  
+  public function savemodified($idpull) {
+    return tfilestorage::savevar($this->getfilename($idpull), $this->pull[$idpull]);
+  }
+  
+  public function getidpull($id) {
+    $idpull = (int) floor ($id /$this->perpull);
+    if (!isset($this->pull[$idpull])) $this->loadpull($idpull);
+    return $idpull;
+  }
+  
+  public function get($id) {
+    $idpull = $this->getidpull($id);
+    if (isset($this->pull[$idpull][$id])) return $this->pull[$idpull][$id];
+    $result = $this->getitem($id);
+    $this->pull[$idpull][$id] = $result;
+    $this->savepull($idpull);
+    return $result;
+  }
+  
+  public function set($id, $item) {
+    $idpull = $this->getidpull($id);
+    $this->pull[$idpull][$id] = $item;
+    $this->savepull($idpull);
   }
   
 }//class

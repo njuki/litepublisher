@@ -24,6 +24,7 @@ $js->add('default', '/plugins/downloaditem/downloaditem.min.js');
 $view = tview::i();
 $view->data['custom'] = array();
 $view->save();
+ttheme::clearcache();
 }
 
 $js->unlock();

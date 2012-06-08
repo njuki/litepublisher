@@ -78,9 +78,9 @@ $js = "var lang;\nif (lang == undefined) lang = {};\n";
   array(
   'error' => $lang->error,
   'confirm' => $lang->confirm,
-'cancel' => $lang->cancel,
-'yes' => $lang->yesword,
-'no' => $lang->noword,
+  'cancel' => $lang->cancel,
+  'yes' => $lang->yesword,
+  'no' => $lang->noword,
   )
   )));
   

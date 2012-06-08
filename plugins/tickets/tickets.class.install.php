@@ -8,7 +8,7 @@
 
 function tticketsInstall($self) {
   $dirname = basename(dirname(__file__));
-tlocalmerger::i()->addplugin(tplugins::getname(__file__));
+  tlocalmerger::i()->addplugin(tplugins::getname(__file__));
   
   $self->data['cats'] = array();
   $self->data['idcomauthor'] =  tusers::i()->add(array(
@@ -154,5 +154,5 @@ function tticketsUninstall($self) {
   }
   $optimizer->unlock();
   
-tlocalmerger::i()->deleteplugin(tplugins::getname(__file__));
+  tlocalmerger::i()->deleteplugin(tplugins::getname(__file__));
 }
