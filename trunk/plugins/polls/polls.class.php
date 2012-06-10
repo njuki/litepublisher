@@ -171,7 +171,6 @@ class tpolls extends titems {
   
   public function hasvote($idpoll, $iduser) {
     $q = sprintf('id = %d and user = %d', (int) $idpoll, (int) $iduser);
-    $this->getdb($this->users1)->delete($q);
     if ($this->getdb($this->users1)->findid($q)) return true;
     return $this->getdb($this->users2)->findid($q);
   }
