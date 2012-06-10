@@ -67,8 +67,8 @@ sprintf('var lang = $.extend(true, lang, {poll: %s});',
   //add sample templates
   $man = tpollsman::i();
   $man->lock();
-  $man->pollpost = $self->add_tml('star',  $lang->fivestars, $lang->poll, array(1, 2, 3, 4, 5));
-  
+  $man->fivestars = $self->add_tml('star',  $lang->fivestars, $lang->poll, array(1, 2, 3, 4, 5));
+  $man->pollpost = $man->fivestars;
   $btn = $self->add_tml('bigbutton',  $lang->likepoll, $lang->poll, array($lang->like, $lang->unlike));
   if (litepublisher::$classes->exists('ttickets')) $man->pollpost = $btn;
   $man->unlock();

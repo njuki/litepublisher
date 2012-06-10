@@ -17,6 +17,7 @@ class tpollsman extends tplugin {
     $this->basename = 'polls' . DIRECTORY_SEPARATOR . 'man';
     $this->data['addtopost'] = false;
     $this->data['pollpost'] = 0;
+    $this->data['fivestars'] = 0;
     //in hours
     $this->data['lifetime'] = 24 * 7;
     $this->data['lastswitched'] = 0;
