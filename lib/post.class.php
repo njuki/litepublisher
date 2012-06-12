@@ -575,8 +575,25 @@ class tpost extends titem implements  itemplate {
   }
   
   public function getcommentslink() {
-    if (($this->commentscount == 0) && ($this->comstatus == 'closed')) return '';
+if (($this->comstatus == 'closed') || !litepublisher::$options->commentspull) {
+    if (($this->commentscount == 0) && (($this->comstatus == 'closed'))) return '';
     return sprintf('<a href="%s%s#comments">%s</a>', litepublisher::$site->url, $this->getlastcommenturl(), $this->getcmtcount());
+} else {
+//inject php code
+    $l = tlocal::i()->ini['comment'];
+$result = sprintf('<?php
+$count =  tcommentspull::i()->get(%d);
+    echo \'<a href="%s%s#comments">\', $c, \'</a>\';
+?>', $this->id,litepublisher::$site->url, $this->getlastcommenturl());
+
+    switch($this->commentscount) {
+      case 0: return $l[0];
+      case 1: return $l[1];
+      default: return sprintf($l[2], $this->commentscount);
+    }
+  }
+
+}
   }
   
   public function getcmtcount() {
