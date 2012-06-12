@@ -127,6 +127,7 @@ class Tadminoptions extends tadminmenu {
       $args->admincache = $options->admincache;
       $args->ob_cache = $options->ob_cache;
       $args->compress = $options->compress;
+      $args->commentspull = $options->commentspull;
       $args->memcache_classes = litepublisher::$classes->memcache;
       break;
       
@@ -272,6 +273,7 @@ class Tadminoptions extends tadminmenu {
         if (!empty($cacheexpired)) $options->expiredcache = (int) $cacheexpired;
         $options->ob_cache = isset($ob_cache);
         $options->compress = isset($compress);
+$options->commentspull = isset($commentspull);
         $options->unlock();
       }
       break;

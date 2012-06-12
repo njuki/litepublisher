@@ -1,6 +1,9 @@
 <?php
 
 function update531() {
+litepublisher::$options->commentspull = false;
+litepublisher::$classes->add('tcommentspull', 'comments.pull.class.php');
+
 if (litepublisher::$classes->exists('tpolls')) {
 $man = tpollsman::i();
 $polls= tpolls::i();
