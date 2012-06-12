@@ -753,8 +753,30 @@ class tpost extends titem implements  itemplate {
   }
   
   public function getcommentslink() {
-    if (($this->commentscount == 0) && ($this->comstatus == 'closed')) return '';
-    return sprintf('<a href="%s%s#comments">%s</a>', litepublisher::$site->url, $this->getlastcommenturl(), $this->getcmtcount());
+    if (($this->comstatus == 'closed') || !litepublisher::$options->commentspull) {
+      if (($this->commentscount == 0) && (($this->comstatus == 'closed'))) return '';
+      return sprintf('<a href="%s%s#comments">%s</a>', litepublisher::$site->url, $this->getlastcommenturl(), $this->getcmtcount());
+    } else {
+      //inject php code
+      $l = tlocal::i()->ini['comment'];
+      $result =sprintf('<?php
+      echo \'<a href="%s%s#comments">\';
+      $count =  tcommentspull::i()->get(%d);
+      ',litepublisher::$site->url, $this->getlastcommenturl(), $this->id);
+      
+      $result .= 'if ($count == 0) {
+        echo \'' . $l[0] . '\';
+      } elseif ($count == 1) {
+        echo \'' . $l[1] . '\';
+      } else {
+        echo sprintf(\'' . $l[2] . '\', $count);
+      }
+      
+      echo \'</a>\';
+      ?>';
+    }
+    
+    return $result;
   }
   
   public function getcmtcount() {
@@ -1533,16 +1555,12 @@ class tmetapost extends titem {
     return 'postmeta';
   }
   
-  public function getbasename() {
-    return 'posts' . DIRECTORY_SEPARATOR . $this->id . DIRECTORY_SEPARATOR . 'meta';
-  }
-  
   protected function create() {
     $this->table = 'postsmeta';
   }
   
   public function getdbversion() {
-    return dbversion;
+    return true;
   }
   
   public function __set($name, $value) {
@@ -1550,26 +1568,18 @@ class tmetapost extends titem {
     $exists = isset($this->data[$name]);
     if ($exists && ($this->data[$name] == $value)) return true;
     $this->data[$name] = $value;
-    if (dbversion) {
-      $name = dbquote($name);
-      $value = dbquote($value);
-      if ($exists) {
-        $this->db->update("value = $value", "id = $this->id and name = $name");
-      } else {
-        $this->db->insertrow("(id, name, value) values ($this->id, $name, $value)");
-      }
+    $name = dbquote($name);
+    $value = dbquote($value);
+    if ($exists) {
+      $this->db->update("value = $value", "id = $this->id and name = $name");
     } else {
-      $this->save();
+      $this->db->insertrow("(id, name, value) values ($this->id, $name, $value)");
     }
   }
   
   //db
   public function load() {
-    if ($this->dbversion)  {
-      $this->LoadFromDB();
-    } else {
-      parent::load();
-    }
+    $this->LoadFromDB();
     return true;
   }
   
@@ -2322,7 +2332,6 @@ class tfiles extends titems {
   }
   
   public function preload(array $items) {
-    if (!dbversion) return false;
     $items = array_diff($items, array_keys($this->items));
     if (count($items) > 0) {
       $this->select(sprintf('(id in (%1$s)) or (parent in (%1$s))',

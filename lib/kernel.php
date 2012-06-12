@@ -1360,6 +1360,7 @@ class tclasses extends titems {
   public $remap;
   public $factories;
   public $instances;
+  private $included_files;
   
   public static function i() {
     if (!isset(litepublisher::$classes)) {
@@ -1387,6 +1388,7 @@ class tclasses extends titems {
     if (function_exists('spl_autoload_register')) spl_autoload_register(array($this, '_autoload'));
     $this->data['memcache'] = false;
     $this->data['revision_memcache'] = 1;
+    $this->included_files = array();
   }
   
   public function load() {
@@ -1464,33 +1466,39 @@ class tclasses extends titems {
   
   public function _autoload($class) {
     if ($filename = $this->getclassfilename($class)) {
-      if (!litepublisher::$debug && isset(tfilestorage::$memcache) && $this->memcache) {
-        if ($s =  tfilestorage::$memcache->get($filename)) {
-          $i = strpos($s, ';');
-          $revision = substr($s, 0, $i);
-          if ($revision == $this->revision_memcache) {
-            eval(substr($s, $i + 1));
-            return;
-          }
-          tfilestorage::$memcache->delete($filename);
-        }
-        
-        if (file_exists($filename)) {
-          $s = file_get_contents($filename);
-          eval('?>' . $s);
-          //strip php tag and copyright in head
-          if (strbegin($s, '<?php')) $s = substr($s, 5);
-          if (strend($s, '?>')) $s = substr($s, 0, -2);
-          $s = trim($s);
-          if (strbegin($s, '/*')) $s = substr($s, strpos($s, '*/') + 2);
-          $s = $this->revision_memcache . ';' . ltrim($s);
-          tfilestorage::$memcache->set($filename, $s, false, 3600);
-        }
-      } else {
-        if (file_exists($filename)) require_once($filename);
-      }
+      $this->include_file($filename);
     }
-    return false;
+  }
+  
+  public function include_file($filename) {
+    if (!isset(tfilestorage::$memcache) || litepublisher::$debug  || !$this->memcache) {
+      if (file_exists($filename)) require_once($filename);
+      return;
+    }
+    
+    if (in_array($filename, $this->included_files)) return;
+    $this->included_files[] = $filename;
+    if ($s =  tfilestorage::$memcache->get($filename)) {
+      $i = strpos($s, ';');
+      $revision = substr($s, 0, $i);
+      if ($revision == $this->revision_memcache) {
+        eval(substr($s, $i + 1));
+        return;
+      }
+      tfilestorage::$memcache->delete($filename);
+    }
+    
+    if (file_exists($filename)) {
+      $s = file_get_contents($filename);
+      eval('?>' . $s);
+      //strip php tag and copyright in head
+      if (strbegin($s, '<?php')) $s = substr($s, 5);
+      if (strend($s, '?>')) $s = substr($s, 0, -2);
+      $s = trim($s);
+      if (strbegin($s, '/*')) $s = substr($s, strpos($s, '*/') + 2);
+      $s = $this->revision_memcache . ';' . ltrim($s);
+      tfilestorage::$memcache->set($filename, $s, false, 3600);
+    }
   }
   
   public function getclassfilename($class, $debug = false) {
@@ -2101,14 +2109,27 @@ class turlmap extends titems {
     return litepublisher::$paths->cache . $this->cachefilename;
   }
   
+  private function include_file($filename) {
+    if (tfilestorage::$memcache) {
+      if ($s =  tfilestorage::$memcache->get($filename)) {
+        eval('?>' . $s);
+        return true;
+      }
+    }
+    
+    if (file_exists($filename) &&
+    ((filemtime ($filename) + litepublisher::$options->expiredcache - litepublisher::$options->filetime_offset) >= time())) {
+      include($filename);
+      return true;
+    }
+    
+    return false;
+  }
+  
   private function  printcontent(array $item) {
     $options = litepublisher::$options;
     if ($this->cache_enabled) {
-      $cachefile = $this->getcachefile($item);
-      if (file_exists($cachefile) && ((filemtime ($cachefile) + $options->expiredcache - $options->filetime_offset) >= time())) {
-        include($cachefile);
-        return;
-      }
+      if ($this->include_file($this->getcachefile($item))) return;
     }
     
     if (class_exists($item['class']))  {
@@ -2152,9 +2173,8 @@ class turlmap extends titems {
     //dumpstr($s);
     eval('?>'. $s);
     if ($this->cache_enabled && $context->cache) {
-      $cachefile = $this->getcachefile($item);
-      file_put_contents($cachefile, $s);
-      chmod($cachefile, 0666);
+      $filename = $this->getcachefile($item);
+      tfilestorage::setfile($filename, $s);
     }
   }
   
@@ -2171,10 +2191,7 @@ class turlmap extends titems {
   private function printclasspage($classname) {
     $cachefile = litepublisher::$paths->cache . $classname . '.php';
     if ($this->cache_enabled) {
-      if (file_exists($cachefile) && ((filemtime ($cachefile) + litepublisher::$options->expiredcache - litepublisher::$options->filetime_offset) >= time())) {
-        include($cachefile);
-        return;
-      }
+      if ($this->include_file($cachefile)) return;
     }
     
     $obj = getinstance($classname);
@@ -2183,8 +2200,7 @@ class turlmap extends titems {
     eval('?>'. $s);
     
     if ($this->cache_enabled && $obj->cache) {
-      file_put_contents($cachefile, $s);
-      chmod($cachefile, 0666);
+      tfilestorage::setfile($cachefile, $result);
     }
   }
   
