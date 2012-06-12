@@ -185,28 +185,28 @@ class turlmap extends titems {
     }
     return litepublisher::$paths->cache . $this->cachefilename;
   }
-
-private function include_file($filename) {
-if (tfilestorage::$memcache) {
-        if ($s =  tfilestorage::$memcache->get($filename)) {
-eval('?>' . $s);
-return true;
-}
-}
-
-      if (file_exists($filename) && 
-((filemtime ($filename) + litepublisher::$options->expiredcache - litepublisher::$options->filetime_offset) >= time())) {
-        include($filename);
+  
+  private function include_file($filename) {
+    if (tfilestorage::$memcache) {
+      if ($s =  tfilestorage::$memcache->get($filename)) {
+        eval('?>' . $s);
         return true;
       }
-
-return false;
-}
+    }
+    
+    if (file_exists($filename) &&
+    ((filemtime ($filename) + litepublisher::$options->expiredcache - litepublisher::$options->filetime_offset) >= time())) {
+      include($filename);
+      return true;
+    }
+    
+    return false;
+  }
   
   private function  printcontent(array $item) {
     $options = litepublisher::$options;
     if ($this->cache_enabled) {
-if ($this->include_file($this->getcachefile($item))) return;
+      if ($this->include_file($this->getcachefile($item))) return;
     }
     
     if (class_exists($item['class']))  {
@@ -251,7 +251,7 @@ if ($this->include_file($this->getcachefile($item))) return;
     eval('?>'. $s);
     if ($this->cache_enabled && $context->cache) {
       $filename = $this->getcachefile($item);
-    tfilestorage::setfile($filename, $result);
+      tfilestorage::setfile($filename, $s);
     }
   }
   
@@ -268,7 +268,7 @@ if ($this->include_file($this->getcachefile($item))) return;
   private function printclasspage($classname) {
     $cachefile = litepublisher::$paths->cache . $classname . '.php';
     if ($this->cache_enabled) {
-if ($this->include_file($cachefile)) return;
+      if ($this->include_file($cachefile)) return;
     }
     
     $obj = getinstance($classname);
@@ -277,7 +277,7 @@ if ($this->include_file($cachefile)) return;
     eval('?>'. $s);
     
     if ($this->cache_enabled && $obj->cache) {
-    tfilestorage::setfile($cachefile, $result);
+      tfilestorage::setfile($cachefile, $result);
     }
   }
   

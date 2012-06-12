@@ -1636,12 +1636,11 @@ class twidgets extends titems_storage {
     if (!file_exists($filename)) {
       $widget = $this->getwidget($id);
       $content = $widget->getcontent($id, $sidebar);
-      file_put_contents($filename, $content);
-      @chmod($filename, 0666);
+      tfilestorage::setfile($filename, $content);
     }
     
     $theme = ttheme::i();
-    return $theme->getwidget($this->items[$id]['title'], "\n<?php @include('$filename'); ?>\n", $this->items[
+    return $theme->getwidget($this->items[$id]['title'], "\n<?php echo tfilestorage::getfile('$filename'); ?>\n", $this->items[
     $id]['template'], $sidebar);
   }
   

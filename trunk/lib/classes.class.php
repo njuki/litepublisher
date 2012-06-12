@@ -18,7 +18,7 @@ class tclasses extends titems {
   public $remap;
   public $factories;
   public $instances;
-private $included_files;
+  private $included_files;
   
   public static function i() {
     if (!isset(litepublisher::$classes)) {
@@ -46,7 +46,7 @@ private $included_files;
     if (function_exists('spl_autoload_register')) spl_autoload_register(array($this, '_autoload'));
     $this->data['memcache'] = false;
     $this->data['revision_memcache'] = 1;
-$this->included_files = array();
+    $this->included_files = array();
   }
   
   public function load() {
@@ -124,39 +124,39 @@ $this->included_files = array();
   
   public function _autoload($class) {
     if ($filename = $this->getclassfilename($class)) {
-$this->include_file($filename);
-}
-}
-
-public function include_file($filename) {
-      if (!isset(tfilestorage::$memcache) || litepublisher::$debug  || !$this->memcache) {
-        if (file_exists($filename)) require_once($filename);
-return;
-}
-
-if (in_array($filename, $this->included_files)) return;
-$this->included_files[] = $filename;
-        if ($s =  tfilestorage::$memcache->get($filename)) {
-          $i = strpos($s, ';');
-          $revision = substr($s, 0, $i);
-          if ($revision == $this->revision_memcache) {
-            eval(substr($s, $i + 1));
-            return;
-          }
-          tfilestorage::$memcache->delete($filename);
-        }
-        
-        if (file_exists($filename)) {
-          $s = file_get_contents($filename);
-          eval('?>' . $s);
-          //strip php tag and copyright in head
-          if (strbegin($s, '<?php')) $s = substr($s, 5);
-          if (strend($s, '?>')) $s = substr($s, 0, -2);
-          $s = trim($s);
-          if (strbegin($s, '/*')) $s = substr($s, strpos($s, '*/') + 2);
-          $s = $this->revision_memcache . ';' . ltrim($s);
-          tfilestorage::$memcache->set($filename, $s, false, 3600);
-        }
+      $this->include_file($filename);
+    }
+  }
+  
+  public function include_file($filename) {
+    if (!isset(tfilestorage::$memcache) || litepublisher::$debug  || !$this->memcache) {
+      if (file_exists($filename)) require_once($filename);
+      return;
+    }
+    
+    if (in_array($filename, $this->included_files)) return;
+    $this->included_files[] = $filename;
+    if ($s =  tfilestorage::$memcache->get($filename)) {
+      $i = strpos($s, ';');
+      $revision = substr($s, 0, $i);
+      if ($revision == $this->revision_memcache) {
+        eval(substr($s, $i + 1));
+        return;
+      }
+      tfilestorage::$memcache->delete($filename);
+    }
+    
+    if (file_exists($filename)) {
+      $s = file_get_contents($filename);
+      eval('?>' . $s);
+      //strip php tag and copyright in head
+      if (strbegin($s, '<?php')) $s = substr($s, 5);
+      if (strend($s, '?>')) $s = substr($s, 0, -2);
+      $s = trim($s);
+      if (strbegin($s, '/*')) $s = substr($s, strpos($s, '*/') + 2);
+      $s = $this->revision_memcache . ';' . ltrim($s);
+      tfilestorage::$memcache->set($filename, $s, false, 3600);
+    }
   }
   
   public function getclassfilename($class, $debug = false) {

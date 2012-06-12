@@ -171,10 +171,10 @@ public function canrequest() { }
     if (litepublisher::$options->admincache) {
       $id = isset($_POST['id']) ? (int) $_POST['id'] : 0;
       $filename = litepublisher::$paths->cache . 'adminmenu.' . litepublisher::$options->user . '.' .md5($_SERVER['REQUEST_URI'] . '&id=' . $id) . '.php';
-
-    if ($result = tfilestorage::getfile($filename)) return $result;
+      
+      if ($result = tfilestorage::getfile($filename)) return $result;
       $result = parent::getcont();
-    tfilestorage::setfile($filename, $result);
+      tfilestorage::setfile($filename, $result);
       return $result;
     } else {
       return parent::getcont();

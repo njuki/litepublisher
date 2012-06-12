@@ -273,7 +273,7 @@ class Tadminoptions extends tadminmenu {
         if (!empty($cacheexpired)) $options->expiredcache = (int) $cacheexpired;
         $options->ob_cache = isset($ob_cache);
         $options->compress = isset($compress);
-$options->commentspull = isset($commentspull);
+        $options->commentspull = isset($commentspull);
         $options->unlock();
       }
       break;

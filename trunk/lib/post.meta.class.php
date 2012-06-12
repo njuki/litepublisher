@@ -29,18 +29,18 @@ class tmetapost extends titem {
     $exists = isset($this->data[$name]);
     if ($exists && ($this->data[$name] == $value)) return true;
     $this->data[$name] = $value;
-      $name = dbquote($name);
-      $value = dbquote($value);
-      if ($exists) {
-        $this->db->update("value = $value", "id = $this->id and name = $name");
-      } else {
-        $this->db->insertrow("(id, name, value) values ($this->id, $name, $value)");
-      }
+    $name = dbquote($name);
+    $value = dbquote($value);
+    if ($exists) {
+      $this->db->update("value = $value", "id = $this->id and name = $name");
+    } else {
+      $this->db->insertrow("(id, name, value) values ($this->id, $name, $value)");
+    }
   }
   
   //db
   public function load() {
-      $this->LoadFromDB();
+    $this->LoadFromDB();
     return true;
   }
   

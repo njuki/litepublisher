@@ -19,7 +19,7 @@ class tcommentspull extends tpullitems {
   }
   
   public function getitem($id) {
-return $this->getdb('posts')->getvalue($id, 'commentscount');
+    return $this->getdb('posts')->getvalue($id, 'commentscount');
   }
   
 }//class
