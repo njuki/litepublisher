@@ -39,7 +39,7 @@ class tpolls extends titems {
     return tfilestorage::save($this);
   }
   
-  public function add($id_tml, $status) {
+  public function add($id_tml, $status = 'opened') {
     return tpollsman::i()->add($id_tml, $status);
   }
   
@@ -171,6 +171,7 @@ class tpolls extends titems {
   
   public function hasvote($idpoll, $iduser) {
     $q = sprintf('id = %d and user = %d', (int) $idpoll, (int) $iduser);
+//$this->getdb($this->users1)->delete($q);
     if ($this->getdb($this->users1)->findid($q)) return true;
     return $this->getdb($this->users2)->findid($q);
   }
