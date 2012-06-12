@@ -16,16 +16,12 @@ class tmetapost extends titem {
     return 'postmeta';
   }
   
-  public function getbasename() {
-    return 'posts' . DIRECTORY_SEPARATOR . $this->id . DIRECTORY_SEPARATOR . 'meta';
-  }
-  
   protected function create() {
     $this->table = 'postsmeta';
   }
   
   public function getdbversion() {
-    return dbversion;
+    return true;
   }
   
   public function __set($name, $value) {
@@ -33,7 +29,6 @@ class tmetapost extends titem {
     $exists = isset($this->data[$name]);
     if ($exists && ($this->data[$name] == $value)) return true;
     $this->data[$name] = $value;
-    if (dbversion) {
       $name = dbquote($name);
       $value = dbquote($value);
       if ($exists) {
@@ -41,18 +36,11 @@ class tmetapost extends titem {
       } else {
         $this->db->insertrow("(id, name, value) values ($this->id, $name, $value)");
       }
-    } else {
-      $this->save();
-    }
   }
   
   //db
   public function load() {
-    if ($this->dbversion)  {
       $this->LoadFromDB();
-    } else {
-      parent::load();
-    }
     return true;
   }
   

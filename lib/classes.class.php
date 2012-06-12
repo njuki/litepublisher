@@ -125,7 +125,7 @@ $this->included_files = array();
   public function _autoload($class) {
     if ($filename = $this->getclassfilename($class)) {
 $this->include_file($filename);
-}}
+}
 }
 
 public function include_file($filename) {

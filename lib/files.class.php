@@ -23,7 +23,6 @@ class tfiles extends titems {
   }
   
   public function preload(array $items) {
-    if (!dbversion) return false;
     $items = array_diff($items, array_keys($this->items));
     if (count($items) > 0) {
       $this->select(sprintf('(id in (%1$s)) or (parent in (%1$s))',

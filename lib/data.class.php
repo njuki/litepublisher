@@ -131,7 +131,7 @@ class tdata {
         $file =$dir .  $externalname;
         if (!file_exists($file)) return;
       }
-      litepublisher::$classes->include_file($file);
+      include_once($file);
       $fnc = $class . $func;
       if (function_exists($fnc)) {
         //$fnc($this, $arg);
