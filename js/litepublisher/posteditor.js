@@ -20,8 +20,8 @@ return false;
       }
     });
     
-    $("a[rel~='loadcontenttabs']").one('click', function() {
-      loadcontenttabs();
+    $("#posteditor-init-raw-tabs").one('click', function() {
+      $.posteditor.init_raw_tabs();
       return false;
     });
 
@@ -38,18 +38,6 @@ $.messagebox(lang.dialog.error, lang.admin.emptytitle);
     });
     
   },
-
-  function loadcontenttabs() {
-    $("#loadcontenttabs").remove();
-    $.get(ltoptions.url + '/admin/ajaxposteditor.htm',
-  {id: ltoptions.idpost, get: "contenttabs"},
-    function (html) {
-      $(html).insertBefore("#raweditor");
-      $("#raweditor").appendTo("#rawtab");
-    $('#contenttabs').tabs({cache: true});
-    });
-  }
-  
 
   function addtocurrentfiles() {
     $("input:checked[id^='itemfilepage']").each(function() {
@@ -148,7 +136,19 @@ load_ui_datepicker: function(callback) {
             if (ltoptions.lang == 'en') return callback();
               $.load_script(ltoptions.files + '/js/jquery/ui-' + $.ui.version + '/jquery.ui.datepicker-' + ltoptions.lang + '.js', callback);
           });
-}
+},
+
+  init_raw_tabs: function() {
+    $("#posteditor-init-raw-tabs").remove();
+var holder = $("#posteditor-raw-holder");
+var html = holder.get(0).firstChild.nodeValue;
+$(holder.get(0).firstChild).remove();
+    $(html).insertBefore("#posteditor-raw");
+    holder.tabs({cache: true});
+    });
+  }
+  
+
 
 }
 
