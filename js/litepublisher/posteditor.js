@@ -1,6 +1,37 @@
 (function( $ ){
 $.posteditor = {
 
+  init: function() {
+    $("#tabs").tabs({
+      cache: true,
+    select: function(event, ui) {
+if ("#datetime-holder", ui.panel).length) $.posteditor.init_datetime_tab(ui.panel);
+},
+
+      load: function(event, ui) {
+          $("a[rel='tagtopost']", ui.panel).click(tagtopost);
+      }
+    });
+    
+    $("a[rel~='initfiletabs']").one('click', function() {
+      initfiletabs();
+      return false;
+    });
+    
+    $("a[rel~='loadcontenttabs']").one('click', function() {
+      loadcontenttabs();
+      return false;
+    });
+    
+    $('form:first').submit(function() {
+      if ("" == $.trim($("input[name='title']").val())) {
+$.messagebox(lang.dialog.error, lang.dialog.emptytitle);
+        return false;
+      }
+    });
+    
+  },
+
   function loadcontenttabs() {
     $("#loadcontenttabs").remove();
     $.get(ltoptions.url + '/admin/ajaxposteditor.htm',
@@ -12,7 +43,7 @@ $.posteditor = {
     });
   }
   
-  
+ 
   function addtocurrentfiles() {
     $("input:checked[id^='itemfilepage']").each(function() {
       $(this).attr('checked', false);
@@ -83,37 +114,6 @@ $.posteditor = {
     return false;
   },
   
-  init: function() {
-    $("#tabs").tabs({
-      cache: true,
-    select: function(event, ui) {
-if ("#datetime-holder", ui.panel).length) $.posteditor.init_datetime_tab(ui.panel);
-},
-
-      load: function(event, ui) {
-          $("a[rel='tagtopost']", ui.panel).click(tagtopost);
-      }
-    });
-    
-    $("a[rel~='initfiletabs']").one('click', function() {
-      initfiletabs();
-      return false;
-    });
-    
-    $("a[rel~='loadcontenttabs']").one('click', function() {
-      loadcontenttabs();
-      return false;
-    });
-    
-    $('form:first').submit(function() {
-      if ("" == $("input[name='title']").val()) {
-        error_dialog("empty title");
-        return false;
-      }
-    });
-    
-  },
-
   init_datetime_tab: function (uipanel) {
 //replace html in comment
 var holder = $("#datetime-holder", uipanel);
@@ -140,4 +140,6 @@ load_ui_datepicker: function(callback) {
 }
 
 }
+
+  $(document).ready($.posteditor.init);
 })( jQuery );
