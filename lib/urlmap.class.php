@@ -454,7 +454,7 @@ class turlmap extends titems {
       break;
     }
     
-    if (!strbegin($url, 'http://')) $url = litepublisher::$site->url . $url;
+    if (!strbegin($url, 'http://') && !strbegin($url, 'https://')) $url = litepublisher::$site->url . $url;
     header('Location: ' . $url);
   }
   

@@ -129,7 +129,7 @@ class tclasses extends titems {
   }
   
   public function include_file($filename) {
-    if (!isset(tfilestorage::$memcache) || litepublisher::$debug  || !$this->memcache) {
+    if (!tfilestorage::$memcache || litepublisher::$debug  || !$this->memcache) {
       if (file_exists($filename)) require_once($filename);
       return;
     }

@@ -144,7 +144,7 @@ class tajaxposteditor  extends tevents {
       $tags = $post->factory->tags;
       $list = $tags->getsorted(-1, 'name', 0);
       foreach ($list as $id ) {
-        $items[] = '<a href="" rel="tagtopost">' . $tags->items[$id]['title'] . "</a>";
+        $items[] = '<a href="" class="posteditor-tag">' . $tags->items[$id]['title'] . "</a>";
       }
       $result .= sprintf('<p>%s</p>', implode(', ', $items));
       break;
@@ -353,11 +353,7 @@ class tajaxposteditor  extends tevents {
     if ($lang->section == '') $lang->section = 'editor';
     $title = $lang->raw;
     if ($this->ajaxvisual && $this->visual) $title .= $html->loadvisual();
-    $title .= $html->loadcontenttabs();
     return $html->getinput('editor', 'raw', tadminhtml::specchars($value), $title);
   }
   
 }//class
-
-
-?>

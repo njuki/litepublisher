@@ -55,11 +55,6 @@ function tjsmergerInstall($self) {
     });
   });');
   
-  $section = 'admin';
-  $self->add($section, '/js/jquery/ui-$site.jqueryui_version/jquery-ui-$site.jqueryui_version.custom.min.js');
-  $self->add($section, '/js/litepublisher/filebrowser.min.js');
-  $self->add($section, '/js/litepublisher/admin.min.js');
-  
   $section = 'comments';
   $self->add($section, '/js/litepublisher/comments.min.js');
   $self->add($section, '/js/litepublisher/confirmcomment.min.js');
@@ -83,6 +78,17 @@ $js = "var lang;\nif (lang == undefined) lang = {};\n";
   'no' => $lang->noword,
   )
   )));
+
+  $section = 'admin';
+  $self->add($section, '/js/jquery/ui-$site.jqueryui_version/jquery-ui-$site.jqueryui_version.custom.min.js');
+  $self->add($section, '/js/litepublisher/admin.min.js');
+  $self->addtext($section, 'lang', $js . sprintf('lang.admin = %s;',  json_encode(
+  array(
+'emptytitle' => tlocal::get('editor', 'emptytitle'),
+  )
+  )));
+
+  
   
   $self->unlock();
   
