@@ -46,7 +46,7 @@ class tdownloaditems extends tposts {
   }
   
   public function themeparsed($theme) {
-    litepublisher::$classes->include_file(litepublisher::$paths->plugins . 'downloaditem' . DIRECTORY_SEPARATOR . 'downloaditems.class.install.php');
+    include_once(litepublisher::$paths->plugins . 'downloaditem' . DIRECTORY_SEPARATOR . 'downloaditems.class.install.php');
     add_downloaditems_to_theme($theme);
   }
   

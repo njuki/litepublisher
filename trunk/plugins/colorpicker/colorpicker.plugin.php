@@ -30,7 +30,7 @@ class tcolorpicker extends tplugin {
   
   public function themeparsed(ttheme $theme) {
     if (empty($theme->templates['content.admin.color'])) {
-      $about = tplugins::getabout(tplugins::getname(__file__));
+      $about = tplugins::getabout('colorpicker');
       $theme->templates['content.admin.color'] =
       '<p>
       <input type="text" name="$name" id="text-$name" value="$value" size="22" />
