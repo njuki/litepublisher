@@ -25,10 +25,8 @@ class ttickets extends tposts {
   }
   
   public function createpoll() {
-    $lang = tlocal::admin('tickets');
-    $items = explode(',', $lang->pollitems);
     $polls = tpolls::i();
-    return $polls->add('', 'opened', 'button', $items);
+    return $polls->add(0, 'opened');
   }
   
   public function filtercats(tpost $post) {
