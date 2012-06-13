@@ -1,17 +1,6 @@
 (function( $ ){
-  function initdatepicker(sel) {
-    var cur = $("#date").val();
-    $(sel).datepicker({
-      altField: '#date',
-      altFormat: 'dd.mm.yy',
-      dateFormat: 'dd.mm.yy',
-      changeYear: true
-      //showButtonPanel: true
-    });
-    
-    $("#datepicker").datepicker("setDate", cur);
-  }
-  
+$.posteditor = {
+
   function loadcontenttabs() {
     $("#loadcontenttabs").remove();
     $.get(ltoptions.url + '/admin/ajaxposteditor.htm',
@@ -92,26 +81,17 @@
       $('#text-tags').val(tags + ', ' + newtag);
     }
     return false;
-  }
+  },
   
-  function initposteditor () {
+  init: function() {
     $("#tabs").tabs({
       cache: true,
+    select: function(event, ui) {
+if ("#datetime-holder", ui.panel).length) $.posteditor.init_datetime_tab(ui.panel);
+},
+
       load: function(event, ui) {
-        var sel = $("#datepicker, datepicker", ui.panel);
-        if (sel.length) {
-          $.load_script(ltoptions.files + '/js/jquery/ui-' + $.ui.version + '/jquery.ui.datepicker.min.js', function() {
-            if (ltoptions.lang == 'en') {
-              initdatepicker(sel);
-            } else {
-              $.load_script(ltoptions.files + '/js/jquery/ui-' + $.ui.version + '/jquery.ui.datepicker-' + ltoptions.lang + '.js', function() {
-                initdatepicker(sel);
-              });
-            }
-          });
-        } else {
           $("a[rel='tagtopost']", ui.panel).click(tagtopost);
-        }
       }
     });
     
@@ -132,5 +112,32 @@
       }
     });
     
-  }
+  },
+
+  init_datetime_tab: function (uipanel) {
+//replace html in comment
+var holder = $("#datetime-holder", uipanel);
+holder.replaceWith(holder.get(0).firstChild.nodeValue);
+this.load_ui_datepicker(function() {
+    var cur = $("#text-date").val();
+    $("#datepicker").datepicker({
+      altField: "#text-date",
+      altFormat: "dd.mm.yy",
+      dateFormat: "dd.mm.yy",
+      changeYear: true
+      //showButtonPanel: true
+    });
+    
+    $("#datepicker").datepicker("setDate", cur);
+});
+  },
+  
+load_ui_datepicker: function(callback) {
+          $.load_script(ltoptions.files + '/js/jquery/ui-' + $.ui.version + '/jquery.ui.datepicker.min.js', function() {
+            if (ltoptions.lang == 'en') return callback();
+              $.load_script(ltoptions.files + '/js/jquery/ui-' + $.ui.version + '/jquery.ui.datepicker-' + ltoptions.lang + '.js', callback);
+          });
+}
+
+}
 })( jQuery );
