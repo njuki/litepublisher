@@ -5,27 +5,34 @@ $.posteditor = {
     $("#tabs").tabs({
       cache: true,
     select: function(event, ui) {
-if ("#datetime-holder", ui.panel).length) $.posteditor.init_datetime_tab(ui.panel);
+if ($("#datetime-holder", ui.panel).length) {
+$.posteditor.init_datetime_tab(ui.panel);
+} else  if ($("#seo-holder", ui.panel).length) {
+$.posteditor.init_seo_tab(ui.panel);
+}
 },
 
       load: function(event, ui) {
-          $("a[rel='tagtopost']", ui.panel).click(tagtopost);
+          $(".posteditor-tag", ui.panel).click(function() {
+$.posteditor.addtag($(this).text());
+return false;
+});
       }
-    });
-    
-    $("a[rel~='initfiletabs']").one('click', function() {
-      initfiletabs();
-      return false;
     });
     
     $("a[rel~='loadcontenttabs']").one('click', function() {
       loadcontenttabs();
       return false;
     });
+
+    $("a[rel~='initfiletabs']").one('click', function() {
+      initfiletabs();
+      return false;
+    });
     
     $('form:first').submit(function() {
       if ("" == $.trim($("input[name='title']").val())) {
-$.messagebox(lang.dialog.error, lang.dialog.emptytitle);
+$.messagebox(lang.dialog.error, lang.admin.emptytitle);
         return false;
       }
     });
@@ -43,7 +50,7 @@ $.messagebox(lang.dialog.error, lang.dialog.emptytitle);
     });
   }
   
- 
+
   function addtocurrentfiles() {
     $("input:checked[id^='itemfilepage']").each(function() {
       $(this).attr('checked', false);
@@ -98,8 +105,7 @@ $.messagebox(lang.dialog.error, lang.dialog.emptytitle);
     });
   }
   
-  function tagtopost() {
-    var newtag  = $(this).text();
+  addtag: function(newtag) {
     var tags = $('#text-tags').val();
     if (tags == '') {
       $('#text-tags').val(newtag);
@@ -111,10 +117,15 @@ $.messagebox(lang.dialog.error, lang.dialog.emptytitle);
       }
       $('#text-tags').val(tags + ', ' + newtag);
     }
-    return false;
   },
-  
-  init_datetime_tab: function (uipanel) {
+
+init_seo_tab: function (uipanel) {
+//replace html in comment
+var holder = $("#seo-holder", uipanel);
+holder.replaceWith(holder.get(0).firstChild.nodeValue);
+},
+
+    init_datetime_tab: function (uipanel) {
 //replace html in comment
 var holder = $("#datetime-holder", uipanel);
 holder.replaceWith(holder.get(0).firstChild.nodeValue);
