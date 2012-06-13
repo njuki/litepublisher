@@ -1471,11 +1471,11 @@ class tclasses extends titems {
   }
   
   public function include_file($filename) {
-    if (!isset(tfilestorage::$memcache) || litepublisher::$debug  || !$this->memcache) {
+    if (!tfilestorage::$memcache || litepublisher::$debug  || !$this->memcache) {
       if (file_exists($filename)) require_once($filename);
       return;
     }
-    
+
     if (in_array($filename, $this->included_files)) return;
     $this->included_files[] = $filename;
     if ($s =  tfilestorage::$memcache->get($filename)) {
@@ -2377,7 +2377,7 @@ class turlmap extends titems {
       break;
     }
     
-    if (!strbegin($url, 'http://')) $url = litepublisher::$site->url . $url;
+    if (!strbegin($url, 'http://') && !strbegin($url, 'https://')) $url = litepublisher::$site->url . $url;
     header('Location: ' . $url);
   }
   

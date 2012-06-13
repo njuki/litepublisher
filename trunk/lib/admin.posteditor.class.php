@@ -108,6 +108,11 @@ class tposteditor extends tadminmenu {
     $args->categories = $this->getpostcategories($post);
       $args->date = $post->posted != 0 ?date('d.m.Y', $post->posted) : '';
       $args->time  = $post->posted != 0 ?date('H:i', $post->posted) : '';
+$args->url = $post->url;
+$args->title2 = $post->title2;
+$args->keywords = $post->keywords;
+$args->description = $post->description;
+$args->head = $post->data['head'];
 
     $ajaxeditor = tajaxposteditor ::i();
     $args->editor = $ajaxeditor->getraweditor($post->rawcontent);
