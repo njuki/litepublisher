@@ -56,15 +56,15 @@ class ttheme extends tevents {
     $this->themeprops = new tthemeprops($this);
     if (!isset(self::$defaultargs)) self::set_defaultargs();
   }
-
-public static function set_defaultargs() {
-      self::$defaultargs = array(
-      '$site.url' => litepublisher::$site->url,
-      '$site.files' => litepublisher::$site->files,
-    '{$site.q}' => litepublisher::$site->q,
-      '$site.q' => litepublisher::$site->q
-      );
-}
+  
+  public static function set_defaultargs() {
+    self::$defaultargs = array(
+    '$site.url' => litepublisher::$site->url,
+    '$site.files' => litepublisher::$site->files,
+  '{$site.q}' => litepublisher::$site->q,
+    '$site.q' => litepublisher::$site->q
+    );
+  }
   
   public function __destruct() {
     unset($this->themeprops, self::$instances[$this->name], $this->templates);
@@ -541,7 +541,7 @@ class targs {
   }
   
   public function __construct($thisthis = null) {
-if (!isset(ttheme::$defaultargs)) ttheme::set_defaultargs();
+    if (!isset(ttheme::$defaultargs)) ttheme::set_defaultargs();
     $this->data = ttheme::$defaultargs;
     if (isset($thisthis)) $this->data['$this'] = $thisthis;
   }

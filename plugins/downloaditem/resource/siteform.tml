@@ -1,7 +1,7 @@
 <script type="text/javascript">
 ltoptions.siteurl_dialog = {
 title: "$lang.changeurl",
-html: '<p><label><strong>$lang.editsite</strong>:<br />\
+html: '<p><label>$lang.editsite:<br />\
 <input type="text" name="text_download_site" value="" size="22" /></label></p>'
 };
 </script>

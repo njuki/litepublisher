@@ -32,7 +32,7 @@ class tsapeplugin extends twidget {
   private function createsape() {
     if (!defined('_SAPE_USER')){
       define('_SAPE_USER', $this->user);
-          litepublisher::$classes->include_file(litepublisher::$paths->plugins . 'sape' . DIRECTORY_SEPARATOR . 'sape.php');
+      litepublisher::$classes->include_file(litepublisher::$paths->plugins . 'sape' . DIRECTORY_SEPARATOR . 'sape.php');
       $o['charset'] = 'UTF-8';
       $o['multi_site'] = true;
       if ($this->force) $o['force_show_code'] = $this->force;

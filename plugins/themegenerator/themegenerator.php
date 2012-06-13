@@ -183,7 +183,7 @@ class tthemegenerator extends tmenu {
       if ($themename == '') $themename = time();
       $path = "themes/generator-$themename/";
       
-          litepublisher::$classes->include_file(litepublisher::$paths->libinclude . 'zip.lib.php');
+      litepublisher::$classes->include_file(litepublisher::$paths->libinclude . 'zip.lib.php');
       $zip = new zipfile();
       
       $themedir = dirname(__file__) . DIRECTORY_SEPARATOR . $this->type . DIRECTORY_SEPARATOR;

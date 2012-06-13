@@ -27,8 +27,8 @@
     
     clickvote: function(idpoll, vote, holder) {
       if ($.inArray(idpoll, this.voted) >= 0) return this.error(lang.poll.voted);
-//single request 
-if (!this.enabled) return false;
+      //single request
+      if (!this.enabled) return false;
       this.setenabled(false);
       this.voted.push(idpoll);
     $.litejson({method: "polls_sendvote", idpoll: idpoll, vote: vote}, function(r) {

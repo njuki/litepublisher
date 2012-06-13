@@ -76,7 +76,7 @@ class tusernews extends tplugin {
       $post->files = $files == '' ? array() : explode(',', $files);
     }
     
-    $post->content = $raw;
+    $post->content = tcontentfilter::remove_scripts($raw);
     if ($this->insertsource) $post->filtered = sprintf($this->sourcetml,     $post->meta->sourceurl) .$post->filtered;
     if ($id == 0) {
       $post->status = $status;

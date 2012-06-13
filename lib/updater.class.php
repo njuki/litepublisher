@@ -169,6 +169,8 @@ class tupdater extends tevents {
     if (litepublisher::$classes->memcache) {
       litepublisher::$classes->revision_memcache++;
       litepublisher::$classes->save();
+      $kernel = litepublisher::$paths->lib . 'kernel.php';
+      if (tfilestorage::$memcache) tfilestorage::$memcache->set($kernel, file_get_contents($kernel), false, 3600);
     }
     
     if (!$backuper->upload($s, 'tar')) {
