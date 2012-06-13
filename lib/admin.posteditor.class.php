@@ -114,8 +114,7 @@ $args->keywords = $post->keywords;
 $args->description = $post->description;
 $args->head = $post->data['head'];
 
-    $ajaxeditor = tajaxposteditor ::i();
-    $args->editor = $ajaxeditor->getraweditor($post->rawcontent);
+$args->raw = $post->rawcontent;
   }
   
   public function getcontent() {
