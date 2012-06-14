@@ -1,5 +1,16 @@
 (function( $ ){
 $.posteditor = {
+files: [],
+tml_file: '<div class="file-item">\
+<div class="file-toolbar">\
+<img src="" title="" alt="" />\
+<img src="" title="" alt="" />\
+<img src="" title="" alt="" />\
+</div>\
+<div class="file-content">\
+{{content}}\
+</div>\
+</div>',
 
   init: function() {
     $("#tabs").tabs({
@@ -41,11 +52,10 @@ $.messagebox(lang.dialog.error, lang.posteditor.emptytitle);
   },
 
   init_files: function() {
-    $.get(ltoptions.url + '/admin/ajaxposteditor.htm',
-  {id: ltoptions.idpost, get: "files"},
-    function (html) {
-      $("#filebrowser").html(html);
+$.litejson({method: "files_get", idpost: ltoptions.idpost}, function (r) {
+var list = $.posteditor.get_filelist(r.files);
     $('#filetabs').tabs({cache: true});
+
       //$("input[id^='addfilesbutton']").live('click', addtocurrentfiles);
       $(document).on("click", "input[id^='addfilesbutton']", addtocurrentfiles);
       
@@ -55,13 +65,28 @@ $.messagebox(lang.dialog.error, lang.posteditor.emptytitle);
         } );
         return false;
       });
-      
+
+        ltoptions.swfu = createswfu($.posteditor.uploaded);      
+
       $('form:first').submit(function() {
         $("input[name='files']").val(getpostfiles());
       });
-      
-        ltoptions.swfu = createswfu($.posteditor.uploaded);
   },
+
+get_filelist: function(files) {
+var result = '';
+for (var id in files) {
+var fileitem = files[id];
+this.files[id] = fileitem;
+if (parseInt(fileitem['parent']) != 0) continue;
+result += this.parse_file(fileitem);
+}
+return result;
+},
+
+parse_file: function(item) {
+
+},
 
 uploaded: function(file, serverData) {
   var haschilds = $("#newfilestab").children().length > 0;
