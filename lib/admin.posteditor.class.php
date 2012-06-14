@@ -20,10 +20,9 @@ class tposteditor extends tadminmenu {
     $template = ttemplate::i();
     $template->ltoptions['idpost'] = $this->idget();
     $template->ltoptions['lang'] = litepublisher::$options->language;
-    //$result .= $template->getready('$.initposteditor();');
-    $result .= $template->getready('initposteditor();');
-    $ajax = tajaxposteditor ::i();
-    return $ajax->dogethead($result);
+
+    $result .= $template->getjavascript($template->jsmerger_posteditor);
+return $result;
   }
   
   private static function getsubcategories($parent, array $postitems) {
@@ -115,6 +114,11 @@ $args->description = $post->description;
 $args->head = $post->data['head'];
 
 $args->raw = $post->rawcontent;
+$args->filtered = $post->filtered;
+$args->excerpt = $post->excerpt;
+$args->rss = $post->rss;
+$args->more = $post->moretitle;
+$args->upd = '';
   }
   
   public function getcontent() {

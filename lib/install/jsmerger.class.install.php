@@ -82,13 +82,18 @@ $js = "var lang;\nif (lang == undefined) lang = {};\n";
   $section = 'admin';
   $self->add($section, '/js/jquery/ui-$site.jqueryui_version/jquery-ui-$site.jqueryui_version.custom.min.js');
   $self->add($section, '/js/litepublisher/admin.min.js');
+
+  $section = 'POSTEDITOR';
+  $self->add($section, '/js/swfupload/swfupload.js');
+  $self->add($section, '/js/litepublisher/swfuploader.min.js');
+  $self->add($section, '/js/jquery/ui-$site.jqueryui_version/jquery.ui.progressbar.min.js');
+  $JS->add($section, '/js/litepublisher/POSTEDITOR.min.js');
   $self->addtext($section, 'lang', $js . sprintf('lang.admin = %s;',  json_encode(
   array(
 'emptytitle' => tlocal::get('editor', 'emptytitle'),
+'upload' => tlocal::i()->upload,
   )
   )));
-
-  
   
   $self->unlock();
   

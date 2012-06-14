@@ -24,25 +24,48 @@ class tajaxposteditor  extends tevents {
     //'/plugins/ckeditor/init.js';
     $this->data['ajaxvisual'] = true;
   }
-  
-  public function dogethead($head) {
-    $template = ttemplate::i();
-    $template->ltoptions['upload_button_text'] = tlocal::i()->upload;
-    $head .= $this->head;
+
+public function setvisual($url) {
+if ($url != $this->visual) {
+$js = tjsmerger::i();
+$js->lock();
+$js->delete('posteditor', $this->visual);
+$js->deletetext('posteditor', 'visual');
+
+if ($url) {
+if ($this->ajaxvisual) {
+$js->addtext('posteditor', 'visual', sprintf(
+'$(document).ready(function() {
+$.posteditor.init_visual_link("%s", %s);
+});', litepublisher::$site->files . $url, json_encode(tlocal::get('editor', 'loadvisual')))
+);
+}else {
+$js->add('posteditor', $url);
+}
+
+$js->unlock();
+
+$this->data['visual'] = $url;
+$this->save();
+}
+
+    public function gethead() {
+    $result = $this->data['head'];
     if ($this->visual) {
+$template = ttemplate::i();
       if ($this->ajaxvisual) {
-        $head .= $template->getready('$("a[rel~=\'loadvisual\']").one("click", function() {
+        $result .= $template->getready('$("a[rel~=\'loadvisual\']").one("click", function() {
           $("#loadvisual").remove();
-          $.getScript("' . litepublisher::$site->files . $this->visual . '");
+          $.load_script("' . litepublisher::$site->files . $this->visual . '");
           return false;
         });');
       } else {
-        $head .= $template->getjavascript($this->visual);
+        $result .= $template->getjavascript($this->visual);
       }
     }
     
-    $this->callevent('onhead', array(&$head));
-    return $head;
+    $this->callevent('onhead', array(&$result));
+    return $result;
   }
   
   protected static function error403() {
@@ -149,13 +172,6 @@ class tajaxposteditor  extends tevents {
       $result .= sprintf('<p>%s</p>', implode(', ', $items));
       break;
       
-      case 'posted':
-      $args = targs::i();
-      $args->date = $post->posted != 0 ?date('d.m.Y', $post->posted) : '';
-      $args->time  = $post->posted != 0 ?date('H:i', $post->posted) : '';
-      $result = $html->datepicker($args);
-      break;
-      
       case 'status':
       $args = new targs();
       if (dbversion) {
@@ -188,13 +204,6 @@ class tajaxposteditor  extends tevents {
       
       case 'view':
       $result = $this->getviewicon($post->idview, $post->icon);
-      break;
-      
-      case 'seo':
-      $form = new tautoform($post, 'editor', 'editor');
-      $form->add($form->url, $form->title2, $form->keywords, $form->description);
-      $result = $form->getcontent();
-      $result .= tadminhtml::i()->getinput('editor', 'head', $post->data['head'], tlocal::i()->head);
       break;
       
       case 'files':
@@ -298,32 +307,6 @@ class tajaxposteditor  extends tevents {
       $result = $files->getlist(array($id), $templates);
       break;
       
-      case 'contenttabs':
-      $args = targs::i();
-      $args->ajax = tadminhtml::getadminlink('/admin/ajaxposteditor.htm', "id=$post->id&get");
-      $result = $html->contenttabs($args);
-      break;
-      
-      case 'excerpt':
-      $result = $this->geteditor('excerpt', $post->excerpt, false);
-      break;
-      
-      case 'rss':
-      $result = $this->geteditor('rss', $post->rss, false);
-      break;
-      
-      case 'more':
-      $result = $html->getedit('more', $post->moretitle, $lang->more);
-      break;
-      
-      case 'filtered':
-      $result = $this->geteditor('filtered', $post->filtered, false);
-      break;
-      
-      case 'upd':
-      $result = $this->geteditor('upd', '', false);
-      break;
-      
       default:
       $result = var_export($_GET, true);
     }
@@ -344,16 +327,6 @@ class tajaxposteditor  extends tevents {
     $lang->section = $lsect;
     $html->section = $hsect;
     return $result;
-  }
-  
-  public function getraweditor($value) {
-    $html = tadminhtml ::i();
-    if ($html->section == '') $html->section = 'editor';
-    $lang = tlocal::i();
-    if ($lang->section == '') $lang->section = 'editor';
-    $title = $lang->raw;
-    if ($this->ajaxvisual && $this->visual) $title .= $html->loadvisual();
-    return $html->getinput('editor', 'raw', tadminhtml::specchars($value), $title);
   }
   
 }//class
