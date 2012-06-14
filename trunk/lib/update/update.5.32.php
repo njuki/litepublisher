@@ -19,6 +19,9 @@ $js->lock();
   array(
 'emptytitle' => tlocal::get('editor', 'emptytitle'),
 'upload' => tlocal::i()->upload,
+'add' => $lang->add,
+'del' => $lang->delete,
+'property' => $lang->property,
   )
   )));
 
