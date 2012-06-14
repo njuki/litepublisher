@@ -93,6 +93,10 @@ $js = "var lang;\nif (lang == undefined) lang = {};\n";
   array(
 'emptytitle' => tlocal::get('editor', 'emptytitle'),
 'upload' => tlocal::i()->upload,
+'upload' => tlocal::i()->upload,
+'add' => $lang->add,
+'del' => $lang->delete,
+'property' => $lang->property,
   )
   )));
   
