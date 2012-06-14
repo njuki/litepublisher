@@ -91,7 +91,7 @@ title: lang.posteditor.del
 });
 
 var toolbar = Mustache.render(tml, {
-url: url + "property.png",
+url: url + "edit.png",
 title: lang.posteditor.property
 });
 
