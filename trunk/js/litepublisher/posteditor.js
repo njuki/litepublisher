@@ -32,12 +32,52 @@ return false;
     
     $('form:first').submit(function() {
       if ("" == $.trim($("input[name='title']").val())) {
-$.messagebox(lang.dialog.error, lang.admin.emptytitle);
+$.messagebox(lang.dialog.error, lang.posteditor.emptytitle);
         return false;
       }
     });
     
   },
+
+  init_files: function() {
+    $.get(ltoptions.url + '/admin/ajaxposteditor.htm',
+  {id: ltoptions.idpost, get: "files"},
+    function (html) {
+      $("#filebrowser").html(html);
+    $('#filetabs').tabs({cache: true});
+      //$("input[id^='addfilesbutton']").live('click', addtocurrentfiles);
+      $(document).on("click", "input[id^='addfilesbutton']", addtocurrentfiles);
+      
+      $("#deletecurrentfiles").click(function() {
+        $("input:checked[id^='currentfile']").each(function() {
+          $(this).parent().remove();
+        } );
+        return false;
+      });
+      
+      $('form:first').submit(function() {
+        $("input[name='files']").val(getpostfiles());
+      });
+      
+        ltoptions.swfu = createswfu($.posteditor.uploaded);
+  },
+
+uploaded: function(file, serverData) {
+  var haschilds = $("#newfilestab").children().length > 0;
+  $("#newfilestab").append(serverData);
+  var html = $("#newfilestab").children(":last").html();
+  if (haschilds) {
+    $("#newfilestab").children(":last").remove();
+    $("#newfilestab").children(":first").append(html);
+  }
+  html =str_replace(
+  ['uploaded-', 'new-post-', 'newfile-'],
+  ['curfile-', 'curpost-', 'currentfile-'],
+  html);
+  $('#currentfilestab > :first').append(html);
+}
+
+
 
   function addtocurrentfiles() {
     $("input:checked[id^='itemfilepage']").each(function() {
@@ -63,35 +103,6 @@ $.messagebox(lang.dialog.error, lang.admin.emptytitle);
     return files.join(',');
   }
   
-  function initfiletabs() {
-    var scripts = $.when(      $.load_script(ltoptions.files + '/js/swfupload/swfupload.js'),
-    $.load_script(ltoptions.files + '/js/litepublisher/swfuploader.min.js'));
-    
-    $.get(ltoptions.url + '/admin/ajaxposteditor.htm',
-  {id: ltoptions.idpost, get: "files"},
-    function (html) {
-      $("#filebrowser").html(html);
-    $('#filetabs').tabs({cache: true});
-      //$("input[id^='addfilesbutton']").live('click', addtocurrentfiles);
-      $(document).on("click", "input[id^='addfilesbutton']", addtocurrentfiles);
-      
-      $("#deletecurrentfiles").click(function() {
-        $("input:checked[id^='currentfile']").each(function() {
-          $(this).parent().remove();
-        } );
-        return false;
-      });
-      
-      $('form:first').submit(function() {
-        $("input[name='files']").val(getpostfiles());
-      });
-      
-      scripts.done(function() {
-        ltoptions.swfu = createswfu();
-      });
-      
-    });
-  }
   
   addtag: function(newtag) {
     var tags = $('#text-tags').val();
@@ -143,14 +154,31 @@ load_ui_datepicker: function(callback) {
 var holder = $("#posteditor-raw-holder");
 var html = holder.get(0).firstChild.nodeValue;
 $(holder.get(0).firstChild).remove();
-    $(html).insertBefore("#posteditor-raw");
-    holder.tabs({cache: true});
-    });
-  }
-  
 
+html = html.replace(/<comment>/gim, '<div class="tab-holder"><!--')
+.replace(/<\/comment>/gim, '--></div>');
+//divide on list and div's
+var i = html.indexOf('<div');
+$("#posteditor-raw").before(html.substring(0, i)).after(html.substring(i));
 
+    holder.tabs({
+cache: true,
+    select: function(event, ui) {
+var inner = $(".tab-holder", ui.panel);
+if (inner.length) inner.replaceWith(inner.get(0).firstChild.nodeValue);
 }
+});
+  },
+
+init_visual_link: function(url, text) {
+$('<a href="#">' + text + '</a>').appendTo("#posteditor-visual").data("url", url).one("click", function() {
+          $.load_script($(this).data("url"));
+          $("#posteditor-visual").remove();
+          return false;
+        });
+}
+  
+}//posteditor
 
   $(document).ready($.posteditor.init);
 })( jQuery );
