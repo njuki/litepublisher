@@ -25,8 +25,9 @@ return false;
       return false;
     });
 
-    $("a[rel~='initfiletabs']").one('click', function() {
-      initfiletabs();
+    $("#posteditor-init-files").one('click', function() {
+$(this).replaceWith($(this).text());
+      $.posteditor.init_files();
       return false;
     });
     
