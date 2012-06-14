@@ -3,6 +3,7 @@ $.posteditor = {
 files: [],
 templates: {
 item: '<div class="file-item">\
+<span class="value-title" title="{{id}}"/>\
 <div class="file-toolbar">\
 {{toolbar}}\
 </div>\
@@ -11,7 +12,7 @@ item: '<div class="file-item">\
 </div>\
 </div>',
 
-toolbar: '<a href="#" title="{{title}}"><img src="{{url}}" title="{{title}}" alt="{{title}}" /></a>',
+toolbar: '<a href="#" title="{{title}}" class="{{class}}"><img src="{{url}}" title="{{title}}" alt="{{title}}" /></a>',
 
 image: '',
 },
@@ -81,16 +82,19 @@ init_file_templates: function() {
 var url = ltoptions.files + "/js/litepublisher/icons/";
 var tml = this.templates.toolbutton;
 var toolbar = Mustache.render(tml, {
+class: "add-toolbutton",
 url: url + "add.png",
 title: lang.posteditor.add
 });
 
 toolbar += Mustache.render(tml, {
+class: "delete-toolbutton",
 url: url + "delete.png",
 title: lang.posteditor.del
 });
 
 var toolbar = Mustache.render(tml, {
+class: "property-toolbutton",
 url: url + "edit.png",
 title: lang.posteditor.property
 });
@@ -100,22 +104,25 @@ this.templates.file = this.templates.file.replace('{{toolbar}}', toolbar);
 
 get_filelist: function(files) {
 var result = '';
+for (var id in files) {
+this.files[id] = files[id];
+}
 
 for (var id in files) {
-var fileitem = files[id];
-this.files[id] = fileitem;
 if (parseInt(fileitem['parent']) != 0) continue;
-var content = Mustache.render(tml, fileitem);
-result += tml_file.replace('{{content}}', content);
+result += this.get_fileitem(id);
 }
 return result;
 },
 
-public function get_fileitem(id) {
+get_fileitem: function(id) {
 var item =this.files[id];
 type = (item["type"] in this.templates) ? item["type"] : "file";
 if (parseInt(item["preview"]) != 0) item["img"] = Mustache.render(this.templates["preview"], this.files[item["preview"]]);
-return this.templates.item.replace('{{content}}', Mustache.render(this.templates[type], item));
+return Mustache.render(this.templates.item, {
+id: item["id"],
+content: Mustache.render(this.templates[type], item)
+});
 },
 
 uploaded: function(file, serverData) {
