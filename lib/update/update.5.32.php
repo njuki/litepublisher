@@ -13,6 +13,7 @@ $js->lock();
   $JS->add($section, '/js/swfupload/swfupload.js');
   $JS->add($section, '/js/litepublisher/swfuploader.min.js');
   $JS->add($section, '/js/jquery/ui-$site.jqueryui_version/jquery.ui.progressbar.min.js');
+  $JS->add($section, '/js/plugins/mustache.min.js');
   $JS->add($section, '/js/litepublisher/POSTEDITOR.min.js');
   $js->addtext($section, 'lang', $js . sprintf('lang.posteditor = %s;',  json_encode(
   array(
