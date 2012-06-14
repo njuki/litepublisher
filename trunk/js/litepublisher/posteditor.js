@@ -1,17 +1,20 @@
 (function( $ ){
 $.posteditor = {
 files: [],
-tml_file: '<div class="file-item">\
+templates: {
+item: '<div class="file-item">\
 <div class="file-toolbar">\
-<img src="" title="" alt="" />\
-<img src="" title="" alt="" />\
-<img src="" title="" alt="" />\
+{{toolbar}}\
 </div>\
 <div class="file-content">\
 {{content}}\
 </div>\
 </div>',
 
+toolbar: '<a href="#" title="{{title}}"><img src="{{url}}" title="{{title}}" alt="{{title}}" /></a>',
+
+image: '',
+},
   init: function() {
     $("#tabs").tabs({
       cache: true,
@@ -53,6 +56,7 @@ $.messagebox(lang.dialog.error, lang.posteditor.emptytitle);
 
   init_files: function() {
 $.litejson({method: "files_get", idpost: ltoptions.idpost}, function (r) {
+$.posteditor.init_file_templates();
 var list = $.posteditor.get_filelist(r.files);
     $('#filetabs').tabs({cache: true});
 
@@ -73,19 +77,45 @@ var list = $.posteditor.get_filelist(r.files);
       });
   },
 
+init_file_templates: function() {
+var url = ltoptions.files + "/js/litepublisher/icons/";
+var tml = this.templates.toolbutton;
+var toolbar = Mustache.render(tml, {
+url: url + "add.png",
+title: lang.posteditor.add
+});
+
+toolbar += Mustache.render(tml, {
+url: url + "delete.png",
+title: lang.posteditor.del
+});
+
+var toolbar = Mustache.render(tml, {
+url: url + "property.png",
+title: lang.posteditor.property
+});
+
+this.templates.file = this.templates.file.replace('{{toolbar}}', toolbar);
+},
+
 get_filelist: function(files) {
 var result = '';
+
 for (var id in files) {
 var fileitem = files[id];
 this.files[id] = fileitem;
 if (parseInt(fileitem['parent']) != 0) continue;
-result += this.parse_file(fileitem);
+var content = Mustache.render(tml, fileitem);
+result += tml_file.replace('{{content}}', content);
 }
 return result;
 },
 
-parse_file: function(item) {
-
+public function get_fileitem(id) {
+var item =this.files[id];
+type = (item["type"] in this.templates) ? item["type"] : "file";
+if (parseInt(item["preview"]) != 0) item["img"] = Mustache.render(this.templates["preview"], this.files[item["preview"]]);
+return this.templates.item.replace('{{content}}', Mustache.render(this.templates[type], item));
 },
 
 uploaded: function(file, serverData) {
