@@ -32,7 +32,7 @@ return false;
 $result = array();
 $where = litepublisher::$options->ingroup('editor') ? '' : ' and author = ' . litepublisher::$options->user;
 $files = tfiles::i();
-$result['count'] = $files->db->getcount(" parent = 0 $where");
+$result['count'] = ceil($files->db->getcount(" parent = 0 $where") / 20);
 $result['files'] = array();
 
 if ($idpost) {

@@ -12,7 +12,7 @@ $css->delete('default', '/js/litepublisher/prettyphoto.dialog.css');
 $css->add('default', '/js/litepublisher/css/prettyphoto.dialog.css');
 $css->unlock();
 
-$lang = tlocal::admin();
+$lang = tlocal::admin('editor');
 $js = tjsmerger::i();
 $js->lock();
 
@@ -33,12 +33,14 @@ $langjs = "var lang;\nif (lang == undefined) lang = {};\n";
 
   $section = 'posteditor';
   $js->add($section, '/js/swfupload/swfupload.js');
-  $js->add($section, '/js/litepublisher/swfuploader.min.js');
+  //$js->add($section, '/js/litepublisher/swfuploader.min.js');
   $js->add($section, '/js/jquery/ui-$site.jqueryui_version/jquery.ui.progressbar.min.js');
   $js->add($section, '/js/plugins/mustache.min.js');
+/*
   $js->add($section, '/js/litepublisher/posteditor.min.js');
   $js->add($section, '/js/litepublisher/fileman.min.js');
   $js->add($section, '/js/litepublisher/fileman.templates.min.js');
+*/
   $js->addtext($section, 'lang', sprintf('lang.posteditor = %s;',  json_encode(
   array(
 'emptytitle' => tlocal::get('editor', 'emptytitle'),
