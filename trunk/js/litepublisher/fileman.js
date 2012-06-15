@@ -12,9 +12,11 @@ $(holder).html(this.templates.tabs);
 tabs.tabs({
 cache: true,
     select: function(event, ui) {
+try {
 if ("empty" == $(ui.panel).data("files")) {
 $.fileman.loadpage(ui.panel, $(ui.panel).data("page"));
 }
+      } catch(e) { alert('error ' + e.message); }
 }
 });
 
@@ -32,7 +34,8 @@ $.fileman.setpage("#new-files", []);
       } catch(e) { alert('error ' + e.message); }
 })
           .fail( function(jq, textStatus, errorThrown) {
-$.messagebox(lang.dialog.error, jq.responseText);
+//$.messagebox(lang.dialog.error, jq.responseText);
+alert(jq.responseText);
 });
 
         ltoptions.swfu = createswfu($.fileman.uploaded);      
@@ -44,21 +47,15 @@ $.messagebox(lang.dialog.error, jq.responseText);
   },
 
 init_templates: function() {
-alert(lang.posteditor.currentfiles);
-var lng = {
-lang: lang.posteditor,
-iconurl: ltoptions.files + "/js/litepublisher/icons/"
-};
-
-alert(Mustache.render(
-'{lang.currentfiles}', {}, {},
- function (s) {
-alert(s);
-return s;
+function repl(str, name, offset, src) {
+if (name in lang.posteditor) return lang.posteditor[name];
+return str;
 }
-));
+
+var iconurl= ltoptions.files + "/js/litepublisher/icons/";
+var re = /\{\{lang\.(\w*)\}\}/gim;
 for (var prop in this.templates) {
-this.templates[prop] = Mustache.render(this.templates[prop], lng);
+this.templates[prop] = this.templates[prop].replace(re, repl).replace(/\{\{iconurl\}\}/gm, iconurl);
 }
 },
 
@@ -72,12 +69,13 @@ tabs.tabs( "add" , "#filepage-" + i, i);
 },
 
 setpage: function(uipanel, files) {
+try {
 var panel =$(uipanel);
 for (var id in files) {
-if (parseInt(fileitem['parent']) != 0) continue;
+if (parseInt(files[id]['parent']) != 0) continue;
 panel.append(this.get_fileitem(id));
 }
-
+      } catch(e) { alert('error ' + e.message); }
 panel.on("click", ".toolbar a", function() {
 var holder = $(this).closest(".file-item")
 var idfile = holder.data("idfile");
@@ -102,17 +100,17 @@ return false;
 },
 
 get_fileitem: function(id) {
-var item =this.files[id];
+var item =this.items[id];
 item.link = ltoptions.files + "/files/" + item.filename;
-type = (item["type"] in this.templates) ? item["type"] : "file";
+type = (item["media"] in this.templates) ? item["media"] : "file";
 item.previewlink = '';
-if ((parseInt(item["preview"]) != 0) &&(item.preview in this.items)) item.previewlink = ltoptions.files + "/files/" + this.files[item["preview"]]["filename"];
+if ((parseInt(item["preview"]) != 0) &&(item.preview in this.items)) item.previewlink = ltoptions.files + "/files/" + this.items[item["preview"]]["filename"];
 var html = Mustache.render(this.templates.item, {
 id: item["id"],
 content: Mustache.render(this.templates[type], item)
 });
-
-return $(html).data("idfile", idfile);
+alert(html);
+return $(html).data("idfile", id);
 },
 
 loadpage: function(uipanel, page) {
