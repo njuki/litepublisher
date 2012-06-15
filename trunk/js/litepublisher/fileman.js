@@ -41,9 +41,13 @@ $.messagebox(lang.dialog.error, jq.responseText);
   },
 
 init_templates: function() {
-lang.posteditor.iconurl =ltoptions.files + "/js/litepublisher/icons/";
+var lng = {
+lang: lang.posteditor,
+iconurl: ltoptions.files + "/js/litepublisher/icons/"
+};
+
 for (var prop in this.templates) {
-this.templates[prop] = Mustache.render(this.templates[prop], lang.posteditor);
+this.templates[prop] = Mustache.render(this.templates[prop], lng);
 }
 },
 
