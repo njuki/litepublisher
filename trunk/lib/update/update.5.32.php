@@ -35,6 +35,8 @@ $langjs = "var lang;\nif (lang == undefined) lang = {};\n";
   $JS->add($section, '/js/jquery/ui-$site.jqueryui_version/jquery.ui.progressbar.min.js');
   $JS->add($section, '/js/plugins/mustache.min.js');
   $JS->add($section, '/js/litepublisher/POSTEDITOR.min.js');
+  $JS->add($section, '/js/litepublisher/fileman.min.js');
+  $JS->add($section, '/js/litepublisher/fileman.templates.min.js');
   $js->addtext($section, 'lang', $js . sprintf('lang.posteditor = %s;',  json_encode(
   array(
 'emptytitle' => tlocal::get('editor', 'emptytitle'),
@@ -42,6 +44,8 @@ $langjs = "var lang;\nif (lang == undefined) lang = {};\n";
 'add' => $lang->add,
 'del' => $lang->delete,
 'property' => $lang->property,
+'currentfiles' => $lang->currentfiles,
+'newupload' => $lang->newupload,
   )
   )));
 
