@@ -104,7 +104,71 @@ this.items[id] = files[id];
 },
 
 uploaded: function(file, serverData) {
+var r = $.parseJSON(serverData);
+/* r = {
+id: int idfile,
+item: array fileitem,
+preview: array fileitem optimal
+}*/
+
+var idfile = r.id;
+$.fileman.curr.push(idfile);
+$.fileman.items[idfile] = r.item;
+if (r.item["preview"] != 0) $.fileman.items[r.preview['id']] = r.preview;
+
+var html = $.fileman.get_fileitem(idfile);
+$(html).appendTo("#current-files").data("idfile", idfile);
+$(html).appendTo("#new-files").data("idfile", idfile);
+},
+
+add: function(idfile) {
+      if ($.inArray(idfile, this.curr) >= 0) return;
+this.curr.push(idfile);
+var html = this.get_fileitem(idfile);
+$(html).appendTo("#current-files").data("idfile", idfile);
+},
+
+del: function(idfile) {
+var i = $.inArray(idfile, this.curr);
+if (i < 0) return;
+delete this.curr[i];
+$("#current-files").children().each(function() {
+if (idfile == $(this).data("idfile")) {
+$(this).remove();
+return false;
+}
+});
+},
+
+editprops: function(idfile) {
+var fileitem = this.items[idfile];
+
+$.prettyPhotoDialog({
+title: ltoptions.siteurl_dialog.title,
+html: this.templates.fileprops,
+open: function(holder) {
+$("input[name='fileprop-title']", holder).val(fileitem.title);
+$("input[name='fileprop-description']", holder).val(fileitem.description);
+$("input[name='fileprop-keywords']", holder).val(fileitem.keywords);
+},
+
+buttons: [
+{
+        title: "Ok",
+        click: function() {
+var url = $.trim($("input[name='text_download_site']").val());
+          $.prettyPhoto.close();
+}
+    },
+{
+        title: lang.dialog.cancel,
+        click: function() {
+          $.prettyPhoto.close();
+}
+    }
+]
+} );
 }
 
-};
+};//fileman
 })( jQuery );

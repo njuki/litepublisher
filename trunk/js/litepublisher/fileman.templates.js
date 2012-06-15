@@ -24,7 +24,16 @@ $fileperm\
 <div id="current-files"></div>\
 <div id="new-files"></div>\
 </div>\
-<p class="hidden"><input type="hidden" name="files" value="" /></p>'
+<p class="hidden"><input type="hidden" name="files" value="" /></p>',
+
+fileprops: '<p><label><input type="text" name="fileprop-title" value="" size="22" />\
+<strong>{{title}}</strong></label></p>\
+\
+<p><label><input type="text" name="fileprop-description" value="" size="22" />\
+<strong>{{description}}</strong></label></p>\
+\
+<p><label><input type="text" name="fileprop-keywords" value="" size="22" />\
+<strong>{{keywords}}</strong></label></p>'
 };
 
 })( jQuery );
