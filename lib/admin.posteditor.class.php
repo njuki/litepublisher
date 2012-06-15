@@ -23,6 +23,12 @@ class tposteditor extends tadminmenu {
 
       $result .= '<link type="text/css" href="$site.files/js/litepublisher/css/fileman.css" rel="stylesheet" />';
     $result .= $template->getjavascript($template->jsmerger_posteditor);
+
+    $result .= $template->getjavascript('/js/litepublisher/swfuploader.js');
+    $result .= $template->getjavascript('/js/litepublisher/POSTEDITOR.js');
+    $result .= $template->getjavascript('/js/litepublisher/fileman.js');
+    $result .= $template->getjavascript('/js/litepublisher/fileman.templates.js');
+
 return $result;
   }
   

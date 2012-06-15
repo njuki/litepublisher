@@ -41,6 +41,7 @@ if (count($list)) {
 $items = implode(',', $list);
 $result['files'] = $files->db->res2items($files->db->query("id in ($items) and parent in ($items)"));
 }
+}
 
 return $result;
 }
@@ -50,10 +51,10 @@ return $result;
 $page = (int) $args['page'];
 $perpage = 20;
 $from = $page * $perpage;
-$where = litepublisher::$options->ingroup('editor') ? 'id > 0' : ' author = ' . litepublisher::$options->user;
+$where = litepublisher::$options->ingroup('editor') ? '' : ' where author = ' . litepublisher::$options->user;
 $files = tfiles::i();
 return array(
-'files' => $files->db->res2items($files->db->query("$where order by posted limit $from, $perpage"));
+'files' => $files->db->res2items($files->db->query("select * from $files->thistable $where order by id limit $from, $perpage"))
 );
 }
 
