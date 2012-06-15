@@ -1,0 +1,20 @@
+.file-item {
+	width: 100%;
+	float: left;
+	overflow: hidden;
+}
+
+.file-toolbar {
+display: block;
+margin:30px;
+}
+
+.file-content {
+margin:5px 15px 5px 5;
+}
+
+.file-content img {
+margin:15px;
+height:120px;
+idth:120px
+}
