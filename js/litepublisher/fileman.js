@@ -27,7 +27,11 @@ $.fileman.items[id] = r.files[id];
 $fileman.setpage("#current-files", r.files);
 //to assign events
 $fileman.setpage("#new-files", []);
+})
+          .fail( function(jq, textStatus, errorThrown) {
+$.messagebox(lang.dialog.error, jq.responseText);
 });
+
 
         ltoptions.swfu = createswfu($.fileman.uploaded);      
 
@@ -47,7 +51,7 @@ set_tabs_count: function(count) {
 if (count < 1) return;
 var tabs = $("#posteditor-files-tabs");
 for (var i =1; i <= count; i++) {
-$('<div id="filepage-' + i + '"></div>').appendTo(tabs).data("page", i).data("files", "empty");
+$(this.templates.tab.replace('{{index}}', i)).appendTo(tabs).data("page", i).data("files", "empty");
 tabs.tabs( "add" , "#filepage-" + i, i);
 }
 },
@@ -56,11 +60,13 @@ setpage: function(uipanel, files) {
 var panel =$(uipanel);
 for (var id in files) {
 if (parseInt(fileitem['parent']) != 0) continue;
-$(this.get_fileitem(id)).appendTo(panel).data("idfile", id);
+panel.append(this.get_fileitem(id));
 }
 
 panel.on("click", ".toolbar a", function() {
-var idfile = $(this).closest(".file-item").data("idfile");
+var holder = $(this).closest(".file-item")
+var idfile = holder.data("idfile");
+
 switch(
 $(this).attr("class")) {
 case "add-toolbutton":
@@ -68,11 +74,11 @@ $.fileman.add(idfile);
 break;
 
 case "delete-toolbutton":
-$.fileman.del(idfile);
+$.fileman.del(idfile, holder);
 break;
 
 case "property-toolbutton":
-$.fileman.editprops(idfile);
+$.fileman.editprops(idfile, holder);
 break;
 }
 
@@ -84,10 +90,12 @@ get_fileitem: function(id) {
 var item =this.files[id];
 type = (item["type"] in this.templates) ? item["type"] : "file";
 if (parseInt(item["preview"]) != 0) item["img"] = Mustache.render(this.templates["preview"], this.files[item["preview"]]);
-return Mustache.render(this.templates.item, {
+var html = Mustache.render(this.templates.item, {
 id: item["id"],
 content: Mustache.render(this.templates[type], item)
 });
+
+return $(html).data("idfile", idfile);
 },
 
 loadpage: function(uipanel, page) {
@@ -95,6 +103,9 @@ $(uipanel).data("files", "loading");
 $.litejson({method: "files_getpage", page: page - 1}, function(r) {
 $.fileman.joinitems(r.files);
 $.fileman.setpage(uipanel, r.files);
+})
+          .fail( function(jq, textStatus, errorThrown) {
+$.messagebox(lang.dialog.error, jq.responseText);
 });
 },
 
@@ -117,31 +128,25 @@ $.fileman.curr.push(idfile);
 $.fileman.items[idfile] = r.item;
 if (r.item["preview"] != 0) $.fileman.items[r.preview['id']] = r.preview;
 
-var html = $.fileman.get_fileitem(idfile);
-$(html).appendTo("#current-files").data("idfile", idfile);
-$(html).appendTo("#new-files").data("idfile", idfile);
+$("#current-files").append($.fileman.get_fileitem(idfile));
+$("#new-files").append($.fileman.get_fileitem(idfile));
 },
 
 add: function(idfile) {
       if ($.inArray(idfile, this.curr) >= 0) return;
 this.curr.push(idfile);
-var html = this.get_fileitem(idfile);
-$(html).appendTo("#current-files").data("idfile", idfile);
+
+$("#current-files").append(this.get_fileitem(idfile));
 },
 
-del: function(idfile) {
+del: function(idfile, holder) {
 var i = $.inArray(idfile, this.curr);
 if (i < 0) return;
 delete this.curr[i];
-$("#current-files").children().each(function() {
-if (idfile == $(this).data("idfile")) {
-$(this).remove();
-return false;
-}
-});
+holder.remove();
 },
 
-editprops: function(idfile) {
+editprops: function(idfile, owner) {
 if (this.indialog) return false;
 this.indialog = true;
 var fileitem = this.items[idfile];
@@ -159,9 +164,12 @@ buttons: [
 {
         title: "Ok",
         click: function() {
-var url = $.trim($("input[name='text_download_site']").val());
+var holder = $(".pp_inline");
+var title = $.trim($("input[name='fileprop-title']", holder).val());
+var description = $.trim($("input[name='fileprop-description']", holder).val());
+var keywords = $.trim($("input[name='fileprop-keywords']", holder).val());
           $.prettyPhoto.close();
-$.fileman.indialog = false;
+$.fileman.setprops(idfile, title, description, keywords, owner);
 }
     },
 {
@@ -173,6 +181,19 @@ $.fileman.indialog = false;
     }
 ]
 } );
+},
+
+setprops: function(idfile, title, description, keywords, holder) {
+$.litejsontype("post",{method: "files_setprops", idfile: idfile, title: title, description: description, keywords: keywords}, function(r) {
+$.fileman.items[r.item["id"]] = r.item;
+//need to update infos but we cant find all files
+holder.replaceWith($.fileman.get_fileitem(idfile));
+$.fileman.indialog = false;
+})
+          .fail( function(jq, textStatus, errorThrown) {
+$.fileman.indialog = false;
+$.messagebox(lang.dialog.error, jq.responseText);
+});
 }
 
 };//fileman
