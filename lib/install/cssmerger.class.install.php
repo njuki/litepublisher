@@ -11,7 +11,7 @@ function tcssmergerInstall($self) {
   $self->items = array();
   $section = 'default';
   $self->add($section, '/js/prettyphoto/css/prettyPhoto.css');
-  $self->add($section, '/js/litepublisher/prettyphoto.dialog.css');
+  $self->add($section, '/js/litepublisher/css/prettyphoto.dialog.css');
   $self->unlock();
   
   $template = ttemplate::i();

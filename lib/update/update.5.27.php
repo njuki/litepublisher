@@ -171,7 +171,7 @@ unset($template->data['jsmerger_moderate']);
 $template->save();
 }
 
-  tcssmerger::i()->add('default', '/js/litepublisher/prettyphoto.dialog.css');
+  tcssmerger::i()->add('default', '/js/litepublisher/css/prettyphoto.dialog.css');
 
 $db = litepublisher::$db;
 $db->table = 'users';
