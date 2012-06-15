@@ -68,17 +68,20 @@ class tfiles extends titems {
   }
   
   public function insert(array $item) {
-    if (dbversion) {
+$item = $this->escape($item);
       $id = $this->db->add($item);
-    } else {
-      $id = ++$this->autoid;
-    }
     $this->items[$id] = $item;
-    if (!$this->dbversion) $this->save();
     $this->changed();
     $this->added($id);
     return $id;
   }
+
+public function escape(array $item) {
+foreach (array('title', 'description', 'keywords') as $name) {
+$item[$name] = tcontentfilter::escape(tcontentfilter::unescape($item[$name]));
+}
+return $item;
+}
   
   public function edit($id, $title, $description, $keywords) {
     $item = $this->getitem($id);
@@ -87,17 +90,14 @@ class tfiles extends titems {
     $item['title'] = $title;
     $item['description'] = $description;
     $item['keywords'] = $keywords;
+$item = $this->escape($item);
     $this->items[$id] = $item;
-    if ($this->dbversion) {
       $this->db->updateassoc($item);
-    } else {
-      $this->save();
-    }
     $this->changed();
     $this->edited($id);
     return true;
   }
-  
+
   public function delete($id) {
     if (!$this->itemexists($id)) return false;
     $list = $this->itemsposts->getposts($id);

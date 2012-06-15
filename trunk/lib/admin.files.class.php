@@ -51,6 +51,9 @@ class tadminfiles extends tadminmenu {
         $args = targs::i();
         $item = $files->getitem($id);
         $args->add($item);
+$args->title = tcontentfilter::unescape($item['title']);
+$args->description = tcontentfilter::unescape($item['description']);
+$args->keywords = tcontentfilter::unescape($item['keywords']);
         $args->formtitle = $this->lang->editfile;
         $result .= $html->adminform('[text=title] [text=description] [text=keywords]' .
         (litepublisher::$options->show_file_perm ?  tadminperms::getcombo($item['idperm'], 'idperm') : ''),
