@@ -25,3 +25,4 @@ width:120px;
 
 .files-tab .delete-toolbutton {display: none}
 #current-files .add-toolbutton {display: none}
+.text-right {text-align:right;}
