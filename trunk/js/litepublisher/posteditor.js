@@ -1,6 +1,5 @@
 (function( $ ){
 $.posteditor = {
-files: [],
 
   init: function() {
     $("#tabs").tabs({
@@ -27,8 +26,7 @@ return false;
     });
 
     $("#posteditor-init-files").one('click', function() {
-$(this).replaceWith($(this).text());
-      $.posteditor.init_files();
+      $.fileman.init("#posteditor-files");
       return false;
     });
     
@@ -41,128 +39,6 @@ $.messagebox(lang.dialog.error, lang.posteditor.emptytitle);
     
   },
 
-  init_files: function() {
-$.litejson({method: "files_get", idpost: ltoptions.idpost}, function (r) {
-$("#posteditor-filelist").remove();
-    var tabs = $("#posteditor-files-tab");
-var html = tabs.get(0).firstChild.nodeValue;
-$(tabs.get(0).firstChild).remove();
-tabs.html(html);
-
-$.posteditor.init_file_templates();
-var list = $.posteditor.get_filelist(r.files);
-
-
-tabs.tabs({
-cache: true,
-
-});
-
-      //$("input[id^='addfilesbutton']").live('click', addtocurrentfiles);
-      $(document).on("click", "input[id^='addfilesbutton']", addtocurrentfiles);
-      
-      $("#deletecurrentfiles").click(function() {
-        $("input:checked[id^='currentfile']").each(function() {
-          $(this).parent().remove();
-        } );
-        return false;
-      });
-
-        ltoptions.swfu = createswfu($.posteditor.uploaded);      
-
-      $('form:first').submit(function() {
-        $("input[name='files']").val(getpostfiles());
-      });
-  },
-
-init_file_templates: function() {
-var url = ltoptions.files + "/js/litepublisher/icons/";
-var tml = this.templates.toolbutton;
-var toolbar = Mustache.render(tml, {
-class: "add-toolbutton",
-url: url + "add.png",
-title: lang.posteditor.add
-});
-
-toolbar += Mustache.render(tml, {
-class: "delete-toolbutton",
-url: url + "delete.png",
-title: lang.posteditor.del
-});
-
-var toolbar = Mustache.render(tml, {
-class: "property-toolbutton",
-url: url + "edit.png",
-title: lang.posteditor.property
-});
-
-this.templates.file = this.templates.file.replace('{{toolbar}}', toolbar);
-},
-
-get_filelist: function(files) {
-var result = '';
-for (var id in files) {
-this.files[id] = files[id];
-}
-
-for (var id in files) {
-if (parseInt(fileitem['parent']) != 0) continue;
-result += this.get_fileitem(id);
-}
-return result;
-},
-
-get_fileitem: function(id) {
-var item =this.files[id];
-type = (item["type"] in this.templates) ? item["type"] : "file";
-if (parseInt(item["preview"]) != 0) item["img"] = Mustache.render(this.templates["preview"], this.files[item["preview"]]);
-return Mustache.render(this.templates.item, {
-id: item["id"],
-content: Mustache.render(this.templates[type], item)
-});
-},
-
-uploaded: function(file, serverData) {
-  var haschilds = $("#newfilestab").children().length > 0;
-  $("#newfilestab").append(serverData);
-  var html = $("#newfilestab").children(":last").html();
-  if (haschilds) {
-    $("#newfilestab").children(":last").remove();
-    $("#newfilestab").children(":first").append(html);
-  }
-  html =str_replace(
-  ['uploaded-', 'new-post-', 'newfile-'],
-  ['curfile-', 'curpost-', 'currentfile-'],
-  html);
-  $('#currentfilestab > :first').append(html);
-}
-
-
-
-  function addtocurrentfiles() {
-    $("input:checked[id^='itemfilepage']").each(function() {
-      $(this).attr('checked', false);
-      var id = $(this).val();
-      if ($("#currentfile-" + id).length == 0) {
-        var html =str_replace(
-        ['pagefile-', 'pagepost-', 'itemfilepage-'],
-        ['curfile-', 'curpost-', 'currentfile-'],
-        $('<div></div>').append($( this).parent().clone() ).html());
-        // outer html prev line
-        //alert(html);
-        $('#currentfilestab > :first').append(html);
-      }
-    });
-  }
-  
-  function getpostfiles() {
-    var files = [];
-    $("input[id^='currentfile']").each(function() {
-      files.push($(this).val());
-    });
-    return files.join(',');
-  }
-  
   
   addtag: function(newtag) {
     var tags = $('#text-tags').val();
