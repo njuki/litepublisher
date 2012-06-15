@@ -20,27 +20,6 @@ function submit_views() {
   }
 }
 
-function confirm_dialog(sel, fn) {
-  $(sel).dialog( {
-    autoOpen: true,
-    modal: true,
-    buttons: [
-    {
-      text: "Ok",
-      click: function() {
-        $(this).dialog("close");
-        if ($.isFunction(fn)) fn();
-      }
-    },
-    {
-      text: "Cancel",
-    click: function() { $(this).dialog("close"); }
-    }
-    ]
-  } );
-  
-}
-
 function show_append_widgets(show) {
   if (show) {
     $("#appendwidgets").show();
@@ -98,7 +77,7 @@ function _init_views() {
     
     $("input[id^='delete_']").click(function() {
       var idview = $(this).attr("id").split("_").pop();
-      confirm_dialog("#dialog_view_delete", function() {
+          $.confirmdelete(function() {
         $("#action").val("delete");
         $("#action_value").val(idview);
         $("#form").submit();
@@ -145,7 +124,7 @@ function _init_views() {
       var a = $(this).attr("id").split("_");
       var idwidget = a.pop();
       var idview = a.pop();
-      confirm_dialog("#dialog_widget_delete", function() {
+          $.confirmdelete(function() {
         $("#widget_" + idview + "_" + idwidget).remove();
         $("#widgetoptions_" + idview + "_" + idwidget).hide();
       });
