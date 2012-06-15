@@ -127,7 +127,7 @@ class tadminviews extends tadminmenu {
     switch ($this->name) {
       case 'views':
       $template->ltoptions['allviews'] = array_keys(tviews::i()->items);
-      $result .= '<link type="text/css" href="$site.files/js/litepublisher/admin.views.css" rel="stylesheet" />';
+      $result .= '<link type="text/css" href="$site.files/js/litepublisher/css/admin.views.css" rel="stylesheet" />';
       $result .= $template->getjavascript('/js/litepublisher/admin.views.min.js');
       break;
       
