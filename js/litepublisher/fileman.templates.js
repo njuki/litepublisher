@@ -1,5 +1,5 @@
 (function( $ ){
-$.posteditor.templates = {
+$.fileman.templates = {
 item: '<div class="file-item">\
 <span class="value-title" title="{{id}}"/>\
 <div class="file-toolbar">\
@@ -29,23 +29,4 @@ $fileperm\
 
 };
 
-$.posteditor.init_templates = function() {
-//url to icons
-lang.posteditor.iconurl =ltoptions.files + "/js/litepublisher/icons/";
-for (var prop in this.templates) {
-this.templates[prop] = Mustache.render(this.templates[prop], lang.posteditor);
-}
-
-};
-
-$.posteditor.files ={
-setcount: function(count) {
-var tabs = $("#posteditor-files-tabs");
-for (var i =1; i <= count; i++) {
-$('<div id="filetab-' + i + '"></div>').appendTo(tabs).data("page", i).data("files", "empty");
-tabs.tabs( "add" , "#filetab-" + i, i);
-},
-
-}
-};
 })( jQuery );
