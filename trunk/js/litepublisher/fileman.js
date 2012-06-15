@@ -5,8 +5,9 @@ curr: [],
 indialog: false,
 
 init: function(holder) {
+try {
 this.init_templates();
-$(holder).html(this.templates.tab);
+$(holder).html(this.templates.tabs);
     var tabs = $("#posteditor-files-tabs");
 tabs.tabs({
 cache: true,
@@ -17,35 +18,45 @@ $.fileman.loadpage(ui.panel, $(ui.panel).data("page"));
 }
 });
 
-$.litejson({method: "files_get", idpost: ltoptions.idpost}, function (r) {
+$.litejson({method: "files_getpost", idpost: ltoptions.idpost}, function (r) {
+try {
 $.fileman.set_tabs_count(r.count);
 for (var id in r.files) {
 $.fileman.curr.push(id);
 $.fileman.items[id] = r.files[id];
 }
 
-$fileman.setpage("#current-files", r.files);
+$.fileman.setpage("#current-files", r.files);
 //to assign events
-$fileman.setpage("#new-files", []);
+$.fileman.setpage("#new-files", []);
+      } catch(e) { alert('error ' + e.message); }
 })
           .fail( function(jq, textStatus, errorThrown) {
 $.messagebox(lang.dialog.error, jq.responseText);
 });
-
 
         ltoptions.swfu = createswfu($.fileman.uploaded);      
 
       $('form:first').submit(function() {
         $("input[name='files']").val($.fileman.curr.join(','));
       });
+      } catch(e) { alert('error ' + e.message); }
   },
 
 init_templates: function() {
+alert(lang.posteditor.currentfiles);
 var lng = {
 lang: lang.posteditor,
 iconurl: ltoptions.files + "/js/litepublisher/icons/"
 };
 
+alert(Mustache.render(
+'{lang.currentfiles}', {}, {},
+ function (s) {
+alert(s);
+return s;
+}
+));
 for (var prop in this.templates) {
 this.templates[prop] = Mustache.render(this.templates[prop], lng);
 }
@@ -92,9 +103,10 @@ return false;
 
 get_fileitem: function(id) {
 var item =this.files[id];
-item.link = ltoptions.files + "/files/" + item.url;
+item.link = ltoptions.files + "/files/" + item.filename;
 type = (item["type"] in this.templates) ? item["type"] : "file";
-if (parseInt(item["preview"]) != 0) item.previewlink = ltoptions.files + "/files/" + this.files[item["preview"]]["url"];
+item.previewlink = '';
+if ((parseInt(item["preview"]) != 0) &&(item.preview in this.items)) item.previewlink = ltoptions.files + "/files/" + this.files[item["preview"]]["filename"];
 var html = Mustache.render(this.templates.item, {
 id: item["id"],
 content: Mustache.render(this.templates[type], item)
