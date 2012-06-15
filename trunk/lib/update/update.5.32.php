@@ -29,17 +29,17 @@ $langjs = "var lang;\nif (lang == undefined) lang = {};\n";
   )));
 
   $section = 'admin';
-  $JS->delete($section, '/js/litepublisher/filebrowser.min.js');
+  $js->delete($section, '/js/litepublisher/filebrowser.min.js');
 
-  $section = 'POSTEDITOR';
-  $JS->add($section, '/js/swfupload/swfupload.js');
-  $JS->add($section, '/js/litepublisher/swfuploader.min.js');
-  $JS->add($section, '/js/jquery/ui-$site.jqueryui_version/jquery.ui.progressbar.min.js');
-  $JS->add($section, '/js/plugins/mustache.min.js');
-  $JS->add($section, '/js/litepublisher/POSTEDITOR.min.js');
-  $JS->add($section, '/js/litepublisher/fileman.min.js');
-  $JS->add($section, '/js/litepublisher/fileman.templates.min.js');
-  $js->addtext($section, 'lang', $js . sprintf('lang.posteditor = %s;',  json_encode(
+  $section = 'posteditor';
+  $js->add($section, '/js/swfupload/swfupload.js');
+  $js->add($section, '/js/litepublisher/swfuploader.min.js');
+  $js->add($section, '/js/jquery/ui-$site.jqueryui_version/jquery.ui.progressbar.min.js');
+  $js->add($section, '/js/plugins/mustache.min.js');
+  $js->add($section, '/js/litepublisher/posteditor.min.js');
+  $js->add($section, '/js/litepublisher/fileman.min.js');
+  $js->add($section, '/js/litepublisher/fileman.templates.min.js');
+  $js->addtext($section, 'lang', sprintf('lang.posteditor = %s;',  json_encode(
   array(
 'emptytitle' => tlocal::get('editor', 'emptytitle'),
 'upload' => tlocal::i()->upload,
@@ -51,9 +51,9 @@ $langjs = "var lang;\nif (lang == undefined) lang = {};\n";
 'title' => $lang->title,
 'description' => $lang->description,
 'keywords' => $lang->keywords,
+'file' => $lang->file,
+'filesize' => $lang->filesize
   )
   )));
-
-
 $js->unlock();
 }
