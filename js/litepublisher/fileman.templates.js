@@ -7,7 +7,7 @@ item: '<div class="file-item">\
 <a href="#" title="{{lang.property}}" class="property-toolbutton"><img src="{{iconurl}}property.png" title="{{lang.property}}" alt="{{lang.property}}" /></a>\
 </div>\
 <div class="file-content">\
-{{content}}\
+{{{content}}}\
 </div>\
 </div>',
 
