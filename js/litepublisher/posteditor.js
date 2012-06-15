@@ -1,21 +1,7 @@
 (function( $ ){
 $.posteditor = {
 files: [],
-templates: {
-item: '<div class="file-item">\
-<span class="value-title" title="{{id}}"/>\
-<div class="file-toolbar">\
-{{toolbar}}\
-</div>\
-<div class="file-content">\
-{{content}}\
-</div>\
-</div>',
 
-toolbar: '<a href="#" title="{{title}}" class="{{class}}"><img src="{{url}}" title="{{title}}" alt="{{title}}" /></a>',
-
-image: '',
-},
   init: function() {
     $("#tabs").tabs({
       cache: true,
@@ -57,9 +43,20 @@ $.messagebox(lang.dialog.error, lang.posteditor.emptytitle);
 
   init_files: function() {
 $.litejson({method: "files_get", idpost: ltoptions.idpost}, function (r) {
+$("#posteditor-filelist").remove();
+    var tabs = $("#posteditor-files-tab");
+var html = tabs.get(0).firstChild.nodeValue;
+$(tabs.get(0).firstChild).remove();
+tabs.html(html);
+
 $.posteditor.init_file_templates();
 var list = $.posteditor.get_filelist(r.files);
-    $('#filetabs').tabs({cache: true});
+
+
+tabs.tabs({
+cache: true,
+
+});
 
       //$("input[id^='addfilesbutton']").live('click', addtocurrentfiles);
       $(document).on("click", "input[id^='addfilesbutton']", addtocurrentfiles);

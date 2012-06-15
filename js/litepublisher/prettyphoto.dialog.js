@@ -40,6 +40,12 @@
       ]
     });
   };
+
+  $.confirmdelete= function(callback) {
+$.confirmbox(lang.dialog.confirm, lang.dialog.confirmdelete, lang.dialog.yes, lang.dialog.no, function(index) {
+if (index == 0) callback();
+});
+};
   
   $.fn.prettyPhotoDialog = function(buttons) {
     $.prettyPhotoDialog({
