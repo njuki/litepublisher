@@ -88,8 +88,9 @@ return false;
 
 get_fileitem: function(id) {
 var item =this.files[id];
+item.link = ltoptions.files + "/files/" + item.url;
 type = (item["type"] in this.templates) ? item["type"] : "file";
-if (parseInt(item["preview"]) != 0) item["img"] = Mustache.render(this.templates["preview"], this.files[item["preview"]]);
+if (parseInt(item["preview"]) != 0) item.previewlink = ltoptions.files + "/files/" + this.files[item["preview"]]["url"];
 var html = Mustache.render(this.templates.item, {
 id: item["id"],
 content: Mustache.render(this.templates[type], item)

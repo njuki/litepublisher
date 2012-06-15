@@ -11,7 +11,10 @@ item: '<div class="file-item">\
 </div>\
 </div>',
 
-image: '',
+image: '<a rel="prettyPhoto[gallery-fileman]" href="{{link}}"><img src="{{previewlink}}" title="{{title}}" alt="{{description}}" /></a>',
+
+file: '
+',
 
 tabs: '<div id="upload"><span id="uploadbutton"></span></div>\
 <div id="progressbar"></div>\
