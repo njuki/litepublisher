@@ -1,6 +1,7 @@
 (function( $ ){
 $.fileman = {
-items: [],
+items: {},
+curr: [],
 
 init: function(holder) {
 this.init_templates();
@@ -17,14 +18,20 @@ $.fileman.loadpage(ui.panel, $(ui.panel).data("page"));
 
 $.litejson({method: "files_get", idpost: ltoptions.idpost}, function (r) {
 $.fileman.set_tabs_count(r.count);
-$.fileman.joinitems(r.files);
-$fileman.setpage("#filepage-0", r.files);
+for (var id in r.files) {
+$.fileman.curr.push(id);
+$.fileman.items[id] = r.files[id];
+}
+
+$fileman.setpage("#current-files", r.files);
+//to assign events
+$fileman.setpage("#new-files", []);
 });
 
         ltoptions.swfu = createswfu($.fileman.uploaded);      
 
       $('form:first').submit(function() {
-        $("input[name='files']").val(getpostfiles());
+        $("input[name='files']").val($.fileman.curr.join(','));
       });
   },
 
@@ -36,11 +43,12 @@ this.templates[prop] = Mustache.render(this.templates[prop], lang.posteditor);
 },
 
 set_tabs_count: function(count) {
-if (count < 1) count = 1;
+if (count < 1) return;
 var tabs = $("#posteditor-files-tabs");
 for (var i =1; i <= count; i++) {
 $('<div id="filepage-' + i + '"></div>').appendTo(tabs).data("page", i).data("files", "empty");
 tabs.tabs( "add" , "#filepage-" + i, i);
+}
 },
 
 setpage: function(uipanel, files) {
@@ -52,7 +60,8 @@ $(this.get_fileitem(id)).appendTo(panel).data("idfile", id);
 
 panel.on("click", ".toolbar a", function() {
 var idfile = $(this).closest(".file-item").data("idfile");
-switch($(this).class()) {
+switch(
+$(this).attr("class")) {
 case "add-toolbutton":
 $.fileman.add(idfile);
 break;
@@ -95,48 +104,7 @@ this.items[id] = files[id];
 },
 
 uploaded: function(file, serverData) {
-  var haschilds = $("#newfilestab").children().length > 0;
-  $("#newfilestab").append(serverData);
-  var html = $("#newfilestab").children(":last").html();
-  if (haschilds) {
-    $("#newfilestab").children(":last").remove();
-    $("#newfilestab").children(":first").append(html);
-  }
-  html =str_replace(
-  ['uploaded-', 'new-post-', 'newfile-'],
-  ['curfile-', 'curpost-', 'currentfile-'],
-  html);
-  $('#currentfilestab > :first').append(html);
 }
-
-
-
-  function addtocurrentfiles() {
-    $("input:checked[id^='itemfilepage']").each(function() {
-      $(this).attr('checked', false);
-      var id = $(this).val();
-      if ($("#currentfile-" + id).length == 0) {
-        var html =str_replace(
-        ['pagefile-', 'pagepost-', 'itemfilepage-'],
-        ['curfile-', 'curpost-', 'currentfile-'],
-        $('<div></div>').append($( this).parent().clone() ).html());
-        // outer html prev line
-        //alert(html);
-        $('#currentfilestab > :first').append(html);
-      }
-    });
-  }
-  
-  function getpostfiles() {
-    var files = [];
-    $("input[id^='currentfile']").each(function() {
-      files.push($(this).val());
-    });
-    return files.join(',');
-  }
-  
-
-
 
 };
 })( jQuery );
