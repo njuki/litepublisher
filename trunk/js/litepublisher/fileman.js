@@ -13,22 +13,13 @@ if ("empty" == $(ui.panel).data("files")) {
 $.fileman.loadpage(ui.panel, $(ui.panel).data("page"));
 }
 }
-}
 });
 
 $.litejson({method: "files_get", idpost: ltoptions.idpost}, function (r) {
 $.fileman.set_tabs_count(r.count);
-var list = $.fileman.get_filelist(r.files);
-
-      //$("input[id^='addfilesbutton']").live('click', addtocurrentfiles);
-      $(document).on("click", "input[id^='addfilesbutton']", addtocurrentfiles);
-      
-      $("#deletecurrentfiles").click(function() {
-        $("input:checked[id^='currentfile']").each(function() {
-          $(this).parent().remove();
-        } );
-        return false;
-      });
+$.fileman.joinitems(r.files);
+$fileman.setpage("#filepage-0", r.files);
+});
 
         ltoptions.swfu = createswfu($.fileman.uploaded);      
 
@@ -45,19 +36,38 @@ this.templates[prop] = Mustache.render(this.templates[prop], lang.posteditor);
 },
 
 set_tabs_count: function(count) {
+if (count < 1) count = 1;
 var tabs = $("#posteditor-files-tabs");
 for (var i =1; i <= count; i++) {
-$('<div id="filetab-' + i + '"></div>').appendTo(tabs).data("page", i).data("files", "empty");
-tabs.tabs( "add" , "#filetab-" + i, i);
+$('<div id="filepage-' + i + '"></div>').appendTo(tabs).data("page", i).data("files", "empty");
+tabs.tabs( "add" , "#filepage-" + i, i);
 },
 
-get_filelist: function(files) {
-var result = '';
+setpage: function(uipanel, files) {
+var panel =$(uipanel);
 for (var id in files) {
 if (parseInt(fileitem['parent']) != 0) continue;
-result += this.get_fileitem(id);
+$(this.get_fileitem(id)).appendTo(panel).data("idfile", id);
 }
-return result;
+
+panel.on("click", ".toolbar a", function() {
+var idfile = $(this).closest(".file-item").data("idfile");
+switch($(this).class()) {
+case "add-toolbutton":
+$.fileman.add(idfile);
+break;
+
+case "delete-toolbutton":
+$.fileman.del(idfile);
+break;
+
+case "property-toolbutton":
+$.fileman.editprops(idfile);
+break;
+}
+
+return false;
+});
 },
 
 get_fileitem: function(id) {
@@ -74,7 +84,7 @@ loadpage: function(uipanel, page) {
 $(uipanel).data("files", "loading");
 $.litejson({method: "files_getpage", page: page - 1}, function(r) {
 $.fileman.joinitems(r.files);
-$(uipanel).
+$.fileman.setpage(uipanel, r.files);
 });
 },
 
