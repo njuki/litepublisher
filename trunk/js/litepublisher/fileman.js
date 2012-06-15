@@ -10,16 +10,15 @@ tabs.tabs({
 cache: true,
     select: function(event, ui) {
 if ("empty" == $(ui.panel).data("files")) {
-$.posteditor.load_file_page(ui.panel, $(ui.panel).data("page"));
+$.fileman.loadpage(ui.panel, $(ui.panel).data("page"));
 }
 }
 }
 });
 
 $.litejson({method: "files_get", idpost: ltoptions.idpost}, function (r) {
-$.posteditor.set_file_tabs_count(r.count);
-var list = $.posteditor.get_filelist(r.files);
-
+$.fileman.set_tabs_count(r.count);
+var list = $.fileman.get_filelist(r.files);
 
       //$("input[id^='addfilesbutton']").live('click', addtocurrentfiles);
       $(document).on("click", "input[id^='addfilesbutton']", addtocurrentfiles);
@@ -31,19 +30,29 @@ var list = $.posteditor.get_filelist(r.files);
         return false;
       });
 
-        ltoptions.swfu = createswfu($.posteditor.uploaded);      
+        ltoptions.swfu = createswfu($.fileman.uploaded);      
 
       $('form:first').submit(function() {
         $("input[name='files']").val(getpostfiles());
       });
   },
 
+init_templates: function() {
+lang.posteditor.iconurl =ltoptions.files + "/js/litepublisher/icons/";
+for (var prop in this.templates) {
+this.templates[prop] = Mustache.render(this.templates[prop], lang.posteditor);
+}
+},
+
+set_tabs_count: function(count) {
+var tabs = $("#posteditor-files-tabs");
+for (var i =1; i <= count; i++) {
+$('<div id="filetab-' + i + '"></div>').appendTo(tabs).data("page", i).data("files", "empty");
+tabs.tabs( "add" , "#filetab-" + i, i);
+},
+
 get_filelist: function(files) {
 var result = '';
-for (var id in files) {
-this.files[id] = files[id];
-}
-
 for (var id in files) {
 if (parseInt(fileitem['parent']) != 0) continue;
 result += this.get_fileitem(id);
@@ -61,10 +70,18 @@ content: Mustache.render(this.templates[type], item)
 });
 },
 
-load_file_page: function(uipanel, page) {
+loadpage: function(uipanel, page) {
+$(uipanel).data("files", "loading");
 $.litejson({method: "files_getpage", page: page - 1}, function(r) {
-$.posteditor.files.setpage(page, r.files);
+$.fileman.joinitems(r.files);
+$(uipanel).
 });
+},
+
+joinitems: function(files) {
+for (var id in files) {
+this.items[id] = files[id];
+}
 },
 
 uploaded: function(file, serverData) {
