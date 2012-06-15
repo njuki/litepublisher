@@ -41,11 +41,14 @@ $langjs = "var lang;\nif (lang == undefined) lang = {};\n";
   array(
 'emptytitle' => tlocal::get('editor', 'emptytitle'),
 'upload' => tlocal::i()->upload,
+'currentfiles' => $lang->currentfiles,
+'newupload' => $lang->newupload,
 'add' => $lang->add,
 'del' => $lang->delete,
 'property' => $lang->property,
-'currentfiles' => $lang->currentfiles,
-'newupload' => $lang->newupload,
+'title' => $lang->title,
+'description' => $lang->description,
+'keywords' => $lang->keywords,
   )
   )));
 
