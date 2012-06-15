@@ -24,9 +24,8 @@ $fileperm\
     </ul>\
 <div id="current-files"></div>\
 <div id="new-files"></div>\
-</div>
+</div>\
 <p class="hidden"><input type="hidden" name="files" value="" /></p>'
-
 };
 
 })( jQuery );
