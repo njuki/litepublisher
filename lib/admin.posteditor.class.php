@@ -21,8 +21,8 @@ class tposteditor extends tadminmenu {
     $template->ltoptions['idpost'] = $this->idget();
     $template->ltoptions['lang'] = litepublisher::$options->language;
 
+      $result .= '<link type="text/css" href="$site.files/js/litepublisher/css/fileman.css" rel="stylesheet" />';
     $result .= $template->getjavascript($template->jsmerger_posteditor);
-      $result .= '<link type="text/css" href="$site.files/js/litepublisher/css/posteditor.css" rel="stylesheet" />';
 return $result;
   }
   

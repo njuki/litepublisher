@@ -90,6 +90,9 @@ $js = "var lang;\nif (lang == undefined) lang = {};\n";
   $self->add($section, '/js/jquery/ui-$site.jqueryui_version/jquery.ui.progressbar.min.js');
   self->add($section, '/js/plugins/mustache.min.js');
   $self->add($section, '/js/litepublisher/POSTEDITOR.min.js');
+  $self->add($section, '/js/litepublisher/fileman.min.js');
+  $self->add($section, '/js/litepublisher/fileman.templates.min.js');
+
   $self->addtext($section, 'lang', $js . sprintf('lang.admin = %s;',  json_encode(
   array(
 'emptytitle' => tlocal::get('editor', 'emptytitle'),
@@ -98,6 +101,8 @@ $js = "var lang;\nif (lang == undefined) lang = {};\n";
 'add' => $lang->add,
 'del' => $lang->delete,
 'property' => $lang->property,
+'currentfiles' => $lang->currentfiles,
+'newupload' => $lang->newupload,
   )
   )));
   
