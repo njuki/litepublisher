@@ -22,10 +22,11 @@ $fileperm\
         <li><a href="#new-files"><span>{{newupload}}</span></a></li>\
     </ul>\
 <div id="current-files"></div>\
-<div id="new-files"></div>\
+<div id="new-files" class="files-tab"></div>\
 </div>\
 <p class="hidden"><input type="hidden" name="files" value="" /></p>',
 
+tab: '<div class="files-tab" id="filepage-{{index}}"></div>',
 fileprops: '<p><label><input type="text" name="fileprop-title" value="" size="22" />\
 <strong>{{title}}</strong></label></p>\
 \
