@@ -24,7 +24,7 @@ return false;
       $.posteditor.init_raw_tabs();
       return false;
     });
-
+      $.fileman.init("#posteditor-files");
     $("#posteditor-init-files").one('click', function() {
       $.fileman.init("#posteditor-files");
       return false;

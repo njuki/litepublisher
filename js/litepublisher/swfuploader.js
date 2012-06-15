@@ -52,9 +52,14 @@ function createswfu (upload_success_handler) {
   if (cookie == "") cookie = get_cookie("admin");
   var settings = {
     flash_url : url + "/js/swfupload/swfupload.swf",
-    upload_url: url + "/admin/ajaxposteditor.htm?get=upload&id=" + ltoptions.idpost,
+    upload_url: url + "/admin/jsonserver.php",
     // prevent_swf_caching: false,
-  post_params: {"litepubl_user": cookie, litepubl_user_id: get_cookie("litepubl_user_id")},
+  post_params: {
+litepubl_user: cookie, 
+litepubl_user_id: get_cookie("litepubl_user_id"),
+method: "files_upload",
+id: ltoptions.idpost
+},
     file_size_limit : "100 MB",
     file_types : "*.*",
     file_types_description : "All Files",
@@ -82,7 +87,7 @@ function createswfu (upload_success_handler) {
     upload_success_handler : upload_success_handler,
     upload_complete_handler : uploadComplete
   };
-  
+
   if (ltoptions.lang != 'en') {
     settings.button_text= '<span class="upload_button">' + lang.posteditor.upload + '</span>';
     settings.button_image_url= ltoptions.files + "/js/swfupload/images/XPButtonNoText_160x22.png";

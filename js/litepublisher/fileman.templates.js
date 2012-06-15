@@ -14,7 +14,7 @@ item: '<div class="file-item">\
 image: '<a rel="prettyPhoto[gallery-fileman]" href="{{link}}"><img src="{{previewlink}}" title="{{title}}" alt="{{description}}" /></a>',
 
 file: '<p>\
-{{iconurl =ltoptions.files + "/js/litepublisher/icons/";file}}: <a href="{{link}}" title="{{title}}">{{description}}</a><br />\
+{{lang.file}}: <a href="{{link}}" title="{{title}}">{{description}}</a><br />\
 {{lang.filesize}}: <span class="text-right">{{size}}</span><br />\
 {{lang.title}}: {{title}}<br />\
 {{lang.description}}: {{description}}<br />\
