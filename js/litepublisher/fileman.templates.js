@@ -1,7 +1,6 @@
 (function( $ ){
 $.fileman.templates = {
 item: '<div class="file-item">\
-<span class="value-title" title="{{id}}"/>\
 <div class="file-toolbar">\
 <a href="#" title="{{add}}" class="add-toolbutton"><img src="{{iconurl}}add.png" title="{{add}}" alt="{{add}}" /></a>\
 <a href="#" title="{{del}}" class="delete-toolbutton"><img src="{{iconurl}}delete.png" title="{{del}}" alt="{{del}}" /></a>\
