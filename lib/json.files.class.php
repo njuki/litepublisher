@@ -26,7 +26,7 @@ return false;
     $this->error('Forbidden', 403);
   }
   
-  public function files_get(array $args) {
+  public function files_getpost(array $args) {
     $idpost = (int) $args['idpost'];
     if (!$this->auth($idpost)) return $this->forbidden();
 $result = array();
@@ -43,6 +43,34 @@ $result['files'] = $files->db->res2items($files->db->query("id in ($items) and p
 }
 
 return $result;
+}
+
+  public function files_getpage(array $args) {
+    if (!litepublisher::$options->hasgroup('author')) return $this->forbidden();
+$page = (int) $args['page'];
+$perpage = 20;
+$from = $page * $perpage;
+$where = litepublisher::$options->ingroup('editor') ? 'id > 0' : ' author = ' . litepublisher::$options->user;
+$files = tfiles::i();
+return array(
+'files' => $files->db->res2items($files->db->query("$where order by posted limit $from, $perpage"));
+);
+}
+
+  public function files_setprops(array $args) {
+    if (!litepublisher::$options->hasgroup('author')) return $this->forbidden();
+$id = (int) $args['idfile'];
+$files = tfiles::i();
+if (!$files->itemexists($id)) return $this->forbidden();
+$item= $files->getitem($id);
+$item['title'] = $args['title'];
+$item['description'] = $args['description'];
+$item['keywords'] = $args['keywords'];
+$item = $files->escape($item);
+$files->db->updateassoc($item);
+return array(
+'item' => $item
+);
 }
 
 }//class

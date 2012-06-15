@@ -4,6 +4,8 @@ function update532() {
 litepublisher::$site->jqueryui_version = '1.8.21';
 litepublisher::$site->save();
 
+litepublisher::$classes->add('tjsonfiles', 'json.files.class.php');
+
   $css = tcssmerger::i();
 $css->lock();
 $css->delete('default', '/js/litepublisher/prettyphoto.dialog.css');
