@@ -2,6 +2,7 @@
 $.fileman = {
 items: {},
 curr: [],
+indialog: false,
 
 init: function(holder) {
 this.init_templates();
@@ -141,10 +142,12 @@ return false;
 },
 
 editprops: function(idfile) {
+if (this.indialog) return false;
+this.indialog = true;
 var fileitem = this.items[idfile];
 
 $.prettyPhotoDialog({
-title: ltoptions.siteurl_dialog.title,
+title: lang.posteditor.property,
 html: this.templates.fileprops,
 open: function(holder) {
 $("input[name='fileprop-title']", holder).val(fileitem.title);
@@ -158,12 +161,14 @@ buttons: [
         click: function() {
 var url = $.trim($("input[name='text_download_site']").val());
           $.prettyPhoto.close();
+$.fileman.indialog = false;
 }
     },
 {
         title: lang.dialog.cancel,
         click: function() {
           $.prettyPhoto.close();
+$.fileman.indialog = false;
 }
     }
 ]
