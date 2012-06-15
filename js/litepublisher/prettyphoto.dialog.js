@@ -61,6 +61,7 @@ if (index == 0) callback();
       title: "",
       html: "",
       width: 300,
+    open: function() {},
     close: function() {},
       buttons: [
       {
@@ -105,6 +106,7 @@ var button = '<button type="button" class="pp_dialog_btn_{index}">{title}</butto
           $(".pp_dialog_btn_" + i).data("index", i).click(options.buttons[i].click);
         }
         $(".pp_dialog_btn_0").focus();
+        if ($.isFunction(options.open)) options.open($(".pp_inline"));
       },
       
       callback: function(){
