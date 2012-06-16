@@ -40,12 +40,12 @@
       ]
     });
   };
-
+  
   $.confirmdelete= function(callback) {
-$.confirmbox(lang.dialog.confirm, lang.dialog.confirmdelete, lang.dialog.yes, lang.dialog.no, function(index) {
-if (index == 0) callback();
-});
-};
+    $.confirmbox(lang.dialog.confirm, lang.dialog.confirmdelete, lang.dialog.yes, lang.dialog.no, function(index) {
+      if (index == 0) callback();
+    });
+  };
   
   $.fn.prettyPhotoDialog = function(buttons) {
     $.prettyPhotoDialog({
@@ -98,6 +98,7 @@ var button = '<button type="button" class="pp_dialog_btn_{index}">{title}</butto
       keyboard_shortcuts: false, /* Set to false if you open forms inside prettyPhoto */
       show_title: false, /* true/false */
       social_tools: false,
+      hideflash: true,
       
       changepicturecallback: function(){
         div.remove();

@@ -1,9 +1,11 @@
 .file-item {
 border: 1px solid black;
-	width: 100%;
 	float: left;
 	overflow: hidden;
-
+/*
+position:relative;
+*/
+display:inline;
 }
 
 .file-toolbar {
