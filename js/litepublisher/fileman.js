@@ -67,14 +67,16 @@ lang: lang.posteditor,
     },
     
     setpage: function(uipanel, files) {
-      var panel =$(uipanel);
+      var panel = $(uipanel);
       for (var id in files) {
         if (parseInt(files[id]['parent']) != 0) continue;
         panel.append(this.get_fileitem(id));
       }
+
+this.setborders(panel);
       
       panel.on("click", ".file-toolbar a", function() {
-        var holder = $(this).closest(".file-item")
+        var holder = $(this).closest(".file-item");
         var idfile = holder.data("idfile");
         
         switch($(this).attr("class")) {
@@ -93,6 +95,13 @@ lang: lang.posteditor,
         
         return false;
       });
+
+      panel.on("click", "a.file-image", function() {
+var self = $(this);
+$.prettyPhoto.open(self.attr("href"), self.attr("title"), $("img", self).attr("alt"));
+return false;
+});
+
     },
     
     get_fileitem: function(id) {
@@ -145,19 +154,53 @@ try {
       $("#new-files").append($.fileman.get_fileitem(idfile));
           } catch(e) { alert('error ' + e.message); }
     },
+
+setborders: function(uipanel) {
+var all = $(".file-item", uipanel);
+if (all.length == 0) return;
+all.removeClass("border-right border-bottom");
+var last = $(".file-item:last", uipanel);
+last.addClass("border-right border-bottom");
+var lastpos = last.position();
+//find max
+var maxleft = lastpos.left;
+all.each(function() {
+var pos = $(this).position();
+if (pos.top == lastpos.top) $(this).addClass("border-bottom");
+if (pos.left > lastpos.left) maxleft = pos.left;
+});
+//add border-right
+var maxtop = 0; //top from right borders
+all.each(function() {
+var pos = $(this).position();
+if (maxleft == pos.left) {
+$(this).addClass("border-right");
+if (pos.top > maxtop) maxtop = pos.top;
+}
+});
+
+//add border to prev row of last
+if (maxtop < lastpos.top) {
+all.each(function() {
+if (maxtop == $(this).position().top) $(this).addClass("border-bottom");
+});
+}
+},
     
     add: function(idfile) {
       if ($.inArray(idfile, this.curr) >= 0) return;
       this.curr.push(idfile);
       
-      $("#current-files").append(this.get_fileitem(idfile));
+      this.setborders($("#current-files").append(this.get_fileitem(idfile)));
     },
     
     del: function(idfile, holder) {
       var i = $.inArray(idfile, this.curr);
       if (i < 0) return;
       delete this.curr[i];
+var parent = holder.parent();
       holder.remove();
+this.setborders(parent);
     },
     
     editprops: function(idfile, owner) {
