@@ -47,15 +47,13 @@
     },
     
     init_templates: function() {
-      function repl(str, name, offset, src) {
-        if (name in lang.posteditor) return lang.posteditor[name];
-        return str;
-      }
-      
-      var iconurl= ltoptions.files + "/js/litepublisher/icons/";
-  var re = /\{\{lang\.(\w*)\}\}/gim;
+var view ={
+lang: lang.posteditor,
+      iconurl:  ltoptions.files + "/js/litepublisher/icons/"
+};
+
       for (var prop in this.templates) {
-    this.templates[prop] = this.templates[prop].replace(re, repl).replace(/\{\{iconurl\}\}/gm, iconurl);
+    this.templates[prop] = $.simpletml(this.templates[prop], view);
       }
     },
     
@@ -103,9 +101,9 @@
       type = (item["media"] in this.templates) ? item["media"] : "file";
       item.previewlink = '';
       if ((parseInt(item["preview"]) != 0) &&(item.preview in this.items)) item.previewlink = ltoptions.files + "/files/" + this.items[item["preview"]]["filename"];
-      var html = Mustache.render(this.templates.item, {
+      var html = $.simpletml(this.templates.item, {
         id: item["id"],
-        content: Mustache.render(this.templates[type], item)
+        content: $.simpletml(this.templates[type], item)
       });
       
       return $(html).data("idfile", id);
