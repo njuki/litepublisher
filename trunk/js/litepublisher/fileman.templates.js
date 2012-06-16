@@ -11,7 +11,7 @@
     </div>\
     </div>',
     
-image: '<a rel="prettyPhoto[gallery-fileman]" href="{{link}}"><img src="{{previewlink}}" title="{{title}}" alt="{{description}}" /></a>',
+image: '<a rel="prettyPhoto[gallery-fileman]" href="{{link}}" class="file-image"><img src="{{previewlink}}" title="{{title}}" alt="{{description}}" /></a>',
     
     file: '<p>\
 {{lang.file}}: <a href="{{link}}" title="{{title}}">{{description}}</a><br />\
@@ -35,6 +35,7 @@ image: '<a rel="prettyPhoto[gallery-fileman]" href="{{link}}"><img src="{{previe
     <p class="hidden"><input type="hidden" name="files" value="" /></p>',
     
 tab: '<div class="files-tab" id="filepage-{{index}}"></div>',
+
     fileprops: '<p><label><input type="text" name="fileprop-title" value="" size="22" />\
 <strong>{{lang.title}}</strong></label></p>\
     \
