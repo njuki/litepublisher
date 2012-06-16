@@ -132,7 +132,7 @@ class titemsposts extends titems {
   }
   
   public function getitems($idpost) {
-      return litepublisher::$db->res2id(litepublisher::$db->query("select item from $this->thistable where post = $idpost"));
+    return litepublisher::$db->res2id(litepublisher::$db->query("select item from $this->thistable where post = $idpost"));
   }
   
   public function getposts($iditem) {

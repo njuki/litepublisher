@@ -1475,7 +1475,7 @@ class tclasses extends titems {
       if (file_exists($filename)) require_once($filename);
       return;
     }
-
+    
     if (in_array($filename, $this->included_files)) return;
     $this->included_files[] = $filename;
     if ($s =  tfilestorage::$memcache->get($filename)) {

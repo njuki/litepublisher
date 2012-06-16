@@ -68,20 +68,20 @@ class tfiles extends titems {
   }
   
   public function insert(array $item) {
-$item = $this->escape($item);
-      $id = $this->db->add($item);
+    $item = $this->escape($item);
+    $id = $this->db->add($item);
     $this->items[$id] = $item;
     $this->changed();
     $this->added($id);
     return $id;
   }
-
-public function escape(array $item) {
-foreach (array('title', 'description', 'keywords') as $name) {
-$item[$name] = tcontentfilter::escape(tcontentfilter::unescape($item[$name]));
-}
-return $item;
-}
+  
+  public function escape(array $item) {
+    foreach (array('title', 'description', 'keywords') as $name) {
+      $item[$name] = tcontentfilter::escape(tcontentfilter::unescape($item[$name]));
+    }
+    return $item;
+  }
   
   public function edit($id, $title, $description, $keywords) {
     $item = $this->getitem($id);
@@ -90,14 +90,14 @@ return $item;
     $item['title'] = $title;
     $item['description'] = $description;
     $item['keywords'] = $keywords;
-$item = $this->escape($item);
+    $item = $this->escape($item);
     $this->items[$id] = $item;
-      $this->db->updateassoc($item);
+    $this->db->updateassoc($item);
     $this->changed();
     $this->edited($id);
     return true;
   }
-
+  
   public function delete($id) {
     if (!$this->itemexists($id)) return false;
     $list = $this->itemsposts->getposts($id);

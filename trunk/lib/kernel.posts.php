@@ -132,13 +132,7 @@ class titemsposts extends titems {
   }
   
   public function getitems($idpost) {
-    if (dbversion) {
-      return litepublisher::$db->res2id(litepublisher::$db->query("select item from $this->thistable where post = $idpost"));
-    } elseif (isset($this->items[$idpost])) {
-      return $this->items[$idpost];
-    } else {
-      return false;
-    }
+    return litepublisher::$db->res2id(litepublisher::$db->query("select item from $this->thistable where post = $idpost"));
   }
   
   public function getposts($iditem) {
@@ -2377,16 +2371,19 @@ class tfiles extends titems {
   }
   
   public function insert(array $item) {
-    if (dbversion) {
-      $id = $this->db->add($item);
-    } else {
-      $id = ++$this->autoid;
-    }
+    $item = $this->escape($item);
+    $id = $this->db->add($item);
     $this->items[$id] = $item;
-    if (!$this->dbversion) $this->save();
     $this->changed();
     $this->added($id);
     return $id;
+  }
+  
+  public function escape(array $item) {
+    foreach (array('title', 'description', 'keywords') as $name) {
+      $item[$name] = tcontentfilter::escape(tcontentfilter::unescape($item[$name]));
+    }
+    return $item;
   }
   
   public function edit($id, $title, $description, $keywords) {
@@ -2396,12 +2393,9 @@ class tfiles extends titems {
     $item['title'] = $title;
     $item['description'] = $description;
     $item['keywords'] = $keywords;
+    $item = $this->escape($item);
     $this->items[$id] = $item;
-    if ($this->dbversion) {
-      $this->db->updateassoc($item);
-    } else {
-      $this->save();
-    }
+    $this->db->updateassoc($item);
     $this->changed();
     $this->edited($id);
     return true;
