@@ -8,7 +8,7 @@
 function fileDialogComplete(numFilesSelected, numFilesQueued) {
 $('#progressbar').progressbar({value: 0});
   var url = ltoptions.uploadurl == undefined ? ltoptions.url: ltoptions.uploadurl;
-  this.setUploadURL(url + "/admin/ajaxposteditor.htm?get=upload&id=" + ltoptions.idpost + '&random=' + Math.random());
+  this.setUploadURL(url + '/admin/jsonserver.php?random=' + Math.random());
   var perm = $("#combo-idperm_upload");
   if (perm.length) this.addPostParam("idperm", perm.val());
   this.startUpload();
@@ -57,8 +57,7 @@ function createswfu (upload_success_handler) {
     post_params: {
       litepubl_user: cookie,
       litepubl_user_id: get_cookie("litepubl_user_id"),
-      method: "files_upload",
-      id: ltoptions.idpost
+      method: "files_upload"
     },
     file_size_limit : "100 MB",
     file_types : "*.*",
