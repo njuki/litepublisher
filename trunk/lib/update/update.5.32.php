@@ -33,14 +33,13 @@ $langjs = "var lang;\nif (lang == undefined) lang = {};\n";
 
   $section = 'posteditor';
   $js->add($section, '/js/swfupload/swfupload.js');
-  //$js->add($section, '/js/litepublisher/swfuploader.min.js');
+  $js->add($section, '/js/litepublisher/swfuploader.min.js');
   $js->add($section, '/js/jquery/ui-$site.jqueryui_version/jquery.ui.progressbar.min.js');
-  $js->add($section, '/js/plugins/mustache.min.js');
-/*
+  $js->add($section, '/js/litepublisher/simpletml.min.js');
   $js->add($section, '/js/litepublisher/posteditor.min.js');
   $js->add($section, '/js/litepublisher/fileman.min.js');
   $js->add($section, '/js/litepublisher/fileman.templates.min.js');
-*/
+
   $js->addtext($section, 'lang', sprintf('lang.posteditor = %s;',  json_encode(
   array(
 'emptytitle' => $lang->emptytitle,

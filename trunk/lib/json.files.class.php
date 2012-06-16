@@ -42,6 +42,10 @@ class tjsonfiles extends tevents {
         $result['files'] = $files->db->res2items($files->db->query("id in ($items) and parent in ($items)"));
       }
     }
+
+          if (litepublisher::$options->show_file_perm) {
+$result['fileperm'] = tadminperms::getcombo(0, 'idperm_upload');
+}
     
     return $result;
   }
