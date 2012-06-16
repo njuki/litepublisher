@@ -158,33 +158,14 @@ try {
 setborders: function(uipanel) {
 var all = $(".file-item", uipanel);
 if (all.length == 0) return;
-all.removeClass("border-right border-bottom");
-var last = $(".file-item:last", uipanel);
-last.addClass("border-right border-bottom");
-var lastpos = last.position();
-//find max
-var maxleft = lastpos.left;
+all.removeClass("border-top border-left");
+var firstpos = $(".file-item:first", uipanel).position();
 all.each(function() {
-var pos = $(this).position();
-if (pos.top == lastpos.top) $(this).addClass("border-bottom");
-if (pos.left > lastpos.left) maxleft = pos.left;
+var self = $(this);
+var pos = self.position();
+if (pos.left == firstpos.left) self.addClass("border-left");
+if (pos.top == firstpos.top) self.addClass("border-top");
 });
-//add border-right
-var maxtop = 0; //top from right borders
-all.each(function() {
-var pos = $(this).position();
-if (maxleft == pos.left) {
-$(this).addClass("border-right");
-if (pos.top > maxtop) maxtop = pos.top;
-}
-});
-
-//add border to prev row of last
-if (maxtop < lastpos.top) {
-all.each(function() {
-if (maxtop == $(this).position().top) $(this).addClass("border-bottom");
-});
-}
 },
     
     add: function(idfile) {
