@@ -98,7 +98,7 @@ var button = '<button type="button" class="pp_dialog_btn_{index}">{title}</butto
       keyboard_shortcuts: false, /* Set to false if you open forms inside prettyPhoto */
       show_title: false, /* true/false */
       social_tools: false,
-      hideflash: true,
+      //hideflash: true,
       
       changepicturecallback: function(){
         div.remove();

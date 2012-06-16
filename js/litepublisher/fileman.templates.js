@@ -2,9 +2,9 @@
   $.fileman.templates = {
     item: '<div class="file-item">\
     <div class="file-toolbar">\
-<a href="#" title="{{lang.add}}" class="add-toolbutton"><img src="{{iconurl}}add.png" title="{{lang.add}}" alt="{{lang.add}}" /></a>\
-<a href="#" title="{{lang.del}}" class="delete-toolbutton"><img src="{{iconurl}}delete.png" title="{{lang.del}}" alt="{{lang.del}}" /></a>\
-<a href="#" title="{{lang.property}}" class="property-toolbutton"><img src="{{iconurl}}property.png" title="{{lang.property}}" alt="{{lang.property}}" /></a>\
+<a href="#" title="{{lang.add}}" class="add-toolbutton"><img src="{{iconurl}}add.png" title="{{lang.add}}" alt="{{lang.add}}" border="0" /></a>\
+<a href="#" title="{{lang.del}}" class="delete-toolbutton"><img src="{{iconurl}}delete.png" title="{{lang.del}}" alt="{{lang.del}}" border="0" /></a>\
+<a href="#" title="{{lang.property}}" class="property-toolbutton"><img src="{{iconurl}}property.png" title="{{lang.property}}" alt="{{lang.property}}" border="0" /></a>\
     </div>\
     <div class="file-content">\
 {{{content}}}\

@@ -129,6 +129,8 @@
     },
     
     uploaded: function(file, serverData) {
+alert(serverData);
+try {
       var r = $.parseJSON(serverData);
       /* r = {
         id: int idfile,
@@ -143,6 +145,7 @@
       
       $("#current-files").append($.fileman.get_fileitem(idfile));
       $("#new-files").append($.fileman.get_fileitem(idfile));
+          } catch(e) { alert('error ' + e.message); }
     },
     
     add: function(idfile) {
