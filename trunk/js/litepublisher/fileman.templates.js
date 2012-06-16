@@ -7,7 +7,7 @@
 <a href="#" title="{{lang.property}}" class="property-toolbutton"><img src="{{iconurl}}property.png" title="{{lang.property}}" alt="{{lang.property}}" border="0" /></a>\
     </div>\
     <div class="file-content">\
-{{{content}}}\
+{{content}}\
     </div>\
     </div>',
     
