@@ -17,8 +17,8 @@
   `keywords` text  NOT NULL,
 
   PRIMARY KEY  (`id`),
-  KEY `parent` (`parent`),
   KEY `preview` (`preview`),
  KEY `author` (`author`),
+  KEY `parent` (`parent`),
   KEY `media` (`media`),
   KEY `posted` (`posted`)
