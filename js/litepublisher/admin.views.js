@@ -77,7 +77,7 @@ function _init_views() {
     
     $("input[id^='delete_']").click(function() {
       var idview = $(this).attr("id").split("_").pop();
-          $.confirmdelete(function() {
+      $.confirmdelete(function() {
         $("#action").val("delete");
         $("#action_value").val(idview);
         $("#form").submit();
@@ -124,7 +124,7 @@ function _init_views() {
       var a = $(this).attr("id").split("_");
       var idwidget = a.pop();
       var idview = a.pop();
-          $.confirmdelete(function() {
+      $.confirmdelete(function() {
         $("#widget_" + idview + "_" + idwidget).remove();
         $("#widgetoptions_" + idview + "_" + idwidget).hide();
       });
