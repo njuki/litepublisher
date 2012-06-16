@@ -22,6 +22,10 @@
         
       $.litejson({method: "files_getpost", idpost: ltoptions.idpost}, function (r) {
           try {
+if ("fileperm" in r) {
+$("posteditor-fileperms").html(r.fileperm);
+}
+
             $.fileman.set_tabs_count(r.count);
             for (var id in r.files) {
               $.fileman.curr.push(id);

@@ -21,9 +21,10 @@ image: '<a rel="prettyPhoto[gallery-fileman]" href="{{link}}" class="file-image"
 {{lang.keywords}}: {{keywords}}<br />\
     </p>',
     
-    tabs: '<div id="upload"><span id="uploadbutton"></span></div>\
+    tabs: '<div id="posteditor-fileperms"></div>\
+<div id="upload"><span id="uploadbutton"></span></div>\
     <div id="progressbar"></div>\
-    $fileperm\
+\
     <div id="posteditor-files-tabs">\
     <ul>\
 <li><a href="#current-files"><span>{{lang.currentfiles}}</span></a></li>\
