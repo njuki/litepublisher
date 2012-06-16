@@ -20,16 +20,16 @@ class tposteditor extends tadminmenu {
     $template = ttemplate::i();
     $template->ltoptions['idpost'] = $this->idget();
     $template->ltoptions['lang'] = litepublisher::$options->language;
-
-      $result .= '<link type="text/css" href="$site.files/js/litepublisher/css/fileman.css" rel="stylesheet" />';
+    
+    $result .= '<link type="text/css" href="$site.files/js/litepublisher/css/fileman.css" rel="stylesheet" />';
     $result .= $template->getjavascript($template->jsmerger_posteditor);
-
+    
     $result .= $template->getjavascript('/js/litepublisher/swfuploader.js');
     $result .= $template->getjavascript('/js/litepublisher/POSTEDITOR.js');
     $result .= $template->getjavascript('/js/litepublisher/fileman.js');
     $result .= $template->getjavascript('/js/litepublisher/fileman.templates.js');
-
-return $result;
+    
+    return $result;
   }
   
   private static function getsubcategories($parent, array $postitems) {
@@ -112,20 +112,20 @@ return $result;
     $args->ajax = tadminhtml::getadminlink('/admin/ajaxposteditor.htm', "id=$post->id&get");
     $args->title = tcontentfilter::unescape($post->title);
     $args->categories = $this->getpostcategories($post);
-      $args->date = $post->posted != 0 ?date('d.m.Y', $post->posted) : '';
-      $args->time  = $post->posted != 0 ?date('H:i', $post->posted) : '';
-$args->url = $post->url;
-$args->title2 = $post->title2;
-$args->keywords = $post->keywords;
-$args->description = $post->description;
-$args->head = $post->data['head'];
-
-$args->raw = $post->rawcontent;
-$args->filtered = $post->filtered;
-$args->excerpt = $post->excerpt;
-$args->rss = $post->rss;
-$args->more = $post->moretitle;
-$args->upd = '';
+    $args->date = $post->posted != 0 ?date('d.m.Y', $post->posted) : '';
+    $args->time  = $post->posted != 0 ?date('H:i', $post->posted) : '';
+    $args->url = $post->url;
+    $args->title2 = $post->title2;
+    $args->keywords = $post->keywords;
+    $args->description = $post->description;
+    $args->head = $post->data['head'];
+    
+    $args->raw = $post->rawcontent;
+    $args->filtered = $post->filtered;
+    $args->excerpt = $post->excerpt;
+    $args->rss = $post->rss;
+    $args->more = $post->moretitle;
+    $args->upd = '';
   }
   
   public function getcontent() {

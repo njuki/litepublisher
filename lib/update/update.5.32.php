@@ -43,8 +43,8 @@ $langjs = "var lang;\nif (lang == undefined) lang = {};\n";
 */
   $js->addtext($section, 'lang', sprintf('lang.posteditor = %s;',  json_encode(
   array(
-'emptytitle' => tlocal::get('editor', 'emptytitle'),
-'upload' => tlocal::i()->upload,
+'emptytitle' => $lang->emptytitle,
+'upload' => $lang->upload,
 'currentfiles' => $lang->currentfiles,
 'newupload' => $lang->newupload,
 'add' => $lang->add,

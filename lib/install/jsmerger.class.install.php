@@ -79,34 +79,34 @@ $js = "var lang;\nif (lang == undefined) lang = {};\n";
   'no' => $lang->noword,
   )
   )));
-
+  
   $section = 'admin';
   $self->add($section, '/js/jquery/ui-$site.jqueryui_version/jquery-ui-$site.jqueryui_version.custom.min.js');
   $self->add($section, '/js/litepublisher/admin.min.js');
-
+  
   $section = 'posteditor';
   $self->add($section, '/js/swfupload/swfupload.js');
   $self->add($section, '/js/litepublisher/swfuploader.min.js');
   $self->add($section, '/js/jquery/ui-$site.jqueryui_version/jquery.ui.progressbar.min.js');
-  self->add($section, '/js/plugins/mustache.min.js');
+  $self->add($section, '/js/plugins/mustache.min.js');
   $self->add($section, '/js/litepublisher/posteditor.min.js');
   $self->add($section, '/js/litepublisher/fileman.min.js');
   $self->add($section, '/js/litepublisher/fileman.templates.min.js');
 
+  $lang =tlocal::admin('editor');
   $self->addtext($section, 'lang', $js . sprintf('lang.posteditor= %s;',  json_encode(
   array(
-'emptytitle' => tlocal::get('editor', 'emptytitle'),
-'upload' => tlocal::i()->upload,
-'upload' => tlocal::i()->upload,
-'currentfiles' => $lang->currentfiles,
-'newupload' => $lang->newupload,
-'add' => $lang->add,
-'del' => $lang->delete,
-'property' => $lang->property,
-'title' => $lang->title,
-'description' => $lang->description,
-'keywords' => $lang->keywords,'file' => $lang->file,
-'filesize' => $lang->filesize,
+  'emptytitle' => $lang->emptytitle,
+  'upload' => $lang->upload,
+  'currentfiles' => $lang->currentfiles,
+  'newupload' => $lang->newupload,
+  'add' => $lang->add,
+  'del' => $lang->delete,
+  'property' => $lang->property,
+  'title' => $lang->title,
+  'description' => $lang->description,
+  'keywords' => $lang->keywords,'file' => $lang->file,
+  'filesize' => $lang->filesize,
   )
   )));
   
