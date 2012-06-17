@@ -23,7 +23,7 @@
       $.litejson({method: "files_getpost", idpost: ltoptions.idpost}, function (r) {
           try {
 if ("fileperm" in r) {
-$("posteditor-fileperms").html(r.fileperm);
+$("#posteditor-fileperms").html(r.fileperm);
 }
 
             $.fileman.set_tabs_count(r.count);
@@ -34,7 +34,7 @@ $("posteditor-fileperms").html(r.fileperm);
             
             $.fileman.setpage("#current-files", r.files);
             //to assign events
-            $.fileman.setpage("#new-files", []);
+            $.fileman.setpage("#new-files", {});
         } catch(e) { alert('error ' + e.message); }
         })
         .fail( function(jq, textStatus, errorThrown) {
@@ -140,7 +140,6 @@ return false;
     },
     
     uploaded: function(file, serverData) {
-alert(serverData);
 try {
       var r = $.parseJSON(serverData);
       /* r = {
@@ -168,7 +167,6 @@ all.each(function() {
 var self = $(this);
 var pos = self.position();
 if (pos.left == firstpos.left) self.addClass("border-left");
-if (pos.top == firstpos.top) self.addClass("border-top");
 });
 },
     
