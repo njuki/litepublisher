@@ -11,7 +11,7 @@
     </div>\
     </div>',
     
-image: '<a rel="prettyPhoto[gallery-fileman]" href="{{link}}" class="file-image"><img src="{{previewlink}}" title="{{title}}" alt="{{description}}" /></a>',
+image: '<a rel="prettyPhoto[gallery-fileman]" href="{{link}}" class="file-image"><img src="{{previewlink}}" title="{{title}}" alt="{{description}}" border="0" /></a>',
     
     file: '<p>\
 {{lang.file}}: <a href="{{link}}" title="{{title}}">{{description}}</a><br />\

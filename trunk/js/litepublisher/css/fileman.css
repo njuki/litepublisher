@@ -1,29 +1,40 @@
-.border-top{border-bottom: 1px solid black;}
-.border-left{border-right: 1px solid black;}
-
 .file-item {
+border-top: 1px solid black;
 border-right: 1px solid black;
 border-bottom: 1px solid black;
 	float: left;
 	overflow: hidden;
 display:inline;
+margin: 0 0 0 0;
+padding: 0 0 0 0;
+width:140px;
+height:172px;
 }
 
+.border-left{border-left: 1px solid black;}
 .file-toolbar {
 display: block;
-margin:5px;
+margin: 5px 0 0 5px;
 }
 
 .file-content {
-margin:5px 5px 5px 5;
-height:150px;
-width:150px;
+display: block;
+margin: 5px 5px 5px 5px;
+padding: 0 0 0 0;
 }
 
 .file-content img {
-margin:15px;
-height:120px;
-width:120px;
+vertical-align:bottom;
+height:130px;
+width:130px;
+}
+
+.file-content p {
+font-size:12px;
+}
+
+.file-content .text-right {
+text-align: right;
 }
 
 .files-tab .delete-toolbutton {display: none}
