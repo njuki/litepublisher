@@ -19,29 +19,7 @@
           } catch(e) { alert('error ' + e.message); }
           }
         });
-        
-      $.litejson({method: "files_getpost", idpost: ltoptions.idpost}, function (r) {
-          try {
-if ("fileperm" in r) {
-$("#posteditor-fileperms").html(r.fileperm);
-}
-
-            $.fileman.set_tabs_count(r.count);
-            for (var id in r.files) {
-              $.fileman.curr.push(id);
-              $.fileman.items[id] = r.files[id];
-            }
-            
-            $.fileman.setpage("#current-files", r.files);
-            //to assign events
-            $.fileman.setpage("#new-files", {});
-        } catch(e) { alert('error ' + e.message); }
-        })
-        .fail( function(jq, textStatus, errorThrown) {
-          //$.messagebox(lang.dialog.error, jq.responseText);
-          alert(jq.responseText);
-        });
-        
+this.load_current_files();        
         ltoptions.swfu = createswfu($.fileman.uploaded);
         
         $('form:first').submit(function() {
@@ -60,6 +38,34 @@ lang: lang.posteditor,
     this.templates[prop] = $.simpletml(this.templates[prop], view);
       }
     },
+
+load_current_files: function() {        
+      $.litejson({method: "files_getpost", idpost: ltoptions.idpost}, function (r) {
+          try {
+$.fileman.set_uploaded(r);
+        } catch(e) { alert('error ' + e.message); }
+        })
+        .fail( function(jq, textStatus, errorThrown) {
+          //$.messagebox(lang.dialog.error, jq.responseText);
+          alert(jq.responseText);
+        });
+},
+
+set_uploaded: function(r) {
+if ("fileperm" in r) {
+$("#posteditor-fileperms").html(r.fileperm);
+}
+
+this.set_tabs_count(r.count);
+            for (var id in r.files) {
+this.curr.push(id);
+this.items[id] = r.files[id];
+            }
+            
+this.setpage("#current-files", r.files);
+            //to assign events
+this.setpage("#new-files", {});
+},
     
     set_tabs_count: function(count) {
       if (count < 1) return;
