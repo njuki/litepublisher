@@ -32,18 +32,19 @@ class tjsonfiles extends tevents {
     $result = array();
     $where = litepublisher::$options->ingroup('editor') ? '' : ' and author = ' . litepublisher::$options->user;
     $files = tfiles::i();
-    $result['count'] = ceil($files->db->getcount(" parent = 0 $where") / 20);
+    $result['count'] = (int) ceil($files->db->getcount(" parent = 0 $where") / 20);
     $result['files'] = array();
     
     if ($idpost) {
       $list = $files->itemsposts->getitems($idpost);
       if (count($list)) {
         $items = implode(',', $list);
-        $result['files'] = $files->db->res2items($files->db->query("id in ($items) and parent in ($items)"));
+        $result['files'] = $files->db->res2items($files->db->query("select * from $files->thistable where id in ($items) or parent in ($items)"));
       }
     }
 
           if (litepublisher::$options->show_file_perm) {
+$theme = ttheme::getinstance('default');
 $result['fileperm'] = tadminperms::getcombo(0, 'idperm_upload');
 }
     

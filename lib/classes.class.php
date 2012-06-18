@@ -90,26 +90,40 @@ class tclasses extends titems {
   }
   
   public function add($class, $filename, $path = '') {
-    if (!isset($this->items[$class]) ||
-    ($this->items[$class][0] != $filename) || ($this->items[$class][1] != $path)) {
+    if (isset($this->items[$class]) &&
+    ($this->items[$class][0] == $filename) && ($this->items[$class][1] == $path)) return false;
+
+$this->lock();
+$m = $this->memcache;
+$this->memcache = false;
       $this->items[$class] = array($filename, $path);
       $instance = $this->getinstance($class);
       if (method_exists($instance, 'install')) $instance->install();
-    }
-    $this->save();
+$this->memcache = $m;
+if ($m) $this->revision_memcache++;
+    $this->unlock();
     $this->added($class);
+return true;
   }
   
   public function delete($class) {
-    if (isset($this->items[$class])) {
+    if (!isset($this->items[$class])) return false;
+
+$this->lock();
+$m = $this->memcache;
+$this->memcache = false;
+
       if (class_exists($class)) {
         $instance = $this->getinstance($class);
         if (method_exists($instance, 'uninstall')) $instance->uninstall();
       }
+
       unset($this->items[$class]);
-      $this->save();
+
+$this->memcache = $m;
+if ($m) $this->revision_memcache++;
+    $this->unlock();
       $this->deleted($class);
-    }
   }
   
   public function reinstall($class) {
