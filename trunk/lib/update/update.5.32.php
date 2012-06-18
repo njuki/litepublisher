@@ -8,7 +8,7 @@ litepublisher::$classes->add('tjsonfiles', 'json.files.class.php');
 
   $css = tcssmerger::i();
 $css->lock();
-$css->delete('default', '/js/litepublisher/prettyphoto.dialog.css');
+$css->deletefile('default', '/js/litepublisher/prettyphoto.dialog.css');
 $css->add('default', '/js/litepublisher/css/prettyphoto.dialog.css');
 $css->unlock();
 

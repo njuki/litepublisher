@@ -1,13 +1,14 @@
 <form name='form' id='form' action='$site.url/admin/posts/editor/' method='post'>
 [text=title]
 [text=sourceurl]
-<div id='dialog_error' class='ui-helper-hidden' title='$lang.error'>
-<h4>$lang.emptytitle</h4>
-</div>
 
 <div id='categoriestab'>$categories</div>
-<div id='filebrowser'><h3><a rel='initfiletabs' href='#'>$lang.files</a></h3>
+
+<div id='posteditor-files'>
+		<h3 ><a href='#' id='posteditor-init-files'>$lang.files</a></h3>
+<div id='posteditor-filelist'>
 $post.filelist
+</div>
 </div>
 
 <div id='raweditor'>
