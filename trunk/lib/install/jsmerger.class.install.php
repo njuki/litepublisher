@@ -92,7 +92,7 @@ $js = "var lang;\nif (lang == undefined) lang = {};\n";
   $self->add($section, '/js/litepublisher/posteditor.min.js');
   $self->add($section, '/js/litepublisher/fileman.min.js');
   $self->add($section, '/js/litepublisher/fileman.templates.min.js');
-
+  
   $lang =tlocal::admin('editor');
   $self->addtext($section, 'lang', $js . sprintf('lang.posteditor= %s;',  json_encode(
   array(

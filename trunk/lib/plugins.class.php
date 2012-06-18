@@ -18,7 +18,7 @@ class tplugins extends TItems {
     $this->dbversion = false;
     parent::create();
     $this->basename = 'plugins' . DIRECTORY_SEPARATOR  . 'index';
-    $this->deprecated = array('ajaxcommentform');
+    $this->deprecated = array('ajaxcommentform', 'fileprops');
   }
   
   public static function getabout($name) {

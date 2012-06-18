@@ -19,8 +19,7 @@ class tadminmenumanager extends tadminmenu {
     $template->ltoptions['idpost'] = $this->idget();
     $template->ltoptions['lang'] = litepublisher::$options->language ;
   $result .= $template->getready('$("#tabs").tabs({ cache: true });');
-    $ajax = tajaxmenueditor ::i();
-    return $ajax->dogethead($result);
+    return $result . tajaxmenueditor ::i()->gethead();
   }
   
   public function gettitle() {

@@ -84,7 +84,7 @@ class tajaxtageditor extends tajaxposteditor  {
       
       case 'text':
       $result = $this->geteditor('raw', $id == 0 ? '' : $tags->contents->getcontent($id), true);
-      $result .= $this->dogethead('');
+      $result .= $this->gethead();
       break;
       
       default:
@@ -94,4 +94,3 @@ class tajaxtageditor extends tajaxposteditor  {
   }
   
 }//class
-?>

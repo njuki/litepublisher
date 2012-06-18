@@ -12,12 +12,12 @@
         tabs.tabs({
           cache: true,
           select: function(event, ui) {
-              if ("empty" == $(ui.panel).data("files")) {
-                $.fileman.loadpage(ui.panel, $(ui.panel).data("page"));
-              }
+            if ("empty" == $(ui.panel).data("files")) {
+              $.fileman.loadpage(ui.panel, $(ui.panel).data("page"));
+            }
           }
         });
-this.load_current_files();        
+        this.load_current_files();
         ltoptions.swfu = createswfu($.fileman.uploaded);
         
         $('form:first').submit(function() {
@@ -27,43 +27,43 @@ this.load_current_files();
     },
     
     init_templates: function() {
-var view ={
-lang: lang.posteditor,
-      iconurl:  ltoptions.files + "/js/litepublisher/icons/"
-};
-
+      var view ={
+        lang: lang.posteditor,
+        iconurl:  ltoptions.files + "/js/litepublisher/icons/"
+      };
+      
       for (var prop in this.templates) {
-    this.templates[prop] = $.simpletml(this.templates[prop], view);
+        this.templates[prop] = $.simpletml(this.templates[prop], view);
       }
     },
-
-load_current_files: function() {        
-      $.litejson({method: "files_getpost", idpost: ltoptions.idpost}, function (r) {
-          try {
-$.fileman.set_uploaded(r);
-        } catch(e) { alert('error ' + e.message); }
-        })
-        .fail( function(jq, textStatus, errorThrown) {
-          $.messagebox(lang.dialog.error, jq.responseText);
-          //alert(jq.responseText);
-        });
-},
-
-set_uploaded: function(r) {
-if ("fileperm" in r) {
-$("#posteditor-fileperms").html(r.fileperm);
-}
-
-this.set_tabs_count(r.count);
-            for (var id in r.files) {
-this.curr.push(id);
-this.items[id] = r.files[id];
-            }
-            
-this.setpage("#current-files", r.files);
-            //to assign events
-this.setpage("#new-files", {});
-},
+    
+    load_current_files: function() {
+    $.litejson({method: "files_getpost", idpost: ltoptions.idpost}, function (r) {
+        try {
+          $.fileman.set_uploaded(r);
+      } catch(e) { alert('error ' + e.message); }
+      })
+      .fail( function(jq, textStatus, errorThrown) {
+        $.messagebox(lang.dialog.error, jq.responseText);
+        //alert(jq.responseText);
+      });
+    },
+    
+    set_uploaded: function(r) {
+      if ("fileperm" in r) {
+        $("#posteditor-fileperms").html(r.fileperm);
+      }
+      
+      this.set_tabs_count(r.count);
+      for (var id in r.files) {
+        this.curr.push(id);
+        this.items[id] = r.files[id];
+      }
+      
+      this.setpage("#current-files", r.files);
+      //to assign events
+    this.setpage("#new-files", {});
+    },
     
     set_tabs_count: function(count) {
       if (count < 1) return;
@@ -80,8 +80,8 @@ this.setpage("#new-files", {});
         if (parseInt(files[id]['parent']) != 0) continue;
         panel.append(this.get_fileitem(id));
       }
-
-this.setborders(panel);
+      
+      this.setborders(panel);
       
       panel.on("click", ".file-toolbar a", function() {
         var holder = $(this).closest(".file-item");
@@ -103,13 +103,13 @@ this.setborders(panel);
         
         return false;
       });
-
+      
       panel.on("click", "a.file-image", function() {
-var self = $(this);
-$.prettyPhoto.open(self.attr("href"), self.attr("title"), $("img", self).attr("alt"));
-return false;
-});
-
+        var self = $(this);
+        $.prettyPhoto.open(self.attr("href"), self.attr("title"), $("img", self).attr("alt"));
+        return false;
+      });
+      
     },
     
     get_fileitem: function(id) {
@@ -144,35 +144,35 @@ return false;
     },
     
     uploaded: function(file, serverData) {
-try {
-      var r = $.parseJSON(serverData);
-      /* r = {
-        id: int idfile,
-        item: array fileitem,
-        preview: array fileitem optimal
-      }*/
-      
-      var idfile = r.id;
-      $.fileman.curr.push(idfile);
-      $.fileman.items[idfile] = r.item;
-      if (r.item["preview"] != 0) $.fileman.items[r.preview['id']] = r.preview;
-      
-      $("#current-files").append($.fileman.get_fileitem(idfile));
-      $("#new-files").append($.fileman.get_fileitem(idfile));
-          } catch(e) { alert('error ' + e.message); }
+      try {
+        var r = $.parseJSON(serverData);
+        /* r = {
+          id: int idfile,
+          item: array fileitem,
+          preview: array fileitem optimal
+        }*/
+        
+        var idfile = r.id;
+        $.fileman.curr.push(idfile);
+        $.fileman.items[idfile] = r.item;
+        if (r.item["preview"] != 0) $.fileman.items[r.preview['id']] = r.preview;
+        
+        $("#current-files").append($.fileman.get_fileitem(idfile));
+        $("#new-files").append($.fileman.get_fileitem(idfile));
+    } catch(e) { alert('error ' + e.message); }
     },
-
-setborders: function(uipanel) {
-var all = $(".file-item", uipanel);
-if (all.length == 0) return;
-all.removeClass("border-left");
-var firstpos = $(".file-item:first", uipanel).position();
-all.each(function() {
-var self = $(this);
-var pos = self.position();
-if (pos.left == firstpos.left) self.addClass("border-left");
-});
-},
+    
+    setborders: function(uipanel) {
+      var all = $(".file-item", uipanel);
+      if (all.length == 0) return;
+      all.removeClass("border-left");
+      var firstpos = $(".file-item:first", uipanel).position();
+      all.each(function() {
+        var self = $(this);
+        var pos = self.position();
+        if (pos.left == firstpos.left) self.addClass("border-left");
+      });
+    },
     
     add: function(idfile) {
       if ($.inArray(idfile, this.curr) >= 0) return;
@@ -185,46 +185,46 @@ if (pos.left == firstpos.left) self.addClass("border-left");
       var i = $.inArray(idfile, this.curr);
       if (i < 0) return;
       delete this.curr[i];
-var parent = holder.parent();
+      var parent = holder.parent();
       holder.remove();
-this.setborders(parent);
+      this.setborders(parent);
     },
     
     editprops: function(idfile, owner) {
-        if (this.indialog) return false;
-        this.indialog = true;
-        var fileitem = this.items[idfile];
+      if (this.indialog) return false;
+      this.indialog = true;
+      var fileitem = this.items[idfile];
+      
+      $.prettyPhotoDialog({
+        title: lang.posteditor.property,
+        html: this.templates.fileprops,
+        open: function(holder) {
+          $("input[name='fileprop-title']", holder).val(fileitem.title);
+          $("input[name='fileprop-description']", holder).val(fileitem.description);
+          $("input[name='fileprop-keywords']", holder).val(fileitem.keywords);
+        },
         
-        $.prettyPhotoDialog({
-          title: lang.posteditor.property,
-          html: this.templates.fileprops,
-          open: function(holder) {
-              $("input[name='fileprop-title']", holder).val(fileitem.title);
-              $("input[name='fileprop-description']", holder).val(fileitem.description);
-              $("input[name='fileprop-keywords']", holder).val(fileitem.keywords);
-          },
-
-          buttons: [
-          {
-            title: "Ok",
-            click: function() {
-                var holder = $(".pp_inline");
-                var title = $.trim($("input[name='fileprop-title']", holder).val());
-                var description = $.trim($("input[name='fileprop-description']", holder).val());
-                var keywords = $.trim($("input[name='fileprop-keywords']", holder).val());
-                $.prettyPhoto.close();
-                $.fileman.setprops(idfile, title, description, keywords, owner);
-            }
-          },
-          {
-            title: lang.dialog.cancel,
-            click: function() {
-              $.prettyPhoto.close();
-              $.fileman.indialog = false;
-            }
+        buttons: [
+        {
+          title: "Ok",
+          click: function() {
+            var holder = $(".pp_inline");
+            var title = $.trim($("input[name='fileprop-title']", holder).val());
+            var description = $.trim($("input[name='fileprop-description']", holder).val());
+            var keywords = $.trim($("input[name='fileprop-keywords']", holder).val());
+            $.prettyPhoto.close();
+            $.fileman.setprops(idfile, title, description, keywords, owner);
           }
-          ]
-        } );
+        },
+        {
+          title: lang.dialog.cancel,
+          click: function() {
+            $.prettyPhoto.close();
+            $.fileman.indialog = false;
+          }
+        }
+        ]
+      } );
     },
     
     setprops: function(idfile, title, description, keywords, holder) {
