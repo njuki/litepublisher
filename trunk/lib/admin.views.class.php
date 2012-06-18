@@ -460,9 +460,10 @@ class tadminviews extends tadminmenu {
       $adminmenus->save();
       
       $ajax = tajaxposteditor ::i();
+$ajax->lock();
       $ajax->ajaxvisual = isset($_POST['ajaxvisual']);
       $ajax->visual = trim($_POST['visual']);
-      $ajax->save();
+      $ajax->unlock();
       
       litepublisher::$options->show_file_perm = isset($_POST['show_file_perm']);
       break;

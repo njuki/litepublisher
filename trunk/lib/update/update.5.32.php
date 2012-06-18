@@ -56,5 +56,11 @@ $langjs = "var lang;\nif (lang == undefined) lang = {};\n";
 'filesize' => $lang->filesize
   )
   )));
+
+$ap = tajaxposteditor ::i();
+if ($url = $ap->visual) {
+$ap->data['visual'] = '';
+$ap->setvisual($url);
+}
 $js->unlock();
 }

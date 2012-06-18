@@ -29,7 +29,7 @@ class tajaxposteditor  extends tevents {
     if ($url == $this->visual) return;
       $js = tjsmerger::i();
       $js->lock();
-      $js->delete('posteditor', $this->visual);
+      $js->deletefile('posteditor', $this->visual);
       $js->deletetext('posteditor', 'visual');
       
       if ($url) {
@@ -96,18 +96,6 @@ class tajaxposteditor  extends tevents {
       public function request($arg) {
         $this->cache = false;
         //tfiler::log(var_export($_GET, true) . var_export($_POST, true) . var_export($_FILES, true));
-        if (isset($_GET['get']) && ($_GET['get'] == 'upload')) {
-          if (empty($_POST['litepubl_user'])) return self::error403();
-          if ( 'POST' != $_SERVER['REQUEST_METHOD'] ) {
-            return "<?php
-            header('Allow: POST');
-            header('HTTP/1.1 405 Method Not Allowed', true, 405);
-            header('Content-Type: text/plain');
-            ?>";
-          }
-          $_COOKIE['litepubl_user'] = $_POST['litepubl_user'];
-          $_COOKIE['litepubl_user_id'] = $_POST['litepubl_user_id'];
-        }
         if ($err = self::auth()) return $err;
         $this->idpost = tadminhtml::idparam();
         $this->isauthor = litepublisher::$options->ingroup('author');
@@ -123,32 +111,6 @@ class tajaxposteditor  extends tevents {
           }
         }
         return $this->getcontent();
-      }
-      
-      private function getfiletemplates($id, $idpost, $li_id) {
-        $replace = array(
-        //'<li>' => sprintf('<li><input type="checkbox" name="%1$s" id="%1$s" value="$id">', $li_id),
-        '$id'=> $id,
-        '$post.id'=> $idpost
-        );
-        
-        $checkbox = sprintf('><input type="checkbox" name="%1$s" id="%1$s" value="$id" />', $li_id);
-        
-        $theme = ttheme::i();
-        $types = $theme->reg('/^content\.post\.filelist/');
-        $a = array();
-        foreach ($types as $name => $val) {
-          $val = strtr($val, $replace);
-          $name = substr($name, strrpos($name, '.') + 1);
-          if ($name == 'filelist') {
-            $name = '';
-          } elseif (substr($name, -1)  != 's') {
-            // chicks if not an items
-            $val =substr_replace($val, $checkbox, strpos($val, '>'), 1);
-          }
-          $a[$name] = $val;
-        }
-        return new tarray2prop ($a);
       }
       
       public function getcontent() {
@@ -205,107 +167,6 @@ class tajaxposteditor  extends tevents {
           
           case 'view':
           $result = $this->getviewicon($post->idview, $post->icon);
-          break;
-          
-          case 'files':
-          $args = targs::i();
-          $args->ajax = tadminhtml::getadminlink('/admin/ajaxposteditor.htm', "id=$post->id&get");
-          $files = $post->factory->files;
-          if (litepublisher::$options->show_file_perm) {
-            $args->fileperm = tadminperms::getcombo(0, 'idperm_upload');
-          } else {
-            $args->fileperm = '';
-          }
-          if (count($post->files) == 0) {
-            $args->currentfiles = '<ul></ul>';
-          } else {
-            $templates = $this->getfiletemplates('curfile-$id', 'curpost-$post.id', 'currentfile-$id');
-            $args->currentfiles = $files->getlist($post->files, $templates);
-          }
-          
-          if (dbversion) {
-            $sql = "parent =0 and media <> 'icon'";
-            $sql .= litepublisher::$options->user <= 1 ? '' : ' and author = ' . litepublisher::$options->user;
-            $count = $files->db->getcount($sql);
-          } else {
-            $list= array();
-            $uid = litepublisher::$options->user;
-            foreach ($files->items as $id => $item) {
-              if (($item['parent'] != 0) || ($item['media'] == 'icon')) continue;
-              if ($uid > 1 && $uid != $item['author']) continue;
-              $list[] = $id;
-            }
-            $count = count($list);
-          }
-          
-          $pages = '';
-          $perpage = 10;
-          $count = ceil($count/$perpage);
-          for ($i =1; $i <= $count; $i++) {
-            $args->index = $i;
-            $pages .= $html->pageindex($args);
-          }
-          
-          $args->pages = $pages;
-          $args->files = implode(',', $post->files);
-          $result = $html->browser($args);
-          break;
-          
-          case 'filepage':
-          $page = tadminhtml::getparam('page', 1);
-          $page = max(1, $page);
-          
-          $perpage = 10;
-          $files = tfiles::i();
-          if (dbversion) {
-            $sql = "parent =0 and media <> 'icon'";
-            $sql .= litepublisher::$options->user <= 1 ? '' : ' and author = ' . litepublisher::$options->user;
-            $count = $files->db->getcount($sql);
-            $pagescount = ceil($count/$perpage);
-            $page = min($page, $pagescount);
-            $from = ($page -1)  * $perpage;
-            $list = $files->select($sql, " order by posted desc limit $from, $perpage");
-            if (!$list) $list = array();
-          } else {
-            $list= array();
-            $uid = litepublisher::$options->user;
-            foreach ($files->items as $id => $item) {
-              if (($item['parent'] != 0) || ($item['media'] == 'icon')) continue;
-              if ($uid > 1 && $uid != $item['author']) continue;
-              $list[] = $id;
-            }
-            $count = count($list);
-            $pagescount = ceil($count/$perpage);
-            $page = min($page, $pagescount);
-            $from = ($page -1)  * $perpage;
-            $list = array_slice($list, $from, $perpage);
-          }
-          
-          if (count($list) == 0) return '';
-          
-          $args = targs::i();
-          $args->ajax = tadminhtml::getadminlink('/admin/ajaxposteditor.htm', "id=$post->id&get");
-          $args->page = $page;
-          $templates = $this->getfiletemplates('pagefile-$id', 'pagepost-$post.id', 'itemfilepage-$id');
-          $files = tfiles::i();
-          $result = $files->getlist($list, $templates);
-          $result .= $html->page($args);
-          break;
-          
-          case 'upload':
-          if (!isset($_FILES['Filedata']) || !is_uploaded_file($_FILES['Filedata']['tmp_name']) ||
-          $_FILES['Filedata']['error'] != 0) return self::error403();
-          if ($this->isauthor && ($r = tauthor_rights::i()->canupload())) return $r;
-          
-          $parser = tmediaparser::i();
-          $id = $parser->uploadfile($_FILES['Filedata']['name'], $_FILES['Filedata']['tmp_name'], '', '', '', false);
-          if (isset($_POST['idperm'])) {
-            $idperm = (int) $_POST['idperm'];
-            if ($idperm > 0) tprivatefiles::i()->setperm($id, (int) $_POST['idperm']);
-          }
-          $templates = $this->getfiletemplates('uploaded-$id', 'new-post-$post.id', 'newfile-$id');
-          $files = tfiles::i();
-          $result = $files->getlist(array($id), $templates);
           break;
           
           default:
