@@ -55,4 +55,3 @@ class tajaxmenueditor extends tajaxposteditor  {
   }
   
 }//class
-?>

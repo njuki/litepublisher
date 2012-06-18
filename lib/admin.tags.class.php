@@ -18,8 +18,8 @@ class tadmintags extends tadminmenu {
     $template = ttemplate::i();
     $template->ltoptions['lang'] = litepublisher::$options->language ;
   $result .= $template->getready('$("#tabs").tabs({ cache: true });');
-    $ajax = tajaxtageditor::i();
-    return $ajax->dogethead($result);
+    
+    return $result . tajaxtageditor::i()->gethead();
   }
   
   public function getcontent() {

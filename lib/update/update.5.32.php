@@ -62,5 +62,11 @@ if ($url = $ap->visual) {
 $ap->data['visual'] = '';
 $ap->setvisual($url);
 }
+$plugins = tplugins::i();
+$plugins->lock();
+$plugins->delete('fileprops');
+    $plugins->deprecated = array('ajaxcommentform', 'fileprops');
+$plugins->unlock();
+
 $js->unlock();
 }

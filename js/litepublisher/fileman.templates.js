@@ -22,9 +22,9 @@ image: '<a rel="prettyPhoto[gallery-fileman]" href="{{link}}" class="file-image"
     </p>',
     
     tabs: '<div id="posteditor-fileperms"></div>\
-<div id="upload"><span id="uploadbutton"></span></div>\
+    <div id="upload"><span id="uploadbutton"></span></div>\
     <div id="progressbar"></div>\
-\
+    \
     <div id="posteditor-files-tabs">\
     <ul>\
 <li><a href="#current-files"><span>{{lang.currentfiles}}</span></a></li>\
@@ -36,7 +36,7 @@ image: '<a rel="prettyPhoto[gallery-fileman]" href="{{link}}" class="file-image"
     <p class="hidden"><input type="hidden" name="files" value="" /></p>',
     
 tab: '<div class="files-tab" id="filepage-{{index}}"></div>',
-
+    
     fileprops: '<p><label><input type="text" name="fileprop-title" value="" size="22" />\
 <strong>{{lang.title}}</strong></label></p>\
     \
