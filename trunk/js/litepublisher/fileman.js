@@ -12,11 +12,9 @@
         tabs.tabs({
           cache: true,
           select: function(event, ui) {
-            try {
               if ("empty" == $(ui.panel).data("files")) {
                 $.fileman.loadpage(ui.panel, $(ui.panel).data("page"));
               }
-          } catch(e) { alert('error ' + e.message); }
           }
         });
 this.load_current_files();        
@@ -46,8 +44,8 @@ $.fileman.set_uploaded(r);
         } catch(e) { alert('error ' + e.message); }
         })
         .fail( function(jq, textStatus, errorThrown) {
-          //$.messagebox(lang.dialog.error, jq.responseText);
-          alert(jq.responseText);
+          $.messagebox(lang.dialog.error, jq.responseText);
+          //alert(jq.responseText);
         });
 },
 
@@ -167,7 +165,7 @@ try {
 setborders: function(uipanel) {
 var all = $(".file-item", uipanel);
 if (all.length == 0) return;
-all.removeClass("border-top border-left");
+all.removeClass("border-left");
 var firstpos = $(".file-item:first", uipanel).position();
 all.each(function() {
 var self = $(this);
