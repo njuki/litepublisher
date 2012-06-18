@@ -107,6 +107,13 @@ class tpost extends titem implements  itemplate {
   }
   
   public function __get($name) {
+/*
+$result = false;
+foreach ($this->props as $props) {
+if ($props->set($this, $name, $result)) return $result;
+}
+*/
+
     if ($this->childtable) {
       if ($name == 'id') return $this->data['id'];
       if (method_exists($this, $get = 'get' . $name))   return $this->$get();
@@ -132,6 +139,12 @@ class tpost extends titem implements  itemplate {
   }
   
   public function __set($name, $value) {
+/*
+foreach ($this->props as $props) {
+if ($props->set($this, $name, $value)) return true;
+}
+*/
+
     if ($this->childtable) {
       if ($name == 'id') return $this->setid($value);
       if (method_exists($this, $set = 'set'. $name)) return $this->$set($value);
