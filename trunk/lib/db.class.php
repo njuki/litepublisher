@@ -162,9 +162,15 @@ class tdatabase {
       if ($name == 'id') continue;
       if (is_bool($value)) {
         $value =$value ? '1' : '0';
-        $list[] = "$name = " . $value;
+        $list[] = sprintf('%s = %s ', $name, $value);
         continue;
-      }
+/*
+      } elseif (is_array($value)) {
+        $list[] = sprintf('%s = \'%s\'', $name, implode('\',\'', $value));
+        continue;
+*/
+}
+
       $list[] = "$name = " . $this->quote($value);
     }
     
