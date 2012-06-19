@@ -1,67 +1,98 @@
-class tpostprops extends tdata {
+class tbasepostprops extends tdata {
 public $dataname;
 public $defvalues;
+public $arrayprops;
+public $intprops;
+public $intprops;
+public $allprops;
 
 protected function create() {
 parent::create();
 $this->dataname = 'postprops';
 $this->table = 'posts';
+$this->defvalues = array();
+}
+
+public function update_all_props() {
+$this->allprops =array_keys($this->defvalues);
+$methods = get_class_methods($this);
+foreach ($methods as $name) {
+if ((strlen($name) > 3) && strbegin($name, 'get')) {
+if (!in_array($name, $this->allprops)) $this->allprops[] = $name;
+}
+}
 }
 
 public function get(tpost $post, $name, &$value) {
-if (!isset($post->data[$this->dataname])) $this->request_item($post);
-$data = &$post->data[$this->dataname];
+if (!in_array($name, $this->allprops)) return false;
+
+if (!isset($post->propdata[$this->dataname])) $this->load_item($post);
+$data = &$post->propdata[$this->dataname];
     if (method_exists($this, $get = 'get' . $name)) {
 $value = $this->$get($data);
-return true;
+} elseif (in_array($name, $this->arrayprops)) {
+if (!isset($post->syncdata[$this->dataname])) $post->syncdata[$this->dataname] = array();
+$syncdata = &$post->syncdata[$this->dataname];
+if (isset($syncdata([$name])) {
+$value = syncdata[$name];
+} else {
+$value = array();
+foreach (explode(',', $data[$name]) as $v) {
+if ($v = trim($v)) $value[] = $v;
 }
 
-if (array_key_exists($name, $data)) {
+$syncdata[$name] = $value;
+}
+} else {
 $value = $data[$name];
-return true;
 }
-
-return false;
+return true;
 }
 
 public function set(tpost $post, $name, $value) {
-if (!isset($post->data[$this->dataname])) $this->request_item($post);
-$data = &$post->data[$this->dataname];
+if (!in_array($name, $this->allprops)) return false;
+if (!isset($post->propdata[$this->dataname])) $this->load_item($post);
+$data = &$post->propdata[$this->dataname];
     if (method_exists($this, $set = 'set' . $name))  {
 $this->$set($data, $value);
+} elseif (in_array($name, $this->arrayprops)) {
+if (!isset($post->syncdata[$this->dataname])) $post->syncdata[$this->dataname] = array();
+$post->syncdata[$this->dataname][$name] = $value;
+$data[$name] = implode(',', $value);
+} else {
+$data[$name] = $value;
+}
 return true;
 }
 
-if (array_key_exists($name, $data)) {
-$value = $data[$name];
-return true;
-}
-
-return false;
-}
-
-public function request_item(tpost $post) {
+public function load_item(tpost $post) {
 if ($post->id == 0) {
-$post->data[$this->dataname] = $this->defvalues;
+$post->propdata[$this->dataname] = $this->defvalues;
 } else {
 //query items for loaded posts
 $items = array();
 foreach (tpost::$instances['post'] as $id => $post) {
-if (!isset($post->data[$this->dataname])) $items[] = $id;
+if (!isset($post->propdata[$this->dataname])) $items[] = $id;
 }
 $list = implode(',', $items);
 $db = litepublisher::$db;
 if ($res = $db->query("select * from $db->prefix$this->table where id in($list)")) {
       while ($r = mysql_fetch_assoc($res)) {
-$post = tpost::i((int) $r['id']);
-$post->data[$this->dataname] = $r;
-}
-}
+$p = tpost::i((int) $r['id']);
+$p->propdata[$this->dataname] = $r;
 }
 }
 
+if (!isset($post->propdata[$this->dataname])) $this->error(sprintf('The "%d" post not found in"%s" table", $post->id, $db->prefix . $this->table));
+}
+}
+
+public function add(tpost $post) {
+$this->db->insert_a($post->propdata[$this->dataname]);
+}
+
 public function save(tpost $post) {
-$this->db->updateassoc($post->data[$this->dataname]);
+$this->db->updateassoc($post->propdata[$this->dataname]);
 }
 
 }//class
