@@ -99,4 +99,39 @@ $this->db->iddelete($post->id);
 $this->add($post);
 }
 
+  public function addpage(tpost $post, $s) {
+    $post->syncdata[$this->datename][] = $s;
+    $post->pagescount = count($post->syncdata[$this->dataname]);
+    if ($post->id > 0) {
+      $this->db->insert_a(array(
+      'id' => $post->id,
+      'page' => $post->pagescount -1,
+      'content' => $s
+      ));
+    }
+  }
+  
+  public function delete(tpost $post) {
+    $post->syncdata[$this->dataname] = array();
+    $post->pagescount = 0;
+    if ($post->id > 0) $this->db->iddelete($post->id);
+  }
+  
+
+  public function getpage(tpost $post, $i) {
+if (!isset($post->propdata[$this->dataname])  $post->propdata[$this->dataname] = array();
+$data = &$post->propdata[$this->dataname];
+    if ( isset($data[$i]))   return $data[$i];
+    if ($post->id > 0) {
+      if ($r = $this->db->getassoc("(id = $post->id) and (page = $i) limit 1")) {
+        $s = $r['content'];
+      } else {
+        $s = false;
+      }
+$data[$i] = $s;
+      return $s;
+    }
+    return false;
+  }
+  
 }//class
