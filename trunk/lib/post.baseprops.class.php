@@ -2,8 +2,9 @@ class tbasepostprops extends tdata {
 public $dataname;
 public $defvalues;
 public $arrayprops;
+public $intarray;
 public $intprops;
-public $intprops;
+public $boolprops;
 public $allprops;
 public $types;
 
@@ -18,21 +19,23 @@ public function update_all_props() {
 $this->allprops =array_keys($this->defvalues);
 $methods = get_class_methods($this);
 foreach ($methods as $name) {
-if ((strlen($name) > 3) && strbegin($name, 'get')) {
+if ((strlen($name) > 3) && (strbegin($name, 'get') || strbegin($name, 'set'))) {
 if (!in_array($name, $this->allprops)) $this->allprops[] = $name;
 }
 }
 
 $this->types = array();
 foreach ($this->allprops as $name) {
-if (in_array($name, $methods)) {
-$type = 'method';
-} elseif (in_array($name, $this->arrayprops)) {
-$type = 'array';
-} elseif (in_array($name, $this->intprops)) {
+if (in_array($name, $this->intprops)) {
 $type = 'int';
-} elseif (in_array($name, $this->bollprops)) {
+} elseif (in_array($name, $this->boolprops)) {
 $type = 'bool;
+if (in_array($name, $this->arrayprops)) {
+$type = 'array';
+if (in_array($name, $this->arrayprops)) {
+$type = 'array';
+if (in_array($name, $this->intarray)) {
+$type = 'intarray';
 } else {
 $type = 'string';
 }
@@ -56,15 +59,23 @@ case 'int':
 $value = (int) $data[$name];
 break;
 
+case 'bool':
+$value = $data[$name] == '1';
+break;
+
 case 'array':
+case 'intarray':
 if (!isset($post->syncdata[$this->dataname])) $post->syncdata[$this->dataname] = array();
 $syncdata = &$post->syncdata[$this->dataname];
 if (isset($syncdata([$name])) {
 $value = syncdata[$name];
 } else {
 $value = array();
+$isint = $this->types[$name] == 'intarray';
 foreach (explode(',', $data[$name]) as $v) {
-if ($v = trim($v)) $value[] = $v;
+if ($v = trim($v)) {
+$value[] = $iisint ? (int) $v : $v;
+}
 }
 
 $syncdata[$name] = $value;
@@ -84,15 +95,29 @@ if (!isset($post->propdata[$this->dataname])) $this->load_item($post);
 $data = &$post->propdata[$this->dataname];
     if (method_exists($this, $set = 'set' . $name))  {
 $this->$set($data, $value);
-} elseif (in_array($name, $this->arrayprops)) {
+return true;
+}
+
+switch ($this->types[$name]) {
+case 'int':
+$data[$name] = (int) $value;
+break;
+
+case 'bool':
+$data[$name] = $value ? '1' : '0';
+break;
+
+case array':
+case 'intarray':
 if (!isset($post->syncdata[$this->dataname])) $post->syncdata[$this->dataname] = array();
 $post->syncdata[$this->dataname][$name] = $value;
 $data[$name] = implode(',', $value);
-} elseif (in_array($name, $this->intprops)) {
-$data[$name] = (int) $value;
-} else {
+break;
+
+default:
 $data[$name] = $value;
 }
+
 return true;
 }
 
