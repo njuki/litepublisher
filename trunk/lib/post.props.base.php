@@ -5,8 +5,14 @@ public $arrayprops;
 public $intarray;
 public $intprops;
 public $boolprops;
+public $datetimeprops;
 public $allprops;
 public $types;
+
+public function __construct() {
+parent::__coonstruct();
+$this->update_all_props();
+}
 
 protected function create() {
 parent::create();
@@ -15,7 +21,7 @@ $this->table = 'posts';
 $this->defvalues = array();
 }
 
-public function update_all_props() {
+protected function update_all_props() {
 $this->allprops =array_keys($this->defvalues);
 $methods = get_class_methods($this);
 foreach ($methods as $name) {
@@ -36,6 +42,8 @@ if (in_array($name, $this->arrayprops)) {
 $type = 'array';
 if (in_array($name, $this->intarray)) {
 $type = 'intarray';
+if (in_array($name, $this->datetimeprops)) {
+$type = 'datetime';
 } else {
 $type = 'string';
 }
@@ -63,9 +71,18 @@ case 'bool':
 $value = $data[$name] == '1';
 break;
 
+case 'datetime':
+$syncdata = &$post->syncdata[$this->dataname];
+if (isset($syncdata([$name])) {
+$value = syncdata[$name];
+} else {
+$value= strtotime($data[$name]);
+$syncdata[$name] = $value;
+}
+break;
+
 case 'array':
 case 'intarray':
-if (!isset($post->syncdata[$this->dataname])) $post->syncdata[$this->dataname] = array();
 $syncdata = &$post->syncdata[$this->dataname];
 if (isset($syncdata([$name])) {
 $value = syncdata[$name];
@@ -107,9 +124,14 @@ case 'bool':
 $data[$name] = $value ? '1' : '0';
 break;
 
-case array':
+case 'datetime':
+$syncdata = &$post->syncdata[$this->dataname];
+$syncdata[$name] = $value;
+$data[$name] = sqldate($value);
+break;
+
+case 'array':
 case 'intarray':
-if (!isset($post->syncdata[$this->dataname])) $post->syncdata[$this->dataname] = array();
 $post->syncdata[$this->dataname][$name] = $value;
 $data[$name] = implode(',', $value);
 break;
@@ -124,6 +146,7 @@ return true;
 public function load_item(tpost $post) {
 if ($post->id == 0) {
 $post->propdata[$this->dataname] = $this->defvalues;
+$post->syncdata[$this->dataname] = array();
 } else {
 //query items for loaded posts
 $items = array();
@@ -136,6 +159,7 @@ if ($res = $db->query("select * from $db->prefix$this->table where id in($list)"
       while ($r = mysql_fetch_assoc($res)) {
 $p = tpost::i((int) $r['id']);
 $p->propdata[$this->dataname] = $r;
+$p->syncdata[$this->dataname] = array();
 }
 }
 
