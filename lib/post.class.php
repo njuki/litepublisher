@@ -10,6 +10,9 @@ class tpost extends titem implements  itemplate {
   public $childdata;
   public $childtable;
   public $factory;
+public $props;
+public $propdata;
+public $syncdata;
   private $aprev;
   private $anext;
   private $_meta;
@@ -57,6 +60,9 @@ class tpost extends titem implements  itemplate {
   
   protected function create() {
     $this->table = 'posts';
+$this->props = array();
+$this->propdata = array();
+$this->syncdata = array();
     //last binding, like cache
     $this->childtable = call_user_func_array(array(get_class($this), 'getchildtable'), array());
     
