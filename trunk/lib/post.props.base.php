@@ -1,3 +1,11 @@
+<?php
+/**
+* Lite Publisher
+* Copyright (C) 2010, 2012 Vladimir Yushko http://litepublisher.com/
+* Dual licensed under the MIT (mit.txt)
+* and GPL (gpl.txt) licenses.
+**/
+
 class tbasepostprops extends tdata {
 public $dataname;
 public $defvalues;
@@ -19,6 +27,11 @@ parent::create();
 $this->dataname = 'postprops';
 $this->table = 'posts';
 $this->defvalues = array();
+$this->arrayprops = array();
+$this->intarray = array();
+$this->intprops = array();
+$this->boolprops = array();
+$this->datetimeprops = array();
 }
 
 protected function update_all_props() {
@@ -56,12 +69,13 @@ public function get(tpost $post, $name, &$value) {
 if (!in_array($name, $this->allprops)) return false;
 
 if (!isset($post->propdata[$this->dataname])) $this->load_item($post);
-$data = &$post->propdata[$this->dataname];
+
     if (method_exists($this, $get = 'get' . $name)) {
-$value = $this->$get($data);
+$value = $this->$get($post);
 return true;
 }
 
+$data = &$post->propdata[$this->dataname];
 switch($this->types[$name]) {
 case 'int':
 $value = (int) $data[$name];
@@ -76,7 +90,7 @@ $syncdata = &$post->syncdata[$this->dataname];
 if (isset($syncdata([$name])) {
 $value = syncdata[$name];
 } else {
-$value= strtotime($data[$name]);
+$value= $data[$name] ? strtotime($data[$name]) : 0;
 $syncdata[$name] = $value;
 }
 break;
@@ -109,12 +123,13 @@ return true;
 public function set(tpost $post, $name, $value) {
 if (!in_array($name, $this->allprops)) return false;
 if (!isset($post->propdata[$this->dataname])) $this->load_item($post);
-$data = &$post->propdata[$this->dataname];
+
     if (method_exists($this, $set = 'set' . $name))  {
-$this->$set($data, $value);
+$this->$set($post, $value);
 return true;
 }
 
+$data = &$post->propdata[$this->dataname];
 switch ($this->types[$name]) {
 case 'int':
 $data[$name] = (int) $value;
@@ -127,7 +142,7 @@ break;
 case 'datetime':
 $syncdata = &$post->syncdata[$this->dataname];
 $syncdata[$name] = $value;
-$data[$name] = sqldate($value);
+$data[$name] = $value ? sqldate($value) : '';
 break;
 
 case 'array':
