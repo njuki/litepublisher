@@ -1,0 +1,169 @@
+﻿* Lite Publisher
+* Copyright (C) 2010 Vladimir Yushko http://litepublisher.com/
+* Dual licensed under the MIT (mit.txt)
+* and GPL (gpl.txt) licenses.
+
+$template = {@import(index.tml)}
+
+$template.title = [$title $template.page]
+
+$template.menu = [ $hover = [true] <script type="text/javascript"> $(document).ready(function(){$("#nav a[href='" + window.location + "']").addClass("current_page_link"); $("#nav li").hover(function(){$(this).addClass("jshover");}, function(){$(this).removeClass("jshover");});});</script>
+<ul id="nav"><li class="home"><a href="/" title="На главную">$site.name</a></li> $item = [<li><a href="$link" title="$title">$title</a>$submenu = [<ul>$items</ul>]</li>] $current = [<li class="current_page_item"><a rel="nofollow" href="$link" title="$title">$title</a>$submenu</li>] </ul>]
+
+$template.head = [
+$post = [
+$rss = [<link rel="alternate" type="application/rss+xml" title="$lang.rsscomments $post.title" href="$post.rsscomments" />]
+$prev = [<link rel="prev" href="$prev.link" />]
+$next = [<link rel="next" href="$next.link" />]]
+$tags = [<link rel="alternate" type="application/rss+xml" title="$lang.rss $context.title" href="$site.url/rss/$context.postpropname/$context.id.xml" />]
+]
+
+$template.content.simple = [$content]
+
+$template.content.notfound = [<table class="post"><tr><th class="title"><h1 class="bxt">$lang.notfound</h1></th></tr>
+<tr><td class="entry"><h2 class="center">$lang.notfound</h2><h3 class="center red">$lang.nocontent</h3></td></tr></table>]
+
+content.menu = [<table class="post" id="menu-$menu.id"><tr><th class="title"><h1 class="bxt">$menu.title</h1></th></tr>
+<tr><td class="entry">$menu.content</td></tr></table>]
+
+content.author = [<table id="author-$author.id" class="post"><tr><th class="title"><h1 class="bxt">$lang.author $author.name</h1></th></tr>
+<tr><td class="entry"><span class="left"><img class="author photo" src="http://www.gravatar.com/avatar/$author.md5email?s=120&amp;r=g&amp;d=wavatar" title="$lang.author $author.name" alt="$author.name"/></span><p><strong>Обо мне:</strong></p>$author.content<p><strong>Мой сайт:</strong> <a href="$author.website">$author.website</a></p></td></tr></table>]
+
+content.post = [
+<table class="main post" id="post-$post.id">
+<tr>
+<th class="title" colspan="2"><h1 class="bxt">$post.title</h1></th>
+</tr>
+<tr><th class="author hcard"><a class="url fn" href="$site.url$author.url">$post.authorname</a><img class="avatar photo" src="http://www.gravatar.com/avatar/$author.md5email?s=90&amp;r=g&amp;d=wavatar" title="$lang.author $post.authorname" alt="$post.authorname"/>
+(<a rel="nofollow" class="url small" href="$author.website">вебсайт</a>)</th>
+<td class="txt"><div class="info"><span class="published">$post.date</span><span class="index"><a title="$lang.permalink на сообщение" href="$post.link#post-$post.id">#0</a></span></div>
+<div class="entry">$post.filelist $post.content</div>
+</td></tr>
+<tr><td class="count" colspan="2">В теме $post.commentscount сообщений</td></tr>
+</table>
+<div class="adv">$custom.advert2</div>
+$post.templatecomments
+$post.prevnext
+]
+
+content.post.date = [Y-m-d]
+content.post.more = [<span id="more-$post.id"></span>]
+content.post.taglinks = [ $item = [ <a rel="tag" title="$lang.tag $title" href="$link">$title</a>] $divider = [,]]
+content.post.catlinks = [ $item = [ <span typeof="v:Breadcrumb"><a rel="v:url" property="v:title" title="Категория $title" href="$link">$title</a></span>] $divider = [<span> › </span>]<span> › </span>]
+content.post.rsslink = [<span class="rsscomments"><a rel="alternate" href="$post.rsscomments" title="$lang.subscribetorsscomments" >$lang.subscribetorsscomments</a></span>]
+
+content.post.prevnext = [<p id="prevnext">
+$prev = [<a class="left" rel="prev" href="$prevpost.link" title="$lang.prev: $prevpost.title">&laquo; $prevpost.title</a>]
+$next = [<a class="right" rel="next" href="$nextpost.link" title="$lang.next: $nextpost.title">$nextpost.title &raquo;</a>]
+</p>]
+
+content.post.filelist = [
+$files = [$file = [<p class="file"><em>Скачать:</em> <a href="$link" title="$description">$title</a> ($description)</p>]]
+$images= [$image = [<span class="image"><img title="$description" class="left photo" src="$link" alt="$post.title"/></span>]
+$preview = [<img class="left photo" title="$description" src="$preview.link" alt="$title $post.title"/>]]
+$audios = [$audio = [<a href="$link" title="$title">$title</a><span id="audiofile-$id" rel="audio"><a onclick="playaudiofile('audiofile-$id', '$link');" title="$title">$lang.play</a></span>]]
+$videos = [$video = [<a href="$link" title="$title">$title</a><span id="videofile-$id" rel="video"><a onclick="playvideofile('#videofile-$id', '$link');" title="$title">$lang.play</a></span>]]
+]
+
+content.post.templatecomments.closed = [<h3 class="center red">$lang.closed</h3>]
+content.post.templatecomments.form = [
+<script type="text/javascript" src="$site.files$template.jsmerger_comments"></script>
+<table class="post"><tr><th class="title"><span class="bxt">$lang.leavereply</span></th></tr>
+<tr><td class="posts"><form action="$options.url/send-comment.php" method="post" id="commentform">
+<p><input type="text" name="name" id="name" value="$name" size="22" /> <label for="name">$lang.name</label><br/><input type="text" name="email" id="email" value="$email" size="22" /> <label for="email">$lang.email</label><br/><input type="text" name="url" id="url" value="$url" size="22" /> <label for="url">$lang.url</label></p>
+<p><input type="checkbox" name="subscribe" id="subscribe" $subscribe size="22" /> <label for="subscribe">$lang.subscribe</label></p>
+<textarea name="content" id="comment" rows="8" cols="62%"></textarea>
+<p><input type="hidden" name="postid" value="$postid" /><input type="hidden" name="antispam" value="$antispam" /><input name="submitbutton" type="submit" id="submitbutton" value="$lang.send" /></p>
+</form></td></tr></table>]
+
+content.post.templatecomments.confirmform = [<h1>$lang.formhead</h1>
+<form name="preform" method="post" action=""><p><input type="submit" name="submit1" value="$lang.robot"/></p></form>
+<form name="form" method="post" action=""><input type="hidden" name="confirmid" value="$confirmid" />
+<p><input type="submit" name="submit2" value="$lang.human"/></p></form>]
+
+content.post.templatecomments.comments.count = []
+content.post.templatecomments.comments = [ $id = [comments] $idhold = [holdcomments] <table class="post" id="comments" start="$from">$comment</table>]
+content.post.templatecomments.holdcomments = [<p class="chead">$lang.hold</p><ol id="holdcomments" start="1">$comment</ol>]
+
+
+
+content.post.templatecomments.comments.comment = [
+<tr id="comment-$comment.id"><th class="author hcard">$comment.authorlink<img class="avatar photo" src="http://www.gravatar.com/avatar/$comment.md5email?s=90&amp;r=g&amp;d=wavatar" alt="$comment.name"/></th>
+<td class="txt"><div class="info"><span class="updated">$comment.date = [d M Y] <span class="time"> $lang.attime $comment.time</span></span> <span class="index"><a title="$lang.permalink на сообщение" href="$post.link#comment-$comment.id">#$index</a></span></div>
+<div class="entry" id="commentcontent-$comment.id">$comment.content</div>
+</td></tr>
+<tr><td class="mode" colspan="2">$moderate $quotebuttons = [ <a onclick="replycomment($comment.id,'$comment.name');">$lang.reply</a> <a onclick="quotecomment($comment.id,'$comment.name');">$lang.quote</a>]</td></tr>]
+
+content.post.templatecomments.comments.comment.moderate = [ <a rel="inlinewidget">Дополнительно</a><!--<span> <input type="checkbox" name="checkbox-comment-$comment.id" id="checkbox-comment-$comment.id" value="$comment.id" /> <a onclick="setcommentstatus($comment.id, 'approved');">$lang.approve</a> <a onclick="setcommentstatus($comment.id, 'hold');">$lang.holdbutton</a> <a onclick="deletecomment($comment.id);">$lang.delete</a> <a onclick="editcomment($comment.id);" >$lang.edit</a></span>-->]
+content.post.templatecomments.pingbacks = [<dl id="pingbacks" start="1"><dt>$lang.pingbacks:</dt> $pingback = [<dd id="pingback-$pingback.id"><a rel="nofollow" href="$pingback.url">$pingback.title</a></dd>]</dl>]
+
+content.excerpts = [
+<table class="post"><tr><th class="title" colspan="4"><h1 class="bxt">$context.title</h1></th></tr>
+<tr class="thead"><th>Название</th><th>$lang.author</th><th>Дата публикации</th><th>Количество комментариев</th></tr>
+$excerpt = [<tr><td><dl><dt><a title="$post.title" href="$post.link">$post.title</a></dt><dd>$post.description</dd></dl></td><td class="center"><span class="hcard"><img class="avatar photo" src="http://www.gravatar.com/avatar/$author.md5email?s=32&amp;r=g&amp;d=wavatar" title="$lang.author $post.authorname" alt="$post.authorname"/><span class="fn">$post.authorname</span></span></td><td class="center"><span>$post.date</span></td><td class="center"><a title="$lang.comments $lang.topost $post.title" href="$post.link#comments">$post.commentscount</a></td></tr>]</table>]
+
+content.excerpts.excerpt.catlinks = [ $item = [ <a rel="category tag" title="$title статьи" href="$link">$title</a>] $divider = [,]]
+content.excerpts.excerpt.filelist = [ $files = [<!---->]
+$images= [$image = [$preview] $preview = [<img class="left photo" id="files-$post.id" src="$preview.link" alt="$title" title="$post.title"/>]]
+$audios = [<!---->] $videos = [<!---->]]
+
+content.excerpts.lite = [
+<table class="post"><tr><th class="title" colspan="3"><h1 class="bxt">$context.title</h1></th></tr>
+<tr class="thead"><th>Название</th><th>Дата публикации</th><th>Количество комментариев</th></tr>
+$excerpt = [<tr><td class="posts"><a title="$post.title" href="$post.link">$post.title</a></td><td class="center">$post.date</td><td class="center"><a title="$lang.comments $lang.topost $post.title" href="$post.link#comments">$post.commentscount</a></td></tr>]</table>]
+
+content.navi = [<div id="paginator">
+$prev = [<span class="previous-entries">$link</span>]
+$next = [<span class="next-entries">$link</span>]
+$link = [<a href="$link" title="Страница $page">$page</a>]
+$current = [<span class="current">$page</span>]
+$divider = [] </div>
+]
+
+content.admin = [
+$editor = [<p><label for="editor-$name"><strong>$lang.$name:</strong></label></p><textarea name="$name" id="editor-$name" cols="80%" rows="15">$value</textarea>]
+$text = [<p><input type="text" name="$name" id="text-$name" value="$value" size="30" /> <label for="text-$name"><strong>$lang.$name</strong></label></p>]
+$password = [<p><input type="password" name="$name" id="password-$name" value="$value" size='30' /> <label for="password-$name"><strong>$lang.$name</strong></label></p>]
+$checkbox= [<p><input type="checkbox" name="$name" id="checkbox-$name" $value /> <label for="checkbox-$name"><strong>$lang.$name</strong></label></p>]
+$combo = [<p><label for="combo-$name"><strong>$lang.$name:</strong></label> <select name="$name" id="combo-$name">$value</select></p>]
+$hidden = [<input type="hidden" name="$name" id="hidden-$name" value="$value" />]
+$form = [<h3>$formtitle</h3><form name="form" action="" method="post" >$items <p><input type="submit" name="submitbutton" id="submitbutton" value="$lang.update" /></p></form>]]
+
+$template.sidebar = [ $widget = [<p class="info">$title</p> $items = [<ul>
+$item = [<li><a rel="$rel" href="$link" title="$title">$text</a> $subcount = [$itemscount] $subitems = [$item] </li>]
+</ul>]]]
+
+sidebar.categories = [<table class="post"><tr><th class="title" colspan="2"><span class="bxt">$title</span></th></tr>
+$items = [<tr class="thead"><th>Категория</th><th>Количество записей</th></tr>
+$item = [<tr class="categories"><td><a rel="category tag" href="$link">$text</a></td><td class="center">$subcount</td></tr>$subitems]]</table>]
+
+sidebar.posts = [<table class="post"><tr><th class="title" colspan="3"><span class="bxt">$title</span></th></tr>
+$items = [<tr class="thead"><th>Название</th><th>Дата публикации</th><th>Количество комментариев</th></tr>
+$item = [<tr><td class="posts"><a href="$post.link">$post.title</a></td><td class="center">$post.date</td><td class="center"><a title="$lang.comments $lang.topost $post.title" href="$post.link#comments">$post.commentscount</a></td></tr>]]</table>]
+
+
+$template.sidebar1 = [ $widget = [<span class="bxt">$title</span> $items = [<ul>
+$item = [<li><a rel="$rel" href="$link" title="$title">$text</a> $subcount = [($itemscount)] $subitems = [<ul>$item</ul>] </li>]
+</ul>]]]
+
+sidebar1.submenu.items.item = [<li><a rel="$rel" href="$link" title="$title">$icon$text</a>$subitems</li>]
+sidebar1.categories.items.item = [<li><a rel="category tag" href="$link">$text</a> $subitems</li>]
+sidebar1.tags.items.item = [<li><a rel="$rel" href="$options.url$url">$title $subcount</a></li>]
+sidebar1.archives.items.item = [<li><a rel="$rel" href="$link" title="$title">$icon$text</a> $subcount$subitems</li>]
+sidebar1.posts.items.item = [<li><a href="$post.link">$post.title</a></li>]
+sidebar1.comments.items.item = [<li><a href="$link#comment-$id" title="$onrecent $title">$name: <cite>$content...</cite></a></li>]
+sidebar1.links.items.item = [<li><a rel="$rel" href="$link" title="$title">$text</a></li>]
+
+$template.ajaxwidget = [<span class="link" title="Показать/Скрыть" onclick="widget_load(this, $id, $sidebar)">$title</span>]
+$template.inlinewidget = [<a class="link" title="Показать/Скрыть" rel="inlinewidget">$title</a>]
+
+$custom.advert = [Текст обьявления, баннеры или контекстная реклама]
+$custom.advert.admin = [
+$title = [Верхнее обьявление]
+$type = [text]
+]
+$custom.advert2 = [Текст обьявления, баннеры или контекстная реклама]
+$custom.advert2.admin = [
+$title = [Нижнее обьявление]
+$type = [text]
+]
