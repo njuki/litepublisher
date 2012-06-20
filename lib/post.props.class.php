@@ -5,6 +5,7 @@ public $arrayprops;
 public $intprops;
 public $intprops;
 public $allprops;
+public $types;
 
 protected function create() {
 parent::create();
@@ -21,6 +22,23 @@ if ((strlen($name) > 3) && strbegin($name, 'get')) {
 if (!in_array($name, $this->allprops)) $this->allprops[] = $name;
 }
 }
+
+$this->types = array();
+foreach ($this->allprops as $name) {
+if (in_array($name, $methods)) {
+$type = 'method';
+} elseif (in_array($name, $this->arrayprops)) {
+$type = 'array';
+} elseif (in_array($name, $this->intprops)) {
+$type = 'int';
+} elseif (in_array($name, $this->bollprops)) {
+$type = 'bool;
+} else {
+$type = 'string';
+}
+
+$this->types[$name] = $type;
+}
 }
 
 public function get(tpost $post, $name, &$value) {
@@ -30,7 +48,15 @@ if (!isset($post->propdata[$this->dataname])) $this->load_item($post);
 $data = &$post->propdata[$this->dataname];
     if (method_exists($this, $get = 'get' . $name)) {
 $value = $this->$get($data);
-} elseif (in_array($name, $this->arrayprops)) {
+return true;
+}
+
+switch($this->types[$name]) {
+case 'int':
+$value = (int) $data[$name];
+break;
+
+case 'array':
 if (!isset($post->syncdata[$this->dataname])) $post->syncdata[$this->dataname] = array();
 $syncdata = &$post->syncdata[$this->dataname];
 if (isset($syncdata([$name])) {
@@ -43,9 +69,12 @@ if ($v = trim($v)) $value[] = $v;
 
 $syncdata[$name] = $value;
 }
-} else {
+break;
+
+default:
 $value = $data[$name];
 }
+
 return true;
 }
 
@@ -59,6 +88,8 @@ $this->$set($data, $value);
 if (!isset($post->syncdata[$this->dataname])) $post->syncdata[$this->dataname] = array();
 $post->syncdata[$this->dataname][$name] = $value;
 $data[$name] = implode(',', $value);
+} elseif (in_array($name, $this->intprops)) {
+$data[$name] = (int) $value;
 } else {
 $data[$name] = $value;
 }
