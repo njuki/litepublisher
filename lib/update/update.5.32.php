@@ -29,7 +29,7 @@ $langjs = "var lang;\nif (lang == undefined) lang = {};\n";
   )));
 
   $section = 'admin';
-  $js->delete($section, '/js/litepublisher/filebrowser.min.js');
+  $js->deletefile($section, '/js/litepublisher/filebrowser.min.js');
 
   $section = 'posteditor';
   $js->add($section, '/js/swfupload/swfupload.js');
