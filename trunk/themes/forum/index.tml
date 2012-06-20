@@ -1,0 +1,18 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML+RDFa 1.0//EN" "http://www.w3.org/MarkUp/DTD/xhtml-rdfa-1.dtd">
+<html version="XHTML+RDFa 1.0" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>$template.title</title>
+<meta http-equiv="content-type" content="text/html;charset=utf-8"/>
+<link rel="stylesheet" href="$template.url/style.css" type="text/css" media="all"/>
+$template.head
+</head>
+<body><div id="site"><a id="logo" href="/" title="$site.description">$site.name</a>
+$template.menu 
+<div id="forum">
+<div id="content" class="bx">
+<div id="breadcrumbs" class="bxt" xmlns:v="http://rdf.data-vocabulary.org/#"><span typeof="v:Breadcrumb"><a title="На главную форума" rel="v:url" property="v:title" href="$site.url/">Форум</a></span><span> › </span>$post.catlinks<strong>$context.title&nbsp;</strong></div>
+<div class="adv">$custom.advert</div>
+$template.sidebar $template.content</div>
+<div id="sidebar" class="bx">$template.sidebar</div></div>
+<div id="footer"><div class="left"><span class="copyright">&copy; $site.name 2012</span>, All Rights Reserved. <br/>Powered by <a href="http://litepublisher.ru/">Lite Publisher</a>, Theme design by <a href="http://seodiz.ru/">SeoDiz</a></div><div class="right">$template.footer</div></div></div>
+</body></html>
