@@ -1,8 +1,6 @@
 <form name='form' id='form' action='$site.url/admin/posts/editor/' method='post'>
 [text=title]
-[text=sourceurl]
-
-<div id='categoriestab'>$categories</div>
+[combo=categories]
 
 <div id='posteditor-files'>
 		<h3 ><a href='#' id='posteditor-init-files'>$lang.files</a></h3>
@@ -15,6 +13,6 @@ $post.filelist
 $raw
 </div>
 
-[hidden=id]
-<p><input type='submit' name='submit' value='$lang.save' /></p>
+<p>[hidden=id]
+<input type='submit' name='submit' value='$lang.save' /></p>
 </form>
