@@ -28,8 +28,14 @@ $self->idview = $idview;
 $self->save();
 
 $cat = $cats->getitem($idcat);
+
 tmenus::i()->addfake($cat['url'], $cat['title']);
+
+tthemeparser::i()->parsed = $this->themeparsed;
+    ttheme::clearcache();
 }
 
 function tforumUninstall($self) {
+tthemeparser::i()->unbind($this);
+    ttheme::clearcache();
 }
