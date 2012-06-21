@@ -6,7 +6,7 @@
 * and GPL (gpl.txt) licenses.
 **/
 
-class tadminforum {
+class tadminforum implements iadmin {
   
   public static function i() {
     return getinstance(__class__);
