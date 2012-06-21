@@ -20,26 +20,34 @@ $this->data['rootcat'] = 0;
 
   public function themeparsed(ttheme $theme) {
 if (($theme->name == 'forum') && !strpos($theme->templates['content.post'], '$forum.comboitems')) {
-$theme->templates['content.post'] .= $this->combo_html;
-$theme->templates['content.post'] = str_replace('$post.content', '$post.content' . $this->editlink, $theme->templates['content.post']);
+$html = tadminhtml::i();
+$html->section = 'forum';
+$lang = tlocal::admin('forum');
+$combo = $theme->parse($html->combocats);
+$theme->templates['content.post'] .= $combo;
+$theme->templates['content.excerpts'] .= $combo;
+
+$theme->templates['content.post'] = str_replace('$post.content', '$post.content' . $theme->replacelang($html->editlink, $lang), $theme->templates['content.post']);
 }
 }
 
 public function getcomboitems() {
 $filename = litepublisher::$paths->cache . 'forum.comboitems.php';
 if ($result = tfilestorage::getfile($filename)) return $result;
-$result = $this->get_categories();
+$result = $this->getcats($this->rootcat);
 tfilestorage::setfile($filename, $result);
 return $result;
 }
 
-    public function get_categories() {
+    public function getcats($idparent, $pretitle) {
     $result = '';
-    $categories = tcategories::i();
-    $categories->loadall();
-    if (count($items) == 0) $items = array_keys($categories->items);
+    $cats = tcategories::i();
+$cats->loadall();
+$items = $cats->db->idselect("parent = $idparent order by title asc");
     foreach ($items as $id) {
-      $result .= sprintf('<option value="%s" %s>%s</option>', $id, $id == $idselected ? 'selected' : '', tadminhtml::specchars($categories->getvalue($id, 'title')));
+$item = $cats->getitem($id);
+      $result .= sprintf('<option value="%s" data-url="%s">%s%s</option>', $id, $item['url'], $pretitle, $item['title']);
+$result .= $this->getcats($id, $item['title'] . ' / ');
     }
     return $result;
   }
