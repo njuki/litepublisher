@@ -7,8 +7,7 @@
 **/
 
 class tforum extends tplugin {
-public $cats;
-  
+
   public static function i() {
     return getinstance(__class__);
   }
@@ -17,7 +16,16 @@ public $cats;
     parent::create();
 $this->basename = 'forum';
 $this->data['idview'] = 1;
-$this->addmap('cats', array());
+$this->data['rootcat'] = 0;
   }
+
+public function getcombocats() {
+$result = '';
+$cats = tcategories::i();
+$cats->loadall();
+$items = $cats->getchilds($this->rootcat);
+
+return $result;
+}
   
 } //class
