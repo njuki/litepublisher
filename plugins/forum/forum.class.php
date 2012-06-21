@@ -19,13 +19,14 @@ $this->data['rootcat'] = 0;
   }
 
   public function themeparsed(ttheme $theme) {
-if (($theme->name == 'forum') && !strpos($theme->templates['content.post'], '$forum.combocats')) {
+if (($theme->name == 'forum') && !strpos($theme->templates['content.post'], '$forum.comboitems')) {
 $theme->templates['content.post'] .= $this->combo_html;
+$theme->templates['content.post'] = str_replace('$post.content', '$post.content' . $this->editlink, $theme->templates['content.post']);
 }
 }
 
-public function getcombocats() {
-$filename = litepublisher::$paths->cache . 'forum.combocats.php';
+public function getcomboitems() {
+$filename = litepublisher::$paths->cache . 'forum.comboitems.php';
 if ($result = tfilestorage::getfile($filename)) return $result;
 $result = $this->get_categories();
 tfilestorage::setfile($filename, $result);
@@ -42,6 +43,5 @@ return $result;
     }
     return $result;
   }
-  
 
-} //class
+}//class
