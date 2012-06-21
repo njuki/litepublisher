@@ -16,6 +16,7 @@ class tforum extends tplugin {
     parent::create();
 $this->data['idview'] = 1;
 $this->data['rootcat'] = 0;
+$this->data['comboitems'] = '';
   }
 
   public function themeparsed(ttheme $theme) {
@@ -31,12 +32,9 @@ $theme->templates['content.post'] = str_replace('$post.content', '$post.content'
 }
 }
 
-public function getcomboitems() {
-$filename = litepublisher::$paths->cache . 'forum.comboitems.php';
-if ($result = tfilestorage::getfile($filename)) return $result;
-$result = $this->getcats($this->rootcat);
-tfilestorage::setfile($filename, $result);
-return $result;
+public function categories_changed() {
+$this->comboitems = $this->getcats($this->rootcat);
+$this->save();
 }
 
     public function getcats($idparent, $pretitle) {
