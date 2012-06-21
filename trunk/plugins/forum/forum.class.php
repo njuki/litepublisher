@@ -14,20 +14,25 @@ class tforum extends tplugin {
   
   public function create() {
     parent::create();
-$this->basename = 'forum';
 $this->data['idview'] = 1;
 $this->data['rootcat'] = 0;
   }
 
-public function getcombocats() {
-$result = '';
-$cats = tcategories::i();
-$cats->loadall();
-$items = $cats->getchilds($this->rootcat);
+  public function themeparsed(ttheme $theme) {
+if (($theme->name == 'forum') && !strpos($theme->templates['content.post'], '$forum.combocats')) {
+$theme->templates['content.post'] .= $this->combo_html;
+}
+}
 
+public function getcombocats() {
+$filename = litepublisher::$paths->cache . 'forum.combocats.php';
+if ($result = tfilestorage::getfile($filename)) return $result;
+$result = $this->get_categories();
+tfilestorage::setfile($filename, $result);
 return $result;
 }
-    public static function getcombocategories(array $items, $idselected) {
+
+    public function get_categories() {
     $result = '';
     $categories = tcategories::i();
     $categories->loadall();
