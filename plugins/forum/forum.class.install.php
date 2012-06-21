@@ -22,10 +22,12 @@ $cats = tcategories::i();
 $idcat = $cats->add(0, $lang->forum);
 $cats->setvalue($idcat, 'includechilds', 1);
 $cats->setvalue($idcat, 'idview', $idview);
-$cats->contents->setcontent($idcat, $lang->intro);
+$cats->contents->setcontent($idcat, $lang->intro . 
+sprintf(' <a href="%s/admin/forum/editor/">%s</a>', litepublisher::$site->url, tlocal::get('names', 'adminpanel')));
 
 $self->rootcat = $idcat;
 $self->idview = $idview;
+$self->categories_changed();
 $self->save();
 
 $cat = $cats->getitem($idcat);
