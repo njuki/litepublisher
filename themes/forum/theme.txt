@@ -14,7 +14,8 @@ $template.head = [
 $post = [
 $rss = [<link rel="alternate" type="application/rss+xml" title="$lang.rsscomments $post.title" href="$post.rsscomments" />]
 $prev = [<link rel="prev" href="$prev.link" />]
-$next = [<link rel="next" href="$next.link" />]]
+$next = [<link rel="next" href="$next.link" />]
+]
 $tags = [<link rel="alternate" type="application/rss+xml" title="$lang.rss $context.title" href="$site.url/rss/$context.postpropname/$context.id.xml" />]
 ]
 
@@ -27,16 +28,16 @@ content.menu = [<table class="post" id="menu-$menu.id"><tr><th class="title"><h1
 <tr><td class="entry">$menu.content</td></tr></table>]
 
 content.author = [<table id="author-$author.id" class="post"><tr><th class="title"><h1 class="bxt">$lang.author $author.name</h1></th></tr>
-<tr><td class="entry"><span class="left"><img class="author photo" src="http://www.gravatar.com/avatar/$author.md5email?s=120&amp;r=g&amp;d=wavatar" title="$lang.author $author.name" alt="$author.name"/></span><p><strong>Обо мне:</strong></p>$author.content<p><strong>Мой сайт:</strong> <a href="$author.website">$author.website</a></p></td></tr></table>]
+<tr><td class="entry"><span class="left">$author.gravatar</span><p><strong>$lang.aboutme:</strong></p>$author.content<p><strong>$lang.website:</strong> $author.websitelink</p></td></tr></table>]
 
 content.post = [
 <table class="main post" id="post-$post.id">
+<tr><th class="title" colspan="2"><h1 class="bxt">$post.title</h1></th></tr>
 <tr>
-<th class="title" colspan="2"><h1 class="bxt">$post.title</h1></th>
-</tr>
-<tr><th class="author hcard"><a class="url fn" href="$site.url$author.url">$post.authorname</a><img class="avatar photo" src="http://www.gravatar.com/avatar/$author.md5email?s=90&amp;r=g&amp;d=wavatar" title="$lang.author $post.authorname" alt="$post.authorname"/>
-(<a rel="nofollow" class="url small" href="$author.website">вебсайт</a>)</th>
-<td class="txt"><div class="info"><span class="published">$post.date</span><span class="index"><a title="$lang.permalink на сообщение" href="$post.link#post-$post.id">#0</a></span></div>
+<th class="author hcard"><a class="url fn" href="$site.url$author.url">$post.authorname</a>$author.gravatar
+(<a rel="nofollow" class="url small" href="$author.website">$lang.website</a>)</th>
+<td class="txt">
+<div class="info"><span class="published">$post.date</span><span class="index"><a title="$lang.permamessage" href="$post.link#post-$post.id">#1</a></span></div>
 <div class="entry">$post.filelist $post.content</div>
 </td></tr>
 <tr><td class="count" colspan="2">В теме $post.commentscount сообщений</td></tr>
@@ -58,7 +59,7 @@ $next = [<a class="right" rel="next" href="$nextpost.link" title="$lang.next: $n
 </p>]
 
 content.post.filelist = [
-$files = [$file = [<p class="file"><em>Скачать:</em> <a href="$link" title="$description">$title</a> ($description)</p>]]
+$files = [$file = [<p class="file"><em>$lang.download:</em> <a href="$link" title="$description" data-idfile="$id">$title</a> ($description)</p>]]
 $images= [$image = [<span class="image"><img title="$description" class="left photo" src="$link" alt="$post.title"/></span>]
 $preview = [<img class="left photo" title="$description" src="$preview.link" alt="$title $post.title"/>]]
 $audios = [$audio = [<a href="$link" title="$title">$title</a><span id="audiofile-$id" rel="audio"><a onclick="playaudiofile('audiofile-$id', '$link');" title="$title">$lang.play</a></span>]]
