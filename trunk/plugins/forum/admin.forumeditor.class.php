@@ -6,39 +6,32 @@
 * and GPL (gpl.txt) licenses.
 **/
 
-class tforumeditor extends tposteditor {
+class tposteditor extends tposteditor {
   
   public static function i($id = 0) {
     return parent::iteminstance(__class__, $id);
-  }
-  
-  public function gethead() {
-    $result = parent::gethead();
-    $template = ttemplate::i();
-  $result .= $template->getready('$("#tabs, #contenttabs").tabs({ cache: true });');
-    return $result;
   }
   
   public function gettitle() {
     if ($this->idpost == 0){
       return parent::gettitle();
     } else {
-      return tlocal::admin('forums')->editor;
+      return tlocal::admin('posts')->editor;
     }
   }
   
   public function camrequest() {
     if ($s = parent::canrequest()) return $s;
-    $this->basename = 'forums';
+    $this->basename = 'posts';
     if ($this->idpost > 0) {
-      $forum = tforum::i($this->idpost);
-      if ((litepublisher::$options->group == 'forum') && (litepublisher::$options->user != $forum->author)) return 403;
+      $post = tpost::i($this->idpost);
+      if ((litepublisher::$options->group == 'post') && (litepublisher::$options->user != $post->author)) return 403;
     }
   }
   
   public function gethtml($name = '') {
-    $lang = tlocal::admin('forums');
-    $lang->ini['forums'] = $lang->ini['forum'] + $lang->ini['forums'];
+    $lang = tlocal::admin('posts');
+    $lang->ini['posts'] = $lang->ini['post'] + $lang->ini['posts'];
     return parent::gethtml($name);
   }
   
@@ -48,39 +41,21 @@ class tforumeditor extends tposteditor {
   
   public function getcontent() {
     $result = $this->logoutlink;
-    $this->basename = 'forums';
-    $forum = tforum::i($this->idpost);
-    ttheme::$vars['forum'] = $forum;
+    $this->basename = 'posts';
+    $post = tpost::i($this->idpost);
+    ttheme::$vars['post'] = $post;
     $args = targs::i();
     $args->id = $this->idpost;
-    $args->title = tcontentfilter::unescape($forum->title);
-    $args->ajax = tadminhtml::getadminlink('/admin/ajaxposteditor.htm', "id=$forum->id&get");
-    $ajaxeditor = tajaxposteditor ::i();
-    $args->raw = $ajaxeditor->geteditor('raw', $forum->rawcontent, true);
+    $args->title = tcontentfilter::unescape($post->title);
+    $args->raw = $post->rawcontent;
     
     $html = $this->html;
-    $lang = tlocal::admin('forums');
+    $lang = tlocal::admin('posts');
     
-    $args->code = $html->getinput('editor', 'code', tadminhtml::specchars($forum->code), $lang->codetext);
+    $posts = tposts::i();
+    $args->catcombo = tposteditor::getcombocategories($posts->cats, count($post->categories) ? $post->categories[0] : $posts->cats[0]);
     
-    $args->fixed = $forum->state == 'fixed';
-    
-    $forums = tforums::i();
-    $args->catcombo = tposteditor::getcombocategories($forums->cats, count($forum->categories) ? $forum->categories[0] : $forums->cats[0]);
-    
-    $states =array();
-    foreach (array('fixed', 'opened', 'wontfix', 'invalid', 'duplicate', 'reassign') as $state) {
-      $states[$state] = $lang->$state;
-    }
-    $args->statecombo= $html->array2combo($states, $forum->state);
-    
-    $prio = array();
-    foreach (array('trivial', 'minor', 'major', 'critical', 'blocker') as $p) {
-      $prio[$p] = $lang->$p;
-    }
-    $args->priocombo = $html->array2combo($prio, $forum->prio);
-    
-    if ($forum->id > 0) $result .= $html->headeditor ();
+    if ($post->id > 0) $result .= $html->headeditor ();
     $result .= $html->form($args);
     $result = $html->fixquote($result);
     return $result;
@@ -91,16 +66,16 @@ class tforumeditor extends tposteditor {
     return;
     */
     extract($_POST, EXTR_SKIP);
-    $forums = tforums::i();
-    $this->basename = 'forums';
+    $posts = tposts::i();
+    $this->basename = 'posts';
     $html = $this->html;
     
     // check spam
     if ($id == 0) {
       $newstatus = 'published';
-      if (litepublisher::$options->group == 'forum') {
-        $hold = $forums->db->getcount('status = \'draft\' and author = '. litepublisher::$options->user);
-        $approved = $forums->db->getcount('status = \'published\' and author = '. litepublisher::$options->user);
+      if (litepublisher::$options->group == 'post') {
+        $hold = $posts->db->getcount('status = \'draft\' and author = '. litepublisher::$options->user);
+        $approved = $posts->db->getcount('status = \'published\' and author = '. litepublisher::$options->user);
         if ($approved < 3) {
           if ($hold - $approved >= 2) return $html->h4->noapproved;
           $newstatus = 'draft';
@@ -111,33 +86,27 @@ class tforumeditor extends tposteditor {
       $lang =tlocal::i('editor');
       return $html->h4->emptytitle;
     }
-    $forum = tforum::i((int)$id);
-    $forum->title = $title;
-    $forum->categories = array((int) $combocat);
-    if (isset($tags)) $forum->tagnames = $tags;
-    if ($forum->author == 0) $forum->author = litepublisher::$options->user;
+    $post = tpost::i((int)$id);
+    $post->title = $title;
+    $post->categories = array((int) $combocat);
+    if (isset($tags)) $post->tagnames = $tags;
+    if ($post->author == 0) $post->author = litepublisher::$options->user;
     if (isset($files))  {
       $files = trim($files);
-      $forum->files = $files == '' ? array() : explode(',', $files);
+      $post->files = $files == '' ? array() : explode(',', $files);
     }
     
-    $forum->content = tcontentfilter::quote(htmlspecialchars($raw));
-    $forum->code = $code;
-    $forum->prio = $prio;
-    $forum->set_state($state);
-    $forum->version = $version;
-    $forum->os = $os;
-    //if (litepublisher::$options->group != 'forum') $forum->state = $state;
+    $post->content = tcontentfilter::quote(htmlspecialchars($raw));
+
     if ($id == 0) {
-      $forum->status = $newstatus;
-      $forum->categories = array((int) $combocat);
-      $forum->closed = time();
-      $id = $forums->add($forum);
+      $post->status = $newstatus;
+      $post->categories = array((int) $combocat);
+      $id = $posts->add($post);
       $_GET['id'] = $id;
       $_POST['id'] = $id;
       $this->idpost = $id;
     } else {
-      $forums->edit($forum);
+      $posts->edit($post);
     }
     
     return $html->h4->successedit;
