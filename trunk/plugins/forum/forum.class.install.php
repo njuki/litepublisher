@@ -10,6 +10,7 @@ function tforumInstall($self) {
   litepublisher::$options->reguser = true;
 tadminoptions::i()->usersenabled = true;
 
+  tlocalmerger::i()->addplugin(basename(dirname(__file__)));
 $lang = tlocal::admin('forum);
 
 $view = new tview();
@@ -31,11 +32,17 @@ $cat = $cats->getitem($idcat);
 
 tmenus::i()->addfake($cat['url'], $cat['title']);
 
+tjsmerger::i()->add('default', '/plugins/forum/forum.min.js');
+tcategories::i()->changed = $self->categories_changed;
 tthemeparser::i()->parsed = $this->themeparsed;
     ttheme::clearcache();
 }
 
 function tforumUninstall($self) {
+tcategories::i()->unbind($self);
 tthemeparser::i()->unbind($this);
     ttheme::clearcache();
+
+  tlocalmerger::i()->deleteplugin(basename(dirname(__file__)));
+tjsmerger::i()->deletefile('default', '/plugins/forum/forum.min.js');
 }
