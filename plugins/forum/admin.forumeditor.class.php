@@ -38,6 +38,7 @@ if ($forum->moderate && !litepublisher::$options->ingroup('editor')) {
         $hold = $posts->db->getcount('status = \'draft\' and author = '. litepublisher::$options->user);
 if ($hold >= 3) return $html->manydrafts;
 }
+}
 
     $post = tpost::i($this->idpost);
     ttheme::$vars['post'] = $post;
@@ -76,6 +77,7 @@ if ($hold >= 3) return $html->manydrafts;
       $lang =tlocal::i('editor');
       return $html->h4->emptytitle;
     }
+}
 
     $post = tpost::i((int)$id);
     $post->title = $title;
