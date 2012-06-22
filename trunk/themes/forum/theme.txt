@@ -7,16 +7,26 @@ $template = {@import(index.tml)}
 
 $template.title = [$title $template.page]
 
-$template.menu = [ $hover = [true] <script type="text/javascript"> $(document).ready(function(){$("#nav a[href='" + window.location + "']").addClass("current_page_link"); $("#nav li").hover(function(){$(this).addClass("jshover");}, function(){$(this).removeClass("jshover");});});</script>
-<ul id="nav"><li class="home"><a href="/" title="На главную">$site.name</a></li> $item = [<li><a href="$link" title="$title">$title</a>$submenu = [<ul>$items</ul>]</li>] $current = [<li class="current_page_item"><a rel="nofollow" href="$link" title="$title">$title</a>$submenu</li>] </ul>]
+$template.menu = [ $hover = [true]
+ <script type="text/javascript">
+ $(document).ready(function(){
+$("#nav a[href='" + window.location + "']").addClass("current_page_link");
+$("#nav a[href='" + ltoptions.url + "/']").addClass("home");
+ $("#nav li").hover(function(){$(this).addClass("jshover");}, function(){$(this).removeClass("jshover");});
+});
+</script>
+<ul id="nav">$item = [<li><a href="$link" title="$title">$title</a>$submenu = [<ul>$items</ul>]</li>] $current = [<li class="current_page_item"><a rel="nofollow" href="$link" title="$title">$title</a>$submenu</li>] </ul>]
 
 $template.head = [
 $post = [
+<script type="text/javascript">ltoptions.idcat = $post.idcat;</script>
 $rss = [<link rel="alternate" type="application/rss+xml" title="$lang.rsscomments $post.title" href="$post.rsscomments" />]
 $prev = [<link rel="prev" href="$prev.link" />]
 $next = [<link rel="next" href="$next.link" />]
 ]
-$tags = [<link rel="alternate" type="application/rss+xml" title="$lang.rss $context.title" href="$site.url/rss/$context.postpropname/$context.id.xml" />]
+$tags = [
+<script type="text/javascript">ltoptions.idcat = $context.id;</script>
+<link rel="alternate" type="application/rss+xml" title="$lang.rss $context.title" href="$site.url/rss/$context.postpropname/$context.id.xml" />]
 ]
 
 $template.content.simple = [$content]
