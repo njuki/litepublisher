@@ -276,12 +276,12 @@ class tmenus extends titems {
     $this->callevent('onbeforemenu', array(&$result, &$hover,$current ));
     if (count($this->tree) > 0) {
       $theme = ttheme::i();
+        $args = new targs();
       if ($hover) {
         $items = $this->getsubmenu($this->tree, $current);
       } else {
         $items = '';
         $tml = $theme->templates['menu.item'];
-        $args = targs::i();
         $args->submenu = '';
         foreach ($this->tree as $id => $subitems) {
           if ($this->exclude($id)) continue;
@@ -291,7 +291,8 @@ class tmenus extends titems {
       }
       
       $this->callevent('onitems', array(&$items));
-      $result = str_replace('$item', $items, $theme->templates['menu']);
+$args->item =  $items;
+      $result = $theme->parsearg($theme->templates['menu'], $args);
     }
     $this->callevent('onmenu', array(&$result));
     return $result;
