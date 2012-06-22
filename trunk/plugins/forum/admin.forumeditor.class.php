@@ -42,6 +42,16 @@ class tposteditor extends tposteditor {
   public function getcontent() {
     $result = $this->logoutlink;
     $this->basename = 'posts';
+
+$posts = tposts::i();
+    if ($this->idpost == 0) {
+$forum = tforum::i();
+if ($forum->moderate && !litepublisher::$options->ingroup('editor')) {
+// if too many drafts then reject
+        $hold = $posts->db->getcount('status = \'draft\' and author = '. litepublisher::$options->user);
+if ($hold >= 3) return $html->manydrafts;
+    }
+
     $post = tpost::i($this->idpost);
     ttheme::$vars['post'] = $post;
     $args = targs::i();
@@ -52,7 +62,6 @@ class tposteditor extends tposteditor {
     $html = $this->html;
     $lang = tlocal::admin('posts');
     
-    $posts = tposts::i();
     $args->catcombo = tposteditor::getcombocategories($posts->cats, count($post->categories) ? $post->categories[0] : $posts->cats[0]);
     
     if ($post->id > 0) $result .= $html->headeditor ();
@@ -62,45 +71,47 @@ class tposteditor extends tposteditor {
   }
   
   public function processform() {
-    /* dumpvar($_POST);
-    return;
-    */
+    //  return dumpvar($_POST);
     extract($_POST, EXTR_SKIP);
     $posts = tposts::i();
     $this->basename = 'posts';
     $html = $this->html;
     
-    // check spam
     if ($id == 0) {
-      $newstatus = 'published';
-      if (litepublisher::$options->group == 'post') {
+$forum = tforum::i();
+if (!$forum->moderate || litepublisher::$options->ingroup('editor')) {
+$status = 'published';
+} else {
+$status = 'draft';
+// if too many drafts then reject
         $hold = $posts->db->getcount('status = \'draft\' and author = '. litepublisher::$options->user);
-        $approved = $posts->db->getcount('status = \'published\' and author = '. litepublisher::$options->user);
-        if ($approved < 3) {
-          if ($hold - $approved >= 2) return $html->h4->noapproved;
-          $newstatus = 'draft';
-        }
-      }
+if ($hold >= 3) return $html->manydrafts;
     }
+
     if (empty($title)) {
       $lang =tlocal::i('editor');
       return $html->h4->emptytitle;
     }
+
     $post = tpost::i((int)$id);
     $post->title = $title;
     $post->categories = array((int) $combocat);
-    if (isset($tags)) $post->tagnames = $tags;
+
     if ($post->author == 0) $post->author = litepublisher::$options->user;
+
     if (isset($files))  {
       $files = trim($files);
       $post->files = $files == '' ? array() : explode(',', $files);
     }
     
-    $post->content = tcontentfilter::quote(htmlspecialchars($raw));
+    $post->content = tcontentfilter::remove_scripts($raw);
 
     if ($id == 0) {
       $post->status = $newstatus;
-      $post->categories = array((int) $combocat);
+$post->comstatus = $forum->comstatus;
+$post->idview = $forum->idview;
+$post->idperm = $forum->idperm;
+
       $id = $posts->add($post);
       $_GET['id'] = $id;
       $_POST['id'] = $id;
