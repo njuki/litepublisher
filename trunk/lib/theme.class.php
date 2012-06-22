@@ -263,8 +263,7 @@ class ttheme extends tevents {
   
   public static function parsevar($name, $var, $s) {
     self::$vars[$name] = $var;
-    $self = self::i();
-    return $self->parse($s);
+return self::i()->parse($s);
   }
   
   public function gethtml($context) {

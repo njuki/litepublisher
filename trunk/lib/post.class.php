@@ -458,8 +458,13 @@ if ($props->set($this, $name, $value)) return true;
     $cats = $this->factory->categories;
     return $cats->getname($this->categories[0]);
   }
+
+  public function getidcat() {
+if (($cats = $this->categories) && count($cats)) return $cats[0];
+return 0;
+  }
   
-  //ITemplate
+    //ITemplate
   
   public function request($id) {
     parent::request((int) $id);

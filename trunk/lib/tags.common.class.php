@@ -294,11 +294,11 @@ class tcommontags extends titems implements  itemplate {
     } catch (Exception $e) {
       return 404;
     }
-    
+
     $perpage = (int) $item['lite'] ? (int) $item['liteperpage'] : litepublisher::$options->perpage;
     $list = $this->getidposts($id);
-    $pages = ceil(count ($list) / $perpage);
-    if (litepublisher::$urlmap->page > $pages) {
+    $pages = (int) ceil(count ($list) / $perpage);
+    if (($pages  > 1) && (litepublisher::$urlmap->page > $pages)) {
       return sprintf('<?php litepublisher::$urlmap->redir(\'%s\'); ?>',$item['url']);
     }
     
