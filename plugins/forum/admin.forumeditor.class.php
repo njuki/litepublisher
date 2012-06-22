@@ -52,7 +52,7 @@ return $html->manydrafts;
     $args->raw = $post->rawcontent;
 $cats = tcategories::i();
 $cats->loadall();    
-    $args->category = tposteditor::getcombocategories($cats->getchilds(tforum::i()->rootcat), $post->category);
+    $args->category = tposteditor::getcombocategories($cats->getchilds(tforum::i()->rootcat), $post->idcat);
 
     if ($post->id > 0) $result .= $html->h4($lang->formhead . ' ' . $post->bookmark);
 $html->section = 'forum';
