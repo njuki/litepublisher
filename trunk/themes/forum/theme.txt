@@ -157,7 +157,7 @@ $password = [<p><input type="password" name="$name" id="password-$name" value="$
 $checkbox= [<p><input type="checkbox" name="$name" id="checkbox-$name" $value /> <label for="checkbox-$name"><strong>$lang.$name</strong></label></p>]
 $combo = [<p><label for="combo-$name"><strong>$lang.$name:</strong></label> <select name="$name" id="combo-$name">$value</select></p>]
 $hidden = [<input type="hidden" name="$name" id="hidden-$name" value="$value" />]
-$form = [<h3>$formtitle</h3><form name="form" action="" method="post" >$items <p><input type="submit" name="submitbutton" id="submitbutton" value="$lang.update" /></p></form>]]
+$form = [<h3>$formtitle</h3><form name="form" action="" method="post" >$items <p><input type="submit" name="submitbutton" id="id-submit-button" value="$lang.update" /></p></form>]]
 
 $template.sidebar = [ $widget = [<p class="info">$title</p> $items = [<ul>
 $item = [<li><a rel="$rel" href="$link" title="$title">$text</a> $subcount = [$itemscount] $subitems = [$item] </li>]
@@ -183,7 +183,7 @@ sidebar1.posts.items.item = [<li><a href="$post.link">$post.title</a></li>]
 sidebar1.comments.items.item = [<li><a href="$link#comment-$id" title="$onrecent $title">$name: <cite>$content...</cite></a></li>]
 sidebar1.links.items.item = [<li><a rel="$rel" href="$link" title="$title">$text</a></li>]
 
-$template.ajaxwidget = [<span class="link" title="$lang.show/$lang.hide" class="widget-load" data-idwidget="$id" data-sidebar="$sidebar">$title</span>]
+$template.ajaxwidget = [<span class="link widget-load" title="$lang.show/$lang.hide" data-idwidget="$id" data-sidebar="$sidebar">$title</span>]
 $template.inlinewidget = [<a class="link" title="$lang.show/$lang.hide" rel="inlinewidget">$title</a>]
 
 $custom.advert = [Текст обьявления, баннеры или контекстная реклама]
