@@ -10,7 +10,9 @@ function tforumInstall($self) {
   litepublisher::$options->reguser = true;
 tadminoptions::i()->usersenabled = true;
 
-  tlocalmerger::i()->addplugin(basename(dirname(__file__)));
+$name = basename(dirname(__file__));
+  tlocalmerger::i()->addplugin($name);
+
 $lang = tlocal::admin('forum);
 
 $view = new tview();
@@ -32,12 +34,21 @@ $self->save();
 
 $cat = $cats->getitem($idcat);
 
+litepublisher::$classes->add('tforumeditor', 'admin.forumeditor.class.php', $name);
 tmenus::i()->addfake($cat['url'], $cat['title']);
-
 tjsmerger::i()->add('default', '/plugins/forum/forum.min.js');
+
+  $linkgen = tlinkgenerator::i();
+  $linkgen->data['forum'] = '/forum/[title].htm';
+  $linkgen->save();
+
 tcategories::i()->changed = $self->categories_changed;
 tthemeparser::i()->parsed = $this->themeparsed;
     ttheme::clearcache();
+
+  $adminmenus = tadminmenus::i();
+$adminmenus->createitem($adminmenus->url2id('/admin/plugins/'),
+  'forum', 'author', 'tforumeditor');
 }
 
 function tforumUninstall($self) {
@@ -47,4 +58,13 @@ tthemeparser::i()->unbind($this);
 
   tlocalmerger::i()->deleteplugin(basename(dirname(__file__)));
 tjsmerger::i()->deletefile('default', '/plugins/forum/forum.min.js');
+
+  $adminmenus = tadminmenus::i();
+  $adminmenus->deletetree($adminmenus->url2id('/admin/plugins/forum/'));
+
+litepublisher::$classes->delete('tforumeditor');
+
+  $linkgen = tlinkgenerator::i();
+  unset($linkgen->data['forum']);
+  $linkgen->save();
 }

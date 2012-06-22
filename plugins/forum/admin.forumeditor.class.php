@@ -6,7 +6,7 @@
 * and GPL (gpl.txt) licenses.
 **/
 
-class tposteditor extends tposteditor {
+class tforumeditor extends tposteditor {
   
   public static function i($id = 0) {
     return parent::iteminstance(__class__, $id);
@@ -20,52 +20,36 @@ class tposteditor extends tposteditor {
     }
   }
   
-  public function camrequest() {
-    if ($s = parent::canrequest()) return $s;
-    $this->basename = 'posts';
-    if ($this->idpost > 0) {
-      $post = tpost::i($this->idpost);
-      if ((litepublisher::$options->group == 'post') && (litepublisher::$options->user != $post->author)) return 403;
-    }
-  }
-  
-  public function gethtml($name = '') {
-    $lang = tlocal::admin('posts');
-    $lang->ini['posts'] = $lang->ini['post'] + $lang->ini['posts'];
-    return parent::gethtml($name);
-  }
-  
   protected function getlogoutlink() {
     return $this->gethtml('login')->logout();
   }
   
   public function getcontent() {
     $result = $this->logoutlink;
-    $this->basename = 'posts';
-
+    $this->basename = 'forum';
 $posts = tposts::i();
+    $html = $this->html;
+    $lang = tlocal::admin('forum');
+   
     if ($this->idpost == 0) {
 $forum = tforum::i();
 if ($forum->moderate && !litepublisher::$options->ingroup('editor')) {
 // if too many drafts then reject
         $hold = $posts->db->getcount('status = \'draft\' and author = '. litepublisher::$options->user);
 if ($hold >= 3) return $html->manydrafts;
-    }
+}
 
     $post = tpost::i($this->idpost);
     ttheme::$vars['post'] = $post;
-    $args = targs::i();
+    $args = new targs();
     $args->id = $this->idpost;
     $args->title = tcontentfilter::unescape($post->title);
     $args->raw = $post->rawcontent;
     
-    $html = $this->html;
-    $lang = tlocal::admin('posts');
-    
     $args->catcombo = tposteditor::getcombocategories($posts->cats, count($post->categories) ? $post->categories[0] : $posts->cats[0]);
     
     if ($post->id > 0) $result .= $html->headeditor ();
-    $result .= $html->form($args);
+    $result .= $html->editor($args);
     $result = $html->fixquote($result);
     return $result;
   }
@@ -111,6 +95,8 @@ if ($hold >= 3) return $html->manydrafts;
 $post->comstatus = $forum->comstatus;
 $post->idview = $forum->idview;
 $post->idperm = $forum->idperm;
+
+    $post->url = tlinkgenerator::i()->addurl($post, 'forum');
 
       $id = $posts->add($post);
       $_GET['id'] = $id;
