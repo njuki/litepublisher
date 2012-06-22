@@ -13,8 +13,7 @@ if ("idcat" in ltoptions) $("#id-jumpto-forum").val(ltoptions.idcat);
 
 $("#id-jump-to-button").click(function() {
 var url = $("#id-jumpto-forum option:selected").data("url");
-alert(url);
-//window.location = ltoptions.url + url;
+window.location = ltoptions.url + url;
 return false;
 });
     //only logged users

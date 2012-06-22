@@ -27,11 +27,15 @@ if (($theme->name == 'forum') && !strpos($theme->templates['content.post'], '$fo
 $html = tadminhtml::i();
 $html->section = 'forum';
 $lang = tlocal::admin('forum');
-$combo = $theme->parse($html->combocats);
+$combo = str_replace('\'', '"', $theme->parse($html->combocats));
+//$this->categories_changed();
+
 $theme->templates['content.post'] .= $combo;
 $theme->templates['content.excerpts'] .= $combo;
 
-$theme->templates['content.post'] = str_replace('$post.content', '$post.content' . $theme->replacelang($html->editlink, $lang), $theme->templates['content.post']);
+$theme->templates['content.post'] = str_replace('\'', '"', str_replace('$post.content',
+'$post.content ' . $theme->replacelang($html->editlink, $lang),
+ $theme->templates['content.post']));
 }
 }
 
