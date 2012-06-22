@@ -15,7 +15,10 @@ class tforum extends tplugin {
   public function create() {
     parent::create();
 $this->data['idview'] = 1;
+$this->data['idviewidperm= 0;
 $this->data['rootcat'] = 0;
+$this->data['moderate'] = false;
+$this->data['comstatus'] = 'reg';
 $this->data['comboitems'] = '';
   }
 
