@@ -15,7 +15,7 @@ class tforum extends tplugin {
   public function create() {
     parent::create();
 $this->data['idview'] = 1;
-$this->data['idviewidperm= 0;
+$this->data['idperm'] = 0;
 $this->data['rootcat'] = 0;
 $this->data['moderate'] = false;
 $this->data['comstatus'] = 'reg';
@@ -36,7 +36,7 @@ $theme->templates['content.post'] = str_replace('$post.content', '$post.content'
 }
 
 public function categories_changed() {
-$this->comboitems = $this->getcats($this->rootcat);
+$this->comboitems = $this->getcats($this->rootcat, '');
 $this->save();
 }
 
