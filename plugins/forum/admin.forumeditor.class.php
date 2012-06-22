@@ -29,14 +29,18 @@ class tforumeditor extends tposteditor {
     $this->basename = 'forum';
 $posts = tposts::i();
     $html = $this->html;
-    $lang = tlocal::admin('forum');
+$html->section = 'editor';
+    $lang = tlocal::admin('editor');
    
     if ($this->idpost == 0) {
 $forum = tforum::i();
 if ($forum->moderate && !litepublisher::$options->ingroup('editor')) {
 // if too many drafts then reject
         $hold = $posts->db->getcount('status = \'draft\' and author = '. litepublisher::$options->user);
-if ($hold >= 3) return $html->manydrafts;
+if ($hold >= 3) {
+$lang = tlocal::admin('forum');
+return $html->manydrafts;
+}
 }
 }
 
@@ -46,10 +50,13 @@ if ($hold >= 3) return $html->manydrafts;
     $args->id = $this->idpost;
     $args->title = tcontentfilter::unescape($post->title);
     $args->raw = $post->rawcontent;
-    
-    $args->catcombo = tposteditor::getcombocategories($posts->cats, count($post->categories) ? $post->categories[0] : $posts->cats[0]);
-    
-    if ($post->id > 0) $result .= $html->headeditor ();
+$cats = tcategories::i();
+$cats->loadall();    
+    $args->category = tposteditor::getcombocategories($cats->getchilds(tforum::i()->rootcat), $post->category);
+
+    if ($post->id > 0) $result .= $html->h4($lang->formhead . ' ' . $post->bookmark);
+$html->section = 'forum';
+
     $result .= $html->editor($args);
     $result = $html->fixquote($result);
     return $result;
@@ -61,7 +68,7 @@ if ($hold >= 3) return $html->manydrafts;
     $posts = tposts::i();
     $this->basename = 'posts';
     $html = $this->html;
-    
+
     if ($id == 0) {
 $forum = tforum::i();
 if (!$forum->moderate || litepublisher::$options->ingroup('editor')) {
@@ -81,7 +88,7 @@ if ($hold >= 3) return $html->manydrafts;
 
     $post = tpost::i((int)$id);
     $post->title = $title;
-    $post->categories = array((int) $combocat);
+    $post->categories = array((int) $category);
 
     if ($post->author == 0) $post->author = litepublisher::$options->user;
 
@@ -93,7 +100,7 @@ if ($hold >= 3) return $html->manydrafts;
     $post->content = tcontentfilter::remove_scripts($raw);
 
     if ($id == 0) {
-      $post->status = $newstatus;
+      $post->status = $status;
 $post->comstatus = $forum->comstatus;
 $post->idview = $forum->idview;
 $post->idperm = $forum->idperm;
