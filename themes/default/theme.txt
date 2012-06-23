@@ -352,8 +352,7 @@ $files = [
 
 $images= [
   $image = [<li><a rel="prettyPhoto[gallery-$post.id]" href="$link" class="photo" data-idfile="$id">$preview</a></li>]
-
-  $preview = [<img src="$preview.link" height="$preview.height" width="$preview.width" title="$title" alt="$title" />]
+  $preview = [<img src="$preview.link" height="$preview.height" width="$preview.width" title="$title" alt="$description" />]
 ]
 
 $audios = [
@@ -595,8 +594,8 @@ content.post.templatecomments.comments.comment = [
   <div class="commentcontent" id="commentcontent-$comment.id" >$comment.content</div>
   $quotebuttons = [
   <div class="replyquotebuttons">
-   <input type="button" value="$lang.reply" onclick="replycomment($comment.id,'$comment.name');" />
-   <input type="button" value="$lang.quote" onclick="quotecomment($comment.id,'$comment.name');" />
+   <button type="button" class="replycomment" data-idcomment="$comment.id" data-authorname="$comment.name">$lang.reply</button>
+   <button type="button" class="quotecomment" data-idcomment="$comment.id" data-authorname="$comment.name">$lang.quote</button>
   </div>
 ]
  </li>
@@ -605,7 +604,8 @@ content.post.templatecomments.comments.comment = [
 В шаблоне комментария мы видим несколько вложенных шаблонов и активное использование тегов $comment.* Рассмотрим вложенные шаблоны:
 $class1 - html класс нечетных комментариев
 $class2 - html класс четных комментариев (в данном примере класс отсутствует)
-$index - целое число, индекс комментария, исползуется если к примеру был обявлен ранее шаблон списка ul
+$index - целое число, индекс комментария, используется если, к примеру, был обявлен ранее шаблон списка ul
+$indexplus- тоже самое , что и $index но на 1 больше, поэтому нумерация начнется с 1
 $comment.date - шаблон даты комментария, не обязательный шаблон
 $quotebuttons - вложенный шаблон кнопок цитирования, имеют смысл при открытом комментировании. Если комментирование отключено, то эти кнопки не показываются
 
