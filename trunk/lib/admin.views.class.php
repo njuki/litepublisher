@@ -128,7 +128,7 @@ class tadminviews extends tadminmenu {
       case 'views':
       $template->ltoptions['allviews'] = array_keys(tviews::i()->items);
       $result .= '<link type="text/css" href="$site.files/js/litepublisher/css/admin.views.css" rel="stylesheet" />';
-      $result .= $template->getjavascript('/js/litepublisher/admin.views.min.js');
+    $result .= $template->getjavascript($template->jsmerger_adminviews);
       break;
       
       case 'headers':
@@ -160,7 +160,6 @@ class tadminviews extends tadminmenu {
     foreach ($sidebarnames as $key => $value) {
       if (isset($about["sidebar$key"])) $sidebarnames[$key] = $about["sidebar$key"];
     }
-    
     if (($idview > 1) && !$view->customsidebar) $view = tview::i(1);
     foreach ($view->sidebars as $index => $sidebar) {
       $args->index = $index;

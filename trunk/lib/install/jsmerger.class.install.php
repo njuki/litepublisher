@@ -83,7 +83,15 @@ $js = "var lang;\nif (lang == undefined) lang = {};\n";
   $section = 'admin';
   $self->add($section, '/js/jquery/ui-$site.jqueryui_version/jquery-ui-$site.jqueryui_version.custom.min.js');
   $self->add($section, '/js/litepublisher/admin.min.js');
-  
+
+  $section = 'adminviews';
+  $self->add($section, '/js/jquery/ui-$site.jqueryui_version/jquery.ui.mouse.min.js');
+  $self->add($section, '/js/jquery/ui-$site.jqueryui_version/jquery.ui.draggable.min.js');
+  $self->add($section, '/js/jquery/ui-$site.jqueryui_version/jquery.ui.droppable.min.js');
+  $self->add($section, '/js/jquery/ui-$site.jqueryui_version/jquery.ui.selectable.min.js');
+  $self->add($section, '/js/jquery/ui-$site.jqueryui_version/jquery.ui.sortable.min.js');
+  $self->add($section, '/js/litepublisher/admin.views.min.js');
+
   $section = 'posteditor';
   $self->add($section, '/js/swfupload/swfupload.js');
   $self->add($section, '/js/litepublisher/swfuploader.min.js');
