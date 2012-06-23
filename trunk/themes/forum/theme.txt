@@ -122,7 +122,7 @@ content.post.templatecomments.comments.comment = [
 <div class="entry" id="commentcontent-$comment.id">$comment.content</div>
 </td></tr>
 <tr><td class="mode" colspan="2"><span class="moderationbuttons" data-idcomment="$comment.id" data-idauthor="$comment.author"></span>
-$quotebuttons = [ <a onclick="replycomment($comment.id,'$comment.name');">$lang.reply</a> <a onclick="quotecomment($comment.id,'$comment.name');">$lang.quote</a>]</td></tr>]
+$quotebuttons = [ <a href="#" class="replycomment" data-idcomment="$comment.id" data-authorname="$comment.name">$lang.reply</a> <a href="#" class="quotecomment" data-idcomment="$comment.id" data-authorname="$comment.name">$lang.quote</a>]</td></tr>]
 
 content.post.templatecomments.pingbacks = [<dl id="pingbacks" start="1"><dt>$lang.pingbacks:</dt> $pingback = [<dd id="pingback-$pingback.id"><a rel="nofollow" href="$pingback.url">$pingback.title</a></dd>]</dl>]
 
