@@ -14,9 +14,6 @@ function getquotedcontent( authorname, content) {
 }
 
 function quotecomment(id, authorname) {
-  var formarea = document.getElementById("comment");
-  var commentcontent = document.getElementById('commentcontent-' + id);
-  
   if (window.getSelection) {
     var sel = window.getSelection();
   } else if (document.getSelection) {
@@ -27,20 +24,30 @@ function quotecomment(id, authorname) {
     var sel = '';
   }
   
-  if (sel == '') {
-    if (commentcontent.innerText){
-      sel = commentcontent.innerText;
-    } else {
-      sel = commentcontent.textContent;
-    }
-  }
-  
-  formarea.value += getquotedcontent(authorname, sel);
-  formarea.focus();
+  if (sel == '') sel = $("#commentcontent-" + id).text();
+var area =   $("#comment");
+area.val(area.val() + getquotedcontent(authorname, sel)).focus();
 }
 
 function replycomment(id, authorname) {
-  var formarea = document.getElementById("comment");
-  formarea.value += getquotedcontent(authorname, '');
-  formarea.focus();
+  var area = $("#comment");
+  area.val(area.val() + getquotedcontent(authorname, ''));
 }
+
+  $(document).ready(function() {
+if (("theme" in ltoptions) && ("comments" in ltoptions.theme) && ("comments" in ltoptions.theme.comments)) {
+var comlist = $(ltoptions.theme.comments.comments);
+} else {
+var comlist = $("#commentlist");
+}
+
+comlist.on("click", ".replycomment, .quotecomment", function() {
+var self= $(this);
+if (self.hasClass("replycomment")) {
+replycomment(self.data("idcomment"), self.data("authorname"));
+} else if (self.hasClass("quotecomment")) {
+quotecomment(self.data("idcomment"), self.data("authorname"));
+}
+return false;
+});
+});

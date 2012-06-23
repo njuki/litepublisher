@@ -58,7 +58,6 @@ $(document).ready(function() {
     return false;
   });
   
-  
   $(".inlinewidget, .ajaxwidget").each(function() {
     var a = $('<a class="expandwidget" href="">' + lang.widgetlang.expand + '</a>');
     $(this).append(a);
@@ -79,5 +78,9 @@ $(document).ready(function() {
     });
     
   });
-  
+  $(".widget-load").one("click", function() {
+var self = $(this);
+widget_load(this, self.data("idwidget"), self.data("sidebar"));
+return false;
+});
 });
