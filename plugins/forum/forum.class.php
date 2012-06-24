@@ -45,6 +45,20 @@ $html->pop_section();
 }
 }
 
+public function cateadded($id) {
+//set idview to forum
+$cats = tcategories::i();
+if ($this->idview == $cats->getvalue($id, 'idview')) return;
+$cats->loadall();
+$idparent = $id;
+while ($idparent = (int) $cats->items[$idparent]['parent']) {
+if ($idparent == $this->rootcat) {
+$cats->setvalue($id, 'idview', $this->idview);
+break;
+}
+}
+}
+
 public function categories_changed() {
 $this->comboitems = $this->getcats($this->rootcat, '');
 $this->save();
@@ -67,9 +81,9 @@ $result .= $this->getcats($id, $item['title'] . ' / ');
 public function getbreadcrumbs() {
 $context = litepublisher::$urlmap->context;
 if ($context instanceof tpost) {
-$idcat = $context->idcat;
+$idcat = (int) $context->idcat;
 } elseif ($context instanceof tcategories) {
-$idcat = $context->id;
+$idcat = (int) $context->getvalue($context->id, 'parent');
 } else {
 $idcat = 0;
 }
@@ -82,13 +96,21 @@ tfilestorage::setfile($filename, $result);
 return $result;
 }
 
-public function build_breadcrumbs($idcat) {
+public function build_breadcrumbs($id) {
 $cats = tcategories::i();
 $cats->loadall();
-$list = array($idcat);
-while ()
+$list = array($id);
+while ($id = (int) $cats->items[$id]['parent']) {
+array_unshift($list, $id);
 }
+
+$tml = '<span typeof="v:Breadcrumb"<a rel="v:url" property="v:title" href="$site.url$url" title=$title">$title</a></span>';
+$theme = ttheme::i();
+$args = new targs();
+$result = '';
 foreach ($list as $id) {
+$args->add($cats->items[$id]);
+$result .= $theme->parsearg($tml, $args);
 }
 return $result;
 }
