@@ -10,7 +10,12 @@ $template.head
 $template.menu 
 <div id="forum">
 <div id="content" class="bx">
-<div id="breadcrumbs" class="bxt" xmlns:v="http://rdf.data-vocabulary.org/#"><span typeof="v:Breadcrumb"><a title="На главную форума" rel="v:url" property="v:title" href="$site.url/">Форум</a></span><span> › </span>$post.catlinks<strong>$context.title&nbsp;</strong></div>
+<div id="mobile-version" class="adv">$custom.mobile</div>
+<div id="breadcrumbs" class="bxt" xmlns:v="http://rdf.data-vocabulary.org/#">
+<span typeof="v:Breadcrumb"<a rel="v:url" property="v:title" href="$site.url/" title=$lang.home">$lang.home</a></span>
+$custom.breadcrumbs
+<strong>$context.title&nbsp;</strong>
+</div>
 <div class="adv">$custom.advert</div>
 $template.sidebar $template.content</div>
 <div id="sidebar" class="bx">$template.sidebar</div></div>
