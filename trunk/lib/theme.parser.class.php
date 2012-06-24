@@ -148,14 +148,14 @@ class tthemeparser extends tevents {
     
     $this->parsedtags = array();
     
-    $s = self::getfile($filename);
+    $s = $this->getfile($filename, $about);
     $this->parsetags($theme, $s);
     $this->afterparse($theme);
   }
   
-  public static function getfile($filename) {
+  public function getfile($filename, $about) {
     $s = file_get_contents($filename);
-    if ($s === false) return litepublisher::$options->error(sprintf('Error read "%s" file', $filename));
+    if ($s === false) return $this->error(sprintf('Error read "%s" file', $filename));
     $s = str_replace(array("\r\n", "\r", "\n\n"), "\n", $s);
     $s = preg_replace('/%%([a-zA-Z0-9]*+)_(\w\w*+)%%/', '\$$1.$2', $s);
     $s = strtr($s, array(
@@ -170,6 +170,17 @@ class tthemeparser extends tevents {
     '<!--sitebar-->' => '<!--sidebar-->',
     '<!--/sitebar-->' => '<!--/sidebar-->'
     ));
+
+//replace $about.*
+    if (preg_match_all('/\$about\.(\w\w*+)/', $s, $m, PREG_SET_ORDER)) {
+      foreach ($m as $item) {
+        $name = $item[1];
+      if (isset($about[$name])) {
+$s = str_replace($item[0], $about[$name], $s);
+        }
+      }
+    }
+
     return trim($s);
   }
   
@@ -306,7 +317,7 @@ class tthemeparser extends tevents {
       preg_match('/\@import\s*\(\s*(\w*+\.\w\w*+\s*)\)/i', $s, $m)) {
         $filename = litepublisher::$paths->themes . $this->theme->name . DIRECTORY_SEPARATOR . $m[1];
         if (!file_exists($filename)) $this->error("File '$filename' not found");
-        $s = self::getfile($filename);
+        $s = $this->getfile($filename, $this->getabout($this->theme->name));
       }
       
       if (strbegin($parent, '$template.')) $parent = substr($parent, strlen('$template.'));

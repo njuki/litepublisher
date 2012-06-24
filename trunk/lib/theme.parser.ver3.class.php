@@ -34,7 +34,7 @@ class tthemeparserver3 extends tevents {
       $theme->parent = $about['parent'];
     }
     
-    $s = tthemeparser::getfile($filename);
+    $s = $parser->getfile($filename, $about);
     $this->theme = $theme;
     $theme->templates = $this->default->templates;
     $theme->title = $this->parsetitle($s);
