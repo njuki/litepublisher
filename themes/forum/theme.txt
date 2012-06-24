@@ -186,13 +186,26 @@ sidebar1.links.items.item = [<li><a rel="$rel" href="$link" title="$title">$text
 $template.ajaxwidget = [<span class="link widget-load" title="$lang.show/$lang.hide" data-idwidget="$id" data-sidebar="$sidebar">$title</span>]
 $template.inlinewidget = [<a class="link" title="$lang.show/$lang.hide" rel="inlinewidget">$title</a>]
 
-$custom.advert = [Текст обьявления, баннеры или контекстная реклама]
+$custom.advert = [$about.advtext]
 $custom.advert.admin = [
-$title = [Верхнее обьявление]
+$title = [$about.advert]
 $type = [text]
 ]
-$custom.advert2 = [Текст обьявления, баннеры или контекстная реклама]
+
+$custom.advert2 = [$about.advtext]
 $custom.advert2.admin = [
-$title = [Нижнее обьявление]
+$title = [$about.advert2]
+$type = [text]
+]
+
+$custom.breadcrumbs = []
+$custom.breadcrumbs.admin = [
+$title = [$about.breadcrumbs]
+$type = [text]
+]
+
+$custom.mobile = []
+$custom.mobile.admin = [
+$title = [$about.mobile]
 $type = [text]
 ]
