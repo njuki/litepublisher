@@ -17,4 +17,8 @@ $js->lock();
   $js->add($section, '/js/litepublisher/admin.views.min.js');
 
 $js->unlock();
+
+litepublisher::$classes->delete('tremoteadmin');
+litepublisher::$classes->delete('TXMLRPCClient');
+litepublisher::$classes->delete('TXMLRPCRemoteAdmin');
 }

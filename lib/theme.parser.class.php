@@ -173,12 +173,15 @@ class tthemeparser extends tevents {
 
 //replace $about.*
     if (preg_match_all('/\$about\.(\w\w*+)/', $s, $m, PREG_SET_ORDER)) {
+$a = array();
       foreach ($m as $item) {
         $name = $item[1];
       if (isset($about[$name])) {
-$s = str_replace($item[0], $about[$name], $s);
+$a[$item[0]] = $about[$name];
+//$s = str_replace($item[0], $about[$name], $s);
         }
       }
+$s = strtr($s, $a);
     }
 
     return trim($s);
