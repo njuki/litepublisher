@@ -25,8 +25,10 @@ $this->data['comboitems'] = '';
   public function themeparsed(ttheme $theme) {
 if (($theme->name == 'forum') && !strpos($theme->templates['content.post'], '$forum.comboitems')) {
 $html = tadminhtml::i();
-$html->section = 'forum';
+$section = $html->section;
+$html->push_section('forum');
 $lang = tlocal::admin('forum');
+
 $combo = str_replace('\'', '"', $theme->parse($html->combocats));
 //$this->categories_changed();
 
@@ -36,6 +38,10 @@ $theme->templates['content.excerpts'] .= $combo;
 $theme->templates['content.post'] = str_replace('\'', '"', str_replace('$post.content',
 '$post.content ' . $theme->replacelang($html->editlink, $lang),
  $theme->templates['content.post']));
+
+$theme->templates['index'] = str_replace('$custom.breadcrumbs', '$forum.breadcrumbs',
+$theme->templates['index']);
+$html->pop_section();
 }
 }
 
@@ -56,5 +62,35 @@ $result .= $this->getcats($id, $item['title'] . ' / ');
     }
     return $result;
   }
+
+
+public function getbreadcrumbs() {
+$context = litepublisher::$urlmap->context;
+if ($context instanceof tpost) {
+$idcat = $context->idcat;
+} elseif ($context instanceof tcategories) {
+$idcat = $context->id;
+} else {
+$idcat = 0;
+}
+
+if ($idcat == 0) return '';
+$filename = litepublisher::$paths->cache . $idcat . '.breadcrumbs.php';
+if ($result = tfilestorage::getfile($filename)) return $result;
+$result = $this->build_breadcrumbs($idcat);
+tfilestorage::setfile($filename, $result);
+return $result;
+}
+
+public function build_breadcrumbs($idcat) {
+$cats = tcategories::i();
+$cats->loadall();
+$list = array($idcat);
+while ()
+}
+foreach ($list as $id) {
+}
+return $result;
+}
 
 }//class
