@@ -92,12 +92,12 @@ if (dbversion) litepublisher::$db = new tdatabase();
 */
 
   litepublisher::$urlmap = turlmap::i();
-//ttheme::clearcache();
+ttheme::clearcache();
 tlocal::clearcache();
 litepublisher::$urlmap->clearcache();
 //tjsmerger::i()->save();
 //litepublisher::$options->show_draft_post = true;
-//tupdater::i()->run(5.32);
+//tupdater::i()->run(5.33);
 //tsubscribers::i()->cronsendmail(2);
 //ttemplatecomments ::i()->install();
 //tregservices::i()->update_widget();
