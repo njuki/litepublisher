@@ -41,7 +41,11 @@ tjsmerger::i()->add('default', '/plugins/forum/forum.min.js');
   $linkgen->data['forum'] = '/forum/[title].htm';
   $linkgen->save();
 
-tcategories::i()->changed = $self->categories_changed;
+$cats = tcategories::i();
+$cats->lock();
+$cats->changed = $self->categories_changed;
+$cats->added = $self->catadded;
+$cats->unlock();
 tthemeparser::i()->parsed = $self->themeparsed;
     ttheme::clearcache();
 
