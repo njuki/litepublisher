@@ -45,7 +45,7 @@ $html->pop_section();
 }
 }
 
-public function cateadded($id) {
+public function catadded($id) {
 //set idview to forum
 $cats = tcategories::i();
 if ($this->idview == $cats->getvalue($id, 'idview')) return;

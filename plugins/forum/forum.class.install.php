@@ -15,10 +15,21 @@ $name = basename(dirname(__file__));
 
 $lang = tlocal::admin('forum');
 
+//prevent double create view
+$idview = 0;
+$views = tviews::i();
+foreach ($views->items as $id => $item) {
+if ('forum' == $item['themename']) {
+$idview = $id;
+break;
+}
+}
+if (!$idview) {
 $view = new tview();
 $view->name = $lang->forum;
 $view->themename = 'forum';
-$idview = tviews::i()->addview($view);
+$idview = $views->addview($view);
+}
 
 $cats = tcategories::i();
 $idcat = $cats->add(0, $lang->forum);
@@ -63,7 +74,9 @@ tthemeparser::i()->unbind($self);
   tlocalmerger::i()->deleteplugin(basename(dirname(__file__)));
 tjsmerger::i()->deletefile('default', '/plugins/forum/forum.min.js');
 
-tmenus::i()->deleteurl(tcategories::i()->getvalue($self->rootcat, 'url'));
+$item = tcategories::i()->getitem($self->rootcat);
+$menus = tmenus::i();
+while ($menus->deleteurl($item['url']));
 
   $adminmenus = tadminmenus::i();
   $adminmenus->deletetree($adminmenus->url2id('/admin/plugins/forum/'));
