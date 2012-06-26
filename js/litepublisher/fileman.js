@@ -1,3 +1,10 @@
+/**
+* Lite Publisher
+* Copyright (C) 2010, 2012 Vladimir Yushko http://litepublisher.com/
+* Dual licensed under the MIT (mit.txt)
+* and GPL (gpl.txt) licenses.
+**/
+
 (function( $ ){
   $.fileman = {
   items: {},
@@ -75,7 +82,7 @@
     },
     
     setpage: function(uipanel, files) {
-      var panel = $(uipanel);
+      var panel = $(".file-items", uipanel);
       for (var id in files) {
         if (parseInt(files[id]['parent']) != 0) continue;
         panel.append(this.get_fileitem(id));
@@ -157,8 +164,8 @@
         $.fileman.items[idfile] = r.item;
         if (r.item["preview"] != 0) $.fileman.items[r.preview['id']] = r.preview;
         
-        $("#current-files").append($.fileman.get_fileitem(idfile));
-        $("#new-files").append($.fileman.get_fileitem(idfile));
+        $("#current-files .file-items").append($.fileman.get_fileitem(idfile));
+        $("#new-files .file-items").append($.fileman.get_fileitem(idfile));
     } catch(e) { alert('error ' + e.message); }
     },
     
@@ -178,7 +185,7 @@
       if ($.inArray(idfile, this.curr) >= 0) return;
       this.curr.push(idfile);
       
-      this.setborders($("#current-files").append(this.get_fileitem(idfile)));
+      this.setborders($("#current-files .file-items").append(this.get_fileitem(idfile)));
     },
     
     del: function(idfile, holder) {

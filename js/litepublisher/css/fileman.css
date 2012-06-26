@@ -12,6 +12,7 @@ height:172px;
 }
 
 .border-left{border-left: 1px solid black;}
+
 .file-toolbar {
 display: block;
 margin: 5px 0 0 5px;
@@ -39,4 +40,15 @@ text-align: right;
 
 .files-tab .delete-toolbutton {display: none}
 #current-files .add-toolbutton {display: none}
+
 .text-right {text-align:right;}
+
+
+.file-items {
+display: block;
+margin: 5px;
+}
+
+.file-items-after {
+clear: both;
+}

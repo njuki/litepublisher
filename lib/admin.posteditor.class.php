@@ -135,7 +135,7 @@ class tposteditor extends tadminmenu {
     $args = targs::i();
     $this->getpostargs($post, $args);
     
-    $result = $post->id == 0 ? '' : $html->h4($lang->formhead . ' ' . $post->bookmark);
+    $result = $post->id == 0 ? '' : $html->h4($this->lang->formhead . ' ' . $post->bookmark);
     if ($this->isauthor &&($r = tauthor_rights::i()->getposteditor($post, $args)))  return $r;
     $result .= $html->form($args);
     unset(ttheme::$vars['post']);

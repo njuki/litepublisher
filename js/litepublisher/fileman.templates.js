@@ -1,3 +1,10 @@
+/**
+* Lite Publisher
+* Copyright (C) 2010, 2012 Vladimir Yushko http://litepublisher.com/
+* Dual licensed under the MIT (mit.txt)
+* and GPL (gpl.txt) licenses.
+**/
+
 (function( $ ){
   $.fileman.templates = {
     item: '<div class="file-item">\
@@ -30,12 +37,23 @@ image: '<a rel="prettyPhoto[gallery-fileman]" href="{{link}}" class="file-image"
 <li><a href="#current-files"><span>{{lang.currentfiles}}</span></a></li>\
 <li><a href="#new-files"><span>{{lang.newupload}}</span></a></li>\
     </ul>\
-    <div id="current-files"></div>\
-    <div id="new-files" class="files-tab"></div>\
+    <div id="current-files">\
+    <div class="file-items"></div>\
+    <div class="file-items-after"></div>\
+    </div>\
+    \
+    <div id="new-files" class="files-tab">\
+    <div class="file-items"</div>\
+    <div class="file-items-after"></div>\
+    </div>\
+    \
     </div>\
     <p class="hidden"><input type="hidden" name="files" value="" /></p>',
     
-tab: '<div class="files-tab" id="filepage-{{index}}"></div>',
+tab: '<div class="files-tab" id="filepage-{{index}}">\
+    <div class="file-items"></div>\
+    <div class="file-items-after"></div>\
+    </div>',
     
     fileprops: '<p><label><input type="text" name="fileprop-title" value="" size="22" />\
 <strong>{{lang.title}}</strong></label></p>\
