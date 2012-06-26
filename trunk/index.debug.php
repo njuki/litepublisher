@@ -80,39 +80,26 @@ tfilestorage::$memcache->connect('127.0.0.1', 11211);
 }
 */
 
-tstorage::loaddata();
+if (!tstorage::loaddata()) {
+if (file_exists(litepublisher::$paths->data . 'storage.php') && filesize(litepublisher::$paths->data . 'storage.php')) die('Storage not loaded');
+  //if (!litepublisher::$options->installed) require_once(litepublisher::$paths->lib .'install' . DIRECTORY_SEPARATOR . 'install.php');
+require_once(litepublisher::$paths->lib .'install' . DIRECTORY_SEPARATOR . 'install.php');
+}
+
   litepublisher::$classes = tclasses::i();
   litepublisher::$options = toptions::i();
   litepublisher::$site = tsite::i();
-  if (!litepublisher::$options->installed) require_once(litepublisher::$paths->lib .'install' . DIRECTORY_SEPARATOR . 'install.php');
+
   //if (dbversion) litepublisher::$db = tdatabase::i();
 if (dbversion) litepublisher::$db = new tdatabase();
-/*
-  litepublisher::$options->admincookie = litepublisher::$options->cookieenabled && litepublisher::$options->authcookie() && ('admin' == litepublisher::$options->group);
-*/
 
   litepublisher::$urlmap = turlmap::i();
+
 ttheme::clearcache();
 tlocal::clearcache();
 litepublisher::$urlmap->clearcache();
-//tjsmerger::i()->save();
-//litepublisher::$options->show_draft_post = true;
-//tupdater::i()->run(5.33);
-//tsubscribers::i()->cronsendmail(2);
-//ttemplatecomments ::i()->install();
-//tregservices::i()->update_widget();
-//tcommentform::i()->oncomuser = tregservices::i()->oncomuser;
+tupdater::i()->run(5.33);
 
-//include_once('lib/update/update.5.27.lang.php');
-//update527lang();
-
-/*
-litepublisher::$classes->delete('tjsonserver');
-litepublisher::$classes->add('tjsonserver', 'jsonserver.class.php');
-
-litepublisher::$classes->items['tcommentform'][2] = 'comments.form.class.php';
-litepublisher::$classes->save();
-*/
 /*
 litepublisher::$urlmap->onclose(function() {
 echo "in close<br>";
@@ -124,18 +111,12 @@ tfiler::log(connection_status () . ' connection_status ');
   if (!defined('litepublisher_mode')) {
     litepublisher::$urlmap->request(strtolower($_SERVER['HTTP_HOST']), $_SERVER['REQUEST_URI']);
   }
-  
 } catch (Exception $e) {
 // echo $e->GetMessage();
 litepublisher::$options->handexception($e);
 }
-//tupdater::i()->run(4.64);
 litepublisher::$options->savemodified();
 litepublisher::$options->showerrors();
-//tupdater::i()->run('4.44');
-//litepublisher::$urlmap->delete('/getwidget.htm');
-//litepublisher::$urlmap->addget('/getwidget.htm', 'twidgets');
-//litepublisher::$urlmap->addget('/admin/ajaxposteditor.htm', 'tajaxposteditor ');
 /*
 echo "<pre>\n";
 $man = tdbmanager::i();
@@ -143,4 +124,3 @@ echo $man->performance();
 echo round(microtime(true) - litepublisher::$microtime, 2), "\n";
 */
 //tdebugproxy::showperformance();
-//echo json_encode(tlocal::$data);

@@ -79,8 +79,8 @@ $(document).ready(function() {
     
   });
   $(".widget-load").one("click", function() {
-var self = $(this);
-widget_load(this, self.data("idwidget"), self.data("sidebar"));
-return false;
-});
+    var self = $(this);
+    widget_load(this, self.data("idwidget"), self.data("sidebar"));
+    return false;
+  });
 });

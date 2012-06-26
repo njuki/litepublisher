@@ -116,8 +116,8 @@ class tadmintags extends tadminmenu {
         $item =$tags->getitem($id);
         $item = $this->set_view($item);
         $tags->items[$id] = $item;
-$item['id'] = $id;
-unset($item['url']);
+        $item['id'] = $id;
+        unset($item['url']);
         if ($tags->dbversion) $tags->db->updateassoc($item);
       }
     } else {

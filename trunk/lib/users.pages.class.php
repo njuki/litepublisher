@@ -52,13 +52,13 @@ class tuserpages extends titems implements itemplate {
       return '';
     }
   }
-
+  
   public function getwebsitelink() {
     if ($website = $this->website) {
-return sprintf('<a href="%1$s">%1$s</a>', $website);
-}
-return '';
-}
+      return sprintf('<a href="%1$s">%1$s</a>', $website);
+    }
+    return '';
+  }
   
   public function select($where, $limit) {
     if (!$this->dbversion) $this->error('Select method must be called ffrom database version');

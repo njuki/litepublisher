@@ -7,16 +7,16 @@
 **/
 
 class tpostprops extends tbasepostprops {
-
+  
   public static function i() {
     return getinstance(__class__);
   }
   
-protected function create() {
-parent::create();
-$this->dataname = 'post';
-$this->table = 'posts';
-$this->defvalues = array(
+  protected function create() {
+    parent::create();
+    $this->dataname = 'post';
+    $this->table = 'posts';
+    $this->defvalues = array(
     'id' => 0,
     'idview' => 1,
     'idurl' => 0,
@@ -51,54 +51,54 @@ $this->defvalues = array(
     'pagescount' => 0,
     );
     
-$this->intarray = array('categories', 'tags', 'files');
-$this->intprops= array('id', 'idurl', 'parent', 'author', 'revision', 'icon', 'commentscount', 'pingbackscount', 'pagescount', 'idview', 'idperm');
-$this->boolprops= array('pingenabled');
-$this->datetimeprops = array('posted');
-}
-
+    $this->intarray = array('categories', 'tags', 'files');
+    $this->intprops= array('id', 'idurl', 'parent', 'author', 'revision', 'icon', 'commentscount', 'pingbackscount', 'pagescount', 'idview', 'idperm');
+    $this->boolprops= array('pingenabled');
+    $this->datetimeprops = array('posted');
+  }
+  
 }//class
 
 class tpostpages extends tbasepostprops {
-
+  
   public static function i() {
     return getinstance(__class__);
   }
   
-protected function create() {
-parent::create();
-$this->dataname = 'pages';
-$this->table = 'pages';
-$this->defvalues = array(
+  protected function create() {
+    parent::create();
+    $this->dataname = 'pages';
+    $this->table = 'pages';
+    $this->defvalues = array(
     'id' => 0,
-'page' => 0,
-'content' => ''
-);
-$this->intprops = array('id', 'page');
-}
-
-public function getpages(tpost $post) {
-}
-
-public function setpages(tpost $post, array $pages) {
-}
-
-public function add(tpost $post) {
-$db = $this->db;
+    'page' => 0,
+    'content' => ''
+    );
+    $this->intprops = array('id', 'page');
+  }
+  
+  public function getpages(tpost $post) {
+  }
+  
+  public function setpages(tpost $post, array $pages) {
+  }
+  
+  public function add(tpost $post) {
+    $db = $this->db;
     foreach ($post->syncdata[$this->dataname] as $page => $content) {
       $db->insert_a(array(
-'id' => $post->id,
- 'page' => $page,
-         'content' => $content
-));
+      'id' => $post->id,
+      'page' => $page,
+      'content' => $content
+      ));
     }
-}
-
-public function save(tpost $post) {
-$this->db->iddelete($post->id);
-$this->add($post);
-}
-
+  }
+  
+  public function save(tpost $post) {
+    $this->db->iddelete($post->id);
+    $this->add($post);
+  }
+  
   public function addpage(tpost $post, $s) {
     $post->syncdata[$this->datename][] = $s;
     $post->pagescount = count($post->syncdata[$this->dataname]);
@@ -117,10 +117,10 @@ $this->add($post);
     if ($post->id > 0) $this->db->iddelete($post->id);
   }
   
-
+  
   public function getpage(tpost $post, $i) {
-if (!isset($post->propdata[$this->dataname])  $post->propdata[$this->dataname] = array();
-$data = &$post->propdata[$this->dataname];
+    if (!isset($post->propdata[$this->dataname])  $post->propdata[$this->dataname] = array();
+    $data = &$post->propdata[$this->dataname];
     if ( isset($data[$i]))   return $data[$i];
     if ($post->id > 0) {
       if ($r = $this->db->getassoc("(id = $post->id) and (page = $i) limit 1")) {
@@ -128,7 +128,7 @@ $data = &$post->propdata[$this->dataname];
       } else {
         $s = false;
       }
-$data[$i] = $s;
+      $data[$i] = $s;
       return $s;
     }
     return false;

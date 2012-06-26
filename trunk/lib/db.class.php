@@ -164,13 +164,13 @@ class tdatabase {
         $value =$value ? '1' : '0';
         $list[] = sprintf('%s = %s ', $name, $value);
         continue;
-/*
+        /*
       } elseif (is_array($value)) {
         $list[] = sprintf('%s = \'%s\'', $name, implode('\',\'', $value));
         continue;
-*/
-}
-
+        */
+      }
+      
       $list[] = "$name = " . $this->quote($value);
     }
     

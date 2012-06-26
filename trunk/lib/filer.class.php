@@ -26,7 +26,6 @@ class tfiler {
   
   public static function delete($path, $subdirs , $rmdir = false) {
     $path = rtrim($path, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR;
-    //echo "$path<br>\n";
     if ( $h = @opendir($path)) {
       while(FALSE !== ($filename = readdir($h))) {
         if (($filename == '.') || ($filename == '..') || ($filename == '.svn')) continue;
@@ -34,11 +33,7 @@ class tfiler {
         if (is_dir($file)) {
           if ($subdirs) self::delete($file . DIRECTORY_SEPARATOR, $subdirs, $rmdir);
         } else {
-          if (!unlink($file)) {
-            chmod($file, 0666);
-            unlink($file);
-          }
-          if (tfilestorage::$memcache) tfilestorage::$memcache->delete($file);
+          tfilestorage::delete($file);
         }
       }
       closedir($h);
@@ -48,7 +43,7 @@ class tfiler {
   
   public static function deletemask($mask) {
     if ($list = glob($mask)) {
-      foreach ($list as $filename) unlink($filename);
+      foreach ($list as $filename) tfilestorage::delete($filename);
     }
   }
   
@@ -57,7 +52,7 @@ class tfiler {
       if (is_dir($filename)) {
         self::deletedirmask($filename. DIRECTORY_SEPARATOR, $mask);
       } else {
-        unlink($filename);
+        tfilestorage::delete($filename);
       }
     }
   }
@@ -102,6 +97,7 @@ class tfiler {
   }
   
   public static function append($s, $filename) {
+    $s = $_SERVER['REQUEST_URI'] . "\n" . $s;
     $dir = dirname($filename);
     if (!is_dir($dir)) {
       mkdir($dir, 0777);
@@ -121,7 +117,7 @@ class tfiler {
     touch($filename, $t, $t);
     clearstatcache  ();
     $t2 = filemtime($filename);
-    unlink($filename);
+    tfilestorage::delete($filename);
     return $t2  - $t;
   }
   

@@ -150,10 +150,8 @@ class tmenus extends titems {
     $this->sort();
     $this->unlock();
     $this->deleted($id);
-    $filename = $this->dir . $id . '.php';
-    if (file_exists($filename))unlink($filename);
-    $filename = $this->dir . $id . '.bak.php';
-    if (file_exists($filename))unlink($filename);
+    tfilestorage::delete($this->dir . $id . '.php');
+    tfilestorage::delete($this->dir . $id . '.bak.php');
     litepublisher::$urlmap->clearcache();
     return true;
   }
@@ -276,7 +274,7 @@ class tmenus extends titems {
     $this->callevent('onbeforemenu', array(&$result, &$hover,$current ));
     if (count($this->tree) > 0) {
       $theme = ttheme::i();
-        $args = new targs();
+      $args = new targs();
       if ($hover) {
         $items = $this->getsubmenu($this->tree, $current);
       } else {
@@ -291,7 +289,7 @@ class tmenus extends titems {
       }
       
       $this->callevent('onitems', array(&$items));
-$args->item =  $items;
+      $args->item =  $items;
       $result = $theme->parsearg($theme->templates['menu'], $args);
     }
     $this->callevent('onmenu', array(&$result));

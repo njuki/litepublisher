@@ -182,7 +182,7 @@ class tcron extends tevents {
     $time = @filectime ($filename);
     if (($time === false) || ($time + 3600 > time())) return;
     $s = file_get_contents($filename);
-    @unlink($filename);
+    tfilestorage::delete($filename);
     tmailer::SendAttachmentToAdmin('[error] '. litepublisher::$site->name, 'See attachment', 'errors.txt', $s);
     sleep(2);
   }

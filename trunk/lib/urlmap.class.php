@@ -67,6 +67,7 @@ class turlmap extends titems {
     } catch (Exception $e) {
       litepublisher::$options->handexception($e);
     }
+    
     if (!litepublisher::$debug && litepublisher::$options->ob_cache) {
       if ($this->isredir || count($this->close_events)) $this->close_connection();
       while (@ob_end_flush ());
@@ -246,7 +247,6 @@ class turlmap extends titems {
       $template = ttemplate::i();
       $s = $template->request($context);
     }
-    //dumpstr($s);
     eval('?>'. $s);
     if ($this->cache_enabled && $context->cache) {
       $filename = $this->getcachefile($item);
@@ -351,8 +351,7 @@ class turlmap extends titems {
         if (is_dir($file)) {
           tfiler::delete($file . DIRECTORY_SEPARATOR, true, true);
         } else {
-          unlink($file);
-          if (tfilestorage::$memcache) tfilestorage::$memcache->delete($file);
+          tfilestorage::delete($file);
         }
       }
       closedir($h);
@@ -366,8 +365,7 @@ class turlmap extends titems {
   }
   
   public function setexpiredcurrent() {
-    $filename = $this->getcachefile($this->itemrequested);
-    if (file_exists($filename)) unlink($filename);
+    tfilestorage::delete($this->getcachefile($this->itemrequested));
   }
   
   public function getcachename($name, $id) {
