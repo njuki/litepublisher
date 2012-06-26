@@ -166,7 +166,7 @@ class tupdater extends tevents {
       return  false;
     }
     
-    if (litepublisher::$classes->memcache) {
+    if (isset(litepublisher::$classes->memcache) && litepublisher::$classes->memcache) {
       litepublisher::$classes->revision_memcache++;
       litepublisher::$classes->save();
       $kernel = litepublisher::$paths->lib . 'kernel.php';

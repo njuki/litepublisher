@@ -135,7 +135,8 @@ class tfilemerger extends titems {
     litepublisher::$urlmap->clearcache();
     foreach (array_keys($this->items) as $section) {
       $old = $home . str_replace('/',DIRECTORY_SEPARATOR, $this->getfilename($section, $this->revision - 1));
-      tfilestorage::delete($old);
+      //tfilestorage::delete($old);
+      @unlink($old);
     }
   }
   
