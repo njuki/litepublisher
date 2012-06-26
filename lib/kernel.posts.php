@@ -182,6 +182,9 @@ class tpost extends titem implements  itemplate {
   public $childdata;
   public $childtable;
   public $factory;
+  public $props;
+  public $propdata;
+  public $syncdata;
   private $aprev;
   private $anext;
   private $_meta;
@@ -229,6 +232,9 @@ class tpost extends titem implements  itemplate {
   
   protected function create() {
     $this->table = 'posts';
+    $this->props = array();
+    $this->propdata = array();
+    $this->syncdata = array();
     //last binding, like cache
     $this->childtable = call_user_func_array(array(get_class($this), 'getchildtable'), array());
     
@@ -279,6 +285,13 @@ class tpost extends titem implements  itemplate {
   }
   
   public function __get($name) {
+    /*
+    $result = false;
+    foreach ($this->props as $props) {
+      if ($props->set($this, $name, $result)) return $result;
+    }
+    */
+    
     if ($this->childtable) {
       if ($name == 'id') return $this->data['id'];
       if (method_exists($this, $get = 'get' . $name))   return $this->$get();
@@ -304,6 +317,12 @@ class tpost extends titem implements  itemplate {
   }
   
   public function __set($name, $value) {
+    /*
+    foreach ($this->props as $props) {
+      if ($props->set($this, $name, $value)) return true;
+    }
+    */
+    
     if ($this->childtable) {
       if ($name == 'id') return $this->setid($value);
       if (method_exists($this, $set = 'set'. $name)) return $this->$set($value);
@@ -610,6 +629,11 @@ class tpost extends titem implements  itemplate {
     if (count($this->categories) == 0) return '';
     $cats = $this->factory->categories;
     return $cats->getname($this->categories[0]);
+  }
+  
+  public function getidcat() {
+    if (($cats = $this->categories) && count($cats)) return $cats[0];
+    return 0;
   }
   
   //ITemplate
@@ -1915,8 +1939,8 @@ class tcommontags extends titems implements  itemplate {
     
     $perpage = (int) $item['lite'] ? (int) $item['liteperpage'] : litepublisher::$options->perpage;
     $list = $this->getidposts($id);
-    $pages = ceil(count ($list) / $perpage);
-    if (litepublisher::$urlmap->page > $pages) {
+    $pages = (int) ceil(count ($list) / $perpage);
+    if (($pages  > 1) && (litepublisher::$urlmap->page > $pages)) {
       return sprintf('<?php litepublisher::$urlmap->redir(\'%s\'); ?>',$item['url']);
     }
     
@@ -2115,11 +2139,7 @@ class ttagcontent extends tdata {
   }
   
   public function delete($id) {
-    if ($this->owner->dbversion) {
-      $this->db->iddelete($id);
-    } else {
-      @unlink($this->getfilename($id));
-    }
+    $this->db->iddelete($id);
   }
   
   public function getvalue($id, $name) {

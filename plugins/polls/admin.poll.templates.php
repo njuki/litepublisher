@@ -32,8 +32,8 @@ class tadminpolltemplates extends tadminmenu {
         $man = tpollsman::i();
         if ($id == $man->pollpost) return $html->h4->deletepullpost;
         if ($this->confirmed) {
-          @unlink($dir .DIRECTORY_SEPARATOR . "$id.php");
-          @unlink($dir .DIRECTORY_SEPARATOR . "$id.bak.php");
+          tfilestorage::delete($dir .DIRECTORY_SEPARATOR . "$id.php");
+          tfilestorage::delete($dir .DIRECTORY_SEPARATOR . "$id.bak.php");
           unset($polls->tml_items[$id]);
           $polls->db->update('id_tml = ' . $man->pollpost, "id_tml = $id");
           $result .= $html->h4->deleted;

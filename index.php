@@ -80,11 +80,16 @@ try {
   }
   */
   
-  tstorage::loaddata();
+  if (!tstorage::loaddata()) {
+    if (file_exists(litepublisher::$paths->data . 'storage.php') && filesize(litepublisher::$paths->data . 'storage.php')) die('Storage not loaded');
+    //if (!litepublisher::$options->installed) require_once(litepublisher::$paths->lib .'install' . DIRECTORY_SEPARATOR . 'install.php');
+    require_once(litepublisher::$paths->lib .'install' . DIRECTORY_SEPARATOR . 'install.php');
+  }
+  
   litepublisher::$classes = tclasses::i();
   litepublisher::$options = toptions::i();
   litepublisher::$site = tsite::i();
-  if (!litepublisher::$options->installed) require_once(litepublisher::$paths->lib .'install' . DIRECTORY_SEPARATOR . 'install.php');
+  //if (!litepublisher::$options->installed) require_once(litepublisher::$paths->lib .'install' . DIRECTORY_SEPARATOR . 'install.php');
   litepublisher::$db = tdatabase::i();
   
   litepublisher::$urlmap = turlmap::i();

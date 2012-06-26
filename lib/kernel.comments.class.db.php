@@ -207,6 +207,7 @@ class tcomments extends titems {
     foreach ($items as $id) {
       $comment->id = $id;
       $args->index = ++$index;
+      $args->indexplus = $index + 1;
       $args->class = ($index % 2) == 0 ? $class1 : $class2;
       $result .= $theme->parsearg($tml, $args);
     }
@@ -335,7 +336,7 @@ class tcomment extends tdata {
   
   public function getgravatar() {
     if ($md5email = $this->getmd5email()) {
-      return sprintf('<img class="avatar photo" src="http://www.gravatar.com/avatar/%s?s=32&amp;r=g&amp;d=wavatar" title="%2$s" alt="%2$s"/>', $md5email, $this->name);
+      return sprintf('<img class="avatar photo" src="http://www.gravatar.com/avatar/%s?s=90&amp;r=g&amp;d=wavatar" title="%2$s" alt="%2$s"/>', $md5email, $this->name);
     } else {
       return '';
     }

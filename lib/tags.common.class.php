@@ -294,7 +294,7 @@ class tcommontags extends titems implements  itemplate {
     } catch (Exception $e) {
       return 404;
     }
-
+    
     $perpage = (int) $item['lite'] ? (int) $item['liteperpage'] : litepublisher::$options->perpage;
     $list = $this->getidposts($id);
     $pages = (int) ceil(count ($list) / $perpage);
@@ -497,11 +497,7 @@ class ttagcontent extends tdata {
   }
   
   public function delete($id) {
-    if ($this->owner->dbversion) {
-      $this->db->iddelete($id);
-    } else {
-      @unlink($this->getfilename($id));
-    }
+    $this->db->iddelete($id);
   }
   
   public function getvalue($id, $name) {

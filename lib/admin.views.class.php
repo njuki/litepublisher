@@ -124,7 +124,7 @@ class tadminviews extends tadminmenu {
       case 'views':
       $template->ltoptions['allviews'] = array_keys(tviews::i()->items);
       $result .= '<link type="text/css" href="$site.files/js/litepublisher/css/admin.views.css" rel="stylesheet" />';
-    $result .= $template->getjavascript($template->jsmerger_adminviews);
+      $result .= $template->getjavascript($template->jsmerger_adminviews);
       break;
       
       case 'headers':

@@ -10,9 +10,9 @@ class tpost extends titem implements  itemplate {
   public $childdata;
   public $childtable;
   public $factory;
-public $props;
-public $propdata;
-public $syncdata;
+  public $props;
+  public $propdata;
+  public $syncdata;
   private $aprev;
   private $anext;
   private $_meta;
@@ -60,9 +60,9 @@ public $syncdata;
   
   protected function create() {
     $this->table = 'posts';
-$this->props = array();
-$this->propdata = array();
-$this->syncdata = array();
+    $this->props = array();
+    $this->propdata = array();
+    $this->syncdata = array();
     //last binding, like cache
     $this->childtable = call_user_func_array(array(get_class($this), 'getchildtable'), array());
     
@@ -113,13 +113,13 @@ $this->syncdata = array();
   }
   
   public function __get($name) {
-/*
-$result = false;
-foreach ($this->props as $props) {
-if ($props->set($this, $name, $result)) return $result;
-}
-*/
-
+    /*
+    $result = false;
+    foreach ($this->props as $props) {
+      if ($props->set($this, $name, $result)) return $result;
+    }
+    */
+    
     if ($this->childtable) {
       if ($name == 'id') return $this->data['id'];
       if (method_exists($this, $get = 'get' . $name))   return $this->$get();
@@ -145,12 +145,12 @@ if ($props->set($this, $name, $result)) return $result;
   }
   
   public function __set($name, $value) {
-/*
-foreach ($this->props as $props) {
-if ($props->set($this, $name, $value)) return true;
-}
-*/
-
+    /*
+    foreach ($this->props as $props) {
+      if ($props->set($this, $name, $value)) return true;
+    }
+    */
+    
     if ($this->childtable) {
       if ($name == 'id') return $this->setid($value);
       if (method_exists($this, $set = 'set'. $name)) return $this->$set($value);
@@ -458,13 +458,13 @@ if ($props->set($this, $name, $value)) return true;
     $cats = $this->factory->categories;
     return $cats->getname($this->categories[0]);
   }
-
+  
   public function getidcat() {
-if (($cats = $this->categories) && count($cats)) return $cats[0];
-return 0;
+    if (($cats = $this->categories) && count($cats)) return $cats[0];
+    return 0;
   }
   
-    //ITemplate
+  //ITemplate
   
   public function request($id) {
     parent::request((int) $id);

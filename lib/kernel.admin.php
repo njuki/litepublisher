@@ -254,6 +254,7 @@ class tadminhtml {
   public $section;
   public $ini;
   private $map;
+  private $section_stack;
   
   public static function i() {
     $self = getinstance(__class__);
@@ -337,6 +338,24 @@ class tadminhtml {
     }
     $s = strtr($s, $args->data);
     return $theme->parse($s);
+  }
+  
+  public function push_section($section) {
+    if (!isset($this->section_stack)) $this->section_stack = array();
+    $lang = tlocal::i();
+    $this->section_stack[] = array(
+    $this->section,
+    $lang->section
+    );
+    
+    $this->section = $section;
+    $lang->section = $section;
+  }
+  
+  public function pop_section() {
+    $a = array_pop($this->section_stack);
+    $this->section = $a[0];
+    tlocal::i()->section = $a[1];
   }
   
   public static function specchars($s) {
@@ -933,14 +952,13 @@ class tajaxposteditor  extends tevents {
       
       case 'status':
       $args = new targs();
-      if (dbversion) {
-        $args->comstatus= tadminhtml::array2combo(array(
-        'closed' => $lang->closed,
-        'reg' => $lang->reg,
-        'guest' => $lang->guest,
-        'comuser' => $lang->comuser
-        ), $post->comstatus);
-      }
+      $args->comstatus= tadminhtml::array2combo(array(
+      'closed' => $lang->closed,
+      'reg' => $lang->reg,
+      'guest' => $lang->guest,
+      'comuser' => $lang->comuser
+      ), $post->comstatus);
+      
       
       $args->pingenabled = $post->pingenabled;
       $args->status= tadminhtml::array2combo(array(
@@ -1119,7 +1137,7 @@ class tposteditor extends tadminmenu {
     $args = targs::i();
     $this->getpostargs($post, $args);
     
-    $result = $post->id == 0 ? '' : $html->h2->formhead . $post->bookmark;
+    $result = $post->id == 0 ? '' : $html->h4($lang->formhead . ' ' . $post->bookmark);
     if ($this->isauthor &&($r = tauthor_rights::i()->getposteditor($post, $args)))  return $r;
     $result .= $html->form($args);
     unset(ttheme::$vars['post']);

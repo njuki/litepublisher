@@ -141,8 +141,8 @@ class tpolls extends titems {
   public function delete_tml($id_tml) {
     $this->db->update("id_tml = 1", "id_tml = $id_tml");
     $filename = $this->getfilename($id_tml);
-    @unlink($filename . '.php');
-    @unlink($filename . '.bak.php');
+    tfilestorage::delete($filename . '.php');
+    tfilestorage::delete($filename . '.bak.php');
   }
   
   public function err($mesg) {

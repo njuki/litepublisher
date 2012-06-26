@@ -21,7 +21,7 @@ class tadminhtml {
   public $section;
   public $ini;
   private $map;
-private $section_stack;
+  private $section_stack;
   
   public static function i() {
     $self = getinstance(__class__);
@@ -106,24 +106,24 @@ private $section_stack;
     $s = strtr($s, $args->data);
     return $theme->parse($s);
   }
-
-public function push_section($section) {
-if (!isset($this->section_stack)) $this->section_stack = array();
-$lang = tlocal::i();
-$this->section_stack[] = array(
-$this->section,
-$lang->section
-);
-
-$this->section = $section;
-$lang->section = $section;
-}
-
-public function pop_section() {
-$a = array_pop($this->section_stack);
-$this->section = $a[0];
-tlocal::i()->section = $a[1];
-}
+  
+  public function push_section($section) {
+    if (!isset($this->section_stack)) $this->section_stack = array();
+    $lang = tlocal::i();
+    $this->section_stack[] = array(
+    $this->section,
+    $lang->section
+    );
+    
+    $this->section = $section;
+    $lang->section = $section;
+  }
+  
+  public function pop_section() {
+    $a = array_pop($this->section_stack);
+    $this->section = $a[0];
+    tlocal::i()->section = $a[1];
+  }
   
   public static function specchars($s) {
     return strtr(            htmlspecialchars($s), array(

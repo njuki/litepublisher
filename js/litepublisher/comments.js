@@ -25,8 +25,8 @@ function quotecomment(id, authorname) {
   }
   
   if (sel == '') sel = $("#commentcontent-" + id).text();
-var area =   $("#comment");
-area.val(area.val() + getquotedcontent(authorname, sel)).focus();
+  var area =   $("#comment");
+  area.val(area.val() + getquotedcontent(authorname, sel)).focus();
 }
 
 function replycomment(id, authorname) {
@@ -34,20 +34,20 @@ function replycomment(id, authorname) {
   area.val(area.val() + getquotedcontent(authorname, ''));
 }
 
-  $(document).ready(function() {
-if (("theme" in ltoptions) && ("comments" in ltoptions.theme) && ("comments" in ltoptions.theme.comments)) {
-var comlist = $(ltoptions.theme.comments.comments);
-} else {
-var comlist = $("#commentlist");
-}
-
-comlist.on("click", ".replycomment, .quotecomment", function() {
-var self= $(this);
-if (self.hasClass("replycomment")) {
-replycomment(self.data("idcomment"), self.data("authorname"));
-} else if (self.hasClass("quotecomment")) {
-quotecomment(self.data("idcomment"), self.data("authorname"));
-}
-return false;
-});
+$(document).ready(function() {
+  if (("theme" in ltoptions) && ("comments" in ltoptions.theme) && ("comments" in ltoptions.theme.comments)) {
+    var comlist = $(ltoptions.theme.comments.comments);
+  } else {
+    var comlist = $("#commentlist");
+  }
+  
+  comlist.on("click", ".replycomment, .quotecomment", function() {
+    var self= $(this);
+    if (self.hasClass("replycomment")) {
+      replycomment(self.data("idcomment"), self.data("authorname"));
+    } else if (self.hasClass("quotecomment")) {
+      quotecomment(self.data("idcomment"), self.data("authorname"));
+    }
+    return false;
+  });
 });

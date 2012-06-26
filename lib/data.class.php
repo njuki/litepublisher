@@ -259,21 +259,32 @@ class tfilestorage {
     if (self::$memcache) self::$memcache->set($base . '.php', $content, false, 3600);
     $tmp = $base .'.tmp.php';
     if(false === file_put_contents($tmp, self::comment_php($content))) {
-      litepublisher::$options->trace("Error write to file $tmp");
+      litepublisher::$options->trace(sprintf('Error write to file "%s"', $tmp));
       return false;
     }
     chmod($tmp, 0666);
     $filename = $base .'.php';
     if (file_exists($filename)) {
       $back = $base . '.bak.php';
-      if (file_exists($back)) unlink($back);
+      self::delete($back);
       rename($filename, $back);
     }
     if (!rename($tmp, $filename)) {
-      litepublisher::$options->trace("Error rename file $tmp to $filename");
+      litepublisher::$options->trace(sprintf('Error rename temp file "%s" to "%s"', $tmp, $filename));
       return false;
     }
     return true;
+  }
+  
+  public static function delete($filename) {
+    if (file_exists($filename)) {
+      if (!unlink($filename)) {
+        chmod($filename, 0666);
+        unlink($filename);
+      }
+    }
+    
+    if (self::$memcache) self::$memcache->delete($filename);
   }
   
   public static function getfile($filename) {
