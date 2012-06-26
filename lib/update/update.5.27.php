@@ -1,6 +1,10 @@
 <?php
 
 function update527() {
+litepublisher::$classes->data['memcache'] = false;
+litepublisher::$classes->data['revision_memcache'] = 1;
+litepublisher::$classes->items['tusergroups'][0] = 'users.groups.class.php';
+
 litepublisher::$options->delete('autocmtform');
 litepublisher::$options->delete('commentsenabled');
 
