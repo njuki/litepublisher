@@ -6,13 +6,13 @@
 <link rel="stylesheet" href="$template.url/style.css" type="text/css" media="all"/>
 $template.head
 </head>
-<body><div id="site"><a id="logo" href="/" title="$site.description">$site.name</a>
+<body><div id="site"><a id="logo" href="$site.url/" title="$site.name">$site.name</a>
 $template.menu 
 <div id="forum">
 <div id="content" class="bx">
 <div id="mobile-version" class="adv">$custom.mobile</div>
 <div id="breadcrumbs" class="bxt" xmlns:v="http://rdf.data-vocabulary.org/#">
-<span typeof="v:Breadcrumb"<a rel="v:url" property="v:title" href="$site.url/" title=$lang.home">$lang.home</a></span>
+<span typeof="v:Breadcrumb"><a rel="v:url" property="v:title" href="$site.url/" title="$lang.home">$lang.home</a></span>
 $custom.breadcrumbs
 <strong>$context.title&nbsp;</strong>
 </div>
