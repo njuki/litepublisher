@@ -189,23 +189,23 @@ $template.inlinewidget = [<a class="link" title="$lang.show/$lang.hide" rel="inl
 $custom.advert = [$about.advtext]
 $custom.advert.admin = [
 $title = [$about.advert]
-$type = [text]
+$type = [editor]
 ]
 
 $custom.advert2 = [$about.advtext]
 $custom.advert2.admin = [
 $title = [$about.advert2]
-$type = [text]
+$type = [editor]
 ]
 
 $custom.breadcrumbs = []
 $custom.breadcrumbs.admin = [
 $title = [$about.breadcrumbs]
-$type = [text]
+$type = [editor]
 ]
 
 $custom.mobile = []
 $custom.mobile.admin = [
 $title = [$about.mobile]
-$type = [text]
+$type = [editor]
 ]
