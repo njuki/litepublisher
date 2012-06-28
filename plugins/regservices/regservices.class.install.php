@@ -23,6 +23,7 @@ function tregservicesInstall($self) {
   litepublisher::$classes->add('tmailruregservice', 'mailru.service.php', $name);
   litepublisher::$classes->add('tyandexregservice', 'yandex.service.php', $name);
   litepublisher::$classes->add('tvkontakteregservice', 'vkontakte.service.php', $name);
+  litepublisher::$classes->add('todnoklassnikiservice', 'odnoklassniki.service.php', $name);
   
   litepublisher::$classes->add('toauth', 'oauth.class.php', $name);
   
@@ -32,6 +33,7 @@ function tregservicesInstall($self) {
   $self->add(tmailruregservice::i());
   $self->add(tyandexregservice::i());
   $self->add(tvkontakteregservice::i());
+  $self->add(todnoklassnikiservice::i());
   
   $self->unlock();
   
