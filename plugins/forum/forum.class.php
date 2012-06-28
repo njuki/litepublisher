@@ -104,7 +104,7 @@ class tforum extends tplugin {
       array_unshift($list, $id);
     }
     
-    $tml = '<span typeof="v:Breadcrumb"<a rel="v:url" property="v:title" href="$site.url$url" title=$title">$title</a></span>';
+    $tml = '<span typeof="v:Breadcrumb"><a rel="v:url" property="v:title" href="$site.url$url" title="$title">$title</a></span>';
     $theme = ttheme::i();
     $args = new targs();
     $result = '';
