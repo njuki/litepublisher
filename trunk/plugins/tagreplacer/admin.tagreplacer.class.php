@@ -21,7 +21,7 @@ class tadmintagreplacer {
     $html = tadminhtml::i();
     $tabs = new tuitabs();
     $args = targs::i();
-    $about = tplugins::getabout(tplugins::getname(__file__));
+    $about = tplugins::getabout('tagreplacer');
     $args->formtitle = $about['name'];
     
     $tabs->add($about['new'], $html->getinput('text',
