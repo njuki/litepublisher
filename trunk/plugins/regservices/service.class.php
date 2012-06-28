@@ -105,11 +105,17 @@ class tregservice extends tplugin {
   
   public function gettab($html, $args, $lang) {
     $a = $this->getadmininfo($lang);
-    $result = $html->p(sprintf(tlocal::i()->reg, $a['regurl'], litepublisher::$site->url . $this->url));
+    $result = $html->p(sprintf($lang->reg, $a['regurl'], litepublisher::$site->url . $this->url));
     $result .= $html->getinput('text', "client_id_$this->name", tadminhtml::specchars($this->client_id), $a['client_id']) ;
     $result .= $html->getinput('text', "client_secret_$this->name", tadminhtml::specchars($this->client_secret), $a['client_secret']) ;
     return $result;
   }
+
+public function processform() {
+      if (isset($_POST["client_id_$this->name"])) $this->client_id = $_POST["client_id_$this->name"];
+      if (isset($_POST["client_secret_$this->name"])) $this->client_secret = $_POST["client_secret_$this->name"];
+$this->save();
+}
   
   public function errorauth() {
     return 403;

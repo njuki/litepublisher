@@ -21,7 +21,7 @@ class tadminregservices implements iadmin {
     $html = tadminhtml::i();
     $tabs = new tuitabs();
     $args = targs::i();
-    $lang = tplugins::getlangabout(__file__);
+    $lang = tplugins::getnamelang($plugin->dirname);
     $args->formtitle = $lang->options;
     foreach ($plugin->items as $id => $classname) {
       $service = getinstance($classname);
@@ -34,11 +34,9 @@ class tadminregservices implements iadmin {
   public function processform() {
     $plugin = tregservices ::i();
     $plugin->lock();
-    foreach ($plugin->items as $id => $classname) {
+    foreach ($plugin->items as $name => $classname) {
       $service = getinstance($classname);
-      if (isset($_POST["client_id_$id"])) $service->client_id = $_POST["client_id_$id"];
-      if (isset($_POST["client_secret_$id"])) $service->client_secret = $_POST["client_secret_$id"];
-      $service->save();
+      $service->processform();
     }
     
     $plugin->update_widget();
