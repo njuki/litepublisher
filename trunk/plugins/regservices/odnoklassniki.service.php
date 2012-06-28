@@ -66,7 +66,7 @@ class todnoklassnikiservice extends tregservice {
 if (!isset($js->error)) {
         return $this->adduser(array(
         'uid' => $js->uid,
-        'email' => $js->has_email ? $js->email : '',
+        'email' => '',
         'name' => $js->name,
         'website' => isset($js->link) ? $js->link : ''
         ));
@@ -81,7 +81,7 @@ if (!isset($js->error)) {
     return array(
     'regurl' => 'http://api.mail.ru/sites/my/add',
     'client_id' => $lang->odnoklass_id,
-    'client_secret' =>$lang->mailru_secret,
+    'client_secret' =>$lang->odnoklass_secret,
 'appkey' => $lang->odnoklass_appkey
     );
   }
