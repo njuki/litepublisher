@@ -16,6 +16,7 @@ class tregservices extends titems {
     $this->dbversion = false;
     parent::create();
     $this->basename = 'regservices' . DIRECTORY_SEPARATOR . 'index';
+$this->data['dirname'] = '';
     $this->data['url'] = '/admin/regservice.htm';
     $this->data['widget'] = '';
     $this->data['widget_title'] = '';
@@ -32,7 +33,7 @@ class tregservices extends titems {
   public function update_widget() {
     $widget = '';
     $url = litepublisher::$site->url . $this->url . litepublisher::$site->q . 'id';
-    $iconurl = litepublisher::$site->files . '/plugins/' . basename(dirname(__file__)) . '/icons/';
+    $iconurl = litepublisher::$site->files . '/plugins/' . $this->dirname . '/icons/';
     foreach ($this->items as $name => $classname) {
       $service = getinstance($classname);
       if ($service->valid()) {
