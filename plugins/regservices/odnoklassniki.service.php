@@ -18,7 +18,7 @@ class todnoklassnikiservice extends tregservice {
     $this->data['name'] = 'odnoklassniki';
     $this->data['title'] = 'odnoklassniki.ru';
     $this->data['icon'] = 'odnoklassniki.png';
-    $this->data['url'] = '/odnoklassniki-oauth2callback.php');
+    $this->data['url'] = '/odnoklassniki-oauth2callback.php';
   }
   
   public function getauthurl() {
