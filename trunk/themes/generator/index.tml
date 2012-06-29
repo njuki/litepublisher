@@ -9,7 +9,13 @@ $template.head
 </head>
 <body>
 <div id="wrapper">
-<div id="top"><a id="logo" href="$site.url/">$site.name</a><p>$site.description</p>$template.menu</div>
+<div id="top">
+<div id="logo">
+<h1><a href="$site.url/" title="$lang.home">$site.name</a></h1>
+<p>$site.description</p>
+</div>
+$template.menu
+</div>
 <div id="main"><div id="content">$template.content</div></div>
 <div id="ls" class="sbar">$template.sidebar</div>
 <div id="rs" class="sbar">$template.sidebar</div>

@@ -16,7 +16,7 @@ class tregservices extends titems {
     $this->dbversion = false;
     parent::create();
     $this->basename = 'regservices' . DIRECTORY_SEPARATOR . 'index';
-$this->data['dirname'] = '';
+    $this->data['dirname'] = '';
     $this->data['url'] = '/admin/regservice.htm';
     $this->data['widget'] = '';
     $this->data['widget_title'] = '';

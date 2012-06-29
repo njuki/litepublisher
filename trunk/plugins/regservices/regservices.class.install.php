@@ -10,10 +10,10 @@ function tregservicesInstall($self) {
   $dir = litepublisher::$paths->data . 'regservices';
   @mkdir($dir, 0777);
   @chmod($dir, 0777);
-  $name = basename(dirname(__file__));  
+  $name = basename(dirname(__file__));
   $about = tplugins::getabout($name);
   $self->lock();
-$self->dirname = $name;
+  $self->dirname = $name;
   $self->widget_title  = sprintf('<h4>%s</h4>', $about['widget_title']);
   litepublisher::$classes->add('tregservice', 'service.class.php', $name);
   litepublisher::$classes->add('tregserviceuser', 'service.class.php', $name);

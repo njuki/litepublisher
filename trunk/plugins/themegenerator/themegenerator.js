@@ -50,7 +50,6 @@ set_progress(-1, this.customSettings.progress);
 //central event
 function uploadSuccess(file, serverData) {
 //alert(serverData);
-try {
 if ("logourl" == this.customSettings.name) {
         var r = $.parseJSON(serverData);
 $("#logo").css("padding-left", r.width);
@@ -59,7 +58,6 @@ set_color("logourl", r.url);
 } else {
 set_color(this.customSettings.name, serverData);
 }
-} catch(e) { alert('Error ' + e.message); }
 }
 
 function createswfu (type) {

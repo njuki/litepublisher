@@ -44,9 +44,9 @@ class tplugins extends TItems {
   }
   
   public static function getlangabout($filename) {
-return self::getnamelang(self::getname($filename));
-}
-
+    return self::getnamelang(self::getname($filename));
+  }
+  
   public static function getnamelang($name) {
     $about = self::getabout($name);
     $lang = tlocal::admin();
