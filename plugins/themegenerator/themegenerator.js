@@ -52,8 +52,8 @@ function uploadSuccess(file, serverData) {
 //alert(serverData);
 if ("logourl" == this.customSettings.name) {
         var r = $.parseJSON(serverData);
-set_color("logowidth", r.url);
-set_color("logowidth", r.width);
+$("#text-color-logowidth").val(r.width);
+set_color("logourl", r.url);
 } else {
 set_color(this.customSettings.name, serverData);
 }
