@@ -43,7 +43,7 @@ $self->dirname = $name;
     tdbmanager::i()->createtable('regservices',
     "id int unsigned NOT NULL default 0,
     service enum('$names') default 'google',
-    uid varchar(128) NOT NULL default '',
+    uid varchar(22) NOT NULL default '',
     
     key `id` (`id`),
     KEY (`service`, `uid`)
