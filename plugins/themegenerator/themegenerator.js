@@ -50,13 +50,16 @@ set_progress(-1, this.customSettings.progress);
 //central event
 function uploadSuccess(file, serverData) {
 //alert(serverData);
+try {
 if ("logourl" == this.customSettings.name) {
         var r = $.parseJSON(serverData);
+$("#logo").css("padding-left", r.width);
 $("#text-color-logowidth").val(r.width);
 set_color("logourl", r.url);
 } else {
 set_color(this.customSettings.name, serverData);
 }
+} catch(e) { alert('Error ' + e.message); }
 }
 
 function createswfu (type) {
@@ -66,7 +69,7 @@ function createswfu (type) {
 //ltoptions.url + "/theme-generator.htm",
     // prevent_swf_caching: false,
   post_params: {"formtype": type ? 'headerurl' : 'logourl'},
-    file_size_limit : type ? "4 MB" : "1 MB",
+    file_size_limit : type ? "4 MB" : "10 MB",
     file_types : type ? "*.jpg;*.png;*.gif" : "*.png",
     file_types_description : "Images",
     file_upload_limit : 100,

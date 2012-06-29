@@ -77,7 +77,7 @@ class tthemegenerator extends tmenu {
       $result .= $template->getjavascript($template->jsmerger_themegenerator);
       //$result .= $template->getjavascript('/plugins/colorpicker/js/colorpicker.js');
       //$result .= $template->getjavascript('/js/swfupload/swfupload.js');
-      //$result .= $template->getjavascript(sprintf('/plugins/%s/themegenerator.min.js', basename(dirname(__file__))));
+      $result .= $template->getjavascript('/plugins/themegenerator/themegenerator.js');
       
       if ($this->colorsuploaded) {
         $args = new targs();
@@ -186,7 +186,7 @@ class tthemegenerator extends tmenu {
       litepublisher::$classes->include_file(litepublisher::$paths->libinclude . 'zip.lib.php');
       $zip = new zipfile();
       
-      $themedir = dirname(__file__) . DIRECTORY_SEPARATOR . $this->type . DIRECTORY_SEPARATOR;
+      $themedir = litepublisher::$paths->plugins . 'themegenerator' .DIRECTORY_SEPARATOR . $this->type . DIRECTORY_SEPARATOR;
       $args = new targs();
       $colors = "[themecolors]\nthemename = \"$themename\"\n";
       foreach ($this->colors as $name => $value) {
@@ -202,14 +202,14 @@ class tthemegenerator extends tmenu {
         }
       }
       
-      $res = dirname(__file__) . DIRECTORY_SEPARATOR  . 'res' . DIRECTORY_SEPARATOR ;
-      $css = strtr(file_get_contents($res . 'scheme.tml'), $args->data);
+      $res = litepublisher::$paths->plugins . 'themegenerator' . DIRECTORY_SEPARATOR  . 'res' . DIRECTORY_SEPARATOR ;
+      $css = strtr(tfilestorage::getfile($res . 'scheme.tml'), $args->data);
       
       $zip->addFile($colors, $path . 'colors.ini');
       
       $filelist = tfiler::getfiles($themedir);
       foreach ($filelist as $filename) {
-        $content = file_get_contents($themedir . $filename);
+        $content = tfilestorage::getfile($themedir . $filename);
         switch ($filename) {
           case 'style.css':
           $content .= $css;
@@ -302,9 +302,9 @@ class tthemegenerator extends tmenu {
       $result = tmediaparser::prepare_filename($name, 'themegen');
       $realfilename = litepublisher::$paths->files . str_replace('/', DIRECTORY_SEPARATOR, $result);
 
-$x = $sourcex * ($height / $sourcey );
+$x = ceil($sourcex * ($height / $sourcey ));
 
-          $dest = imagecreatetruecolor($x, $y);
+          $dest = imagecreatetruecolor($x, $height);
       imagecopyresampled($dest, $source, 0, 0, 0, 0, $x, $height, $sourcex, $sourcey);
       
       if ('png' != substr($result, strrpos($result, '.')+ 1)){
@@ -321,8 +321,8 @@ $x = $sourcex * ($height / $sourcey );
       
       @chmod($realfilename, 0666);
       return array(
-'url'=> litepublisher::$site->files . '/files/'. $result
-'width' => $x + $padding,
+'url'=> litepublisher::$site->files . '/files/'. $result,
+'width' =>  $x + $padding,
 );
     }
     
