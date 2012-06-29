@@ -169,7 +169,7 @@ class tthemegenerator extends tmenu {
         $_FILES['Filedata']['error'] != 0) return 403;
         
         if ($result = $this->uploadlogo($_FILES['Filedata']['name'], $_FILES['Filedata']['tmp_name'], $this->colors['logopadding'], $this->colors['logoheight'])) {
-          return turlmap::htmlheader(false) . $result;
+          return turlmap::htmlheader(false) . json_encode($result);
         }
         return 403;
       }
@@ -302,8 +302,7 @@ class tthemegenerator extends tmenu {
       $result = tmediaparser::prepare_filename($name, 'themegen');
       $realfilename = litepublisher::$paths->files . str_replace('/', DIRECTORY_SEPARATOR, $result);
 
-      $ratio = $sourcex / $sourcey;
-        $x = $height > $sourcey ? $height *$ratio : $height / $ratio;
+$x = $sourcex * ($height / $sourcey );
 
           $dest = imagecreatetruecolor($x, $y);
       imagecopyresampled($dest, $source, 0, 0, 0, 0, $x, $height, $sourcex, $sourcey);
