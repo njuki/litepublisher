@@ -134,7 +134,11 @@ $this->save();
         'name' => $item['name'],
         'website' => isset($item['website']) ? tcontentfilter::clean_website($item['website']) : ''
         ));
-        if (isset($item['uid'])) $reguser->add($id, $this->name, $item['uid']);
+        if (isset($item['uid'])) {
+$uid = $item['uid'];
+if (strlen($uid) >= 22) $uid = basemd5($uid);
+$reguser->add($id, $this->name, $uid);
+}
       } else {
         //registration disabled
         return 403;
@@ -142,6 +146,7 @@ $this->save();
     } else {
       $uid = !empty($item['uid']) ? $item['uid'] : (!empty($item['website']) ? $item['website'] : '');
       if ($uid) {
+if (strlen($uid) >= 22) $uid = basemd5($uid);
         if ($id = $reguser->find($this->name, $uid)){
           //nothing
         } elseif (litepublisher::$options->reguser) {
@@ -200,32 +205,15 @@ class tregserviceuser extends titems {
   
   public function add($id, $service, $uid) {
     if (($id == 0) || ($service == '') || ($uid == '')) return;
-    if (dbversion) {
       $this->db->insert_a(array(
       'id' => $id,
       'service' => $service,
       'uid' => $uid
       ));
-    } else {
-      $this->items[$id] = array(
-      'service' => $service,
-      'uid' => $uid
-      );
-      $this->save();
-    }
   }
   
   public function find($service, $uid) {
-    if (dbversion){
       return $this->db->findid('service = '. dbquote($service) . ' and uid = ' . dbquote($uid));
-    }
-    
-    foreach ($this->items as $id => $item) {
-      if (($item['service'] == $service) && ($item['uid'] == $uid)) {
-        return $id;
-      }
-    }
-    return false;
   }
   
 }//class
