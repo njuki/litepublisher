@@ -41,7 +41,7 @@ class todnoklassnikiservice extends tregservice {
     if ($err = parent::request($arg)) return $err;
     $code = $_REQUEST['code'];
     $resp = self::http_post('http://api.odnoklassniki.ru/oauth/token.do', array(
-			'grant_type' => 'authorization_code',
+    'grant_type' => 'authorization_code',
     'code' => $code,
     'client_id' => $this->client_id,
     'client_secret' => $this->client_secret,
@@ -52,26 +52,26 @@ class todnoklassnikiservice extends tregservice {
       $tokens  = json_decode($resp);
       
       $params = array(
-               'application_key' => $this->public_key,
-				'client_id' => $this->client_id,
-				'method' => 'users.getCurrentUser',
-                'format' => 'JSON',
+      'application_key' => $this->public_key,
+      'client_id' => $this->client_id,
+      'method' => 'users.getCurrentUser',
+      'format' => 'JSON',
       );
       
       $params['sig'] = strtolower($this->sign($params, md5($tokens->access_token . $this->client_secret)));
-                $params['access_token'] = $tokens->access_token;
-
+      $params['access_token'] = $tokens->access_token;
+      
       if ($r = self::http_post('http://api.odnoklassniki.ru/fb.do', $params)) {
         $js = json_decode($r);
-if (!isset($js->error)) {
-        return $this->adduser(array(
-        'uid' => $js->uid,
-        'email' => '',
-        'name' => $js->name,
-        'website' => isset($js->link) ? $js->link : ''
-        ));
+        if (!isset($js->error)) {
+          return $this->adduser(array(
+          'uid' => $js->uid,
+          'email' => '',
+          'name' => $js->name,
+          'website' => isset($js->link) ? $js->link : ''
+          ));
+        }
       }
-}
     }
     
     return $this->errorauth();
@@ -82,24 +82,24 @@ if (!isset($js->error)) {
     'regurl' => 'http://api.mail.ru/sites/my/add',
     'client_id' => $lang->odnoklass_id,
     'client_secret' =>$lang->odnoklass_secret,
-'public_key' => $lang->odnoklass_public_key
+    'public_key' => $lang->odnoklass_public_key
     );
   }
   
   public function gettab($html, $args, $lang) {
     $a = $this->getadmininfo($lang);
     $result = $html->p(sprintf($lang->odnoklass_reg, 'http://dev.odnoklassniki.ru/wiki/display/ok/How+to+add+application+on+site'));
-
+    
     $result .= $html->getinput('text', "client_id_$this->name", tadminhtml::specchars($this->client_id), $a['client_id']) ;
     $result .= $html->getinput('text', "client_secret_$this->name", tadminhtml::specchars($this->client_secret), $a['client_secret']) ;
-
+    
     $result .= $html->getinput('text', "public_key_$this->name", tadminhtml::specchars($this->public_key), $lang->odnoklass_public_key);
     return $result;
   }
-
-public function processform() {
-      if (isset($_POST["public_key_$this->name"])) $this->public_key = $_POST["public_key_$this->name"];
-parent::processform();
-}
-
+  
+  public function processform() {
+    if (isset($_POST["public_key_$this->name"])) $this->public_key = $_POST["public_key_$this->name"];
+    parent::processform();
+  }
+  
 }//class

@@ -110,12 +110,12 @@ class tregservice extends tplugin {
     $result .= $html->getinput('text', "client_secret_$this->name", tadminhtml::specchars($this->client_secret), $a['client_secret']) ;
     return $result;
   }
-
-public function processform() {
-      if (isset($_POST["client_id_$this->name"])) $this->client_id = $_POST["client_id_$this->name"];
-      if (isset($_POST["client_secret_$this->name"])) $this->client_secret = $_POST["client_secret_$this->name"];
-$this->save();
-}
+  
+  public function processform() {
+    if (isset($_POST["client_id_$this->name"])) $this->client_id = $_POST["client_id_$this->name"];
+    if (isset($_POST["client_secret_$this->name"])) $this->client_secret = $_POST["client_secret_$this->name"];
+    $this->save();
+  }
   
   public function errorauth() {
     return 403;
@@ -135,10 +135,10 @@ $this->save();
         'website' => isset($item['website']) ? tcontentfilter::clean_website($item['website']) : ''
         ));
         if (isset($item['uid'])) {
-$uid = $item['uid'];
-if (strlen($uid) >= 22) $uid = basemd5($uid);
-$reguser->add($id, $this->name, $uid);
-}
+          $uid = $item['uid'];
+          if (strlen($uid) >= 22) $uid = basemd5($uid);
+          $reguser->add($id, $this->name, $uid);
+        }
       } else {
         //registration disabled
         return 403;
@@ -146,7 +146,7 @@ $reguser->add($id, $this->name, $uid);
     } else {
       $uid = !empty($item['uid']) ? $item['uid'] : (!empty($item['website']) ? $item['website'] : '');
       if ($uid) {
-if (strlen($uid) >= 22) $uid = basemd5($uid);
+        if (strlen($uid) >= 22) $uid = basemd5($uid);
         if ($id = $reguser->find($this->name, $uid)){
           //nothing
         } elseif (litepublisher::$options->reguser) {
@@ -205,15 +205,15 @@ class tregserviceuser extends titems {
   
   public function add($id, $service, $uid) {
     if (($id == 0) || ($service == '') || ($uid == '')) return;
-      $this->db->insert_a(array(
-      'id' => $id,
-      'service' => $service,
-      'uid' => $uid
-      ));
+    $this->db->insert_a(array(
+    'id' => $id,
+    'service' => $service,
+    'uid' => $uid
+    ));
   }
   
   public function find($service, $uid) {
-      return $this->db->findid('service = '. dbquote($service) . ' and uid = ' . dbquote($uid));
+    return $this->db->findid('service = '. dbquote($service) . ' and uid = ' . dbquote($uid));
   }
   
 }//class
