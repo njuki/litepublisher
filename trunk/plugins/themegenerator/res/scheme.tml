@@ -4,7 +4,11 @@ a,a:link,a:visited{color:#%%link%%}
 a:hover,#content a:hover{color:#%%hoverlink%%}
 h1,h2,h3,h4,h5,h6{color:#%%h%%}
 #top {background:url(%%headerurl%%) repeat-x top center #%%headerbackground%%;}
-a#logo{background:url(%%logourl%%) no-repeat scroll 0 0 transparent;color:#%%logo%%}
+#logo{
+background: url(%%logourl%%) no-repeat scroll left center transparent;
+color:#%%logo%%;
+padding-left:%%logowidth%%px;
+}
 
 #nav a{color:#%%menu%%}
 #nav a:hover,#nav li.jshover a{background:#%%menubackground%%;color:#%%menuhover%%}

@@ -168,7 +168,7 @@ class tthemegenerator extends tmenu {
         if (!isset($_FILES['Filedata']) || !is_uploaded_file($_FILES['Filedata']['tmp_name']) ||
         $_FILES['Filedata']['error'] != 0) return 403;
         
-        if ($result = $this->uploadlogo($_FILES['Filedata']['name'], $_FILES['Filedata']['tmp_name'], $this->colors['logowidth'], $this->colors['logoheight'])) {
+        if ($result = $this->uploadlogo($_FILES['Filedata']['name'], $_FILES['Filedata']['tmp_name'], $this->colors['logopadding'], $this->colors['logoheight'])) {
           return turlmap::htmlheader(false) . $result;
         }
         return 403;
@@ -286,21 +286,27 @@ class tthemegenerator extends tmenu {
       return litepublisher::$site->files . '/files/'. $result;
     }
     
-    public function uploadlogo($name, $filename, $x, $y) {
+    public function uploadlogo($name, $filename, $padding, $height) {
       if (!($source = tmediaparser::readimage($filename))) return false;
       $sourcex = imagesx($source);
       $sourcey = imagesy($source);
-      if (($x == $sourcex) && ($y == $sourcey)) {
+      if ($height == $sourcey) {
         if (!($result = tmediaparser::move_uploaded($name, $filename, 'themegen'))) return false;
         @chmod(litepublisher::$paths->files . str_replace('/', DIRECTORY_SEPARATOR, $result), 0666);
-        return litepublisher::$site->files . '/files/' . $result;
+        return array(
+'url' => litepublisher::$site->files . '/files/' . $result,
+'width' => $sourcex + $padding,
+);
       }
       
       $result = tmediaparser::prepare_filename($name, 'themegen');
       $realfilename = litepublisher::$paths->files . str_replace('/', DIRECTORY_SEPARATOR, $result);
-      
-      $dest = imagecreatetruecolor($x, $y);
-      imagecopyresampled($dest, $source, 0, 0, 0, 0, $x, $y, $sourcex, $sourcey);
+
+      $ratio = $sourcex / $sourcey;
+        $x = $height > $sourcey ? $height *$ratio : $height / $ratio;
+
+          $dest = imagecreatetruecolor($x, $y);
+      imagecopyresampled($dest, $source, 0, 0, 0, 0, $x, $height, $sourcex, $sourcey);
       
       if ('png' != substr($result, strrpos($result, '.')+ 1)){
         $index = imagecolorexact($dest, 255, 255, 255);
@@ -315,7 +321,10 @@ class tthemegenerator extends tmenu {
       imagedestroy($source);
       
       @chmod($realfilename, 0666);
-      return litepublisher::$site->files . '/files/'. $result;
+      return array(
+'url'=> litepublisher::$site->files . '/files/'. $result
+'width' => $x + $padding,
+);
     }
     
   }//class

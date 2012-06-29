@@ -45,7 +45,6 @@ button,input[type="submit"],input[type="reset"],input[type="button"]{cursor:poin
 button,input,select,textarea{margin:2px 2px 2px 0;padding:1px 2px}
 form#moderateform input,.quote input{font-size:11px}
 #wrapper{width:980px;margin:0 auto;background:#dfe9f5;position:relative;}
-#top {display:block;width:980px;padding-top:10px;height:1%;background:url(../generator/images/top1.jpg) repeat-x top center #002362;position:relative;z-index:2}
 #main{width:100%;min-height:400px;position:relative;overflow:hidden}
 #top:after{clear:both;content:".";display:block;height:0;font-size:0;visibility:hidden}
 #content{float:right;width:690px;padding:10px 0;background:#fff}
@@ -79,8 +78,32 @@ form#moderateform input,.quote input{font-size:11px}
 .sbar ul ul{margin:0 0 0 10px}
 .sbar ul li a{border-bottom:1px dotted #fff;display:block;padding:2px 0}
 .sbar ul li a:hover{background:#fff;text-decoration:none}
-a#logo{background:url(../generator/images/logo.png) no-repeat scroll 0 0 transparent;color:#fff;display:block;font:italic 28px Georgia,Serif;margin:0 0 10px 20px;padding-left:50px;text-decoration:none;text-shadow:2px 2px 2px #69c}
-#top p{clear:left;color:#666;font-size:11px;margin:0 0 15px 70px}
+
+#top {width:980px;padding-top:10px;background:url(../generator/images/top1.jpg) repeat-x top center #002362;position:relative;z-index:2}
+#logo {
+display:block;
+margin-left: 10px;
+padding-left:100px;
+background: url("../generator/images/logo90x90.png") no-repeat scroll left center transparent;
+overflow:hidden;
+}
+
+#logo h1 {
+color: #FFFFFF;
+    display: block;
+    font: italic 28px Georgia,Serif;
+    margin:20px 0; 
+    text-decoration: none;
+    text-shadow: 2px 2px 2px #6699CC;
+}
+
+#logo p {
+    clear: left;
+color: #FFFFFF;
+    font-size: 20px;
+margin-left: 20px;
+    margin-bottom:15px; 
+}
 
 ul#nav{display:block;list-style:none;margin:0 20px;width:940px;position:relative;z-index:2}
 #nav li{float:left;position:relative}
