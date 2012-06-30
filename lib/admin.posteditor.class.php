@@ -118,7 +118,7 @@ class tposteditor extends tadminmenu {
     $args->title2 = $post->title2;
     $args->keywords = $post->keywords;
     $args->description = $post->description;
-    $args->head = $post->data['head'];
+    $args->head = $post->rawhead;
     
     $args->raw = $post->rawcontent;
     $args->filtered = $post->filtered;
@@ -175,7 +175,7 @@ class tposteditor extends tadminmenu {
       $post->title2 = $title2;
       $post->keywords = $keywords;
       $post->description = $description;
-      $post->head = $head;
+      $post->rawhead = $head;
     }
     
     $post->content = $raw;
