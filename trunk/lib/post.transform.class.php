@@ -14,7 +14,7 @@ class tposttransform  {
   public static $props = array('id', 'idurl', 'parent', 'author', 'revision', 'class',
   //'created', 'modified',
   'posted',
-  'title', 'title2', 'filtered', 'excerpt', 'rss', 'keywords', 'description', 'head', 'moretitle',
+  'title', 'title2', 'filtered', 'excerpt', 'rss', 'keywords', 'description', 'rawhead', 'moretitle',
   'categories', 'tags', 'files',
   'password', 'idview', 'idperm', 'icon',
   'status', 'comstatus', 'pingenabled',
@@ -83,7 +83,7 @@ class tposttransform  {
   }
   
   public function __get($name) {
-    if (('head' == $name) || ('pagescount' == $name)) return $this->post->data[$name];
+    if ('pagescount' == $name) return $this->post->data[$name];
     if (method_exists($this, $get = "get$name")) return $this->$get();
     if (in_array($name, self::$arrayprops))  return implode(',', $this->post->$name);
     if (in_array($name, self::$boolprops))  return $this->post->$name ? 1 : 0;

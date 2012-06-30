@@ -14,7 +14,7 @@
   `pingbackscount` int unsigned NOT NULL default '0',
   `pagescount` int unsigned NOT NULL default '0',
   `posted` datetime NOT NULL default '2011-11-11 11:11:11',
-  `head` text NOT NULL,
+  `rawhead` text NOT NULL,
   `title` text NOT NULL,
   `title2` text NOT NULL,
   `filtered` longtext NOT NULL,

@@ -87,7 +87,7 @@ class tpost extends titem implements  itemplate {
     'rawcontent' => false,
     'keywords' => '',
     'description' => '',
-    'head' => '',
+    'rawhead' => '',
     'moretitle' => '',
     'categories' => array(),
     'tags' => array(),
@@ -483,7 +483,7 @@ class tpost extends titem implements  itemplate {
   }
   
   public function gethead() {
-    $result = $this->data['head'];
+    $result = $this->rawhead;
     ttemplate::i()->ltoptions['idpost'] = $this->id;
     $theme = $this->theme;
     $result .= $theme->templates['head.post'];
