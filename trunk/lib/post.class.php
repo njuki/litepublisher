@@ -661,7 +661,7 @@ class tpost extends titem implements  itemplate {
   
   public function getexcerptcontent() {
     $posts = $this->factory->posts;
-    if ($this->revision < $posts->revision) $this->setrevision($posts->revision);
+    if ($this->revision < $posts->revision) $this->update_revision($posts->revision);
     $result = $this->get_excerpt();
     $posts->beforeexcerpt($this, $result);
     $result = $this->replacemore($result, true);
@@ -714,7 +714,7 @@ class tpost extends titem implements  itemplate {
     $result = '';
     $posts = $this->factory->posts;
     $posts->beforecontent($this, $result);
-    if ($this->revision < $posts->revision) $this->setrevision($posts->revision);
+    if ($this->revision < $posts->revision) $this->update_revision($posts->revision);
     $result .= $this->getcontentpage(litepublisher::$urlmap->page);
     if (litepublisher::$options->parsepost) {
       $result = $this->theme->parse($result);
@@ -729,11 +729,11 @@ class tpost extends titem implements  itemplate {
     tcontentfilter::i()->filterpost($this,$s);
   }
   
-  public function setrevision($value) {
-    if ($value != $this->data['revision']) {
+  public function update_revision($value) {
+    if ($value != $this->revision) {
       $this->updatefiltered();
       $posts = $this->factory->posts;
-      $this->data['revision'] = (int) $posts->revision;
+      $this->revision = (int) $posts->revision;
       if ($this->id > 0) $this->save();
     }
   }

@@ -166,7 +166,7 @@ class tposts extends titems {
   private function beforechange($post) {
     $post->title = trim($post->title);
     $post->modified = time();
-    $post->data['revision'] = $this->revision;
+    $post->revision = $this->revision;
     $post->data['class'] = get_class($post);
     if (($post->status == 'published') && ($post->posted > time())) {
       $post->status = 'future';
