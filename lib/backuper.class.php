@@ -263,8 +263,8 @@ class tbackuper extends tevents {
     public function setdir($dir) {
       $dir = trim($dir, '/');
       if ($i = strpos($dir, '/')) $dir = substr($dir, 0, $i);
-      if (! array_key_exists($dir, litepublisher::$_paths)) $this->error(sprintf('Unknown "%s" folder', $dir));
-      $this->chdir(dirname(rtrim(litepublisher::$_paths[$dir], DIRECTORY_SEPARATOR )));
+      if (!isset(litepublisher::$paths->$dir)) $this->error(sprintf('Unknown "%s" folder', $dir));
+      $this->chdir(dirname(rtrim(litepublisher::$paths->$dir, DIRECTORY_SEPARATOR )));
     }
     
     public function check_ftp_root() {

@@ -43,8 +43,8 @@ class tlocalmerger extends tfilemerger {
   public function getrealfilename($filename) {
     $filename = ltrim($filename, '/');
     $name = substr($filename, 0, strpos($filename, '/'));
-    if (isset(litepublisher::$_paths[$name])) {
-      return litepublisher::$_paths[$name]  . str_replace('/', DIRECTORY_SEPARATOR, substr($filename, strlen($name) + 1));
+    if (isset(litepublisher::$paths->$name)) {
+      return litepublisher::$paths->$name  . str_replace('/', DIRECTORY_SEPARATOR, substr($filename, strlen($name) + 1));
     }
     return  litepublisher::$paths->home . str_replace('/', DIRECTORY_SEPARATOR, $filename);
   }
