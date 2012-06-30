@@ -266,7 +266,13 @@ class Tadminoptions extends tadminmenu {
       if (isset($clearcache)) {
         ttheme::clearcache();
       } else {
-        litepublisher::$classes->memcache = isset($memcache_classes);
+$classes = litepublisher::$classes;
+if (        $classes->memcache != isset($memcache_classes)) {
+if (isset($memcache_classes)) $classes->revision_memcache++;
+        $classes->memcache = isset($memcache_classes);
+$classes->save();
+}
+
         $options->lock();
         $options->cache = isset($cache );
         $options->admincache = isset($admincache );

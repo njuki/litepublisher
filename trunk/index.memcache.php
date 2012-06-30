@@ -18,7 +18,6 @@ class litepublisher {
   public static $site;
   public static $urlmap;
   public static $paths;
-  public static $_paths;
   public static $domain;
   public static $debug = false;
   public static $secret = '8r7j7hbt8iik//pt7hUy5/e/7FQvVBoh7/Zt8sCg8+ibVBUt7rQ';
@@ -28,33 +27,41 @@ class litepublisher {
     if (defined('litepublisher_mode') && (litepublisher_mode == 'debug')) litepublisher::$debug = true;
     if (!preg_match('/(www\.)?([\w\.\-]+)(:\d*)?/', strtolower(trim($_SERVER['HTTP_HOST'])) , $domain)) die('cant resolve domain name');
     self::$domain = $domain[2];
+
     $home = dirname(__file__) . DIRECTORY_SEPARATOR;
     $storage = $home . 'storage' . DIRECTORY_SEPARATOR;
-    self::$_paths = array(
-    'home' => $home,
-    'lib' => $home .'lib'. DIRECTORY_SEPARATOR,
-    'data' => $storage . 'data'. DIRECTORY_SEPARATOR,
-    'cache' => $storage . 'cache'. DIRECTORY_SEPARATOR,
-    'libinclude' => $home .'lib'. DIRECTORY_SEPARATOR . 'include'. DIRECTORY_SEPARATOR,
-    'languages' => $home .'lib'. DIRECTORY_SEPARATOR . 'languages'. DIRECTORY_SEPARATOR,
-    'storage' => $storage,
-    'backup' => $storage . 'backup' . DIRECTORY_SEPARATOR,
-    'plugins' =>  $home . 'plugins' . DIRECTORY_SEPARATOR,
-    'themes' => $home . 'themes'. DIRECTORY_SEPARATOR,
-    'files' => $home . 'files' . DIRECTORY_SEPARATOR,
-    'js' => $home . 'js' . DIRECTORY_SEPARATOR
-    );
-    
-    self::$paths = new tpaths();
+
+$paths = new tpaths();
+    self::$paths = $paths;
+    $paths->home = $home;
+    $paths->lib = $home .'lib'. DIRECTORY_SEPARATOR;
+    $paths->data = $storage . 'data'. DIRECTORY_SEPARATOR;
+    $paths->cache = $storage . 'cache'. DIRECTORY_SEPARATOR;
+    $paths->libinclude = $home .'lib'. DIRECTORY_SEPARATOR . 'include'. DIRECTORY_SEPARATOR;
+    $paths->languages = $home .'lib'. DIRECTORY_SEPARATOR . 'languages'. DIRECTORY_SEPARATOR;
+    $paths->storage = $storage;
+    $paths->backup = $storage . 'backup' . DIRECTORY_SEPARATOR;
+    $paths->plugins =  $home . 'plugins' . DIRECTORY_SEPARATOR;
+    $paths->themes = $home . 'themes'. DIRECTORY_SEPARATOR;
+    $paths->files = $home . 'files' . DIRECTORY_SEPARATOR;
+   $paths->js = $home . 'js' . DIRECTORY_SEPARATOR;
     self::$microtime = microtime(true);
   }
   
-}
+}//class
 
 class tpaths {
-public function __get($name) { return litepublisher::$_paths[$name]; }
-public function __set($name, $value) { litepublisher::$_paths[$name] = $value; }
-public function __isset($name) { return array_key_exists($name, litepublisher::$_paths); }
+public $home;
+public $lib;
+public $data;
+public $cache;
+public $backup;
+public $storage;
+public $libinclude;
+public $js;
+public $plugins;
+public $themes;
+public $files;
 }
 
 try {
