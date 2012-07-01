@@ -259,7 +259,7 @@ class tpost extends titem implements  itemplate {
     'rawcontent' => false,
     'keywords' => '',
     'description' => '',
-    'head' => '',
+    'rawhead' => '',
     'moretitle' => '',
     'categories' => array(),
     'tags' => array(),
@@ -655,7 +655,7 @@ class tpost extends titem implements  itemplate {
   }
   
   public function gethead() {
-    $result = $this->data['head'];
+    $result = $this->rawhead;
     ttemplate::i()->ltoptions['idpost'] = $this->id;
     $theme = $this->theme;
     $result .= $theme->templates['head.post'];
@@ -696,8 +696,12 @@ class tpost extends titem implements  itemplate {
   public function setidview($id) {
     if ($id != $this->idview) {
       $this->data['idview'] = $id;
-      $this->db->setvalue($this->id, 'idview', $id);
+      if ($this->id) $this->db->setvalue($this->id, 'idview', $id);
     }
+  }
+  
+  public function setid_view($id_view) {
+    $this->data['idview'] = $id_view;
   }
   
   public function geticonurl() {
@@ -827,14 +831,10 @@ class tpost extends titem implements  itemplate {
     return ($this->data['comstatus'] != 'closed') && ((int) $this->data['commentscount'] > 0);
   }
   
-  public function get_excerpt() {
-    return $this->data['excerpt'];
-  }
-  
   public function getexcerptcontent() {
     $posts = $this->factory->posts;
-    if ($this->revision < $posts->revision) $this->setrevision($posts->revision);
-    $result = $this->get_excerpt();
+    if ($this->revision < $posts->revision) $this->update_revision($posts->revision);
+    $result = $this->excerpt;
     $posts->beforeexcerpt($this, $result);
     $result = $this->replacemore($result, true);
     if (litepublisher::$options->parsepost) {
@@ -886,7 +886,7 @@ class tpost extends titem implements  itemplate {
     $result = '';
     $posts = $this->factory->posts;
     $posts->beforecontent($this, $result);
-    if ($this->revision < $posts->revision) $this->setrevision($posts->revision);
+    if ($this->revision < $posts->revision) $this->update_revision($posts->revision);
     $result .= $this->getcontentpage(litepublisher::$urlmap->page);
     if (litepublisher::$options->parsepost) {
       $result = $this->theme->parse($result);
@@ -901,11 +901,11 @@ class tpost extends titem implements  itemplate {
     tcontentfilter::i()->filterpost($this,$s);
   }
   
-  public function setrevision($value) {
-    if ($value != $this->data['revision']) {
+  public function update_revision($value) {
+    if ($value != $this->revision) {
       $this->updatefiltered();
       $posts = $this->factory->posts;
-      $this->data['revision'] = (int) $posts->revision;
+      $this->revision = (int) $posts->revision;
       if ($this->id > 0) $this->save();
     }
   }
@@ -1242,8 +1242,8 @@ class tposts extends titems {
   private function beforechange($post) {
     $post->title = trim($post->title);
     $post->modified = time();
-    $post->data['revision'] = $this->revision;
-    $post->data['class'] = get_class($post);
+    $post->revision = $this->revision;
+    $post->class = get_class($post);
     if (($post->status == 'published') && ($post->posted > time())) {
       $post->status = 'future';
     } elseif (($post->status == 'future') && ($post->posted <= time())) {
@@ -1267,7 +1267,7 @@ class tposts extends titems {
     
     if ($post->idview == 1) {
       $views = tviews::i();
-      if (isset($views->defaults['post'])) $post->data['idview'] = $views->defaults['post'];
+      if (isset($views->defaults['post'])) $post->id_view = $views->defaults['post'];
     }
     
     $linkgen = tlinkgenerator::i();
@@ -1459,7 +1459,7 @@ class tposttransform  {
   public static $props = array('id', 'idurl', 'parent', 'author', 'revision', 'class',
   //'created', 'modified',
   'posted',
-  'title', 'title2', 'filtered', 'excerpt', 'rss', 'keywords', 'description', 'head', 'moretitle',
+  'title', 'title2', 'filtered', 'excerpt', 'rss', 'keywords', 'description', 'rawhead', 'moretitle',
   'categories', 'tags', 'files',
   'password', 'idview', 'idperm', 'icon',
   'status', 'comstatus', 'pingenabled',
@@ -1528,7 +1528,7 @@ class tposttransform  {
   }
   
   public function __get($name) {
-    if (('head' == $name) || ('pagescount' == $name)) return $this->post->data[$name];
+    if ('pagescount' == $name) return $this->post->data[$name];
     if (method_exists($this, $get = "get$name")) return $this->$get();
     if (in_array($name, self::$arrayprops))  return implode(',', $this->post->$name);
     if (in_array($name, self::$boolprops))  return $this->post->$name ? 1 : 0;

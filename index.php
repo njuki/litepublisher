@@ -27,11 +27,11 @@ class litepublisher {
     if (defined('litepublisher_mode') && (litepublisher_mode == 'debug')) litepublisher::$debug = true;
     if (!preg_match('/(www\.)?([\w\.\-]+)(:\d*)?/', strtolower(trim($_SERVER['HTTP_HOST'])) , $domain)) die('cant resolve domain name');
     self::$domain = $domain[2];
-
+    
     $home = dirname(__file__) . DIRECTORY_SEPARATOR;
     $storage = $home . 'storage' . DIRECTORY_SEPARATOR;
-
-$paths = new tpaths();
+    
+    $paths = new tpaths();
     self::$paths = $paths;
     $paths->home = $home;
     $paths->lib = $home .'lib'. DIRECTORY_SEPARATOR;
@@ -44,24 +44,24 @@ $paths = new tpaths();
     $paths->plugins =  $home . 'plugins' . DIRECTORY_SEPARATOR;
     $paths->themes = $home . 'themes'. DIRECTORY_SEPARATOR;
     $paths->files = $home . 'files' . DIRECTORY_SEPARATOR;
-   $paths->js = $home . 'js' . DIRECTORY_SEPARATOR;
+    $paths->js = $home . 'js' . DIRECTORY_SEPARATOR;
     self::$microtime = microtime(true);
   }
   
 }//class
 
 class tpaths {
-public $home;
-public $lib;
-public $data;
-public $cache;
-public $backup;
-public $storage;
-public $libinclude;
-public $js;
-public $plugins;
-public $themes;
-public $files;
+  public $home;
+  public $lib;
+  public $data;
+  public $cache;
+  public $backup;
+  public $storage;
+  public $libinclude;
+  public $js;
+  public $plugins;
+  public $themes;
+  public $files;
 }
 
 try {
@@ -97,7 +97,7 @@ try {
   litepublisher::$site = tsite::i();
   litepublisher::$db = tdatabase::i();
   litepublisher::$urlmap = turlmap::i();
-
+  
   if (!defined('litepublisher_mode')) {
     litepublisher::$urlmap->request(strtolower($_SERVER['HTTP_HOST']), $_SERVER['REQUEST_URI']);
   }

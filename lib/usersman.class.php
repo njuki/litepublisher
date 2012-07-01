@@ -43,7 +43,7 @@ class tusersman extends tdata {
     $item['idgroups'] = $idgroups;
     $users->items[$id] = $item;
     $users->setgroups($id, $item['idgroups']);
-if ('approved' == $item['status']) tuserpages::i()->add($id);
+    if ('approved' == $item['status']) tuserpages::i()->add($id);
     $users->added($id);
     return $id;
   }
@@ -77,16 +77,16 @@ if ('approved' == $item['status']) tuserpages::i()->add($id);
     $users->setgroups($id, $item['idgroups']);
     $item['idgroups'] = implode(',', $item['idgroups']);
     $users->db->updateassoc($item);
-
+    
     $pages = tuserpages::i();
     if (isset($values['status']) && ('approved' == $values['status']) && ($item['status'] != $values['status'])) {
-if ($pages->itemexists($id)) {
-    if ($pages->createpage) $pages->addpage($id);
-} else {
-$pages->add($id);
-}
-}
-
+      if ($pages->itemexists($id)) {
+        if ($pages->createpage) $pages->addpage($id);
+      } else {
+        $pages->add($id);
+      }
+    }
+    
     $pages->edit($id, $values);
     return true;
   }

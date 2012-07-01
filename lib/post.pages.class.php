@@ -13,11 +13,11 @@ class tpostpages extends tbasepostprops {
   }
   
   protected function create() {
-parent::create();
-$this->table = 'pages';
+    parent::create();
+    $this->table = 'pages';
     $this->dataname = 'pages';
-}
-
+  }
+  
   public function add(tpost $post) {
     $db = $this->db;
     foreach ($post->syncdata[$this->dataname] as $page => $content) {
@@ -30,10 +30,10 @@ $this->table = 'pages';
   }
   
   public function save(tpost $post) {
-$this->clear();
+    $this->clear();
     $this->add($post);
   }
-
+  
   public function addpage(tpost $post, $s) {
     $post->syncdata[$this->dataname][] = $s;
     $post->pagescount = count($post->syncdata[$this->dataname]);
@@ -45,13 +45,13 @@ $this->clear();
       ));
     }
   }
-
-public function clearpages(tpost $post) {
+  
+  public function clearpages(tpost $post) {
     $post->syncdata[$this->dataname] = array();
     $post->pagescount = 0;
     if ($post->id > 0) $this->db->iddelete($post->id);
   }
-
+  
   public function getpage(tpost $post, $i) {
     if (!isset($post->propdata[$this->dataname])  $post->propdata[$this->dataname] = array();
     $data = &$post->propdata[$this->dataname];

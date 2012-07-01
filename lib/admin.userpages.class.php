@@ -101,15 +101,15 @@ class tadminuserpages extends tadminmenu {
     $perpage = 20;
     $count = $pages->count;
     $from = $this->getfrom($perpage, $count);
-$p = $pages->thistable;
-$u = $users->thistable;
-      $items = $users->res2items($users->db->query("
-select $u.*  from $u
-left join $p on $u.id = $p.id 
-where not $p.id is null
-order by $u.id desc limit $from, $perpage"));
-
-//dumpvar($items);    
+    $p = $pages->thistable;
+    $u = $users->thistable;
+    $items = $users->res2items($users->db->query("
+    select $u.*  from $u
+    left join $p on $u.id = $p.id
+    where not $p.id is null
+    order by $u.id desc limit $from, $perpage"));
+    
+    //dumpvar($items);
     $html = $this->gethtml('users');
     $lang = tlocal::admin('users');
     $args = new targs();
