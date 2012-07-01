@@ -106,7 +106,7 @@ $u = $users->thistable;
       $items = $users->res2items($users->db->query("
 select $u.*  from $u
 left join $p on $u.id = $p.id 
-where not isnull($p.id)
+where not $p.id is null
 order by $u.id desc limit $from, $perpage"));
 
 //dumpvar($items);    
