@@ -33,10 +33,10 @@ class tadminuserpages extends tadminmenu {
     $users = tusers::i();
     $html = $this->gethtml('users');
     $lang = tlocal::admin('users');
-    $args = targs::i();
+    $args = new targs();
     
     if (!($id= $this->getiduser())) {
-      if (litepublisher::$options->group == 'admin') return $this->getuserlist();
+      if (litepublisher::$options->ingroup('admin')) return $this->getuserlist();
       return $this->notfound;
     }
     
@@ -97,16 +97,19 @@ class tadminuserpages extends tadminmenu {
   
   public function getuserlist() {
     $users = tusers::i();
+    $pages = tuserpages::i();
     $perpage = 20;
-    $count = $users->count;
+    $count = $pages->count;
     $from = $this->getfrom($perpage, $count);
-    if ($users->dbversion) {
-      $items = $users->select('', " order by id desc limit $from, $perpage");
-      if (!$items) $items = array();
-    } else {
-      $items = array_slice(array_keys($users->items), $from, $perpage);
-    }
-    
+$p = $pages->thistable;
+$u = $users->thistable;
+      $items = $users->res2items($users->db->query("
+select $u.*  from $u
+left join $p on $u.id = $p.id 
+where not isnull($p.id)
+order by $u.id desc limit $from, $perpage"));
+
+//dumpvar($items);    
     $html = $this->gethtml('users');
     $lang = tlocal::admin('users');
     $args = new targs();
