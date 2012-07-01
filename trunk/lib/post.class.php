@@ -524,9 +524,13 @@ class tpost extends titem implements  itemplate {
   public function setidview($id) {
     if ($id != $this->idview) {
       $this->data['idview'] = $id;
-      $this->db->setvalue($this->id, 'idview', $id);
+if ($this->id) $this->db->setvalue($this->id, 'idview', $id);
     }
   }
+
+  public function setid_view($id_view) {
+$this->data['idview'] = $id_view;
+}
   
   public function geticonurl() {
     if ($this->icon == 0) return '';
@@ -655,14 +659,10 @@ class tpost extends titem implements  itemplate {
     return ($this->data['comstatus'] != 'closed') && ((int) $this->data['commentscount'] > 0);
   }
   
-  public function get_excerpt() {
-    return $this->data['excerpt'];
-  }
-  
   public function getexcerptcontent() {
     $posts = $this->factory->posts;
     if ($this->revision < $posts->revision) $this->update_revision($posts->revision);
-    $result = $this->get_excerpt();
+    $result = $this->excerpt;
     $posts->beforeexcerpt($this, $result);
     $result = $this->replacemore($result, true);
     if (litepublisher::$options->parsepost) {
