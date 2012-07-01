@@ -149,13 +149,9 @@ class tuserpages extends titems implements itemplate {
     if ($item['idurl'] > 0) return $item['idurl'];
     $item = $this->addurl($item);
     $this->items = $item;
-    if (dbversion) {
       unset($item['url']);
       $item['id'] = $id;
       $this->db->updateassoc($item);
-    } else {
-      $this->save();
-    }
   }
   
   private function addurl(array $item) {
@@ -189,18 +185,19 @@ class tuserpages extends titems implements itemplate {
     }
     $this->items[$id] = $item;
     unset($item['url']);
-    if (dbversion) $this->db->insert_a($item);
-    $this->save();
+$this->db->insert_a($item);
   }
   
   public function delete($id) {
     if ($id <= 1) return false;
+if (!$this->itemexists($id)) return false;
     $idurl = $this->getvalue($id, 'idurl');
     if ($idurl > 0) litepublisher::$urlmap->deleteitem($idurl);
     return parent::delete($id);
   }
   
   public function edit($id, array $values) {
+if (!$this->itemexists($id)) return false;
     $item = $this->getitem($id);
     $url = isset($values['url']) ? $values['url'] : '';
     unset($values['url'], $values['idurl'], $values['id']);
@@ -220,12 +217,8 @@ class tuserpages extends titems implements itemplate {
     }
     
     $this->items[$id] = $item;
-    if ($this->dbversion) {
       unset($item['url']);
       $this->db->updateassoc($item);
-    } else {
-      $this->save();
-    }
   }
   
 }//class
