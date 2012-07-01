@@ -58,4 +58,3 @@ class tpostprops extends tbasepostprops {
   }
   
 }//class
-

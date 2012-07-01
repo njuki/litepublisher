@@ -524,13 +524,13 @@ class tpost extends titem implements  itemplate {
   public function setidview($id) {
     if ($id != $this->idview) {
       $this->data['idview'] = $id;
-if ($this->id) $this->db->setvalue($this->id, 'idview', $id);
+      if ($this->id) $this->db->setvalue($this->id, 'idview', $id);
     }
   }
-
+  
   public function setid_view($id_view) {
-$this->data['idview'] = $id_view;
-}
+    $this->data['idview'] = $id_view;
+  }
   
   public function geticonurl() {
     if ($this->icon == 0) return '';

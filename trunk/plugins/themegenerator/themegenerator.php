@@ -294,17 +294,17 @@ class tthemegenerator extends tmenu {
         if (!($result = tmediaparser::move_uploaded($name, $filename, 'themegen'))) return false;
         @chmod(litepublisher::$paths->files . str_replace('/', DIRECTORY_SEPARATOR, $result), 0666);
         return array(
-'url' => litepublisher::$site->files . '/files/' . $result,
-'width' => $sourcex + $padding,
-);
+        'url' => litepublisher::$site->files . '/files/' . $result,
+        'width' => $sourcex + $padding,
+        );
       }
       
       $result = tmediaparser::prepare_filename($name, 'themegen');
       $realfilename = litepublisher::$paths->files . str_replace('/', DIRECTORY_SEPARATOR, $result);
-
-$x = ceil($sourcex * ($height / $sourcey ));
-
-          $dest = imagecreatetruecolor($x, $height);
+      
+      $x = ceil($sourcex * ($height / $sourcey ));
+      
+      $dest = imagecreatetruecolor($x, $height);
       imagecopyresampled($dest, $source, 0, 0, 0, 0, $x, $height, $sourcex, $sourcey);
       
       if ('png' != substr($result, strrpos($result, '.')+ 1)){
@@ -321,9 +321,9 @@ $x = ceil($sourcex * ($height / $sourcey ));
       
       @chmod($realfilename, 0666);
       return array(
-'url'=> litepublisher::$site->files . '/files/'. $result,
-'width' =>  $x + $padding,
-);
+      'url'=> litepublisher::$site->files . '/files/'. $result,
+      'width' =>  $x + $padding,
+      );
     }
     
   }//class

@@ -24,8 +24,8 @@ class todnoklassnikiservice extends tregservice {
   public function getauthurl() {
     $url = 'http://www.odnoklassniki.ru/oauth/authorize?';
     $url .= 'response_type=code';
-    $url .= '&redirect_uri=' . urlencode(litepublisher::$site->url . 
-$this->url . litepublisher::$site->q . 'state=' . $this->newstate());
+    $url .= '&redirect_uri=' . urlencode(litepublisher::$site->url .
+    $this->url . litepublisher::$site->q . 'state=' . $this->newstate());
     $url .= '&client_id=' . $this->client_id;
     return $url;
   }
@@ -50,10 +50,10 @@ $this->url . litepublisher::$site->q . 'state=' . $this->newstate());
     'client_secret' => $this->client_secret,
     'redirect_uri' => litepublisher::$site->url . $this->url . litepublisher::$site->q . 'state=' . $_GET['state'],
     ));
-
+    
     if ($resp) {
       $tokens  = json_decode($resp);
-        if (isset($tokens ->error)) return 403;
+      if (isset($tokens ->error)) return 403;
       
       $params = array(
       'application_key' => $this->public_key,
