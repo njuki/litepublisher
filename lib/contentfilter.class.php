@@ -72,7 +72,7 @@ class tcontentfilter extends tevents {
       }
     }
     
-    $post->description = self::getpostdescription($post->data['excerpt']);
+    $post->description = self::getpostdescription($post->excerpt);
     $this->aftercontent($post);
   }
   

@@ -167,7 +167,7 @@ class tposts extends titems {
     $post->title = trim($post->title);
     $post->modified = time();
     $post->revision = $this->revision;
-    $post->data['class'] = get_class($post);
+    $post->class = get_class($post);
     if (($post->status == 'published') && ($post->posted > time())) {
       $post->status = 'future';
     } elseif (($post->status == 'future') && ($post->posted <= time())) {
@@ -191,7 +191,7 @@ class tposts extends titems {
     
     if ($post->idview == 1) {
       $views = tviews::i();
-      if (isset($views->defaults['post'])) $post->data['idview'] = $views->defaults['post'];
+      if (isset($views->defaults['post'])) $post->id_view = $views->defaults['post'];
     }
     
     $linkgen = tlinkgenerator::i();
