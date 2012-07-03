@@ -21,13 +21,19 @@ class tmetatags extends tplugin {
   
   public function getlist() {
     $context = ttemplate::i()->context;
-    if (isset($context) && isset($context->idposts)) {
+    if ($context instanceof tcommontags) {
+      $list = $context->getidposts($context->id);
+    } elseif (isset($context) && isset($context->idposts)) {
       $list = $context->idposts;
-      if (count($list) > 0) {
-        tposts::i()->loaditems($list);
-        return array_slice($list, 0, 3);
-      }
+    } else {
+      return false;
     }
+    
+    if (count($list) > 0) {
+      tposts::i()->loaditems($list);
+      return array_slice($list, 0, 3);
+    }
+    
     return false;
   }
   

@@ -105,7 +105,7 @@ class tticket extends tpost {
   }
   
   public static function getresource() {
-    return dirname(__file__) . DIRECTORY_SEPARATOR . 'resource' . DIRECTORY_SEPARATOR;
+    return litepublisher::$paths->plugins . 'tickets'  . DIRECTORY_SEPARATOR . 'resource' . DIRECTORY_SEPARATOR;
   }
   
   public function getschemalink() {

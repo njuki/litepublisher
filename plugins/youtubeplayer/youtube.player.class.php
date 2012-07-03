@@ -51,13 +51,11 @@ class tyoutubeplayer extends tplugin {
   }
   
   public function install() {
-    $filter = tcontentfilter::i();
-    $filter->afterfilter = $this->filter;
+    tcontentfilter::i()->afterfilter = $this->filter;
   }
   
   public function uninstall() {
-    $filter = tcontentfilter::i();
-    $filter->unbind($this);
+    tcontentfilter::i()->unbind($this);
   }
   
 }//class

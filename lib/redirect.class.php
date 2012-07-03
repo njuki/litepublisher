@@ -16,6 +16,7 @@ class tredirector extends titems {
     $this->dbversion = false;
     parent::create();
     $this->basename = 'redirector';
+    $this->addevents('onget');
   }
   
   public function add($from, $to) {
@@ -57,6 +58,7 @@ class tredirector extends titems {
       if (isset($template->$name)) return $template->$name;
     }
     
+    if ($url = $this->onget($url)) return $url;
     return false;
   }
   
