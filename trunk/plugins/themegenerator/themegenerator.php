@@ -36,9 +36,13 @@ class tthemegenerator extends tmenu {
     if (@filectime ($filename) + 24*3600 < time()) unlink($filename);
   }
   
+  public function getres() {
+    return litepublisher::$paths->plugins . 'themegenerator' . DIRECTORY_SEPARATOR  . 'res' . DIRECTORY_SEPARATOR;
+  }
+  
   public function parseselectors() {
     $this->data['selectors'] = array();
-    $s = file_get_contents(dirname(__file__) . DIRECTORY_SEPARATOR . 'res' . DIRECTORY_SEPARATOR   . 'scheme.tml');
+    $s = file_get_contents($this->res . 'scheme.tml');
     $lines = explode("\n", str_replace(array("\r\n", "\r"), "\n", trim($s)));
     foreach ($lines as $line) {
       $line = trim($line);
@@ -75,16 +79,17 @@ class tthemegenerator extends tmenu {
       $template = ttemplate::i();
       $template->ltoptions['colors'] = $this->data['selectors'];
       $result .= $template->getjavascript($template->jsmerger_themegenerator);
+      
       //$result .= $template->getjavascript('/plugins/colorpicker/js/colorpicker.js');
       //$result .= $template->getjavascript('/js/swfupload/swfupload.js');
-      $result .= $template->getjavascript('/plugins/themegenerator/themegenerator.js');
+      //$result .= $template->getjavascript('/plugins/themegenerator/themegenerator.js');
       
       if ($this->colorsuploaded) {
         $args = new targs();
         foreach ($this->data['colors'] as $name => $value) {
           $args->$name = $value;
         }
-        $res = dirname(__file__) . DIRECTORY_SEPARATOR  . 'res' . DIRECTORY_SEPARATOR ;
+        $res = $this->res;
         $css = strtr(file_get_contents($res . 'scheme.tml'), $args->data);
         $result .= "<style type=\"text/css\">\n$css</style>\n";
       }
@@ -202,7 +207,7 @@ class tthemegenerator extends tmenu {
         }
       }
       
-      $res = litepublisher::$paths->plugins . 'themegenerator' . DIRECTORY_SEPARATOR  . 'res' . DIRECTORY_SEPARATOR ;
+      $res = $this->res;
       $css = strtr(tfilestorage::getfile($res . 'scheme.tml'), $args->data);
       
       $zip->addFile($colors, $path . 'colors.ini');

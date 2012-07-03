@@ -100,8 +100,11 @@ class tlinkgenerator extends tevents {
   }
   
   public function filterfilename($filename) {
-    $filename = trim($filename, "\n\r\t \x0B\0,.;?!/\\<>():;-\"'");
-    $result = basename($filename);
+    $result = trim($filename, "\n\r\t \x0B\0,.;?!/\\<>():;-\"'");
+    //bug with rus encode
+    //$result = basename($filename);
+    if ($i = strrpos($result, '/')) $result = substr($result, $i + 1);
+    if ($i = strrpos($result, '\\')) $result = substr($result, $i + 1);
     $result= $this->encode($result);
     $result= $this->clean($result);
     return trim($result, '/');
