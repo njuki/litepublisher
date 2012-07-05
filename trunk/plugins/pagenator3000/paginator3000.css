@@ -150,3 +150,4 @@
 .paginator .item-list ul li a {
     padding: 0;
 }
+.paginator-current-page {font-weight: bold;}
