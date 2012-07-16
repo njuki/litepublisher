@@ -30,7 +30,7 @@ function tpasswordpageInstall($self) {
   $self->data['invalidpassword'] = $lang->invalidpassword;
   $self->save();
   
-  trobotstxt ::i()->add('/check-password.php');
+  trobotstxt ::i()->AddDisallow('/check-password.php');
   
   litepublisher::$urlmap->addget('/check-password.php', get_class($self));
 }
