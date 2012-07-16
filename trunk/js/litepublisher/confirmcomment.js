@@ -26,7 +26,7 @@ form.submit();
     
 var self = this;
 form.off("submit.confirmcomment").on("submit.confirmcomment", function() {
-self.submit();
+return self.submit();
 });
 },
     
