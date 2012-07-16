@@ -6,18 +6,30 @@
 **/
 
 (function( $ ){
-  $.confirmcomment = function(opt) {
-    var options= $.extend({
+  $.confirmcomment = {
+
+init: function(opt) {
+    this.options= $.extend({
       confirmcomment: true,
       comuser: false,
       form: "#commentform",
       editor: "#comment"
     }, ltoptions.theme.comments, opt);
+
+    //ctrl+enter
+this.get("content").off("keydown.confirmcomment").on("keydown.confirmcomment", function (e) {
+      if (e.ctrlKey && ((e.keyCode == 13) || (e.keyCode == 10))) {
+        $(options.form).submit();
+      }
+    });
     
-    var form= {
+        $(this.options.form).off("submit.confirmcomment").on("submit.confirmcomment", function() {
+});
+},
+    
       get: function(name) {
-        if (name == 'content') return $(options.editor);
-        return $("input[name='" + name + "']", options.form);
+        if (name == 'content') return $("textarea[name='content']", this.options.form);
+        return $("input[name='" + name + "']", this.options.form);
       },
       
       error: function(mesg) {
@@ -25,69 +37,71 @@
       },
       
       error_field: function(field, mesg) {
-        form.error(mesg).close = function() {
-          form.get(field).focus();
+var self = this;
+        this.error(mesg).close = function() {
+          self.get(field).focus();
         };
       },
       
       empty: function(name) {
-        var s = form.get(name).val();
+        var s = this.get(name).val();
         return $.trim(s) == "";
       },
       
       validemail: function() {
-        var s = $.trim(form.get("email").val());
+        var s = $.trim(this.get("email").val());
         if (s == "") return false;
       var filter = /^([a-zA-Z0-9_\.\-])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$/;
         return filter.test(s);
       },
       
       validate: function() {
-        if ("" == $.trim($(options.editor).val())) {
-          form.error_field("content", lang.comment.emptycontent);
-          return false;
-        } else if (options.comuser) {
-          if (form.empty("name")) {
-            form.error_field("name", lang.comment.emptyname);
-            return false;
-          }
-          
-          if (!form.validemail()) {
-            form.error_field("email", lang.comment.invalidemail);
-            return false;
-          }
-        }
-        return true;
+        if ("" == $.trim(this.get("content").val())) {
+          this.error_field("content", lang.comment.emptycontent);
+return false;
+}
+if (!this.options.comuser) return true;
+
+          if (this.empty("name")) {
+            this.error_field("name", lang.comment.emptyname);
+           } else if (!this.validemail()) {
+            this.error_field("email", lang.comment.invalidemail);
+        } else {
+return true;
+}
+
+        return false;
       },
       
       send: function() {
       var values = {method: "comment_add"};
-        var inputs = $(":input", options.form);
+        var inputs = $(":input", this.options.form);
         inputs.each(function() {
-          var self = $(this);
-          values[self.attr("name")] = self.val();
-          self.attr("disabled", "disabled");
+          var inp = $(this);
+          values[imp.attr("name")] = imp.val();
+          imp.attr("disabled", "disabled");
         });
         
-        $.litejsontype("post", values, function (resp) {
+var self = this;
+        $.litejsonpost(values, function (resp) {
           try {
             switch (resp.code) {
               case 'confirm':
-              form.confirm(resp.confirmid);
+              self.confirm(resp.confirmid);
               break;
               
               case 'success':
-              form.success(resp);
+              self.success(resp);
               break;
               
               default: //error
-              form.error(resp.msg);
+              self.error(resp.msg);
               break;
             }
         } catch(e) { form.error(e.message); }
         })
         .fail( function(jq, textStatus, errorThrown) {
-          form.error(jq.responseText);
+          self.error(jq.responseText);
         })
         .always(function() {
           inputs.removeAttr("disabled");
@@ -95,11 +109,12 @@
       },
       
       confirm: function(confirmid) {
+var self = this;
         $.confirmbox(lang.dialog.confirm, lang.comment.checkspam , lang.comment.robot, lang.comment.human, function(index) {
           if (index !=1) return;
-        $.litejsontype("post", {method: "comment_confirm", confirmid: confirmid}, form.success)
+        $.litejsonpost({method: "comment_confirm", confirmid: confirmid}, self.success)
           .fail( function(jq, textStatus, errorThrown) {
-            form.error(jq.responseText);
+            self.error(jq.responseText);
           });
         });
       },
@@ -115,30 +130,20 @@
       
       submit: function() {
         try {
-          if (!form.validate()) return false;
-          if (options.confirmcomment) {
-            form.send();
+          if (!this.validate()) return false;
+          if (this.options.confirmcomment) {
+            this.send();
             return false;
           }
       } catch(e) { alert(e.message); }
       }
       
-    }; //form
+    }; //object
     
-    //init
-    //ctrl+enter
-    $(options.editor).off("keydown.confirmcomment").on("keydown.confirmcomment", function (e) {
-      if (e.ctrlKey && ((e.keyCode == 13) || (e.keyCode == 10))) {
-        $(options.form).submit();
-      }
-    });
-    
-    
-    $(options.form).off("submit.confirmcomment").on("submit.confirmcomment", form.submit);
-  };
-  
+
+
   $(document).ready(function() {
-    $.confirmcomment();
+    $.confirmcomment.init();
   });
   
 })( jQuery );
