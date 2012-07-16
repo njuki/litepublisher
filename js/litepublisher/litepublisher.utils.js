@@ -5,7 +5,11 @@
 * and GPL (gpl.txt) licenses.
 **/
 
-function get_get(name) {
+(function ($, document, window) {
+//litepublisher namespace
+window.litepubl = {};
+
+window.get_get=  function (name) {
   var q = window.location.search.substring(1);
   var vars = q.split('&');
   for (var i=0, l=  vars.length; i < l; i++) {
@@ -15,7 +19,6 @@ function get_get(name) {
   return false;
 }
 
-(function( $ ){
   $.extend({
     load_script: function( url, callback ) {
       return $.ajax({
@@ -79,4 +82,4 @@ function get_get(name) {
     }
     
   });
-})( jQuery );
+}(jQuery, document, window));
