@@ -5,9 +5,8 @@
 * and GPL (gpl.txt) licenses.
 **/
 
-(function( $ ){
-  $.confirmcomment = {
-
+(function ($, document, window) {
+  window.litepubl.class_confirmcomment = Class.extend({
 init: function(opt) {
     this.options= $.extend({
       confirmcomment: true,
@@ -16,14 +15,17 @@ init: function(opt) {
       editor: "#comment"
     }, ltoptions.theme.comments, opt);
 
+        var form = $(this.options.form);
     //ctrl+enter
 this.get("content").off("keydown.confirmcomment").on("keydown.confirmcomment", function (e) {
       if (e.ctrlKey && ((e.keyCode == 13) || (e.keyCode == 10))) {
-        $(options.form).submit();
+form.submit();
       }
     });
     
-        $(this.options.form).off("submit.confirmcomment").on("submit.confirmcomment", function() {
+var self = this;
+form.off("submit.confirmcomment").on("submit.confirmcomment", function() {
+self.submit();
 });
 },
     
@@ -138,12 +140,10 @@ var self = this;
       } catch(e) { alert(e.message); }
       }
       
-    }; //object
+    });
     
-
-
   $(document).ready(function() {
-    $.confirmcomment.init();
+    litepubl.confirmcomment = new litepubl.class_confirmcomment();
   });
   
-})( jQuery );
+}(jQuery, document, window));
