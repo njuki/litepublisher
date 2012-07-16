@@ -46,6 +46,10 @@ function get_get(name) {
       return $.litejsontype("get", data, callback);
     },
     
+    litejsonpost: function(data, callback) {
+      return $.litejsontype("post", data, callback);
+    },
+
     litejsontype: function(type, data, callback) {
       var c = get_cookie("litepubl_user");
       if (c != '') {
