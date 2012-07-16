@@ -110,10 +110,11 @@ var button = '<button type="button" class="pp_dialog_btn_{index}">{title}</butto
         if ($.isFunction(options.open)) options.open($(".pp_inline"));
       },
       
+ /* Called when prettyPhoto is closed */
       callback: function(){
         $(document).off('keydown.onEscape');
         if ($.isFunction(options.close)) options.close();
-      } /* Called when prettyPhoto is closed */
+      }
     });
     
     a.click();
