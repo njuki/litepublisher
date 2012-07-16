@@ -5,8 +5,9 @@
 * and GPL (gpl.txt) licenses.
 **/
 
+(function( $, document){
 $(document).ready(function() {
-  $(".videofile, .audiofile").one("click", function() {
+  $(".videofile, .audiofile").one("click.play", function() {
     var comment = widget_findcomment(this, false);
     if (comment) {
       var content = comment.nodeValue;
@@ -16,3 +17,4 @@ $(document).ready(function() {
     return false;
   });
 });
+})( jQuery, document);
