@@ -15,7 +15,18 @@ comments: "#commentlist",
     }, ltoptions.theme.comments, opt);
 
 var self = this;  
-  $(this.options.comments).off("click.quotecomment").on("click.quotecomment", ".replycomment, .quotecomment", function() {
+  var list = $(this.options.comments);
+//backward support
+$("*[onclick^='replycomment'][onclick^='quotecomment']", list).each(function() {
+var link = $(this);
+var values = /^\s*(\w*)\s*\(\s*(\d*)\s*,\s*'(.*)'\s*\)/.exec(link.attr("onclick"));
+link.attr("onclick", false);
+link.data("idcomment", values[2]);
+link.data("authorname", values[3]);
+link.addClass(values[1] == "replycomment" ? "replycomment" : "quotecomment");
+});
+
+list.off("click.quotecomment").on("click.quotecomment", ".replycomment, .quotecomment", function() {
     var cmt = $(this);
     if (cmt.hasClass("replycomment")) {
       self.reply(cmt.data("idcomment"), cmt.data("authorname"));
