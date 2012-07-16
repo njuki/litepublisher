@@ -7,6 +7,7 @@
 
 (function ($, document, window) {
   window.litepubl.class_confirmcomment = Class.extend({
+
 init: function(opt) {
     this.options= $.extend({
       confirmcomment: true,
