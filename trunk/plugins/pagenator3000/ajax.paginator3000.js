@@ -266,11 +266,12 @@ self.addClass("paginator-current-page");
               if (isNaN(n)) return false;
 if (n == options.pageCurrent) return false;
 try {
+                    if (false !== options.baseUrl(n)) {
 options.pageCurrent = n;
+$(".prev-page", holder).attr("rel", n > 0 ? n - 1 : 0);
 $(".next-page", holder).attr("rel",
 (n < parseInt(options.pagesTotal) - 1) ? n + 1 : (options.pagesTotal*1-1));
-$(".prev-page", holder).attr("rel", n > 0 ? n - 1 : 0);
-                    options.baseUrl(n);
+}
       } catch(e) { alert('error ' + e.message); }
 return false;
                 });
