@@ -1,19 +1,19 @@
-ul.tabs {
+ul.litetabs {
 	overflow:hidden;
-/*
 	list-style:none;
 	margin:0;
 	padding:0;
+/*
 	float: left;
 */
 }
 
-ul.tabs li {
+ul.litetabs li {
 				list-style:none;
 	display:inline;
 			}
 
-			.tabs a {
+.litetabs a {
 				padding:5px 10px;
 				display:inline-block;
 				background:#666;
@@ -21,7 +21,7 @@ ul.tabs li {
 				text-decoration:none;
 			}
 
-			.tabs a.active {
+.litetabs a.active {
 				background:#fff;
 				color:#000;
 			}
