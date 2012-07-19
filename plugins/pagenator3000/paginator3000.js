@@ -1,16 +1,42 @@
-(function($){
+(function ($, document, window) {
+    $.fn.nextpaginator = function (opt){
+var options = $.extend({
+page: 0,
+count: 1,
+perpage: 10,
+url: window.location.toString(),
+pageurl : window.location.toString()
+}, opt);
+
+$(this).first().next().not(".paginated").paginator({
+            pagesTotal : options.count,
+            pagesSpan : options.perpage,
+            pageCurrent : options.page - 1,
+            baseUrl : function(page) {
+              window.location= (++page == 1) ? options.url :              options.pageurl + page + "/";
+            }
+});
+
+$(this).first().remove();
+return this;
+};
+
     $.fn.paginator = function (s){
+//prevent double call
+if ($(this).hasClass("paginated")) return this;
+$(this).addClass("paginated paginator");
+
         var options = {
             pagesTotal  : 1, //count all pages
             pagesSpan   : 10,  //view pages
             pageCurrent : 0,  //current page
-            baseUrl     : '?page=', //link or function function (page){}
+            baseUrl : $.noop,
             returnOrder : false,  // 1..10 if false, 10..1 if true
             lang        : {
-                next  : "Next",
-                last  : "Last",
-                prior : "Prior",
-                first : "First",
+                next  : lang.pagenator.next,
+                last  : lang.pagenator.last,
+                prior : lang.pagenator.prior,
+                first : lang.pagenator.first,
                 arrowRight : String.fromCharCode(8594),
                 arrowLeft  : String.fromCharCode(8592)
             }
@@ -72,7 +98,7 @@
             var isFunc = $.isFunction(options.baseUrl);
 
             var next_page = (parseInt(options.pageCurrent) < parseInt(options.pagesTotal) - 1) ? parseInt(options.pageCurrent) + 1 : (options.pagesTotal*1-1);
-            var next  = '<a href="';
+            var next  = '<a class="next-page" href="';
             next+= isFunc ? 'javascript:void(0)' : options.baseUrl.replace(/%page%/i, next_page);
             next += '" rel="' + next_page + '">%next%</a>';
             var last  = '<a href="';
@@ -80,7 +106,7 @@
             last += '" rel="' + (options.pagesTotal*1-1) + '">%last%</a>';
 
             var prior_page = (parseInt(options.pageCurrent) > 0) ? parseInt(options.pageCurrent) - 1 : 0;
-            var prior = '<a href="';
+            var prior = '<a class="prev-page" href="';
             prior += isFunc ? 'javascript:void(0)' : options.baseUrl.replace(/%page%/i, prior_page);
             prior += '" rel="' + prior_page + '">%prior%</a>';
             var first = '<a href="';
@@ -240,10 +266,8 @@
             });
 
             if ($.isFunction(options.baseUrl)){
-                $(html.holder).find('a[rel!=""]').bind('click', function (e){
-                    var n = parseInt($(this).attr('rel'));
-                    options.baseUrl(n);
-                });
+                //$(html.holder).find('a[rel!=""]').bind('click', function (e){
+set_pages_click(html.holder);
             }
 
             $(window).resize(function (){
@@ -252,6 +276,31 @@
                 setScrollThumbWidth();
             });
         }
+
+function set_pages_click() {
+                $(".paginator").off("click.pagenator").on("click.pagenator", 'a.page-number, a[rel!=""]', function() {
+var holder = $(".paginator");
+var self = $(this);
+if (self.hasClass("page-number")) {
+var n = (self.text())*1-1;
+$("a.page-number", holder).removeClass("paginator-current-page");
+self.addClass("paginator-current-page");
+} else {
+                    var n = parseInt(self.attr('rel'));
+}
+
+              if (isNaN(n)) return false;
+if (n == options.pageCurrent) return false;
+try {
+options.pageCurrent = n;
+$(".next-page", holder).attr("rel",
+(n < parseInt(options.pagesTotal) - 1) ? n + 1 : (options.pagesTotal*1-1));
+$(".prev-page", holder).attr("rel", n > 0 ? n - 1 : 0);
+                    options.baseUrl(n);
+      } catch(e) { alert('error ' + e.message); }
+return false;
+                });
+}
 
         function drawPages(){
             var percentFromLeft = html.scrollThumb.xPos / $(html.table).width();
@@ -272,20 +321,21 @@
             for(var i=1; i <= html.tdsPages.length; i++){
                 var cellCurrentValue = cellFirstValue + i;
                 if((cellCurrentValue*1-1) == options.pageCurrent){
-                    data = '<span> <strong>' + cellCurrentValue + '</strong> </span>';
-                }
-                else {
-                    data = '<span> <a href="';
-                    data += isFunc ? 'javascript:void(0)' : options.baseUrl.replace(/%page%/i, (cellCurrentValue*1-1));
-                    data += '">' + cellCurrentValue + '</a> </span>';
+                    data = '<span> <a href=#"" class="page-number paginator-current-page">' + cellCurrentValue  + '</a></span>';
+                } else {
+                    data = '<span> <a href="#" class="page-number">' + cellCurrentValue  + '</a></span>';
                 }
                 $(html.tdsPages[i-1]).html(data);
+}
+set_pages_click(html.holder);
+/*
                 if (isFunc){
                     $(html.tdsPages[i-1]).find('a').bind('click', function (){
                         options.baseUrl(($(this).text())*1-1);
+return false;
                     });
                 }
-            }
+*/
         }
 
         function drawReturn(){
@@ -307,21 +357,21 @@
             for(var i=1; i <= html.tdsPages.length; i++){
                 var cellCurrentValue = cellFirstValue - i;
                 if((cellCurrentValue*1-1) == options.pageCurrent){
-                    data = '<span> <strong>' + cellCurrentValue + '</strong> </span>';
-                }
-                else {
-                    data = '<span> <a href="';
-                    data += isFunc ? 'javascript:void(0)' : options.baseUrl.replace(/%page%/i, (cellCurrentValue*1-1));
-                    data += '">' + cellCurrentValue + '</a> </span>';
-                }
+                    data = '<span> <a href="#" class="page-number paginator-current-page">' + cellCurrentValue  + '</a></span>';
+                } else {
+                    data = '<span> <a href="#" class="page-number">' + cellCurrentValue  + '</a></span>';
+}
                 $(html.tdsPages[i-1]).html(data);
+}
+set_pages_click(html.holder);
+/*
                 if (isFunc){
                     $(html.tdsPages[i-1]).find('a').bind('click', function (){
                         options.baseUrl(($(this).text())*1-1);
                     });
                 }
+*/
             }
-        }
 
         function enableSelection(){
             document.onselectstart = function(){
@@ -359,4 +409,4 @@
             options.returnOrder ? drawReturn() : drawPages();
         }
     };
-})(jQuery);
+}(jQuery, document, window));
