@@ -14,44 +14,22 @@ class tpagenator3000 extends tplugin {
   
   public function themeparsed(ttheme $theme) {
     if (strpos($theme->templates['content.navi'], 'paginator3000.min.js')) return;
-    $url = litepublisher::$site->files . '/plugins/' . basename(dirname(__file__)) . '/';
-    $about = tplugins::getabout('pagenator3000');
-    $head = '<script type="text/javascript"><!--
-    function init_paginator3000() {
-      $.load_script("' . $url . 'paginator3000.min.js", function() {
+
+    $script = '<script type="text/javascript"><!--
         $(document).ready(function() {
           var tag = $("#paginator, .navigation");
           tag.addClass("paginator");
           tag.paginator({
-            pagesTotal : %%count%%,
-            pagesSpan : %%perpage%%,
-            pageCurrent : %%page%% - 1,
+            pagesTotal : $count,
+            pagesSpan : $perpage,
+            pageCurrent : $page - 1,
             baseUrl : function(page) {
-              if (isNaN(page)) return;
-              window.location= ++page == 1 ? "%%link%%" :
-              "%%pageurl%%" + page + "/";
-            },
-            
-            returnOrder : false,
-            lang : {
-              next : "' . $about['next'] . '",
-              last : "' . $about['last'] . '",
-              prior : "' . $about['prior'] . '",
-              first : "' . $about['first'] . '",
-              arrowRight : String.fromCharCode(8594),
-              arrowLeft : String.fromCharCode(8592)
+              window.location= ++page == 1 ? "$link" :
+              "$pageurl" + page + "/";
             }
-          });
-        });
-      });
-    }
-    
-    if (ltoptions.paginator3000 ==undefined) {
-      ltoptions.paginator3000  = "init";
-      init_paginator3000();
-    }
-    //-->
-    </script>';
+});
+});
+       </script>';
     
     $theme->templates['content.navi'] = $head . $theme->templates['content.navi'];
   }
