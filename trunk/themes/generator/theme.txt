@@ -105,7 +105,7 @@ content.post.templatecomments.comments.comment = [
 <small class="dtreviewed date">$comment.date = [d M Y] <span class="time"> $lang.attime $comment.time</span></small> <em class="reviewer vcard">$comment.authorlink</em>
 <ins class="description" id="commentcontent-$comment.id">$comment.content
 <p class="moderate"><span class="moderationbuttons hidden" data-idcomment="$comment.id" data-idauthor="$comment.author"></span>
-$quotebuttons = [ <input type="button" value="$lang.reply" onclick="replycomment($comment.id,'$comment.name');" /><input type="button" value="$lang.quote" onclick="quotecomment($comment.id,'$comment.name');" />]</p></ins></li>]
+$quotebuttons = [ <input type="button" value="$lang.reply" class="replycomment" data-idcomment="$comment.id" data-authorname="$comment.name" /><input type="button" value="$lang.quote" class="quotecomment" data-idcomment="$comment.id" data-authorname="$comment.name" />]</p></ins></li>]
 
 content.post.templatecomments.pingbacks = [<h3>$lang.pingbacks</h3>
 <ol class="commentlist" start="1">$pingback = [<li id="pingback-$pingback.id"><a href="$pingback.url">$pingback.title</a></li>]</ol>
@@ -132,7 +132,8 @@ content.excerpts.lite = [<h1>$lang.posts $template.title</h1><ul>
 $excerpt = [<li><a href="$post.link" title="$lang.permalink: &laquo;$post.title&raquo;">$post.title</a></li>]</ul>
 ]
 
-content.navi = [<div id="paginator">
+content.navi = [
+<div id="paginator" data-page="$page" data-count="$count" data-perpage="$perpage">
 $prev = [<span class="previous-entries">$link</span>]
 $next = [<span class="next-entries">$link</span>]
 $link = [<a href="$link">$page</a>]

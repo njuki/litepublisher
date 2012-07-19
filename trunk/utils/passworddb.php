@@ -13,4 +13,3 @@ litepublisher::$options->save();
 litepublisher::$options->savemodified();
 echo "<pre>\n";
 echo "$password\n<br>new password";
-?>

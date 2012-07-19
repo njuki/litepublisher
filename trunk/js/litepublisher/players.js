@@ -6,15 +6,15 @@
 **/
 
 (function( $, document){
-$(document).ready(function() {
-  $(".videofile, .audiofile").one("click.play", function() {
-    var comment = widget_findcomment(this, false);
-    if (comment) {
-      var content = comment.nodeValue;
-      $(comment).remove();
-      $(this).replaceWith(content);
-    }
-    return false;
+  $(document).ready(function() {
+    $(".videofile, .audiofile").one("click.play", function() {
+      var comment = widget_findcomment(this, false);
+      if (comment) {
+        var content = comment.nodeValue;
+        $(comment).remove();
+        $(this).replaceWith(content);
+      }
+      return false;
+    });
   });
-});
 })( jQuery, document);

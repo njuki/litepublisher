@@ -467,7 +467,6 @@ content.post.templatecomments.regform = [
 								<p id="respond">$lang.leavereply</p>
 								<form action="$site.url/send-comment.php" method="post" id="commentform">
 									<p><textarea name="content" id="comment" rows="10" cols="60%"></textarea></p>
-
 <p>
 									<input type="hidden" name="postid" value="$postid" />
 									<input type="hidden" name="antispam" value="$antispam" />
@@ -755,7 +754,7 @@ content.excerpts.lite = [
 В секции content нам осталось описать еще два шаблона - navi и admin. Шаблон navi предназначен для постраничной навигации, зададим его:
 
 content.navi = [
-	<div class="navigation">
+	<div class="navigation" data-page="$page" data-count="$count" data-perpage="$perpage">
 			$prev = [<span class="previous-entries">$link</span>]
 			$next = [<span class="next-entries">$link</span>]
 			$link = [<a href="$link">$page</a>]

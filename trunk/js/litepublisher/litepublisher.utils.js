@@ -6,19 +6,19 @@
 **/
 
 (function ($, document, window) {
-//litepublisher namespace
+  //litepublisher namespace
 window.litepubl = {};
-
-window.get_get=  function (name) {
-  var q = window.location.search.substring(1);
-  var vars = q.split('&');
-  for (var i=0, l=  vars.length; i < l; i++) {
-    var pair = vars[i].split('=');
-    if (name == pair[0]) return decodeURIComponent(pair[1]);
+  
+  window.get_get=  function (name) {
+    var q = window.location.search.substring(1);
+    var vars = q.split('&');
+    for (var i=0, l=  vars.length; i < l; i++) {
+      var pair = vars[i].split('=');
+      if (name == pair[0]) return decodeURIComponent(pair[1]);
+    }
+    return false;
   }
-  return false;
-}
-
+  
   $.extend({
     load_script: function( url, callback ) {
       return $.ajax({
@@ -52,7 +52,7 @@ window.get_get=  function (name) {
     litejsonpost: function(data, callback) {
       return $.litejsontype("post", data, callback);
     },
-
+    
     litejsontype: function(type, data, callback) {
       var c = get_cookie("litepubl_user");
       if (c != '') {

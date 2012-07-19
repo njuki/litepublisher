@@ -142,7 +142,7 @@ content.excerpts.lite = [
 <tr class="thead"><th>$lang.title</th><th>$lang.posted</th><th>$lang.answers</th></tr>
 $excerpt = [<tr><td class="posts"><a title="$post.title" href="$post.link">$post.title</a></td><td class="center">$post.date</td><td class="center"><a title="$lang.comments $lang.topost $post.title" href="$post.link#comments">$post.commentscount</a></td></tr>]</table>]
 
-content.navi = [<div id="paginator">
+content.navi = [<div id="paginator" data-page="$page" data-count="$count" data-perpage="$perpage">
 $prev = [<span class="previous-entries">$link</span>]
 $next = [<span class="next-entries">$link</span>]
 $link = [<a href="$link" title="Страница $page">$page</a>]
