@@ -56,20 +56,4 @@ class tpagenator3000 extends tplugin {
     $theme->templates['content.navi'] = $head . $theme->templates['content.navi'];
   }
   
-  public function install() {
-    tcssmerger::i()->addstyle(dirname(__file__) . '/paginator3000.css');
-    
-    $parser = tthemeparser::i();
-    $parser->parsed = $this->themeparsed;
-    ttheme::clearcache();
-  }
-  
-  public function uninstall() {
-    $parser = tthemeparser::i();
-    $parser->unbind($this);
-    ttheme::clearcache();
-    
-    tcssmerger::i()->deletestyle(dirname(__file__) . '/paginator3000.css');
-  }
-  
 }//class
