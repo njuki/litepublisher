@@ -1,10 +1,10 @@
-(function($){
-    $.fn.paginator2 = function (s){
+(function ($, document, window) {
+    $.fn.paginator = function (s){
         var options = {
             pagesTotal  : 1, //count all pages
             pagesSpan   : 10,  //view pages
             pageCurrent : 0,  //current page
-            baseUrl     : function (n){},
+            baseUrl : $.noop,
             returnOrder : false,  // 1..10 if false, 10..1 if true
             lang        : {
                 next  : lang.pagenator.next,
@@ -266,12 +266,11 @@ self.addClass("paginator-current-page");
               if (isNaN(n)) return false;
 if (n == options.pageCurrent) return false;
 try {
-                    if (false !== options.baseUrl(n)) {
 options.pageCurrent = n;
-$(".prev-page", holder).attr("rel", n > 0 ? n - 1 : 0);
 $(".next-page", holder).attr("rel",
 (n < parseInt(options.pagesTotal) - 1) ? n + 1 : (options.pagesTotal*1-1));
-}
+$(".prev-page", holder).attr("rel", n > 0 ? n - 1 : 0);
+                    options.baseUrl(n);
       } catch(e) { alert('error ' + e.message); }
 return false;
                 });
@@ -384,4 +383,4 @@ set_pages_click(html.holder);
             options.returnOrder ? drawReturn() : drawPages();
         }
     };
-})(jQuery);
+(function ($, document, window) {
