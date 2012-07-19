@@ -13,20 +13,20 @@ class tpagenator3000 extends tplugin {
   }
   
   public function themeparsed(ttheme $theme) {
-$tag = '<div class="hidden next-paginator"></div>';
+    $tag = '<div class="hidden next-paginator"></div>';
     if (false !== strpos($theme->templates['content.navi'], $tag)) return;
-
+    
     $script = '<script type="text/javascript">
-        $(document).ready(function() {
-$(".next-paginator").nextpaginator({
-            count: $count,
-            perpage: $perpage,
-            page: $page,
-url: "$link",
-              pageurl: "$pageurl"
-});
-});
-       </script>';
+    $(document).ready(function() {
+      $(".next-paginator").nextpaginator({
+        count: $count,
+        perpage: $perpage,
+        page: $page,
+        url: "$link",
+        pageurl: "$pageurl"
+      });
+    });
+    </script>';
     
     $theme->templates['content.navi'] = $tag . $theme->templates['content.navi'] .$script;
   }

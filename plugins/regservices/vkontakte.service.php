@@ -57,7 +57,7 @@ class tvkontakteregservice extends tregservice {
   
   protected function getadmininfo($lang) {
     return array(
-    'regurl' => 'https://oauth.yandex.ru/client/new',
+    'regurl' => 'http://vk.com/editapp?act=create',
     'client_id' => $lang->yandex_id,
     'client_secret' =>$lang->vk_secret
     );
