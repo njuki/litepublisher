@@ -118,8 +118,8 @@ $template.content.post.templatecomments.comments.comment = [<li $class id="comme
 			<cite>$comment.authorlink</cite> $lang.says: <br />
 			<small class="commentmetadata"><a href="#comment-$comment.id" title="">$comment.date $lang.attime $comment.time</a></small>
 			<span class="replyquotebuttons">
-<input type="button" value="$lang.reply" onclick="replycomment($comment.id,'$comment.name');" />
-<input type="button" value="$lang.quote" onclick="quotecomment($comment.id,'$comment.name');" />
+<input type="button" value="$lang.reply" class="replycomment" data-idcomment="$comment.id" data-authorname="$comment.name" />
+<input type="button" value="$lang.quote" class="quotecomment" data-idcomment="$comment.id" data-authorname="$comment.name" />
 </span>
 <p id="commentcontent-$comment.id">
 $comment.content
@@ -158,9 +158,11 @@ $template.content.navi.prev = [<div class="alignleft">$link</div>]
 
 $template.content.navi.next = [<div class="alignright">$link</div>]
 
-$template.content.navi = [<div id="paginator" class="navigation">
+$template.content.navi = [
+<div id="paginator" class="navigation" data-page="$page" data-count="$count" data-perpage="$perpage">
 $items
-</div>]
+</div>
+]
 
 $template.content.excerpts.excerpt.catlinks = [<span class="filedto">$lang.categories: 
 $items

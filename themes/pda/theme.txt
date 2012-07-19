@@ -48,7 +48,7 @@ $post.prevnext
 ]
 
 content.post.prevnext = [
-	<div class="navigation">
+	<div class="navigation" data-page="$page" data-count="$count" data-perpage="$perpage">
 								$prev = [&laquo; $lang.prev <a rel="prev" href="$prevpost.link" title="$lang.permalink $prevpost.title">$prevpost.title</a> ]
 								$next = [$lang.next <a rel="next" href="$nextpost.link" title="$lang.permalink $nextpost.title">$nextpost.title</a> &raquo;]
 	</div>

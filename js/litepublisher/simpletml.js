@@ -20,13 +20,13 @@ return tml.replace(/[%\{]{2}(\w*)[%\}]{2}/gim, function(str, prop, offset, src) 
       return str;
     });
   };
-
-$.replacetml = function(obj, view) {
-var prop = "";
-for (prop in obj) {
-if (typeof obj[prop] == "string") {
-obj[prop] = $.simpletml(obj[prop], view);
-}
-}
-};
+  
+  $.replacetml = function(obj, view) {
+    var prop = "";
+    for (prop in obj) {
+      if (typeof obj[prop] == "string") {
+        obj[prop] = $.simpletml(obj[prop], view);
+      }
+    }
+  };
 })( jQuery );
