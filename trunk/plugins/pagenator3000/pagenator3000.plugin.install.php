@@ -16,7 +16,7 @@ $js->add('default', "/plugins/$name/paginator3000.min.js");
   $js->addtext('default', 'pagenator', 
 sprintf('var lang = $.extend(true, lang, { pagenator: %s });',
   json_encode(array(
-                'next  ' =>  $about['next'],
+                'next' =>  $about['next'],
                 'last' => $about['last'],
                 'prior' => $about['prior'],
                 'first' => $about['first']

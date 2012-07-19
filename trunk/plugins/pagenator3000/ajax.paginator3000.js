@@ -1,5 +1,31 @@
 (function ($, document, window) {
+    $.fn.nextpaginator = function (opt){
+var options = $.extend({
+page: 0,
+count: 1,
+perpage: 10,
+url: window.location.toString(),
+pageurl : window.location.toString()
+}, opt);
+
+$(this).first().next().not(".paginated").paginator({
+            pagesTotal : options.count,
+            pagesSpan : options.perpage,
+            pageCurrent : options.page - 1,
+            baseUrl : function(page) {
+              window.location= (++page == 1) ? options.url :              options.pageurl + page + "/";
+            }
+});
+
+$(this).first().remove();
+return this;
+};
+
     $.fn.paginator = function (s){
+//prevent double call
+if ($(this).hasClass("paginated")) return this;
+$(this).addClass("paginated paginator");
+
         var options = {
             pagesTotal  : 1, //count all pages
             pagesSpan   : 10,  //view pages
@@ -383,4 +409,4 @@ set_pages_click(html.holder);
             options.returnOrder ? drawReturn() : drawPages();
         }
     };
-(function ($, document, window) {
+}(jQuery, document, window));
