@@ -2,6 +2,25 @@
 
 function update538() {
 $lang = tlocal::admin('editor');
+
+$cm = tcommentmanager::i();
+$users = tusers::i();
+if (($cm->idguest == 0) || !$users->itemexists($cm->idguest)) {
+    $cm->idguest =  $users->add(array(
+    'email' => '',
+    'name' => tlocal::get('default', 'guest'),
+    'status' => 'hold',
+    'idgroups' => 'commentator'
+    ));
+    $cm->save();
+    $users->setvalue($cm->idguest, 'status', 'approved');
+    } else {
+$user = $users->getitem($cm->idguest);
+if ($user['name'] == '') {
+    $users->setvalue($cm->idguest, 'name', tlocal::get('default', 'guest'));
+}
+}
+
 $js = tjsmerger::i();
 $js->lock();
   $section = 'default';

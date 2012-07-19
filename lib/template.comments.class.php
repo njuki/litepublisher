@@ -121,7 +121,7 @@ class ttemplatecomments extends tevents {
     $template = ttemplate::I();
     $result .= $template->getjavascript($template->jsmerger_comments);
     return  $result;
-
+    
     /*
     $result .= $template->getjavascript('/js/litepublisher/confirmcomment.js');
     $result .= $template->getjavascript($template->jsmerger_moderate);

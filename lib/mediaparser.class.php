@@ -22,20 +22,20 @@ class tmediaparser extends tevents {
     $this->data['previewheight'] = 120;
     $this->data['audiosize'] = 128;
   }
-
-public static function fixfilename($filename) {
+  
+  public static function fixfilename($filename) {
     if (preg_match('/\.(htm|html|js|php|phtml|php\d|htaccess)$/i', $filename)) return $filename . '.txt';
-return $filename;
-}
-
-public function linkgen($filename) {
+    return $filename;
+  }
+  
+  public function linkgen($filename) {
     $filename = tlinkgenerator::i()->filterfilename($filename);
-return self::fixfilename($filename);
-}
+    return self::fixfilename($filename);
+  }
   
   public function upload($filename, $content, $title, $description, $keywords, $overwrite ) {
     if ($title == '') $title = $filename;
-$filename = self::linkgen($filename);
+    $filename = self::linkgen($filename);
     $tempfilename = $this->doupload($filename, $content);
     return $this->addfile($filename, $tempfilename, $title, $description, $keywords, $overwrite);
   }
@@ -48,7 +48,7 @@ $filename = self::linkgen($filename);
   public function uploadfile($filename, $tempfilename, $title, $description, $keywords, $overwrite ) {
     if ($title == '') $title = $filename;
     if ($description == '') $description = $title;
-$filename = self::linkgen($filename);
+    $filename = self::linkgen($filename);
     $parts = pathinfo($filename);
     $newtemp = $this->gettempname($parts);
     if (!move_uploaded_file($tempfilename, litepublisher::$paths->files . $newtemp)) return $this->error("Error access to uploaded file");
@@ -56,21 +56,21 @@ $filename = self::linkgen($filename);
   }
   
   public static function move_uploaded($filename, $tempfilename, $subdir) {
-$filename = self::linkgen($filename);
+    $filename = self::linkgen($filename);
     $filename = self::create_filename($filename, $subdir, false);
     $sep = $subdir == '' ? '' : $subdir . DIRECTORY_SEPARATOR;
     if (!move_uploaded_file($tempfilename, litepublisher::$paths->files . $sep . $filename)) return false;
     return $subdir == '' ? $filename : "$subdir/$filename";
   }
-
+  
   public static function prepare_filename($filename, $subdir) {
-$filename = self::linkgen($filename);
+    $filename = self::linkgen($filename);
     $filename = self::create_filename($filename, $subdir, false);
     return $subdir == '' ? $filename : "$subdir/$filename";
   }
   
   public function uploadicon($filename, $content, $overwrite ) {
-$filename = self::linkgen($filename);    $tempfilename = $this->doupload($filename, $content, $overwrite);
+    $filename = self::linkgen($filename);    $tempfilename = $this->doupload($filename, $content, $overwrite);
     $info = $this->getinfo($tempfilename);
     if ($info['media'] != 'image') $this->error('Invalid icon file format '. $info['media']);
     $info['media'] = 'icon';
@@ -99,7 +99,7 @@ $filename = self::linkgen($filename);    $tempfilename = $this->doupload($filena
   }
   
   private function doupload($filename, &$content) {
-$filename = self::fixfilename($filename);
+    $filename = self::fixfilename($filename);
     $parts = pathinfo($filename);
     $filename = $this->gettempname($parts);
     if (@file_put_contents(litepublisher::$paths->files . $filename, $content)) {
@@ -138,13 +138,13 @@ $filename = self::fixfilename($filename);
     
     return $filename;
   }
-
-public function getmediafolder($media) {
-if (isset($this->data[$media])) {
-if ($result = $this->data[$media]) return $result;
-}
-return $media;
-}
+  
+  public function getmediafolder($media) {
+    if (isset($this->data[$media])) {
+      if ($result = $this->data[$media]) return $result;
+    }
+    return $media;
+  }
   
   public function movetofolder($filename, $tempfilename, $subdir, $overwrite) {
     $filename = self::create_filename($filename, $subdir, $overwrite);
