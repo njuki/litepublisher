@@ -10,7 +10,7 @@ $.fn.litetabs = function(params) {
 if (params == "select") return setselected(arguments[1]);
 if (params == "setindex") return setindex(this, arguments[1]);
 
-var options = $.extend({
+var taboptions = $.extend({
 select: $.noop,
 show: $.noop
 }, params);
@@ -20,9 +20,11 @@ var link = $(a);
 var id = link.attr("href");
 id = id.substring(id.indexOf("#"));
 var content = $(id);
-if (options.select(content) === false) return;
+var owner = link.closest("ul");
+var taboptions = owner.data("taboptions");
+if (taboptions.select(content) === false) return;
 
-link.closest("ul").find("a.active").each(function() {
+owner.find("a.active").each(function() {
 var self = $(this);
 self.removeClass("active");
 id = self.attr("href");
@@ -32,7 +34,7 @@ $(id).hide();
 
 link.addClass("active");
 content.show();
-options.show(content);
+taboptions.show(content);
 }
 
 function setindex(list, index) {
@@ -40,6 +42,7 @@ setselected($("a", list).get(index));
 }
 
 				$(this).each(function(){
+$(this).data("taboptions", taboptions);
 setindex(this, 0);
 				});
 

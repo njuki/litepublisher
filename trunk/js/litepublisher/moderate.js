@@ -66,7 +66,7 @@ var self = this;
           
           case "hold":
           case "approved":
-          self.setenabled(false);
+          this.setenabled(false);
         $.litejson({method: "comment_setstatus", id: id, status: status}, function(r) {
             try {
               if (r == false) return self.error(lang.comments.notmoderated);
@@ -81,19 +81,36 @@ var self = this;
           break;
           
           case "edit":
-          self.setenabled(false);
+          this.setenabled(false);
         $.litejson({method: "comment_getraw", id: id}, function(resp){
-            var area = self.getarea();
-            area.data("idcomment", id);
-            area.data("savedtext", area.val());
-            area.val(resp.rawcontent);
-            area.focus();
+try {
+self.edit(id, resp.rawcontent);
+          } catch(e) { alert('error ' + e.message); }
+})
+          .fail( function(jq, textStatus, errorThrown) {
+            self.error(lang.comments.errorrecieved);
+          });
+          break;
+          
+          default:
+          alert("Unknown status " + status);
+        }
+
+},
+
+edit: function(id, rawcontent) {
+            var area = this.getarea();
+            area.data("idcomment", id)
+            .data("savedtext", area.val())
+            .val(rawcontent)
+            .focus();
             
-            $.onEscape(self.restore_submit);
-            var form = $(options.form);
+            $.onEscape(this.restore_submit);
+
+var self = this;
+            var form = $(this.options.form);
             form.off("submit.confirmcomment").on("submit.moderate", function() {
               try {
-            var area = self.getarea();
                 var content = $.trim(area.val());
                 if (content == "") {
                   self.enabled = true;
@@ -106,7 +123,7 @@ var self = this;
                               $.litejsonpost({method: "comment_edit", id: area.data("idcomment"), content: content}, function(r){
                   try {
                     $(":input", form).removeAttr("disabled");
-                    var cc = options.content + r.id;
+                    var cc = self.options.content + r.id;
                     $(cc).html(r.content);
                     self.restore_submit();
                     location.hash = cc.substring(1);
@@ -121,15 +138,6 @@ var self = this;
             } catch (e) { alert(e.message); }
               return false;
             });
-          })
-          .fail( function(jq, textStatus, errorThrown) {
-            self.error(lang.comments.errorrecieved);
-          });
-          break;
-          
-          default:
-          alert("Unknown status " + status);
-        }
       },
       
       restore_submit: function() {
