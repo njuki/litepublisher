@@ -42,10 +42,8 @@ $lang = tlocal::admin('usernews');
   }
   
   public function getposteditor($post, $args) {
-if ($this->insertsource) {
-$args->sourceurl = isset($post->meta->sourceurl) ? $post->meta->sourceurl : '';
 $args->data['$lang.sourceurl'] = tlocal::admin()->get('usernews', 'sourceurl');
-}
+if ($this->insertsource) $args->sourceurl = isset($post->meta->sourceurl) ? $post->meta->sourceurl : '';
 
     $form = tfilestorage::getfile(litepublisher::$paths->plugins . $this->dir . DIRECTORY_SEPARATOR . $this->editorfile);
     $args->raw = $post->rawcontent;
@@ -70,7 +68,7 @@ if ($this->checkspam && ($id == 0)) {
         $post->status = 'draft';
       }
     }
-}
+
     
 if ($this->insertsource) $post->meta->sourceurl = $sourceurl;
     $post->title = $title;

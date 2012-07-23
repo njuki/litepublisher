@@ -7,7 +7,8 @@
 **/
 
 function tusernewsInstall($self) {
-$self->data['dir'] = basename(dirname(__file__));
+$name = basename(dirname(__file__));
+$self->data['dir'] = $name;
 $self->save();
 
 tlocalmerger::i()->addplugin($name);
