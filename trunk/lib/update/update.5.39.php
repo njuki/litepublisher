@@ -9,5 +9,5 @@ $u->data['dir'] = 'usernews';
 $u->save();
 
 tlocalmerger::i()->addplugin('usernews');
-}
+echo "aa";}
 }
