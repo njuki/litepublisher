@@ -14,22 +14,22 @@ class tadminusernews {
   
   public function getcontent() {
     $plugin = tusernews::i();
-    $about = tplugins::getabout(tplugins::getname(__file__));
-    $args = targs::i();
+$lang = tlocal::admin('usernews');
+    $args = new targs();
     $form = '';
     foreach (array('_changeposts', '_canupload', '_candeletefile', 'insertsource') as $name) {
       $args->$name = $plugin->data[$name];
-      $args->data["\$lang.$name"] = $about[$name];
+      //$args->data["\$lang.$name"] = $about[$name];
       $form .= "[checkbox=$name]";
     }
     
     foreach (array('sourcetml') as $name) {
       $args->$name = $plugin->data[$name];
-      $args->data["\$lang.$name"] = $about[$name . 'label'];
+      //$args->data["\$lang.$name"] = $about[$name . 'label'];
       $form .= "[text=$name]";
     }
     
-    $args->formtitle = $about['formtitle'];
+    $args->formtitle = $lang->formtitle;
     $html = tadminhtml::i();
     return $html->adminform($form, $args);
   }
@@ -42,6 +42,7 @@ class tadminusernews {
     foreach (array('sourcetml') as $name) {
       $plugin->data[$name] = $_POST[$name];
     }
+
     $plugin->save();
   }
   

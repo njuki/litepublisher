@@ -7,7 +7,11 @@
 **/
 
 function tusernewsInstall($self) {
-  //if (!dbversion) die("Ticket  system only for database version");
+$self->data['dir'] = basename(dirname(__file__));
+$self->save();
+
+tlocalmerger::i()->addplugin($name);
+
   $filter = tcontentfilter::i();
   $filter->phpcode = true;
   $filter->save();
@@ -32,6 +36,6 @@ function tusernewsInstall($self) {
 }
 
 function tusernewsUninstall($self) {
-  $rights = tauthor_rights::i();
-  $rights->unbind($self);
+tauthor_rights::i()->unbind($self);
+tlocalmerger::i()->deleteplugin(basename(dirname(__file__)));
 }

@@ -14,6 +14,7 @@ class tusernews extends tplugin {
   
   public function create() {
     parent::create();
+$this->data['dir'] = 'usernews';
     $this->data['_changeposts'] = false;
     $this->data['_canupload'] = true;
     $this->data['_candeletefile'] = true;
@@ -22,8 +23,8 @@ class tusernews extends tplugin {
   }
   
   public function getnorights() {
-    $about = tplugins::getabout(tplugins::getname(__file__));
-    return sprintf('<h4>%s</h4>', $about['norights']);
+$lang = tlocal::admin('usernews');
+    return sprintf('<h4>%s</h4>', $lang->norights);
   }
   
   public function changeposts($action) {
@@ -40,9 +41,9 @@ class tusernews extends tplugin {
   
   public function getposteditor($post, $args) {
     $args->sourceurl = isset($post->meta->sourceurl) ? $post->meta->sourceurl : '';
-    $form = file_get_contents(dirname(__file__) . DIRECTORY_SEPARATOR . 'editor.htm');
-    $about = tplugins::getabout(tplugins::getname(__file__));
-    $args->data['$lang.sourceurl'] = $about['sourceurl'];
+    $form = tfilestorage::getfile(litepublisher::$paths->plugins . $this->dir . DIRECTORY_SEPARATOR . 'editor.htm');
+$lang = tlocal::admin('usernews');
+
     $ajaxeditor = tajaxposteditor ::i();
     $args->raw = $ajaxeditor->geteditor('raw', $post->rawcontent, true);
     $html = tadminhtml::i();
