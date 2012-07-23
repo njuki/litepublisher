@@ -14,11 +14,11 @@ class tfiles extends titems {
   }
   
   protected function create() {
-    $this->dbversion = dbversion;
+    $this->dbversion = true;
     parent::create();
     $this->basename = 'files';
     $this->table = 'files';
-    $this->addevents('changed', 'edited', 'ongetfilelist');
+    $this->addevents('changed', 'edited', 'ongetfilelist', 'onlist');
     $this->itemsposts = tfileitems ::i();
   }
   
@@ -150,8 +150,9 @@ class tfiles extends titems {
   
   public function getlist(array $list,  $templates) {
     if (count($list) == 0) return '';
+$this->onlist($list);
     $result = '';
-    if ($this->dbversion) $this->preload($list);
+$this->preload($list);
     
     //sort by media type
     $items = array();
@@ -177,7 +178,7 @@ class tfiles extends titems {
       }
     }
     $theme = ttheme::i();
-    $args = targs::i();
+    $args = new targs();
     $url = litepublisher::$site->files . '/files/';
     $preview = new tarray2prop();
     ttheme::$vars['preview'] = $preview;

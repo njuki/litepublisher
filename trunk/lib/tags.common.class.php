@@ -208,18 +208,14 @@ class tcommontags extends titems implements  itemplate {
   
   public function delete($id) {
     $item = $this->getitem($id);
-    $urlmap = turlmap::i();
-    $urlmap->deleteitem($item['idurl']);
-    
-    $this->lock();
+    litepublisher::$urlmap->deleteitem($item['idurl']);
     $this->contents->delete($id);
     $list = $this->itemsposts->getposts($id);
     $this->itemsposts->deleteitem($id);
     parent::delete($id);
-    $this->unlock();
     $this->itemsposts->updateposts($list, $this->postpropname);
     $this->changed();
-    $urlmap->clearcache();
+   litepublisher::$urlmap->clearcache();
   }
   
   public function createnames($list) {
