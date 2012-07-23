@@ -17,13 +17,13 @@ class tadminusernews {
 $lang = tlocal::admin('usernews');
     $args = new targs();
     $form = '';
-    foreach (array('_changeposts', '_canupload', '_candeletefile', 'insertsource') as $name) {
+    foreach (array('_changeposts', '_canupload', '_candeletefile', 'checkspam', 'insertsource') as $name) {
       $args->$name = $plugin->data[$name];
       //$args->data["\$lang.$name"] = $about[$name];
       $form .= "[checkbox=$name]";
     }
     
-    foreach (array('sourcetml') as $name) {
+    foreach (array('sourcetml', 'editorfile') as $name) {
       $args->$name = $plugin->data[$name];
       //$args->data["\$lang.$name"] = $about[$name . 'label'];
       $form .= "[text=$name]";
@@ -36,10 +36,10 @@ $lang = tlocal::admin('usernews');
   
   public function processform() {
     $plugin = tusernews::i();
-    foreach (array('_changeposts', '_canupload', '_candeletefile', 'insertsource') as $name) {
+    foreach (array('_changeposts', '_canupload', '_candeletefile', 'checkspam', 'insertsource') as $name) {
       $plugin->data[$name] = isset($_POST[$name]);
     }
-    foreach (array('sourcetml') as $name) {
+    foreach (array('sourcetml', 'editorfile') as $name) {
       $plugin->data[$name] = $_POST[$name];
     }
 
