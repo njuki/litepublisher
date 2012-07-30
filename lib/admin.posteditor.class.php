@@ -46,15 +46,16 @@ class tposteditor extends tadminmenu {
       $result .= $html->category($args);
     }
     
-    if ($result != '') $result = sprintf($html->categories(), $result);
-    if ($parent == 0) $result = $html->categorieshead($args) . $result;
-    return $result;
+    if ($result == '') return '';
+return sprintf($html->categories(), $result);
   }
   
   public static function getcategories(array $items) {
     $categories = tcategories::i();
     $categories->loadall();
-    $result = self::getsubcategories(0, $items);
+$html = tadminhtml::i();
+$result = $html->categorieshead();
+    $result .= self::getsubcategories(0, $items);
     return str_replace("'", '"', $result);
   }
   

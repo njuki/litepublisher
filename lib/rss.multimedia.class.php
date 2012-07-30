@@ -16,6 +16,7 @@ class trssMultimedia extends tevents {
   protected function create() {
     parent::create();
     $this->basename = 'rssmultimedia';
+$this->addevents('onroot', 'onitem');
     $this->data['feedburner'] = '';
   }
   
@@ -37,6 +38,7 @@ class trssMultimedia extends tevents {
     
     $this->domrss = new tdomrss;
     $this->domrss->CreateRootMultimedia(litepublisher::$site->url. litepublisher::$urlmap->url, 'media');
+$this->onroot($this->domrss);
     
     $list = $this->getrecent($arg, litepublisher::$options->perpage);
     foreach ($list as $id) {
@@ -126,7 +128,7 @@ class trssMultimedia extends tevents {
         tnode::attr($thumbnail, 'width', $preview['width']);
       }
     }
-    
+    $this->onitem($item, $file);
   }
   
   public static function hashtomd5($hash) {

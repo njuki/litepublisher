@@ -210,7 +210,6 @@ public function getdescription() {}
   
 }//class
 
-
 class titems_itemplate extends titems {
   
   protected function create() {
