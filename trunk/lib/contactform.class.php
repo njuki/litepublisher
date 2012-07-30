@@ -19,7 +19,6 @@ class tcontactform extends tmenu {
     }
   }
   
-  
   protected function create() {
     parent::create();
     $this->cache = false;

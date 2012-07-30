@@ -247,7 +247,10 @@ class tcontentfilter extends tevents {
   
   public static function remove_scripts($s) {
     $s = preg_replace('/\<\?.*?\?\>/ims', '', $s);
-    $s = preg_replace('/\<script(.*?)script(\s*)\>/ims', '', $s);
+foreach (array('script', 'style', 'iframe', 'frame', 'object') as $tag) {
+    $s = preg_replace("/\\<$tag(.*?)$tag(\\s*)\\>/ims", '', $s);
+    $s = preg_replace("/\\<$tag(.*?)\\>/ims", '', $s);
+}
     $s = preg_replace('/\[html(.*?)html\]/ims', '', $s);
     $s = preg_replace('/\[html(.*?)/ims', '', $s);
     return $s;

@@ -9,6 +9,7 @@
 class tthemeparser extends tevents {
   public $theme;
   public $paths;
+public $extrapaths;
   public $fixsubcount;
   private $abouts;
   private $sidebar_index;
@@ -22,7 +23,8 @@ class tthemeparser extends tevents {
   protected function create() {
     parent::create();
     $this->basename = 'themeparser';
-    $this->addevents('beforeparse', 'parsed', 'onfix');
+    $this->addevents('ongetpaths', 'beforeparse', 'parsed', 'onfix');
+$this->addmap('extrapaths', array());
     $this->data['replacelang'] = false;
     $this->data['removephp'] = true;
     $this->fixsubcount = true;
@@ -282,7 +284,7 @@ class tthemeparser extends tevents {
   
   public function parsetags(ttheme $theme, $s) {
     $this->theme = $theme;
-    $this->paths = self::getpaths($theme);
+    $this->paths = $this->getpaths($theme);
     $s = trim($s);
     $this->callevent('beforeparse', array($theme, &$s));
     if ($this->removephp) {
@@ -675,8 +677,10 @@ class tthemeparser extends tevents {
         return file_put_contents($dir . 'theme.txt', $result);
       }
       
-      public static function getpaths() {
-        return array(
+      public function getpaths() {
+$extra = $this->extrapaths;
+$this->callevent('ongetpaths', array(&$extra));
+        return $extra + array(
         'index' => array(
         'tag' => '',
         'replace' => ''
