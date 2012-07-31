@@ -13,5 +13,12 @@ $u->data['dir'] = 'usernews';
 $u->save();
 
 tlocalmerger::i()->addplugin('usernews');
-echo "aa";}
+}
+
+$js = tjsmerger::i();
+$js->lock();
+  $section = 'posteditor';
+$js->deletefile($section, '/js/litepublisher/swfuploader.min.js');
+  $js->add($section, '/js/litepublisher/uploader.min.js');
+$js->unlock();
 }
