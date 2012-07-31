@@ -5,8 +5,8 @@
 * and GPL (gpl.txt) licenses.
 **/
 
-(function( $ ){
-  $.fileman = {
+(function ($, document, window) {
+  litepubl.Fileman = Class.extend({
   items: {},
     curr: [],
     indialog: false,
@@ -14,40 +14,41 @@
     init: function(holder) {
       try {
         this.init_templates();
+var self = this;
         $(holder).html(this.templates.tabs);
         var tabs = $("#posteditor-files-tabs");
         tabs.tabs({
           cache: true,
           select: function(event, ui) {
             if ("empty" == $(ui.panel).data("files")) {
-              $.fileman.loadpage(ui.panel, $(ui.panel).data("page"));
+              self.loadpage(ui.panel, $(ui.panel).data("page"));
             }
           }
         });
+
         this.load_current_files();
-        ltoptions.swfu = createswfu($.fileman.uploaded);
+        ltoptions.swfu = createswfu(function(file, serverData) {
+self.uploaded(file, serverData);
+});
         
         $('form:first').submit(function() {
-          $("input[name='files']").val($.fileman.curr.join(','));
+          $("input[name='files']").val(self.curr.join(','));
         });
     } catch(e) { alert('error ' + e.message); }
     },
     
     init_templates: function() {
-      var view ={
+$.replacetml(this.templates, {
         lang: lang.posteditor,
         iconurl:  ltoptions.files + "/js/litepublisher/icons/"
-      };
-      
-      for (var prop in this.templates) {
-        this.templates[prop] = $.simpletml(this.templates[prop], view);
-      }
+      });
     },
     
     load_current_files: function() {
+var self = this;
     $.litejson({method: "files_getpost", idpost: ltoptions.idpost}, function (r) {
         try {
-          $.fileman.set_uploaded(r);
+          self.set_uploaded(r);
       } catch(e) { alert('error ' + e.message); }
       })
       .fail( function(jq, textStatus, errorThrown) {
@@ -89,31 +90,32 @@
       }
       
       this.setborders(panel);
-      
-      panel.on("click", ".file-toolbar a", function() {
+
+var self = this;      
+      panel.on("click.toolbar", ".file-toolbar a", function() {
         var holder = $(this).closest(".file-item");
         var idfile = holder.data("idfile");
         
         switch($(this).attr("class")) {
           case "add-toolbutton":
-          $.fileman.add(idfile);
+          self.add(idfile);
           break;
           
           case "delete-toolbutton":
-          $.fileman.del(idfile, holder);
+          self.del(idfile, holder);
           break;
           
           case "property-toolbutton":
-          $.fileman.editprops(idfile, holder);
+          self.editprops(idfile, holder);
           break;
         }
         
         return false;
       });
       
-      panel.on("click", "a.file-image", function() {
-        var self = $(this);
-        $.prettyPhoto.open(self.attr("href"), self.attr("title"), $("img", self).attr("alt"));
+      panel.on("click.image", "a.file-image", function() {
+        var link = $(this);
+        $.prettyPhoto.open(link.attr("href"), link.attr("title"), $("img", link).attr("alt"));
         return false;
       });
       
@@ -134,10 +136,11 @@
     },
     
     loadpage: function(uipanel, page) {
+var self = this;
       $(uipanel).data("files", "loading");
     $.litejson({method: "files_getpage", page: page - 1}, function(r) {
-        $.fileman.joinitems(r.files);
-        $.fileman.setpage(uipanel, r.files);
+        self.joinitems(r.files);
+        self.setpage(uipanel, r.files);
       })
       .fail( function(jq, textStatus, errorThrown) {
         $.messagebox(lang.dialog.error, jq.responseText);
@@ -153,19 +156,21 @@
     uploaded: function(file, serverData) {
       try {
         var r = $.parseJSON(serverData);
-        /* r = {
+        /*
+ r = {
           id: int idfile,
           item: array fileitem,
           preview: array fileitem optimal
-        }*/
+        }
+*/
         
         var idfile = r.id;
-        $.fileman.curr.push(idfile);
-        $.fileman.items[idfile] = r.item;
-        if (r.item["preview"] != 0) $.fileman.items[r.preview['id']] = r.preview;
+        this.curr.push(idfile);
+        this.items[idfile] = r.item;
+        if (r.item["preview"] != 0) this.items[r.preview['id']] = r.preview;
         
-        $("#current-files .file-items").append($.fileman.get_fileitem(idfile));
-        $("#new-files .file-items").append($.fileman.get_fileitem(idfile));
+        $("#current-files .file-items").append(this.get_fileitem(idfile));
+        $("#new-files .file-items").append(this.get_fileitem(idfile));
     } catch(e) { alert('error ' + e.message); }
     },
     
@@ -201,6 +206,7 @@
       if (this.indialog) return false;
       this.indialog = true;
       var fileitem = this.items[idfile];
+var self = this;
       
       $.prettyPhotoDialog({
         title: lang.posteditor.property,
@@ -220,14 +226,14 @@
             var description = $.trim($("input[name='fileprop-description']", holder).val());
             var keywords = $.trim($("input[name='fileprop-keywords']", holder).val());
             $.prettyPhoto.close();
-            $.fileman.setprops(idfile, title, description, keywords, owner);
+            self.setprops(idfile, title, description, keywords, owner);
           }
         },
         {
           title: lang.dialog.cancel,
           click: function() {
             $.prettyPhoto.close();
-            $.fileman.indialog = false;
+            self.indialog = false;
           }
         }
         ]
@@ -235,17 +241,18 @@
     },
     
     setprops: function(idfile, title, description, keywords, holder) {
-    $.litejsontype("post",{method: "files_setprops", idfile: idfile, title: title, description: description, keywords: keywords}, function(r) {
-        $.fileman.items[r.item["id"]] = r.item;
+var self = this;
+    $.litejsonpost({method: "files_setprops", idfile: idfile, title: title, description: description, keywords: keywords}, function(r) {
+        self.items[r.item["id"]] = r.item;
         //need to update infos but we cant find all files
-        holder.replaceWith($.fileman.get_fileitem(idfile));
-        $.fileman.indialog = false;
+        holder.replaceWith(self.get_fileitem(idfile));
+        self.indialog = false;
       })
       .fail( function(jq, textStatus, errorThrown) {
-        $.fileman.indialog = false;
+        self.indialog = false;
         $.messagebox(lang.dialog.error, jq.responseText);
       });
     }
     
-  };//fileman
-})( jQuery );
+  });//fileman
+}(jQuery, document, window));

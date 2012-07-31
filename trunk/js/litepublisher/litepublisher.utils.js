@@ -7,7 +7,18 @@
 
 (function ($, document, window) {
   //litepublisher namespace
-window.litepubl = {};
+window.litepubl = {
+    getjson: function(data, callback) {
+      return $.ajax({
+        type: "get",
+        url: ltoptions.url + "/admin/jsonserver.php",
+        data: data,
+        success: callback,
+        dataType: "json",
+        cache: true
+      });
+    }
+};
   
   window.get_get=  function (name) {
     var q = window.location.search.substring(1);
@@ -18,7 +29,7 @@ window.litepubl = {};
     }
     return false;
   }
-  
+
   $.extend({
     load_script: function( url, callback ) {
       return $.ajax({
