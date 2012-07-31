@@ -5,8 +5,8 @@
 * and GPL (gpl.txt) licenses.
 **/
 
-(function( $ ){
-  $.fileman.templates = {
+(function( window ){
+  window.litepubl.tml.fileman = {
     item: '<div class="file-item">\
     <div class="file-toolbar">\
 <a href="#" title="{{lang.add}}" class="add-toolbutton"><img src="{{iconurl}}add.png" title="{{lang.add}}" alt="{{lang.add}}" border="0" /></a>\
@@ -65,4 +65,4 @@ tab: '<div class="files-tab" id="filepage-{{index}}">\
 <strong>{{lang.keywords}}</strong></label></p>'
   };
   
-})( jQuery );
+})( window);
