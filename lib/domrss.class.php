@@ -123,17 +123,17 @@ class tdomrss extends domDocument {
     $this->appendChild($this->rss);
     
     tnode::attr($this->rss, 'version', '2.0');
-    tnode::attr($this->rss, 'xmlns:content', "http://purl.org/rss/1.0/modules/content/");
-    tnode::attr($this->rss, 'xmlns:wfw',  "http://wellformedweb.org/CommentAPI/");
-    tnode::attr($this->rss, 'xmlns:dc', "http://purl.org/dc/elements/1.1/");
-    tnode::attr($this->rss, 'xmlns:atom', "http://www.w3.org/2005/Atom");
+    tnode::attr($this->rss, 'xmlns:content', 'http://purl.org/rss/1.0/modules/content/');
+    tnode::attr($this->rss, 'xmlns:wfw', 'http://wellformedweb.org/CommentAPI/');
+    tnode::attr($this->rss, 'xmlns:dc', 'http://purl.org/dc/elements/1.1/');
+    tnode::attr($this->rss, 'xmlns:atom', 'http://www.w3.org/2005/Atom');
     
     $this->channel = tnode::add($this->rss, 'channel');
     
     $link = tnode::add($this->channel, 'atom:link');
     tnode::attr($link, 'href', $url);
-    tnode::attr($link, 'rel', "self");
-    tnode::attr($link,'type', "application/rss+xml");
+    tnode::attr($link, 'rel', 'self');
+    tnode::attr($link,'type', 'application/rss+xml');
     
     tnode::addvalue($this->channel , 'title', $title);
     tnode::addvalue($this->channel , 'link', $url);
@@ -150,15 +150,15 @@ class tdomrss extends domDocument {
     $this->appendChild($this->rss);
     
     tnode::attr($this->rss, 'version', '2.0');
-    tnode::attr($this->rss, 'xmlns:media', "http://video.search.yahoo.com/mrss");
-    tnode::attr($this->rss, 'xmlns:atom', "http://www.w3.org/2005/Atom");
+    tnode::attr($this->rss, 'xmlns:media', 'http://video.search.yahoo.com/mrss');
+    tnode::attr($this->rss, 'xmlns:atom', 'http://www.w3.org/2005/Atom');
     
     $this->channel = tnode::add($this->rss, 'channel');
     
     $link = tnode::add($this->channel, 'atom:link');
     tnode::attr($link, 'href', $url);
-    tnode::attr($link, 'rel', "self");
-    tnode::attr($link,'type', "application/rss+xml");
+    tnode::attr($link, 'rel', 'self');
+    tnode::attr($link,'type', 'application/rss+xml');
     
     tnode::addvalue($this->channel , 'title', $title);
     tnode::addvalue($this->channel , 'link', $url);

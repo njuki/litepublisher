@@ -95,7 +95,8 @@ $js = "var lang;\nif (lang == undefined) lang = {};\n";
   
   $section = 'posteditor';
   $self->add($section, '/js/swfupload/swfupload.js');
-  $self->add($section, '/js/litepublisher/swfuploader.min.js');
+  //$self->add($section, '/js/litepublisher/swfuploader.min.js');
+  $self->add($section, '/js/litepublisher/uploader.min.js');
   $self->add($section, '/js/jquery/ui-$site.jqueryui_version/jquery.ui.progressbar.min.js');
   $self->add($section, '/js/litepublisher/simpletml.min.js');
   $self->add($section, '/js/litepublisher/posteditor.min.js');
