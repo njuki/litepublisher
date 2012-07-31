@@ -27,9 +27,15 @@ var self = this;
         });
 
         this.load_current_files();
+/*
         ltoptions.swfu = createswfu(function(file, serverData) {
 self.uploaded(file, serverData);
 });
+*/
+litepubl.uploader = new litepubl.Uploader();
+litepubl.uploader.onupload = function(file, r) {
+self.uploaded(file, r);
+};
         
         $('form:first').submit(function() {
           $("input[name='files']").val(self.curr.join(','));
@@ -154,9 +160,9 @@ var self = this;
       }
     },
     
-    uploaded: function(file, serverData) {
+    uploaded: function(file, r) {
       try {
-        var r = $.parseJSON(serverData);
+        //var r = $.parseJSON(serverData);
         /*
  r = {
           id: int idfile,
