@@ -8,6 +8,7 @@
 (function ($, document, window) {
   //litepublisher namespace
 window.litepubl = {
+tml: {}, //namespace for templates
     getjson: function(data, callback) {
       return $.ajax({
         type: "get",

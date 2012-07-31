@@ -15,7 +15,7 @@
       try {
         this.init_templates();
 var self = this;
-        $(holder).html(this.templates.tabs);
+        $(holder).html(this.tml.tabs);
         var tabs = $("#posteditor-files-tabs");
         tabs.tabs({
           cache: true,
@@ -38,7 +38,8 @@ self.uploaded(file, serverData);
     },
     
     init_templates: function() {
-$.replacetml(this.templates, {
+this.tml = litepubl.tml.fileman;
+$.replacetml(litepubl.tml.fileman, {
         lang: lang.posteditor,
         iconurl:  ltoptions.files + "/js/litepublisher/icons/"
       });
@@ -77,7 +78,7 @@ var self = this;
       if (count < 1) return;
       var tabs = $("#posteditor-files-tabs");
       for (var i =1; i <= count; i++) {
-    $(this.templates.tab.replace('{{index}}', i)).appendTo(tabs).data("page", i).data("files", "empty");
+    $(this.tml.tab.replace('{{index}}', i)).appendTo(tabs).data("page", i).data("files", "empty");
         tabs.tabs( "add" , "#filepage-" + i, i);
       }
     },
@@ -124,12 +125,12 @@ var self = this;
     get_fileitem: function(id) {
       var item =this.items[id];
       item.link = ltoptions.files + "/files/" + item.filename;
-      type = (item["media"] in this.templates) ? item["media"] : "file";
+      type = (item["media"] in this.tml) ? item["media"] : "file";
       item.previewlink = '';
       if ((parseInt(item["preview"]) != 0) &&(item.preview in this.items)) item.previewlink = ltoptions.files + "/files/" + this.items[item["preview"]]["filename"];
-      var html = $.simpletml(this.templates.item, {
+      var html = $.simpletml(this.tml.item, {
         id: item["id"],
-        content: $.simpletml(this.templates[type], item)
+        content: $.simpletml(this.tml[type], item)
       });
       
       return $(html).data("idfile", id);
@@ -210,7 +211,7 @@ var self = this;
       
       $.prettyPhotoDialog({
         title: lang.posteditor.property,
-        html: this.templates.fileprops,
+        html: this.tml.fileprops,
         open: function(holder) {
           $("input[name='fileprop-title']", holder).val(fileitem.title);
           $("input[name='fileprop-description']", holder).val(fileitem.description);
