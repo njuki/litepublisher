@@ -22,7 +22,7 @@
       var content = $(id);
       var owner = link.closest("ul");
       var taboptions = owner.data("taboptions");
-      if (taboptions.select(content) === false) return;
+      if (taboptions.select(content) === false) return false;
       
       owner.find("a.active").each(function() {
         var self = $(this);
@@ -35,12 +35,13 @@
       link.addClass("active");
       content.show();
       taboptions.show(content);
+return true;
     }
     
     function setindex(list, index) {
-      setselected($("a", list).get(index));
+      return setselected($("a", list).get(index));
     }
-    
+
     $(this).each(function(){
       $(this).data("taboptions", taboptions);
       setindex(this, 0);
