@@ -1,5 +1,5 @@
 (function ($, document, window) {
-litepubl.uploader = Class.extend({
+litepubl.Uploader = Class.extend({
 progressbar: "#progressbar",
 maxsize: "100",
 types: "*.*",
@@ -25,7 +25,7 @@ this.oncomplete(this.items);
 this.items.length = 0;
 },
 
-init: function(upload_success_handler) {
+init: function() {
 this.items = new Array();
   var url = ltoptions.uploadurl == undefined ? ltoptions.url: ltoptions.uploadurl;
   var cookie = get_cookie("litepubl_user");
@@ -115,6 +115,7 @@ self.complete();
     settings.button_text= '<span class="upload_button">' + lang.posteditor.upload + '</span>';
     settings.button_image_url= ltoptions.files + "/js/swfupload/images/XPButtonNoText_160x22.png";
     settings.button_width =  160;
+    settings.button_height= 22;
   settings.button_text_style = '.upload_button { font-family: Helvetica, Arial, sans-serif; font-size: 14pt; text-align: center; }';
     settings.button_text_top_padding= 1;
     settings.button_text_left_padding= 5;

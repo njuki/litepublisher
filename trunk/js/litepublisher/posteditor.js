@@ -27,7 +27,7 @@
       //$.fileman.init("#posteditor-files");
       $("#posteditor-init-files").one('click.initfiles', function() {
         //$.fileman.init("#posteditor-files");
-litepubl.fileman = new litepubl.fileman("#posteditor-files");
+litepubl.fileman = new litepubl.Fileman("#posteditor-files");
         return false;
       });
       
