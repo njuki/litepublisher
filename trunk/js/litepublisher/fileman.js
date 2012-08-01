@@ -27,19 +27,12 @@ var self = this;
         });
 
         this.load_current_files();
-/*
-        ltoptions.swfu = createswfu(function(file, serverData) {
-self.uploaded(file, serverData);
-});
-*/
-litepubl.uploader = new litepubl.Uploader();
-litepubl.uploader.onupload = function(file, r) {
-self.uploaded(file, r);
-};
-        
+
         $('form:first').submit(function() {
           $("input[name='files']").val(self.curr.join(','));
         });
+
+this.init_upload();
     } catch(e) { alert('error ' + e.message); }
     },
     
@@ -50,6 +43,14 @@ $.replacetml(litepubl.tml.fileman, {
         iconurl:  ltoptions.files + "/js/litepublisher/icons/"
       });
     },
+
+init_upload: function() {
+var self = this;
+this.uploader = new litepubl.Uploader();
+this.uploader.onupload = function(file, r) {
+self.uploaded(file, r);
+};
+},
     
     load_current_files: function() {
 var self = this;
@@ -121,12 +122,15 @@ var self = this;
       });
       
       panel.on("click.image", "a.file-image", function() {
-        var link = $(this);
-        $.prettyPhoto.open(link.attr("href"), link.attr("title"), $("img", link).attr("alt"));
+self.openimage($(this));
         return false;
       });
       
     },
+
+openimage: function(link) {
+        $.prettyPhoto.open(link.attr("href"), link.attr("title"), $("img", link).attr("alt"));
+},
     
     get_fileitem: function(id) {
       var item =this.items[id];
@@ -229,11 +233,14 @@ var self = this;
           title: "Ok",
           click: function() {
             var holder = $(".pp_inline");
-            var title = $.trim($("input[name='fileprop-title']", holder).val());
-            var description = $.trim($("input[name='fileprop-description']", holder).val());
-            var keywords = $.trim($("input[name='fileprop-keywords']", holder).val());
+var values = {
+            title: $.trim($("input[name='fileprop-title']", holder).val()),
+            description: $.trim($("input[name='fileprop-description']", holder).val()),
+            keywords: $.trim($("input[name='fileprop-keywords']", holder).val())
+};
+
             $.prettyPhoto.close();
-            self.setprops(idfile, title, description, keywords, owner);
+            self.setprops(idfile, values, owner);
           }
         },
         {
@@ -247,12 +254,15 @@ var self = this;
       } );
     },
     
-    setprops: function(idfile, title, description, keywords, holder) {
+    setprops: function(idfile, values, holder) {
+this.items[idfile] = $.extend(values, this.items[idfile]);
+values.method = "files_setprops";
+values.idfile = idfile;
 var self = this;
-    $.litejsonpost({method: "files_setprops", idfile: idfile, title: title, description: description, keywords: keywords}, function(r) {
+    return $.litejsonpost(values, function(r) {
         self.items[r.item["id"]] = r.item;
         //need to update infos but we cant find all files
-        holder.replaceWith(self.get_fileitem(idfile));
+if (!!holder) holder.replaceWith(self.get_fileitem(idfile));
         self.indialog = false;
       })
       .fail( function(jq, textStatus, errorThrown) {

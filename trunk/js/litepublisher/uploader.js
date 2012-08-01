@@ -1,4 +1,11 @@
-(function ($, document, window) {
+/**
+* Lite Publisher
+* Copyright (C) 2010, 2012 Vladimir Yushko http://litepublisher.com/
+* Dual licensed under the MIT (mit.txt)
+* and GPL (gpl.txt) licenses.
+**/
+
+(function ($, window) {
 litepubl.Uploader = Class.extend({
 progressbar: "#progressbar",
 maxsize: "100",
@@ -128,4 +135,4 @@ this.onsettings(settings);
 }
 
 });
-}(jQuery, document, window));
+}(jQuery, window));
