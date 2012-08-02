@@ -318,8 +318,8 @@ $this->addmap('extrapaths', array());
     }
     
     public function settag($parent, $s) {
-      if (preg_match('/file\s*=\s*(\w*+\.\w\w*+\s*)/i', $s, $m) ||
-      preg_match('/\@import\s*\(\s*(\w*+\.\w\w*+\s*)\)/i', $s, $m)) {
+      if (preg_match('/file\s*=\s*(\w[\w\._\-]*?\.\w\w*+\s*)/i', $s, $m) ||
+      preg_match('/\@import\s*\(\s*(\w[\w\._\-]*?\.\w\w*+\s*)\)/i', $s, $m)) {
         $filename = litepublisher::$paths->themes . $this->theme->name . DIRECTORY_SEPARATOR . $m[1];
         if (!file_exists($filename)) $this->error("File '$filename' not found");
         $s = $this->getfile($filename, $this->getabout($this->theme->name));

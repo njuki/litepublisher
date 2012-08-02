@@ -51,22 +51,8 @@ $this->onroot($this->domrss);
   
   private function getrecent($type, $count) {
     $files = tfiles::i();
-    if (dbversion) {
       $sql = $type == '' ? '' : "media = '$type' and ";
       return $files->select($sql . 'parent = 0 and idperm = 0', " order by posted desc limit $count");
-    } else {
-      $result = array();
-      $list = array_reverse(array_keys($files->items));
-      foreach ($list as $id) {
-        $item = $files->items[$id];
-        if ($item['parent'] != 0) continue;
-        if ($item['idperm'] != 0) continue;
-        if ($type != '' && $type != $item['media']) continue;
-        $result[] = $id;
-        if (--$count <= 0) break;
-      }
-      return $result;
-    }
   }
   
   public function addfile($id) {

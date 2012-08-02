@@ -11,7 +11,11 @@ class tjsonfiles extends tevents {
   public static function i() {
     return getinstance(__class__);
   }
-  
+  protected function create() {
+    parent::create();
+$this->addevents('uploaded', 'onprops');
+}  
+
   public function auth($idpost) {
     if (!litepublisher::$options->user) return false;
     if (litepublisher::$options->ingroup('editor')) return true;
@@ -69,9 +73,12 @@ class tjsonfiles extends tevents {
     $files = tfiles::i();
     if (!$files->itemexists($id)) return $this->forbidden();
     $item= $files->getitem($id);
-    $item['title'] = $args['title'];
-    $item['description'] = $args['description'];
-    $item['keywords'] = $args['keywords'];
+    $item['title'] = tcontentfilter::escape(tcontentfilter::unescape($args['title']));
+    $item['description'] = tcontentfilter::escape(tcontentfilter::unescape($args['description']));
+    $item['keywords'] = tcontentfilter::escape(tcontentfilter::unescape($args['keywords']));
+
+$this->callevent('onprops', array(&$item));
+
     $item = $files->escape($item);
     $files->db->updateassoc($item);
     return array(
@@ -98,6 +105,8 @@ class tjsonfiles extends tevents {
       if ($idperm > 0) tprivatefiles::i()->setperm($id, (int) $_POST['idperm']);
     }
     
+$this->uploaded($id);
+
     $files = tfiles::i();
     $item = $files->getitem($id);
     
