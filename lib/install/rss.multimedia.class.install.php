@@ -31,5 +31,3 @@ function trssMultimediaUninstall($self) {
   $meta = tmetawidget::i();
   $meta->delete('media');
 }
-
-?>
