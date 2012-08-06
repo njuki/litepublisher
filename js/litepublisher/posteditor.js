@@ -1,32 +1,41 @@
-(function( $ ){
-  $.posteditor = {
+/**
+* Lite Publisher
+* Copyright (C) 2010, 2012 Vladimir Yushko http://litepublisher.com/
+* Dual licensed under the MIT (mit.txt)
+* and GPL (gpl.txt) licenses.
+**/
+
+(function ($, document, window) {
+  litepubl.Posteditor = Class.extend({
     
     init: function() {
-      $("#tabs").tabs({
+var tabs = $("#tabs");
+if (tabs.length == 0) return;
+var self = this;
+      tabs.tabs({
         cache: true,
         select: function(event, ui) {
           if ($("#datetime-holder", ui.panel).length) {
-            $.posteditor.init_datetime_tab(ui.panel);
+            self.init_datetime_tab(ui.panel);
           } else  if ($("#seo-holder", ui.panel).length) {
-            $.posteditor.init_seo_tab(ui.panel);
+            self.init_seo_tab(ui.panel);
           }
         },
         
         load: function(event, ui) {
           $(".posteditor-tag", ui.panel).click(function() {
-            $.posteditor.addtag($(this).text());
+            self.addtag($(this).text());
             return false;
           });
         }
       });
-      
+
       $("#posteditor-init-raw-tabs").one('click', function() {
-        $.posteditor.init_raw_tabs();
+        self.init_raw_tabs();
         return false;
       });
-      //$.fileman.init("#posteditor-files");
+
       $("#posteditor-init-files").one('click.initfiles', function() {
-        //$.fileman.init("#posteditor-files");
 litepubl.fileman = new litepubl.Fileman("#posteditor-files");
         return false;
       });
@@ -39,8 +48,7 @@ litepubl.fileman = new litepubl.Fileman("#posteditor-files");
       });
       
     },
-    
-    
+ 
     addtag: function(newtag) {
       var tags = $('#text-tags').val();
       if (tags == '') {
@@ -115,7 +123,11 @@ litepubl.fileman = new litepubl.Fileman("#posteditor-files");
       });
     }
     
-  }//posteditor
+  });//posteditor
   
-  $(document).ready($.posteditor.init);
-})( jQuery );
+  $(document).ready(function() {
+try {
+litepubl.posteditor  = new litepubl.Posteditor();
+      } catch(e) { alert('error ' + e.message); }
+});
+}(jQuery, document, window));

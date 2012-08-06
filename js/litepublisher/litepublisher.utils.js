@@ -29,7 +29,16 @@ tml: {}, //namespace for templates
       if (name == pair[0]) return decodeURIComponent(pair[1]);
     }
     return false;
-  }
+  };
+
+//cookies
+window.get_cookie = function(name) {
+return $.cookie(name);
+};
+
+window.set_cookie = function(name, value, expires){
+    $.cookie(name, value, { expires: 3650});
+};
 
   $.extend({
     load_script: function( url, callback ) {
