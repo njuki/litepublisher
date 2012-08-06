@@ -232,8 +232,8 @@ class tauthor_rights extends tevents {
   
   protected function create() {
     parent::create();
-    $this->addevents('getposteditor', 'editpost', 'changeposts', 'canupload', 'candeletefile');
+    $this->addevents('gethead', 'getposteditor', 'editpost', 'changeposts', 'canupload', 'candeletefile');
     $this->basename = 'authorrights';
   }
-  
-}//class
+
+  }//class

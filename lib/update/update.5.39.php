@@ -21,6 +21,9 @@ $js->lock();
 $js->deletefile($section, '/js/litepublisher/swfuploader.min.js');
   $js->add($section, '/js/litepublisher/uploader.min.js');
 
+$js->deletefile('default', '/js/litepublisher/cookie.min.js');
+  $js->add('default', '/js/plugins/jquery.cookie.min.js');
+
   $lang = tlocal::admin('common');
 $js->deletetext('default', 'dialog');
   $js->addtext('default', 'dialog', 
