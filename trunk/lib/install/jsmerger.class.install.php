@@ -68,7 +68,7 @@ $js = "var lang;\nif (lang == undefined) lang = {};\n";
   'expand' => tlocal::get('default', 'expand'),
   'colapse' => tlocal::get('default', 'colapse')
   );
-  $lang = tlocal::admin();
+  $lang = tlocal::admin('common');
   $self->addtext('default', 'widgetlang', $js . sprintf('lang.widgetlang= %s;',  json_encode($widgetlang)));
   $self->addtext('default', 'dialog', $js . sprintf('lang.dialog = %s;',  json_encode(
   array(
