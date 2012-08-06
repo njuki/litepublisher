@@ -29,6 +29,8 @@ class tposteditor extends tadminmenu {
     $result .= $template->getjavascript('/js/litepublisher/fileman.js');
     $result .= $template->getjavascript('/js/litepublisher/fileman.templates.js');
     */
+
+    if ($this->isauthor &&($h = tauthor_rights::i()->gethead()))  $result .= $h;
     return $result;
   }
   
