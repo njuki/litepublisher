@@ -86,7 +86,8 @@ class tjsonserver extends titems {
       */
 
       $result = $this->callevent($method, $a);
-      //tfiler::log(var_export($result, true));
+    //tfiler::log(var_export($result, true));
+tfiler::log(json_encode($result));
       //dumpvar($result);
       //tfiler::log(var_export($result, true));
     } catch (Exception $e) {
