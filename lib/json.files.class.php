@@ -86,7 +86,6 @@ $this->callevent('onprops', array(&$item));
     );
   }
   
-  
   public function files_upload(array $args) {
     if ( 'POST' != $_SERVER['REQUEST_METHOD']) return $this->forbidden();
     //clear $options->admincookie
@@ -108,14 +107,15 @@ $this->callevent('onprops', array(&$item));
 $this->uploaded($id);
 
     $files = tfiles::i();
-    $item = $files->getitem($id);
+    $item = $files->db->getitem($id);
+$files->items[$id] = $item;
     
     $result = array(
     'id' => $id,
     'item' => $item
     );
     
-    if ($item['preview'] > 0) $result['preview'] = $files->getitem($item['preview']);
+    if ($item['preview'] > 0) $result['preview'] = $files->db->getitem($item['preview']);
     return $result;
   }
   
