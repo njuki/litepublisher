@@ -173,6 +173,8 @@ class tregservice extends tplugin {
     litepublisher::$options->updategroup();
     litepublisher::$options->setcookies($cookie, $expired);
     if (litepublisher::$options->ingroup('admin')) setcookie('litepubl_user_flag', 'true', $expired, litepublisher::$site->subdir . '/', false);
+
+setcookie('litepubl_regservice', $this->name, $expired, litepublisher::$site->subdir . '/', false);
     
     if (isset($this->sessdata['comuser'])) {
       return tcommentform::i()->processform($this->sessdata['comuser'], true);

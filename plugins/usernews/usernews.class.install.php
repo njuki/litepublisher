@@ -28,6 +28,7 @@ tlocalmerger::i()->addplugin($name);
   
   $rights = tauthor_rights::i();
   $rights->lock();
+  $rights->gethead = $self->gethead;
   $rights->getposteditor = $self->getposteditor;
   $rights->editpost = $self->editpost;
   $rights->changeposts = $self->changeposts;

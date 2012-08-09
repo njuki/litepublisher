@@ -243,11 +243,11 @@ class tthemegenerator extends tmenu {
       exit();
     }
     
-    public function imageresize($name, $filename, $x, $y) {
+    public function imageresize($name, $filename, $width, $height) {
       if (!($source = tmediaparser::readimage($filename))) return false;
       $sourcex = imagesx($source);
       $sourcey = imagesy($source);
-      if (($x >= $sourcex) && ($y >= $sourcey)) {
+      if ($height == $sourcey) {
         if (!($result = tmediaparser::move_uploaded($name, $filename, 'themegen'))) return false;
         @chmod(litepublisher::$paths->files . str_replace('/', DIRECTORY_SEPARATOR, $result), 0666);
         return litepublisher::$site->files . '/files/' . $result;
@@ -256,15 +256,11 @@ class tthemegenerator extends tmenu {
       $result = tmediaparser::prepare_filename($name, 'themegen');
       $realfilename = litepublisher::$paths->files . str_replace('/', DIRECTORY_SEPARATOR, $result);
       
-      $ratio = $sourcex / $sourcey;
-      if ($x/$y > $ratio) {
-        $x = $y *$ratio;
-      } else {
-        $y = $x /$ratio;
-      }
+      $x = ceil($sourcex * ($height / $sourcey ));
       
-      $dest = imagecreatetruecolor($x, $y);
-      imagecopyresampled($dest, $source, 0, 0, 0, 0, $x, $y, $sourcex, $sourcey);
+      $dest = imagecreatetruecolor($x, $height);
+      imagecopyresampled($dest, $source, 0, 0, 0, 0, $x, $height, $sourcex, $sourcey);
+      
       switch (substr($result, strrpos($result, '.')+ 1)) {
         case 'jpg':
         imagejpeg($dest, $realfilename, 100);

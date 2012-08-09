@@ -40,6 +40,10 @@ $lang = tlocal::admin('usernews');
   public function candeletefile() {
     if (!$this->_candeletefile) return $this->norights;
   }
+
+public function gethead() {
+return '';
+}
   
   public function getposteditor($post, $args) {
 $args->data['$lang.sourceurl'] = tlocal::admin()->get('usernews', 'sourceurl');
