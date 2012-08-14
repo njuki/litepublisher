@@ -306,16 +306,12 @@ class tthemegenerator extends tmenu {
       $x = ceil($sourcex * ($height / $sourcey ));
       
       $dest = imagecreatetruecolor($x, $height);
+imagealphablending( $dest, false );
+ imagesavealpha( $dest, true ); 
+                $transparent = imagecolorallocatealpha($dest, 255, 255, 255, 127);
+                 imagefilledrectangle($dest, 0, 0, $x, $height, $transparent);  
+
       imagecopyresampled($dest, $source, 0, 0, 0, 0, $x, $height, $sourcex, $sourcey);
-      
-      if ('png' != substr($result, strrpos($result, '.')+ 1)){
-        $index = imagecolorexact($dest, 255, 255, 255);
-        if ($index == -1) {
-          $index = imagecolorallocate($dest, 255, 255, 255);
-        }
-        imagecolortransparent($dest, $index);
-      }
-      
       imagepng($dest, $realfilename);
       imagedestroy($dest);
       imagedestroy($source);
