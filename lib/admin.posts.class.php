@@ -41,21 +41,21 @@ class tadminposts extends tadminmenu {
       return $this->html->confirmform($args);
     }
     
-    $h2 = $this->html->h2;
+    $h4 = $this->html->h4;
     switch ($_GET['action']) {
       case 'delete' :
       $posts->delete($id);
-      return $h2->confirmeddelete;
+      return $h4->confirmeddelete;
       
       case 'setdraft':
       $post->status = 'draft';
       $posts->edit($post);
-      return $h2->confirmedsetdraft;
+      return $h4->confirmedsetdraft;
       
       case 'publish':
       $post->status = 'published';
       $posts->edit($post);
-      return $h2->confirmedpublish;
+      return $h4->confirmedpublish;
     }
     
   }
@@ -76,7 +76,7 @@ class tadminposts extends tadminmenu {
     $result .= $html->listhead();
     $args = targs::i();
     $args->adminurl = $this->adminurl;
-    $args->editurl = litepublisher::$site->url . $this->url . 'editor/' . litepublisher::$site->q . 'id';
+    $args->editurl = tadminhtml::getadminlink($this->url . 'editor/', 'id');
     foreach ($items  as $id ) {
       $post = tpost::i($id);
       ttheme::$vars['post'] = $post;

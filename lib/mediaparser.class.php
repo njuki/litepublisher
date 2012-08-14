@@ -28,7 +28,7 @@ class tmediaparser extends tevents {
     return $filename;
   }
   
-  public function linkgen($filename) {
+  public static function linkgen($filename) {
     $filename = tlinkgenerator::i()->filterfilename($filename);
     return self::fixfilename($filename);
   }

@@ -8,7 +8,7 @@
 
 class tposteditor extends tadminmenu {
   public $idpost;
-  private $isauthor;
+  protected $isauthor;
   
   public static function i($id = 0) {
     return parent::iteminstance(__class__, $id);
@@ -30,8 +30,7 @@ class tposteditor extends tadminmenu {
     $result .= $template->getjavascript('/js/litepublisher/fileman.templates.js');
     */
 
-    //if ($this->isauthor &&($h = tauthor_rights::i()->gethead()))  $result .= $h;
-    if ($h = tauthor_rights::i()->gethead())  $result .= $h;
+    if ($this->isauthor &&($h = tauthor_rights::i()->gethead()))  $result .= $h;
     return $result;
   }
   
@@ -140,8 +139,8 @@ $result = $html->categorieshead();
     $this->getpostargs($post, $args);
     
     $result = $post->id == 0 ? '' : $html->h4($this->lang->formhead . ' ' . $post->bookmark);
-return tauthor_rights::i()->getposteditor($post, $args);
     if ($this->isauthor &&($r = tauthor_rights::i()->getposteditor($post, $args)))  return $r;
+
     $result .= $html->form($args);
     unset(ttheme::$vars['post']);
     return $html->fixquote($result);

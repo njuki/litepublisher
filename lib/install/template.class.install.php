@@ -26,5 +26,3 @@ function ttemplateInstall($self) {
   $theme = ttheme::i();
   $self->footer = $theme->parse($html->footer);
 }
-
-?>
