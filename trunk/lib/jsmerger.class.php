@@ -17,6 +17,7 @@ class tfilemerger extends titems {
     parent::create();
     $this->basename = 'jsmerger';
     $this->data['revision'] = 0;
+$this->addevents('onsave');
   }
   
   public function save() {
@@ -24,6 +25,7 @@ class tfilemerger extends titems {
     $this->data['revision']++;
     parent::save();
     $this->merge();
+$this->onsave();
   }
   
   public function normfilename($filename) {
