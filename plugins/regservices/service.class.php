@@ -212,6 +212,8 @@ class tregserviceuser extends titems {
     'service' => $service,
     'uid' => $uid
     ));
+
+$this->added($id, $service);
   }
   
   public function find($service, $uid) {
