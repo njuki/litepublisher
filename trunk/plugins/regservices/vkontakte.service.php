@@ -45,7 +45,7 @@ class tvkontakteregservice extends tregservice {
         $info = $js->response[0];
         return $this->adduser(array(
         'service' => $this->name,
-        'uidservice' => $info->uid,
+        'uid' => $info->uid,
         'name' => $info->first_name.' '.$info->last_name,
         'website' => 'http://vk.com/id'.$info->uid
         ));

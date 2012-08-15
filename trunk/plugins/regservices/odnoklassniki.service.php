@@ -70,7 +70,6 @@ class todnoklassnikiservice extends tregservice {
         if (!isset($js->error)) {
           return $this->adduser(array(
           'uid' => $js->uid,
-          'email' => '',
           'name' => $js->name,
           'website' => isset($js->link) ? $js->link : ''
           ));

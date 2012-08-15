@@ -44,7 +44,7 @@ class tyandexregservice extends tregservice {
         $info = json_decode($r);
         return $this->adduser(array(
         'service' => $this->name,
-        'idservice' => $info->id,
+        'uid' => $info->id,
         'email' => isset($info->email) ? $info->email : '',
         'name' => $info->name,
         'website' => isset($info->links) && isset($info->links->www) ? $info->links->www : ''
