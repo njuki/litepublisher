@@ -106,7 +106,18 @@ class tcron extends tevents {
     if (!preg_match('/^single|hour|day|week$/', $type)) $this->error("Unknown cron type $type");
     if ($this->disableadd) return false;
     $id = $this->doadd($type, $class, $func, $arg);
-    if (($type == 'single') && !self::$pinged) self::pingonshutdown();
+    if (($type == 'single') && !self::$pinged) {
+    if (tfilestorage::$memcache) {
+$k =litepublisher::$domain . ':cronpinged';
+      $lastpinged = tfilestorage::$memcache->get($k);
+      if (!$lastpinged || (time() > $lastpinged + 300)) {
+        self::pingonshutdown();
+      }
+} else {
+self::pingonshutdown();
+}
+}
+
     return $id;
   }
   
@@ -161,6 +172,12 @@ class tcron extends tevents {
   public static function pingonshutdown() {
     if (self::$pinged) return;
     self::$pinged = true;
+
+if (tfilestorage::$memcache) {
+$k =litepublisher::$domain . ':cronpinged';
+        tfilestorage::$memcache->set($k, time(), false, 3600);
+}
+
     register_shutdown_function(array(tcron::i(), 'ping'));
   }
   
