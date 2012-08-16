@@ -108,11 +108,15 @@ class tcron extends tevents {
     $id = $this->doadd($type, $class, $func, $arg);
     if (($type == 'single') && !self::$pinged) {
     if (tfilestorage::$memcache) {
+$memcache = tfilestorage::$memcache;
 $k =litepublisher::$domain . ':cronpinged';
-      $lastpinged = tfilestorage::$memcache->get($k);
+      $lastpinged = $memcache->get($k);
       if (!$lastpinged || (time() > $lastpinged + 300)) {
         self::pingonshutdown();
-      }
+      } else {
+$k =litepublisher::$domain . ':singlewait';
+if (!$memcache->get($k)) $memcache->set($k, time(), false, 3600);
+}
 } else {
 self::pingonshutdown();
 }
@@ -174,8 +178,11 @@ self::pingonshutdown();
     self::$pinged = true;
 
 if (tfilestorage::$memcache) {
+$memcache = tfilestorage::$memcache;
 $k =litepublisher::$domain . ':cronpinged';
-        tfilestorage::$memcache->set($k, time(), false, 3600);
+        $memcache->set($k, time(), false, 3600);
+$k =litepublisher::$domain . ':singlewait';
+$memcache->delete($k);
 }
 
     register_shutdown_function(array(tcron::i(), 'ping'));
