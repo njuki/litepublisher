@@ -75,7 +75,7 @@ class tregservices extends titems {
     $id = empty($_GET['id']) ? 0 : $_GET['id'];
     if (!isset($this->items[$id])) return 404;
     $service = getinstance($this->items[$id]);
-    if (!$service->valid) return 403;
+    if (!$service->valid()) return 403;
     $url = $service->getauthurl();
     if (!$url) return 403;
     if (!empty($_GET['backurl'])) setcookie('backurl', $_GET['backurl'], time() + 8 * 3600, litepublisher::$site->subdir . '/', false);

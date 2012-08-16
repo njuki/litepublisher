@@ -13,6 +13,8 @@ class toauth extends tdata {
   public $token;
   public $tokensecret;
   public $timeout;
+public $response;
+public $response_headers;
   
   protected function create() {
     parent::create();
@@ -228,16 +230,21 @@ class toauth extends tdata {
     return false;
   }
   
-  public function postdata($postdata, $url) {
-    $keys = array(
-    'oauth_token' => $this->token
-    );
-    
-    $authorization = $this->getauthorization($keys, $url);
+  public function postdata($url, array $post) {
+$a = array();
+foreach ($post as $k => $v) {
+$a[] = sprintf('%s=%s', rawurlencode($k), rawurlencode($v));
+}
+$postdata = implode('&', $a);
+
+    $keys = array('oauth_token' => $this->token);
+
+    $authorization = $this->getauthorization($keys, $url . '?' . $postdata);
     $headers = array(
     'Authorization: OAuth '. $authorization,
     'Content-Length: ' . strlen($postdata )
     );
+
     $headers = array_merge($headers, $this->getextraheaders());
     
     $ch = curl_init();
@@ -251,11 +258,11 @@ class toauth extends tdata {
     curl_setopt($ch, CURLOPT_POST, TRUE);
     curl_setopt($ch, CURLOPT_POSTFIELDS, $postdata );
     
-    $response = curl_exec($ch);
-    $headers = curl_getinfo($ch);
+    $this->response = curl_exec($ch);
+    $this->response_headers = curl_getinfo($ch);
     curl_close($ch);
-    if ($headers['http_code'] != '200') return false;
-    return $response;
+    if ($this->response_headers['http_code'] != '200') return false;
+    return $this->response;
   }
   
   public function get_data($url) {
