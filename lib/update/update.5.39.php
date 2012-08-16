@@ -11,6 +11,8 @@ $js->items[$section]['files'][$i] = $dst;
 }
   
 function update539() {
+litepublisher::$options->fromemail = tsubscribers::i()->fromemail;
+
 $parser = tthemeparser::i();
 if (!isset($parser->data['extrapaths'])) {
 $parser->data['extrapaths'] = array();

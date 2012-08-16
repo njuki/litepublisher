@@ -76,6 +76,7 @@ function installoptions($email, $language) {
   $options->crontime = time();
   $options->show_file_perm = false;
   $options->xxxcheck = empty($_SERVER['HTTP_REFERER']) && isset($_POST) && (count($_POST) > 0) ? false : true;
+  $options->fromemail = 'litepublisher@' . $_SERVER['HTTP_HOST'];
   $options->unlock();
   return $password;
 }
