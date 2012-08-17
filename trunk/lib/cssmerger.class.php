@@ -30,9 +30,9 @@ class tcssmerger extends tfilemerger {
       chdir(dirname($filename));
       $result = preg_replace_callback('/\s*url\s*\(\s*[\'"]?(.*?)[\'"]?\s*\)/i',
       array($this, 'replaceurl'), $result);
-
-//delete comments
-    $result = preg_replace('/\/\*.*?\*\//ims', '', $result);
+      
+      //delete comments
+      $result = preg_replace('/\/\*.*?\*\//ims', '', $result);
       return $result;
     }
   }

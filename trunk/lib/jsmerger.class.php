@@ -17,7 +17,7 @@ class tfilemerger extends titems {
     parent::create();
     $this->basename = 'jsmerger';
     $this->data['revision'] = 0;
-$this->addevents('onsave');
+    $this->addevents('onsave');
   }
   
   public function save() {
@@ -25,7 +25,7 @@ $this->addevents('onsave');
     $this->data['revision']++;
     parent::save();
     $this->merge();
-$this->onsave();
+    $this->onsave();
   }
   
   public function normfilename($filename) {
@@ -59,15 +59,15 @@ $this->onsave();
     array_delete($this->items[$section]['files'], $i);
     $this->save();
   }
-
-public function replacefile($section, $src, $dst) {
+  
+  public function replacefile($section, $src, $dst) {
     if (!isset($this->items[$section])) return false;
     if (!($src = $this->normfilename($src))) return false;
     if (!($dst = $this->normfilename($dst))) return false;
     if (false === ($i = array_search($src, $this->items[$section]['files']))) return false;
-$this->items[$section]['files'][$i] = $dst;
+    $this->items[$section]['files'][$i] = $dst;
     $this->save();
-}
+  }
   
   public function setfiles($section, $s) {
     $this->lock();

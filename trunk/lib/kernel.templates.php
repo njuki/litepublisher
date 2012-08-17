@@ -316,7 +316,6 @@ public function getdescription() {}
   
 }//class
 
-
 class titems_itemplate extends titems {
   
   protected function create() {
@@ -376,7 +375,7 @@ class ttemplate extends tevents_storage {
     litepublisher::$classes->instances[__class__] = $this;
     parent::create();
     $this->basename = 'template' ;
-    $this->addevents('beforecontent', 'aftercontent', 'onhead', 'onbody', 'ontitle', 'ongetmenu');
+    $this->addevents('beforecontent', 'aftercontent', 'onhead', 'onrequest', 'ontitle', 'ongetmenu');
     $this->path = litepublisher::$paths->themes . 'default' . DIRECTORY_SEPARATOR ;
     $this->url = litepublisher::$site->files . '/themes/default';
     $this->itemplate = false;
@@ -431,6 +430,7 @@ class ttemplate extends tevents_storage {
     
     $result = $this->httpheader();
     $result  .= $theme->gethtml($context);
+    $this->callevent('onrequest', array(&$result));
     unset(ttheme::$vars['context'], ttheme::$vars['template']);
     return $result;
   }
@@ -557,12 +557,6 @@ class ttemplate extends tevents_storage {
     $result = $this->getltoptions() . $result;
     $result = $this->view->theme->parse($result);
     $this->callevent('onhead', array(&$result));
-    return $result;
-  }
-  
-  public function getbody() {
-    $result = '';
-    $this->callevent('onbody', array(&$result));
     return $result;
   }
   

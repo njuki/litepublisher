@@ -16,7 +16,7 @@ class trssMultimedia extends tevents {
   protected function create() {
     parent::create();
     $this->basename = 'rssmultimedia';
-$this->addevents('onroot', 'onitem');
+    $this->addevents('onroot', 'onitem');
     $this->data['feedburner'] = '';
   }
   
@@ -38,7 +38,7 @@ $this->addevents('onroot', 'onitem');
     
     $this->domrss = new tdomrss;
     $this->domrss->CreateRootMultimedia(litepublisher::$site->url. litepublisher::$urlmap->url, 'media');
-$this->onroot($this->domrss);
+    $this->onroot($this->domrss);
     
     $list = $this->getrecent($arg, litepublisher::$options->perpage);
     foreach ($list as $id) {
@@ -51,8 +51,8 @@ $this->onroot($this->domrss);
   
   private function getrecent($type, $count) {
     $files = tfiles::i();
-      $sql = $type == '' ? '' : "media = '$type' and ";
-      return $files->select($sql . 'parent = 0 and idperm = 0', " order by posted desc limit $count");
+    $sql = $type == '' ? '' : "media = '$type' and ";
+    return $files->select($sql . 'parent = 0 and idperm = 0', " order by posted desc limit $count");
   }
   
   public function addfile($id) {

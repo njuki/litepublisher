@@ -229,10 +229,10 @@ class toptions extends tevents_storage {
     setcookie('litepubl_user_id', $this->_user, $expired, litepublisher::$site->subdir . '/', false);
     setcookie('litepubl_user', $cookie, $expired, litepublisher::$site->subdir . '/', false);
     if ('admin' == $this->group) {
-setcookie('litepubl_user_flag', $cookie ? 'true' : '', $expired, litepublisher::$site->subdir . '/', false);
-} else {
-setcookie('litepubl_user_flag', '', time(), litepublisher::$site->subdir . '/', false);
-}
+      setcookie('litepubl_user_flag', $cookie ? 'true' : '', $expired, litepublisher::$site->subdir . '/', false);
+    } else {
+      setcookie('litepubl_user_flag', '', time(), litepublisher::$site->subdir . '/', false);
+    }
     if ($this->_user == 1) {
       $this->set_cookie($cookie);
       $this->cookieexpired = $expired;

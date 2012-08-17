@@ -235,5 +235,5 @@ class tauthor_rights extends tevents {
     $this->addevents('gethead', 'getposteditor', 'editpost', 'changeposts', 'canupload', 'candeletefile');
     $this->basename = 'authorrights';
   }
-
-  }//class
+  
+}//class
