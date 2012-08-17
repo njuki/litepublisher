@@ -66,7 +66,7 @@ $template.content.post.templatecomments.comments.comment = [
 ]
 
 content.post.templatecomments.form = [
-								<form action="$options.url/send-comment.php" method="post" id="commentform">
+								<form action="$site.url/send-comment.php" method="post" id="commentform">
 									<p><input type="text" name="name" id="name" value="$name" size="22" />
 									<label for="name"><small>$lang.name</small></label></p>
 
@@ -91,7 +91,7 @@ content.post.templatecomments.form = [
 
 content.menu = [
 		<div class="post">
-			<h2 id="post-$menu.id"><a href="$site.url$menu.url" rel="bookmark" title="$menu.title">$menu.title</a></h2>
+			<h2 id="post-$menu.id">$menu.title</h2>
 			<div class="entry">
 $menu.content
 			</div>
