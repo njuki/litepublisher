@@ -417,12 +417,20 @@ return false;
 }
 }
 
-public function removefromcache($filename, $data) {
+public function removefromcache($filename) {
 if (tfilestorage::$memcache) {
 tfilestorage::$memcache->delete(litepublisher::$domain . ':cache:' . $filename);
 } else {
 $fn = litepublisher::$paths->cache . $filename;
 if (file_exists($fn)) unlink($fn);
+}
+}
+
+public function incache($filename) {
+if (tfilestorage::$memcache) {
+return !!tfilestorage::$memcache->get(litepublisher::$domain . ':cache:' . $filename);
+} else {
+return file_exists(litepublisher::$paths->cache . $filename);
 }
 }
 
