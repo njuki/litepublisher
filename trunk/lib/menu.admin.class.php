@@ -170,11 +170,10 @@ public function canrequest() { }
   public function getcont() {
     if (litepublisher::$options->admincache) {
       $id = isset($_POST['id']) ? (int) $_POST['id'] : 0;
-      $filename = litepublisher::$paths->cache . 'adminmenu.' . litepublisher::$options->user . '.' .md5($_SERVER['REQUEST_URI'] . '&id=' . $id) . '.php';
-      
-      if ($result = tfilestorage::getfile($filename)) return $result;
+      $filename = 'adminmenu.' . litepublisher::$options->user . '.' .md5($_SERVER['REQUEST_URI'] . '&id=' . $id) . '.php';
+            if ($result = litepublisher::$urlmap->loadfromcache($filename)) return $result;
       $result = parent::getcont();
-      tfilestorage::setfile($filename, $result);
+      litepublisher::$urlmap->savetocache($filename, $result);
       return $result;
     } else {
       return parent::getcont();

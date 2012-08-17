@@ -153,17 +153,14 @@ class ttemplate extends tevents_storage {
     //$current = $this->context instanceof tmenu ? $this->context->id : 0;
     $view = $this->view;
     $menuclass = $view->menuclass;
-    $filename = litepublisher::$paths->cache . $view->theme->name . sprintf('.%s.%s.php',
+    $filename = $view->theme->name . sprintf('.%s.%s.php', 
     $menuclass, litepublisher::$options->group ? litepublisher::$options->group : 'nobody');
-    
-    //if (file_exists($filename)) return file_get_contents($filename);
-    //use memcache
-    if ($result = tfilestorage::getfile($filename)) return $result;
+   
+    if ($result = litepublisher::$urlmap->loadfromcache($filename)) return $result;
     
     $menus = getinstance($menuclass);
     $result = $menus->getmenu($this->hover, 0);
-    //file_put_contents($filename, $result);
-    tfilestorage::setfile($filename, $result);
+litepublisher::$urlmap->savetocache($filename, $result);
     return $result;
   }
   
