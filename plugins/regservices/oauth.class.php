@@ -13,8 +13,8 @@ class toauth extends tdata {
   public $token;
   public $tokensecret;
   public $timeout;
-public $response;
-public $response_headers;
+  public $response;
+  public $response_headers;
   
   protected function create() {
     parent::create();
@@ -231,20 +231,20 @@ public $response_headers;
   }
   
   public function postdata($url, array $post) {
-$a = array();
-foreach ($post as $k => $v) {
-$a[] = sprintf('%s=%s', rawurlencode($k), rawurlencode($v));
-}
-$postdata = implode('&', $a);
-
+    $a = array();
+    foreach ($post as $k => $v) {
+      $a[] = sprintf('%s=%s', rawurlencode($k), rawurlencode($v));
+    }
+    $postdata = implode('&', $a);
+    
     $keys = array('oauth_token' => $this->token);
-
+    
     $authorization = $this->getauthorization($keys, $url . '?' . $postdata);
     $headers = array(
     'Authorization: OAuth '. $authorization,
     'Content-Length: ' . strlen($postdata )
     );
-
+    
     $headers = array_merge($headers, $this->getextraheaders());
     
     $ch = curl_init();

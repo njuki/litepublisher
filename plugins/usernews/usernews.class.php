@@ -14,7 +14,7 @@ class tusernews extends tplugin {
   
   public function create() {
     parent::create();
-$this->data['dir'] = 'usernews';
+    $this->data['dir'] = 'usernews';
     $this->data['_changeposts'] = false;
     $this->data['_canupload'] = true;
     $this->data['_candeletefile'] = true;
@@ -25,7 +25,7 @@ $this->data['dir'] = 'usernews';
   }
   
   public function getnorights() {
-$lang = tlocal::admin('usernews');
+    $lang = tlocal::admin('usernews');
     return sprintf('<h4>%s</h4>', $lang->norights);
   }
   
@@ -40,15 +40,15 @@ $lang = tlocal::admin('usernews');
   public function candeletefile() {
     if (!$this->_candeletefile) return $this->norights;
   }
-
-public function gethead() {
-return '';
-}
+  
+  public function gethead() {
+    return '';
+  }
   
   public function getposteditor($post, $args) {
-$args->data['$lang.sourceurl'] = tlocal::admin()->get('usernews', 'sourceurl');
-if ($this->insertsource) $args->sourceurl = isset($post->meta->sourceurl) ? $post->meta->sourceurl : '';
-
+    $args->data['$lang.sourceurl'] = tlocal::admin()->get('usernews', 'sourceurl');
+    if ($this->insertsource) $args->sourceurl = isset($post->meta->sourceurl) ? $post->meta->sourceurl : '';
+    
     $form = tfilestorage::getfile(litepublisher::$paths->plugins . $this->dir . DIRECTORY_SEPARATOR . $this->editorfile);
     $args->raw = $post->rawcontent;
     $html = tadminhtml::i();
@@ -62,8 +62,8 @@ if ($this->insertsource) $args->sourceurl = isset($post->meta->sourceurl) ? $pos
     extract($_POST, EXTR_SKIP);
     $posts = tposts::i();
     $html = tadminhtml::i();
-
-if ($this->checkspam && ($id == 0)) {
+    
+    if ($this->checkspam && ($id == 0)) {
       $post->status = 'published';
       $hold = $posts->db->getcount('status = \'draft\' and author = '. litepublisher::$options->user);
       $approved = $posts->db->getcount('status = \'published\' and author = '. litepublisher::$options->user);
@@ -72,9 +72,9 @@ if ($this->checkspam && ($id == 0)) {
         $post->status = 'draft';
       }
     }
-
     
-if ($this->insertsource) $post->meta->sourceurl = $sourceurl;
+    
+    if ($this->insertsource) $post->meta->sourceurl = $sourceurl;
     $post->title = $title;
     $post->categories = tposteditor::processcategories();
     if (litepublisher::$options->user > 1) $post->author = litepublisher::$options->user;

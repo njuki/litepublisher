@@ -7,12 +7,12 @@
 **/
 
 function tusernewsInstall($self) {
-$name = basename(dirname(__file__));
-$self->data['dir'] = $name;
-$self->save();
-
-tlocalmerger::i()->addplugin($name);
-
+  $name = basename(dirname(__file__));
+  $self->data['dir'] = $name;
+  $self->save();
+  
+  tlocalmerger::i()->addplugin($name);
+  
   $filter = tcontentfilter::i();
   $filter->phpcode = true;
   $filter->save();
@@ -38,6 +38,6 @@ tlocalmerger::i()->addplugin($name);
 }
 
 function tusernewsUninstall($self) {
-tauthor_rights::i()->unbind($self);
-tlocalmerger::i()->deleteplugin(basename(dirname(__file__)));
+  tauthor_rights::i()->unbind($self);
+  tlocalmerger::i()->deleteplugin(basename(dirname(__file__)));
 }

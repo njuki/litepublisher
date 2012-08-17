@@ -14,7 +14,7 @@ class tadminusernews {
   
   public function getcontent() {
     $plugin = tusernews::i();
-$lang = tlocal::admin('usernews');
+    $lang = tlocal::admin('usernews');
     $args = new targs();
     $form = '';
     foreach (array('_changeposts', '_canupload', '_candeletefile', 'checkspam', 'insertsource') as $name) {
@@ -42,7 +42,7 @@ $lang = tlocal::admin('usernews');
     foreach (array('sourcetml', 'editorfile') as $name) {
       $plugin->data[$name] = $_POST[$name];
     }
-
+    
     $plugin->save();
   }
   
