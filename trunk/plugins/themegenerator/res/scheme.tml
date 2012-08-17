@@ -5,7 +5,7 @@ a:hover,#content a:hover{color:#%%hoverlink%%}
 h1,h2,h3,h4,h5,h6{color:#%%h%%}
 #top {background:url(%%headerurl%%) repeat-x top center #%%headerbackground%%;}
 #logo{background: url(%%logourl%%) no-repeat scroll left center transparent; padding-left:%%logowidth%%px;}
-#logo, #logo p{color:#%%logo%%}
+#logo, #logo h1, #logo p{color:#%%logo%%}
 #nav a{color:#%%menu%%}
 #nav a:hover,#nav li.jshover a{background:#%%menubackground%%;color:#%%menuhover%%}
 #nav li a.current_page_link{background:#%%currentmenubackground%%;color:#%%currentmenu%%}
