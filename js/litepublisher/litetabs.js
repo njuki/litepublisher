@@ -35,13 +35,13 @@
       link.addClass("active");
       content.show();
       taboptions.show(content);
-return true;
+      return true;
     }
     
     function setindex(list, index) {
       return setselected($("a", list).get(index));
     }
-
+    
     $(this).each(function(){
       $(this).data("taboptions", taboptions);
       setindex(this, 0);

@@ -7,8 +7,8 @@
 
 (function ($, document, window) {
   //litepublisher namespace
-window.litepubl = {
-tml: {}, //namespace for templates
+  window.litepubl = {
+  tml: {}, //namespace for templates
     getjson: function(data, callback) {
       return $.ajax({
         type: "get",
@@ -19,7 +19,7 @@ tml: {}, //namespace for templates
         cache: true
       });
     }
-};
+  };
   
   window.get_get=  function (name) {
     var q = window.location.search.substring(1);
@@ -30,16 +30,16 @@ tml: {}, //namespace for templates
     }
     return false;
   };
-
-//cookies
-window.get_cookie = function(name) {
-return $.cookie(name);
-};
-
-window.set_cookie = function(name, value, expires){
-    $.cookie(name, value, { expires: 3650});
-};
-
+  
+  //cookies
+  window.get_cookie = function(name) {
+    return $.cookie(name);
+  };
+  
+  window.set_cookie = function(name, value, expires){
+  $.cookie(name, value, { expires: 3650});
+  };
+  
   $.extend({
     load_script: function( url, callback ) {
       return $.ajax({
@@ -82,6 +82,7 @@ window.set_cookie = function(name, value, expires){
         if (c != '') data.litepubl_user_id = c;
       }
       if (type != "post") type = "get";
+      
       return $.ajax({
         type: type,
         url: ltoptions.url + "/admin/jsonserver.php",
