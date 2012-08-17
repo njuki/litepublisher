@@ -13,9 +13,9 @@ class tjsonfiles extends tevents {
   }
   protected function create() {
     parent::create();
-$this->addevents('uploaded', 'onprops');
-}  
-
+    $this->addevents('uploaded', 'onprops');
+  }
+  
   public function auth($idpost) {
     if (!litepublisher::$options->user) return false;
     if (litepublisher::$options->ingroup('editor')) return true;
@@ -76,9 +76,9 @@ $this->addevents('uploaded', 'onprops');
     $item['title'] = tcontentfilter::escape(tcontentfilter::unescape($args['title']));
     $item['description'] = tcontentfilter::escape(tcontentfilter::unescape($args['description']));
     $item['keywords'] = tcontentfilter::escape(tcontentfilter::unescape($args['keywords']));
-
-$this->callevent('onprops', array(&$item));
-
+    
+    $this->callevent('onprops', array(&$item));
+    
     $item = $files->escape($item);
     $files->db->updateassoc($item);
     return array(
@@ -104,11 +104,11 @@ $this->callevent('onprops', array(&$item));
       if ($idperm > 0) tprivatefiles::i()->setperm($id, (int) $_POST['idperm']);
     }
     
-$this->uploaded($id);
-
+    $this->uploaded($id);
+    
     $files = tfiles::i();
     $item = $files->db->getitem($id);
-$files->items[$id] = $item;
+    $files->items[$id] = $item;
     
     $result = array(
     'id' => $id,

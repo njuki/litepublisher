@@ -209,7 +209,7 @@ class Tadminoptions extends tadminmenu {
         $subscribe = tsubscribers::i();
         $subscribe->fromemail = $subscribeemail;
         $subscribe->save();
-$options->fromemail = $subscribeemail;
+        $options->fromemail = $subscribeemail;
       }
       
       $mailer = TSMTPMailer ::i();

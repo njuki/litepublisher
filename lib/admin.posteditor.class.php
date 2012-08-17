@@ -29,7 +29,7 @@ class tposteditor extends tadminmenu {
     $result .= $template->getjavascript('/js/litepublisher/fileman.js');
     $result .= $template->getjavascript('/js/litepublisher/fileman.templates.js');
     */
-
+    
     if ($this->isauthor &&($h = tauthor_rights::i()->gethead()))  $result .= $h;
     return $result;
   }
@@ -49,14 +49,14 @@ class tposteditor extends tadminmenu {
     }
     
     if ($result == '') return '';
-return sprintf($html->categories(), $result);
+    return sprintf($html->categories(), $result);
   }
   
   public static function getcategories(array $items) {
     $categories = tcategories::i();
     $categories->loadall();
-$html = tadminhtml::i();
-$result = $html->categorieshead();
+    $html = tadminhtml::i();
+    $result = $html->categorieshead();
     $result .= self::getsubcategories(0, $items);
     return str_replace("'", '"', $result);
   }
@@ -140,7 +140,7 @@ $result = $html->categorieshead();
     
     $result = $post->id == 0 ? '' : $html->h4($this->lang->formhead . ' ' . $post->bookmark);
     if ($this->isauthor &&($r = tauthor_rights::i()->getposteditor($post, $args)))  return $r;
-
+    
     $result .= $html->form($args);
     unset(ttheme::$vars['post']);
     return $html->fixquote($result);

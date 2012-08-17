@@ -232,7 +232,7 @@ class tauthor_rights extends tevents {
   
   protected function create() {
     parent::create();
-    $this->addevents('getposteditor', 'editpost', 'changeposts', 'canupload', 'candeletefile');
+    $this->addevents('gethead', 'getposteditor', 'editpost', 'changeposts', 'canupload', 'candeletefile');
     $this->basename = 'authorrights';
   }
   
@@ -1010,7 +1010,7 @@ class tajaxposteditor  extends tevents {
 //admin.posteditor.class.php
 class tposteditor extends tadminmenu {
   public $idpost;
-  private $isauthor;
+  protected $isauthor;
   
   public static function i($id = 0) {
     return parent::iteminstance(__class__, $id);
@@ -1031,6 +1031,8 @@ class tposteditor extends tadminmenu {
     $result .= $template->getjavascript('/js/litepublisher/fileman.js');
     $result .= $template->getjavascript('/js/litepublisher/fileman.templates.js');
     */
+    
+    if ($this->isauthor &&($h = tauthor_rights::i()->gethead()))  $result .= $h;
     return $result;
   }
   
@@ -1048,15 +1050,16 @@ class tposteditor extends tadminmenu {
       $result .= $html->category($args);
     }
     
-    if ($result != '') $result = sprintf($html->categories(), $result);
-    if ($parent == 0) $result = $html->categorieshead($args) . $result;
-    return $result;
+    if ($result == '') return '';
+    return sprintf($html->categories(), $result);
   }
   
   public static function getcategories(array $items) {
     $categories = tcategories::i();
     $categories->loadall();
-    $result = self::getsubcategories(0, $items);
+    $html = tadminhtml::i();
+    $result = $html->categorieshead();
+    $result .= self::getsubcategories(0, $items);
     return str_replace("'", '"', $result);
   }
   
@@ -1139,6 +1142,7 @@ class tposteditor extends tadminmenu {
     
     $result = $post->id == 0 ? '' : $html->h4($this->lang->formhead . ' ' . $post->bookmark);
     if ($this->isauthor &&($r = tauthor_rights::i()->getposteditor($post, $args)))  return $r;
+    
     $result .= $html->form($args);
     unset(ttheme::$vars['post']);
     return $html->fixquote($result);

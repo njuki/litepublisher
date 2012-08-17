@@ -206,12 +206,9 @@ class tdatabase {
   
   public function add(array $a) {
     $this->insertrow($this->assoctorow($a));
-    if ($id = mysql_insert_id($this->handle)) {
-      return $id;
-    } else {
-      $r = mysql_fetch_row($this->query('select last_insert_id() from ' . $this->prefix . $this->table));
-      return (int) $r[0];
-    }
+    if ($id = mysql_insert_id($this->handle)) return $id;
+    $r = mysql_fetch_row($this->query('select last_insert_id() from ' . $this->prefix . $this->table));
+    return (int) $r[0];
   }
   
   public function insert_a(array $a) {
@@ -1789,7 +1786,11 @@ class toptions extends tevents_storage {
   public function setcookies($cookie, $expired) {
     setcookie('litepubl_user_id', $this->_user, $expired, litepublisher::$site->subdir . '/', false);
     setcookie('litepubl_user', $cookie, $expired, litepublisher::$site->subdir . '/', false);
-    if ('admin' == $this->group) setcookie('litepubl_user_flag', $cookie ? 'true' : '', $expired, litepublisher::$site->subdir . '/', false);
+    if ('admin' == $this->group) {
+      setcookie('litepubl_user_flag', $cookie ? 'true' : '', $expired, litepublisher::$site->subdir . '/', false);
+    } else {
+      setcookie('litepubl_user_flag', '', time(), litepublisher::$site->subdir . '/', false);
+    }
     if ($this->_user == 1) {
       $this->set_cookie($cookie);
       $this->cookieexpired = $expired;
@@ -2377,10 +2378,19 @@ class turlmap extends titems {
   protected function close() {
     $this->call_close_events();
     if (tfilestorage::$memcache) {
-      $crontime = tfilestorage::$memcache->get(litepublisher::$domain . ' .crontime');
+      $memcache = tfilestorage::$memcache;
+      $k =litepublisher::$domain . ':crontime';
+      $crontime = $memcache->get($k);
       if (!$crontime || (time() > $crontime + 3600)) {
-        tfilestorage::$memcache->set(litepublisher::$domain . ' .crontime', time(), false, 3600);
+        $memcache->set($k, time(), false, 3600);
         tcron::pingonshutdown();
+      }else {
+        $k =litepublisher::$domain . ':singlewait';
+        $singlepinged = $memcache->get($k);
+        if (!$singlepinged || (time() > $singlepinged  + 300)) {
+          $memcache->delete($k);
+          tcron::pingonshutdown();
+        }
       }
     } elseif (time() > litepublisher::$options->crontime + 3600) {
       litepublisher::$options->crontime = time();

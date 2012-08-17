@@ -215,7 +215,7 @@ class tcommontags extends titems implements  itemplate {
     parent::delete($id);
     $this->itemsposts->updateposts($list, $this->postpropname);
     $this->changed();
-   litepublisher::$urlmap->clearcache();
+    litepublisher::$urlmap->clearcache();
   }
   
   public function createnames($list) {

@@ -76,7 +76,7 @@ class tjsonserver extends titems {
     $a = array($args);
     $this->callevent('beforecall', $a);
     try {
-     //tfiler::log(var_export($_POST, true));
+      //tfiler::log(var_export($_POST, true));
       /*
       //tfiler::log(var_export($_COOKIE, true));
       tfiler::log(var_export($_GET, true));
@@ -84,15 +84,15 @@ class tjsonserver extends titems {
       tfiler::log(var_export($_FILES, true));
       tfiler::log(var_export($args, true));
       */
-
+      
       $result = $this->callevent($method, $a);
-    //tfiler::log(var_export($result, true));
-//tfiler::log(json_encode($result));
+      //tfiler::log(var_export($result, true));
+      //tfiler::log(json_encode($result));
       //dumpvar($result);
       //tfiler::log(var_export($result, true));
     } catch (Exception $e) {
-litepublisher::$options->handexception($e);
-throw new Exception(litepublisher::$options->errorlog);
+      litepublisher::$options->handexception($e);
+      throw new Exception(litepublisher::$options->errorlog);
       if (403 == $e->getCode()) {
         $result = '<?php Header(\'HTTP/1.0 403 Forbidden\', true, 403); ?>';
       } else {

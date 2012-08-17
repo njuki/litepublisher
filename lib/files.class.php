@@ -150,9 +150,9 @@ class tfiles extends titems {
   
   public function getlist(array $list,  $templates) {
     if (count($list) == 0) return '';
-$this->onlist($list);
+    $this->onlist($list);
     $result = '';
-$this->preload($list);
+    $this->preload($list);
     
     //sort by media type
     $items = array();

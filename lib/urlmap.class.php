@@ -422,19 +422,19 @@ class turlmap extends titems {
   protected function close() {
     $this->call_close_events();
     if (tfilestorage::$memcache) {
-$memcache = tfilestorage::$memcache;
-$k =litepublisher::$domain . ':crontime';
+      $memcache = tfilestorage::$memcache;
+      $k =litepublisher::$domain . ':crontime';
       $crontime = $memcache->get($k);
       if (!$crontime || (time() > $crontime + 3600)) {
         $memcache->set($k, time(), false, 3600);
         tcron::pingonshutdown();
-}else {
-$k =litepublisher::$domain . ':singlewait';
-      $singlepinged = $memcache->get($k);
-      if (!$singlepinged || (time() > $singlepinged  + 300)) {
-$memcache->delete($k);
-        tcron::pingonshutdown();
-}
+      }else {
+        $k =litepublisher::$domain . ':singlewait';
+        $singlepinged = $memcache->get($k);
+        if (!$singlepinged || (time() > $singlepinged  + 300)) {
+          $memcache->delete($k);
+          tcron::pingonshutdown();
+        }
       }
     } elseif (time() > litepublisher::$options->crontime + 3600) {
       litepublisher::$options->crontime = time();
