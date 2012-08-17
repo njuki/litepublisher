@@ -36,6 +36,7 @@ class turlmap extends titems {
     $this->table = 'urlmap';
     $this->basename = 'urlmap';
     $this->addevents('beforerequest', 'afterrequest', 'onclearcache');
+$this->data['revision'] = 0;
     $this->is404 = false;
     $this->isredir = false;
     $this->adminpanel = false;
@@ -165,36 +166,32 @@ class turlmap extends titems {
   }
   
   private function getcachefile(array $item) {
-    if (!$this->cachefilename) {
       switch ($item['type']) {
         case 'normal':
-        $this->cachefilename =  sprintf('%s-%d.php', $item['id'], $this->page);
-        break;
+        return  sprintf('%s-%d.php', $item['id'], $this->page);
         
         case 'usernormal':
-        $this->cachefilename =  sprintf('%s-page-%d-user-%d.php', $item['id'], $this->page, litepublisher::$options->user);
-        break;
-        
+        return sprintf('%s-page-%d-user-%d.php', $item['id'], $this->page, litepublisher::$options->user);
+
         case 'userget':
-        $this->cachefilename = sprintf('%s-page-%d-user%d-get-%s.php', $item['id'], $this->page, litepublisher::$options->user, md5($_SERVER['REQUEST_URI']));
-        break;
-        
+return sprintf('%s-page-%d-user%d-get-%s.php', $item['id'], $this->page, litepublisher::$options->user, md5($_SERVER['REQUEST_URI']));
+
         default: //get
-        $this->cachefilename = sprintf('%s-%d-%s.php', $item['id'], $this->page, md5($_SERVER['REQUEST_URI']));
-        break;
-      }
+return sprintf('%s-%d-%s.php', $item['id'], $this->page, md5($_SERVER['REQUEST_URI']));
+     }
     }
-    return litepublisher::$paths->cache . $this->cachefilename;
   }
   
-  private function include_file($filename) {
+  private function include_file($fn) {
     if (tfilestorage::$memcache) {
-      if ($s =  tfilestorage::$memcache->get($filename)) {
+if ($s = $this->loadfromcache($fn)) {
         eval('?>' . $s);
         return true;
-      }
     }
+return false;
+}
     
+$filename = litepublisher::$paths->cache . $fn;
     if (file_exists($filename) &&
     ((filemtime ($filename) + litepublisher::$options->expiredcache - litepublisher::$options->filetime_offset) >= time())) {
       include($filename);
@@ -249,8 +246,7 @@ class turlmap extends titems {
     }
     eval('?>'. $s);
     if ($this->cache_enabled && $context->cache) {
-      $filename = $this->getcachefile($item);
-      tfilestorage::setfile($filename, $s);
+$this->savetocache($this->getcachefile($item), $s);
     }
   }
   
@@ -265,7 +261,7 @@ class turlmap extends titems {
   }
   
   private function printclasspage($classname) {
-    $cachefile = litepublisher::$paths->cache . $classname . '.php';
+    $cachefile = $classname . '.php';
     if ($this->cache_enabled) {
       if ($this->include_file($cachefile)) return;
     }
@@ -276,7 +272,7 @@ class turlmap extends titems {
     eval('?>'. $s);
     
     if ($this->cache_enabled && $obj->cache) {
-      tfilestorage::setfile($cachefile, $result);
+      $this->savetocache($cachefile, $result);
     }
   }
   
@@ -343,6 +339,11 @@ class turlmap extends titems {
   }
   
   public function clearcache() {
+if (tfilestorage::$memcache) {
+$this->revision++;
+$this->save();
+} else {
+
     $path = litepublisher::$paths->cache;
     if ( $h = @opendir($path)) {
       while(FALSE !== ($filename = @readdir($h))) {
@@ -356,7 +357,8 @@ class turlmap extends titems {
       }
       closedir($h);
     }
-    
+}    
+
     $this->onclearcache();
   }
   
@@ -365,7 +367,7 @@ class turlmap extends titems {
   }
   
   public function setexpiredcurrent() {
-    tfilestorage::delete($this->getcachefile($this->itemrequested));
+$this->removefromcache($this->getcachefile($this->itemrequested));
   }
   
   public function getcachename($name, $id) {
@@ -380,7 +382,50 @@ class turlmap extends titems {
     $items = $this->db->idselect("class = '$class'");
     foreach ($items as $id) $this->setexpired($id);
   }
-  
+
+public function savetocache($filename, $data) {
+if (tfilestorage::$memcache) {
+tfilestorage::$memcache->set(litepublisher::$domain . ':cache:' . $filename, 
+serialize(array(
+'revision' => $this->revision,
+'time' => time(),
+'data' => $data
+)), false, 3600);
+} else {
+$fn = litepublisher::$paths->cache . $filename;
+    file_put_contents($fn, $data);
+    @chmod($fn, 0666);
+}
+}
+
+public function loadfromcache($filename) {
+if (tfilestorage::$memcache) {
+$k = litepublisher::$domain . ':cache:' . $filename;
+if ($s = tfilestorage::$memcache->get($k)) {
+$a = unserialize($s);
+if ($a['revision'] == $this->revision) {
+return $a['data'];
+} else {
+tfilestorage::$memcache->delete($k);
+}
+}
+return false;
+} else {
+$fn = litepublisher::$paths->cache . $filename;
+    if (file_exists($fn)) return  file_get_contents($fn);
+return false;
+}
+}
+
+public function removefromcache($filename, $data) {
+if (tfilestorage::$memcache) {
+tfilestorage::$memcache->delete(litepublisher::$domain . ':cache:' . $filename);
+} else {
+$fn = litepublisher::$paths->cache . $filename;
+if (file_exists($fn)) unlink($fn);
+}
+}
+
   public function addredir($from, $to) {
     if ($from == $to) return;
     $Redir = tredirector::i();
@@ -423,15 +468,15 @@ class turlmap extends titems {
     $this->call_close_events();
     if (tfilestorage::$memcache) {
       $memcache = tfilestorage::$memcache;
-      $k =litepublisher::$domain . ':crontime';
-      $crontime = $memcache->get($k);
-      if (!$crontime || (time() > $crontime + 3600)) {
+      $k =litepublisher::$domain . ':lastpinged';
+      $lastpinged = $memcache->get($k);
+      if (!$lastpinged  || (time() > $lastpinged  + 3600)) {
         $memcache->set($k, time(), false, 3600);
         tcron::pingonshutdown();
       }else {
-        $k =litepublisher::$domain . ':singlewait';
+        $k =litepublisher::$domain . ':singlepinged';
         $singlepinged = $memcache->get($k);
-        if (!$singlepinged || (time() > $singlepinged  + 300)) {
+        if ($singlepinged && (time() > $singlepinged  + 300)) {
           $memcache->delete($k);
           tcron::pingonshutdown();
         }
