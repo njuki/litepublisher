@@ -108,14 +108,20 @@ class tcron extends tevents {
     $id = $this->doadd($type, $class, $func, $arg);
     if (($type == 'single') && !self::$pinged) {
       if (tfilestorage::$memcache) {
+        tfiler::log("cron added $id");
         $memcache = tfilestorage::$memcache;
-        $k =litepublisher::$domain . ':cronpinged';
+        $k =litepublisher::$domain . ':lastpinged';
         $lastpinged = $memcache->get($k);
-        if (!$lastpinged || (time() > $lastpinged + 300)) {
+        if ($lastpinged && (time() > $lastpinged + 300)) {
           self::pingonshutdown();
         } else {
-          $k =litepublisher::$domain . ':singlewait';
-          if (!$memcache->get($k)) $memcache->set($k, time(), false, 3600);
+          $k =litepublisher::$domain . ':singlepinged';
+          $singlepinged = $memcache->get($k);
+          if (!$singlepinged) {
+            $memcache->set($k, time(), false, 3600);
+          } elseif (time() > $singlepinged  + 300) {
+            self::pingonshutdown();
+          }
         }
       } else {
         self::pingonshutdown();
@@ -179,9 +185,9 @@ class tcron extends tevents {
     
     if (tfilestorage::$memcache) {
       $memcache = tfilestorage::$memcache;
-      $k =litepublisher::$domain . ':cronpinged';
+      $k =litepublisher::$domain . ':lastpinged';
       $memcache->set($k, time(), false, 3600);
-      $k =litepublisher::$domain . ':singlewait';
+      $k =litepublisher::$domain . ':singlepinged';
       $memcache->delete($k);
     }
     
@@ -218,5 +224,3 @@ class tcron extends tevents {
   }
   
 }//class
-
-?>

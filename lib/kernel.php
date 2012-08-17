@@ -2379,15 +2379,15 @@ class turlmap extends titems {
     $this->call_close_events();
     if (tfilestorage::$memcache) {
       $memcache = tfilestorage::$memcache;
-      $k =litepublisher::$domain . ':crontime';
-      $crontime = $memcache->get($k);
-      if (!$crontime || (time() > $crontime + 3600)) {
+      $k =litepublisher::$domain . ':lastpinged';
+      $lastpinged = $memcache->get($k);
+      if (!$lastpinged  || (time() > $lastpinged  + 3600)) {
         $memcache->set($k, time(), false, 3600);
         tcron::pingonshutdown();
       }else {
-        $k =litepublisher::$domain . ':singlewait';
+        $k =litepublisher::$domain . ':singlepinged';
         $singlepinged = $memcache->get($k);
-        if (!$singlepinged || (time() > $singlepinged  + 300)) {
+        if ($singlepinged && (time() > $singlepinged  + 300)) {
           $memcache->delete($k);
           tcron::pingonshutdown();
         }
