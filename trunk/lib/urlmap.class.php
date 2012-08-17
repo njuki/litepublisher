@@ -370,14 +370,6 @@ $this->save();
 $this->removefromcache($this->getcachefile($this->itemrequested));
   }
   
-  public function getcachename($name, $id) {
-    return litepublisher::$paths->cache. "$name-$id.php";
-  }
-  
-  public function expiredname($name, $id) {
-    tfiler::deletedirmask(litepublisher::$paths->cache, "*$name-$id.php");
-  }
-  
   public function expiredclass($class) {
     $items = $this->db->idselect("class = '$class'");
     foreach ($items as $id) $this->setexpired($id);
