@@ -9,9 +9,9 @@
   litepubl.Posteditor = Class.extend({
     
     init: function() {
-var tabs = $("#tabs");
-if (tabs.length == 0) return;
-var self = this;
+      var tabs = $("#tabs");
+      if (tabs.length == 0) return;
+      var self = this;
       tabs.tabs({
         cache: true,
         select: function(event, ui) {
@@ -29,14 +29,14 @@ var self = this;
           });
         }
       });
-
+      
       $("#posteditor-init-raw-tabs").one('click', function() {
         self.init_raw_tabs();
         return false;
       });
-
+      
       $("#posteditor-init-files").one('click.initfiles', function() {
-litepubl.fileman = new litepubl.Fileman("#posteditor-files");
+        litepubl.fileman = new litepubl.Fileman("#posteditor-files");
         return false;
       });
       
@@ -48,7 +48,7 @@ litepubl.fileman = new litepubl.Fileman("#posteditor-files");
       });
       
     },
- 
+    
     addtag: function(newtag) {
       var tags = $('#text-tags').val();
       if (tags == '') {
@@ -126,8 +126,8 @@ litepubl.fileman = new litepubl.Fileman("#posteditor-files");
   });//posteditor
   
   $(document).ready(function() {
-try {
-litepubl.posteditor  = new litepubl.Posteditor();
-      } catch(e) { alert('error ' + e.message); }
-});
+    try {
+      litepubl.posteditor  = new litepubl.Posteditor();
+  } catch(e) { alert('error ' + e.message); }
+  });
 }(jQuery, document, window));
