@@ -13,7 +13,6 @@ class turlmap extends titems {
   public $uripath;
   public $itemrequested;
   public  $context;
-  public $cachefilename;
   public $cache_enabled;
   public $argtree;
   public $is404;
@@ -41,7 +40,12 @@ $this->data['revision'] = 0;
     $this->isredir = false;
     $this->adminpanel = false;
     $this->mobile= false;
-    $this->cachefilename = false;
+if (tfilestorage::$memcache) {
+$this->cache = new tlitememcache();
+} else {
+$this->cache = new tfilecache();
+}
+
     $this->cache_enabled =     litepublisher::$options->cache && !litepublisher::$options->admincookie;
     $this->page = 1;
     $this->close_events = array();
@@ -183,7 +187,7 @@ return sprintf('%s-%d-%s.php', $item['id'], $this->page, md5($_SERVER['REQUEST_U
   
   private function include_file($fn) {
     if (tfilestorage::$memcache) {
-if ($s = $this->loadfromcache($fn)) {
+if ($s = $this->cache->get($fn)) {
         eval('?>' . $s);
         return true;
     }
@@ -245,7 +249,7 @@ $filename = litepublisher::$paths->cache . $fn;
     }
     eval('?>'. $s);
     if ($this->cache_enabled && $context->cache) {
-$this->savetocache($this->getcachefile($item), $s);
+$this->cache->set($this->getcachefile($item), $s);
     }
   }
   
@@ -271,7 +275,7 @@ $this->savetocache($this->getcachefile($item), $s);
     eval('?>'. $s);
     
     if ($this->cache_enabled && $obj->cache) {
-      $this->savetocache($cachefile, $result);
+      $this->cache->set($cachefile, $result);
     }
   }
   
@@ -338,26 +342,7 @@ $this->savetocache($this->getcachefile($item), $s);
   }
   
   public function clearcache() {
-if (tfilestorage::$memcache) {
-$this->revision++;
-$this->save();
-} else {
-
-    $path = litepublisher::$paths->cache;
-    if ( $h = @opendir($path)) {
-      while(FALSE !== ($filename = @readdir($h))) {
-        if (($filename == '.') || ($filename == '..') || ($filename == '.svn')) continue;
-        $file = $path. $filename;
-        if (is_dir($file)) {
-          tfiler::delete($file . DIRECTORY_SEPARATOR, true, true);
-        } else {
-          tfilestorage::delete($file);
-        }
-      }
-      closedir($h);
-    }
-}    
-
+$this->cache->clear();
     $this->onclearcache();
   }
   
@@ -366,7 +351,7 @@ $this->save();
   }
   
   public function setexpiredcurrent() {
-$this->removefromcache($this->getcachefile($this->itemrequested));
+$this->cache->delete($this->getcachefile($this->itemrequested));
   }
   
   public function expiredclass($class) {
@@ -374,56 +359,6 @@ $this->removefromcache($this->getcachefile($this->itemrequested));
     foreach ($items as $id) $this->setexpired($id);
   }
 
-public function savetocache($filename, $data) {
-if (tfilestorage::$memcache) {
-tfilestorage::$memcache->set(litepublisher::$domain . ':cache:' . $filename, 
-serialize(array(
-'revision' => $this->revision,
-'time' => time(),
-'data' => $data
-)), false, 3600);
-} else {
-$fn = litepublisher::$paths->cache . $filename;
-    file_put_contents($fn, $data);
-    @chmod($fn, 0666);
-}
-}
-
-public function loadfromcache($filename) {
-if (tfilestorage::$memcache) {
-$k = litepublisher::$domain . ':cache:' . $filename;
-if ($s = tfilestorage::$memcache->get($k)) {
-$a = unserialize($s);
-if ($a['revision'] == $this->revision) {
-return $a['data'];
-} else {
-tfilestorage::$memcache->delete($k);
-}
-}
-return false;
-} else {
-$fn = litepublisher::$paths->cache . $filename;
-    if (file_exists($fn)) return  file_get_contents($fn);
-return false;
-}
-}
-
-public function removefromcache($filename) {
-if (tfilestorage::$memcache) {
-tfilestorage::$memcache->delete(litepublisher::$domain . ':cache:' . $filename);
-} else {
-$fn = litepublisher::$paths->cache . $filename;
-if (file_exists($fn)) unlink($fn);
-}
-}
-
-public function incache($filename) {
-if (tfilestorage::$memcache) {
-return !!tfilestorage::$memcache->get(litepublisher::$domain . ':cache:' . $filename);
-} else {
-return file_exists(litepublisher::$paths->cache . $filename);
-}
-}
 
   public function addredir($from, $to) {
     if ($from == $to) return;
@@ -551,4 +486,91 @@ return file_exists(litepublisher::$paths->cache . $filename);
     echo '<?xml version="1.0" encoding="utf-8" ?>';
   }
   
+}//class
+
+class tlitememcache {
+public $revision;
+public $prefix;
+
+public function __construct() {
+$this->revision =&litepublisher::$urlmap->data['revision'];
+$this->prefix = litepublisher::$domain . ':cache:';
+}
+
+public function clear() {
+$this->revision++;
+litepublisher::$urlmap->save();
+}
+
+public function set($filename, $data) {
+tfilestorage::$memcache->set($this->prefix . $filename, 
+serialize(array(
+'revision' => $this->revision,
+'time' => time(),
+'data' => $data
+)), false, 3600);
+}
+
+public function get($filename) {
+if ($s = tfilestorage::$memcache->get($this->prefix . $filename)) {
+$a = unserialize($s);
+if ($a['revision'] == $this->revision) {
+return $a['data'];
+} else {
+tfilestorage::$memcache->delete($this->prefix . $filename);
+}
+}
+return false;
+}
+
+public function delete($filename) {
+tfilestorage::$memcache->delete($this->prefix . $filename);
+}
+
+public function exists($filename) {
+return !!tfilestorage::$memcache->get($this->prefix . $filename);
+}
+
+}//class
+
+class tfilecache {
+
+public function clear() {
+    $path = litepublisher::$paths->cache;
+    if ( $h = @opendir($path)) {
+      while(FALSE !== ($filename = @readdir($h))) {
+        if (($filename == '.') || ($filename == '..') || ($filename == '.svn')) continue;
+        $file = $path. $filename;
+        if (is_dir($file)) {
+          tfiler::delete($file . DIRECTORY_SEPARATOR, true, true);
+        } else {
+          unlink($file);
+        }
+      }
+      closedir($h);
+    }
+}
+
+public function set($filename, $data) {
+$fn = litepublisher::$paths->cache . $filename;
+    file_put_contents($fn, $data);
+    @chmod($fn, 0666);
+}
+
+
+public function get($filename) {
+$fn = litepublisher::$paths->cache . $filename;
+    if (file_exists($fn)) return  file_get_contents($fn);
+return false;
+}
+
+public function delete($filename) {
+$fn = litepublisher::$paths->cache . $filename;
+if (file_exists($fn)) unlink($fn);
+}
+
+public function exists($filename) {
+return file_exists(litepublisher::$paths->cache . $filename);
+}
+
 }//class
