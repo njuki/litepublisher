@@ -171,9 +171,9 @@ public function canrequest() { }
     if (litepublisher::$options->admincache) {
       $id = isset($_POST['id']) ? (int) $_POST['id'] : 0;
       $filename = 'adminmenu.' . litepublisher::$options->user . '.' .md5($_SERVER['REQUEST_URI'] . '&id=' . $id) . '.php';
-            if ($result = litepublisher::$urlmap->loadfromcache($filename)) return $result;
+            if ($result = litepublisher::$urlmap->cache->get($filename)) return $result;
       $result = parent::getcont();
-      litepublisher::$urlmap->savetocache($filename, $result);
+      litepublisher::$urlmap->cache->set($filename, $result);
       return $result;
     } else {
       return parent::getcont();

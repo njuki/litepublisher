@@ -73,6 +73,7 @@ class tusers extends titems {
   }
   
   public function delete($id) {
+if ($id == 1) return;
     $this->getdb($this->grouptable)->delete('iduser = ' .(int)$id);
     tuserpages::i()->delete($id);
     $this->getdb('comments')->update("status = 'deleted'", "author = $id");
