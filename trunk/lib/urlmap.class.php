@@ -179,7 +179,6 @@ return sprintf('%s-page-%d-user%d-get-%s.php', $item['id'], $this->page, litepub
         default: //get
 return sprintf('%s-%d-%s.php', $item['id'], $this->page, md5($_SERVER['REQUEST_URI']));
      }
-    }
   }
   
   private function include_file($fn) {
