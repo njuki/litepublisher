@@ -19,7 +19,6 @@ class tusers extends titems {
     $this->basename = 'users';
     $this->table = 'users';
     $this->grouptable = 'usergroup';
-    $this->autoid = 1;
   }
   
   public function res2items($res) {
@@ -35,6 +34,7 @@ class tusers extends titems {
     return $result;
   }
   
+/*
   public function getitem($id) {
     if ($id == 1) return array(
     'email' =>litepublisher::$options->email,
@@ -49,7 +49,8 @@ class tusers extends titems {
     
     return parent::getitem($id);
   }
-  
+*/  
+
   public function add(array $values) {
     return tusersman::i()->add($values);
   }
