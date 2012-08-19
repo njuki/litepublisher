@@ -40,6 +40,7 @@ $this->data['revision'] = 0;
     $this->isredir = false;
     $this->adminpanel = false;
     $this->mobile= false;
+$this->data['revision'] = 0;
 if (tfilestorage::$memcache) {
 $this->cache = new tlitememcache();
 } else {
@@ -94,7 +95,7 @@ $this->cache = new tfilecache();
     //header('Accept-Ranges: bytes');
   }
   
-  private function dorequest($url) {
+  protected function dorequest($url) {
     //echo "'$url'<br>";
     $this->itemrequested = $this->finditem($url);
     if ($this->isredir) return;

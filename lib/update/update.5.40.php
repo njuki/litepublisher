@@ -1,6 +1,13 @@
 <?php
 
 function update540() {
+litepublisher::$urlmap->data['revision'] = 0;
+litepublisher::$urlmap->save();
+
+$m = tmediaparser::i();
+$m->data['clipbounds'] = false;
+$m->save();
+
 $item = array(
 'id' => 1,
     'email' =>litepublisher::$options->email,
