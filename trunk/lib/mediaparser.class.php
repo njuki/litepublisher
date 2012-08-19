@@ -18,6 +18,7 @@ class tmediaparser extends tevents {
     $this->addevents('added');
     $this->data['enablepreview'] = true;
     $this->data['ratio'] = true;
+    $this->data['clipbounds'] = false;
     $this->data['previewwidth'] = 120;
     $this->data['previewheight'] = 120;
     $this->data['audiosize'] = 128;
@@ -341,12 +342,20 @@ class tmediaparser extends tevents {
     return false;
   }
   
-  public static function createsnapshot($srcfilename, $destfilename, $x, $y, $ratio) {
+  public static function createsnapshot($srcfilename, $destfilename, $x, $y, $ratio, $clipbounds) {
     if (!($source = self::readimage($srcfilename))) return false;
     $sourcex = imagesx($source);
     $sourcey = imagesy($source);
     if (($x >= $sourcex) && ($y >= $sourcey)) return false;
-    if ($ratio) {
+
+if ($clipbounds) {
+      $ratio = $x / $y;
+      if ($sourcex/$sourcey > $ratio) {
+        $sourcex = $sourcey *$ratio;
+      } else {
+        $sourcey = $sourcex /$ratio;
+      }
+    } elseif ($ratio) {
       $ratio = $sourcex / $sourcey;
       if ($x/$y > $ratio) {
         $x = $y *$ratio;
@@ -375,7 +384,7 @@ class tmediaparser extends tevents {
     $dir = dirname($fullname) . DIRECTORY_SEPARATOR;
     $fullname = $dir . self::getunique($dir, basename($fullname));
     
-    if (!self::createsnapshot(litepublisher::$paths->files . $filename, $fullname, $this->previewwidth, $this->previewheight, $this->ratio)) return false;
+    if (!self::createsnapshot(litepublisher::$paths->files . $filename, $fullname, $this->previewwidth, $this->previewheight, $this->ratio, $this->clipbounds)) return false;
     @chmod($fullname, 0666);
     $info = getimagesize($fullname);
     $destfilename = substr($fullname, strlen(litepublisher::$paths->files));
