@@ -109,6 +109,7 @@ class Tadminoptions extends tadminmenu {
       $parser = tmediaparser::i();
       $args->enablepreview = $parser->enablepreview;
       $args->ratio = $parser->ratio;
+      $args->clipbounds = $parser->clipbounds;
       $args->previewwidth = $parser->previewwidth;
       $args->previewheight = $parser->previewheight;
       
@@ -243,6 +244,7 @@ class Tadminoptions extends tadminmenu {
       $parser = tmediaparser::i();
       $parser->enablepreview = isset($enablepreview);
       $parser->ratio = isset($ratio);
+      $parser->clipbounds = isset($clipbounds);
       $parser->previewwidth = $previewwidth;
       $parser->previewheight = $previewheight;
       $parser->save();
