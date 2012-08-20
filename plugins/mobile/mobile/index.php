@@ -43,6 +43,7 @@ return tview::i($idview);
 
 litepublisher::$site = tmobilesite::i();
 litepublisher::$paths->cache = litepublisher::$paths->cache . 'mobile.';
+if (tfilestorage::$memcache) litepublisher::$urlmap->cache->prefix .= 'mobile:';
 litepublisher::$classes->instances['ttemplate'] = tmobiletemplate::i();
 
 $url = $_SERVER['REQUEST_URI'];
