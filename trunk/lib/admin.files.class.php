@@ -83,13 +83,8 @@ class tadminfiles extends tadminmenu {
     }
     
     $from = $this->getfrom($perpage, $count);
-    if (dbversion) {
       $list = $files->select($sql, " order by posted desc limit $from, $perpage");
       if (!$list) $list = array();
-    } else {
-      $list = array_slice($list, $from, $perpage);
-    }
-    
     $result .= sprintf($html->h2->countfiles, $count, $from, $from + count($list));
     //if ($type != 'icon') $result .= $files->getlist($list);
     $result .= $html->tableheader();
