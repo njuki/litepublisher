@@ -30,12 +30,12 @@ class tpullitems extends tdata {
   }
   
   public function getfilename($idpull) {
-    return litepublisher::$paths->cache . $this->basename . '.pull.' . $idpull;
+    return $this->basename . '.pull.' . $idpull;
   }
   
   public function loadpull($idpull) {
-    if (tfilestorage::loadvar($this->getfilename($idpull), $v)) {
-      $this->pull[$idpull] = $v;
+    if ($s = litepublisher::$urlmap->get($this->getfilename($idpull))) {
+      $this->pull[$idpull] = unserialize($s);
     } else {
       $this->pull[$idpull] = array();
     }
@@ -49,7 +49,7 @@ class tpullitems extends tdata {
   }
   
   public function savemodified($idpull) {
-    return tfilestorage::savevar($this->getfilename($idpull), $this->pull[$idpull]);
+    litepublisher::$urlmap->cache->set($this->getfilename($idpull), serialize($this->pull[$idpull]));
   }
   
   public function getidpull($id) {
