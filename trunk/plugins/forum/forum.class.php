@@ -89,10 +89,10 @@ class tforum extends tplugin {
     }
     
     if ($idcat == 0) return '';
-    $filename = litepublisher::$paths->cache . $idcat . '.breadcrumbs.php';
-    if ($result = tfilestorage::getfile($filename)) return $result;
+    $filename = $idcat . '.breadcrumbs.php';
+    if ($result = litepublisher::$urlmap->cache->get($filename)) return $result;
     $result = $this->build_breadcrumbs($idcat);
-    tfilestorage::setfile($filename, $result);
+    litepublisher::$urlmap->cache->set($filename, $result);
     return $result;
   }
   
