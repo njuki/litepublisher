@@ -351,7 +351,7 @@ $this->cache->clear();
 if ($item = $this->getitem($id)) {
 $cache = $this->cache;
 $page = $this->page;
-foreach ($i = 1; $i <= 10; $i++) {
+for ($i = 1; $i <= 10; $i++) {
 $this->page = $i;
 $cache->delete($this->getcachefile($item));
 }
