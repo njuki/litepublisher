@@ -12,7 +12,7 @@ class tdatabase {
   public $table;
   public $prefix;
   public $history;
-  public $mysqli;
+  public $handle;
   
   public static function i() {
     return getinstance(__class__);
@@ -30,15 +30,18 @@ class tdatabase {
     $this->sql = '';
     $this->history = array();
     
-    $this->mysqli = new mysqli($dbconfig['host'], $dbconfig['login'], str_rot13(base64_decode($dbconfig['password'])),
-$dbconfig['dbname'], $dbconfig['port'] > 0 ?  $dbconfig['port'] : null);
-
-if (mysqli_connect_error()) {
+    $host= $dbconfig['host'];
+    if ($dbconfig['port'] > 0) $host .= ':' . $dbconfig['port'];
+    $this->handle = mysql_connect($host, $dbconfig['login'], str_rot13(base64_decode($dbconfig['password'])));
+    if (! $this->handle) {
+      //die(mysql_error());
       throw new Exception('Error connect to database');
     }
-
-$this->mysqli->set_charset('utf8');
-    //$this->query('SET NAMES utf8');
+    if (!        mysql_select_db($dbconfig['dbname'], $this->handle)) {
+      throw new Exception('Error select database');
+    }
+    
+    $this->query('SET NAMES utf8');
     
     /* lost performance
     $timezone = date('Z') / 3600;
@@ -50,8 +53,8 @@ $this->mysqli->set_charset('utf8');
   /*
   public function __destruct() {
     if (is_object($this)) {
-      if (is_resource($this->mysqli)) mysql_close($this->mysqli);
-      $this->mysqli = false;
+      if (is_resource($this->handle)) mysql_close($this->handle);
+      $this->handle = false;
     }
   }
   */
@@ -65,6 +68,13 @@ $this->mysqli->set_charset('utf8');
   }
   
   public function query($sql) {
+    /*
+    if ($sql == $this->sql) {
+      if ($this->result && @mysql_num_rows($this->result)) mysql_data_seek($this->result, 0);
+      return $this->result;
+    }
+    */
+    //if (strbegin($sql, 'select ')) $sql = str_replace('select ', 'select SQL_BUFFER_RESULT ', $sql);
     $this->sql = $sql;
     if (litepublisher::$debug) {
       $this->history[] = array(
@@ -74,19 +84,19 @@ $this->mysqli->set_charset('utf8');
       $microtime = microtime(true);
     }
     
-    if (is_object($this->result)) $this->result->close();
-    $this->result = $this->mysqli->query($sql);
+    if (is_resource ($this->result)) mysql_free_result($this->result);
+    $this->result = mysql_query($sql, $this->handle);
     if (litepublisher::$debug) {
       $this->history[count($this->history) - 1]['time'] = microtime(true) - $microtime;
-if ($this->mysqli->warning_count && ($r = $this->mysqli->query('SHOW WARNINGS'))) {
+      if ($r = mysql_fetch_assoc(mysql_query('SHOW WARNINGS', $this->handle))) {
         echo "<pre>\n";
         echo $sql, "\n";
-        var_dump($r->fetch_assoc ());
+        var_dump($r);
         echo "</pre>\n";
       }
     }
     if ($this->result == false) {
-      $this->doerror(mysql_error($this->mysqli));
+      $this->doerror(mysql_error($this->handle));
     }
     return $this->result;
   }
@@ -109,11 +119,11 @@ if ($this->mysqli->warning_count && ($r = $this->mysqli->query('SHOW WARNINGS'))
   }
   
   public function quote($s) {
-    return sprintf('\'%s\'', $this->mysqli->real_escape_string($s));
+    return sprintf('\'%s\'', mysql_real_escape_string($s));
   }
   
   public function escape($s) {
-    return $this->mysqli->real_escape_string($s);
+    return mysql_real_escape_string($s);
   }
   
   public function settable($table) {
@@ -131,11 +141,11 @@ if ($this->mysqli->warning_count && ($r = $this->mysqli->query('SHOW WARNINGS'))
   }
   
   public function selectassoc($sql) {
-    return $this->query($sql)->fetch_assoc();
+    return mysql_fetch_assoc($this->query($sql));
   }
   
   public function getassoc($where) {
-    return $this->select($where)->fetch_assoc();
+    return mysql_fetch_assoc($this->select($where));
   }
   
   public function update($values, $where) {
@@ -196,8 +206,8 @@ if ($this->mysqli->warning_count && ($r = $this->mysqli->query('SHOW WARNINGS'))
   
   public function add(array $a) {
     $this->insertrow($this->assoctorow($a));
-    if ($id = $this->mysqli->insert_id) return $id;
-    $r = $this->query('select last_insert_id() from ' . $this->prefix . $this->table)->fetch_row();
+    if ($id = mysql_insert_id($this->handle)) return $id;
+    $r = mysql_fetch_row($this->query('select last_insert_id() from ' . $this->prefix . $this->table));
     return (int) $r[0];
   }
   
@@ -220,7 +230,7 @@ if ($this->mysqli->warning_count && ($r = $this->mysqli->query('SHOW WARNINGS'))
   public function getcount($where = '') {
     $sql = "SELECT COUNT(*) as count FROM $this->prefix$this->table";
     if ($where != '') $sql .= ' where '. $where;
-    if ($r = $this->query($sql)->fetch_assoc()) {
+    if ($r = mysql_fetch_assoc( $this->query($sql))) {
       return (int) $r['count'];
     }
     return false;
@@ -239,12 +249,12 @@ if ($this->mysqli->warning_count && ($r = $this->mysqli->query('SHOW WARNINGS'))
   }
   
   public function idexists($id) {
-    if ($r = $this->query("select id  from $this->prefix$this->table where id = $id limit 1")->fetch_assoc()) return true;
+    if ($r = mysql_fetch_assoc($this->query("select id  from $this->prefix$this->table where id = $id limit 1"))) return true;
     return false;
   }
   
   public function  exists($where) {
-    if ($this->query("select *  from $this->prefix$this->table where $where limit 1")->num_rows) return true;
+    if (mysql_num_rows($this->query("select *  from $this->prefix$this->table where $where limit 1"))) return true;
     return false;
   }
   
@@ -257,25 +267,25 @@ if ($this->mysqli->warning_count && ($r = $this->mysqli->query('SHOW WARNINGS'))
   }
   
   public function getitem($id) {
-    return $this->query("select * from $this->prefix$this->table where id = $id limit 1")->fetch_assoc();
+    return mysql_fetch_assoc($this->query("select * from $this->prefix$this->table where id = $id limit 1"));
   }
   
   public function finditem($where) {
-    return $this->query("select * from $this->prefix$this->table where $where limit 1")->fetch_assoc();
+    return mysql_fetch_assoc($this->query("select * from $this->prefix$this->table where $where limit 1"));
   }
   
   public function findid($where) {
-    if($r = $this->query("select id from $this->prefix$this->table where $where limit 1")->fetch_assoc()) return $r['id'];
+    if($r = mysql_fetch_assoc($this->query("select id from $this->prefix$this->table where $where limit 1"))) return $r['id'];
     return false;
   }
   
   public function getval($table, $id, $name) {
-    if ($r = $this->query("select $name from $this->prefix$table where id = $id limit 1")->fetch_assoc()) return $r[$name];
+    if ($r = mysql_fetch_assoc($this->query("select $name from $this->prefix$table where id = $id limit 1"))) return $r[$name];
     return false;
   }
   
   public function getvalue($id, $name) {
-    if ($r = $this->query("select $name from $this->prefix$this->table where id = $id limit 1")->fetch_assoc()) return $r[$name];
+    if ($r = mysql_fetch_assoc($this->query("select $name from $this->prefix$this->table where id = $id limit 1"))) return $r[$name];
     return false;
   }
   
@@ -285,8 +295,8 @@ if ($this->mysqli->warning_count && ($r = $this->mysqli->query('SHOW WARNINGS'))
   
   public function res2array($res) {
     $result = array();
-    if (is_object($res)) {
-      while ($row = $res->fetch_row()) {
+    if (is_resource($res)) {
+      while ($row = mysql_fetch_row($res)) {
         $result[] = $row;
       }
       return $result;
@@ -295,8 +305,8 @@ if ($this->mysqli->warning_count && ($r = $this->mysqli->query('SHOW WARNINGS'))
   
   public function res2id($res) {
     $result = array();
-    if (is_object($res)) {
-      while ($row = $res->fetch_row()) {
+    if (is_resource($res)) {
+      while ($row = mysql_fetch_row($res)) {
         $result[] = $row[0];
       }
     }
@@ -305,8 +315,8 @@ if ($this->mysqli->warning_count && ($r = $this->mysqli->query('SHOW WARNINGS'))
   
   public function res2assoc($res) {
     $result = array();
-    if (is_object($res)) {
-      while ($r = $res->fetch_assoc()) {
+    if (is_resource($res)) {
+      while ($r = mysql_fetch_assoc($res)) {
         $result[] = $r;
       }
     }
@@ -315,8 +325,8 @@ if ($this->mysqli->warning_count && ($r = $this->mysqli->query('SHOW WARNINGS'))
   
   public function res2items($res) {
     $result = array();
-    if (is_object($res)) {
-      while ($r = $res->fetch_assoc()) {
+    if (is_resource($res)) {
+      while ($r = mysql_fetch_assoc($res)) {
         $result[(int) $r['id']] = $r;
       }
     }
@@ -324,15 +334,15 @@ if ($this->mysqli->warning_count && ($r = $this->mysqli->query('SHOW WARNINGS'))
   }
   
   public function fetchassoc($res) {
-    return is_object($res) ? $res->fetch_assoc() : false;
+    return is_resource($res) ? mysql_fetch_assoc($res) : false;
   }
   
   public function fetchnum($res) {
-    return is_object($res) ? $res->fetch_row() : false;
+    return is_resource($res) ? mysql_fetch_row($res) : false;
   }
   
   public function countof($res) {
-    return  is_object($res) ? $res->num_rows : 0;
+    return  is_resource($res) ? mysql_num_rows($res) : 0;
   }
   
   public static function str2array($s) {
@@ -346,3 +356,4 @@ if ($this->mysqli->warning_count && ($r = $this->mysqli->query('SHOW WARNINGS'))
   }
   
 }//class
+?>
