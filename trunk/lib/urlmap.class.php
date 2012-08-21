@@ -348,18 +348,32 @@ $this->cache->clear();
   }
   
   public function setexpired($id) {
-    tfiler::deletemask(litepublisher::$paths->cache . "$id-*.php");
+if ($item = $this->getitem($id)) {
+$cache = $this->cache;
+$page = $this->page;
+foreach ($i = 1; $i <= 10; $i++) {
+$this->page = $i;
+$cache->delete($this->getcachefile($item));
+}
+$this->page = $page;
+}
   }
-  
+
   public function setexpiredcurrent() {
 $this->cache->delete($this->getcachefile($this->itemrequested));
   }
   
   public function expiredclass($class) {
-    $items = $this->db->idselect("class = '$class'");
-    foreach ($items as $id) $this->setexpired($id);
+    $items = $this->db->getitems("class = '$class'");
+if (count($items) == 0) return;
+$cache = $this->cache;
+$page = $this->page;
+$this->page = 1;
+    foreach ($items as $item) {
+$cache->delete($this->getcachefile($item));
+}
+$this->page = $page;
   }
-
 
   public function addredir($from, $to) {
     if ($from == $to) return;
