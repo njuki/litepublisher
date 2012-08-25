@@ -56,7 +56,7 @@ class tuseroptions extends titems {
     if ($i === false) {
       $this->db->updateassoc($item);
     } else {
-      $this->db->insert_a($item);
+      $this->db->insert($item);
       array_splice($this->defitems, $i, 1);
     }
   }

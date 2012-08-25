@@ -12,7 +12,7 @@ function installoptions($email, $language) {
   $options->lock();
   $usehost = isset($_REQUEST['usehost']) ? ($_REQUEST['usehost'] == '1') : false;
   $options->data['dbconfig'] = array(
-  'driver' => 'mysql',
+  'driver' => 'mysqli',
   'host' => $usehost ? $_REQUEST['dbhost'] : 'localhost',
   'port' => $usehost ? (int) $_REQUEST['dbport'] : 0,
   'dbname' => $_REQUEST['dbname'],
