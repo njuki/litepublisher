@@ -185,7 +185,7 @@ class tuserpages extends titems implements itemplate {
     }
     $this->items[$id] = $item;
     unset($item['url']);
-    $this->db->insert_a($item);
+    $this->db->insert($item);
   }
   
   public function delete($id) {

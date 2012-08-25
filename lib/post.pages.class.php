@@ -21,7 +21,7 @@ class tpostpages extends tbasepostprops {
   public function add(tpost $post) {
     $db = $this->db;
     foreach ($post->syncdata[$this->dataname] as $page => $content) {
-      $db->insert_a(array(
+      $db->insert(array(
       'id' => $post->id,
       'page' => $page,
       'content' => $content
@@ -38,7 +38,7 @@ class tpostpages extends tbasepostprops {
     $post->syncdata[$this->dataname][] = $s;
     $post->pagescount = count($post->syncdata[$this->dataname]);
     if ($post->id > 0) {
-      $this->db->insert_a(array(
+      $this->db->insert(array(
       'id' => $post->id,
       'page' => $post->pagescount -1,
       'content' => $s

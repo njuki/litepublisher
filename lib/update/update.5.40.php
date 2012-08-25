@@ -31,4 +31,15 @@ $users->db->insert_a($item);
 }
 
   $users->setgroups(1, array(1));
+
+tjsmerger::i()->addtext('default', 'pretty',
+  '$(document).ready(function() {
+    $("a[rel^=\'prettyPhoto\']").prettyPhoto({
+      social_tools: false
+    });
+    $("a[href^=\'http://youtu.be/\'], a[href^=\'http://www.youtube.com/watch?v=\']").prettyPhoto({
+      social_tools: false
+    });
+  });');
+  
 }

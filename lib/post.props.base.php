@@ -171,7 +171,7 @@ class tbasepostprops extends tdata {
               $list = implode(',', $items);
               $db = litepublisher::$db;
               if ($res = $db->query("select * from $db->prefix$this->table where id in($list)")) {
-                while ($r = mysql_fetch_assoc($res)) {
+                while ($r = $db->fetchassoc($res)) {
                   $p = tpost::i((int) $r['id']);
                   $p->propdata[$this->dataname] = $r;
                   $p->syncdata[$this->dataname] = array();
@@ -183,7 +183,7 @@ class tbasepostprops extends tdata {
           }
           
           public function add(tpost $post) {
-            $this->db->insert_a($post->propdata[$this->dataname]);
+            $this->db->insert($post->propdata[$this->dataname]);
           }
           
           public function save(tpost $post) {

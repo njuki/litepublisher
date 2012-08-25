@@ -237,7 +237,7 @@ class tpost extends titem implements  itemplate {
     if ($this->childtable) {
       $this->beforedb();
       $this->childdata['id'] = $id;
-      $this->getdb($this->childtable)->insert_a($this->childdata);
+      $this->getdb($this->childtable)->insert($this->childdata);
     }
     return $id;
   }
@@ -771,7 +771,7 @@ class tpost extends titem implements  itemplate {
     $this->data['pages'][] = $s;
     $this->data['pagescount'] = count($this->data['pages']);
     if ($this->id > 0) {
-      $this->getdb('pages')->insert_a(array(
+      $this->getdb('pages')->insert(array(
       'id' => $this->id,
       'page' => $this->data['pagescount'] -1,
       'content' => $s

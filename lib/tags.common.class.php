@@ -473,7 +473,7 @@ class ttagcontent extends tdata {
     $this->items[$id] = $item;
     if ($this->owner->dbversion) {
       $item['id'] = $id;
-      $this->db->insert($item);
+      $this->db->addupdate($item);
     } else {
       tfilestorage::savevar($this->getfilename($id), $item);
     }

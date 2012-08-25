@@ -146,7 +146,7 @@ if ($this->mysqli->warning_count && ($r = $this->mysqli->query('SHOW WARNINGS'))
     return $this->update($values, "id = $id");
   }
   
-  public function updateassoc($a) {
+  public function updateassoc(array $a) {
     $list = array();
     foreach ($a As $name => $value) {
       if ($name == 'id') continue;
@@ -161,20 +161,10 @@ if ($this->mysqli->warning_count && ($r = $this->mysqli->query('SHOW WARNINGS'))
         */
       }
       
-      $list[] = "$name = " . $this->quote($value);
+      $list[] = sprintf('%s = %s', $name,  $this->quote($value));
     }
     
     return $this->update(implode(', ', $list), 'id = '. $a['id']);
-  }
-  
-  public function UpdateProps($obj, $props) {
-    $list = array();
-    foreach ($props  As $name) {
-      if ($name == 'id') continue;
-      $list[] = "$Name = " . $this->quote($obj->$name);
-    }
-    
-    return $this->update(implode(', ', $list), "id = $obj->id");
   }
   
   public function insertrow($row) {
@@ -186,7 +176,7 @@ if ($this->mysqli->warning_count && ($r = $this->mysqli->query('SHOW WARNINGS'))
     return $this->add($a);
   }
   
-  public function insert(array $a) {
+  public function addupdate(array $a) {
     if ($this->idexists($a['id'])) {
       $this->updateassoc($a);
     } else {
@@ -201,9 +191,13 @@ if ($this->mysqli->warning_count && ($r = $this->mysqli->query('SHOW WARNINGS'))
     return (int) $r[0];
   }
   
-  public function insert_a(array $a) {
+  public function insert(array $a) {
     $this->insertrow($this->assoctorow($a));
   }
+
+  public function insert_a(array $a) {
+return $this->update($a);
+}
   
   public function assoctorow(array $a) {
     $vals = array();

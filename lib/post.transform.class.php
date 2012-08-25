@@ -35,7 +35,7 @@ class tposttransform  {
     }
     $db = $post->db;
     $id = $db->add($values);
-    $post->rawdb->insert_a(array(
+    $post->rawdb->insert(array(
     'id' => $id,
     'created' => sqldate(),
     'modified' => sqldate(),
@@ -44,7 +44,7 @@ class tposttransform  {
     
     $db->table = 'pages';
     foreach ($post->data['pages'] as $i => $content) {
-      $db->insert_a(array('id' => $id, 'page' => $i,         'content' => $content));
+      $db->insert(array('id' => $id, 'page' => $i,         'content' => $content));
     }
     
     return $id;
@@ -71,7 +71,7 @@ class tposttransform  {
     $db->table = 'pages';
     $db->iddelete($post->id);
     foreach ($post->data['pages'] as $i => $content) {
-      $db->insert_a(array('id' => $post->id, 'page' => $i, 'content' => $content));
+      $db->insert(array('id' => $post->id, 'page' => $i, 'content' => $content));
     }
     */
   }

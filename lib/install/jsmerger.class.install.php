@@ -54,6 +54,9 @@ function tjsmergerInstall($self) {
     $("a[rel^=\'prettyPhoto\']").prettyPhoto({
       social_tools: false
     });
+    $("a[href^=\'http://youtu.be/\'], a[href^=\'http://www.youtube.com/watch?v=\']").prettyPhoto({
+      social_tools: false
+    });
   });');
   
   $section = 'comments';
