@@ -85,7 +85,7 @@ class tadmindownloaditems extends tadminmenu {
       if ($url == '') return '';
       if ($downloaditem = taboutparser::parse($url)) {
         $id = $downloaditems->add($downloaditem);
-        litepublisher::$urlmap->redir(tadminhtml::getadminlink('/admin/' . basename(dirname(__file__)) . '/editor/', "id=$id"));
+        litepublisher::$urlmap->redir(tadminhtml::getadminlink('/admin/downloaditems/editor/', "id=$id"));
       }
       return '';
     }
