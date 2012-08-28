@@ -31,19 +31,19 @@ class tdownloaditemeditor extends tposteditor {
     $this->basename = 'downloaditems';
     $html = $this->html;
     $lang = tlocal::admin('downloaditems');
-$html->push_section('editor');
-
+    $html->push_section('editor');
+    
     $downloaditem = tdownloaditem::i($this->idpost);
     ttheme::$vars['downloaditem'] = $downloaditem;
     $args = new targs();
     $this->getpostargs($downloaditem, $args);
-$html->pop_section();
+    $html->pop_section();
     $args->downloadurl = $downloaditem->downloadurl;
     $args->authorname = $downloaditem->authorname;
     $args->authorurl = $downloaditem->authorurl;
     $args->version = $downloaditem->version;
     
-   
+    
     $types = array(
     'theme' => tlocal::get('downloaditem', 'theme'),
     'plugin' => tlocal::get('downloaditem', 'plugin')

@@ -170,11 +170,10 @@ public function canrequest() { }
   public function getcont() {
     if (litepublisher::$options->admincache) {
       $id = isset($_POST['id']) ? (int) $_POST['id'] : 0;
-      $filename = litepublisher::$paths->cache . 'adminmenu.' . litepublisher::$options->user . '.' .md5($_SERVER['REQUEST_URI'] . '&id=' . $id) . '.php';
-      
-      if ($result = tfilestorage::getfile($filename)) return $result;
+      $filename = 'adminmenu.' . litepublisher::$options->user . '.' .md5($_SERVER['REQUEST_URI'] . '&id=' . $id) . '.php';
+      if ($result = litepublisher::$urlmap->cache->get($filename)) return $result;
       $result = parent::getcont();
-      tfilestorage::setfile($filename, $result);
+      litepublisher::$urlmap->cache->set($filename, $result);
       return $result;
     } else {
       return parent::getcont();
@@ -851,7 +850,7 @@ class tajaxposteditor  extends tevents {
       if ($this->ajaxvisual) {
         $js->addtext('posteditor', 'visual', sprintf(
         '$(document).ready(function() {
-          $.posteditor.init_visual_link("%s", %s);
+          litepubl.posteditor.init_visual_link("%s", %s);
         });', litepublisher::$site->files . $url, json_encode(tlocal::get('editor', 'loadvisual')))
         );
       }else {
@@ -1058,8 +1057,10 @@ class tposteditor extends tadminmenu {
     $categories = tcategories::i();
     $categories->loadall();
     $html = tadminhtml::i();
+    $html->push_section('editor');
     $result = $html->categorieshead();
     $result .= self::getsubcategories(0, $items);
+    $html->pop_section();
     return str_replace("'", '"', $result);
   }
   

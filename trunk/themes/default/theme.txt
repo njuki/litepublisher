@@ -345,9 +345,7 @@ $nextpost - следующая запись
 Разрешено использовать любые теги для записи, здесь же использовались уже ранее встречавшиеся свойства записи link  и title. Перейдем к более сложному и важному шаблону - шаблон списка файлов.
 
 content.post.filelist = [
-<div class="filelist">
-								<ul id="files-$post.id">
-
+<div class="filelist"><ul id="files-$post.id">
 $files = [
   $file = [<li><a href="$link" data-idfile="$id" title="$title">$description</a></li>]
 ]
@@ -366,8 +364,7 @@ $videos = [
    $video = [<li><a href="$link" class="videofile" rel="video" data-idfile="$id" title="$lang.playvideo $title">$lang.playvideo $title</a>
 <!--$player--></li>]
 ]
-								</ul>
-</div>
+</ul></div>
 ]
 
 Мы видим объявление в списке файлов шаблоны для разных типов. Несложно догадатся, какой шаблон отвечает за какой тип файлов

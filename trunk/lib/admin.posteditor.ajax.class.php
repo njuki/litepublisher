@@ -36,7 +36,7 @@ class tajaxposteditor  extends tevents {
       if ($this->ajaxvisual) {
         $js->addtext('posteditor', 'visual', sprintf(
         '$(document).ready(function() {
-          $.posteditor.init_visual_link("%s", %s);
+          litepubl.posteditor.init_visual_link("%s", %s);
         });', litepublisher::$site->files . $url, json_encode(tlocal::get('editor', 'loadvisual')))
         );
       }else {

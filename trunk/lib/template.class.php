@@ -153,14 +153,14 @@ class ttemplate extends tevents_storage {
     //$current = $this->context instanceof tmenu ? $this->context->id : 0;
     $view = $this->view;
     $menuclass = $view->menuclass;
-    $filename = $view->theme->name . sprintf('.%s.%s.php', 
+    $filename = $view->theme->name . sprintf('.%s.%s.php',
     $menuclass, litepublisher::$options->group ? litepublisher::$options->group : 'nobody');
-   
+    
     if ($result = litepublisher::$urlmap->cache->get($filename)) return $result;
     
     $menus = getinstance($menuclass);
     $result = $menus->getmenu($this->hover, 0);
-litepublisher::$urlmap->cache->set($filename, $result);
+    litepublisher::$urlmap->cache->set($filename, $result);
     return $result;
   }
   

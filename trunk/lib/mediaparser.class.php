@@ -347,8 +347,8 @@ class tmediaparser extends tevents {
     $sourcex = imagesx($source);
     $sourcey = imagesy($source);
     if (($x >= $sourcex) && ($y >= $sourcey)) return false;
-
-if ($clipbounds) {
+    
+    if ($clipbounds) {
       $ratio = $x / $y;
       if ($sourcex/$sourcey > $ratio) {
         $sourcex = $sourcey *$ratio;

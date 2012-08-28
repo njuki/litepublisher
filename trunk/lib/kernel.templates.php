@@ -503,17 +503,14 @@ class ttemplate extends tevents_storage {
     //$current = $this->context instanceof tmenu ? $this->context->id : 0;
     $view = $this->view;
     $menuclass = $view->menuclass;
-    $filename = litepublisher::$paths->cache . $view->theme->name . sprintf('.%s.%s.php',
+    $filename = $view->theme->name . sprintf('.%s.%s.php',
     $menuclass, litepublisher::$options->group ? litepublisher::$options->group : 'nobody');
     
-    //if (file_exists($filename)) return file_get_contents($filename);
-    //use memcache
-    if ($result = tfilestorage::getfile($filename)) return $result;
+    if ($result = litepublisher::$urlmap->cache->get($filename)) return $result;
     
     $menus = getinstance($menuclass);
     $result = $menus->getmenu($this->hover, 0);
-    //file_put_contents($filename, $result);
-    tfilestorage::setfile($filename, $result);
+    litepublisher::$urlmap->cache->set($filename, $result);
     return $result;
   }
   
@@ -1251,7 +1248,7 @@ class twidget extends tevents {
     if ($theme->name == '') {
       $theme = tview::i()->theme;
     }
-    return litepublisher::$paths->cache . sprintf('widget.%s.%d.php', $theme->name, $id);
+    return sprintf('widget.%s.%d.php', $theme->name, $id);
   }
   
   public function expired($id) {
@@ -1264,7 +1261,7 @@ class twidget extends tevents {
       case 'include':
       $sidebar = self::findsidebar($id);
       $filename = self::getcachefilename($id, $sidebar);
-      file_put_contents($filename, $this->getcontent($id, $sidebar));
+      litepublisher::$urlmap->cache->set($filename, $this->getcontent($id, $sidebar));
       break;
     }
   }
@@ -1629,15 +1626,14 @@ class twidgets extends titems_storage {
   
   private function includewidget($id, $sidebar) {
     $filename = twidget::getcachefilename($id, $sidebar);
-    if (!file_exists($filename)) {
+    if (!litepublisher::$urlmap->cache->exists($filename)) {
       $widget = $this->getwidget($id);
       $content = $widget->getcontent($id, $sidebar);
-      tfilestorage::setfile($filename, $content);
+      litepublisher::$urlmap->cache->set($filename, $content);
     }
     
     $theme = ttheme::i();
-    return $theme->getwidget($this->items[$id]['title'], "\n<?php echo tfilestorage::getfile('$filename'); ?>\n", $this->items[
-    $id]['template'], $sidebar);
+    return $theme->getwidget($this->items[$id]['title'], "\n<?php echo litepublisher::\$urlmap->cache->get('$filename'); ?>\n", $this->items[$id]['template'], $sidebar);
   }
   
   private function getcode($id, $sidebar) {
@@ -1701,11 +1697,11 @@ class twidgets extends titems_storage {
       
       case 'include':
       $filename = twidget::getcachefilename($id, $sidebar);
-      $result = tfilestorage::getfile($filename);
+      $result = litepublisher::$urlmap->cache->get($filename);
       if (!$result) {
         $widget = $this->getwidget($id);
         $result = $widget->getcontent($id, $sidebar);
-        tfilestorage::setfile($filename, $result);
+        litepublisher::$urlmap->cache->set($filename, $result);
       }
       break;
       
@@ -1755,7 +1751,7 @@ class twidgetscache extends titems {
   }
   
   public function load() {
-    if ($s = tfilestorage::loadfile(litepublisher::$paths->cache . $this->getbasename() .'.php')) {
+    if ($s = litepublisher::$urlmap->cache->get($this->getbasename() .'.php')) {
       return $this->loadfromstring($s);
     }
     return false;
@@ -1763,8 +1759,7 @@ class twidgetscache extends titems {
   
   public function savemodified() {
     if ($this->modified) {
-      tfilestorage::savetofile(litepublisher::$paths->cache .$this->getbasename(),
-      $this->savetostring());
+      litepublisher::$urlmap->cache->set($this->getbasename(), $this->savetostring());
     }
     $this->modified = false;
   }

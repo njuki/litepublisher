@@ -203,7 +203,7 @@ class tcodedocfilter extends titems {
     }
     
     if ($post->id > 0) {
-      $this->db->insert($docitem);
+      $this->db->addupdate($docitem);
     } else {
       $docitem['post'] = $post;
       $this->fix[] = $docitem;
