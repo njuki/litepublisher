@@ -116,7 +116,7 @@ class tadminusers extends tadminmenu {
       }
       return;
     }
-
+    
     switch ($this->action) {
       case 'add':
       $_POST['idgroups'] = tadminhtml::check2array('idgroup-');
@@ -132,10 +132,10 @@ class tadminusers extends tadminmenu {
       if (!$users->itemexists($id)) return;
       $_POST['idgroups'] = tadminhtml::check2array('idgroup-');
       if (!$users->edit($id, $_POST))return $this->notfound;
-if ($id == 1) {
-litepublisher::$site->author = $_POST['name'];
-//litepublisher::$site->email = $_POST['email'];
-}
+      if ($id == 1) {
+        litepublisher::$site->author = $_POST['name'];
+        //litepublisher::$site->email = $_POST['email'];
+      }
       break;
     }
   }

@@ -35,18 +35,18 @@ class turlmap extends titems {
     $this->table = 'urlmap';
     $this->basename = 'urlmap';
     $this->addevents('beforerequest', 'afterrequest', 'onclearcache');
-$this->data['revision'] = 0;
+    $this->data['revision'] = 0;
     $this->is404 = false;
     $this->isredir = false;
     $this->adminpanel = false;
     $this->mobile= false;
-$this->data['revision'] = 0;
-if (tfilestorage::$memcache) {
-$this->cache = new tlitememcache();
-} else {
-$this->cache = new tfilecache();
-}
-
+    $this->data['revision'] = 0;
+    if (tfilestorage::$memcache) {
+      $this->cache = new tlitememcache();
+    } else {
+      $this->cache = new tfilecache();
+    }
+    
     $this->cache_enabled =     litepublisher::$options->cache && !litepublisher::$options->admincookie;
     $this->page = 1;
     $this->close_events = array();
@@ -171,31 +171,31 @@ $this->cache = new tfilecache();
   }
   
   private function getcachefile(array $item) {
-      switch ($item['type']) {
-        case 'normal':
-        return  sprintf('%s-%d.php', $item['id'], $this->page);
-        
-        case 'usernormal':
-        return sprintf('%s-page-%d-user-%d.php', $item['id'], $this->page, litepublisher::$options->user);
-
-        case 'userget':
-return sprintf('%s-page-%d-user%d-get-%s.php', $item['id'], $this->page, litepublisher::$options->user, md5($_SERVER['REQUEST_URI']));
-
-        default: //get
-return sprintf('%s-%d-%s.php', $item['id'], $this->page, md5($_SERVER['REQUEST_URI']));
-     }
+    switch ($item['type']) {
+      case 'normal':
+      return  sprintf('%s-%d.php', $item['id'], $this->page);
+      
+      case 'usernormal':
+      return sprintf('%s-page-%d-user-%d.php', $item['id'], $this->page, litepublisher::$options->user);
+      
+      case 'userget':
+      return sprintf('%s-page-%d-user%d-get-%s.php', $item['id'], $this->page, litepublisher::$options->user, md5($_SERVER['REQUEST_URI']));
+      
+      default: //get
+      return sprintf('%s-%d-%s.php', $item['id'], $this->page, md5($_SERVER['REQUEST_URI']));
+    }
   }
   
   private function include_file($fn) {
     if (tfilestorage::$memcache) {
-if ($s = $this->cache->get($fn)) {
+      if ($s = $this->cache->get($fn)) {
         eval('?>' . $s);
         return true;
+      }
+      return false;
     }
-return false;
-}
     
-$filename = litepublisher::$paths->cache . $fn;
+    $filename = litepublisher::$paths->cache . $fn;
     if (file_exists($filename) &&
     ((filemtime ($filename) + litepublisher::$options->expiredcache - litepublisher::$options->filetime_offset) >= time())) {
       include($filename);
@@ -250,7 +250,7 @@ $filename = litepublisher::$paths->cache . $fn;
     }
     eval('?>'. $s);
     if ($this->cache_enabled && $context->cache) {
-$this->cache->set($this->getcachefile($item), $s);
+      $this->cache->set($this->getcachefile($item), $s);
     }
   }
   
@@ -343,38 +343,38 @@ $this->cache->set($this->getcachefile($item), $s);
   }
   
   public function clearcache() {
-$this->cache->clear();
+    $this->cache->clear();
     $this->onclearcache();
   }
   
   public function setexpired($id) {
-if ($item = $this->getitem($id)) {
-$cache = $this->cache;
-$page = $this->page;
-for ($i = 1; $i <= 10; $i++) {
-$this->page = $i;
-$cache->delete($this->getcachefile($item));
-}
-$this->page = $page;
-}
+    if ($item = $this->getitem($id)) {
+      $cache = $this->cache;
+      $page = $this->page;
+      for ($i = 1; $i <= 10; $i++) {
+        $this->page = $i;
+        $cache->delete($this->getcachefile($item));
+      }
+      $this->page = $page;
+    }
   }
-
+  
   public function setexpiredcurrent() {
-$this->cache->delete($this->getcachefile($this->itemrequested));
+    $this->cache->delete($this->getcachefile($this->itemrequested));
   }
   
   public function expiredclass($class) {
     $items = $this->db->getitems("class = '$class'");
-if (count($items) == 0) return;
-$cache = $this->cache;
-$page = $this->page;
-$this->page = 1;
+    if (count($items) == 0) return;
+    $cache = $this->cache;
+    $page = $this->page;
+    $this->page = 1;
     foreach ($items as $item) {
-$cache->delete($this->getcachefile($item));
-}
-$this->page = $page;
+      $cache->delete($this->getcachefile($item));
+    }
+    $this->page = $page;
   }
-
+  
   public function addredir($from, $to) {
     if ($from == $to) return;
     $Redir = tredirector::i();
@@ -504,53 +504,53 @@ $this->page = $page;
 }//class
 
 class tlitememcache {
-public $revision;
-public $prefix;
-
-public function __construct() {
-$this->revision =&litepublisher::$urlmap->data['revision'];
-$this->prefix = litepublisher::$domain . ':cache:';
-}
-
-public function clear() {
-$this->revision++;
-litepublisher::$urlmap->save();
-}
-
-public function set($filename, $data) {
-tfilestorage::$memcache->set($this->prefix . $filename, 
-serialize(array(
-'revision' => $this->revision,
-'time' => time(),
-'data' => $data
-)), false, 3600);
-}
-
-public function get($filename) {
-if ($s = tfilestorage::$memcache->get($this->prefix . $filename)) {
-$a = unserialize($s);
-if ($a['revision'] == $this->revision) {
-return $a['data'];
-} else {
-tfilestorage::$memcache->delete($this->prefix . $filename);
-}
-}
-return false;
-}
-
-public function delete($filename) {
-tfilestorage::$memcache->delete($this->prefix . $filename);
-}
-
-public function exists($filename) {
-return !!tfilestorage::$memcache->get($this->prefix . $filename);
-}
-
+  public $revision;
+  public $prefix;
+  
+  public function __construct() {
+    $this->revision =&litepublisher::$urlmap->data['revision'];
+    $this->prefix = litepublisher::$domain . ':cache:';
+  }
+  
+  public function clear() {
+    $this->revision++;
+    litepublisher::$urlmap->save();
+  }
+  
+  public function set($filename, $data) {
+    tfilestorage::$memcache->set($this->prefix . $filename,
+    serialize(array(
+    'revision' => $this->revision,
+    'time' => time(),
+    'data' => $data
+    )), false, 3600);
+  }
+  
+  public function get($filename) {
+    if ($s = tfilestorage::$memcache->get($this->prefix . $filename)) {
+      $a = unserialize($s);
+      if ($a['revision'] == $this->revision) {
+        return $a['data'];
+      } else {
+        tfilestorage::$memcache->delete($this->prefix . $filename);
+      }
+    }
+    return false;
+  }
+  
+  public function delete($filename) {
+    tfilestorage::$memcache->delete($this->prefix . $filename);
+  }
+  
+  public function exists($filename) {
+    return !!tfilestorage::$memcache->get($this->prefix . $filename);
+  }
+  
 }//class
 
 class tfilecache {
-
-public function clear() {
+  
+  public function clear() {
     $path = litepublisher::$paths->cache;
     if ( $h = @opendir($path)) {
       while(FALSE !== ($filename = @readdir($h))) {
@@ -564,28 +564,28 @@ public function clear() {
       }
       closedir($h);
     }
-}
-
-public function set($filename, $data) {
-$fn = litepublisher::$paths->cache . $filename;
+  }
+  
+  public function set($filename, $data) {
+    $fn = litepublisher::$paths->cache . $filename;
     file_put_contents($fn, $data);
     @chmod($fn, 0666);
-}
-
-
-public function get($filename) {
-$fn = litepublisher::$paths->cache . $filename;
+  }
+  
+  
+  public function get($filename) {
+    $fn = litepublisher::$paths->cache . $filename;
     if (file_exists($fn)) return  file_get_contents($fn);
-return false;
-}
-
-public function delete($filename) {
-$fn = litepublisher::$paths->cache . $filename;
-if (file_exists($fn)) unlink($fn);
-}
-
-public function exists($filename) {
-return file_exists(litepublisher::$paths->cache . $filename);
-}
-
+    return false;
+  }
+  
+  public function delete($filename) {
+    $fn = litepublisher::$paths->cache . $filename;
+    if (file_exists($fn)) unlink($fn);
+  }
+  
+  public function exists($filename) {
+    return file_exists(litepublisher::$paths->cache . $filename);
+  }
+  
 }//class

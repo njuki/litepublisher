@@ -31,13 +31,13 @@ class tdatabase {
     $this->history = array();
     
     $this->mysqli = new mysqli($dbconfig['host'], $dbconfig['login'], str_rot13(base64_decode($dbconfig['password'])),
-$dbconfig['dbname'], $dbconfig['port'] > 0 ?  $dbconfig['port'] : null);
-
-if (mysqli_connect_error()) {
+    $dbconfig['dbname'], $dbconfig['port'] > 0 ?  $dbconfig['port'] : null);
+    
+    if (mysqli_connect_error()) {
       throw new Exception('Error connect to database');
     }
-
-$this->mysqli->set_charset('utf8');
+    
+    $this->mysqli->set_charset('utf8');
     //$this->query('SET NAMES utf8');
     
     /* lost performance
@@ -78,7 +78,7 @@ $this->mysqli->set_charset('utf8');
     $this->result = $this->mysqli->query($sql);
     if (litepublisher::$debug) {
       $this->history[count($this->history) - 1]['time'] = microtime(true) - $microtime;
-if ($this->mysqli->warning_count && ($r = $this->mysqli->query('SHOW WARNINGS'))) {
+      if ($this->mysqli->warning_count && ($r = $this->mysqli->query('SHOW WARNINGS'))) {
         echo "<pre>\n";
         echo $sql, "\n";
         var_dump($r->fetch_assoc ());
@@ -194,10 +194,10 @@ if ($this->mysqli->warning_count && ($r = $this->mysqli->query('SHOW WARNINGS'))
   public function insert(array $a) {
     $this->insertrow($this->assoctorow($a));
   }
-
+  
   public function insert_a(array $a) {
-return $this->update($a);
-}
+    return $this->update($a);
+  }
   
   public function assoctorow(array $a) {
     $vals = array();

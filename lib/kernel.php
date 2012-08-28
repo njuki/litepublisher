@@ -12,7 +12,7 @@ class tdatabase {
   public $table;
   public $prefix;
   public $history;
-  public $handle;
+  public $mysqli;
   
   public static function i() {
     return getinstance(__class__);
@@ -30,18 +30,15 @@ class tdatabase {
     $this->sql = '';
     $this->history = array();
     
-    $host= $dbconfig['host'];
-    if ($dbconfig['port'] > 0) $host .= ':' . $dbconfig['port'];
-    $this->handle = mysql_connect($host, $dbconfig['login'], str_rot13(base64_decode($dbconfig['password'])));
-    if (! $this->handle) {
-      //die(mysql_error());
+    $this->mysqli = new mysqli($dbconfig['host'], $dbconfig['login'], str_rot13(base64_decode($dbconfig['password'])),
+    $dbconfig['dbname'], $dbconfig['port'] > 0 ?  $dbconfig['port'] : null);
+    
+    if (mysqli_connect_error()) {
       throw new Exception('Error connect to database');
     }
-    if (!        mysql_select_db($dbconfig['dbname'], $this->handle)) {
-      throw new Exception('Error select database');
-    }
     
-    $this->query('SET NAMES utf8');
+    $this->mysqli->set_charset('utf8');
+    //$this->query('SET NAMES utf8');
     
     /* lost performance
     $timezone = date('Z') / 3600;
@@ -53,8 +50,8 @@ class tdatabase {
   /*
   public function __destruct() {
     if (is_object($this)) {
-      if (is_resource($this->handle)) mysql_close($this->handle);
-      $this->handle = false;
+      if (is_resource($this->mysqli)) mysql_close($this->mysqli);
+      $this->mysqli = false;
     }
   }
   */
@@ -68,13 +65,6 @@ class tdatabase {
   }
   
   public function query($sql) {
-    /*
-    if ($sql == $this->sql) {
-      if ($this->result && @mysql_num_rows($this->result)) mysql_data_seek($this->result, 0);
-      return $this->result;
-    }
-    */
-    //if (strbegin($sql, 'select ')) $sql = str_replace('select ', 'select SQL_BUFFER_RESULT ', $sql);
     $this->sql = $sql;
     if (litepublisher::$debug) {
       $this->history[] = array(
@@ -84,19 +74,19 @@ class tdatabase {
       $microtime = microtime(true);
     }
     
-    if (is_resource ($this->result)) mysql_free_result($this->result);
-    $this->result = mysql_query($sql, $this->handle);
+    if (is_object($this->result)) $this->result->close();
+    $this->result = $this->mysqli->query($sql);
     if (litepublisher::$debug) {
       $this->history[count($this->history) - 1]['time'] = microtime(true) - $microtime;
-      if ($r = mysql_fetch_assoc(mysql_query('SHOW WARNINGS', $this->handle))) {
+      if ($this->mysqli->warning_count && ($r = $this->mysqli->query('SHOW WARNINGS'))) {
         echo "<pre>\n";
         echo $sql, "\n";
-        var_dump($r);
+        var_dump($r->fetch_assoc ());
         echo "</pre>\n";
       }
     }
     if ($this->result == false) {
-      $this->doerror(mysql_error($this->handle));
+      $this->doerror(mysql_error($this->mysqli));
     }
     return $this->result;
   }
@@ -119,11 +109,11 @@ class tdatabase {
   }
   
   public function quote($s) {
-    return sprintf('\'%s\'', mysql_real_escape_string($s));
+    return sprintf('\'%s\'', $this->mysqli->real_escape_string($s));
   }
   
   public function escape($s) {
-    return mysql_real_escape_string($s);
+    return $this->mysqli->real_escape_string($s);
   }
   
   public function settable($table) {
@@ -141,11 +131,11 @@ class tdatabase {
   }
   
   public function selectassoc($sql) {
-    return mysql_fetch_assoc($this->query($sql));
+    return $this->query($sql)->fetch_assoc();
   }
   
   public function getassoc($where) {
-    return mysql_fetch_assoc($this->select($where));
+    return $this->select($where)->fetch_assoc();
   }
   
   public function update($values, $where) {
@@ -156,7 +146,7 @@ class tdatabase {
     return $this->update($values, "id = $id");
   }
   
-  public function updateassoc($a) {
+  public function updateassoc(array $a) {
     $list = array();
     foreach ($a As $name => $value) {
       if ($name == 'id') continue;
@@ -171,20 +161,10 @@ class tdatabase {
         */
       }
       
-      $list[] = "$name = " . $this->quote($value);
+      $list[] = sprintf('%s = %s', $name,  $this->quote($value));
     }
     
     return $this->update(implode(', ', $list), 'id = '. $a['id']);
-  }
-  
-  public function UpdateProps($obj, $props) {
-    $list = array();
-    foreach ($props  As $name) {
-      if ($name == 'id') continue;
-      $list[] = "$Name = " . $this->quote($obj->$name);
-    }
-    
-    return $this->update(implode(', ', $list), "id = $obj->id");
   }
   
   public function insertrow($row) {
@@ -196,7 +176,7 @@ class tdatabase {
     return $this->add($a);
   }
   
-  public function insert(array $a) {
+  public function addupdate(array $a) {
     if ($this->idexists($a['id'])) {
       $this->updateassoc($a);
     } else {
@@ -206,13 +186,17 @@ class tdatabase {
   
   public function add(array $a) {
     $this->insertrow($this->assoctorow($a));
-    if ($id = mysql_insert_id($this->handle)) return $id;
-    $r = mysql_fetch_row($this->query('select last_insert_id() from ' . $this->prefix . $this->table));
+    if ($id = $this->mysqli->insert_id) return $id;
+    $r = $this->query('select last_insert_id() from ' . $this->prefix . $this->table)->fetch_row();
     return (int) $r[0];
   }
   
-  public function insert_a(array $a) {
+  public function insert(array $a) {
     $this->insertrow($this->assoctorow($a));
+  }
+  
+  public function insert_a(array $a) {
+    return $this->update($a);
   }
   
   public function assoctorow(array $a) {
@@ -230,7 +214,7 @@ class tdatabase {
   public function getcount($where = '') {
     $sql = "SELECT COUNT(*) as count FROM $this->prefix$this->table";
     if ($where != '') $sql .= ' where '. $where;
-    if ($r = mysql_fetch_assoc( $this->query($sql))) {
+    if ($r = $this->query($sql)->fetch_assoc()) {
       return (int) $r['count'];
     }
     return false;
@@ -249,12 +233,12 @@ class tdatabase {
   }
   
   public function idexists($id) {
-    if ($r = mysql_fetch_assoc($this->query("select id  from $this->prefix$this->table where id = $id limit 1"))) return true;
+    if ($r = $this->query("select id  from $this->prefix$this->table where id = $id limit 1")->fetch_assoc()) return true;
     return false;
   }
   
   public function  exists($where) {
-    if (mysql_num_rows($this->query("select *  from $this->prefix$this->table where $where limit 1"))) return true;
+    if ($this->query("select *  from $this->prefix$this->table where $where limit 1")->num_rows) return true;
     return false;
   }
   
@@ -267,25 +251,25 @@ class tdatabase {
   }
   
   public function getitem($id) {
-    return mysql_fetch_assoc($this->query("select * from $this->prefix$this->table where id = $id limit 1"));
+    return $this->query("select * from $this->prefix$this->table where id = $id limit 1")->fetch_assoc();
   }
   
   public function finditem($where) {
-    return mysql_fetch_assoc($this->query("select * from $this->prefix$this->table where $where limit 1"));
+    return $this->query("select * from $this->prefix$this->table where $where limit 1")->fetch_assoc();
   }
   
   public function findid($where) {
-    if($r = mysql_fetch_assoc($this->query("select id from $this->prefix$this->table where $where limit 1"))) return $r['id'];
+    if($r = $this->query("select id from $this->prefix$this->table where $where limit 1")->fetch_assoc()) return $r['id'];
     return false;
   }
   
   public function getval($table, $id, $name) {
-    if ($r = mysql_fetch_assoc($this->query("select $name from $this->prefix$table where id = $id limit 1"))) return $r[$name];
+    if ($r = $this->query("select $name from $this->prefix$table where id = $id limit 1")->fetch_assoc()) return $r[$name];
     return false;
   }
   
   public function getvalue($id, $name) {
-    if ($r = mysql_fetch_assoc($this->query("select $name from $this->prefix$this->table where id = $id limit 1"))) return $r[$name];
+    if ($r = $this->query("select $name from $this->prefix$this->table where id = $id limit 1")->fetch_assoc()) return $r[$name];
     return false;
   }
   
@@ -295,8 +279,8 @@ class tdatabase {
   
   public function res2array($res) {
     $result = array();
-    if (is_resource($res)) {
-      while ($row = mysql_fetch_row($res)) {
+    if (is_object($res)) {
+      while ($row = $res->fetch_row()) {
         $result[] = $row;
       }
       return $result;
@@ -305,8 +289,8 @@ class tdatabase {
   
   public function res2id($res) {
     $result = array();
-    if (is_resource($res)) {
-      while ($row = mysql_fetch_row($res)) {
+    if (is_object($res)) {
+      while ($row = $res->fetch_row()) {
         $result[] = $row[0];
       }
     }
@@ -315,8 +299,8 @@ class tdatabase {
   
   public function res2assoc($res) {
     $result = array();
-    if (is_resource($res)) {
-      while ($r = mysql_fetch_assoc($res)) {
+    if (is_object($res)) {
+      while ($r = $res->fetch_assoc()) {
         $result[] = $r;
       }
     }
@@ -325,8 +309,8 @@ class tdatabase {
   
   public function res2items($res) {
     $result = array();
-    if (is_resource($res)) {
-      while ($r = mysql_fetch_assoc($res)) {
+    if (is_object($res)) {
+      while ($r = $res->fetch_assoc()) {
         $result[(int) $r['id']] = $r;
       }
     }
@@ -334,15 +318,15 @@ class tdatabase {
   }
   
   public function fetchassoc($res) {
-    return is_resource($res) ? mysql_fetch_assoc($res) : false;
+    return is_object($res) ? $res->fetch_assoc() : false;
   }
   
   public function fetchnum($res) {
-    return is_resource($res) ? mysql_fetch_row($res) : false;
+    return is_object($res) ? $res->fetch_row() : false;
   }
   
   public function countof($res) {
-    return  is_resource($res) ? mysql_num_rows($res) : 0;
+    return  is_object($res) ? $res->num_rows : 0;
   }
   
   public static function str2array($s) {
@@ -1969,7 +1953,6 @@ class turlmap extends titems {
   public $uripath;
   public $itemrequested;
   public  $context;
-  public $cachefilename;
   public $cache_enabled;
   public $argtree;
   public $is404;
@@ -1992,11 +1975,18 @@ class turlmap extends titems {
     $this->table = 'urlmap';
     $this->basename = 'urlmap';
     $this->addevents('beforerequest', 'afterrequest', 'onclearcache');
+    $this->data['revision'] = 0;
     $this->is404 = false;
     $this->isredir = false;
     $this->adminpanel = false;
     $this->mobile= false;
-    $this->cachefilename = false;
+    $this->data['revision'] = 0;
+    if (tfilestorage::$memcache) {
+      $this->cache = new tlitememcache();
+    } else {
+      $this->cache = new tfilecache();
+    }
+    
     $this->cache_enabled =     litepublisher::$options->cache && !litepublisher::$options->admincookie;
     $this->page = 1;
     $this->close_events = array();
@@ -2045,7 +2035,7 @@ class turlmap extends titems {
     //header('Accept-Ranges: bytes');
   }
   
-  private function dorequest($url) {
+  protected function dorequest($url) {
     //echo "'$url'<br>";
     $this->itemrequested = $this->finditem($url);
     if ($this->isredir) return;
@@ -2121,36 +2111,31 @@ class turlmap extends titems {
   }
   
   private function getcachefile(array $item) {
-    if (!$this->cachefilename) {
-      switch ($item['type']) {
-        case 'normal':
-        $this->cachefilename =  sprintf('%s-%d.php', $item['id'], $this->page);
-        break;
-        
-        case 'usernormal':
-        $this->cachefilename =  sprintf('%s-page-%d-user-%d.php', $item['id'], $this->page, litepublisher::$options->user);
-        break;
-        
-        case 'userget':
-        $this->cachefilename = sprintf('%s-page-%d-user%d-get-%s.php', $item['id'], $this->page, litepublisher::$options->user, md5($_SERVER['REQUEST_URI']));
-        break;
-        
-        default: //get
-        $this->cachefilename = sprintf('%s-%d-%s.php', $item['id'], $this->page, md5($_SERVER['REQUEST_URI']));
-        break;
-      }
+    switch ($item['type']) {
+      case 'normal':
+      return  sprintf('%s-%d.php', $item['id'], $this->page);
+      
+      case 'usernormal':
+      return sprintf('%s-page-%d-user-%d.php', $item['id'], $this->page, litepublisher::$options->user);
+      
+      case 'userget':
+      return sprintf('%s-page-%d-user%d-get-%s.php', $item['id'], $this->page, litepublisher::$options->user, md5($_SERVER['REQUEST_URI']));
+      
+      default: //get
+      return sprintf('%s-%d-%s.php', $item['id'], $this->page, md5($_SERVER['REQUEST_URI']));
     }
-    return litepublisher::$paths->cache . $this->cachefilename;
   }
   
-  private function include_file($filename) {
+  private function include_file($fn) {
     if (tfilestorage::$memcache) {
-      if ($s =  tfilestorage::$memcache->get($filename)) {
+      if ($s = $this->cache->get($fn)) {
         eval('?>' . $s);
         return true;
       }
+      return false;
     }
     
+    $filename = litepublisher::$paths->cache . $fn;
     if (file_exists($filename) &&
     ((filemtime ($filename) + litepublisher::$options->expiredcache - litepublisher::$options->filetime_offset) >= time())) {
       include($filename);
@@ -2205,8 +2190,7 @@ class turlmap extends titems {
     }
     eval('?>'. $s);
     if ($this->cache_enabled && $context->cache) {
-      $filename = $this->getcachefile($item);
-      tfilestorage::setfile($filename, $s);
+      $this->cache->set($this->getcachefile($item), $s);
     }
   }
   
@@ -2221,7 +2205,7 @@ class turlmap extends titems {
   }
   
   private function printclasspage($classname) {
-    $cachefile = litepublisher::$paths->cache . $classname . '.php';
+    $cachefile = $classname . '.php';
     if ($this->cache_enabled) {
       if ($this->include_file($cachefile)) return;
     }
@@ -2232,7 +2216,7 @@ class turlmap extends titems {
     eval('?>'. $s);
     
     if ($this->cache_enabled && $obj->cache) {
-      tfilestorage::setfile($cachefile, $result);
+      $this->cache->set($cachefile, $result);
     }
   }
   
@@ -2299,42 +2283,36 @@ class turlmap extends titems {
   }
   
   public function clearcache() {
-    $path = litepublisher::$paths->cache;
-    if ( $h = @opendir($path)) {
-      while(FALSE !== ($filename = @readdir($h))) {
-        if (($filename == '.') || ($filename == '..') || ($filename == '.svn')) continue;
-        $file = $path. $filename;
-        if (is_dir($file)) {
-          tfiler::delete($file . DIRECTORY_SEPARATOR, true, true);
-        } else {
-          tfilestorage::delete($file);
-        }
-      }
-      closedir($h);
-    }
-    
+    $this->cache->clear();
     $this->onclearcache();
   }
   
   public function setexpired($id) {
-    tfiler::deletemask(litepublisher::$paths->cache . "$id-*.php");
+    if ($item = $this->getitem($id)) {
+      $cache = $this->cache;
+      $page = $this->page;
+      for ($i = 1; $i <= 10; $i++) {
+        $this->page = $i;
+        $cache->delete($this->getcachefile($item));
+      }
+      $this->page = $page;
+    }
   }
   
   public function setexpiredcurrent() {
-    tfilestorage::delete($this->getcachefile($this->itemrequested));
-  }
-  
-  public function getcachename($name, $id) {
-    return litepublisher::$paths->cache. "$name-$id.php";
-  }
-  
-  public function expiredname($name, $id) {
-    tfiler::deletedirmask(litepublisher::$paths->cache, "*$name-$id.php");
+    $this->cache->delete($this->getcachefile($this->itemrequested));
   }
   
   public function expiredclass($class) {
-    $items = $this->db->idselect("class = '$class'");
-    foreach ($items as $id) $this->setexpired($id);
+    $items = $this->db->getitems("class = '$class'");
+    if (count($items) == 0) return;
+    $cache = $this->cache;
+    $page = $this->page;
+    $this->page = 1;
+    foreach ($items as $item) {
+      $cache->delete($this->getcachefile($item));
+    }
+    $this->page = $page;
   }
   
   public function addredir($from, $to) {
@@ -2465,6 +2443,93 @@ class turlmap extends titems {
   
 }//class
 
+class tlitememcache {
+  public $revision;
+  public $prefix;
+  
+  public function __construct() {
+    $this->revision =&litepublisher::$urlmap->data['revision'];
+    $this->prefix = litepublisher::$domain . ':cache:';
+  }
+  
+  public function clear() {
+    $this->revision++;
+    litepublisher::$urlmap->save();
+  }
+  
+  public function set($filename, $data) {
+    tfilestorage::$memcache->set($this->prefix . $filename,
+    serialize(array(
+    'revision' => $this->revision,
+    'time' => time(),
+    'data' => $data
+    )), false, 3600);
+  }
+  
+  public function get($filename) {
+    if ($s = tfilestorage::$memcache->get($this->prefix . $filename)) {
+      $a = unserialize($s);
+      if ($a['revision'] == $this->revision) {
+        return $a['data'];
+      } else {
+        tfilestorage::$memcache->delete($this->prefix . $filename);
+      }
+    }
+    return false;
+  }
+  
+  public function delete($filename) {
+    tfilestorage::$memcache->delete($this->prefix . $filename);
+  }
+  
+  public function exists($filename) {
+    return !!tfilestorage::$memcache->get($this->prefix . $filename);
+  }
+  
+}//class
+
+class tfilecache {
+  
+  public function clear() {
+    $path = litepublisher::$paths->cache;
+    if ( $h = @opendir($path)) {
+      while(FALSE !== ($filename = @readdir($h))) {
+        if (($filename == '.') || ($filename == '..') || ($filename == '.svn')) continue;
+        $file = $path. $filename;
+        if (is_dir($file)) {
+          tfiler::delete($file . DIRECTORY_SEPARATOR, true, true);
+        } else {
+          unlink($file);
+        }
+      }
+      closedir($h);
+    }
+  }
+  
+  public function set($filename, $data) {
+    $fn = litepublisher::$paths->cache . $filename;
+    file_put_contents($fn, $data);
+    @chmod($fn, 0666);
+  }
+  
+  
+  public function get($filename) {
+    $fn = litepublisher::$paths->cache . $filename;
+    if (file_exists($fn)) return  file_get_contents($fn);
+    return false;
+  }
+  
+  public function delete($filename) {
+    $fn = litepublisher::$paths->cache . $filename;
+    if (file_exists($fn)) unlink($fn);
+  }
+  
+  public function exists($filename) {
+    return file_exists(litepublisher::$paths->cache . $filename);
+  }
+  
+}//class
+
 //interfaces.php
 interface itemplate {
   public function request($arg);
@@ -2521,7 +2586,6 @@ class tusers extends titems {
     $this->basename = 'users';
     $this->table = 'users';
     $this->grouptable = 'usergroup';
-    $this->autoid = 1;
   }
   
   public function res2items($res) {
@@ -2537,6 +2601,7 @@ class tusers extends titems {
     return $result;
   }
   
+  /*
   public function getitem($id) {
     if ($id == 1) return array(
     'email' =>litepublisher::$options->email,
@@ -2551,6 +2616,7 @@ class tusers extends titems {
     
     return parent::getitem($id);
   }
+  */
   
   public function add(array $values) {
     return tusersman::i()->add($values);
@@ -2574,6 +2640,7 @@ class tusers extends titems {
   }
   
   public function delete($id) {
+    if ($id == 1) return;
     $this->getdb($this->grouptable)->delete('iduser = ' .(int)$id);
     tuserpages::i()->delete($id);
     $this->getdb('comments')->update("status = 'deleted'", "author = $id");
@@ -2685,12 +2752,12 @@ class tpullitems extends tdata {
   }
   
   public function getfilename($idpull) {
-    return litepublisher::$paths->cache . $this->basename . '.pull.' . $idpull;
+    return $this->basename . '.pull.' . $idpull;
   }
   
   public function loadpull($idpull) {
-    if (tfilestorage::loadvar($this->getfilename($idpull), $v)) {
-      $this->pull[$idpull] = $v;
+    if ($s = litepublisher::$urlmap->get($this->getfilename($idpull))) {
+      $this->pull[$idpull] = unserialize($s);
     } else {
       $this->pull[$idpull] = array();
     }
@@ -2704,7 +2771,7 @@ class tpullitems extends tdata {
   }
   
   public function savemodified($idpull) {
-    return tfilestorage::savevar($this->getfilename($idpull), $this->pull[$idpull]);
+    litepublisher::$urlmap->cache->set($this->getfilename($idpull), serialize($this->pull[$idpull]));
   }
   
   public function getidpull($id) {

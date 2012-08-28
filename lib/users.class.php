@@ -34,7 +34,7 @@ class tusers extends titems {
     return $result;
   }
   
-/*
+  /*
   public function getitem($id) {
     if ($id == 1) return array(
     'email' =>litepublisher::$options->email,
@@ -49,8 +49,8 @@ class tusers extends titems {
     
     return parent::getitem($id);
   }
-*/  
-
+  */
+  
   public function add(array $values) {
     return tusersman::i()->add($values);
   }
@@ -73,7 +73,7 @@ class tusers extends titems {
   }
   
   public function delete($id) {
-if ($id == 1) return;
+    if ($id == 1) return;
     $this->getdb($this->grouptable)->delete('iduser = ' .(int)$id);
     tuserpages::i()->delete($id);
     $this->getdb('comments')->update("status = 'deleted'", "author = $id");

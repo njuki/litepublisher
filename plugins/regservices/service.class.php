@@ -207,7 +207,7 @@ class tregserviceuser extends titems {
   
   public function add($id, $service, $uid) {
     if (($id == 0) || ($service == '') || ($uid == '')) return;
-    $this->db->insert_a(array(
+    $this->db->insert(array(
     'id' => $id,
     'service' => $service,
     'uid' => $uid

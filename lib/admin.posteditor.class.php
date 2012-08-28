@@ -56,8 +56,10 @@ class tposteditor extends tadminmenu {
     $categories = tcategories::i();
     $categories->loadall();
     $html = tadminhtml::i();
+    $html->push_section('editor');
     $result = $html->categorieshead();
     $result .= self::getsubcategories(0, $items);
+    $html->pop_section();
     return str_replace("'", '"', $result);
   }
   

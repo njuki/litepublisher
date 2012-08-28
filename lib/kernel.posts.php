@@ -409,7 +409,7 @@ class tpost extends titem implements  itemplate {
     if ($this->childtable) {
       $this->beforedb();
       $this->childdata['id'] = $id;
-      $this->getdb($this->childtable)->insert_a($this->childdata);
+      $this->getdb($this->childtable)->insert($this->childdata);
     }
     return $id;
   }
@@ -943,7 +943,7 @@ class tpost extends titem implements  itemplate {
     $this->data['pages'][] = $s;
     $this->data['pagescount'] = count($this->data['pages']);
     if ($this->id > 0) {
-      $this->getdb('pages')->insert_a(array(
+      $this->getdb('pages')->insert(array(
       'id' => $this->id,
       'page' => $this->data['pagescount'] -1,
       'content' => $s
@@ -1479,7 +1479,7 @@ class tposttransform  {
     }
     $db = $post->db;
     $id = $db->add($values);
-    $post->rawdb->insert_a(array(
+    $post->rawdb->insert(array(
     'id' => $id,
     'created' => sqldate(),
     'modified' => sqldate(),
@@ -1488,7 +1488,7 @@ class tposttransform  {
     
     $db->table = 'pages';
     foreach ($post->data['pages'] as $i => $content) {
-      $db->insert_a(array('id' => $id, 'page' => $i,         'content' => $content));
+      $db->insert(array('id' => $id, 'page' => $i,         'content' => $content));
     }
     
     return $id;
@@ -1515,7 +1515,7 @@ class tposttransform  {
     $db->table = 'pages';
     $db->iddelete($post->id);
     foreach ($post->data['pages'] as $i => $content) {
-      $db->insert_a(array('id' => $post->id, 'page' => $i, 'content' => $content));
+      $db->insert(array('id' => $post->id, 'page' => $i, 'content' => $content));
     }
     */
   }
@@ -2114,7 +2114,7 @@ class ttagcontent extends tdata {
     $this->items[$id] = $item;
     if ($this->owner->dbversion) {
       $item['id'] = $id;
-      $this->db->insert($item);
+      $this->db->addupdate($item);
     } else {
       tfilestorage::savevar($this->getfilename($id), $item);
     }

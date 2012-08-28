@@ -32,7 +32,10 @@ $users->db->insert_a($item);
 
   $users->setgroups(1, array(1));
 
-tjsmerger::i()->addtext('default', 'pretty',
+
+$js = tjsmerger::i();
+$js->lock();
+$js->addtext('default', 'pretty',
   '$(document).ready(function() {
     $("a[rel^=\'prettyPhoto\']").prettyPhoto({
       social_tools: false
@@ -41,5 +44,15 @@ tjsmerger::i()->addtext('default', 'pretty',
       social_tools: false
     });
   });');
-  
+
+$aj = tajaxposteditor ::i();
+if (($v = $aj->visual) && $aj->ajaxvisual) {
+tlocal::admin();
+        $js->addtext('posteditor', 'visual', sprintf(
+        '$(document).ready(function() {
+          litepubl.posteditor.init_visual_link("%s", %s);
+        });', litepublisher::$site->files . $v, json_encode(tlocal::get('editor', 'loadvisual')))
+        );
+}
+ $js->unlock(); 
 }
