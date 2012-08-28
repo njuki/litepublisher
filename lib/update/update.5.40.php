@@ -4,8 +4,9 @@ function update540() {
 litepublisher::$urlmap->data['revision'] = 0;
 litepublisher::$urlmap->save();
 
-litepublisher::$classes->add('tlitememcache', 'urlmap.class.php');
-litepublisher::$classes->add('tfilecache', 'urlmap.class.php');
+litepublisher::$classes->items['tlitememcache'] = array('urlmap.class.php', '');
+litepublisher::$classes->items['tfilecache'] = array('urlmap.class.php', '');
+litepublisher::$classes->save();
 
 $m = tmediaparser::i();
 $m->data['clipbounds'] = false;
