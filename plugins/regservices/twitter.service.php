@@ -57,11 +57,14 @@ class ttwitterregservice extends tregservice {
     if ($tokens  = $oauth->getaccesstoken()) {
       if ($r = $oauth->get_data('https://api.twitter.com/1/account/verify_credentials.json')) {
         $info = json_decode($r);
-        return $this->adduser(array(
+        $id = $this->adduser(array(
         'uid' => $info->id,
         'name' => $info->name,
         'website' => 'http://twitter.com/account/redirect_by_id?id='.$info->id_str
         ));
+
+$this->onadd($id, $info);
+return $id;
       }
     }
     

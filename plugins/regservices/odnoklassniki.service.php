@@ -68,11 +68,14 @@ class todnoklassnikiservice extends tregservice {
       if ($r = self::http_post('http://api.odnoklassniki.ru/fb.do', $params)) {
         $js = json_decode($r);
         if (!isset($js->error)) {
-          return $this->adduser(array(
+          $id = $this->adduser(array(
           'uid' => $js->uid,
           'name' => $js->name,
           'website' => isset($js->link) ? $js->link : ''
           ));
+
+$this->onadd($id, $js);
+return $id;
         }
       }
     }
