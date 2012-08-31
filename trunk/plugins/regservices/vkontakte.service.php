@@ -43,12 +43,15 @@ class tvkontakteregservice extends tregservice {
       if ($r = http::get('https://api.vk.com/method/getProfiles?uids=' . $tokens->user_id . '&access_token=' . $tokens->access_token)) {
         $js = json_decode($r);
         $info = $js->response[0];
-        return $this->adduser(array(
+        $id = $this->adduser(array(
         'service' => $this->name,
         'uid' => $info->uid,
         'name' => $info->first_name.' '.$info->last_name,
         'website' => 'http://vk.com/id'.$info->uid
         ));
+
+$this->onadd($id, $info);
+return $id;
       }
     }
     

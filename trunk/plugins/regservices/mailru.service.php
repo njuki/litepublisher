@@ -64,12 +64,15 @@ class tmailruregservice extends tregservice {
       if ($r = http::get('http://www.appsmail.ru/platform/api?' . http_build_query($params))) {
         $js = json_decode($r);
         $info = $js[0];
-        return $this->adduser(array(
+        $id = $this->adduser(array(
         'uid' => $info->uid,
         'email' => isset($info->email) ? $info->email : '',
         'name' => $info->nick,
         'website' => isset($info->link) ? $info->link : ''
         ));
+
+$this->onadd($id, $info);
+return $id;
       }
     }
     

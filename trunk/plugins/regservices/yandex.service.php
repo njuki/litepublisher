@@ -42,13 +42,16 @@ class tyandexregservice extends tregservice {
       $tokens  = json_decode($resp);
       if ($r = http::get('https://api-yaru.yandex.ru/me/?format=json&oauth_token=' . $tokens->access_token)) {
         $info = json_decode($r);
-        return $this->adduser(array(
+        $id = $this->adduser(array(
         'service' => $this->name,
         'uid' => $info->id,
         'email' => isset($info->email) ? $info->email : '',
         'name' => $info->name,
         'website' => isset($info->links) && isset($info->links->www) ? $info->links->www : ''
         ));
+
+$this->onadd($id, $info);
+return $id;
       }
     }
     
