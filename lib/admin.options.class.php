@@ -193,6 +193,7 @@ class Tadminoptions extends tadminmenu {
       $home->invertorder = isset($invertorder);
       $home->includecats = tadminhtml::check2array('category-');
       $home->excludecats = tadminhtml::check2array('exclude_category-');
+$home->postschanged();
       $home->unlock();
       
       $menus = tmenus::i();
