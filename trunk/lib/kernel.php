@@ -2756,7 +2756,7 @@ class tpullitems extends tdata {
   }
   
   public function loadpull($idpull) {
-    if ($s = litepublisher::$urlmap->get($this->getfilename($idpull))) {
+    if ($s = litepublisher::$urlmap->cache->get($this->getfilename($idpull))) {
       $this->pull[$idpull] = unserialize($s);
     } else {
       $this->pull[$idpull] = array();

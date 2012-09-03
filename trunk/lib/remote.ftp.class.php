@@ -189,10 +189,8 @@ class tftpfiler extends tremotefiler {
   
   private function parselisting($line) {
     static $is_windows;
-    if ( is_null($is_windows) )
-    $is_windows = strpos( strtolower(ftp_systype($this->handle)), 'win') !== false;
-    
-if ( $is_windows && preg_match("/([0-9]{2})-([0-9]{2})-([0-9]{2}) +([0-9]{2}):([0-9]{2})(AM|PM) +([0-9]+|<DIR>) +(.+)/", $line, $lucifer) ) {
+    if ( is_null($is_windows) ) $is_windows = strpos( strtolower(ftp_systype($this->handle)), 'win') !== false;
+    if ( $is_windows && preg_match("/([0-9]\x7b2\x7d)-([0-9]\x7b2\x7d)-([0-9]\x7b2\x7d) +([0-9]\x7b2\x7d):([0-9]\x7b2\x7d)(AM|PM) +([0-9]+|<DIR>) +(.+)/", $line, $lucifer) ) {
       $b = array();
   if ( $lucifer[3] < 70 ) { $lucifer[3] +=2000; } else { $lucifer[3] += 1900; } // 4digit year fix
       $b['isdir'] = ($lucifer[7]=="<DIR>");

@@ -1897,10 +1897,12 @@ class tcommontags extends titems implements  itemplate {
   public function getsorted($parent, $sortname, $count) {
     $count = (int) $count;
     if ($sortname == 'count') $sortname = 'itemscount';
-    if (!in_array($sortname, array('title', 'itemscount', 'id'))) $sortname = 'title';
+    if (!in_array($sortname, array('title', 'itemscount', 'customorder', 'id'))) $sortname = 'title';
     
     if ($this->dbversion) {
-      $limit  = $sortname == 'itemscount' ? "order by $this->thistable.itemscount desc" :"order by $this->thistable.$sortname asc";
+      $limit  = $sortname == 'itemscount' ?
+      "order by $this->thistable.$sortname desc" :
+      "order by $this->thistable.$sortname asc";
       if ($count > 0) $limit .= " limit $count";
       return $this->select($parent == -1 ? '' : "$this->thistable.parent = $parent", $limit);
     }
