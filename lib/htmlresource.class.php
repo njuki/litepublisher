@@ -333,6 +333,18 @@ class tadminhtml {
     }
     return $result;
   }
+
+public static function cacheini($filename) {
+$datafile = sprintf('cacheini.%s.php', md5($filename));
+if ($s = litepublisher::$urlmap->get($datafile)) {
+if (is_string($s)) return unserialize($s);
+return $s;
+} else {
+$ini = parse_ini_file($filename, true);
+litepublisher::$urlmap->cache->set($datafile, $ini);
+return $ini;
+}
+}
   
 }//class
 

@@ -568,12 +568,12 @@ class tfilecache {
   
   public function set($filename, $data) {
     $fn = litepublisher::$paths->cache . $filename;
+if (!is_string($data)) $data = serialize($data);
     file_put_contents($fn, $data);
     @chmod($fn, 0666);
   }
   
-  
-  public function get($filename) {
+    public function get($filename) {
     $fn = litepublisher::$paths->cache . $filename;
     if (file_exists($fn)) return  file_get_contents($fn);
     return false;

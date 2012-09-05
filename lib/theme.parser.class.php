@@ -158,6 +158,9 @@ class tthemeparser extends tevents {
   public function getfile($filename, $about) {
     $s = file_get_contents($filename);
     if ($s === false) return $this->error(sprintf('Error read "%s" file', $filename));
+//strip utf8 signature
+$utf = "\xEF\xBB\xBF";
+if (strbegin($s, $utf)) $s = substr($s, strlen($utf));
     $s = str_replace(array("\r\n", "\r", "\n\n"), "\n", $s);
     $s = preg_replace('/%%([a-zA-Z0-9]*+)_(\w\w*+)%%/', '\$$1.$2', $s);
     $s = strtr($s, array(
