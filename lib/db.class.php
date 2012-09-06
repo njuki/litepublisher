@@ -50,7 +50,7 @@ class tdatabase {
   /*
   public function __destruct() {
     if (is_object($this)) {
-      if (is_resource($this->mysqli)) mysql_close($this->mysqli);
+      if (is_object($this->mysqli)) $this->mysqli->close();;
       $this->mysqli = false;
     }
   }
@@ -86,7 +86,7 @@ class tdatabase {
       }
     }
     if ($this->result == false) {
-      $this->doerror(mysql_error($this->mysqli));
+      $this->doerror($this->mysqli->error);
     }
     return $this->result;
   }
