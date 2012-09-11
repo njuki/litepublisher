@@ -39,11 +39,11 @@ class tregservices extends titems {
       if ($service->valid()) {
         //$icon = $service->icon ? sprintf('<img src="%s%s" alt="%s" height="32" width="32" />', $iconurl, $service->icon, $service->title) : '';
         //$widget .= sprintf('<li><a href="%s=%s&backurl=" class="$name-regservice">%s%s</a></li>', $url, $name, $icon, $service->title);
-        $widget .= "<li><a href=\"$ur=$name&backurl=\" class=\"$name-regservice\">$service->title</a></li>";
+        $widget .= "<li><a href=\"$ur=$name&backurl=\"><span class=\"$name-regservice\"></span>$service->title</a></li>";
       }
     }
     $widget = str_replace('&', '&amp;', $widget);
-    $this->widget = $this->widget_title . sprintf('<ul>%s</ul>', $widget);
+    $this->widget = $this->widget_title . sprintf('<ul class="regservices">%s</ul>', $widget);
     $this->save();
     
     $admin = tadminlogin::i();

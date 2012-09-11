@@ -13,6 +13,10 @@ function tregservicesInstall($self) {
   $name = basename(dirname(__file__));
   $about = tplugins::getabout($name);
   $self->lock();
+
+$css = tcssmerger::i();
+$css->addstyle("/plugins/$name/regservice.min.css");
+
   $self->dirname = $name;
   $self->widget_title  = sprintf('<h4>%s</h4>', $about['widget_title']);
   litepublisher::$classes->add('tregservice', 'service.class.php', $name);
@@ -56,6 +60,7 @@ function tregservicesInstall($self) {
 }
 
 function tregservicesUninstall($self) {
+$name = basename(dirname(__file__));
   tcommentform::i()->unbind($self);
   turlmap::unsub($self);
   foreach ($self->items as $id => $classname) {
@@ -69,4 +74,7 @@ function tregservicesUninstall($self) {
   
   tusers::i()->unbind('tregserviceuser');
   tdbmanager::i()->deletetable('regservices');
+
+$css = tcssmerger::i();
+$css->deletestyle("/plugins/$name/regservice.min.css");
 }
