@@ -39,7 +39,15 @@
   window.set_cookie = function(name, value, expires){
   $.cookie(name, value, { expires: 3650});
   };
-  
+
+window.$ready = function(fn) {
+$(document).ready(fn);
+};
+
+window.erralert = function(e) {
+ alert('error ' + e.message);
+};
+
   $.extend({
     load_script: function( url, callback ) {
       return $.ajax({

@@ -72,7 +72,7 @@
             if (r == false) return self.error(lang.comments.notmoderated);
             $(status == "hold" ? options.hold : options.comments).append($(options.comment  + id));
             self.setenabled(true);
-        } catch(e) { alert('error ' + e.message); }
+        } catch(e) {erralert(e);}
         })
         .fail( function(jq, textStatus, errorThrown) {
           self.error(lang.comments.notmoderated);
@@ -85,7 +85,7 @@
       $.litejson({method: "comment_getraw", id: id}, function(resp){
           try {
             self.edit(id, resp.rawcontent);
-        } catch(e) { alert('error ' + e.message); }
+        } catch(e) {erralert(e);}
         })
         .fail( function(jq, textStatus, errorThrown) {
           self.error(lang.comments.errorrecieved);
@@ -127,7 +127,7 @@
               $(cc).html(r.content);
               self.restore_submit();
               location.hash = cc.substring(1);
-          } catch (e) { alert(e.message); }
+        } catch(e) {erralert(e);}
           })
           .fail( function(jq, textStatus, errorThrown) {
             $(":input", form).removeAttr("disabled");
@@ -135,7 +135,7 @@
             self.restore_submit();
           });
           
-      } catch (e) { alert(e.message); }
+        } catch(e) {erralert(e);}
         return false;
       });
     },
@@ -163,7 +163,7 @@
           }
           $(options.comments).after(r.items);
           self.create_buttons(options.hold);
-      } catch(e) { alert('error ' + e.message); }
+        } catch(e) {erralert(e);}
       })
       .fail( function(jq, textStatus, errorThrown) {
         self.error(lang.comments.errorrecieved);

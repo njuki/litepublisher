@@ -128,6 +128,6 @@
   $(document).ready(function() {
     try {
       litepubl.posteditor  = new litepubl.Posteditor();
-  } catch(e) { alert('error ' + e.message); }
+        } catch(e) {erralert(e);}
   });
 }(jQuery, document, window));

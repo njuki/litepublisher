@@ -138,7 +138,7 @@
           this.send();
           return false;
         }
-    } catch(e) { alert(e.message); }
+        } catch(e) {erralert(e);}
     }
     
   });

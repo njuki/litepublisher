@@ -33,7 +33,7 @@
         });
         
         this.init_upload();
-    } catch(e) { alert('error ' + e.message); }
+        } catch(e) {erralert(e);}
     },
     
     init_templates: function() {
@@ -57,7 +57,7 @@
     $.litejson({method: "files_getpost", idpost: ltoptions.idpost}, function (r) {
         try {
           self.set_uploaded(r);
-      } catch(e) { alert('error ' + e.message); }
+        } catch(e) {erralert(e);}
       })
       .fail( function(jq, textStatus, errorThrown) {
         $.messagebox(lang.dialog.error, jq.responseText);
@@ -182,7 +182,7 @@
         
         $("#current-files .file-items").append(this.get_fileitem(idfile));
         $("#new-files .file-items").append(this.get_fileitem(idfile));
-    } catch(e) { alert('error ' + e.message); }
+        } catch(e) {erralert(e);}
     },
     
     setborders: function(uipanel) {
