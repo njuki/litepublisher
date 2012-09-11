@@ -1,11 +1,13 @@
-#container li {
-    background: url(/plugins/regservice/icons/all.png) no-repeat top left;
+.regservices span {
+    background: url(/plugins/regservices/icons/all.png) no-repeat top left;
+width: 32px;
+height: 32px;
 }
 
-.facebook-regservice{ background-position: 0 0; width: 32px; height: 32px; } 
-.google-regservice{ background-position: 0 -33px; width: 32px; height: 32px; } 
-.mailru-regservice{ background-position: 0 -66px; width: 32px; height: 32px; } 
-.odnoklassniki-regservice{ background-position: 0 -99px; width: 32px; height: 32px; } 
-.twitter-regservice{ background-position: 0 -132px; width: 32px; height: 32px; } 
-.vkontakte-regservice{ background-position: 0 -165px; width: 32px; height: 32px; } 
-.yandex-regservice{ background-position: 0 -198px; width: 32px; height: 32px; } 
+.facebook-regservice{ background-position: 0 0;}
+.google-regservice{ background-position: 0 -33px;}
+.mailru-regservice{ background-position: 0 -66px;}
+.odnoklassniki-regservice{ background-position: 0 -99px;}
+.twitter-regservice{ background-position: 0 -132px;}
+.vkontakte-regservice{ background-position: 0 -165px;}
+.yandex-regservice{ background-position: 0 -198px;}
