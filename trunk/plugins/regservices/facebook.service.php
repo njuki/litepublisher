@@ -51,9 +51,9 @@ class tfacebookregservice extends tregservice {
         'name' => $info->name,
         'website' => isset($info->link) ? $info->link : ''
         ));
-
-$this->onadd($id, $info);
-return $id;
+        
+        $this->onadd($id, $info);
+        return $id;
       }
     }
     

@@ -73,9 +73,9 @@ class todnoklassnikiservice extends tregservice {
           'name' => $js->name,
           'website' => isset($js->link) ? $js->link : ''
           ));
-
-$this->onadd($id, $js);
-return $id;
+          
+          $this->onadd($id, $js);
+          return $id;
         }
       }
     }

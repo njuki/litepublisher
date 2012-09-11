@@ -62,9 +62,9 @@ class ttwitterregservice extends tregservice {
         'name' => $info->name,
         'website' => 'http://twitter.com/account/redirect_by_id?id='.$info->id_str
         ));
-
-$this->onadd($id, $info);
-return $id;
+        
+        $this->onadd($id, $info);
+        return $id;
       }
     }
     

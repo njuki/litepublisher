@@ -16,7 +16,7 @@ class tregservice extends tplugin {
   
   protected function create() {
     parent::create();
-$this->addevents('onadd');
+    $this->addevents('onadd');
     $this->data['name'] = 'service';
     $this->data['title'] = 'service';
     $this->data['icon'] = '';

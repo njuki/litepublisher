@@ -37,8 +37,9 @@ class tregservices extends titems {
     foreach ($this->items as $name => $classname) {
       $service = getinstance($classname);
       if ($service->valid()) {
-        $icon = $service->icon ? sprintf('<img src="%s%s" alt="%s" height="32" width="32" />', $iconurl, $service->icon, $service->title) : '';
-        $widget .= sprintf('<li><a href="%s=%s&backurl=">%s%s</a></li>', $url, $name, $icon, $service->title);
+        //$icon = $service->icon ? sprintf('<img src="%s%s" alt="%s" height="32" width="32" />', $iconurl, $service->icon, $service->title) : '';
+        //$widget .= sprintf('<li><a href="%s=%s&backurl=" class="$name-regservice">%s%s</a></li>', $url, $name, $icon, $service->title);
+        $widget .= "<li><a href=\"$ur=$name&backurl=\" class=\"$name-regservice\">$service->title</a></li>";
       }
     }
     $widget = str_replace('&', '&amp;', $widget);
