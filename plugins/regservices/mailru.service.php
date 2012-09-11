@@ -70,9 +70,9 @@ class tmailruregservice extends tregservice {
         'name' => $info->nick,
         'website' => isset($info->link) ? $info->link : ''
         ));
-
-$this->onadd($id, $info);
-return $id;
+        
+        $this->onadd($id, $info);
+        return $id;
       }
     }
     
