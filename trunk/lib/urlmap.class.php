@@ -248,6 +248,7 @@ class turlmap extends titems {
       $template = ttemplate::i();
       $s = $template->request($context);
     }
+
     eval('?>'. $s);
     if ($this->cache_enabled && $context->cache) {
       $this->cache->set($this->getcachefile($item), $s);
