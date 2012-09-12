@@ -18,7 +18,13 @@
         dataType: "json",
         cache: true
       });
-    }
+    },
+
+dump: function(obj) {
+var s = '';
+for (var prop in obj) s = s + prop + " = " + obj[prop] + "\n";
+alert(s);
+}
   };
   
   window.get_get=  function (name) {

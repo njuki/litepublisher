@@ -5,7 +5,7 @@
 * and GPL (gpl.txt) licenses.
 **/
 
-(function ($, window) {
+(function ($, litepubl, window) {
   litepubl.Uploader = Class.extend({
     progressbar: "#progressbar",
     maxsize: "100",
@@ -135,4 +135,4 @@
     }
     
   });
-}(jQuery, window));
+}(jQuery, litepubl, window));

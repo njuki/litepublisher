@@ -22,7 +22,7 @@ margin: 5px 0 0 5px;
 div.file-toolbar:after {clear:both;content:'.';display:block;height:0;visibility:hidden}
 
 .file-toolbar  a {
-    background: url(//js/litepublisher/icons/all.png) no-repeat 0 0;
+    background: url(../icons/all.png) no-repeat 0 0;
 display: bblock;
 float: left;
 		overflow:hidden; 

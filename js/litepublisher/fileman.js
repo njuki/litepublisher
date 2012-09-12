@@ -5,7 +5,7 @@
 * and GPL (gpl.txt) licenses.
 **/
 
-(function ($, document, window) {
+(function ($, litepubl, document, window) {
   litepubl.Fileman = Class.extend({
   items: {},
     curr: [],
@@ -85,7 +85,7 @@
       if (count < 1) return;
       var tabs = $("#posteditor-files-tabs");
       for (var i =1; i <= count; i++) {
-    $(this.tml.tab.replace('{{index}}', i)).appendTo(tabs).data("page", i).data("files", "empty");
+    $(this.tml.tab.replace('%%index%%', i)).appendTo(tabs).data("page", i).data("files", "empty");
         tabs.tabs( "add" , "#filepage-" + i, i);
       }
     },
@@ -272,4 +272,4 @@
     }
     
   });//fileman
-}(jQuery, document, window));
+}(jQuery, litepubl, document, window));
