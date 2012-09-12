@@ -50,7 +50,6 @@ class tlocal {
     isset($this->ini['default'][$name]);
   }
   
-  
   public function __call($name, $args) {
     return strtr ($this->__get($name), $args->data);
   }
