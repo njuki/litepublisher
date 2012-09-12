@@ -15,8 +15,27 @@ height:172px;
 
 .file-toolbar {
 display: block;
+		overflow:hidden; 
 margin: 5px 0 0 5px;
 }
+
+div.file-toolbar:after {clear:both;content:'.';display:block;height:0;visibility:hidden}
+
+.file-toolbar  a {
+    background: url(//js/litepublisher/icons/all.png) no-repeat 0 0;
+display: bblock;
+float: left;
+		overflow:hidden; 
+width: 24px;
+height: 24px;
+margin: 5px;
+}
+
+a.add-toolbutton{ background-position: 0 0;  } 
+a.left-toolbutton{ background-position: 0 -25px;  } 
+a.right-toolbutton{ background-position: 0 -50px;  } 
+a.delete-toolbutton{ background-position: 0 -75px;  } 
+a.property-toolbutton{ background-position: 0 -100px;  } 
 
 .file-content {
 display: block;
