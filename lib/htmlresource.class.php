@@ -333,14 +333,14 @@ class tadminhtml {
     }
     return $result;
   }
-
-public static function cacheini($filename) {
-$datafile = tlocal::getcachedir() . sprintf('cacheini.%s.php', md5($filename));
+  
+  public static function cacheini($filename) {
+    $datafile = tlocal::getcachedir() . sprintf('cacheini.%s.php', md5($filename));
     if (tfilestorage::loadvar($datafile, $ini) && is_array($ini)) return $ini;
-$ini = parse_ini_file($filename, true);
+    $ini = parse_ini_file($filename, true);
     tfilestorage::savevar($datafile, $ini);
-return $ini;
-}
+    return $ini;
+  }
   
 }//class
 

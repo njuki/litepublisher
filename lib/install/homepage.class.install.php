@@ -20,7 +20,7 @@ function thomepageInstall($self) {
   $menus->idhome = $menus->add($self);
   $menus->unlock();
   
-  if (dbversion) tposts::i()->addevent('changed', get_class($self), 'postschanged');
+  tposts::i()->addevent('changed', get_class($self), 'postschanged');
 }
 
 function thomepageUninstall($self) {

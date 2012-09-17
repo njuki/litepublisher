@@ -102,8 +102,8 @@ class tposteditor extends tadminmenu {
     if ($this->idpost == 0){
       return parent::gettitle();
     } else {
-if (isset(tlocal::admin()->ini[$this->name]['editor'])) return tlocal::get($this->name, 'editor');
-return tlocal::get('editor', 'editor');
+      if (isset(tlocal::admin()->ini[$this->name]['editor'])) return tlocal::get($this->name, 'editor');
+      return tlocal::get('editor', 'editor');
     }
   }
   
