@@ -127,7 +127,7 @@
               $(cc).html(r.content);
               self.restore_submit();
               location.hash = cc.substring(1);
-        } catch(e) {erralert(e);}
+          } catch(e) {erralert(e);}
           })
           .fail( function(jq, textStatus, errorThrown) {
             $(":input", form).removeAttr("disabled");
@@ -135,7 +135,7 @@
             self.restore_submit();
           });
           
-        } catch(e) {erralert(e);}
+      } catch(e) {erralert(e);}
         return false;
       });
     },
@@ -163,7 +163,7 @@
           }
           $(options.comments).after(r.items);
           self.create_buttons(options.hold);
-        } catch(e) {erralert(e);}
+      } catch(e) {erralert(e);}
       })
       .fail( function(jq, textStatus, errorThrown) {
         self.error(lang.comments.errorrecieved);

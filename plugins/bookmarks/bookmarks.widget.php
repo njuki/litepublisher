@@ -38,7 +38,7 @@ class tbookmarkswidget extends tlinkswidget  {
     '$title' => urlencode(ttemplate::i()->title)
     );
     $redirlink = litepublisher::$site->url . $this->redirlink . litepublisher::$site->q . strtr('url=$url&title=$title&id=', $a);
-    $iconurl = litepublisher::$site->files . sprintf('/plugins/%s/icons/', basename(dirname(__file__)));
+    $iconurl = litepublisher::$site->files . '/plugins/bookmarks/icons/';
     $theme = ttheme::i();
     $tml = $theme->getwidgetitem('links', $sidebar);
     $args = targs::i();
