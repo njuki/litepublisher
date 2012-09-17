@@ -566,6 +566,14 @@ class tadminhtml {
     return $result;
   }
   
+  public static function cacheini($filename) {
+    $datafile = tlocal::getcachedir() . sprintf('cacheini.%s.php', md5($filename));
+    if (tfilestorage::loadvar($datafile, $ini) && is_array($ini)) return $ini;
+    $ini = parse_ini_file($filename, true);
+    tfilestorage::savevar($datafile, $ini);
+    return $ini;
+  }
+  
 }//class
 
 class tautoform {
@@ -1103,7 +1111,8 @@ class tposteditor extends tadminmenu {
     if ($this->idpost == 0){
       return parent::gettitle();
     } else {
-      return tlocal::get($this->name, 'editor');
+      if (isset(tlocal::admin()->ini[$this->name]['editor'])) return tlocal::get($this->name, 'editor');
+      return tlocal::get('editor', 'editor');
     }
   }
   

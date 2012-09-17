@@ -50,7 +50,7 @@ class tdatabase {
   /*
   public function __destruct() {
     if (is_object($this)) {
-      if (is_resource($this->mysqli)) mysql_close($this->mysqli);
+      if (is_object($this->mysqli)) $this->mysqli->close();;
       $this->mysqli = false;
     }
   }
@@ -86,7 +86,7 @@ class tdatabase {
       }
     }
     if ($this->result == false) {
-      $this->doerror(mysql_error($this->mysqli));
+      $this->doerror($this->mysqli->error);
     }
     return $this->result;
   }
@@ -251,7 +251,8 @@ class tdatabase {
   }
   
   public function getitem($id) {
-    return $this->query("select * from $this->prefix$this->table where id = $id limit 1")->fetch_assoc();
+    if ($r = $this->query("select * from $this->prefix$this->table where id = $id limit 1")) return $r->fetch_assoc();
+    return false;
   }
   
   public function finditem($where) {
@@ -2188,6 +2189,7 @@ class turlmap extends titems {
       $template = ttemplate::i();
       $s = $template->request($context);
     }
+    
     eval('?>'. $s);
     if ($this->cache_enabled && $context->cache) {
       $this->cache->set($this->getcachefile($item), $s);
@@ -2508,10 +2510,10 @@ class tfilecache {
   
   public function set($filename, $data) {
     $fn = litepublisher::$paths->cache . $filename;
+    if (!is_string($data)) $data = serialize($data);
     file_put_contents($fn, $data);
     @chmod($fn, 0666);
   }
-  
   
   public function get($filename) {
     $fn = litepublisher::$paths->cache . $filename;

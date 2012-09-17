@@ -1,12 +1,13 @@
 <?php
 
 function update541() {
-tposts::i()->changed = thomepage::i()->postschanged;
-thomepage::i()->postschanged();
+$h = thomepage::i();
+tposts::i()->addevent('changed', get_class($h), 'postschanged');
+$h->postschanged();
 
-if (litepublisher::$classes->exists('tregservices')) }
+if (litepublisher::$classes->exists('tregservices')) {
 tregservices::i()->update_widget();
 $css = tcssmerger::i();
-$css->addstyle('/plugins/regservices/regservice.min.css');
+$css->addstyle('/plugins/regservices/regservices.min.css');
 }
 }

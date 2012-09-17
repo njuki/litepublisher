@@ -50,7 +50,6 @@ class tlocal {
     isset($this->ini['default'][$name]);
   }
   
-  
   public function __call($name, $args) {
     return strtr ($this->__get($name), $args->data);
   }
@@ -515,7 +514,7 @@ class ttemplate extends tevents_storage {
   }
   
   private function getltoptions() {
-    return sprintf('<script type="text/javascript">var ltoptions = %s;</script>', json_encode($this->ltoptions));
+    return sprintf('<script type="text/javascript">window.ltoptions = %s;</script>', json_encode($this->ltoptions));
   }
   
   public function getjavascript($filename) {

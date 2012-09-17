@@ -251,8 +251,8 @@ class tdatabase {
   }
   
   public function getitem($id) {
-if ($r = $this->query("select * from $this->prefix$this->table where id = $id limit 1")) return $r->fetch_assoc();
-return false;
+    if ($r = $this->query("select * from $this->prefix$this->table where id = $id limit 1")) return $r->fetch_assoc();
+    return false;
   }
   
   public function finditem($where) {
