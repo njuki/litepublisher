@@ -9,6 +9,7 @@
   $.pollclient = {
     enabled: true,
     voted : [],
+    
     init: function () {
       $(".pollitem").click(function() {
         var self =$(this);
@@ -31,7 +32,11 @@
       if (!this.enabled) return false;
       this.setenabled(false);
       this.voted.push(idpoll);
-    $.litejson({method: "polls_sendvote", idpoll: idpoll, vote: vote}, function(r) {
+      $.litejson({
+        method: "polls_sendvote",
+        idpoll: idpoll,
+        vote: vote
+      },function(r) {
         if (r.code == "error") return $.pollclient.error(r.message);
         $.pollclient.setenabled(true);
         //update results
@@ -63,11 +68,12 @@
       $(":input", ".activepoll").attr("disabled", "disabled");
     }
   }
+  
 };
 
 $(document).ready(function() {
   //only logged users
-  if (get_cookie("litepubl_user_id")) $.pollclient.init();
+  if ($.cookie("litepubl_user_id")) $.pollclient.init();
 });
 
-})( jQuery );
+})(jQuery );

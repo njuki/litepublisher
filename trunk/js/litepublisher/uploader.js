@@ -35,8 +35,8 @@
     init: function() {
       this.items = new Array();
       var url = ltoptions.uploadurl == undefined ? ltoptions.url: ltoptions.uploadurl;
-      var cookie = get_cookie("litepubl_user");
-      if (cookie == "") cookie = get_cookie("admin");
+      var cookie = $.cookie("litepubl_user");
+      if (!cookie) cookie = $.cookie("admin");
       var self = this;
       var settings = {
         flash_url : url + "/js/swfupload/swfupload.swf",
@@ -44,7 +44,7 @@
         // prevent_swf_caching: false,
         post_params: {
           litepubl_user: cookie,
-          litepubl_user_id: get_cookie("litepubl_user_id"),
+          litepubl_user_id: $.cookie("litepubl_user_id"),
           method: "files_upload"
         },
         

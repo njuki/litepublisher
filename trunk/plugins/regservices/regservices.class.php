@@ -33,13 +33,10 @@ class tregservices extends titems {
   public function update_widget() {
     $widget = '';
     $url = litepublisher::$site->url . $this->url . litepublisher::$site->q . 'id';
-    $iconurl = litepublisher::$site->files . '/plugins/' . $this->dirname . '/icons/';
     foreach ($this->items as $name => $classname) {
       $service = getinstance($classname);
       if ($service->valid()) {
-        //$icon = $service->icon ? sprintf('<img src="%s%s" alt="%s" height="32" width="32" />', $iconurl, $service->icon, $service->title) : '';
-        //$widget .= sprintf('<li><a href="%s=%s&backurl=" class="$name-regservice">%s%s</a></li>', $url, $name, $icon, $service->title);
-        $widget .= "<a href=\"$ur=$name&backurl=\" class=\"$name-regservice\" title=\"$service->title\"></a>";
+        $widget .= "<a href=\"$url=$name&backurl=\" class=\"$name-regservice\" title=\"$service->title\"></a>";
       }
     }
     $widget = str_replace('&', '&amp;', $widget);

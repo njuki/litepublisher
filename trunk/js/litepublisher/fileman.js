@@ -33,7 +33,7 @@
         });
         
         this.init_upload();
-        } catch(e) {erralert(e);}
+    } catch(e) {erralert(e);}
     },
     
     init_templates: function() {
@@ -57,7 +57,7 @@
     $.litejson({method: "files_getpost", idpost: ltoptions.idpost}, function (r) {
         try {
           self.set_uploaded(r);
-        } catch(e) {erralert(e);}
+      } catch(e) {erralert(e);}
       })
       .fail( function(jq, textStatus, errorThrown) {
         $.messagebox(lang.dialog.error, jq.responseText);
@@ -85,7 +85,7 @@
       if (count < 1) return;
       var tabs = $("#posteditor-files-tabs");
       for (var i =1; i <= count; i++) {
-    $(this.tml.tab.replace('%%index%%', i)).appendTo(tabs).data("page", i).data("files", "empty");
+        $(this.tml.tab.replace('%%index%%', i)).appendTo(tabs).data("page", i).data("files", "empty");
         tabs.tabs( "add" , "#filepage-" + i, i);
       }
     },
@@ -182,7 +182,7 @@
         
         $("#current-files .file-items").append(this.get_fileitem(idfile));
         $("#new-files .file-items").append(this.get_fileitem(idfile));
-        } catch(e) {erralert(e);}
+    } catch(e) {erralert(e);}
     },
     
     setborders: function(uipanel) {

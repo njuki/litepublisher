@@ -19,12 +19,12 @@
         cache: true
       });
     },
-
-dump: function(obj) {
-var s = '';
-for (var prop in obj) s = s + prop + " = " + obj[prop] + "\n";
-alert(s);
-}
+    
+    dump: function(obj) {
+      var s = '';
+      for (var prop in obj) s = s + prop + " = " + obj[prop] + "\n";
+      alert(s);
+    }
   };
   
   window.get_get=  function (name) {
@@ -45,15 +45,15 @@ alert(s);
   window.set_cookie = function(name, value, expires){
   $.cookie(name, value, { expires: 3650});
   };
-
-window.$ready = function(fn) {
-$(document).ready(fn);
-};
-
-window.erralert = function(e) {
- alert('error ' + e.message);
-};
-
+  
+  window.$ready = function(fn) {
+    $(document).ready(fn);
+  };
+  
+  window.erralert = function(e) {
+    alert('error ' + e.message);
+  };
+  
   $.extend({
     load_script: function( url, callback ) {
       return $.ajax({
