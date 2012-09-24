@@ -122,7 +122,7 @@ class tregservice extends tplugin {
     return 403;
   }
   
-  public function adduser(array $item) {
+  public function adduser(array $item, $rawdata) {
     $users = tusers::i();
     $reguser =tregserviceuser::i();
     if (!empty($item['email'])) {
@@ -176,6 +176,8 @@ class tregservice extends tplugin {
     if (litepublisher::$options->ingroup('admin')) setcookie('litepubl_user_flag', 'true', $expired, litepublisher::$site->subdir . '/', false);
     
     setcookie('litepubl_regservice', $this->name, $expired, litepublisher::$site->subdir . '/', false);
+
+          $this->onadd($id, $rawdata);
     
     if (isset($this->sessdata['comuser'])) {
       return tcommentform::i()->processform($this->sessdata['comuser'], true);
@@ -187,7 +189,7 @@ class tregservice extends tplugin {
       $user = $users->getitem($id);
       $backurl =  tusergroups::i()->gethome($user['idgroups'][0]);
     }
-    
+
     return litepublisher::$urlmap->redir($backurl);
   }
   

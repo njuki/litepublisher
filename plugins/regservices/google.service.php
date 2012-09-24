@@ -43,17 +43,14 @@ class tgoogleregservice extends tregservice {
       $tokens  = json_decode($resp);
       if ($r = http::get('https://www.googleapis.com/oauth2/v1/userinfo?access_token=' . $tokens->access_token)) {
         $info = json_decode($r);
-        $id = $this->adduser(array(
+return $this->adduser(array(
         //'uid' => $info->id, session depended
         'service' => $this->name,
         'email' => isset($info->email) ? $info->email : '',
         'name' => $info->name,
         'website' => isset($info->link) ? $info->link : ''
-        ));
-        
-        $this->onadd($id, $info);
-        return $id;
-      }
+        ), $info);
+             }
     }
     
     return $this->errorauth();
