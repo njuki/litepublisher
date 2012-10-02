@@ -91,14 +91,18 @@ class tjsonserver extends titems {
       //dumpvar($result);
       //tfiler::log(var_export($result, true));
     } catch (Exception $e) {
+if (litepublisher::$debug) {
       litepublisher::$options->handexception($e);
       throw new Exception(litepublisher::$options->errorlog);
-      if (403 == $e->getCode()) {
+}
+
+if (403 == $e->getCode()) {
         $result = '<?php Header(\'HTTP/1.0 403 Forbidden\', true, 403); ?>';
       } else {
         //500 error
         $result = '<?php header(\'HTTP/1.1 500 Internal Server Error\', true, 500); ?>';
       }
+
       $result .= $e->getMessage();
       return $result;
     }
@@ -111,12 +115,12 @@ class tjsonserver extends titems {
     header('Connection: close');
     header('Content-Length: ". strlen($js) . "');
     header('Content-Type: text/javascript');
-    //header('Content-Type: application/json');
     header('Date: ".date('r') . "');
     Header( 'Cache-Control: no-cache, must-revalidate');
     Header( 'Pragma: no-cache');
-    header('X-Pingback: ". litepublisher::$site->url . "/rpc.xml');
     ?>" . $js;
+
+    //header('Content-Type: application/json');
   }
   
   public function addevent($name, $class, $func) {
