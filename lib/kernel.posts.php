@@ -98,37 +98,24 @@ class titemsposts extends titems {
     $items = array_unique($items);
     // delete zero item
     if (false !== ($i = array_search(0, $items))) array_splice($items, $i, 1);
-    if (dbversion) {
-      $db = $this->db;
-      $old = $this->getitems($idpost);
-      $add = array_diff($items, $old);
-      $delete = array_diff($old, $items);
-      
-      if (count($delete) > 0) {
-        $db->delete("post = $idpost and item in (" . implode(', ', $delete) . ')');
-      }
-      
-      if (count($add) > 0) {
-        $vals = array();
-        foreach ($add as $iditem) {
-          $vals[]= "($idpost, $iditem)";
-        }
-        $db->exec("INSERT INTO $this->thistable (post, item) values " . implode(',', $vals) );
-      }
-      
-      return array_merge($old, $add);
-    } else {
-      if (!isset($this->items[$idpost])) {
-        $this->items[$idpost] = $items;
-        $this->save();
-        return $items;
-      } else {
-        $result = array_merge($this->items[$idpost], array_diff($items, $this->items[$idpost]));
-        $this->items[$idpost] = $items;
-        $this->save();
-        return $result;
-      }
+    $db = $this->db;
+    $old = $this->getitems($idpost);
+    $add = array_diff($items, $old);
+    $delete = array_diff($old, $items);
+    
+    if (count($delete) > 0) {
+      $db->delete("post = $idpost and item in (" . implode(', ', $delete) . ')');
     }
+    
+    if (count($add) > 0) {
+      $vals = array();
+      foreach ($add as $iditem) {
+        $vals[]= "($idpost, $iditem)";
+      }
+      $db->exec("INSERT INTO $this->thistable (post, item) values " . implode(',', $vals) );
+    }
+    
+    return array_merge($old, $add);
   }
   
   public function getitems($idpost) {
@@ -723,7 +710,11 @@ class tpost extends titem implements  itemplate {
   }
   
   public function setfiles(array $list) {
-    $this->data['files'] = array_unique($list);
+    $list = array_unique($list);
+    array_delete_value($list, '');
+    array_delete_value($list, false);
+    array_delete_value($list, null);
+    $this->data['files'] = $list;
   }
   
   public function getfilelist() {

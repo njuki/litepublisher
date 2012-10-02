@@ -72,8 +72,8 @@
       
       this.set_tabs_count(r.count);
       for (var id in r.files) {
-        this.curr.push(id);
         this.items[id] = r.files[id];
+        if (r.files[id].parent == "0") this.curr.push(id);
       }
       
       this.setpage("#current-files", r.files);
@@ -207,7 +207,7 @@
     del: function(idfile, holder) {
       var i = $.inArray(idfile, this.curr);
       if (i < 0) return;
-      delete this.curr[i];
+      this.curr.splice(i, 1);
       var parent = holder.parent();
       holder.remove();
       this.setborders(parent);
