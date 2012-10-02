@@ -98,7 +98,6 @@ class titemsposts extends titems {
     $items = array_unique($items);
     // delete zero item
     if (false !== ($i = array_search(0, $items))) array_splice($items, $i, 1);
-    if (dbversion) {
       $db = $this->db;
       $old = $this->getitems($idpost);
       $add = array_diff($items, $old);
@@ -117,18 +116,6 @@ class titemsposts extends titems {
       }
       
       return array_merge($old, $add);
-    } else {
-      if (!isset($this->items[$idpost])) {
-        $this->items[$idpost] = $items;
-        $this->save();
-        return $items;
-      } else {
-        $result = array_merge($this->items[$idpost], array_diff($items, $this->items[$idpost]));
-        $this->items[$idpost] = $items;
-        $this->save();
-        return $result;
-      }
-    }
   }
   
   public function getitems($idpost) {
