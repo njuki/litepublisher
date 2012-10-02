@@ -113,7 +113,7 @@ class tadminusers extends tadminmenu {
         if (!is_numeric($value)) continue;
         $id = (int) $value;
         $users->delete($id);
-//if (litepublisher::$classes->exists('tregservices')) $users->getdb('
+        //if (litepublisher::$classes->exists('tregservices')) $users->getdb('
       }
       return;
     }

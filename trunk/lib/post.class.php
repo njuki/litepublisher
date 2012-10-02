@@ -551,10 +551,10 @@ class tpost extends titem implements  itemplate {
   }
   
   public function setfiles(array $list) {
-$list = array_unique($list);
-array_delete_value($list, '');
-array_delete_value($list, false);
-array_delete_value($list, null);
+    $list = array_unique($list);
+    array_delete_value($list, '');
+    array_delete_value($list, false);
+    array_delete_value($list, null);
     $this->data['files'] = $list;
   }
   

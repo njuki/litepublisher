@@ -98,24 +98,24 @@ class titemsposts extends titems {
     $items = array_unique($items);
     // delete zero item
     if (false !== ($i = array_search(0, $items))) array_splice($items, $i, 1);
-      $db = $this->db;
-      $old = $this->getitems($idpost);
-      $add = array_diff($items, $old);
-      $delete = array_diff($old, $items);
-      
-      if (count($delete) > 0) {
-        $db->delete("post = $idpost and item in (" . implode(', ', $delete) . ')');
+    $db = $this->db;
+    $old = $this->getitems($idpost);
+    $add = array_diff($items, $old);
+    $delete = array_diff($old, $items);
+    
+    if (count($delete) > 0) {
+      $db->delete("post = $idpost and item in (" . implode(', ', $delete) . ')');
+    }
+    
+    if (count($add) > 0) {
+      $vals = array();
+      foreach ($add as $iditem) {
+        $vals[]= "($idpost, $iditem)";
       }
-      
-      if (count($add) > 0) {
-        $vals = array();
-        foreach ($add as $iditem) {
-          $vals[]= "($idpost, $iditem)";
-        }
-        $db->exec("INSERT INTO $this->thistable (post, item) values " . implode(',', $vals) );
-      }
-      
-      return array_merge($old, $add);
+      $db->exec("INSERT INTO $this->thistable (post, item) values " . implode(',', $vals) );
+    }
+    
+    return array_merge($old, $add);
   }
   
   public function getitems($idpost) {

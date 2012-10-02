@@ -91,18 +91,18 @@ class tjsonserver extends titems {
       //dumpvar($result);
       //tfiler::log(var_export($result, true));
     } catch (Exception $e) {
-if (litepublisher::$debug) {
-      litepublisher::$options->handexception($e);
-      throw new Exception(litepublisher::$options->errorlog);
-}
-
-if (403 == $e->getCode()) {
+      if (litepublisher::$debug) {
+        litepublisher::$options->handexception($e);
+        throw new Exception(litepublisher::$options->errorlog);
+      }
+      
+      if (403 == $e->getCode()) {
         $result = '<?php Header(\'HTTP/1.0 403 Forbidden\', true, 403); ?>';
       } else {
         //500 error
         $result = '<?php header(\'HTTP/1.1 500 Internal Server Error\', true, 500); ?>';
       }
-
+      
       $result .= $e->getMessage();
       return $result;
     }
@@ -119,7 +119,7 @@ if (403 == $e->getCode()) {
     Header( 'Cache-Control: no-cache, must-revalidate');
     Header( 'Pragma: no-cache');
     ?>" . $js;
-
+    
     //header('Content-Type: application/json');
   }
   
