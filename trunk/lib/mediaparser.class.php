@@ -159,7 +159,7 @@ class tmediaparser extends tevents {
   public function addfile($filename, $tempfilename, $title, $description, $keywords, $overwrite) {
     $files = tfiles::i();
     $hash =$files->gethash(litepublisher::$paths->files . $tempfilename);
-    if (($id = $files->IndexOf('hash', $hash) ||
+    if (($id = $files->IndexOf('hash', $hash)) ||
       ($id = $this->getdb('imghashes')->findid('hash = '. dbquote($hash)))) {
       @unlink(litepublisher::$paths->files . $tempfilename);
       return $id;
@@ -414,9 +414,9 @@ $srcfilename = litepublisher::$paths->files . $filename;
     $fullname = $dir . self::getunique($dir, basename($fullname));
 
     if ($source = self::readimage($srcfilename)) {
-if (self::createthumb($source, $fullname, $this->previewwidth, $this->previewheight, $this->ratio, $this->clipbounds))) {
+if (self::createthumb($source, $fullname, $this->previewwidth, $this->previewheight, $this->ratio, $this->clipbounds)) {
     @chmod($fullname, 0666);
-$info = getimagesize($fullname)) {
+$info = getimagesize($fullname);
     $destfilename = substr($fullname, strlen(litepublisher::$paths->files));
     $result = $this->getdefaultvalues(str_replace(DIRECTORY_SEPARATOR, '/', $destfilename));
     $result['media'] = 'image';
