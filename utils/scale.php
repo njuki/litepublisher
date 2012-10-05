@@ -7,7 +7,7 @@
 define('litepublisher_mode', 'xmlrpc');
 include('index.php');
 litepublisher::$debug = true;
-
+set_time_limit(300);
 $p = tmediaparser::i();
 if (($p->maxwidth == 0) || ($p->maxheight == 0)) die('0 max sizes');
 $files = tfiles::i();
@@ -55,6 +55,7 @@ $p->getdb('imghashes')->insert(array(
 ));
 
 echo $item['size'], ' : ', $upd['size'], '<br>';
+flush();
 }
 }
 } echo "not found big images<br>";
