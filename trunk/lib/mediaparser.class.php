@@ -21,6 +21,8 @@ class tmediaparser extends tevents {
     $this->data['clipbounds'] = false;
     $this->data['previewwidth'] = 120;
     $this->data['previewheight'] = 120;
+    $this->data['maxwidth'] = 0;
+    $this->data['maxheight'] = 0;
     $this->data['audiosize'] = 128;
   }
   
@@ -157,7 +159,8 @@ class tmediaparser extends tevents {
   public function addfile($filename, $tempfilename, $title, $description, $keywords, $overwrite) {
     $files = tfiles::i();
     $hash =$files->gethash(litepublisher::$paths->files . $tempfilename);
-    if ($id = $files->IndexOf('hash', $hash)) {
+    if (($id = $files->IndexOf('hash', $hash) ||
+      ($id = $this->getdb('imghashes')->findid('hash = '. dbquote($hash)))) {
       @unlink(litepublisher::$paths->files . $tempfilename);
       return $id;
     }
@@ -171,7 +174,6 @@ class tmediaparser extends tevents {
     'keywords' => $keywords
     );
     
-    $files->lock();
     $id = $files->additem($item);
     if ($this->enablepreview && ($preview = $this->createpreview($info))) {
       $preview = $preview + array(
@@ -184,10 +186,29 @@ class tmediaparser extends tevents {
       );
       $preview['parent'] = $id;
       $idpreview = $files->additem($preview);
-      
-      $files->setvalue($id, 'preview', $idpreview);
+
+//update hash and size because when create thumbnail we can scale original image      
+$upd = array(
+'id' => $id, 
+'preview'=> $idpreview,
+);
+
+$srcfilename = $info['filename'];
+if (('image' == $item['media']) && ($info2 = getimagesize($srcfilename))) {
+      $upd['mime'] = $info2['mime'];
+      $upd['width'] = $info2[0];
+      $upd['height'] = $info2[1];
+$upd['hash'] = $files->gethash($srcfilename);
+    $upd['size'] = filesize($srcfilename);
+
+$this->getdb('imghashes')->insert(array(
+'id' => $id,
+'hash' => $item['hash'],
+));
+}
+
+      $files->db->updateassoc($upd);
     }
-    $files->unlock();
     $this->added($id);
     return $id;
   }
@@ -344,6 +365,13 @@ class tmediaparser extends tevents {
   
   public static function createsnapshot($srcfilename, $destfilename, $x, $y, $ratio, $clipbounds) {
     if (!($source = self::readimage($srcfilename))) return false;
+$r = self::createthumb($source, $destfilename, $x, $y, $ratio, $clipbounds);
+    imagedestroy($source);
+return $r;
+}
+
+  public static function createthumb($source, $destfilename, $x, $y, $ratio, $clipbounds) {
+if (!$source) return false;
     $sourcex = imagesx($source);
     $sourcey = imagesy($source);
     if (($x >= $sourcex) && ($y >= $sourcey)) return false;
@@ -368,12 +396,13 @@ class tmediaparser extends tevents {
     imagecopyresampled($dest, $source, 0, 0, 0, 0, $x, $y, $sourcex, $sourcey);
     imagejpeg($dest, $destfilename, 100);
     imagedestroy($dest);
-    imagedestroy($source);
     return true;
   }
   
   public function getsnapshot($filename) {
+$result = false;
     $filename = str_replace('/', DIRECTORY_SEPARATOR, $filename);
+$srcfilename = litepublisher::$paths->files . $filename;
     $parts = pathinfo($filename);
     $destfilename = $parts['filename'] . '.preview.jpg';
     if (!empty($parts['dirname']) && ($parts['dirname'] != '.')) {
@@ -383,16 +412,41 @@ class tmediaparser extends tevents {
     $fullname = litepublisher::$paths->files . $destfilename ;
     $dir = dirname($fullname) . DIRECTORY_SEPARATOR;
     $fullname = $dir . self::getunique($dir, basename($fullname));
-    
-    if (!self::createsnapshot(litepublisher::$paths->files . $filename, $fullname, $this->previewwidth, $this->previewheight, $this->ratio, $this->clipbounds)) return false;
+
+    if ($source = self::readimage($srcfilename)) {
+if (self::createthumb($source, $fullname, $this->previewwidth, $this->previewheight, $this->ratio, $this->clipbounds))) {
     @chmod($fullname, 0666);
-    $info = getimagesize($fullname);
+$info = getimagesize($fullname)) {
     $destfilename = substr($fullname, strlen(litepublisher::$paths->files));
     $result = $this->getdefaultvalues(str_replace(DIRECTORY_SEPARATOR, '/', $destfilename));
     $result['media'] = 'image';
     $result['mime'] = $info['mime'];
     $result['width'] = $info[0];
     $result['height'] = $info[1];
+}
+
+    $sourcex = imagesx($source);
+    $sourcey = imagesy($source);
+$x = $this->maxwidth;
+$y = $this->maxheight;
+if (($y > 0) && ($x > 0) && (($sourcex > $x) || ($sourcey > $y))) {
+      $ratio = $sourcex / $sourcey;
+      if ($x/$y > $ratio) {
+        $x = $y *$ratio;
+      } else {
+        $y = $x /$ratio;
+      }
+
+    $dest = imagecreatetruecolor($x, $y);
+    imagecopyresampled($dest, $source, 0, 0, 0, 0, $x, $y, $sourcex, $sourcey);
+    imagejpeg($dest, $srcfilename, 100);
+    imagedestroy($dest);
+@chmod($srcfilename, 0666);
+}
+
+    imagedestroy($source);
+}
+
     return $result;
   }
   
