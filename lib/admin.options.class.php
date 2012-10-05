@@ -112,6 +112,9 @@ class Tadminoptions extends tadminmenu {
       $args->clipbounds = $parser->clipbounds;
       $args->previewwidth = $parser->previewwidth;
       $args->previewheight = $parser->previewheight;
+
+      $args->maxwidth = $parser->maxwidth;
+      $args->maxheight = $parser->maxheight;
       
       $args->video_width = litepublisher::$site->video_width;
       $args->video_height = litepublisher::$site->video_height;
@@ -246,8 +249,12 @@ class Tadminoptions extends tadminmenu {
       $parser->enablepreview = isset($enablepreview);
       $parser->ratio = isset($ratio);
       $parser->clipbounds = isset($clipbounds);
-      $parser->previewwidth = $previewwidth;
-      $parser->previewheight = $previewheight;
+      $parser->previewwidth = (int) trim($previewwidth);
+      $parser->previewheight = (int) trim($previewheight);
+
+      $parser->maxwidth = (int) trim($maxwidth);
+      $parser->maxheight = (int) trim($maxheight);
+
       $parser->save();
       
       litepublisher::$site->video_width = $video_width;
