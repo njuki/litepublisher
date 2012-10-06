@@ -30,7 +30,7 @@ $y = $p->maxheight;
 
     $dest = imagecreatetruecolor($x, $y);
     imagecopyresampled($dest, $source, 0, 0, 0, 0, $x, $y, $sourcex, $sourcey);
-    imagejpeg($dest, $srcfilename, 100);
+    imagejpeg($dest, $srcfilename, 95);
     imagedestroy($dest);
 @chmod($srcfilename, 0666);
     imagedestroy($source);
