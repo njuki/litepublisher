@@ -160,7 +160,7 @@ class tmediaparser extends tevents {
     $files = tfiles::i();
     $hash =$files->gethash(litepublisher::$paths->files . $tempfilename);
     if (($id = $files->IndexOf('hash', $hash)) ||
-      ($id = $this->getdb('imghashes')->findid('hash = '. dbquote($hash)))) {
+    ($id = $this->getdb('imghashes')->findid('hash = '. dbquote($hash)))) {
       @unlink(litepublisher::$paths->files . $tempfilename);
       return $id;
     }
@@ -186,27 +186,27 @@ class tmediaparser extends tevents {
       );
       $preview['parent'] = $id;
       $idpreview = $files->additem($preview);
-
-//update hash and size because when create thumbnail we can scale original image      
-$upd = array(
-'id' => $id, 
-'preview'=> $idpreview,
-);
-
-$srcfilename = $info['filename'];
-if (('image' == $item['media']) && ($info2 = getimagesize($srcfilename))) {
-      $upd['mime'] = $info2['mime'];
-      $upd['width'] = $info2[0];
-      $upd['height'] = $info2[1];
-$upd['hash'] = $files->gethash($srcfilename);
-    $upd['size'] = filesize($srcfilename);
-
-$this->getdb('imghashes')->insert(array(
-'id' => $id,
-'hash' => $item['hash'],
-));
-}
-
+      
+      //update hash and size because when create thumbnail we can scale original image
+      $upd = array(
+      'id' => $id,
+      'preview'=> $idpreview,
+      );
+      
+      $srcfilename = $info['filename'];
+      if (('image' == $item['media']) && ($info2 = getimagesize($srcfilename))) {
+        $upd['mime'] = $info2['mime'];
+        $upd['width'] = $info2[0];
+        $upd['height'] = $info2[1];
+        $upd['hash'] = $files->gethash($srcfilename);
+        $upd['size'] = filesize($srcfilename);
+        
+        $this->getdb('imghashes')->insert(array(
+        'id' => $id,
+        'hash' => $item['hash'],
+        ));
+      }
+      
       $files->db->updateassoc($upd);
     }
     $this->added($id);
@@ -365,13 +365,13 @@ $this->getdb('imghashes')->insert(array(
   
   public static function createsnapshot($srcfilename, $destfilename, $x, $y, $ratio, $clipbounds) {
     if (!($source = self::readimage($srcfilename))) return false;
-$r = self::createthumb($source, $destfilename, $x, $y, $ratio, $clipbounds);
+    $r = self::createthumb($source, $destfilename, $x, $y, $ratio, $clipbounds);
     imagedestroy($source);
-return $r;
-}
-
+    return $r;
+  }
+  
   public static function createthumb($source, $destfilename, $x, $y, $ratio, $clipbounds) {
-if (!$source) return false;
+    if (!$source) return false;
     $sourcex = imagesx($source);
     $sourcey = imagesy($source);
     if (($x >= $sourcex) && ($y >= $sourcey)) return false;
@@ -394,15 +394,15 @@ if (!$source) return false;
     
     $dest = imagecreatetruecolor($x, $y);
     imagecopyresampled($dest, $source, 0, 0, 0, 0, $x, $y, $sourcex, $sourcey);
-    imagejpeg($dest, $destfilename, 100);
+    imagejpeg($dest, $destfilename, 95);
     imagedestroy($dest);
     return true;
   }
   
   public function getsnapshot($filename) {
-$result = false;
+    $result = false;
     $filename = str_replace('/', DIRECTORY_SEPARATOR, $filename);
-$srcfilename = litepublisher::$paths->files . $filename;
+    $srcfilename = litepublisher::$paths->files . $filename;
     $parts = pathinfo($filename);
     $destfilename = $parts['filename'] . '.preview.jpg';
     if (!empty($parts['dirname']) && ($parts['dirname'] != '.')) {
@@ -412,41 +412,41 @@ $srcfilename = litepublisher::$paths->files . $filename;
     $fullname = litepublisher::$paths->files . $destfilename ;
     $dir = dirname($fullname) . DIRECTORY_SEPARATOR;
     $fullname = $dir . self::getunique($dir, basename($fullname));
-
+    
     if ($source = self::readimage($srcfilename)) {
-if (self::createthumb($source, $fullname, $this->previewwidth, $this->previewheight, $this->ratio, $this->clipbounds)) {
-    @chmod($fullname, 0666);
-$info = getimagesize($fullname);
-    $destfilename = substr($fullname, strlen(litepublisher::$paths->files));
-    $result = $this->getdefaultvalues(str_replace(DIRECTORY_SEPARATOR, '/', $destfilename));
-    $result['media'] = 'image';
-    $result['mime'] = $info['mime'];
-    $result['width'] = $info[0];
-    $result['height'] = $info[1];
-}
-
-    $sourcex = imagesx($source);
-    $sourcey = imagesy($source);
-$x = $this->maxwidth;
-$y = $this->maxheight;
-if (($y > 0) && ($x > 0) && (($sourcex > $x) || ($sourcey > $y))) {
-      $ratio = $sourcex / $sourcey;
-      if ($x/$y > $ratio) {
-        $x = $y *$ratio;
-      } else {
-        $y = $x /$ratio;
+      if (self::createthumb($source, $fullname, $this->previewwidth, $this->previewheight, $this->ratio, $this->clipbounds)) {
+        @chmod($fullname, 0666);
+        $info = getimagesize($fullname);
+        $destfilename = substr($fullname, strlen(litepublisher::$paths->files));
+        $result = $this->getdefaultvalues(str_replace(DIRECTORY_SEPARATOR, '/', $destfilename));
+        $result['media'] = 'image';
+        $result['mime'] = $info['mime'];
+        $result['width'] = $info[0];
+        $result['height'] = $info[1];
       }
-
-    $dest = imagecreatetruecolor($x, $y);
-    imagecopyresampled($dest, $source, 0, 0, 0, 0, $x, $y, $sourcex, $sourcey);
-    imagejpeg($dest, $srcfilename, 100);
-    imagedestroy($dest);
-@chmod($srcfilename, 0666);
-}
-
-    imagedestroy($source);
-}
-
+      
+      $sourcex = imagesx($source);
+      $sourcey = imagesy($source);
+      $x = $this->maxwidth;
+      $y = $this->maxheight;
+      if (($y > 0) && ($x > 0) && (($sourcex > $x) || ($sourcey > $y))) {
+        $ratio = $sourcex / $sourcey;
+        if ($x/$y > $ratio) {
+          $x = $y *$ratio;
+        } else {
+          $y = $x /$ratio;
+        }
+        
+        $dest = imagecreatetruecolor($x, $y);
+        imagecopyresampled($dest, $source, 0, 0, 0, 0, $x, $y, $sourcex, $sourcey);
+        imagejpeg($dest, $srcfilename, 95);
+        imagedestroy($dest);
+        @chmod($srcfilename, 0666);
+      }
+      
+      imagedestroy($source);
+    }
+    
     return $result;
   }
   
