@@ -113,8 +113,8 @@ class tfiles extends titems {
     
     parent::delete($id);
     if ($item['preview'] > 0) $this->delete($item['preview']);
-
-$this->getdb('imghashes')->delete("id = $id");
+    
+    $this->getdb('imghashes')->delete("id = $id");
     $this->changed();
     return true;
   }
