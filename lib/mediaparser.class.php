@@ -193,7 +193,7 @@ class tmediaparser extends tevents {
       'preview'=> $idpreview,
       );
       
-      $srcfilename = $info['filename'];
+      $srcfilename = litepublisher::$paths->files. str_replace('/', DIRECTORY_SEPARATOR, $info['filename']);
       if (('image' == $item['media']) && ($info2 = getimagesize($srcfilename))) {
         $upd['mime'] = $info2['mime'];
         $upd['width'] = $info2[0];
@@ -203,7 +203,7 @@ class tmediaparser extends tevents {
         
         $this->getdb('imghashes')->insert(array(
         'id' => $id,
-        'hash' => $item['hash'],
+        'hash' => $files->getvalue($id, 'hash'),
         ));
       }
       
