@@ -23,4 +23,11 @@ $js->lock();
   $js->add($section, '/js/litepublisher/admin.views.min.js');
   
 $js->unlock();
+
+$admin = tadminmenus::i();
+$admin->heads = str_replace(
+'$site.files/js/jquery/ui-$site.jqueryui_version/redmond/jquery-ui-$site.jqueryui_version.custom.css',
+'$site.files/js/jquery/ui-$site.jqueryui_version/redmond/jquery-ui-$site.jqueryui_version.custom.min.css',
+$admin->heads);
+$admin->save();
 }
