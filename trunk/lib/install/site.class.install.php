@@ -17,7 +17,7 @@ function tsiteInstall($self) {
   
   $site->home = '/';
   $site->keywords = "blog";
-  $site->jquery_version = '1.8.2';
+  $site->jquery_version = '1.8.3';
   $site->jqueryui_version = '1.9.0';
   $site->author = 'Admin';
   $site->video_width =450;

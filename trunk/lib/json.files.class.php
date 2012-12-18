@@ -63,7 +63,7 @@ class tjsonfiles extends tevents {
     $where = litepublisher::$options->ingroup('editor') ? '' : ' where author = ' . litepublisher::$options->user;
     $files = tfiles::i();
     return array(
-    'files' => $files->db->res2items($files->db->query("select * from $files->thistable $where order by id limit $from, $perpage"))
+    'files' => $files->db->res2items($files->db->query("select * from $files->thistable $where order by id desc limit $from, $perpage"))
     );
   }
   
