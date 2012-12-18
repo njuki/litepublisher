@@ -428,8 +428,8 @@ content.post.filelist.audio.player = [
 Видео: стоит простая ссылка на файл с видео, после которой примечательный html комментарий, в котором стоит тег $player. Рассмотрим детально. Ссылка с классом videofile будет обработана скриптом jquery, который заменит клик по файлу на видео проигрыватель, а html проигрывателя будет извлечен из html комментария. Код видео плеера ниже:
 
 content.post.filelist.video.player = [
-  <object type="application/x-shockwave-flash" data="$site.files/js/flowplayer/flowplayer-3.2.8.swf" width="$site.video_width" height="$site.video_height" id="videoplayer-$id" name="videoplayer-$id">
-  <param name="movie" value="$site.files/js/flowplayer/flowplayer-3.2.8.swf" />
+  <object type="application/x-shockwave-flash" data="$site.files/js/flowplayer/flowplayer-3.2.15.swf" width="$site.video_width" height="$site.video_height" id="videoplayer-$id" name="videoplayer-$id">
+  <param name="movie" value="$site.files/js/flowplayer/flowplayer-3.2.15.swf" />
   <param name="allowfullscreen" value="true" />
   <param name="allowscriptaccess" value="always" />
 <param name="flashvars" value='config={"clip":{"url":"$link"},"canvas":{"backgroundColor":"#112233"}}' />

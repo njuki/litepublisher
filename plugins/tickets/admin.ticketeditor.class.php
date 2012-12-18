@@ -15,7 +15,10 @@ class tticketeditor extends tposteditor {
   public function gethead() {
     $result = parent::gethead();
     $template = ttemplate::i();
-  $result .= $template->getready('$("#tabs, #contenttabs").tabs({ cache: true });');
+  $result .= $template->getready('
+//alert($("#tabs").parent().parent().html());
+//$("textarea:first").val($("#tabs").parent().parent().html());
+$("#tabs, #contenttabs").tabs({ cache: true });');
     return $result;
   }
   
