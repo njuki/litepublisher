@@ -114,7 +114,6 @@ class tadmincommentmanager extends tadminmenu {
     
     $mesgtabs = new tuitabs();
     $tc = ttemplatecomments::i();
-    dumpstr($tc->regaccount );
     foreach (array('logged', 'reqlogin', 'regaccount', 'guest', 'comuser', 'loadhold') as $name) {
       $args->$name = $tc->$name;
       $mesgtabs->add($lang->$name, "[editor=$name]");
