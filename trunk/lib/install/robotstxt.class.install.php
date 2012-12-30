@@ -25,5 +25,3 @@ function trobotstxtInstall($self) {
 function trobotstxtUninstall($self) {
   turlmap::unsub($self);
 }
-
-?>
