@@ -33,16 +33,10 @@ class Tadminoptions extends tadminmenu {
       $form->add($form->enabled, $form->services('editor'));
       break;
       
-      case 'robots':
-      $form = new tautoform(trobotstxt::i(), 'options', 'editrobot');
-      $form->add($form->text('editor'));
-      break;
-      
       case 'notfound404':
       $form = new tautoform(tnotfound404::i(), 'options', 'edit404');
       $form->add($form->notify, $form->text('editor'));
       break;
-      
       
       default:
       return false;
@@ -68,7 +62,7 @@ class Tadminoptions extends tadminmenu {
     $template = ttemplate::i();
     ttheme::$vars['template'] = $template;
     $result = '';
-    $args = targs::i();
+    $args = new targs();
     
     switch ($this->name) {
       case 'home':
@@ -146,13 +140,22 @@ class Tadminoptions extends tadminmenu {
       $args->litetags = $tags->lite;
       $args->parenttags = $tags->includeparents;
       $args->childtags = $tags->includechilds;
-      $lang = tlocal::i('options');
+      $lang = tlocal::admin('options');
       $args->formtitle = $lang->catstags;
       $html = $this->html;
       return $html->adminform('[checkbox=litearch]
       [checkbox=litecats] [checkbox=parentcats] [checkbox=childcats]
       [checkbox=litetags] [checkbox=parenttags] [checkbox=childtags]', $args) .
       $html->p->notecatstags;
+      
+      case 'robots':
+$args->robots = trobotstxt::i()->text;
+$args->prefetch = tprefetchtxt::i()->text;
+$tabs = new tuitabs();
+$tabs->add('robots.txt', '[editor=robots]');
+$tabs->add('prefetch.txt', '[editor=prefetch]');
+    return tuitabs::gethead() . $html->adminform($tabs->get(), $args);
+      break;
       
       case 'secure':
       $args->echoexception = $options->echoexception;
@@ -309,7 +312,17 @@ class Tadminoptions extends tadminmenu {
       $tags->includechilds = isset($childtags);
       $tags->save();
       break;
-      
+
+      case 'robots':
+$robo = trobotstxt::i();
+$robo->text = $robots;
+$robo->save();
+
+$pref = tprefetchtxt::i();
+$pref->text = $prefetch;
+$pref->save();
+break;      
+
       case 'secure':
       if (isset($_POST['oldpassword'])) {
         $h2 = $this->html->h2;
