@@ -9,7 +9,7 @@ $(document).ready(function() {
   $(document).on("click", "input[name^='checkbox-showcolumn-']", function() {
     var index = $(this).val();
     var sel = 'td:nth-child(' + index + '),th:nth-child(' + index + ')';
-    if ($(this).attr("checked")) {
+    if ($(this).prop("checked")) {
       $(sel).show();
     } else {
       $(sel).hide();
@@ -17,11 +17,11 @@ $(document).ready(function() {
   });
   
   $("input[name='invert_checkbox']").click(function() {
-    $(this).closest("form").find("input:checkbox").each(function() {
-      if ('togglecolumn' != $(this).attr('rel')) {
-        $(this).attr("checked", ! $(this).attr("checked"));
+    $(this).closest("form").find("input[type=checkbox]").each(function() {
+      if ('togglecolumn' != $(this).prop('rel')) {
+        $(this).prop("checked", ! $(this).prop("checked"));
       }
     });
-    $(this).attr("checked", false);
+    $(this).prop("checked", false);
   });
 });
