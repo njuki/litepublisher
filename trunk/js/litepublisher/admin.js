@@ -7,15 +7,15 @@
 
 $(document).ready(function() {
   $("input[rel='checkall']").click(function() {
-    $(this).closest("form").find("input:checkbox").attr("checked", true);
-    $(this).attr("checked", false);
+    $(this).closest("form").find("input[type=checkbox]").prop("checked", true);
+    $(this).prop("checked", false);
   });
   
   $("input[rel='invertcheck']").click(function() {
-    $(this).closest("form").find("input:checkbox").each(function() {
-      $(this).attr("checked", ! $(this).attr("checked"));
+    $(this).closest("form").find("input[type=checkbox]").each(function() {
+      $(this).prop("checked", ! $(this).prop("checked"));
     });
-    $(this).attr("checked", false);
+    $(this).prop("checked", false);
   });
   
 });

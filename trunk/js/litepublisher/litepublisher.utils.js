@@ -116,6 +116,13 @@
         }
       });
     }
-    
-  });
+
+      });
+
+$.fn.replaceComment= function(html) {
+var result = html == undefined ? $(this.get(0).nodeValue) : $(html);
+$(this).before(result).remove();
+return result;
+};
+
 }(jQuery, document, window));
