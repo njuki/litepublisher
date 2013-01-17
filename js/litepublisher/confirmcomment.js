@@ -80,9 +80,9 @@
     var values = {method: "comment_add"};
       var inputs = $(":input", this.options.form);
       inputs.each(function() {
-        var inp = $(this);
-        values[imp.attr("name")] = imp.val();
-        imp.attr("disabled", "disabled");
+        var self = $(this);
+        values[self.attr("name")] = self.val();
+        self.attr("disabled", "disabled");
       });
       
       var self = this;

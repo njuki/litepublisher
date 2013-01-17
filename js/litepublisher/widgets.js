@@ -53,8 +53,8 @@ $(document).ready(function() {
     widget_inline(this);
     return false;
   });
-
-    var a = '<a class="expandwidget" href="">' + lang.widgetlang.expand + '</a>';
+  
+  var a = '<a class="expandwidget" href="">' + lang.widgetlang.expand + '</a>';
   $(".inlinewidget, .ajaxwidget").each(function() {
     $(a).appendTo(this).one("click", function() {
       if ($(this).parent().hasClass("inlinewidget")) {
@@ -66,13 +66,13 @@ $(document).ready(function() {
       return false;
     })
     .click(function() {
-var self = $(this);
+      var self = $(this);
       self.toggleClass("expandwidget colapsewidget");
       self.text(self.hasClass("expandwidget") ? lang.widgetlang.expand : lang.widgetlang.colapse);
       return false;
     });
-      });
-
+  });
+  
   $(".widget-load").one("click", function() {
     var self = $(this);
     widget_load(this, self.data("idwidget"), self.data("sidebar"));
