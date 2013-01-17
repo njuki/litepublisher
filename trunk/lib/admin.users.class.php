@@ -74,12 +74,20 @@ class tadminusers extends tadminmenu {
     $count = $users->count;
     $from = $this->getfrom($perpage, $count);
     $where = '';
+$params = '';
     if (!empty($_GET['idgroup'])) {
       $idgroup = (int) tadminhtml::getparam('idgroup', 0);
       if ($groups->itemexists($idgroup)) {
         $grouptable = litepublisher::$db->prefix . $users->grouptable;
         $where =  "$users->thistable.id in (select iduser from $grouptable where idgroup = $idgroup)";
+$params = "idgroup=$idgroup";
       }
+} elseif ($search = trim(tadminhtml::getparam('search', ''))) {
+$params = 'search=' . urlencode($search);
+$search = dbquote($search);
+$where = "name like $search or email like $search ";
+    $count = $users->db->getcount($where);
+    $from = $this->getfrom($perpage, $count);
     }
     
     $items = $users->select($where, " order by id desc limit $from, $perpage");
@@ -100,7 +108,7 @@ class tadminusers extends tadminmenu {
     $result = $html->fixquote($result);
     
     $theme = ttheme::i();
-    $result .= $theme->getpages($this->url, litepublisher::$urlmap->page, ceil($count/$perpage));
+    $result .= $theme->getpages($this->url, litepublisher::$urlmap->page, ceil($count/$perpage), $params);
     return $result;
   }
   
