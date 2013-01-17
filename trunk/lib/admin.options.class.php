@@ -149,6 +149,8 @@ class Tadminoptions extends tadminmenu {
       $html->p->notecatstags;
       
       case 'robots':
+      $html = $this->html;
+$args->formtitle = 'robots.txt';
 $args->robots = trobotstxt::i()->text;
 $args->prefetch = tprefetchtxt::i()->text;
 $tabs = new tuitabs();
@@ -378,6 +380,7 @@ break;
       $menus->createitem($id, 'groups', 'admin', 'tadmingroups');
       $menus->createitem($id, 'options', 'admin', 'tadminuseroptions');
       $menus->createitem($id, 'perms', 'admin', 'tadminperms');
+      $menus->createitem($id, 'search', 'admin', 'tadminusersearch');
       
       $menus->createitem($menus->url2id('/admin/posts/'),
       'authorpage', 'author', 'tadminuserpages');
