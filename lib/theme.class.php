@@ -283,7 +283,7 @@ class ttheme extends tevents {
   
   public function getpages($url, $page, $count, $params = '') {
     if (!(($count > 1) && ($page >=1) && ($page <= $count)))  return '';
-    $args = targs::i();
+    $args = new targs();
     $args->count = $count;
     $from = 1;
     $to = $count;
