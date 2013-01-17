@@ -68,26 +68,33 @@ class tadminusers extends tadminmenu {
       
       $result .= $html->adminform($tabs->get(), $args);
     }
+    $args->search = '';
     
     //table
     $perpage = 20;
     $count = $users->count;
     $from = $this->getfrom($perpage, $count);
     $where = '';
-$params = '';
+    $params = '';
     if (!empty($_GET['idgroup'])) {
       $idgroup = (int) tadminhtml::getparam('idgroup', 0);
       if ($groups->itemexists($idgroup)) {
         $grouptable = litepublisher::$db->prefix . $users->grouptable;
         $where =  "$users->thistable.id in (select iduser from $grouptable where idgroup = $idgroup)";
-$params = "idgroup=$idgroup";
+        $params = "idgroup=$idgroup";
       }
-} elseif ($search = trim(tadminhtml::getparam('search', ''))) {
-$params = 'search=' . urlencode($search);
-$search = dbquote($search);
-$where = "name like $search or email like $search ";
-    $count = $users->db->getcount($where);
-    $from = $this->getfrom($perpage, $count);
+    } elseif ($search = trim(tadminhtml::getparam('search', ''))) {
+      $params = 'search=' . urlencode($search);
+      $args->search = $search;
+      $search = litepublisher::$db->escape($search);
+      $search = strtr($search, array(
+      '%' => '\%',
+      '_' => '\_'
+      ));
+      
+      $where = "name like '%$search%' or email like '%$search%' ";
+      $count = $users->db->getcount($where);
+      $from = $this->getfrom($perpage, $count);
     }
     
     $items = $users->select($where, " order by id desc limit $from, $perpage");
@@ -109,6 +116,8 @@ $where = "name like $search or email like $search ";
     
     $theme = ttheme::i();
     $result .= $theme->getpages($this->url, litepublisher::$urlmap->page, ceil($count/$perpage), $params);
+    
+    $result .= $html->searchform($args);
     return $result;
   }
   

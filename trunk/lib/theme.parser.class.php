@@ -86,13 +86,16 @@ class tthemeparser extends tevents {
       $theme->type = 'wordpress';
       break;
     }
-
-//save and restore lang section
-$lang = tlocal::i();
-$sect = $lang->section;    
+    
+    /*
+    //save and restore lang section
+    $lang = tlocal::i();
+    $sect = $lang->section;
+    */
+    
     $this->parsed($theme);
     if ($this->replacelang) $this->doreplacelang($theme);
-$lang->section = $sect;
+    //$lang->section = $sect;
     $theme->unlock();
     return true;
   }

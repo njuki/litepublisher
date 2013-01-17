@@ -14,7 +14,7 @@ function tforumInstall($self) {
   tlocalmerger::i()->addplugin($name);
   
   $lang = tlocal::admin('forum');
-
+  
   //prevent double create view
   $idview = 0;
   $views = tviews::i();
@@ -24,15 +24,15 @@ function tforumInstall($self) {
       break;
     }
   }
-
+  
   if (!$idview) {
     $view = new tview();
     $view->name = $lang->forum;
     $view->themename = 'forum';
     $idview = $views->addview($view);
   }
-
-$lang->section = 'forum';
+  
+  $lang->section = 'forum';
   $cats = tcategories::i();
   $idcat = $cats->add(0, $lang->forum);
   $cats->setvalue($idcat, 'includechilds', 1);

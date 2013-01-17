@@ -23,7 +23,7 @@ class tprefetchtxt extends titems {
     if (!in_array($value, $this->items)) {
       $this->items[] = $value;
       $this->save();
-     litepublisher::$urlmap->setexpired($this->idurl);
+      litepublisher::$urlmap->setexpired($this->idurl);
       $this->added($value);
     }
   }
@@ -33,20 +33,20 @@ class tprefetchtxt extends titems {
   }
   
   public function settext($value) {
-    $this->items = explode("\n", 
-trim(str_replace(array("\r\n", "\r"), "\n", $value)));
+    $this->items = explode("\n",
+    trim(str_replace(array("\r\n", "\r"), "\n", $value)));
     $this->save();
   }
   
   public function request($arg) {
-    $s = '<?php 
-header(\'Content-Type: text/plain\');
+    $s = '<?php
+    header(\'Content-Type: text/plain\');
     header(\'Last-Modified: ' . date('r') . '\');
     ?>';
-
+    
     $theme = ttheme::i();
-        $s .= $theme->parse($this->text);
-
+    $s .= $theme->parse($this->text);
+    
     return  $s;
   }
   

@@ -150,13 +150,13 @@ class Tadminoptions extends tadminmenu {
       
       case 'robots':
       $html = $this->html;
-$args->formtitle = 'robots.txt';
-$args->robots = trobotstxt::i()->text;
-$args->prefetch = tprefetchtxt::i()->text;
-$tabs = new tuitabs();
-$tabs->add('robots.txt', '[editor=robots]');
-$tabs->add('prefetch.txt', '[editor=prefetch]');
-    return tuitabs::gethead() . $html->adminform($tabs->get(), $args);
+      $args->formtitle = 'robots.txt';
+      $args->robots = trobotstxt::i()->text;
+      $args->prefetch = tprefetchtxt::i()->text;
+      $tabs = new tuitabs();
+      $tabs->add('robots.txt', '[editor=robots]');
+      $tabs->add('prefetch.txt', '[editor=prefetch]');
+      return tuitabs::gethead() . $html->adminform($tabs->get(), $args);
       break;
       
       case 'secure':
@@ -314,17 +314,17 @@ $tabs->add('prefetch.txt', '[editor=prefetch]');
       $tags->includechilds = isset($childtags);
       $tags->save();
       break;
-
+      
       case 'robots':
-$robo = trobotstxt::i();
-$robo->text = $robots;
-$robo->save();
-
-$pref = tprefetchtxt::i();
-$pref->text = $prefetch;
-$pref->save();
-break;      
-
+      $robo = trobotstxt::i();
+      $robo->text = $robots;
+      $robo->save();
+      
+      $pref = tprefetchtxt::i();
+      $pref->text = $prefetch;
+      $pref->save();
+      break;
+      
       case 'secure':
       if (isset($_POST['oldpassword'])) {
         $h2 = $this->html->h2;
