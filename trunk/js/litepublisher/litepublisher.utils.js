@@ -125,8 +125,7 @@
     return result;
   };
   
-  
-  $.fn.hoverclass = function(toggleclass) {
+    $.fn.hoverclass = function(toggleclass) {
 return $(this).mouseenter(function(){$(this).addClass(toggleclass);}).mouseleave(function(){$(this).removeClass(toggleclass);}); 
   };
   
