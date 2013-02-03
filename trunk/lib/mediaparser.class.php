@@ -23,7 +23,10 @@ class tmediaparser extends tevents {
     $this->data['previewheight'] = 120;
     $this->data['maxwidth'] = 0;
     $this->data['maxheight'] = 0;
-    $this->data['audiosize'] = 128;
+$this->data['quality_snapshot'] = 95;
+ $this->data['quality_original'] = 95;
+ 
+        $this->data['audiosize'] = 128;
   }
   
   public static function fixfilename($filename) {
@@ -394,7 +397,7 @@ class tmediaparser extends tevents {
     
     $dest = imagecreatetruecolor($x, $y);
     imagecopyresampled($dest, $source, 0, 0, 0, 0, $x, $y, $sourcex, $sourcey);
-    imagejpeg($dest, $destfilename, 95);
+    imagejpeg($dest, $destfilename, $this->quality_snapshot);
     imagedestroy($dest);
     return true;
   }
@@ -439,7 +442,7 @@ class tmediaparser extends tevents {
         
         $dest = imagecreatetruecolor($x, $y);
         imagecopyresampled($dest, $source, 0, 0, 0, 0, $x, $y, $sourcex, $sourcey);
-        imagejpeg($dest, $srcfilename, 95);
+        imagejpeg($dest, $srcfilename, $this->quality_original);
         imagedestroy($dest);
         @chmod($srcfilename, 0666);
       }
