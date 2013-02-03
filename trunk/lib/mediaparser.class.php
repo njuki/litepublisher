@@ -25,8 +25,9 @@ class tmediaparser extends tevents {
     $this->data['maxheight'] = 0;
 $this->data['quality_snapshot'] = 95;
  $this->data['quality_original'] = 95;
- 
-        $this->data['audiosize'] = 128;
+
+$this->data['audioext'] = 'mp3|wav ';
+$this->data['videoext'] = 'mp4|webm|flv|avi|mpg|mpeg';
   }
   
   public static function fixfilename($filename) {
@@ -267,7 +268,7 @@ $this->data['quality_snapshot'] = 95;
   public function getinfo($filename) {
     $realfile = litepublisher::$paths->files. str_replace('/', DIRECTORY_SEPARATOR, $filename);
     $result = $this->getdefaultvalues($filename);
-    if (preg_match('/\.(mp4|f4b|f4p|f4v|flv|avi|mpg|mpeg)$/', $filename)) {
+    if (preg_match("/\\.($this->videoext)\$/", $filename)) {
       $result['media'] = 'video';
       //todo get mime type
       $result['mime'] = 'unknown';
@@ -282,7 +283,7 @@ $this->data['quality_snapshot'] = 95;
       return $result;
     }
     
-    if (preg_match('/\.(mp3|wav)$/', $filename)) {
+    if (preg_match("/\\.($this->audioext)\$/", $filename)) {
       $result['media'] = 'audio';
       $result['mime'] = preg_match('/\.mp3$/', $filename) ? 'audio/mpeg' : 'audio/x-wave';
       if ($info = $this->getaudioinfo($filename)) {
