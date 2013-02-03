@@ -63,6 +63,8 @@ class Tadminoptions extends tadminmenu {
     ttheme::$vars['template'] = $template;
     $result = '';
     $args = new targs();
+            $lang = tlocal::admin('options');
+    $html = $this->html;
     
     switch ($this->name) {
       case 'home':
@@ -118,21 +120,24 @@ class Tadminoptions extends tadminmenu {
       $args->video_width = litepublisher::$site->video_width;
       $args->video_height = litepublisher::$site->video_height;
       
-            $lang = tlocal::admin('options');
-      $args->formtitle = $lang->catstags;
-      $html = $this->html;
+      $args->formtitle = $lang->files;
       return $html->adminform('
+      <h4>$lang.imagesize</h4>
+[text=maxwidth]
+[text=maxheight]
+[text=quality_original]
+
+      <h4>$lang.previewsize</h4>
 [checkbox=enablepreview]
-[checkbox=clipbounds]
 [checkbox=ratio]
+      [checkbox=clipbounds]
 [text=previewwidth]
 [text=previewheight]
 [text=quality_snapshot]
 
-<h4>$lang.maxsizes</h4>
-[text=maxwidth]
-[text=maxheight]
-[text=quality_original]
+<h4>$lang.extfile</h4>
+[text=audioext]
+[text=videoext]
 
 [text=video_width]
 [text=video_height]

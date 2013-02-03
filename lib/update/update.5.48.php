@@ -19,6 +19,8 @@ litepublisher::$site->jquery_version = '1.9.0';
           $m = tmediaparser::i();
           $m->data['quality_snapshot'] = 95;
  $m->data['quality_original'] = 95;
-
+$m->data['audioext'] = 'mp3|wav ';
+$m->data['videoext'] = 'mp4|webm|flv|avi|mpg|mpeg';
+        unset($m->data['audiosize']);
           $m->save();
 }
