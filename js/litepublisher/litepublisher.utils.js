@@ -125,14 +125,4 @@
     return result;
   };
   
-    $.fn.hoverclass = function(toggleclass) {
-return $(this).mouseenter(function(){$(this).addClass(toggleclass);}).mouseleave(function(){$(this).removeClass(toggleclass);}); 
-  };
-  
-  $.fn.hovermenu = function(hoverclass, currentclass) {
-    $("li", this).hoverclass(hoverclass);
-        $("a[href='" + window.location + "']", this).addClass(currentclass);
-return this;
-  };
-  
 }(jQuery, document, window));

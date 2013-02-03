@@ -99,8 +99,10 @@ class Tadminoptions extends tadminmenu {
       
       $themeparser = tthemeparser::i();
       $args->replacelang = $themeparser->replacelang;
+      break;
       
-      $parser = tmediaparser::i();
+      case 'files':
+            $parser = tmediaparser::i();
       $args->enablepreview = $parser->enablepreview;
       $args->ratio = $parser->ratio;
       $args->clipbounds = $parser->clipbounds;
@@ -110,8 +112,31 @@ class Tadminoptions extends tadminmenu {
       $args->maxwidth = $parser->maxwidth;
       $args->maxheight = $parser->maxheight;
       
+            $args->quality_original = $parser->quality_original;
+                        $args->quality_snapshot = $parser->quality_snapshot;
+      
       $args->video_width = litepublisher::$site->video_width;
       $args->video_height = litepublisher::$site->video_height;
+      
+            $lang = tlocal::admin('options');
+      $args->formtitle = $lang->catstags;
+      $html = $this->html;
+      return $html->adminform('
+[checkbox=enablepreview]
+[checkbox=clipbounds]
+[checkbox=ratio]
+[text=previewwidth]
+[text=previewheight]
+[text=quality_snapshot]
+
+<h4>$lang.maxsizes</h4>
+[text=maxwidth]
+[text=maxheight]
+[text=quality_original]
+
+[text=video_width]
+[text=video_height]
+');
       break;
       
       case 'links':
@@ -249,8 +274,10 @@ class Tadminoptions extends tadminmenu {
         $themeparser->replacelang = $replacelang;
         $themeparser->save();
       }
+      break;
       
-      $parser = tmediaparser::i();
+      case 'files':
+            $parser = tmediaparser::i();
       $parser->enablepreview = isset($enablepreview);
       $parser->ratio = isset($ratio);
       $parser->clipbounds = isset($clipbounds);
@@ -260,6 +287,9 @@ class Tadminoptions extends tadminmenu {
       $parser->maxwidth = (int) trim($maxwidth);
       $parser->maxheight = (int) trim($maxheight);
       
+      $parser->quality_snapshot= (int) trim($quality_snapshot);
+            $parser->quality_original = (int) trim($quality_original);
+            
       $parser->save();
       
       litepublisher::$site->video_width = $video_width;
