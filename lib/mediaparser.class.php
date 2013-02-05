@@ -269,9 +269,22 @@ $this->data['videoext'] = 'mp4|webm|flv|avi|mpg|mpeg';
     $realfile = litepublisher::$paths->files. str_replace('/', DIRECTORY_SEPARATOR, $filename);
     $result = $this->getdefaultvalues($filename);
     if (preg_match("/\\.($this->videoext)\$/", $filename)) {
-      $result['media'] = 'video';
-      //todo get mime type
-      $result['mime'] = 'unknown';
+    $mime = array(
+    'mp4' => 'video/mp4',
+'mpe' => 'video/mpeg',
+'mpeg' => 'video/mpeg',
+'mpg' => 'video/mpeg',
+'avi' => 'video/x-msvideo',
+'mov' => 'video/quicktime',
+'ogg' => 'video/ogg',
+'webm' =>> 'video/webm',
+'flv' => 'video/x-flv',
+'f4v' => 'video/mp4',
+'f4p' => 'video/mp4',
+    );
+    
+      $result['mime'] = $mime[strtolower(substr($filename, -3))];
+            $result['media'] = 'video';
       return $result;
     }
     
@@ -284,16 +297,24 @@ $this->data['videoext'] = 'mp4|webm|flv|avi|mpg|mpeg';
     }
     
     if (preg_match("/\\.($this->audioext)\$/", $filename)) {
+    $mime = array(
+    'mp3' => 'audio/mpeg',
+    'wav' => 'audio/x-wav', 
+'flac' => 'audio/ogg',
+'f4a' => 'audio/mp4',
+'f4b' => 'audio/mp4',
+    );
+    
+      $result['mime'] = $mime[strtolower(substr($filename, -3))];
       $result['media'] = 'audio';
-      $result['mime'] = preg_match('/\.mp3$/', $filename) ? 'audio/mpeg' : 'audio/x-wave';
+      /*
       if ($info = $this->getaudioinfo($filename)) {
-        /*
         $result['bitrate']  = $info['bitrate'];
         $result['samplingrate'] = $info['samplingrate'];
         $result['channels'] = $info['channels'];
         $result['duration'] = $info['duration'];
-        */
       }
+      */
       return $result;
     }
     

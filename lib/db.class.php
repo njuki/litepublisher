@@ -195,10 +195,6 @@ class tdatabase {
     $this->insertrow($this->assoctorow($a));
   }
   
-  public function insert_a(array $a) {
-    return $this->update($a);
-  }
-  
   public function assoctorow(array $a) {
     $vals = array();
     foreach( $a as $name => $val) {
