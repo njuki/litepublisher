@@ -18,10 +18,10 @@
         $(holder).html(this.tml.tabs);
         var tabs = $("#posteditor-files-tabs");
         tabs.tabs({
-          cache: true,
-          select: function(event, ui) {
-            if ("empty" == $(ui.panel).data("files")) {
-              self.loadpage(ui.panel, $(ui.panel).data("page"));
+        beforeLoad: litepubl.uibefore,
+          beforeActivate: function(event, ui) {
+            if ("empty" == $(ui.newPanel).data("files")) {
+              self.loadpage(ui.newPanel, $(ui.newPanel).data("page"));
             }
           }
         });
@@ -84,9 +84,12 @@
     set_tabs_count: function(count) {
       if (count < 1) return;
       var tabs = $("#posteditor-files-tabs");
+      var tabhead = $(".ui-tabs-nav", tabs);
+      var li =         '<li><a href="#filepage-%%index%%">%%index%%</a></li>';
       for (var i =1; i <= count; i++) {
         $(this.tml.tab.replace('%%index%%', i)).appendTo(tabs).data("page", i).data("files", "empty");
-        tabs.tabs( "add" , "#filepage-" + i, i);
+$(li.replace('%%index%%', i)).appendTo(tabhead);
+        tabs.tabs( "refresh" );
       }
     },
     
