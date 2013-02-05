@@ -134,6 +134,7 @@ class tfilemerger extends titems {
           $s .= $this->readfile($filename);
           $s .= "\n"; //prevent comments
         }
+        //else echo "$filename not found<br>\n";
       }
       $s .= implode("\n", $items['texts']);
       $savefile =  $this->getfilename($section, $this->revision);

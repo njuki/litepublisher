@@ -1,8 +1,8 @@
 <?php
 
 function update548() {
-litepublisher::$site->jquery_version = '1.9.0';
-  litepublisher::$site->jqueryui_version = '1.10.1';
+litepublisher::$site->jquery_version = '1.9.1';
+  litepublisher::$site->jqueryui_version = '1.10.0';
   litepublisher::$site->save();
   
   $t = ttemplate::i();
