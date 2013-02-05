@@ -13,15 +13,18 @@
       if (tabs.length == 0) return;
       var self = this;
       tabs.tabs({
-        cache: true,
-        select: function(event, ui) {
-          if ($("#datetime-holder", ui.panel).length) {
-            self.init_datetime_tab(ui.panel);
-          } else  if ($("#seo-holder", ui.panel).length) {
-            self.init_seo_tab(ui.panel);
+        hide: true,
+        show: true,
+        beforeLoad: litepubl.uibefore,
+        
+        beforeActivate: function(event, ui) {
+          if ($("#datetime-holder", ui.newPanel).length) {
+            self.init_datetime_tab(ui.newPanel);
+          } else  if ($("#seo-holder", ui.newPanel).length) {
+            self.init_seo_tab(ui.newPanel);
           }
         },
-        
+
         load: function(event, ui) {
           $(".posteditor-tag", ui.panel).click(function() {
             self.addtag($(this).text());
@@ -79,11 +82,12 @@
           altField: "#text-date",
           altFormat: "dd.mm.yy",
           dateFormat: "dd.mm.yy",
+                  defaultDate: cur,
           changeYear: true
           //showButtonPanel: true
         });
         
-        $("#datepicker").datepicker("setDate", cur);
+        //$("#datepicker").datepicker("setDate", cur);
       });
     },
     
@@ -107,9 +111,9 @@
       $("#posteditor-raw").before(html.substring(0, i)).after(html.substring(i));
       
       holder.tabs({
-        cache: true,
-        select: function(event, ui) {
-          var inner = $(".tab-holder", ui.panel);
+        beforeLoad: litepubl.uibefore,
+        beforeActivate: function(event, ui) {
+          var inner = $(".tab-holder", ui.newPanel);
           if (inner.length) inner.replaceWith(inner.get(0).firstChild.nodeValue);
         }
       });

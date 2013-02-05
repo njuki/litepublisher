@@ -50,7 +50,7 @@ function _init_views() {
       }
       
       $(this).tabs({
-        cache: true,
+        beforeLoad: litepubl.uibefore,
         disabled: disabled,
         selected: disabled.length == 0 ? 0 : 1,
         show: function(event, ui) {
@@ -73,7 +73,7 @@ function _init_views() {
       $( "#viewtab_" + idview ).tabs( "option", "disabled", checked  ? [] : [0]);
     });
     
-  $("#allviewtabs").tabs({ cache: true });
+  $("#allviewtabs").tabs({         beforeLoad: litepubl.uibefore});
     
     $("input[id^='delete_']").click(function() {
       var idview = $(this).attr("id").split("_").pop();
