@@ -119,7 +119,7 @@ class tadminreguser extends tadminform {
     extract($_POST, EXTR_SKIP);
     $email = strtolower(trim($email));
     if (!tcontentfilter::ValidateEmail($email)) return sprintf('<p><strong>%s</strong></p>', tlocal::get('comment', 'invalidemail'));
-
+    
     if (substr_count($email, '.', 0, strpos($email, '@')) > 2) return sprintf('<p><strong>%s</strong></p>', tlocal::get('comment', 'invalidemail'));
     
     $users = tusers::i();

@@ -55,7 +55,7 @@
     <div class="file-items-after"></div>\
     </div>',
     
-      tabli: '<li><a href="#filepage-%%index%%">%%index%%</a></li>',
+    tabli: '<li><a href="#filepage-%%index%%">%%index%%</a></li>',
     
     fileprops: '<p><label><input type="text" name="fileprop-title" value="" size="22" />\
     <strong>%%lang.title%%</strong></label></p>\

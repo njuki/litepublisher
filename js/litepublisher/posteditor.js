@@ -24,7 +24,7 @@
             self.init_seo_tab(ui.newPanel);
           }
         },
-
+        
         load: function(event, ui) {
           $(".posteditor-tag", ui.panel).click(function() {
             self.addtag($(this).text());
@@ -82,7 +82,7 @@
           altField: "#text-date",
           altFormat: "dd.mm.yy",
           dateFormat: "dd.mm.yy",
-                  defaultDate: cur,
+          defaultDate: cur,
           changeYear: true
           //showButtonPanel: true
         });

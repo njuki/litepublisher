@@ -6,7 +6,7 @@ litepublisher::$site->jquery_version = '1.9.1';
   litepublisher::$site->save();
   
   $t = ttemplate::i();
-  $t-footer = str_replace('2012', '2013', $t-footer);
+  $t->footer = str_replace('2012', '2013', $t->footer);
   $t->save();
   
   $admin = tadminmenus::i();
@@ -19,14 +19,14 @@ litepublisher::$site->jquery_version = '1.9.1';
           $m = tmediaparser::i();
           $m->data['quality_snapshot'] = 95;
  $m->data['quality_original'] = 95;
-$m->data['audioext'] = 'mp3|wav ';
-$m->data['videoext'] = 'mp4|webm|flv|avi|mpg|mpeg';
+$m->data['audioext'] = 'mp3|wav |flac|f4a|f4b';
+$m->data['videoext'] = 'mp4|mpe|mpeg|mpg|avi|mov|ogv|webm|flv|f4v|f4p';
         unset($m->data['audiosize']);
           $m->save();
           
           $man = tdbmanager::i();
           $files = tfiles::i();
-                    $man->alter($files->table, "delete mime");
+                    $man->alter($files->table, "drop mime");
           $man->alter($files->table, "add 
                 mime enum ('application/octet-stream', 'image/jpeg', 'image/png', 'image/gif', 'image/bmp',
        'image/x-icon', 'image/tiff', 'image/vnd.wap.wbm', 'image/x-xbitmap', 'image/pict',
@@ -37,7 +37,7 @@ $m->data['videoext'] = 'mp4|webm|flv|avi|mpg|mpeg';
       after media");
 
     $mime = array(
-    //'text' => 'text/plain';
+    'txt' => 'text/plain',
 
 'jpg' => 'image/jpeg',
 'jpe' => 'image/jpeg',
@@ -55,19 +55,19 @@ $m->data['videoext'] = 'mp4|webm|flv|avi|mpg|mpeg';
           
         'mp4' => 'video/mp4',
 'mpe' => 'video/mpeg',
-'mpeg' => 'video/mpeg',
+'peg' => 'video/mpeg',
 'mpg' => 'video/mpeg',
 'avi' => 'video/x-msvideo',
 'mov' => 'video/quicktime',
 'ogv' => 'video/ogg',
-'webm' => 'video/webm',
+'ebm' => 'video/webm',
 'flv' => 'video/x-flv',
 'f4v' => 'video/mp4',
 'f4p' => 'video/mp4',
 
     'mp3' => 'audio/mpeg',
     'wav' => 'audio/x-wav', 
-'flac' => 'audio/ogg',
+'lac' => 'audio/ogg',
 'f4a' => 'audio/mp4',
 'f4b' => 'audio/mp4',
     );
@@ -75,7 +75,7 @@ $m->data['videoext'] = 'mp4|webm|flv|avi|mpg|mpeg';
 $db = $files->db;
     $items = $db->res2assoc($db->query("select id, filename from $files->thistable"));
 foreach ($items as $item) {
-$ext = substr($item['filename, -3);
+$ext = substr($item['filename'], -3);
 $db->setvalue($item['id'], 'mime', isset($mime[$ext]) ? $mime[$ext] : 'application/octet-stream');
 }
 }

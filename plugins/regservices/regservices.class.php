@@ -61,9 +61,9 @@ class tregservices extends titems {
   
   public function request($arg) {
     $this->cache = false;
-              Header( 'Cache-Control: no-cache, must-revalidate');
-      Header( 'Pragma: no-cache');
-
+    Header( 'Cache-Control: no-cache, must-revalidate');
+    Header( 'Pragma: no-cache');
+    
     // hook for clien disabled cookies
     if (!isset($_GET['cookietest'])) {
       setcookie('litepubl_cookie_test', 'test', time() + 8000, litepublisher::$site->subdir . '/', false);

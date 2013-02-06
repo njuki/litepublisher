@@ -23,11 +23,11 @@ class tmediaparser extends tevents {
     $this->data['previewheight'] = 120;
     $this->data['maxwidth'] = 0;
     $this->data['maxheight'] = 0;
-$this->data['quality_snapshot'] = 95;
- $this->data['quality_original'] = 95;
-
-$this->data['audioext'] = 'mp3|wav ';
-$this->data['videoext'] = 'mp4|webm|flv|avi|mpg|mpeg';
+    $this->data['quality_snapshot'] = 95;
+    $this->data['quality_original'] = 95;
+    
+    $this->data['audioext'] = 'mp3|wav |flac|f4a|f4b';
+    $this->data['videoext'] = 'mp4|mpe|mpeg|mpg|avi|mov|ogv|webm|flv|f4v|f4p';
   }
   
   public static function fixfilename($filename) {
@@ -269,22 +269,22 @@ $this->data['videoext'] = 'mp4|webm|flv|avi|mpg|mpeg';
     $realfile = litepublisher::$paths->files. str_replace('/', DIRECTORY_SEPARATOR, $filename);
     $result = $this->getdefaultvalues($filename);
     if (preg_match("/\\.($this->videoext)\$/", $filename)) {
-    $mime = array(
-    'mp4' => 'video/mp4',
-'mpe' => 'video/mpeg',
-'mpeg' => 'video/mpeg',
-'mpg' => 'video/mpeg',
-'avi' => 'video/x-msvideo',
-'mov' => 'video/quicktime',
-'ogv' => 'video/ogg',
-'webm' => 'video/webm',
-'flv' => 'video/x-flv',
-'f4v' => 'video/mp4',
-'f4p' => 'video/mp4',
-    );
-    
+      $mime = array(
+      'mp4' => 'video/mp4',
+      'mpe' => 'video/mpeg',
+      'mpeg' => 'video/mpeg',
+      'mpg' => 'video/mpeg',
+      'avi' => 'video/x-msvideo',
+      'mov' => 'video/quicktime',
+      'ogv' => 'video/ogg',
+      'webm' => 'video/webm',
+      'flv' => 'video/x-flv',
+      'f4v' => 'video/mp4',
+      'f4p' => 'video/mp4',
+      );
+      
       $result['mime'] = $mime[strtolower(substr($filename, -3))];
-            $result['media'] = 'video';
+      $result['media'] = 'video';
       return $result;
     }
     
@@ -297,25 +297,22 @@ $this->data['videoext'] = 'mp4|webm|flv|avi|mpg|mpeg';
     }
     
     if (preg_match("/\\.($this->audioext)\$/", $filename)) {
-    $mime = array(
-    'mp3' => 'audio/mpeg',
-    'wav' => 'audio/x-wav', 
-'flac' => 'audio/ogg',
-'f4a' => 'audio/mp4',
-'f4b' => 'audio/mp4',
-    );
-    
+      $mime = array(
+      'mp3' => 'audio/mpeg',
+      'wav' => 'audio/x-wav',
+      'flac' => 'audio/ogg',
+      'f4a' => 'audio/mp4',
+      'f4b' => 'audio/mp4',
+      );
+      
       $result['mime'] = $mime[strtolower(substr($filename, -3))];
       $result['media'] = 'audio';
-      /*
-      if ($info = $this->getaudioinfo($filename)) {
-        $result['bitrate']  = $info['bitrate'];
-        $result['samplingrate'] = $info['samplingrate'];
-        $result['channels'] = $info['channels'];
-        $result['duration'] = $info['duration'];
-      }
-      */
       return $result;
+    }
+    
+    if (strend($filename, '.txt')) {
+      $result['mime'] = 'text/plain';
+      $result['media'] = 'text';
     }
     
     return $result;
