@@ -18,7 +18,7 @@ class tticketeditor extends tposteditor {
     $result .= $template->getready('
     //alert($("#tabs").parent().parent().html());
     //$("textarea:first").val($("#tabs").parent().parent().html());
-  $("#tabs, #contenttabs").tabs({ cache: true });');
+  $("#tabs, #contenttabs").tabs({ beforeLoad: litepubl.uibefore});');
     return $result;
   }
   

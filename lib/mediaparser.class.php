@@ -395,7 +395,7 @@ $this->data['videoext'] = 'mp4|webm|flv|avi|mpg|mpeg';
     return $r;
   }
   
-  public static function createthumb($source, $destfilename, $x, $y, $ratio, $clipbounds) {
+  public static function createthumb($source, $destfilename, $x, $y, $ratio, $clipbounds, $quality_snapshot) {
     if (!$source) return false;
     $sourcex = imagesx($source);
     $sourcey = imagesy($source);
@@ -419,7 +419,7 @@ $this->data['videoext'] = 'mp4|webm|flv|avi|mpg|mpeg';
     
     $dest = imagecreatetruecolor($x, $y);
     imagecopyresampled($dest, $source, 0, 0, 0, 0, $x, $y, $sourcex, $sourcey);
-    imagejpeg($dest, $destfilename, $this->quality_snapshot);
+    imagejpeg($dest, $destfilename, $quality_snapshot);
     imagedestroy($dest);
     return true;
   }
@@ -439,7 +439,7 @@ $this->data['videoext'] = 'mp4|webm|flv|avi|mpg|mpeg';
     $fullname = $dir . self::getunique($dir, basename($fullname));
     
     if ($source = self::readimage($srcfilename)) {
-      if (self::createthumb($source, $fullname, $this->previewwidth, $this->previewheight, $this->ratio, $this->clipbounds)) {
+      if (self::createthumb($source, $fullname, $this->previewwidth, $this->previewheight, $this->ratio, $this->clipbounds, $this->quality_snapshot)) {
         @chmod($fullname, 0666);
         $info = getimagesize($fullname);
         $destfilename = substr($fullname, strlen(litepublisher::$paths->files));

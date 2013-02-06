@@ -132,7 +132,7 @@ class tadminviews extends tadminmenu {
       break;
       
       case 'spec':
-    $result .= $template->getready('$("#tabs").tabs({ cache: true });');
+    $result .= $template->getready('$("#tabs").tabs({ beforeLoad: litepubl.uibefore});');
       break;
     }
     return $result;
