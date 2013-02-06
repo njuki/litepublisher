@@ -5,13 +5,14 @@
 * and GPL (gpl.txt) licenses.
 **/
 
+(function ($, document, window) {
 $(document).ready(function() {
-  $("input[rel='checkall']").click(function() {
-    $(this).closest("form").find("input[type=checkbox]").prop("checked", true);
+  $(".checkall").click(function() {
+    $(this).closest("form").find("input[type='checkbox']").prop("checked", true);
     $(this).prop("checked", false);
   });
   
-  $("input[rel='invertcheck']").click(function() {
+  $(".invertcheck").click(function() {
     $(this).closest("form").find("input[type=checkbox]").each(function() {
       $(this).prop("checked", ! $(this).prop("checked"));
     });
@@ -30,3 +31,4 @@ litepubl.uibefore = function( event, ui) {
                                                              ui.tab.data( "loaded", true );
                                                                      });
 };
+}(jQuery, document, window));

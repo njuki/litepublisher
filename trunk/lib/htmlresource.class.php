@@ -566,7 +566,7 @@ class tuitabs {
     $this->items = array();
     $this->head = '<li><a href="#tab-' . self::$index. '-%d"><span>%s</span></a></li>';
     $this->body = '<div id="tab-' . self::$index . '-%d">%s</div>';
-    $this->tabs = '<div id="tabs-' . self::$index . '" rel="tabs">
+    $this->tabs = '<div id="tabs-' . self::$index . '" class="admintabs">
     <ul>%s</ul>
     %s
     </div>';
@@ -590,7 +590,7 @@ class tuitabs {
   }
   
   public static function gethead() {
-    return ttemplate::i()->getready('$($("div[rel=\'tabs\']").get().reverse()).tabs()');
+    return ttemplate::i()->getready('$($("div.admintabs").get().reverse()).tabs()');
   }
   
 }//class

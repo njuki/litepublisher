@@ -36,7 +36,7 @@ function widget_clicked() {
 
 function _init_views() {
   $(document).ready(function() {
-    $("div[rel='tabs']").each(function() {
+    $("div.admintabs").each(function() {
       var idview = $(this).attr("id").split("_").pop();
       if (idview == "1") {
         $("#customsidebar_1").attr("disabled", "disabled");

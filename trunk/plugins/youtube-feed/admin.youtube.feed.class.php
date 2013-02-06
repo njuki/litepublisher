@@ -40,7 +40,7 @@ class tadminyoutubefeed {
       $table = '<table>
       <thead>
       <tr>
-      <th align="center"><input type="checkbox" name="invertcheckbox" onclick="invertcheck(this);" /></th>
+      <th align="center"><input type="checkbox" name="invertcheckbox" class="invertcheck" /></th>
       <th align="left">Video</th>
       </tr>
       </thead>

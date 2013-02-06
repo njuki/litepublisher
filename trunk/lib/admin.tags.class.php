@@ -17,7 +17,7 @@ class tadmintags extends tadminmenu {
     
     $template = ttemplate::i();
     $template->ltoptions['lang'] = litepublisher::$options->language ;
-  $result .= $template->getready('$("#tabs").tabs({ cache: true });');
+  $result .= $template->getready('$("#tabs").tabs({ beforeLoad: litepubl.uibefore});');
     
     return $result . tajaxtageditor::i()->gethead();
   }

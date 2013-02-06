@@ -50,7 +50,7 @@ class Tadminoptions extends tadminmenu {
     switch ($this->name) {
       case 'home':
       $template = ttemplate::i();
-    $result .= $template->getready('$("#tabs").tabs({ cache: true });');
+    $result .= $template->getready('$("#tabs").tabs({ beforeLoad: litepubl.uibefore});');
       break;
     }
     return $result;
