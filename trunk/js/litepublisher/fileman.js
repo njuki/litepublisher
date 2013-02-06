@@ -18,7 +18,7 @@
         $(holder).html(this.tml.tabs);
         var tabs = $("#posteditor-files-tabs");
         tabs.tabs({
-        beforeLoad: litepubl.uibefore,
+          beforeLoad: litepubl.uibefore,
           beforeActivate: function(event, ui) {
             if ("empty" == $(ui.newPanel).data("files")) {
               self.loadpage(ui.newPanel, $(ui.newPanel).data("page"));
@@ -87,7 +87,7 @@
       var tabhead = $(".ui-tabs-nav", tabs);
       for (var i =1; i <= count; i++) {
         $(this.tml.tab.replace('%%index%%', i)).appendTo(tabs).data("page", i).data("files", "empty");
-$(this.tml.tabli.replace(/%%index%%/gim, i)).appendTo(tabhead);
+        $(this.tml.tabli.replace(/%%index%%/gim, i)).appendTo(tabhead);
         tabs.tabs( "refresh" );
       }
     },

@@ -68,9 +68,9 @@ class tregservice extends tplugin {
   //handle callback
   public function request($arg) {
     $this->cache = false;
-              Header( 'Cache-Control: no-cache, must-revalidate');
-      Header( 'Pragma: no-cache');
-
+    Header( 'Cache-Control: no-cache, must-revalidate');
+    Header( 'Pragma: no-cache');
+    
     if (empty($_REQUEST['code'])) return 403;
     $this->start_session();
     

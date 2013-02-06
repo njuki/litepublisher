@@ -63,7 +63,7 @@ class Tadminoptions extends tadminmenu {
     ttheme::$vars['template'] = $template;
     $result = '';
     $args = new targs();
-            $lang = tlocal::admin('options');
+    $lang = tlocal::admin('options');
     $html = $this->html;
     
     switch ($this->name) {
@@ -104,7 +104,7 @@ class Tadminoptions extends tadminmenu {
       break;
       
       case 'files':
-            $parser = tmediaparser::i();
+      $parser = tmediaparser::i();
       $args->enablepreview = $parser->enablepreview;
       $args->ratio = $parser->ratio;
       $args->clipbounds = $parser->clipbounds;
@@ -114,8 +114,11 @@ class Tadminoptions extends tadminmenu {
       $args->maxwidth = $parser->maxwidth;
       $args->maxheight = $parser->maxheight;
       
-            $args->quality_original = $parser->quality_original;
-                        $args->quality_snapshot = $parser->quality_snapshot;
+      $args->quality_original = $parser->quality_original;
+      $args->quality_snapshot = $parser->quality_snapshot;
+      
+      $args->audioext = $parser->audioext;
+      $args->videoext = $parser->videoext;
       
       $args->video_width = litepublisher::$site->video_width;
       $args->video_height = litepublisher::$site->video_height;
@@ -123,25 +126,25 @@ class Tadminoptions extends tadminmenu {
       $args->formtitle = $lang->files;
       return $html->adminform('
       <h4>$lang.imagesize</h4>
-[text=maxwidth]
-[text=maxheight]
-[text=quality_original]
-
+      [text=maxwidth]
+      [text=maxheight]
+      [text=quality_original]
+      
       <h4>$lang.previewsize</h4>
-[checkbox=enablepreview]
-[checkbox=ratio]
+      [checkbox=enablepreview]
+      [checkbox=ratio]
       [checkbox=clipbounds]
-[text=previewwidth]
-[text=previewheight]
-[text=quality_snapshot]
-
-<h4>$lang.extfile</h4>
-[text=audioext]
-[text=videoext]
-
-[text=video_width]
-[text=video_height]
-');
+      [text=previewwidth]
+      [text=previewheight]
+      [text=quality_snapshot]
+      
+      <h4>$lang.extfile</h4>
+      [text=audioext]
+      [text=videoext]
+      
+      [text=video_width]
+      [text=video_height]
+      ', $args);
       break;
       
       case 'links':
@@ -282,7 +285,7 @@ class Tadminoptions extends tadminmenu {
       break;
       
       case 'files':
-            $parser = tmediaparser::i();
+      $parser = tmediaparser::i();
       $parser->enablepreview = isset($enablepreview);
       $parser->ratio = isset($ratio);
       $parser->clipbounds = isset($clipbounds);
@@ -293,8 +296,11 @@ class Tadminoptions extends tadminmenu {
       $parser->maxheight = (int) trim($maxheight);
       
       $parser->quality_snapshot= (int) trim($quality_snapshot);
-            $parser->quality_original = (int) trim($quality_original);
-            
+      $parser->quality_original = (int) trim($quality_original);
+      
+      $parser->audioext = trim($audioext);
+      $parser->videoext = trim($videoext);
+      
       $parser->save();
       
       litepublisher::$site->video_width = $video_width;
