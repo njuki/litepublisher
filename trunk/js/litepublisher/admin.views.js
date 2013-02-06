@@ -52,10 +52,10 @@ function _init_views() {
       $(this).tabs({
         beforeLoad: litepubl.uibefore,
         disabled: disabled,
-        selected: disabled.length == 0 ? 0 : 1,
-        show: function(event, ui) {
-          if (ui.index == 0) {
-            var idview = $(ui.panel).attr("id").split("_").pop();
+        active: disabled.length == 0 ? 0 : 1,
+        activate: function(event, ui) {
+          if (        ui.newTab.index() == 0) {
+            var idview = $(ui.newPanel).attr("id").split("_").pop();
             var showlist = $("#appendwidget_" + idview).data("showlist");
             show_append_widgets(showlist);
           } else {

@@ -85,10 +85,9 @@
       if (count < 1) return;
       var tabs = $("#posteditor-files-tabs");
       var tabhead = $(".ui-tabs-nav", tabs);
-      var li =         '<li><a href="#filepage-%%index%%">%%index%%</a></li>';
       for (var i =1; i <= count; i++) {
         $(this.tml.tab.replace('%%index%%', i)).appendTo(tabs).data("page", i).data("files", "empty");
-$(li.replace('%%index%%', i)).appendTo(tabhead);
+$(this.tml.tabli.replace(/%%index%%/gim, i)).appendTo(tabhead);
         tabs.tabs( "refresh" );
       }
     },
