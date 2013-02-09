@@ -1,9 +1,10 @@
-(function( $, document){
+;(function( $, document, window){
   $(document).ready(function() {
-  var media = $("audio,video");
-  if (media.length) {
-  
-  var player_loader = {
+var audios = $(".audiofile");
+var videos = $(".videofile");  
+if (audio.length || videos.length) {
+//see end of file to init
+  litepubl.Mediaplayer= Class.extend({
   script: false;
   ready: function(callback) {
   if (this.script) {
@@ -15,7 +16,18 @@
   }
   };
   
-  player_loader.ready(function() {
+init: function(audio, video) {
+if (audio.length) {
+var self = this;
+this.ready(function() {
+self.init_audio(audios);
+};
+}
+
+if (videos.length) this.init_video(videos);
+},
+
+init_audio: function(links) {
   $audio = [<audio id="player-$id" src="$link" type="$mime" controls="controls"></audio>]
   $("audio", media).mediaelementplayer({
   pluginPath: ltoptions.files + "/js/mediaelement/",
@@ -24,8 +36,14 @@ audioHeight: 30,
     startVolume: 1,
         features: ['playpause','progress','current','volume']
   });
+  },
   
-  });
+  init_video: function(links) {
+  }
+  
+  };
+  
+  litepubl.mediaplayer = new litepubl.Mediaplayer(audios, videos);
   }
   });
-})( jQuery, document);
+})( jQuery, document, window);
