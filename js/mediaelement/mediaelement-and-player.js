@@ -1583,7 +1583,7 @@ function onYouTubePlayerReady(id) {
 window.mejs = mejs;
 window.MediaElement = mejs.MediaElement;
 
-/*!
+/**
  * Adds Internationalization and localization to objects.
  *
  * What is the concept beyond i18n?
@@ -1778,7 +1778,7 @@ window.MediaElement = mejs.MediaElement;
 // end i18n
     exports.i18n = i18n;
 }(jQuery, document, mejs));
-/*!
+/**
  * This is a i18n.locale language object.
  *
  *<de> German translation by Tim Latz, latz.tim@gmail.com
@@ -1792,6 +1792,7 @@ window.MediaElement = mejs.MediaElement;
  * @params
  *  - exports - CommonJS, window ..
  */
+ /*
 ;(function(exports, undefined) {
 
     "use strict";
@@ -1804,7 +1805,7 @@ window.MediaElement = mejs.MediaElement;
     };
 
 }(mejs.i18n.locale.strings));
-
+*/
 /*!
  * MediaElementPlayer
  * http://mediaelementjs.com/
