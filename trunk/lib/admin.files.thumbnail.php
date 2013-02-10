@@ -6,7 +6,7 @@
 * and GPL (gpl.txt) licenses.
 **/
 
-class tadminfiles extends tadminmenu {
+class tadminfilethumbnails extends tadminmenu {
   
   public static function i($id = 0) {
     return parent::iteminstance(__class__, $id);
@@ -29,6 +29,7 @@ class tadminfiles extends tadminmenu {
     } else {
       $id = $this->idget();
       if (!$files->itemexists($id)) return $this->notfound;
+      
       switch ($_GET['action']) {
         case 'delete':
         if ($this->confirmed) {
