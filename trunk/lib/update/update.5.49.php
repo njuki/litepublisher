@@ -3,10 +3,11 @@
 function update549() {
 $css = tcssmerger::i();
 $css->lock();
+$section = 'default'';
   $css->deletefile('default', '/js/litepublisher/css/prettyphoto.dialog.css');
   $css->add('default', '/js/litepublisher/css/prettyphoto.dialog.min.css');
-    $css->add($section, '/themes/default/css/filelist.min.css');
-    $css->add($section, '/themes/default/css/table.min.css');
+      $css->add($section, '/js/litepublisher/css/filelist.min.css');
+    $css->add($section, '/js/litepublisher/css/table.min.css');
     $css->addtext('default', 'hidden', '.hidden{display:none}');
 $css->unlock();
 

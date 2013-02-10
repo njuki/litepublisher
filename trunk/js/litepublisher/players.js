@@ -11,10 +11,14 @@ if (audios.length || videos.length) {
 	          pretty: '<div id="pretty-video-holder"></div>',
 	          holder: "#pretty-video-holder"
   },
+  
+  width: '500',
+  height: '344',
   clicked: false,
+  tmplink: false,
   script: false,
   
-  ready: function(callback) {
+    ready: function(callback) {
   if (this.script) {
   this.script.done(callback);
   } else {
@@ -43,17 +47,20 @@ audioHeight: 30,
   },
   
   init_video: function(links) {
+    this.tmplink = $('<a href="#custom&width=' + this.width + '&height=' + this.height + '"></a>').appendTo("body").hide();
   var self = this;
   var tml = this.tml;
   links.on("click.playvideo", function(event) {
   self.clicked = $(this);
   event.preventDefault();
+  self.tmplink.click();
   });
   
-    links.prettyPhoto({
+    this.tmplink.prettyPhoto({
             custom_markup: tml.pretty,
-      default_width: options.width,
-      opacity: 0.60, /* Value between 0 and 1 */
+      default_width: this.width,
+            default_height: this.height,
+      opacity: 0.80, /* Value between 0 and 1 */
       modal: true, /* If set to true, only the close button will close the window */
       deeplinking: false, /* Allow prettyPhoto to update the url to enable deeplinking. */
       keyboard_shortcuts: false, /* Set to false if you open forms inside prettyPhoto */

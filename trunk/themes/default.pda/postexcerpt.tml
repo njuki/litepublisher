@@ -1,8 +1,0 @@
-        <h2><a href="$Options->url$post->url" rel="bookmark" title="$lang->permalink $post->title">$post->title</a></h2>
-<p>$lang->posted $post->localdate|
-$lang->categories: $post->categorieslinks |
-$lang->tags: $post->tagslinks </p>
-
-$post->excerpt
-$post->morelink
-$Template->CommentsCountLink
