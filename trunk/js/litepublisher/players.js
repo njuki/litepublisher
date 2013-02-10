@@ -34,12 +34,10 @@ if (videos.length) this.init_video(videos);
 },
 
 init_audio: function(links) {
-  $("audio", media).mediaelementplayer({
-  pluginPath: ltoptions.files + "/js/mediaelement/",
+  $("audio", media).mediaplayer({
 audioWidth: 400,
 audioHeight: 30,
-    startVolume: 1,
-        features: ['playpause','progress','current','volume']
+    startVolume: 1
   });
   },
   
@@ -84,8 +82,6 @@ siteurl: ltoptions.files
   });
   
   $(html).appendTo("#pretty-video-player").mediaelementplayer({
-  pluginPath: ltoptions.files + "/js/mediaelement/",
-      plugins: ['flash', 'silverlight'],
     success: function(mediaElement, domObject) {
         if (mediaElement.pluginType == 'flash') {
             mediaElement.addEventListener('canplay', function() {
