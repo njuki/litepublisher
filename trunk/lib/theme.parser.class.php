@@ -47,13 +47,6 @@ class tthemeparser extends tevents {
     $result[$post . 'images.preview'] = $post . 'preview';
     $result[$excerpt . 'images.preview'] = $excerpt . 'preview';
     
-    foreach(array('audio', 'video') as $name) {
-      $val = $post . $name . '.player';
-      $key = $post . $name;
-      $result[$key . 's.player'] = $val;
-      $result[$key . "s.$name.player"] = $val;
-    }
-    
     return $result;
   }
   
@@ -531,28 +524,8 @@ class tthemeparser extends tevents {
         $keyexcerpt = $excerpt . 'filelist.preview';
         if ( !isset($templates[$keyexcerpt])) $templates[$keyexcerpt] = $templates[$key];
         
-        //replace player
-        $key = $post . 'filelist.audio';
-        if (strpos($templates[$key], 'playaudiofile(')) $templates[$key] = str_replace('</a>', '</a><!--$player-->', $templates[$key]);
-        $templates[$key] = str_replace('$player', $templates[$key . '.player'], $templates[$key]);
-        $ekey = $excerpt . 'filelist.audio';
-        if (isset($templates[$ekey])) {
-          if (strpos($templates[$ekey], 'playaudiofile(')) $templates[$ekey] = str_replace('</a>', '</a><!--$player-->', $templates[$ekey]);
-          $templates[$ekey] = str_replace('$player', $templates[$key . '.player'], $templates[$ekey]);
-        }
-        
-        $key = $post . 'filelist.video';
-        if (strpos($templates[$key], 'playvideofile(')) $templates[$key] = str_replace('</a>', '</a><!--$player-->', $templates[$key]);
-        $templates[$key] = str_replace('$player', $templates[$key . '.player'], $templates[$key]);
-        $ekey = $excerpt . 'filelist.video';
-        if (isset($templates[$ekey])) {
-          if (strpos($templates[$ekey], 'playvideofile(')) $templates[$ekey] = str_replace('</a>', '</a><!--$player-->', $templates[$ekey]);
-          $templates[$ekey] = str_replace('$player', $templates[$key . '.player'], $templates[$ekey]);
-        }
-        
         foreach (array('date',
         'filelist', 'filelist.file', 'filelist.image', 'filelist.preview', 'filelist.audio', 'filelist.video',
-        //'filelist.audio.player', 'filelist.video.player',
         'filelist.files', 'filelist.images', 'filelist.audios', 'filelist.videos',
         'catlinks',         'catlinks.item', 'catlinks.divider',
         'taglinks',         'taglinks.item', 'taglinks.divider') as $name) {
@@ -852,11 +825,6 @@ class tthemeparser extends tevents {
         'replace' => ''
         ),
         
-        'content.post.filelist.audio.player' => array(
-        'tag' => '$player',
-        'replace' => '$player'
-        ),
-        
         'content.post.filelist.audios.audio' => array(
         'tag' => '$audio',
         'replace' => '$audio'
@@ -870,11 +838,6 @@ class tthemeparser extends tevents {
         'content.post.filelist.video' => array(
         'tag' => '$video',
         'replace' => ''
-        ),
-        
-        'content.post.filelist.video.player' => array(
-        'tag' => '$player',
-        'replace' => '$player'
         ),
         
         'content.post.filelist.videos' => array(
