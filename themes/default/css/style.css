@@ -91,37 +91,3 @@ a:hover{color:#0c588a;}
 .blogolet {float:right;}
 .blogolet a {color:#0c588a;font-size:10px;}
 .post-tags, .post-cat {height:16px;display:block;}
-
-.filelist {
-	width: 100%;
-	overflow: hidden;
-}
- 
-.filelist ul {
-	float: left;
-	overflow:hidden;
-	list-style:none;
-	margin:0;
-	padding:0;
-	width:100%;
-}
- 
-.filelist ul li {
-	display:inline;
-}
- 
-.classictable   {
-border: 2px solid black;
-border-collapse:collapse;
-font-size:12px;
-width:98%;
-} 
-
-.classictable   th, .classictable    td {
-border: 1px solid black;
-padding: 5px;
-}
-
-.div-table{overflow:auto}
-
-.hidden {display: none}
