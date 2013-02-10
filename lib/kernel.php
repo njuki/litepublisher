@@ -2024,11 +2024,13 @@ class turlmap extends titems {
   
   public function close_connection() {
     ignore_user_abort(true);
+        header('Content-Encoding: none');
+                header('Vary: none');
+
     //$len = $this->isredir ? 0 : ob_get_length();
     $len = ob_get_length();
     header('Connection: close');
     header('Content-Length: ' . $len);
-    header('Content-Encoding: none');
     //header('Accept-Ranges: bytes');
   }
   
@@ -2430,6 +2432,9 @@ class turlmap extends titems {
     header('Content-Type: text/html; charset=utf-8');
     header('Last-Modified: ' . date('r'));
     header('X-Pingback: ' . litepublisher::$site->url . '/rpc.xml');
+        //header('Content-Encoding: none');
+                header('Vary: ');
+
   }
   
   public static function sendxml() {

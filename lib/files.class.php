@@ -206,7 +206,9 @@ class tfiles extends titems {
           $preview->link = $url . $preview->filename;
           $args->preview = $theme->parsearg($types['preview'], $args);
         }
-        
+ 
+ unset($item['title'], $item['keywords'], $item['description']);
+ $args->json = str_replace('"', '&quot;', json_encode($item));       
         $sublist .= $theme->parsearg($types[$type], $args);
       }
       $sublist = str_replace('$' . $type, $sublist, $types[$type . 's']);

@@ -11,7 +11,10 @@ function tcssmergerInstall($self) {
   $self->items = array();
   $section = 'default';
   $self->add($section, '/js/prettyphoto/css/prettyPhoto.css');
-  $self->add($section, '/js/litepublisher/css/prettyphoto.dialog.css');
+  $self->add($section, '/js/litepublisher/css/prettyphoto.dialog.min.css');
+      $self->add($section, '/themes/default/css/filelist.min.css');
+    $self->add($section, '/themes/default/css/table.min.css');
+        $self->addtext($section, 'hidden', '.hidden{display:none}');
   $self->unlock();
   
   $template = ttemplate::i();

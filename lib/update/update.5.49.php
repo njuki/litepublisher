@@ -1,6 +1,15 @@
 <?php
 
 function update549() {
+$css = tcssmerger::i();
+$css->lock();
+  $css->deletefile('default', '/js/litepublisher/css/prettyphoto.dialog.css');
+  $css->add('default', '/js/litepublisher/css/prettyphoto.dialog.min.css');
+    $css->add($section, '/themes/default/css/filelist.min.css');
+    $css->add($section, '/themes/default/css/table.min.css');
+    $css->addtext('default', 'hidden', '.hidden{display:none}');
+$css->unlock();
+
 litepublisher::$classes->add('tadminfilethumbnails', 'admin.files.thumbnail.php');
 
   $admin = tadminmenus::i();
