@@ -1,12 +1,11 @@
 ;(function( $, document, window){
   $(document).ready(function() {
-var audios = $(".audiofile");
+var audios = $("audio");
 var videos = $(".videofile");  
 if (audios.length || videos.length) {
 //see end of file to init
   litepubl.Mediaplayer= Class.extend({
   tml: {
-  audio: '<audio id="player-$id" src="$link" type="$mime" controls="controls"></audio>',
   video: '<video src="%%siteurl%%/files/%%file.filename%%" type="%%file.mime%%" controls="controls" autoplay="autoplay"></video>',
 	          pretty: '<div id="pretty-video-holder"></div>',
 	          holder: "#pretty-video-holder"
@@ -39,7 +38,7 @@ if (videos.length) this.init_video(videos);
 },
 
 init_audio: function(links) {
-  $("audio", media).mediaplayer({
+links.videoplayer({
 audioWidth: 400,
 audioHeight: 30,
     startVolume: 1
