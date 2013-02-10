@@ -2,13 +2,14 @@
   $(document).ready(function() {
 var audios = $(".audiofile");
 var videos = $(".videofile");  
-if (audio.length || videos.length) {
+if (audios.length || videos.length) {
 //see end of file to init
   litepubl.Mediaplayer= Class.extend({
   tml: {
   audio: '<audio id="player-$id" src="$link" type="$mime" controls="controls"></audio>',
   video: '<video src="%%siteurl%%/files/%%file.filename%%" type="%%file.mime%%" controls="controls" autoplay="autoplay"></video>',
-	          pretty: '<div id="pretty-video-player"></div>'
+	          pretty: '<div id="pretty-video-holder"></div>',
+	          holder: "#pretty-video-holder"
   },
   clicked: false,
   script: false,
@@ -18,7 +19,7 @@ if (audio.length || videos.length) {
   this.script.done(callback);
   } else {
   $.load_css(ltoptions.files + "/js/mediaelement/css/mediaelementplayer.min.css");
-  this.script = $.load_script(ltoptions.files + "/js/mediaelement/mediaelement-and-player.min.js", callback);
+  this.script = $.load_script(ltoptions.files + "/js/mediaelement/videoplayer.min.js", callback);
   }
   },
 
@@ -76,12 +77,14 @@ audioHeight: 30,
   },
   
     init_mediaelement: function() {
+    var tml = this.tml;
   var html = $.simpletml(tml.video, {
   file: self.clicked.data("file"),
 siteurl: ltoptions.files
   });
   
-  $(html).appendTo("#pretty-video-player").mediaelementplayer({
+  $(html).appendTo(tml.holder).videoplayer({
+  /*
     success: function(mediaElement, domObject) {
         if (mediaElement.pluginType == 'flash') {
             mediaElement.addEventListener('canplay', function() {
@@ -95,7 +98,7 @@ siteurl: ltoptions.files
     error: function() {
         alert('Error setting media!');
     }
-
+*/
 });//mediaelement
 }
     
