@@ -8,8 +8,8 @@ pluginPath: ltoptions.files + "/js/mediaelement/",
 ltoptions.lang != "ru" ? {} : {
 		playpauseText: 'Воспроизвести/Пауза',
 				stopText: 'Остановить',
-		muteText: 'Выключить звук',
-				fullscreenText: 'Полноэкранный',
+		muteText: 'Отключение звука',
+				fullscreenText: 'Развернуть',
 						tracksText: 'Субтитры',
 								postrollCloseText: 'Закрыть'
 }));
