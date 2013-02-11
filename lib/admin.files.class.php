@@ -64,24 +64,10 @@ class tadminfiles extends tadminmenu {
     
     $perpage = 20;
     $type = $this->name == 'files' ? '' : $this->name;
-    if (dbversion) {
       $sql = 'parent =0';
       $sql .= litepublisher::$options->user <= 1 ? '' : ' and author = ' . litepublisher::$options->user;
       $sql .= $type == '' ? " and media<> 'icon'" : " and media = '$type'";
       $count = $files->db->getcount($sql);
-    } else {
-      $list= array();
-      $user = litepublisher::$options->user;
-      foreach ($files->items as $id => $item) {
-        if ($item['parent'] != 0) continue;
-        if ($user > 1 && $user != $item['author']) continue;
-        if (($type != '') && ($item['media'] != $type)) continue;
-        if (($type == '') && ($item['media'] == 'icon')) continue;
-        $list[] = $id;
-      }
-      $count = count($list);
-    }
-    
     $from = $this->getfrom($perpage, $count);
     $list = $files->select($sql, " order by posted desc limit $from, $perpage");
     if (!$list) $list = array();

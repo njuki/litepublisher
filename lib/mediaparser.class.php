@@ -18,7 +18,7 @@ class tmediaparser extends tevents {
     $this->addevents('added');
     $this->data['enablepreview'] = true;
     $this->data['ratio'] = true;
-    $this->data['clipbounds'] = false;
+    $this->data['clipbounds'] = true;
     $this->data['previewwidth'] = 120;
     $this->data['previewheight'] = 120;
     $this->data['maxwidth'] = 0;
@@ -26,8 +26,8 @@ class tmediaparser extends tevents {
     $this->data['quality_snapshot'] = 95;
     $this->data['quality_original'] = 95;
     
-    $this->data['audioext'] = 'mp3|wav |flac|f4a|f4b';
-    $this->data['videoext'] = 'mp4|mpe|mpeg|mpg|avi|mov|ogv|webm|flv|f4v|f4p';
+    $this->data['audioext'] = 'mp3|wav |flac';
+    $this->data['videoext'] = 'mp4|ogv|webm';
   }
   
   public static function fixfilename($filename) {
