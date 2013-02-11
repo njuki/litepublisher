@@ -16,8 +16,12 @@ class tadminfilethumbnails extends tadminmenu {
     $result = '';
     $files = tfiles::i();
     $html = $this->html;
-    if (!isset($_GET['action'])) {
-      $args = targs::i();
+      $args = new targs();
+      
+            $id = $this->idget();
+      if (!$files->itemexists($id)) return $this->notfound;
+            $user = litepublisher::$options->user;
+        if ($user > 1 && $user != $item['author']) continue;
       $args->adminurl = $this->url;
       $args->perm = litepublisher::$options->show_file_perm ?  tadminperms::getcombo(0, 'idperm') : '';
       $args->add(array(
@@ -26,10 +30,7 @@ class tadminfilethumbnails extends tadminmenu {
       'keywords' => ''
       ));
       $result .= $html->uploadform($args);
-    } else {
-      $id = $this->idget();
-      if (!$files->itemexists($id)) return $this->notfound;
-      
+
       switch ($_GET['action']) {
         case 'delete':
         if ($this->confirmed) {
@@ -63,47 +64,7 @@ class tadminfilethumbnails extends tadminmenu {
       }
     }
     
-    $perpage = 20;
-    $type = $this->name == 'files' ? '' : $this->name;
-    if (dbversion) {
-      $sql = 'parent =0';
-      $sql .= litepublisher::$options->user <= 1 ? '' : ' and author = ' . litepublisher::$options->user;
-      $sql .= $type == '' ? " and media<> 'icon'" : " and media = '$type'";
-      $count = $files->db->getcount($sql);
-    } else {
-      $list= array();
-      $user = litepublisher::$options->user;
-      foreach ($files->items as $id => $item) {
-        if ($item['parent'] != 0) continue;
-        if ($user > 1 && $user != $item['author']) continue;
-        if (($type != '') && ($item['media'] != $type)) continue;
-        if (($type == '') && ($item['media'] == 'icon')) continue;
-        $list[] = $id;
-      }
-      $count = count($list);
-    }
-    
-    $from = $this->getfrom($perpage, $count);
-    $list = $files->select($sql, " order by posted desc limit $from, $perpage");
-    if (!$list) $list = array();
-    $result .= sprintf($html->h2->countfiles, $count, $from, $from + count($list));
-    //if ($type != 'icon') $result .= $files->getlist($list);
-    $result .= $html->tableheader();
-    $args = targs::i();
-    $args->adminurl = $this->adminurl;
-    foreach ($list as $id) {
-      $item = $files->items[$id];
-      $args->add($item);
-      $args->id = $id;
-      if ($type == 'icon') $args->title = sprintf('<img src="%1$s/files/%2$s" title="%2$s" />', litepublisher::$site->files, $item['filename']);
-      $result .= $html->tableitem ($args);
-    }
-    
-    $result .= $html->tablefooter;
-    
-    $theme = ttheme::i();
-    $result .= $theme->getpages($this->url, litepublisher::$urlmap->page, ceil($count/$perpage));
-    return $result;
+
   }
   
   public function processform() {

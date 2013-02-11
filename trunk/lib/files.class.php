@@ -20,7 +20,7 @@ class tfiles extends titems {
     $this->table = 'files';
     $this->addevents('changed', 'edited', 'ongetfilelist', 'onlist');
     $this->itemsposts = tfileitems ::i();
-    $this->data['videoposter'] = false;
+    $this->data['videoplayer'] = '/js/litepublisher/icons/videoplayer.jpg';
   }
   
   public function preload(array $items) {
@@ -198,15 +198,12 @@ class tfiles extends titems {
                                 
         if ($item['preview'] > 0) {
           $preview->array = $this->getitem($item['preview']);
-          if ($preview->media === 'image') $preview->id = $item['preview'];
         } elseif($type == 'image') {
           $preview->array = $item;
           $preview->id = $id;
                 } elseif($type == 'video') {
-                if ($this->videoposter) {
-                          $preview->array = $this->getitem($this->videoposter);
-                } else {
-                $args->preview = $item['title'];
+            $preview->link = litepublisher::$site->url . $this->videoplayer;
+            $args->preview = $theme->parsearg($types['preview'], $args);
                 }
                 }
         
