@@ -20,6 +20,7 @@ class tfiles extends titems {
     $this->table = 'files';
     $this->addevents('changed', 'edited', 'ongetfilelist', 'onlist');
     $this->itemsposts = tfileitems ::i();
+    $this->data['videoposter'] = false;
   }
   
   public function preload(array $items) {
@@ -187,26 +188,33 @@ class tfiles extends titems {
       $sublist = '';
       foreach ($subitems as $typeindex => $id) {
         $item = $this->items[$id];
-        $args->preview  = '';
         $args->add($item);
         $args->link = $url . $item['filename'];
         $args->id = $id;
         $args->typeindex = $typeindex;
         $args->index = $index++;
+                $args->preview  = '';
+                                $preview->array = array(); 
+                                
         if ($item['preview'] > 0) {
           $preview->array = $this->getitem($item['preview']);
-          if ($preview->media === 'image') {
-            $preview->id = $item['preview'];
-            $preview->link = $url . $preview->filename;
-            $args->preview = $theme->parsearg($types['preview'], $args);
-          }
+          if ($preview->media === 'image') $preview->id = $item['preview'];
         } elseif($type == 'image') {
           $preview->array = $item;
           $preview->id = $id;
-          $preview->link = $url . $preview->filename;
-          $args->preview = $theme->parsearg($types['preview'], $args);
-        }
- 
+                } elseif($type == 'video') {
+                if ($this->videoposter) {
+                          $preview->array = $this->getitem($this->videoposter);
+                } else {
+                $args->preview = $item['title'];
+                }
+                }
+        
+if (count($preview->array)) {
+            $preview->link = $url . $preview->filename;
+            $args->preview = $theme->parsearg($types['preview'], $args);
+            }
+
  unset($item['title'], $item['keywords'], $item['description']);
  $args->json = str_replace('"', '&quot;', json_encode($item));       
         $sublist .= $theme->parsearg($types[$type], $args);
