@@ -16,8 +16,9 @@ class tadminfiles extends tadminmenu {
     $result = '';
     $files = tfiles::i();
     $html = $this->html;
+    $lang = $this->lang;
+                $args = new targs();
     if (!isset($_GET['action'])) {
-      $args = targs::i();
       $args->adminurl = $this->url;
       $args->perm = litepublisher::$options->show_file_perm ?  tadminperms::getcombo(0, 'idperm') : '';
       $args->add(array(
@@ -37,7 +38,6 @@ class tadminfiles extends tadminmenu {
           $result .= $html->h2->deleted;
         } else {
           $item = $files->getitem($id);
-          $args = targs::i();
           $args->add($item);
           $args->id = $id;
           $args->adminurl = $this->adminurl;
@@ -48,7 +48,6 @@ class tadminfiles extends tadminmenu {
         break;
         
         case 'edit':
-        $args = targs::i();
         $item = $files->getitem($id);
         $args->add($item);
         $args->title = tcontentfilter::unescape($item['title']);
@@ -72,16 +71,15 @@ class tadminfiles extends tadminmenu {
     $list = $files->select($sql, " order by posted desc limit $from, $perpage");
     if (!$list) $list = array();
     $result .= sprintf($html->h4->countfiles, $count, $from, $from + count($list));
-
-    $args = new targs();
+    
     $args->adminurl = $this->adminurl;
         $result .= $html->buildtable($files->items, array(
-            array('right', 'ID, '$id'),
+            array('right', 'ID', '$id'),
                         array('right', $lang->filename, '<a href="$site.files/files/$filename">$filename</a>'),
                 array('left', $lang->title, $type != 'icon' ? '$title' :
 '<img src="$site.files/files/$filename" alt="$filename" />'),
     array('center', $lang->edit, "<a href=\"$this->adminurl=\$id&action=edit\">$lang->edit</a>"),
-        array('center', $lang->thumbmail, '<a href="' . tadminhtml::getadminlink('/admin/files/thumbnail/', 'id=') .. "\$id\">$lang->thumbnail</a>"),
+        array('center', $lang->thumbnail, '<a href="' . tadminhtml::getadminlink('/admin/files/thumbnail/', 'id='). "\$id\">$lang->thumbnail</a>"),
     array('center', $lang->delete, "<a href=\"$this->adminurl=\$id&action=delete\">$lang->delete</a>")
 ));
 
