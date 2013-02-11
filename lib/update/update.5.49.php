@@ -11,6 +11,13 @@ $section = 'default'';
     $css->addtext('default', 'hidden', '.hidden{display:none}');
 $css->unlock();
 
+$files = tfiles::i();
+    $files->data['videoposter'] = false;
+    if ($img = http::get('http://litepublisher.ru/files/image/videoposter-big.jpg')) {
+        $files->data['videoposter'] = tmediaparser::i()->uploadthumbnail('videoposter.jpg', $img);
+    }
+        $files->save();
+
 litepublisher::$classes->add('tadminfilethumbnails', 'admin.files.thumbnail.php');
 
   $admin = tadminmenus::i();
