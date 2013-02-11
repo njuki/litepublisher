@@ -71,21 +71,20 @@ class tadminfiles extends tadminmenu {
     $from = $this->getfrom($perpage, $count);
     $list = $files->select($sql, " order by posted desc limit $from, $perpage");
     if (!$list) $list = array();
-    $result .= sprintf($html->h2->countfiles, $count, $from, $from + count($list));
-    //if ($type != 'icon') $result .= $files->getlist($list);
-    $result .= $html->tableheader();
-    $args = targs::i();
+    $result .= sprintf($html->h4->countfiles, $count, $from, $from + count($list));
+
+    $args = new targs();
     $args->adminurl = $this->adminurl;
-    foreach ($list as $id) {
-      $item = $files->items[$id];
-      $args->add($item);
-      $args->id = $id;
-      if ($type == 'icon') $args->title = sprintf('<img src="%1$s/files/%2$s" title="%2$s" />', litepublisher::$site->files, $item['filename']);
-      $result .= $html->tableitem ($args);
-    }
-    
-    $result .= $html->tablefooter;
-    
+        $result .= $html->buildtable($files->items, array(
+            array('right', 'ID, '$id'),
+                        array('right', $lang->filename, '<a href="$site.files/files/$filename">$filename</a>'),
+                array('left', $lang->title, $type != 'icon' ? '$title' :
+'<img src="$site.files/files/$filename" alt="$filename" />'),
+    array('center', $lang->edit, "<a href=\"$this->adminurl=\$id&action=edit\">$lang->edit</a>"),
+        array('center', $lang->thumbmail, '<a href="' . tadminhtml::getadminlink('/admin/files/thumbnail/', 'id=') .. "\$id\">$lang->thumbnail</a>"),
+    array('center', $lang->delete, "<a href=\"$this->adminurl=\$id&action=delete\">$lang->delete</a>")
+));
+
     $theme = ttheme::i();
     $result .= $theme->getpages($this->url, litepublisher::$urlmap->page, ceil($count/$perpage));
     return $result;
@@ -131,4 +130,3 @@ class tadminfiles extends tadminmenu {
   }
   
 }//class
-?>
