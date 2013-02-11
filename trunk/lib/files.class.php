@@ -205,7 +205,6 @@ class tfiles extends titems {
             $preview->link = litepublisher::$site->url . $this->videoplayer;
             $args->preview = $theme->parsearg($types['preview'], $args);
                 }
-                }
         
 if (count($preview->array)) {
             $preview->link = $url . $preview->filename;
