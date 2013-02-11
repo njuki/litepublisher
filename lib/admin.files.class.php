@@ -79,7 +79,7 @@ class tadminfiles extends tadminmenu {
                 array('left', $lang->title, $type != 'icon' ? '$title' :
 '<img src="$site.files/files/$filename" alt="$filename" />'),
     array('center', $lang->edit, "<a href=\"$this->adminurl=\$id&action=edit\">$lang->edit</a>"),
-        array('center', $lang->thumbnail, '<a href="' . tadminhtml::getadminlink('/admin/files/thumbnail/', 'id='). "\$id\">$lang->thumbnail</a>"),
+        array('center', $lang->thumbnail, '<a href="' . tadminhtml::getadminlink('/admin/files/thumbnail/', 'id='). "\$id\" target=\"_blank">$lang->thumbnail</a>"),
     array('center', $lang->delete, "<a href=\"$this->adminurl=\$id&action=delete\">$lang->delete</a>")
 ));
 

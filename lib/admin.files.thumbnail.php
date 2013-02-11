@@ -12,99 +12,151 @@ class tadminfilethumbnails extends tadminmenu {
     return parent::iteminstance(__class__, $id);
   }
   
+  public function getidfile() {
+  $files = tfiles::i();
+            $id = $this->idget();
+      if (($id == 0) || !$files->itemexists($id)) return false;
+      if (litepublisher::$options->hasgroup('editor')) return $id;
+                        $user = litepublisher::$options->user;
+      $item = $files->getitem($id);
+if ($user == $item['author']) return $id;
+return false;
+  }
+  
   public function getcontent() {
+if (!($id = $this->getidfile())   return $this->notfound;
     $result = '';
     $files = tfiles::i();
     $html = $this->html;
       $args = new targs();
-      
-            $id = $this->idget();
-      if (!$files->itemexists($id)) return $this->notfound;
-            $user = litepublisher::$options->user;
-        if ($user > 1 && $user != $item['author']) continue;
-      $args->adminurl = $this->url;
-      $args->perm = litepublisher::$options->show_file_perm ?  tadminperms::getcombo(0, 'idperm') : '';
-      $args->add(array(
-      'title' => '',
-      'description' => '',
-      'keywords' => ''
-      ));
-      $result .= $html->uploadform($args);
+            $args->adminurl = $this->url;
+            $item = $files->getitem($id);
+            $idpreview = $item['preview'];
+            if ($idpreview > 0) {
+$args->add($files->getitem($idpreview));
+$args->idfile = $id;
+            $result .= $html->preview($args);
+            }
+            
+            $args->id = $id;
+      $result .= $html->uploadthumb($args);
+return $result;
+}    
 
-      switch ($_GET['action']) {
-        case 'delete':
-        if ($this->confirmed) {
-          if (('author' == litepublisher::$options->group) && ($r = tauthor_rights::i()->candeletefile($id))) return $r;
-          $files->delete($id);
-          $result .= $html->h2->deleted;
-        } else {
-          $item = $files->getitem($id);
-          $args = targs::i();
-          $args->add($item);
-          $args->id = $id;
-          $args->adminurl = $this->adminurl;
-          $args->action = 'delete';
-          $args->confirm = sprintf($this->lang->confirm, $item['filename']);
-          return $html->confirmform($args);
-        }
-        break;
-        
-        case 'edit':
-        $args = targs::i();
+  public function processform() {
+  if (!($id = $this->getidfile())   return $this->notfound;
+    $files = tfiles::i();
         $item = $files->getitem($id);
-        $args->add($item);
-        $args->title = tcontentfilter::unescape($item['title']);
-        $args->description = tcontentfilter::unescape($item['description']);
-        $args->keywords = tcontentfilter::unescape($item['keywords']);
-        $args->formtitle = $this->lang->editfile;
-        $result .= $html->adminform('[text=title] [text=description] [text=keywords]' .
-        (litepublisher::$options->show_file_perm ?  tadminperms::getcombo($item['idperm'], 'idperm') : ''),
-        $args);
-        break;
-      }
+        
+    if (isset($_POST['submitdelete'])) {
+    $files->delete($item['preview']);
+    $files->setvalue($id, 'preview', 0);
+    return $this->html->deleted();
     }
     
-
-  }
-  
-  public function processform() {
-    $files = tfiles::i();
-    if (empty($_GET['action'])) {
       $isauthor = 'author' == litepublisher::$options->group;
-      if ($_POST['uploadmode'] == 'upload') {
         if (isset($_FILES['filename']['error']) && $_FILES['filename']['error'] > 0) {
           $error = tlocal::get('uploaderrors', $_FILES["filename"]["error"]);
-          return "<h2>$error</h2>\n";
+          return "<h3>$error</h3>\n";
         }
-        if (!is_uploaded_file($_FILES['filename']['tmp_name'])) return sprintf($this->html->h2->attack, $_FILES["filename"]["name"]);
+        
+        if (!is_uploaded_file($_FILES['filename']['tmp_name'])) return sprintf($this->html->h4->attack, $_FILES["filename"]["name"]);
         if ($isauthor && ($r = tauthor_rights::i()->canupload())) return $r;
-        $overwrite  = isset($_POST['overwrite']);
+
+        $filename = $_FILES['filename']['name'];
+        $tempfilename = $_FILES['filename']['tmp_name'];
         $parser = tmediaparser::i();
-        $id = $parser->uploadfile($_FILES['filename']['name'], $_FILES['filename']['tmp_name'], $_POST['title'], $_POST['description'], $_POST['keywords'], $overwrite);
-      } else {
-        //downloadurl
-        $content = http::get($_POST['downloadurl']);
-        if ($content == false) return $this->html->h2->errordownloadurl;
-        $filename = basename(trim($_POST['downloadurl'], '/'));
-        if ($filename == '') $filename = 'noname.txt';
-        if ($isauthor && ($r = tauthor_rights::i()->canupload())) return $r;
-        $overwrite  = isset($_POST['overwrite']);
-        $parser = tmediaparser::i();
-        $id = $parser->upload($filename, $content, $_POST['title'], $_POST['description'], $_POST['keywords'], $overwrite);
+                   $filename = tmediaparser::linkgen($filename);
+    $parts = pathinfo($filename);
+    $newtemp = $parser->gettempname($parts);
+    if (!move_uploaded_file($tempfilename, litepublisher::$paths->files . $newtemp)) return $this->html->h4->attack, $_FILES["filename"]["name"]);
+    
+//addfile($filename, $newtemp, $title, $description, $keywords, $overwrite);
+$tempfilename = $newtemp;
+    $hash =$files->gethash(litepublisher::$paths->files . $tempfilename);
+    if (($idpreview = $files->IndexOf('hash', $hash)) ||
+    ($idpreview = $this->getdb('imghashes')->findid('hash = '. dbquote($hash)))) {
+      @unlink(litepublisher::$paths->files . $tempfilename);
+      return ;
+    }
+
+    $info = $parser->getinfo($tempfilename);
+    if ($info['media'] != 'image') {
+      @unlink(litepublisher::$paths->files . $tempfilename);
+      return ;
+        }
+    
+        $info['filename'] = $parser->movetofolder($filename, $tempfilename, $parser->getmediafolder($info['media']), false);
+        
+            $newitem = $info + array(
+    'filename' => $filename,
+          'parent' => $id,
+      'preview' => 0,
+    'title' => $filename,
+    'description' => '',
+    'keywords' => ''
+    );
+
+        if (isset($_POST['noresize'])) {
+            $idpreview = $files->additem($newitem);
+        } else {
+//$preview = $parser->getsnapshot($info['filename']);
+    $filename = str_replace('/', DIRECTORY_SEPARATOR, $info['filename']);
+    $srcfilename = litepublisher::$paths->files . $filename;
+        if (($source = tmediaparser::readimage($srcfilename) && tmediaparser::createthumb($source, $srcfilename, $parser->previewwidth, $parser->previewheight, $parser->ratio, $parser->clipbounds, $parser->quality_snapshot)) {
+        @chmod($srcfilename, 0666);
+        $info = getimagesize($srcfilename);
+
+        $result = $this->getdefaultvalues(str_replace(DIRECTORY_SEPARATOR, '/', $destfilename));
+        $result['media'] = 'image';
+        $result['mime'] = $info['mime'];
+        $result['width'] = $info[0];
+        $result['height'] = $info[1];
+      }
+}
+
+      $preview = $preview + array(
+      'parent' => $id,
+      'preview' => 0,
+      'filename' => $filename,
+      'title' => $title,
+      'description' => '',
+      'keywords' => ''
+      );
+      $preview['parent'] = $id;
+      $idpreview = $files->additem($preview);
+      
+      //update hash and size because when create thumbnail we can scale original image
+      $upd = array(
+      'id' => $id,
+      'preview'=> $idpreview,
+      );
+      
+      $srcfilename = litepublisher::$paths->files. str_replace('/', DIRECTORY_SEPARATOR, $info['filename']);
+      if (('image' == $item['media']) && ($info2 = getimagesize($srcfilename))) {
+        $upd['mime'] = $info2['mime'];
+        $upd['width'] = $info2[0];
+        $upd['height'] = $info2[1];
+        $upd['hash'] = $files->gethash($srcfilename);
+        $upd['size'] = filesize($srcfilename);
+        
+        $this->getdb('imghashes')->insert(array(
+        'id' => $id,
+        'hash' => $files->getvalue($id, 'hash'),
+        ));
       }
       
-      if (isset($_POST['idperm'])) tprivatefiles::i()->setperm($id, (int) $_POST['idperm']);
-      return $this->html->h4->success;
-    } elseif ($_GET['action'] == 'edit') {
-      $id = $this->idget();
-      if (!$files->itemexists($id))  return $this->notfound;
-      $files->edit($id, $_POST['title'], $_POST['description'], $_POST['keywords']);
-      if (isset($_POST['idperm'])) tprivatefiles::i()->setperm($id, (int) $_POST['idperm']);
-      return $this->html->h4->edited;
+      $files->db->updateassoc($upd);
     }
-    
-    return '';
-  }
-  
-}//class
-?>
+
+            if ($item['preview'] > 0) $files->delete($item['preview']);
+        $files->setvalue($id, 'preview', $idpreview);
+                $files->setvalue($idpreview, 'parent', $id);
+      if ($item['idperm'] > 0) {
+                                      $files->setvalue($idpreview, 'idperm', $item['idperm']);
+      tprivatefiles::i()->setperm($idpreview, (int) $item['idperm']);
+      }
+      return $this->html->h4->success;
+      }
+      
+      }//class
