@@ -1,9 +1,11 @@
+/**
+* Lite Publisher
+* Copyright (C) 2010, 2013 Vladimir Yushko http://litepublisher.com/
+* Dual licensed under the MIT (mit.txt)
+* and GPL (gpl.txt) licenses.
+**/
+
 ;(function( $, document, window){
-  $(document).ready(function() {
-var audios = $("audio");
-var videos = $(".videofile");  
-if (audios.length || videos.length) {
-//see end of file to init
   litepubl.Mediaplayer= Class.extend({
   tml: {
   video: '<video src="%%siteurl%%/files/%%file.filename%%" type="%%file.mime%%" controls="controls" autoplay="autoplay"></video>',
@@ -11,8 +13,8 @@ if (audios.length || videos.length) {
 	          holder: "#pretty-video-holder"
   },
   
-  width: '500',
-  height: '344',
+  width: 450,
+  height: 300,
   clicked: false,
   tmplink: false,
   script: false,
@@ -27,14 +29,17 @@ if (audios.length || videos.length) {
   },
 
   init: function(audio, video) {
+  this.width = ltoptions.video_width;
+  this.height = ltoptions.video_height;
+  
 if (audio.length) {
 var self = this;
 this.ready(function() {
-self.init_audio(audios);
+self.init_audio(audio);
 });
 }
 
-if (videos.length) this.init_video(videos);
+if (video.length) this.init_video(video);
 },
 
 init_audio: function(links) {
@@ -91,27 +96,12 @@ siteurl: ltoptions.files
   });
   
   $(html).appendTo(tml.holder).videoplayer({
-  /*
-    success: function(mediaElement, domObject) {
-        if (mediaElement.pluginType == 'flash') {
-            mediaElement.addEventListener('canplay', function() {
-                // Player is ready
-                mediaElement.play();
-            }, false);
-        }
-        else             $('.mejs-overlay-button').trigger('click');
-    },
-    
-    error: function() {
-        alert('Error setting media!');
-    }
-*/
 });//mediaelement
 }
     
 });//class
 
-  litepubl.mediaplayer = new litepubl.Mediaplayer(audios, videos);
-  }
+  $(document).ready(function() {
+  litepubl.mediaplayer = new litepubl.Mediaplayer($("audio"), $(".videofile"));
   });
 })( jQuery, document, window);
