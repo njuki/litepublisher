@@ -46,7 +46,8 @@ audioHeight: 30,
   },
   
   init_video: function(links) {
-    this.tmplink = $('<a href="#custom&width=' + this.width + '&height=' + this.height + '"></a>').appendTo("body").hide();
+    this.tmplink = $('<a href="#custom=true&width=' + this.width + '&height=' + this.height + '"></a>').appendTo($('<div class="hidden"></div>').appendTo("body").hide());
+
   var self = this;
   var tml = this.tml;
   links.on("click.playvideo", function(event) {
@@ -85,7 +86,7 @@ audioHeight: 30,
     init_mediaelement: function() {
     var tml = this.tml;
   var html = $.simpletml(tml.video, {
-  file: self.clicked.data("file"),
+  file: this.clicked.data("file"),
 siteurl: ltoptions.files
   });
   
