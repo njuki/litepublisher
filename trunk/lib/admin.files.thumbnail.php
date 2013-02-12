@@ -29,7 +29,7 @@ if (!($id = $this->getidfile()))   return $this->notfound;
     $files = tfiles::i();
     $html = $this->html;
       $args = new targs();
-            $args->adminurl = $this->url;
+            $args->adminurl = $this->adminurl;
             $item = $files->getitem($id);
             $idpreview = $item['preview'];
             if ($idpreview > 0) {
@@ -51,7 +51,7 @@ if (!($id = $this->getidfile()))   return $this->notfound;
     if (isset($_POST['submitdelete'])) {
     $files->delete($item['preview']);
     $files->setvalue($id, 'preview', 0);
-    return $this->html->deleted();
+    return $this->html->h4->deleted;
     }
     
       $isauthor = 'author' == litepublisher::$options->group;
