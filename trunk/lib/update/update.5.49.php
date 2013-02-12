@@ -3,7 +3,7 @@
 function update549() {
 $css = tcssmerger::i();
 $css->lock();
-$section = 'default'';
+$section = 'default';
   $css->deletefile('default', '/js/litepublisher/css/prettyphoto.dialog.css');
   $css->add('default', '/js/litepublisher/css/prettyphoto.dialog.min.css');
       $css->add($section, '/js/litepublisher/css/filelist.min.css');
