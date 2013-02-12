@@ -46,13 +46,6 @@ $next = [<p id="next">$lang.next <a rel="next" href="$nextpost.link" title="$lan
 <div class="clear"></div></div>
 ]
 
-content.post.filelist = [<div id="files-$post.id">
-$files = [$file = [<span class="file"><a href="$link" data-idfile="$id" title="$description">$title</a></span>]]
-$images= [$image = [<span class="image"><a title="$title" rel="prettyPhoto[gallery-$post.id]" href="$link" data-idfile="$id">$preview</a></span>]
-$preview = [<img class="photo" src="$preview.link" alt="$title" title="$description" />]]
-$audios = [$audio = [<a href="$link" class="audiofile" rel="audio" data-idfile="$id" title="$lang.play $title">$lang.playaudio $title</a><!--$player-->]]
-$videos = [$video = [<a href="$link" class="videofile" rel="video" data-idfile="$id" title="$lang.playvideo $title">$lang.playvideo $title</a><!--$player-->]]
-</div>]
 
 content.post.templatecomments.closed = [<p class="center red">$lang.closed</p>]
 

@@ -253,35 +253,3 @@ ul.list.line{
 
 ul#nav{display:block;list-style:none;margin:0 20px;width:100%;position:relative;}
 #nav li{float:left;position:relative}
-
-.filelist {
-	width: 100%;
-	float: left;
-	overflow: hidden;
-}
- 
-.filelist ul {
-	overflow:hidden;
-	list-style:none;
-	margin:0;
-	padding:0;
-	width:100%;
-}
- 
-.filelist ul li {
-	display:inline;
-}
- 
-.classictable   {
-border: 2px solid black;
-border-collapse:collapse;
-font-size:12px;
-width:98%;
-} 
-
-.classictable   th, td {
-border: 1px solid black;
-padding: 5px;
-}
-.div-table{overflow:auto}
-.hidden {display: none}
