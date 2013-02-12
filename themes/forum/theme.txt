@@ -68,18 +68,6 @@ $prev = [<a class="left" rel="prev" href="$prevpost.link" title="$lang.prev: $pr
 $next = [<a class="right" rel="next" href="$nextpost.link" title="$lang.next: $nextpost.title">$nextpost.title &raquo;</a>]
 </p>]
 
-content.post.filelist = [
-$files = [$file = [<p class="file"><em>$lang.download:</em> <a href="$link" title="$description" data-idfile="$id">$title</a> ($description)</p>]]
-$images= [$image = [<span class="image"><a rel="prettyPhoto[gallery-$post.id]" href="$link" class="photo" data-idfile="$id">$preview</a></span>]
-$preview = [<img class="left photo" title="$description" src="$preview.link" alt="$title $post.title"/>]]
-$audios = [$audio = [<a href="$link" class="audiofile" rel="audio" data-idfile="$id" title="$lang.play $title">$lang.playaudio $title</a>
-<!--$player-->]]
-
-$videos = [$video = [<a href="$link" class="videofile" rel="video" data-idfile="$id" title="$lang.playvideo $title">$lang.playvideo $title</a>
-<!--$player-->]]
-
-]
-
 content.post.templatecomments.closed = [<h3 class="center red">$lang.closed</h3>]
 
 content.post.templatecomments.regform = [

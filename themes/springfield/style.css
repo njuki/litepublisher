@@ -387,22 +387,3 @@ table#wp-calendar tfoot td{
 #footer a:hover{
 	color: #D503C4;
 } 
-
-.filelist {
-	width: 100%;
-	float: left;
-	overflow: hidden;
-}
- 
-.filelist ul {
-	overflow:hidden;
-	list-style:none;
-	margin:0;
-	padding:0;
-	width:100%;
-}
- 
-.filelist ul li {
-	display:inline;
-}
- 

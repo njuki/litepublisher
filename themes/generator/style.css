@@ -22,6 +22,7 @@ ol,ul{list-style:none}
 #content ol{list-style:decimal}
 #content ul{list-style:disc}
 #tabs ul,.sbar ul{list-style:none}
+.div-table{max-width:565px;overflow:auto}
 table{border:1px solid #ddd;border-collapse:collapse;border-spacing:0;vertical-align:baseline}
 .classictable{font-size:11px}
 caption,thead,tfoot,tbody,tr,th,td{border:1px solid #ddd;padding:2px;vertical-align:middle}
@@ -60,7 +61,6 @@ form#moderateform input,.quote input{font-size:11px}
 .ui-tabs-panel .file{clear:both;display:block}
 .ui-tabs-panel .photo{height:120px;width:120px}
 .ui-tabs-panel p{clear:both}
-.div-table{max-width:565px;overflow:auto}
 #prevnext{border-bottom:1px dotted #cdcdcd;padding:15px 0;margin-bottom:20px}
 #prev{margin-bottom:5px}
 #next{margin-top:5px;text-align:right}

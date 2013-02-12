@@ -1,5 +1,0 @@
-        <div class="article">
-          <h2><span><a href="$Options->url$post->url" rel="bookmark" title="$lang->permalink $post->title">$post->title</a></span></h2>
-$post->content
-        </div>
-        <hr class="noscreen" />
