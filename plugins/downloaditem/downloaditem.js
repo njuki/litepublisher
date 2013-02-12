@@ -80,7 +80,7 @@ if (url == '') {
 $("a[rel='theme'], a[rel='plugin']").click(download_item_clicked);
 } else {
 $("a[rel='theme'], a[rel='plugin']").each(function() {
-$(this).unbind("click");
+$(this).off("click");
 var type = $(this).attr("rel");
 var fileurl = $(this).data("url");
 $(this).attr("href", get_download_item(fileurl, type));

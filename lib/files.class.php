@@ -204,6 +204,7 @@ class tfiles extends titems {
                 } elseif($type == 'video') {
             $preview->link = litepublisher::$site->url . $this->videoplayer;
             $args->preview = $theme->parsearg($types['preview'], $args);
+            $preview->array = array();
                 }
         
 if (count($preview->array)) {
