@@ -243,7 +243,7 @@ class tmediaparser extends tevents {
     return $files->additem($item);
   }
   
-  private function getdefaultvalues($filename) {
+  public function getdefaultvalues($filename) {
     return array(
     'parent' => 0,
     'preview' => 0,
@@ -253,13 +253,6 @@ class tmediaparser extends tevents {
     'size' => 0,
     'icon' => 0,
     'idperm' => 0,
-    /*
-    'bitrate' => 0,
-    'framerate' => 0,
-    'samplingrate' => '',
-    'channels' => 0,
-    'duration' => 0,
-    */
     'height' => 0,
     'width' => 0
     );

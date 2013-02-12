@@ -24,7 +24,7 @@ return false;
   }
   
   public function getcontent() {
-if (!($id = $this->getidfile())   return $this->notfound;
+if (!($id = $this->getidfile()))   return $this->notfound;
     $result = '';
     $files = tfiles::i();
     $html = $this->html;
@@ -44,7 +44,7 @@ return $result;
 }    
 
   public function processform() {
-  if (!($id = $this->getidfile())   return $this->notfound;
+if (!($id = $this->getidfile()))   return $this->notfound;
     $files = tfiles::i();
         $item = $files->getitem($id);
         
@@ -69,13 +69,13 @@ return $result;
                    $filename = tmediaparser::linkgen($filename);
     $parts = pathinfo($filename);
     $newtemp = $parser->gettempname($parts);
-    if (!move_uploaded_file($tempfilename, litepublisher::$paths->files . $newtemp)) return $this->html->h4->attack, $_FILES["filename"]["name"]);
+    if (!move_uploaded_file($tempfilename, litepublisher::$paths->files . $newtemp)) return sprintf($this->html->h4->attack, $_FILES["filename"]["name"]);
     
 //addfile($filename, $newtemp, $title, $description, $keywords, $overwrite);
 $tempfilename = $newtemp;
     $hash =$files->gethash(litepublisher::$paths->files . $tempfilename);
     if (($idpreview = $files->IndexOf('hash', $hash)) ||
-    ($idpreview = $this->getdb('imghashes')->findid('hash = '. dbquote($hash)))) {
+    ($idpreview = $files->getdb('imghashes')->findid('hash = '. dbquote($hash)))) {
       @unlink(litepublisher::$paths->files . $tempfilename);
       return ;
     }
@@ -100,54 +100,22 @@ $tempfilename = $newtemp;
         if (isset($_POST['noresize'])) {
             $idpreview = $files->additem($newitem);
         } else {
-//$preview = $parser->getsnapshot($info['filename']);
-    $filename = str_replace('/', DIRECTORY_SEPARATOR, $info['filename']);
-    $srcfilename = litepublisher::$paths->files . $filename;
-        if (($source = tmediaparser::readimage($srcfilename) && tmediaparser::createthumb($source, $srcfilename, $parser->previewwidth, $parser->previewheight, $parser->ratio, $parser->clipbounds, $parser->quality_snapshot)) {
+    $srcfilename = litepublisher::$paths->files . str_replace('/', DIRECTORY_SEPARATOR, $info['filename']);
+        if (($source = tmediaparser::readimage($srcfilename)) && tmediaparser::createthumb($source, $srcfilename, $parser->previewwidth, $parser->previewheight, $parser->ratio, $parser->clipbounds, $parser->quality_snapshot)) {
         @chmod($srcfilename, 0666);
-        $info = getimagesize($srcfilename);
+        $imginfo = getimagesize($srcfilename);
+        $newitem['media'] = 'image';
+        $newitem['mime'] = $imginfo['mime'];
+        $newitem['width'] = $imginfo[0];
+        $newitem['height'] = $imginfo[1];
 
-        $result = $this->getdefaultvalues(str_replace(DIRECTORY_SEPARATOR, '/', $destfilename));
-        $result['media'] = 'image';
-        $result['mime'] = $info['mime'];
-        $result['width'] = $info[0];
-        $result['height'] = $info[1];
-      }
-}
-
-      $preview = $preview + array(
-      'parent' => $id,
-      'preview' => 0,
-      'filename' => $filename,
-      'title' => $title,
-      'description' => '',
-      'keywords' => ''
-      );
-      $preview['parent'] = $id;
-      $idpreview = $files->additem($preview);
-      
-      //update hash and size because when create thumbnail we can scale original image
-      $upd = array(
-      'id' => $id,
-      'preview'=> $idpreview,
-      );
-      
-      $srcfilename = litepublisher::$paths->files. str_replace('/', DIRECTORY_SEPARATOR, $info['filename']);
-      if (('image' == $item['media']) && ($info2 = getimagesize($srcfilename))) {
-        $upd['mime'] = $info2['mime'];
-        $upd['width'] = $info2[0];
-        $upd['height'] = $info2[1];
-        $upd['hash'] = $files->gethash($srcfilename);
-        $upd['size'] = filesize($srcfilename);
-        
-        $this->getdb('imghashes')->insert(array(
-        'id' => $id,
-        'hash' => $files->getvalue($id, 'hash'),
+      $idpreview = $files->additem($newitem);
+              $files->getdb('imghashes')->insert(array(
+        'id' => $idpreview,
+        'hash' => $hash
         ));
-      }
-      
-      $files->db->updateassoc($upd);
-    }
+} else return;
+}      
 
             if ($item['preview'] > 0) $files->delete($item['preview']);
         $files->setvalue($id, 'preview', $idpreview);
