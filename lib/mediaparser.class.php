@@ -47,7 +47,7 @@ class tmediaparser extends tevents {
     return $this->addfile($filename, $tempfilename, $title, $description, $keywords, $overwrite);
   }
   
-  private function gettempname($parts) {
+  public function gettempname($parts) {
     return 'tmp.' . md5(mt_rand() . litepublisher::$secret. microtime()) . '.' . $parts['filename'] .
     (empty($parts['extension']) ? '' : '.' . $parts['extension']);
   }
