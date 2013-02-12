@@ -1,6 +1,12 @@
 <?php
 
 function update549() {
+$js = tjsmerger::i();
+$js->lock();
+  $js->deletefile('posteditor', '/js/litepublisher/simpletml.min.js');
+  $js->add('default', '/js/litepublisher/simpletml.min.js');
+  $js->unlock();
+
 $css = tcssmerger::i();
 $css->lock();
 $section = 'default';

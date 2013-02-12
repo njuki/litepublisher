@@ -47,6 +47,7 @@ function tjsmergerInstall($self) {
   $self->add($section, '/js/plugins/jquery.cookie.min.js');
   $self->add($section, '/js/litepublisher/litepublisher.utils.min.js');
   $self->add($section, '/js/litepublisher/widgets.min.js');
+    $self->add($section, '/js/litepublisher/simpletml.min.js');
   $self->add($section, '/js/litepublisher/players.min.js');
   $self->add($section, '/js/litepublisher/prettyphoto.dialog.min.js');
   $self->addtext($section, 'pretty',
@@ -100,7 +101,6 @@ $js = "var lang;\nif (lang == undefined) lang = {};\n";
   $self->add($section, '/js/swfupload/swfupload.min.js');
   $self->add($section, '/js/litepublisher/uploader.min.js');
   $self->add($section, '/js/jquery/ui-$site.jqueryui_version/jquery.ui.progressbar.min.js');
-  $self->add($section, '/js/litepublisher/simpletml.min.js');
   $self->add($section, '/js/litepublisher/posteditor.min.js');
   $self->add($section, '/js/litepublisher/fileman.min.js');
   $self->add($section, '/js/litepublisher/fileman.templates.min.js');
