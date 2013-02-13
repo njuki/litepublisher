@@ -90,6 +90,7 @@ class Tadminoptions extends tadminmenu {
       break;
       
       case 'view':
+     $args->perpage = $options->perpage;
       $filter = tcontentfilter::i();
       $args->usefilter = $filter->usefilter;
       $args->automore = $filter->automore;
@@ -101,10 +102,24 @@ class Tadminoptions extends tadminmenu {
       
       $themeparser = tthemeparser::i();
       $args->replacelang = $themeparser->replacelang;
+            $args->stylebefore = $themeparser->stylebefore;
+            
+$args->formtitle = $lang->viewoptions;
+                  return $html->adminform('
+[text=perpage]
+[checkbox=usefilter]
+[checkbox=automore]
+[text=automorelength]
+[checkbox=autolinks]
+[checkbox=commentautolinks]
+[checkbox=hidefilesonpage]
+[checkbox=icondisabled]
+[checkbox=replacelang]
+[checkbox=stylebefore]
+', $args);
       break;
       
-      case 'files':
-      $parser = tmediaparser::i();
+      case 'files':      $parser = tmediaparser::i();
       $args->enablepreview = $parser->enablepreview;
       $args->ratio = $parser->ratio;
       $args->clipbounds = $parser->clipbounds;
@@ -276,12 +291,20 @@ class Tadminoptions extends tadminmenu {
       $filter->commentautolinks = isset($commentautolinks);
       $filter->save();
       
-      $replacelang  = isset($replacelang );
       $themeparser = tthemeparser::i();
-      if ($replacelang != $themeparser->replacelang) {
-        $themeparser->replacelang = $replacelang;
+        $themeparser->replacelang = isset($replacelang );
+        $themeparser->stylebefore = isset($stylebefore);
         $themeparser->save();
-      }
+        
+        // restore style after
+        if (!$themeparser->stylebefore) {
+        $css = '<link type="text/css" href="$site.files$template.cssmerger_default" rel="stylesheet" />';
+        $t = ttemplate::i();
+if (false !== strpos($t->heads, "<!--$css-->")) {
+$t->heads = str_replace("<!--$css-->", $css, $t->heads);
+$t->save();
+}
+}
       break;
       
       case 'files':
