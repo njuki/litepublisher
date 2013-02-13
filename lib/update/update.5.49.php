@@ -34,4 +34,8 @@ litepublisher::$classes->add('tadminfilethumbnails', 'admin.files.thumbnail.php'
 $m->data['audioext'] = 'mp3|wav |flac';
 $m->data['videoext'] = 'mp4|ogv|webm';
 $m->save();
+
+$themeparser = tthemeparser::i();
+        $themeparser->data['stylebefore'] = true;
+        $themeparserr->save();
 }

@@ -27,6 +27,8 @@ class tthemeparser extends tevents {
     $this->addmap('extrapaths', array());
     $this->data['replacelang'] = false;
     $this->data['removephp'] = true;
+        $this->data['stylebefore'] = true;
+    
     $this->fixsubcount = true;
     
     $this->sidebar_index = 0;
@@ -601,7 +603,21 @@ class tthemeparser extends tevents {
         $templates[$comment] = str_replace('$moderate',
         '<div class="moderationbuttons" data-idcomment="$comment.id" data-idauthor="$comment.author"></div>',
         $templates[$comment]);
-        
+
+if ($this->stylebefore && !strpos($templates['index'], '$template.cssmerger_default')) {
+//insert css merger before theme css
+if ($i = strpos($templates['index'], '.css')) {
+$i = strrpos(substr($templates['index'], 0, $i), '<');
+$css = '<link type="text/css" href="$site.files$template.cssmerger_default" rel="stylesheet" />';
+$templates['index'] = substr_replace($templates['index'], $css, $i - 1, 0);
+//fix $template.head
+$t = ttemplate::i();
+if ((false !== strpos($t->heads, $css)) && (false === strpos($t->heads, "<!--$css-->"))) {
+$t->heads = str_replace($css, "<!--$css-->", $t->heads);
+$t->save();
+}
+}
+}        
       }//method
       
       public static function getmetaclasses($s) {
