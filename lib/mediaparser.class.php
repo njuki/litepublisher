@@ -278,19 +278,6 @@ class tmediaparser extends tevents {
       
       $result['mime'] = $mime[strtolower(substr($filename, -3))];
       $result['media'] = 'video';
-      if ($result['mime'] == 'video/mp4') {
-      require_once(litepublisher::$paths->libinclude . 'php-mp4info/MP4Info.php');
-      		try {
-      $info = MP4Info::getInfo($realfile);
-      dumpvar($info);
-      if($info->hasVideo) {
-  $result['width'] = $info->video->width;
-    $result['height'] = $info->video->height;
-}
-      		//} catch (MP4Info_Exception $e) {};
-      		      		} catch (Exception $e) {};
-      }
-      
       return $result;
     }
     

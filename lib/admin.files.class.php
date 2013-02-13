@@ -17,7 +17,7 @@ class tadminfiles extends tadminmenu {
     $files = tfiles::i();
     $html = $this->html;
     $lang = $this->lang;
-                $args = new targs();
+    $args = new targs();
     if (!isset($_GET['action'])) {
       $args->adminurl = $this->url;
       $args->perm = litepublisher::$options->show_file_perm ?  tadminperms::getcombo(0, 'idperm') : '';
@@ -63,26 +63,26 @@ class tadminfiles extends tadminmenu {
     
     $perpage = 20;
     $type = $this->name == 'files' ? '' : $this->name;
-      $sql = 'parent =0';
-      $sql .= litepublisher::$options->user <= 1 ? '' : ' and author = ' . litepublisher::$options->user;
-      $sql .= $type == '' ? " and media<> 'icon'" : " and media = '$type'";
-      $count = $files->db->getcount($sql);
+    $sql = 'parent =0';
+    $sql .= litepublisher::$options->user <= 1 ? '' : ' and author = ' . litepublisher::$options->user;
+    $sql .= $type == '' ? " and media<> 'icon'" : " and media = '$type'";
+    $count = $files->db->getcount($sql);
     $from = $this->getfrom($perpage, $count);
     $list = $files->select($sql, " order by posted desc limit $from, $perpage");
     if (!$list) $list = array();
     $result .= sprintf($html->h4->countfiles, $count, $from, $from + count($list));
     
     $args->adminurl = $this->adminurl;
-        $result .= $html->buildtable($files->items, array(
-            array('right', 'ID', '$id'),
-                        array('right', $lang->filename, '<a href="$site.files/files/$filename">$filename</a>'),
-                array('left', $lang->title, $type != 'icon' ? '$title' :
-'<img src="$site.files/files/$filename" alt="$filename" />'),
+    $result .= $html->buildtable($files->items, array(
+    array('right', 'ID', '$id'),
+    array('right', $lang->filename, '<a href="$site.files/files/$filename">$filename</a>'),
+    array('left', $lang->title, $type != 'icon' ? '$title' :
+    '<img src="$site.files/files/$filename" alt="$filename" />'),
     array('center', $lang->edit, "<a href=\"$this->adminurl=\$id&action=edit\">$lang->edit</a>"),
-        array('center', $lang->thumbnail, '<a href="' . tadminhtml::getadminlink('/admin/files/thumbnail/', 'id='). "\$id\" target=\"_blank\">$lang->thumbnail</a>"),
+    array('center', $lang->thumbnail, '<a href="' . tadminhtml::getadminlink('/admin/files/thumbnail/', 'id='). "\$id\" target=\"_blank\">$lang->thumbnail</a>"),
     array('center', $lang->delete, "<a href=\"$this->adminurl=\$id&action=delete\">$lang->delete</a>")
-));
-
+    ));
+    
     $theme = ttheme::i();
     $result .= $theme->getpages($this->url, litepublisher::$urlmap->page, ceil($count/$perpage));
     return $result;

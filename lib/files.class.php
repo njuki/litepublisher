@@ -193,27 +193,27 @@ class tfiles extends titems {
         $args->id = $id;
         $args->typeindex = $typeindex;
         $args->index = $index++;
-                $args->preview  = '';
-                                $preview->array = array(); 
-                                
+        $args->preview  = '';
+        $preview->array = array();
+        
         if ($item['preview'] > 0) {
           $preview->array = $this->getitem($item['preview']);
         } elseif($type == 'image') {
           $preview->array = $item;
           $preview->id = $id;
-                } elseif($type == 'video') {
-            $preview->link = litepublisher::$site->url . $this->videoplayer;
-            $args->preview = $theme->parsearg($types['preview'], $args);
-            $preview->array = array();
-                }
+        } elseif($type == 'video') {
+          $preview->link = litepublisher::$site->url . $this->videoplayer;
+          $args->preview = $theme->parsearg($types['preview'], $args);
+          $preview->array = array();
+        }
         
-if (count($preview->array)) {
-            $preview->link = $url . $preview->filename;
-            $args->preview = $theme->parsearg($types['preview'], $args);
-            }
-
- unset($item['title'], $item['keywords'], $item['description']);
- $args->json = str_replace('"', '&quot;', json_encode($item));       
+        if (count($preview->array)) {
+          $preview->link = $url . $preview->filename;
+          $args->preview = $theme->parsearg($types['preview'], $args);
+        }
+        
+        unset($item['title'], $item['keywords'], $item['description']);
+        $args->json = str_replace('"', '&quot;', json_encode($item));
         $sublist .= $theme->parsearg($types[$type], $args);
       }
       $sublist = str_replace('$' . $type, $sublist, $types[$type . 's']);

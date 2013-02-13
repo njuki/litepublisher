@@ -37,5 +37,5 @@ $m->save();
 
 $themeparser = tthemeparser::i();
         $themeparser->data['stylebefore'] = true;
-        $themeparserr->save();
+        $themeparser->save();
 }
