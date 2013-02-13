@@ -383,7 +383,10 @@ class ttemplate extends tevents_storage {
     'files' =>litepublisher::$site->files,
     'idurl' => litepublisher::$urlmap->itemrequested['id'],
     'jqueryui_version' => litepublisher::$site->jqueryui_version,
-    'theme' => array()
+    'lang' => litepublisher::$site->language,
+    'video_width' => litepublisher::$site->video_width,
+    'video_height' => litepublisher::$site->video_height,
+    'theme' => array(),
     );
     $this->hover = true;
     $this->data['heads'] = '';

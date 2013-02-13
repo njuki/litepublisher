@@ -2332,6 +2332,7 @@ class tfiles extends titems {
     $this->table = 'files';
     $this->addevents('changed', 'edited', 'ongetfilelist', 'onlist');
     $this->itemsposts = tfileitems ::i();
+    $this->data['videoplayer'] = '/js/litepublisher/icons/videoplayer.jpg';
   }
   
   public function preload(array $items) {
@@ -2499,26 +2500,32 @@ class tfiles extends titems {
       $sublist = '';
       foreach ($subitems as $typeindex => $id) {
         $item = $this->items[$id];
-        $args->preview  = '';
         $args->add($item);
         $args->link = $url . $item['filename'];
         $args->id = $id;
         $args->typeindex = $typeindex;
         $args->index = $index++;
+        $args->preview  = '';
+        $preview->array = array();
+        
         if ($item['preview'] > 0) {
           $preview->array = $this->getitem($item['preview']);
-          if ($preview->media === 'image') {
-            $preview->id = $item['preview'];
-            $preview->link = $url . $preview->filename;
-            $args->preview = $theme->parsearg($types['preview'], $args);
-          }
         } elseif($type == 'image') {
           $preview->array = $item;
           $preview->id = $id;
+        } elseif($type == 'video') {
+          $preview->link = litepublisher::$site->url . $this->videoplayer;
+          $args->preview = $theme->parsearg($types['preview'], $args);
+          $preview->array = array();
+        }
+        
+        if (count($preview->array)) {
           $preview->link = $url . $preview->filename;
           $args->preview = $theme->parsearg($types['preview'], $args);
         }
         
+        unset($item['title'], $item['keywords'], $item['description']);
+        $args->json = str_replace('"', '&quot;', json_encode($item));
         $sublist .= $theme->parsearg($types[$type], $args);
       }
       $sublist = str_replace('$' . $type, $sublist, $types[$type . 's']);

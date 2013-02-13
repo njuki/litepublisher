@@ -31,7 +31,7 @@ function tadminmenusInstall($self) {
   $plugins = $self->createitem(0, 'plugins', 'admin', 'tadminplugins');
   $files = $self->createitem(0, 'files', 'author', 'tadminfiles');
   {
-      $self->createitem($files, 'thumbnail', 'editor', 'tadminfilethumbnails');
+    $self->createitem($files, 'thumbnail', 'editor', 'tadminfilethumbnails');
     $self->createitem($files, 'image', 'editor', 'tadminfiles');
     $self->createitem($files, 'video', 'editor', 'tadminfiles');
     $self->createitem($files, 'audio', 'editor', 'tadminfiles');
