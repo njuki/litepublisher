@@ -169,50 +169,55 @@ class tmediaparser extends tevents {
       return $id;
     }
     
-    $info = $this->getinfo($tempfilename);
-    $info['filename'] = $this->movetofolder($filename, $tempfilename, $this->getmediafolder($info['media']), $overwrite);
-    $item = $info + array(
-    'filename' => $filename,
+    $item = $this->getinfo($tempfilename);
+    $item = $item + array(
+    'filename' => $this->movetofolder($filename, $tempfilename, $this->getmediafolder($item['media']), $overwrite),
     'title' => $title,
     'description' => $description,
     'keywords' => $keywords
     );
-    
-    $id = $files->additem($item);
-    if ($this->enablepreview && ($preview = $this->createpreview($info))) {
+
+$preview = false;
+if ($item['media'] == 'image') {
+$srcfilename = litepublisher::$paths->files . str_replace('/', DIRECTORY_SEPARATOR, $item['filename']);
+$need_to_resize = ($this->maxwidth > 0) && ($this->maxheight > 0) && (($item['width'] > $this->maxwidth ) || ($item['height'] > $this->maxheight));
+if (($need_to_resize || $this->enablepreview) && ($image = self::readimage($srcfilename)))) {
+          if ($need_to_resize) {
+          $this->resize($srcfilename, $image);
+          // after resize only jpg format
+          if (!strend($srcfilename, '.jpg')) {
+          $item['filename'] .= '.jpg';
+          rename($srcfilename, $srcfilename . '.jpg');
+          }
+}
+
+          if ($this->enablepreview && ($preview = $this->getsnapshot($ITEM['filename']);
       $preview = $preview + array(
-      'parent' => $id,
       'preview' => 0,
-      'filename' => $filename,
       'title' => $title,
       'description' => '',
       'keywords' => ''
       );
-      $preview['parent'] = $id;
-      $idpreview = $files->additem($preview);
-      
-      //update hash and size because when create thumbnail we can scale original image
-      $upd = array(
-      'id' => $id,
-      'preview'=> $idpreview,
-      );
-      
-      $srcfilename = litepublisher::$paths->files. str_replace('/', DIRECTORY_SEPARATOR, $info['filename']);
-      if (('image' == $item['media']) && ($info2 = getimagesize($srcfilename))) {
-        $upd['mime'] = $info2['mime'];
-        $upd['width'] = $info2[0];
-        $upd['height'] = $info2[1];
-        $upd['hash'] = $files->gethash($srcfilename);
-        $upd['size'] = filesize($srcfilename);
-        
-        $this->getdb('imghashes')->insert(array(
+}
+
+          imagedestroy($image);
+          }
+}
+
+        $id = $files->additem($item);
+        IF ($HASH != $FILES->GETVALUE($ID, 'HASH')) {
+                $FILES->getdb('imghashes')->insert(array(
         'id' => $id,
-        'hash' => $files->getvalue($id, 'hash'),
+        'hash' => $HASH
         ));
       }
-      
-      $files->db->updateassoc($upd);
-    }
+
+        if ($preview) {
+        $PREVIEW['PARENT'] = $ID;
+      $idpreview = $files->additem($preview);
+      $FILES->SETVALUE($ID, 'PREVIEW', $IDPREVIEW);
+}      
+
     $this->added($id);
     return $id;
   }
@@ -311,35 +316,6 @@ class tmediaparser extends tevents {
     return $result;
   }
   
-  public function createpreview(array $info) {
-    switch ($info['media']) {
-      case 'image':
-      return $this->getsnapshot($info['filename']);
-      break;
-      
-      case 'audio':
-      break;
-      
-      case 'video':
-      //$result['preview'] = $this->getvideopreview($info['filename']);
-      break;
-      
-      case 'document':
-      break;
-      
-      case 'executable':
-      break;
-      
-      case 'text':
-      break;
-      
-      case 'archive':
-      break;
-    }
-    
-    return false;
-  }
-  
   public static function readimage($srcfilename) {
     if (!file_exists($srcfilename)) return false;
     if (!($info = @getimagesize($srcfilename))) return false;
@@ -414,7 +390,7 @@ class tmediaparser extends tevents {
     return true;
   }
   
-  public function getsnapshot($filename) {
+  public function getsnapshot($filename, $image) {
     $result = false;
     $filename = str_replace('/', DIRECTORY_SEPARATOR, $filename);
     $srcfilename = litepublisher::$paths->files . $filename;
@@ -422,13 +398,11 @@ class tmediaparser extends tevents {
     $destfilename = $parts['filename'] . '.preview.jpg';
     if (!empty($parts['dirname']) && ($parts['dirname'] != '.')) {
       $destfilename = $parts['dirname'] . DIRECTORY_SEPARATOR . $destfilename;
-    }
     
     $fullname = litepublisher::$paths->files . $destfilename ;
     $dir = dirname($fullname) . DIRECTORY_SEPARATOR;
     $fullname = $dir . self::getunique($dir, basename($fullname));
     
-    if ($source = self::readimage($srcfilename)) {
       if (self::createthumb($source, $fullname, $this->previewwidth, $this->previewheight, $this->ratio, $this->clipbounds, $this->quality_snapshot)) {
         @chmod($fullname, 0666);
         $info = getimagesize($fullname);
@@ -440,8 +414,13 @@ class tmediaparser extends tevents {
         $result['height'] = $info[1];
       }
       
-      $sourcex = imagesx($source);
-      $sourcey = imagesy($source);
+      $this->resize($SOURCE);
+    return $result;
+  }
+      
+      public function resize($filename, $image) {
+      $sourcex = imagesx($image);
+      $sourcey = imagesy($image);
       $x = $this->maxwidth;
       $y = $this->maxheight;
       if (($y > 0) && ($x > 0) && (($sourcex > $x) || ($sourcey > $y))) {
@@ -453,18 +432,13 @@ class tmediaparser extends tevents {
         }
         
         $dest = imagecreatetruecolor($x, $y);
-        imagecopyresampled($dest, $source, 0, 0, 0, 0, $x, $y, $sourcex, $sourcey);
-        imagejpeg($dest, $srcfilename, $this->quality_original);
+        imagecopyresampled($dest, $image, 0, 0, 0, 0, $x, $y, $sourcex, $sourcey);
+        imagejpeg($dest, $filename, $this->quality_original);
         imagedestroy($dest);
-        @chmod($srcfilename, 0666);
+        @chmod($filename, 0666);
       }
-      
-      imagedestroy($source);
     }
-    
-    return $result;
-  }
-  
+      
   private function getaudioinfo($filename) {
     return false;
     /*
