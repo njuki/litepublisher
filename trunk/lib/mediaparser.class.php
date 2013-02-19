@@ -15,7 +15,7 @@ class tmediaparser extends tevents {
   protected function create() {
     parent::create();
     $this->basename = 'mediaparser';
-    $this->addevents('added');
+    $this->addevents('added', 'onimage');
     $this->data['enablepreview'] = true;
     $this->data['ratio'] = true;
     $this->data['clipbounds'] = true;
@@ -115,7 +115,21 @@ class tmediaparser extends tevents {
     }
     return false;
   }
-  
+
+public static function replace_ext($filename, $ext) {
+    $parts = pathinfo($filename);
+    $result = $parts['filename'] . $ext;
+    if (!empty($parts['dirname']) && ($parts['dirname'] != '.')) $result = $parts['dirname'] . DIRECTORY_SEPARATOR . $result;
+return $result;
+}
+
+  public static function makeunique($filename) {  
+$filename = str_replace('/', DIRECTORY_SEPARATOR, $filename);
+$i = strrpos($filename, DIRECTORY_SEPARATOR);
+$dir = substr($filename, 0, $i +1);
+return $dir . self::getunique($dir, substr($filename, $i + 1));
+}
+
   public static function getunique($dir, $filename) {
     $files = tfiles::i();
     $subdir = basename(rtrim($dir, '/' .DIRECTORY_SEPARATOR)) . '/';
@@ -170,34 +184,32 @@ class tmediaparser extends tevents {
     }
     
     $item = $this->getinfo($tempfilename);
-    $item = $item + array(
+    $item = array_merge($item, array(
     'filename' => $this->movetofolder($filename, $tempfilename, $this->getmediafolder($item['media']), $overwrite),
     'title' => $title,
     'description' => $description,
     'keywords' => $keywords
-    );
+    ));
 
 $preview = false;
 if ($item['media'] == 'image') {
 $srcfilename = litepublisher::$paths->files . str_replace('/', DIRECTORY_SEPARATOR, $item['filename']);
 $need_to_resize = ($this->maxwidth > 0) && ($this->maxheight > 0) && (($item['width'] > $this->maxwidth ) || ($item['height'] > $this->maxheight));
-if (($need_to_resize || $this->enablepreview) && ($image = self::readimage($srcfilename)))) {
+if (($need_to_resize || $this->enablepreview) && ($image = self::readimage($srcfilename))) {
+          if ($this->enablepreview && ($preview = $this->getsnapshot($srcfilename, $image))) {
+      $preview['title'] = $title;
+}
+
+$this->onimage($image);
           if ($need_to_resize) {
           $this->resize($srcfilename, $image);
           // after resize only jpg format
           if (!strend($srcfilename, '.jpg')) {
-          $item['filename'] .= '.jpg';
-          rename($srcfilename, $srcfilename . '.jpg');
+$fixfilename = self::replace_ext($srcfilename, '.jpg');
+    $fixfilename = self::makeunique($fixfilename);
+          rename($srcfilename, $fixfilename);
+          $item['filename'] = str_replace(DIRECTORY_SEPARATOR, '/', substr($fixfilename, strlen(litepublisher::$paths->files)));
           }
-}
-
-          if ($this->enablepreview && ($preview = $this->getsnapshot($ITEM['filename']);
-      $preview = $preview + array(
-      'preview' => 0,
-      'title' => $title,
-      'description' => '',
-      'keywords' => ''
-      );
 }
 
           imagedestroy($image);
@@ -205,17 +217,17 @@ if (($need_to_resize || $this->enablepreview) && ($image = self::readimage($srcf
 }
 
         $id = $files->additem($item);
-        IF ($HASH != $FILES->GETVALUE($ID, 'HASH')) {
-                $FILES->getdb('imghashes')->insert(array(
+        IF ($hash != $files->getvalue($id, 'hash')) {
+                $files->getdb('imghashes')->insert(array(
         'id' => $id,
-        'hash' => $HASH
+        'hash' => $hash
         ));
       }
 
         if ($preview) {
-        $PREVIEW['PARENT'] = $ID;
+        $preview['parent'] = $id;
       $idpreview = $files->additem($preview);
-      $FILES->SETVALUE($ID, 'PREVIEW', $IDPREVIEW);
+      $files->setvalue($id, 'preview', $idpreview);
 }      
 
     $this->added($id);
@@ -259,7 +271,11 @@ if (($need_to_resize || $this->enablepreview) && ($image = self::readimage($srcf
     'icon' => 0,
     'idperm' => 0,
     'height' => 0,
-    'width' => 0
+    'width' => 0,
+          'preview' => 0,
+      'title' => '',
+      'description' => '',
+      'keywords' => ''
     );
   }
   
@@ -390,32 +406,20 @@ if (($need_to_resize || $this->enablepreview) && ($image = self::readimage($srcf
     return true;
   }
   
-  public function getsnapshot($filename, $image) {
-    $result = false;
-    $filename = str_replace('/', DIRECTORY_SEPARATOR, $filename);
-    $srcfilename = litepublisher::$paths->files . $filename;
-    $parts = pathinfo($filename);
-    $destfilename = $parts['filename'] . '.preview.jpg';
-    if (!empty($parts['dirname']) && ($parts['dirname'] != '.')) {
-      $destfilename = $parts['dirname'] . DIRECTORY_SEPARATOR . $destfilename;
-    
-    $fullname = litepublisher::$paths->files . $destfilename ;
-    $dir = dirname($fullname) . DIRECTORY_SEPARATOR;
-    $fullname = $dir . self::getunique($dir, basename($fullname));
-    
-      if (self::createthumb($source, $fullname, $this->previewwidth, $this->previewheight, $this->ratio, $this->clipbounds, $this->quality_snapshot)) {
-        @chmod($fullname, 0666);
-        $info = getimagesize($fullname);
-        $destfilename = substr($fullname, strlen(litepublisher::$paths->files));
-        $result = $this->getdefaultvalues(str_replace(DIRECTORY_SEPARATOR, '/', $destfilename));
+  public function getsnapshot($srcfilename, $image) {
+$destfilename = self::replace_ext($srcfilename, '.preview.jpg');
+    $destfilename = self::makeunique($destfilename);
+      if (self::createthumb($image, $destfilename, $this->previewwidth, $this->previewheight, $this->ratio, $this->clipbounds, $this->quality_snapshot)) {
+        @chmod($destfilename, 0666);
+        $info = getimagesize($destfilename);
+        $result = $this->getdefaultvalues(str_replace(DIRECTORY_SEPARATOR, '/', substr($destfilename, strlen(litepublisher::$paths->files))));
         $result['media'] = 'image';
         $result['mime'] = $info['mime'];
         $result['width'] = $info[0];
         $result['height'] = $info[1];
-      }
-      
-      $this->resize($SOURCE);
     return $result;
+}
+return false;
   }
       
       public function resize($filename, $image) {
