@@ -15,7 +15,7 @@ class tmediaparser extends tevents {
   protected function create() {
     parent::create();
     $this->basename = 'mediaparser';
-    $this->addevents('added', 'onimage');
+    $this->addevents('added', 'onresize', 'noresize', 'onimage');
     $this->data['enablepreview'] = true;
     $this->data['ratio'] = true;
     $this->data['clipbounds'] = true;
@@ -196,11 +196,11 @@ if ($item['media'] == 'image') {
 $srcfilename = litepublisher::$paths->files . str_replace('/', DIRECTORY_SEPARATOR, $item['filename']);
 $need_to_resize = ($this->maxwidth > 0) && ($this->maxheight > 0) && (($item['width'] > $this->maxwidth ) || ($item['height'] > $this->maxheight));
 if (($need_to_resize || $this->enablepreview) && ($image = self::readimage($srcfilename))) {
+$this->onimage($image);
           if ($this->enablepreview && ($preview = $this->getsnapshot($srcfilename, $image))) {
       $preview['title'] = $title;
 }
 
-$this->onimage($image);
           if ($need_to_resize) {
           $this->resize($srcfilename, $image);
           // after resize only jpg format
@@ -210,6 +210,8 @@ $fixfilename = self::replace_ext($srcfilename, '.jpg');
           rename($srcfilename, $fixfilename);
           $item['filename'] = str_replace(DIRECTORY_SEPARATOR, '/', substr($fixfilename, strlen(litepublisher::$paths->files)));
           }
+} else {
+$this->noresize($image, $srcfilename);
 }
 
           imagedestroy($image);
@@ -437,6 +439,7 @@ return false;
         
         $dest = imagecreatetruecolor($x, $y);
         imagecopyresampled($dest, $image, 0, 0, 0, 0, $x, $y, $sourcex, $sourcey);
+$this->onresize($dest);
         imagejpeg($dest, $filename, $this->quality_original);
         imagedestroy($dest);
         @chmod($filename, 0666);
