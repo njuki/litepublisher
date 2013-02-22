@@ -21,8 +21,8 @@ class tmediaparser extends tevents {
     $this->data['clipbounds'] = true;
     $this->data['previewwidth'] = 120;
     $this->data['previewheight'] = 120;
-    $this->data['maxwidth'] = 0;
-    $this->data['maxheight'] = 0;
+    $this->data['maxwidth'] = 1600;
+    $this->data['maxheight'] = 1200;
     $this->data['quality_snapshot'] = 95;
     $this->data['quality_original'] = 95;
     
@@ -115,21 +115,21 @@ class tmediaparser extends tevents {
     }
     return false;
   }
-
-public static function replace_ext($filename, $ext) {
+  
+  public static function replace_ext($filename, $ext) {
     $parts = pathinfo($filename);
     $result = $parts['filename'] . $ext;
     if (!empty($parts['dirname']) && ($parts['dirname'] != '.')) $result = $parts['dirname'] . DIRECTORY_SEPARATOR . $result;
-return $result;
-}
-
-  public static function makeunique($filename) {  
-$filename = str_replace('/', DIRECTORY_SEPARATOR, $filename);
-$i = strrpos($filename, DIRECTORY_SEPARATOR);
-$dir = substr($filename, 0, $i +1);
-return $dir . self::getunique($dir, substr($filename, $i + 1));
-}
-
+    return $result;
+  }
+  
+  public static function makeunique($filename) {
+    $filename = str_replace('/', DIRECTORY_SEPARATOR, $filename);
+    $i = strrpos($filename, DIRECTORY_SEPARATOR);
+    $dir = substr($filename, 0, $i +1);
+    return $dir . self::getunique($dir, substr($filename, $i + 1));
+  }
+  
   public static function getunique($dir, $filename) {
     $files = tfiles::i();
     $subdir = basename(rtrim($dir, '/' .DIRECTORY_SEPARATOR)) . '/';
@@ -190,48 +190,48 @@ return $dir . self::getunique($dir, substr($filename, $i + 1));
     'description' => $description,
     'keywords' => $keywords
     ));
-
-$preview = false;
-if ($item['media'] == 'image') {
-$srcfilename = litepublisher::$paths->files . str_replace('/', DIRECTORY_SEPARATOR, $item['filename']);
-$need_to_resize = ($this->maxwidth > 0) && ($this->maxheight > 0) && (($item['width'] > $this->maxwidth ) || ($item['height'] > $this->maxheight));
-if (($need_to_resize || $this->enablepreview) && ($image = self::readimage($srcfilename))) {
-$this->onimage($image);
-          if ($this->enablepreview && ($preview = $this->getsnapshot($srcfilename, $image))) {
-      $preview['title'] = $title;
-}
-
-          if ($need_to_resize) {
+    
+    $preview = false;
+    if ($item['media'] == 'image') {
+      $srcfilename = litepublisher::$paths->files . str_replace('/', DIRECTORY_SEPARATOR, $item['filename']);
+      $need_to_resize = ($this->maxwidth > 0) && ($this->maxheight > 0) && (($item['width'] > $this->maxwidth ) || ($item['height'] > $this->maxheight));
+      if (($need_to_resize || $this->enablepreview) && ($image = self::readimage($srcfilename))) {
+        $this->onimage($image);
+        if ($this->enablepreview && ($preview = $this->getsnapshot($srcfilename, $image))) {
+          $preview['title'] = $title;
+        }
+        
+        if ($need_to_resize) {
           $this->resize($srcfilename, $image);
           // after resize only jpg format
           if (!strend($srcfilename, '.jpg')) {
-$fixfilename = self::replace_ext($srcfilename, '.jpg');
-    $fixfilename = self::makeunique($fixfilename);
-          rename($srcfilename, $fixfilename);
-          $item['filename'] = str_replace(DIRECTORY_SEPARATOR, '/', substr($fixfilename, strlen(litepublisher::$paths->files)));
+            $fixfilename = self::replace_ext($srcfilename, '.jpg');
+            $fixfilename = self::makeunique($fixfilename);
+            rename($srcfilename, $fixfilename);
+            $item['filename'] = str_replace(DIRECTORY_SEPARATOR, '/', substr($fixfilename, strlen(litepublisher::$paths->files)));
           }
-} else {
-$this->noresize($image, $srcfilename);
-}
-
-          imagedestroy($image);
-          }
-}
-
-        $id = $files->additem($item);
-        IF ($hash != $files->getvalue($id, 'hash')) {
-                $files->getdb('imghashes')->insert(array(
-        'id' => $id,
-        'hash' => $hash
-        ));
+        } else {
+          $this->noresize($image, $srcfilename);
+        }
+        
+        imagedestroy($image);
       }
-
-        if ($preview) {
-        $preview['parent'] = $id;
+    }
+    
+    $id = $files->additem($item);
+    IF ($hash != $files->getvalue($id, 'hash')) {
+      $files->getdb('imghashes')->insert(array(
+      'id' => $id,
+      'hash' => $hash
+      ));
+    }
+    
+    if ($preview) {
+      $preview['parent'] = $id;
       $idpreview = $files->additem($preview);
       $files->setvalue($id, 'preview', $idpreview);
-}      
-
+    }
+    
     $this->added($id);
     return $id;
   }
@@ -274,10 +274,10 @@ $this->noresize($image, $srcfilename);
     'idperm' => 0,
     'height' => 0,
     'width' => 0,
-          'preview' => 0,
-      'title' => '',
-      'description' => '',
-      'keywords' => ''
+    'preview' => 0,
+    'title' => '',
+    'description' => '',
+    'keywords' => ''
     );
   }
   
@@ -409,43 +409,43 @@ $this->noresize($image, $srcfilename);
   }
   
   public function getsnapshot($srcfilename, $image) {
-$destfilename = self::replace_ext($srcfilename, '.preview.jpg');
+    $destfilename = self::replace_ext($srcfilename, '.preview.jpg');
     $destfilename = self::makeunique($destfilename);
-      if (self::createthumb($image, $destfilename, $this->previewwidth, $this->previewheight, $this->ratio, $this->clipbounds, $this->quality_snapshot)) {
-        @chmod($destfilename, 0666);
-        $info = getimagesize($destfilename);
-        $result = $this->getdefaultvalues(str_replace(DIRECTORY_SEPARATOR, '/', substr($destfilename, strlen(litepublisher::$paths->files))));
-        $result['media'] = 'image';
-        $result['mime'] = $info['mime'];
-        $result['width'] = $info[0];
-        $result['height'] = $info[1];
-    return $result;
-}
-return false;
-  }
-      
-      public function resize($filename, $image) {
-      $sourcex = imagesx($image);
-      $sourcey = imagesy($image);
-      $x = $this->maxwidth;
-      $y = $this->maxheight;
-      if (($y > 0) && ($x > 0) && (($sourcex > $x) || ($sourcey > $y))) {
-        $ratio = $sourcex / $sourcey;
-        if ($x/$y > $ratio) {
-          $x = $y *$ratio;
-        } else {
-          $y = $x /$ratio;
-        }
-        
-        $dest = imagecreatetruecolor($x, $y);
-        imagecopyresampled($dest, $image, 0, 0, 0, 0, $x, $y, $sourcex, $sourcey);
-$this->onresize($dest);
-        imagejpeg($dest, $filename, $this->quality_original);
-        imagedestroy($dest);
-        @chmod($filename, 0666);
-      }
+    if (self::createthumb($image, $destfilename, $this->previewwidth, $this->previewheight, $this->ratio, $this->clipbounds, $this->quality_snapshot)) {
+      @chmod($destfilename, 0666);
+      $info = getimagesize($destfilename);
+      $result = $this->getdefaultvalues(str_replace(DIRECTORY_SEPARATOR, '/', substr($destfilename, strlen(litepublisher::$paths->files))));
+      $result['media'] = 'image';
+      $result['mime'] = $info['mime'];
+      $result['width'] = $info[0];
+      $result['height'] = $info[1];
+      return $result;
     }
+    return false;
+  }
+  
+  public function resize($filename, $image) {
+    $sourcex = imagesx($image);
+    $sourcey = imagesy($image);
+    $x = $this->maxwidth;
+    $y = $this->maxheight;
+    if (($y > 0) && ($x > 0) && (($sourcex > $x) || ($sourcey > $y))) {
+      $ratio = $sourcex / $sourcey;
+      if ($x/$y > $ratio) {
+        $x = $y *$ratio;
+      } else {
+        $y = $x /$ratio;
+      }
       
+      $dest = imagecreatetruecolor($x, $y);
+      imagecopyresampled($dest, $image, 0, 0, 0, 0, $x, $y, $sourcex, $sourcey);
+      $this->onresize($dest);
+      imagejpeg($dest, $filename, $this->quality_original);
+      imagedestroy($dest);
+      @chmod($filename, 0666);
+    }
+  }
+  
   private function getaudioinfo($filename) {
     return false;
     /*
