@@ -17,8 +17,9 @@ function tcssmergerInstall($self) {
 $self->addtext($section, 'hidden', '.hidden{display:none}');
   $self->unlock();
   
+  // add in comment because by default tthemeparser::i()->stylebefore  is true
   $template = ttemplate::i();
-  $template->addtohead('<link type="text/css" href="$site.files$template.cssmerger_default" rel="stylesheet" />');
+  $template->addtohead('<!--<link type="text/css" href="$site.files$template.cssmerger_default" rel="stylesheet" />-->');
   
   $updater = tupdater::i();
   $updater->onupdated = $self->save;

@@ -611,10 +611,13 @@ class tthemeparser extends tevents {
             $css = '<link type="text/css" href="$site.files$template.cssmerger_default" rel="stylesheet" />';
             $templates['index'] = substr_replace($templates['index'], $css, $i - 1, 0);
             //fix $template.head
-            $t = ttemplate::i();
-            if ((false !== strpos($t->heads, $css)) && (false === strpos($t->heads, "<!--$css-->"))) {
-              $t->heads = str_replace($css, "<!--$css-->", $t->heads);
-              $t->save();
+            // ignore on installling (class not exists)
+            if (!defined('litepublisher_mode')|| (litepublisher_mode != 'install')) {
+              $t = ttemplate::i();
+              if ((false !== strpos($t->heads, $css)) && (false === strpos($t->heads, "<!--$css-->"))) {
+                $t->heads = str_replace($css, "<!--$css-->", $t->heads);
+                $t->save();
+              }
             }
           }
         }

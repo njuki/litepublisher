@@ -14,8 +14,8 @@ class tadminblackip {
   
   public function getcontent() {
     $plugin = tblackip::i();
-    $lang = tplugins::getlangabout(__file__);
-    $args = targs::i();
+    $lang = tplugins::getlangabout('black-ip');
+    $args = new targs();
     $args->ip = implode("\n", $plugin->ip);
     $args->words = implode("\n", $plugin->words);
     $args->ipstatus = tadminhtml::array2combo(tlocal::i()->ini['commentstatus'], $plugin->ipstatus);
