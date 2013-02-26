@@ -21,10 +21,10 @@ class tmediaparser extends tevents {
     $this->data['clipbounds'] = true;
     $this->data['previewwidth'] = 120;
     $this->data['previewheight'] = 120;
-    $this->data['maxwidth'] = 1600;
-    $this->data['maxheight'] = 1200;
-    $this->data['quality_snapshot'] = 95;
-    $this->data['quality_original'] = 95;
+    $this->data['maxwidth'] = 1200;
+    $this->data['maxheight'] = 900;
+    $this->data['quality_snapshot'] = 94;
+    $this->data['quality_original'] = 92;
     
     $this->data['audioext'] = 'mp3|wav |flac';
     $this->data['videoext'] = 'mp4|ogv|webm';

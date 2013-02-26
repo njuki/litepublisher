@@ -6,17 +6,10 @@
 * and GPL (gpl.txt) licenses.
 **/
 
-class tcontactform extends tmenu {
+class tcontactform extends tsinglemenu {
   
   public static function i($id = 0) {
     return self::iteminstance(__class__, $id);
-  }
-  
-  public function __construct() {
-    parent::__construct();
-    if ($id = $this->getowner()->class2id(get_class($this))) {
-      $this->loaddata($id);
-    }
   }
   
   protected function create() {
