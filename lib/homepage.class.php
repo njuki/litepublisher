@@ -6,17 +6,10 @@
 * and GPL (gpl.txt) licenses.
 **/
 
-class thomepage extends tmenu  {
+class thomepage extends tsinglemenu  {
   
   public static function i($id = 0) {
-    return $id == 0 ? self::singleinstance(__class__) : self::iteminstance(__class__, $id);
-  }
-  
-  public function __construct() {
-    parent::__construct();
-    if ($id = $this->getowner()->class2id(get_class($this))) {
-      $this->loaddata($id);
-    }
+    return self::iteminstance(__class__, $id);
   }
   
   protected function create() {
