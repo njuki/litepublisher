@@ -7,6 +7,7 @@
 **/
 
 class thomepage extends tsinglemenu  {
+public $cacheposts;
   
   public static function i($id = 0) {
     return self::iteminstance(__class__, $id);
@@ -23,7 +24,17 @@ class thomepage extends tsinglemenu  {
     $this->data['archcount'] = 0;
     $this->data['parsetags'] = false;
     $this->coinstances[] = new tcoevents($this, 'onbeforegetitems', 'ongetitems');
+$this->cacheposts = false;
   }
+
+public function gethead() {
+$result = parent::gethead();
+    if (!$this->hideposts) {    
+    $items =  $this->getidposts();
+$result .= tposts::i()->getanhead($items);
+}
+return $result;
+}
   
   public function gettitle() {
   }
@@ -50,6 +61,7 @@ class thomepage extends tsinglemenu  {
   }
   
   public function getidposts() {
+if ($this->cacheposts) return $this->cacheposts;
     if($result = $this->onbeforegetitems()) return $result;
     $posts = tposts::i();
     $perpage = litepublisher::$options->perpage;
@@ -65,6 +77,7 @@ class thomepage extends tsinglemenu  {
       'order by ' . $posts->thistable . ".posted $order limit $from, $perpage");
     }
     $this->callevent('ongetitems', array(&$result));
+$this->cacheposts = $result;
     return $result;
   }
   
