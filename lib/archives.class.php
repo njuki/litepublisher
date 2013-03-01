@@ -26,7 +26,7 @@ class tarchives extends titems_itemplate implements  itemplate {
     foreach ($this->items as $date => $item) {
   $result  .= "<link rel=\"archives\" title=\"{$item['title']}\" href=\"litepublisher::$site->url{$item['url']}\" />\n";
     }
-    return $result;
+    return ttheme::i()->parse($result);
   }
   
   protected function setlite($value) {

@@ -33,7 +33,7 @@ $result = parent::gethead();
     $items =  $this->getidposts();
 $result .= tposts::i()->getanhead($items);
 }
-return $result;
+return ttheme::i()->parse($result);
 }
   
   public function gettitle() {

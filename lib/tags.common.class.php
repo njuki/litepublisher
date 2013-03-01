@@ -318,7 +318,7 @@ class tcommontags extends titems implements  itemplate {
     $result .= tview::getview($this)->theme->templates['head.tags'];
     $list = $this->getidposts($this->id);
 $result .=     $this->factory->posts->getanhead($list);
-    return $result;
+    return ttheme::i()->parse($result);
   }
   
   public function getkeywords() {
