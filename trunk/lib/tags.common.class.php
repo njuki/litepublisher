@@ -316,6 +316,8 @@ class tcommontags extends titems implements  itemplate {
   public function gethead() {
     $result = $this->contents->getvalue($this->id, 'head');
     $result .= tview::getview($this)->theme->templates['head.tags'];
+    $list = $this->getidposts($this->id);
+$result .=     $this->factory->posts->getanhead($list);
     return $result;
   }
   
@@ -378,7 +380,7 @@ class tcommontags extends titems implements  itemplate {
   
   public function get_sorted_posts($id, $count, $invert) {
     $itemstable  = $this->itemsposts->thistable;
-    $posts = tposts::i();
+    $posts = $this->factory->posts;
     $poststable = $posts->thistable;
     $order = $invert ? 'asc' : 'desc';
     return $posts->select("$poststable.status = 'published' and $poststable.id in

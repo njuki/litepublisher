@@ -28,7 +28,7 @@ class tposts extends titems {
     $this->childtable = '';
     $this->rawtable = 'rawposts';
     $this->basename = 'posts/index';
-    $this->addevents('edited', 'changed', 'singlecron', 'beforecontent', 'aftercontent', 'beforeexcerpt', 'afterexcerpt', 'onselect');
+    $this->addevents('edited', 'changed', 'singlecron', 'beforecontent', 'aftercontent', 'beforeexcerpt', 'afterexcerpt', 'onselect', 'onhead', 'onanhead');
     $this->data['archivescount'] = 0;
     $this->data['revision'] = 0;
     $this->data['syncmeta'] = false;
@@ -321,6 +321,17 @@ class tposts extends titems {
     litepublisher::$urlmap->clearcache();
   }
   
+  public function getanhead(array $items) {
+    if (count($items) == 0) return '';
+$this->loaditems($items);
+    
+    $result = '';
+    foreach($items as $id) {
+      $result .= tpost::i($id)->anhead;
+}    
+    return $result;
+  }
+
   //fix call reference
   public function beforecontent($post, &$result) {
     $this->callevent('beforecontent', array($post, &$result));
@@ -338,8 +349,7 @@ class tposts extends titems {
     $this->callevent('afterexcerpt', array($post, &$result));
   }
   
-  
-  public function getsitemap($from, $count) {
+    public function getsitemap($from, $count) {
     return $this->externalfunc(__class__, 'Getsitemap', array($from, $count));
   }
   
