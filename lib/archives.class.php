@@ -42,10 +42,10 @@ class tarchives extends titems_itemplate implements  itemplate {
     $this->items = array();
     //sort archive by months
     $linkgen = tlinkgenerator::i();
-    if (dbversion) {
       $db = litepublisher::$db;
       $res = $db->query("SELECT YEAR(posted) AS 'year', MONTH(posted) AS 'month', count(id) as 'count' FROM  $db->posts
       where status = 'published' GROUP BY YEAR(posted), MONTH(posted) ORDER BY posted DESC ");
+
       while ($r = $db->fetchassoc($res)) {
         $this->date = mktime(0,0,0, $r['month'] , 1, $r['year']);
         $this->items[$this->date] = array(
@@ -57,31 +57,12 @@ class tarchives extends titems_itemplate implements  itemplate {
         'count' => $r['count']
         );
       }
-    } else {
-      foreach ($posts->archives as $id => $date) {
-        $d = getdate($date);
-        $this->date = mktime(0,0,0, $d['mon'] , 1, $d['year']);
-        if (!isset($this->items[$this->date])) {
-          $this->items[$this->date] = array(
-          'idurl' => 0,
-          'url' => $linkgen->Createlink($this, 'archive', false),
-          'title' => tlocal::date($this->date, 'F Y'),
-          'year' => $d['year'],
-          'month' =>$d['mon'],
-          'count' => 0,
-          'posts' => array()
-          );
-        }
-        $this->items[$this->date]['posts'][] = $id;
-      }
-      foreach ($this->items as $date => $item) $this->items[$date]['count'] = count($item['posts']);
-    }
+
     $this->CreatePageLinks();
     $this->unlock();
   }
   
   public function CreatePageLinks() {
-    litepublisher::$urlmap->lock();
     $this->lock();
     //Compare links
     $old = litepublisher::$urlmap->GetClassUrls(get_class($this));
@@ -98,7 +79,6 @@ class tarchives extends titems_itemplate implements  itemplate {
     }
     
     $this->unlock();
-    litepublisher::$urlmap->unlock();
   }
   
   //ITemplate
@@ -110,6 +90,12 @@ class tarchives extends titems_itemplate implements  itemplate {
       return sprintf("<?php litepublisher::$urlmap->redir('%s');",$item['url']);
     }
   }
+
+public function gethead() {
+$result = parent::gethead();
+$result .= tposts::i()->getanhead($this->getidposts());
+return $result;
+}
   
   public function gettitle() {
     return $this->items[$this->date]['title'];
@@ -129,14 +115,9 @@ class tarchives extends titems_itemplate implements  itemplate {
   
   public function getidposts() {
     if (isset($this->_idposts)) return $this->_idposts;
-    if (dbversion) {
       $item = $this->items[$this->date];
-  $this->_idposts = $this->db->idselect("status = 'published' and year(posted) = '{$item['year']}' and month(posted) = '{$item['month']}' ORDER BY posted DESC ");
+  $this->_idposts = $this->getdb('posts')->idselect("status = 'published' and year(posted) = '{$item['year']}' and month(posted) = '{$item['month']}' ORDER BY posted DESC ");
       return $this->_idposts;
-    } else {
-      if (!isset($this->items[$this->date]['posts'])) return array();
-      return $this->items[$this->date]['posts'];
-    }
   }
   
   public function getsitemap($from, $count) {
