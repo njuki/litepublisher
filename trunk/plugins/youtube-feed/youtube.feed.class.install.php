@@ -12,20 +12,16 @@ function tyoutubefeedInstall($self) {
   $idfiles = $admin->url2id('/admin/files/');
   $admin->createitem($idfiles, 'youtube', 'author', 'tadminfiles');
   
-  $parser = tthemeparser::i();
-  $parser->parsed = $self->themeparsed;
+tthemeparser::i()->parsed = $self->themeparsed;
   ttheme::clearcache();
   
-  if (dbversion) {
     $man = tdbmanager::i();
     $man->alter('files', "modify `media` enum('bin','image','icon','audio','video','document','executable','text','archive', 'youtube') default 'bin'");
-  }
 }
 
 function tyoutubefeedUninstall($self) {
   $admin = tadminmenus::i();
   $admin->deleteurl('/admin/files/youtube/');
   
-  $parser = tthemeparser::i();
-  $parser->unbind($self);
+tthemeparser::i()->unbind($self);
 }
