@@ -395,7 +395,7 @@ $result .=     $this->factory->posts->getanhead($list);
     $includeparents = (int) $item['includeparents'];
     $includechilds = (int) $item['includechilds'];
     $perpage = (int) $item['lite'] ? $item['liteperpage'] : litepublisher::$options->perpage;
-    $posts = litepublisher::$classes->posts;
+    $posts = $this->factory->posts;
     
     if ($includeparents || $includechilds) {
       $this->loadall();
