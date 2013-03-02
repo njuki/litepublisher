@@ -175,29 +175,42 @@ class tmediaparser extends tevents {
   }
   
   public function addfile($filename, $tempfilename, $title, $description, $keywords, $overwrite) {
+return $this->add(array(
+'filename' => $filename, 
+'tempfilename' => $tempfilename,
+'title' => $title,
+'description' => $description,
+ 'keywords' => $keywords,
+'overwrite' => $overwrite
+));
+}
+
+  public function add(array $file) {
+if (!isset($file['filename') || !isset($file['tempfilename'])) $this->error('No file name');
     $files = tfiles::i();
-    $hash =$files->gethash(litepublisher::$paths->files . $tempfilename);
+    $hash =$files->gethash(litepublisher::$paths->files . $file['tempfilename']);
     if (($id = $files->IndexOf('hash', $hash)) ||
-    ($id = $this->getdb('imghashes')->findid('hash = '. dbquote($hash)))) {
-      @unlink(litepublisher::$paths->files . $tempfilename);
+    ($id = $files->getdb('imghashes')->findid('hash = '. dbquote($hash)))) {
+      @unlink(litepublisher::$paths->files . $file['tempfilename']);
       return $id;
     }
     
-    $item = $this->getinfo($tempfilename);
+    $item = $this->getinfo($file['tempfilename']);
     $item = array_merge($item, array(
-    'filename' => $this->movetofolder($filename, $tempfilename, $this->getmediafolder($item['media']), $overwrite),
-    'title' => $title,
-    'description' => $description,
-    'keywords' => $keywords
+    'filename' => $this->movetofolder($file['filename'], $file['tempfilename'], $this->getmediafolder($item['media']), isset($file['overwrite']) ? $file['overwrite'] : false),
+    'title' => isset($file['title']) ? $file['title']: $filename,
+    'description' => isset($file['description']) ? $file['description'] : '',
+    'keywords' => isset($file['keywords']) ? $file['keywords'] : ''
     ));
     
     $preview = false;
     if ($item['media'] == 'image') {
       $srcfilename = litepublisher::$paths->files . str_replace('/', DIRECTORY_SEPARATOR, $item['filename']);
       $need_to_resize = ($this->maxwidth > 0) && ($this->maxheight > 0) && (($item['width'] > $this->maxwidth ) || ($item['height'] > $this->maxheight));
-      if (($need_to_resize || $this->enablepreview) && ($image = self::readimage($srcfilename))) {
+$enablepreview = isset($file['enablepreview']) ? $file['enablepreview'] : $this->enablepreview;
+      if (($need_to_resize || $enablepreview) && ($image = self::readimage($srcfilename))) {
         $this->onimage($image);
-        if ($this->enablepreview && ($preview = $this->getsnapshot($srcfilename, $image))) {
+        if ($enablepreview && ($preview = $this->getsnapshot($srcfilename, $image))) {
           $preview['title'] = $title;
         }
         
@@ -237,7 +250,7 @@ class tmediaparser extends tevents {
   }
   
   public function uploadthumbnail($filename, $content) {
-    if (!preg_match('/\.(jpg|gif|png|bmp)$/i', $filename)) return false;
+    if (!preg_match('/\.(jpg|jpeg|gif|png|bmp)$/i', $filename)) return false;
     $linkgen = tlinkgenerator::i();
     $filename = $linkgen->filterfilename($filename);
     $tempfilename = $this->doupload($filename, $content);
