@@ -206,21 +206,33 @@ if (!isset($file['filename') || !isset($file['tempfilename'])) $this->error('No 
     $preview = false;
     if ($item['media'] == 'image') {
       $srcfilename = litepublisher::$paths->files . str_replace('/', DIRECTORY_SEPARATOR, $item['filename']);
-      $need_to_resize = ($this->maxwidth > 0) && ($this->maxheight > 0) && (($item['width'] > $this->maxwidth ) || ($item['height'] > $this->maxheight));
+$maxwidth = isset($file['maxwidth']) ? $file['maxwidth'] : $this->maxwidth;
+$maxheight = isset($file['maxheight']) ? $file['maxheight'] : $this->maxheight;
+      $resize = ($maxwidth > 0) && ($maxheight > 0) && (($item['width'] > $maxwidth ) || ($item['height'] > $maxheight));
 $enablepreview = isset($file['enablepreview']) ? $file['enablepreview'] : $this->enablepreview;
-      if (($need_to_resize || $enablepreview) && ($image = self::readimage($srcfilename))) {
+      if (($resize || $enablepreview) && ($image = self::readimage($srcfilename))) {
         $this->onimage($image);
         if ($enablepreview && ($preview = $this->getsnapshot($srcfilename, $image))) {
           $preview['title'] = $title;
+if (isset($file['ispreview']) && $file['ispreview']) {
+$item['filename'] = $preview['filename'];
+$item['width'] => $preview['width'];
+$item['height'] = $preview['height'];
+$item['mime'] = $preview['mime'];
+@unlink($srcfilename);
+$resize = false;
+$preview = false;
+}
         }
         
-        if ($need_to_resize) {
-          $this->resize($srcfilename, $image);
+        if ($resize) {
+          $this->resize($srcfilename, $image, $maxwidth, $maxheight);
           // after resize only jpg format
           if (!strend($srcfilename, '.jpg')) {
             $fixfilename = self::replace_ext($srcfilename, '.jpg');
             $fixfilename = self::makeunique($fixfilename);
             rename($srcfilename, $fixfilename);
+@chmod($fixfilename, 0666);
             $item['filename'] = str_replace(DIRECTORY_SEPARATOR, '/', substr($fixfilename, strlen(litepublisher::$paths->files)));
           }
         } else {
@@ -254,26 +266,13 @@ $enablepreview = isset($file['enablepreview']) ? $file['enablepreview'] : $this-
     $linkgen = tlinkgenerator::i();
     $filename = $linkgen->filterfilename($filename);
     $tempfilename = $this->doupload($filename, $content);
-    $files = tfiles::i();
-    $hash =$files->gethash(litepublisher::$paths->files . $tempfilename);
-    if ($id = $files->IndexOf('hash', $hash)) {
-      @unlink(litepublisher::$paths->files . $tempfilename);
-      return $id;
-    }
-    
-    $info = $this->getinfo($tempfilename);
-    $info['filename'] = $this->movetofolder($filename, $tempfilename, $info['media'], true);
-    $item = $info + array(
-    'filename' => $filename,
-    'parent' => 0,
-    'preview' => 0,
-    'title' => '',
-    'description' => '',
-    'keywords' => ''
-    );
-    
-    return $files->additem($item);
-  }
+
+return $this->add(array(
+'filename' => $filename,
+'tempfilename' => $tempfilename,
+'enabledpreview' => false
+));
+}
   
   public function getdefaultvalues($filename) {
     return array(
@@ -437,11 +436,9 @@ $enablepreview = isset($file['enablepreview']) ? $file['enablepreview'] : $this-
     return false;
   }
   
-  public function resize($filename, $image) {
+  public function resize($filename, $image, $x, $y) {
     $sourcex = imagesx($image);
     $sourcey = imagesy($image);
-    $x = $this->maxwidth;
-    $y = $this->maxheight;
     if (($y > 0) && ($x > 0) && (($sourcex > $x) || ($sourcey > $y))) {
       $ratio = $sourcex / $sourcey;
       if ($x/$y > $ratio) {

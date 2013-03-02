@@ -71,52 +71,16 @@ class tadminfilethumbnails extends tadminmenu {
     $newtemp = $parser->gettempname($parts);
     if (!move_uploaded_file($tempfilename, litepublisher::$paths->files . $newtemp)) return sprintf($this->html->h4->attack, $_FILES["filename"]["name"]);
     
-    //addfile($filename, $newtemp, $title, $description, $keywords, $overwrite);
-    $tempfilename = $newtemp;
-    $hash =$files->gethash(litepublisher::$paths->files . $tempfilename);
-    if (($idpreview = $files->IndexOf('hash', $hash)) ||
-    ($idpreview = $files->getdb('imghashes')->findid('hash = '. dbquote($hash)))) {
-      @unlink(litepublisher::$paths->files . $tempfilename);
-      return ;
-    }
-    
-    $info = $parser->getinfo($tempfilename);
-    if ($info['media'] != 'image') {
-      @unlink(litepublisher::$paths->files . $tempfilename);
-      return ;
-    }
-    
-    $info['filename'] = $parser->movetofolder($filename, $tempfilename, $parser->getmediafolder($info['media']), false);
-    
-    $newitem = $info + array(
-    'filename' => $filename,
-    'parent' => $id,
-    'preview' => 0,
-    'title' => $filename,
-    'description' => '',
-    'keywords' => ''
-    );
-    
-    if (isset($_POST['noresize'])) {
-      $idpreview = $files->additem($newitem);
-    } else {
-      $srcfilename = litepublisher::$paths->files . str_replace('/', DIRECTORY_SEPARATOR, $info['filename']);
-      if (($source = tmediaparser::readimage($srcfilename)) && tmediaparser::createthumb($source, $srcfilename, $parser->previewwidth, $parser->previewheight, $parser->ratio, $parser->clipbounds, $parser->quality_snapshot)) {
-        @chmod($srcfilename, 0666);
-        $imginfo = getimagesize($srcfilename);
-        $newitem['media'] = 'image';
-        $newitem['mime'] = $imginfo['mime'];
-        $newitem['width'] = $imginfo[0];
-        $newitem['height'] = $imginfo[1];
-        
-        $idpreview = $files->additem($newitem);
-        $files->getdb('imghashes')->insert(array(
-        'id' => $idpreview,
-        'hash' => $hash
-        ));
-      } else return;
-    }
-    
+$resize = !isset($_POST['noresize'];
+
+$idpreview = $parser->add(array(
+'filename' => $filename,
+'tempfilename' => $newtemp,
+'enabledpreview' => $resize,
+'ispreview' => $resize
+));
+
+if ($idpreview) {
     if ($item['preview'] > 0) $files->delete($item['preview']);
     $files->setvalue($id, 'preview', $idpreview);
     $files->setvalue($idpreview, 'parent', $id);
@@ -125,6 +89,7 @@ class tadminfilethumbnails extends tadminmenu {
       tprivatefiles::i()->setperm($idpreview, (int) $item['idperm']);
     }
     return $this->html->h4->success;
+}
   }
   
 }//class
