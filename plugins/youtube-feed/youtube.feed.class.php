@@ -58,30 +58,29 @@ if (!isset($this->items[$videoid])) return false;
     $files = tfiles::i();
 if ($id = $files->exists($videoid)) return $id;
 
-$parser = tmediaparser::i();
 $video = $this->items[$videoid];
 $idpreview = 0;
     if (!empty($video['thumb']) && ($s = http::get($video['thumb']))) {
-$idpreview = $parser->uploadthumb($filename, $s);
+$parser = tmediaparser::i();
+$idpreview = $parser->uploadthumb("youtube/$videoid.jpg", $s);
 }
 
       $item = array(
+'filename' => $videoid,
+'hash' => $videoid,
+'posted' => $video['posted'],
       'media' => 'youtube',
       'mime' => 'application/octet-stream',
+'preview' => $idpreview,
+'author' => litepublisher::$options->user,
+'size' => 0,
+'title' => $video['title'],
+'description' => '',
+'keywords' => ''
       );
 
-      $ext = substr($item['preview'], strrpos($item['preview'], '.'));
-      $filename = sprintf('thumbnail.%s%s', $item['filename'], $ext);
-
-      $item['preview'] = $mediaparser->uploadthumbnail($filename, $image);
-    } else {
-      $item['preview'] = 0;
-    }
-    
     $id = $files->insert($item);
-
     if ($idpreview) {
-      $files->setvalue($id, 'preview', $idpreview);
 $files->setvalue($idpreview, 'parent', $id);
     }
 
