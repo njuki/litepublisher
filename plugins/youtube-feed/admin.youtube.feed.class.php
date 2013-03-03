@@ -6,7 +6,7 @@
 * and GPL (gpl.txt) licenses.
 **/
 
-class tadminyoutubefeed {
+class tadminyoutubefeed implements iadmin {
   
   public static function i() {
     return getinstance(__class__);
@@ -14,8 +14,8 @@ class tadminyoutubefeed {
   
   public function getcontent() {
     $feed = tyoutubefeed::i();
-    $about = tplugins::getabout(tplugins::getname(__file__));
-    $args = targs::i();
+    $lang = tplugins::getlangabout(__file__);
+    $args = new targs();
     $html = tadminhtml::i();
     if (!isset($_POST['step'])) $_POST['step'] = 1;
     switch ($_POST['step']) {
@@ -23,11 +23,13 @@ class tadminyoutubefeed {
       case 3:
       $files = tfiles::i();
       $args->step = 3;
-      $args->formtitle = $about['feeditems'];
+      $args->formtitle = $lang->feeditems;
+
       $tml = '<tr>
       <td align="center"><input type="checkbox" name="youtubeid-$id" id="youtubeid-$id" value="$id" $checked /></td>
-      <td align="left"><a href="http://www.youtube.com/watch?v=$id" target="top">$title</a></td>
+      <td><a href="http://www.youtube.com/watch?v=$id">$title</a></td>
       </tr>';
+
       $items = '';
       foreach ($feed->items as $id => $item) {
         $args->add($item);
@@ -35,36 +37,21 @@ class tadminyoutubefeed {
         $args->checked = $files->exists($id) ? false : true;
         $items .= $html->parsearg($tml, $args);
       }
-      $args->items = $items;
-      
-      $table = '<table>
-      <thead>
-      <tr>
-      <th align="center"><input type="checkbox" name="invertcheckbox" class="invertcheck" /></th>
-      <th align="left">Video</th>
-      </tr>
-      </thead>
-      <tbody>
-      $items
-      </tbody >
-      </table>';
-      
-      $args->items = $html->parsearg($table, $args);
-      $result = $html->adminform('$items [hidden:step]', $args);
-      return $result;
-      
+
+      $args->tablebody = $items;
+      $args->tablehead = '<th align="center"><input type="checkbox" name="invertcheckbox" class="invertcheck" /></th>
+      <th>Video</th>';
+
+return $html->adminform(
+$html->table($args) .
+'[hidden:step]', $args);
+
       default:
       $args->step = 2;
-      $args->formtitle = $about['feedtitle'];
-      $args->data['$lang.url'] = $about['feedurl'];
+      $args->formtitle = $lang->feedtitle;
       $args->url = $feed->url;
       $result = $html->adminform('[text:url] [hidden:step]', $args);
       
-      $args->step = 'options';
-      $args->formtitle = $about['options'];
-      $args->data['$lang.player'] = $about['player'];
-      $args->player = $feed->player;
-      $result .= $html->adminform('[editor:player] [hidden:step]', $args);
       return $result;
     }
   }
@@ -72,12 +59,6 @@ class tadminyoutubefeed {
   public function processform() {
     $feed = tyoutubefeed::i();
     switch ($_POST['step']) {
-      case 'options':
-      $feed->player = $_POST['player'];
-      $feed->save();
-      ttheme::clearcache();
-      break;
-      
       case 2:
       $feed->items = array();
       $feed->url = trim($_POST['url']);
@@ -87,13 +68,11 @@ class tadminyoutubefeed {
       
       case 3:
       $files = tfiles::i();
-      $files->lock();
       foreach ($_POST as $k => $v) {
         if (strbegin($k, 'youtubeid-') && isset($feed->items[$v]) && !$files->exists($v)) {
           $feed->addtofiles($feed->items[$v]);
         }
       }
-      $files->unlock();
       break;
     }
   }
