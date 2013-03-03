@@ -19,10 +19,6 @@ class tyoutubefeed extends tplugin {
     $this->addmap('items', array());
   }
   
-  public function getpublished($video) {
-    return strtotime($video['published']['$t']);
-  }
-  
   public function getvideoid($video) {
     return strtr($video['id']['$t'], array(
     'http://www.youtube.com/watch?v=' => '',
@@ -30,77 +26,38 @@ class tyoutubefeed extends tplugin {
     ));
   }
 
-  public function createthumb($id, array $video) {
+  public function findthumb($id, array $video) {
     foreach( $video['media$group']['media$thumbnail'] as $item) {
-      if (($item['width'] < 200) && ($filename = $this->savethumb($id, $item['url']))) return $filename;
+      if (($item['width'] < 200) return $item['url'];
     }
     return false;
   }
   
-  public function savethumb($id, $url) {
-    if ($s = http::get($url)) {
-      $thumbfile = sprintf('%04d/%04d.jpg', floor ($id/ 5000), $id);
-      $filename = litepublisher::$paths->files . 'youtubethumbs/' . $thumbfile;
-      $dir = dirname($filename);
-      if (!is_dir($dir)) {
-        mkdir($dir, 0777);
-        @chmod($dir, 0777);
-      }
-      
-      file_put_contents($filename, $s);
-      @chmod($filename, 0666);
-      
-      $info = getimagesize($filename);
-      $this->getdb('geotube')->updateassoc(array(
-      'id' => $id,
-      'thumbfile' => $thumbfile,
-      'thumbwidth' => $info[0],
-      'thumbheight' => $info[1],
-      ));
-      
-      return $filename;
-    }
-    return false;
-  }
-
-  public static function feedtoitems($s) {
+  public static function parsefeed($url) {
     $result = array();
+      if ($s = http::get($url))  {
 $js = json_decode($s, true);
+} else return array();
+
       foreach ($js['feed']['entry'] as $video) {
-        $published = $this->getpublished($video);
-        $videoid =$this->getvideoid($video);
-
+$result[] = array(
+'id' => $this->getvideoid($video),
         'title' => tcontentfilter::escape(tcontentfilter::unescape($video['title']['$t'])),
-        'published' => sqldate($published),
-
-        $this->createthumb($id, $video);
-
-      $item = array(
-      'media' => 'youtube',
-      'mime' => 'application/x-shockwave-flash',
-      'parent' => 0,
-      'preview' => 0,
-      'icon' => 0,
-      'author' => litepublisher::$options->user,
-      'size' => 0,
-      'description' => '',
-      'keywords' => '',
-      'preview' => ''
-      );
-      
-      $item['filename'] = $id;
-      $item['hash'] = $id;
-
-      
-      
-      $result[$id] = $item;
+        'posted' => sqldate(strtotime($video['published']['$t'])),
+'thumb' => $this->findthumb($item)
+);
     }
     return $result;
   }
   
-  public function addtofiles(array $item) {
+  public function add(array $video) {
     $files = tfiles::i();
     if (!empty($item['preview']) && ($image = http::get($item['preview']))) {
+      $item = array(
+      'media' => 'youtube',
+      'mime' => 'application/x-shockwave-flash',
+      );
+
       $ext = substr($item['preview'], strrpos($item['preview'], '.'));
       $filename = sprintf('thumbnail.%s%s', $item['filename'], $ext);
       $mediaparser = tmediaparser::i();
@@ -115,10 +72,13 @@ $js = json_decode($s, true);
   }
   
   public function themeparsed($theme) {
-    $theme->templates['content.excerpts.excerpt.filelist.youtube'] = $this->player;
-    $theme->templates['content.excerpts.excerpt.filelist.youtubes'] = '$youtube';
-    $theme->templates['content.post.filelist.youtube'] = $this->player;
-    $theme->templates['content.post.filelist.youtubes'] = '$youtube';
+$item = '<span class="image"><a title="$title" rel="youtube" class="youtube-item" id="postfile-$post.id-$id" href="http://www.youtube.com/watch?v=$hash" data-file="$json">$preview</a></span>';
+$items = '<div class="files-block filelist-youtube">$youtube</div>';
+
+    $theme->templates['content.excerpts.excerpt.filelist.youtube'] = $item;
+    $theme->templates['content.excerpts.excerpt.filelist.youtubes'] = $items;
+    $theme->templates['content.post.filelist.youtube'] = $item;
+    $theme->templates['content.post.filelist.youtubes'] = $items;
   }
   
 }//class

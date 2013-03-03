@@ -7,7 +7,7 @@
 **/
 
 class tadminyoutubefeed implements iadmin {
-  
+
   public static function i() {
     return getinstance(__class__);
   }
@@ -25,15 +25,12 @@ class tadminyoutubefeed implements iadmin {
       $args->step = 3;
       $args->formtitle = $lang->feeditems;
 
-      $tml = '<tr>
-      <td align="center"><input type="checkbox" name="youtubeid-$id" id="youtubeid-$id" value="$id" $checked /></td>
-      <td><a href="http://www.youtube.com/watch?v=$id">$title</a></td>
-      </tr>';
+      $tml = '<tr><td align="center"><input type="checkbox" name="youtubeid-$id" id="youtubeid-$id" value="$id" $checked /></td>
+      <td><a href="http://www.youtube.com/watch?v=$id">$title</a></td></tr>';
 
       $items = '';
-      foreach ($feed->items as $id => $item) {
+      foreach ($feed->items as $item) {
         $args->add($item);
-        $args->id = $id;
         $args->checked = $files->exists($id) ? false : true;
         $items .= $html->parsearg($tml, $args);
       }
@@ -60,9 +57,8 @@ $html->table($args) .
     $feed = tyoutubefeed::i();
     switch ($_POST['step']) {
       case 2:
-      $feed->items = array();
       $feed->url = trim($_POST['url']);
-      if ($s = http::get($feed->url))  $feed->items = $feed->feedtoitems($s);
+$feed->items= $feed->parsefeed($feed->url);
       $feed->save();
       break;
       
