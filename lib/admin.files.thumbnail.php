@@ -71,7 +71,7 @@ class tadminfilethumbnails extends tadminmenu {
     $newtemp = $parser->gettempname($parts);
     if (!move_uploaded_file($tempfilename, litepublisher::$paths->files . $newtemp)) return sprintf($this->html->h4->attack, $_FILES["filename"]["name"]);
     
-$resize = !isset($_POST['noresize'];
+$resize = !isset($_POST['noresize']);
 
 $idpreview = $parser->add(array(
 'filename' => $filename,
