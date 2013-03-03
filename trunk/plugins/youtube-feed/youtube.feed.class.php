@@ -12,28 +12,69 @@ class tyoutubefeed extends tplugin {
   public static function i() {
     return getinstance(__class__);
   }
+
   protected function create() {
     parent::create();
     $this->data['url'] = '';
     $this->addmap('items', array());
-    $this->data['player'] ='<li><object width="425" height="350">' .
-    '<param name="movie" value="http://www.youtube.com/v/$filename?fs=1&amp;rel=0"></param>' .
-    //'<param name="wmode" value="transparent"></param>' .
-    '<param name="allowFullScreen" value="true"></param>' .
-    '<param name="allowscriptaccess" value="always"></param>' .
-    '<embed src="http://www.youtube.com/v/$filename?fs=1&amp;rel=0" ' .
-    'type="application/x-shockwave-flash" ' .
-    //'wmode="transparent" ' .
-    'allowscriptaccess="always" ' .
-    'allowfullscreen="true" ' .
-    'width="425" height="350">' .
-    '</embed></object></li>';
   }
   
+  public function getpublished($video) {
+    return strtotime($video['published']['$t']);
+  }
+  
+  public function getvideoid($video) {
+    return strtr($video['id']['$t'], array(
+    'http://www.youtube.com/watch?v=' => '',
+    'http://gdata.youtube.com/feeds/api/videos/' => ''
+    ));
+  }
+
+  public function createthumb($id, array $video) {
+    foreach( $video['media$group']['media$thumbnail'] as $item) {
+      if (($item['width'] < 200) && ($filename = $this->savethumb($id, $item['url']))) return $filename;
+    }
+    return false;
+  }
+  
+  public function savethumb($id, $url) {
+    if ($s = http::get($url)) {
+      $thumbfile = sprintf('%04d/%04d.jpg', floor ($id/ 5000), $id);
+      $filename = litepublisher::$paths->files . 'youtubethumbs/' . $thumbfile;
+      $dir = dirname($filename);
+      if (!is_dir($dir)) {
+        mkdir($dir, 0777);
+        @chmod($dir, 0777);
+      }
+      
+      file_put_contents($filename, $s);
+      @chmod($filename, 0666);
+      
+      $info = getimagesize($filename);
+      $this->getdb('geotube')->updateassoc(array(
+      'id' => $id,
+      'thumbfile' => $thumbfile,
+      'thumbwidth' => $info[0],
+      'thumbheight' => $info[1],
+      ));
+      
+      return $filename;
+    }
+    return false;
+  }
+
   public static function feedtoitems($s) {
     $result = array();
-    $xml = new SimpleXMLElement($s);
-    foreach ($xml->entry as $entry) {
+$js = json_decode($s, true);
+      foreach ($js['feed']['entry'] as $video) {
+        $published = $this->getpublished($video);
+        $videoid =$this->getvideoid($video);
+
+        'title' => tcontentfilter::escape(tcontentfilter::unescape($video['title']['$t'])),
+        'published' => sqldate($published),
+
+        $this->createthumb($id, $video);
+
       $item = array(
       'media' => 'youtube',
       'mime' => 'application/x-shockwave-flash',
@@ -47,22 +88,10 @@ class tyoutubefeed extends tplugin {
       'preview' => ''
       );
       
-      $id = substr($entry->id, strrpos($entry->id, '/') + 1);
       $item['filename'] = $id;
       $item['hash'] = $id;
-      $item['posted'] = sqldate(strtotime($entry->published));
-      $item['title'] = (string) $entry->title;
+
       
-      /*
-      $media = $entry->children('http://search.yahoo.com/mrss/');
-      $group = $media->group;
-      //$item['title'] = (string) $group->title;
-      $item['description'] = (string) $group->description;
-      $item['keywords'] = (string) $group->keywords;
-      dumpvar($item);
-      $attrs = $group->thumbnail[0]->attributes();
-      $item['preview'] = (string) $attrs['url'];
-      */
       
       $result[$id] = $item;
     }
@@ -71,7 +100,6 @@ class tyoutubefeed extends tplugin {
   
   public function addtofiles(array $item) {
     $files = tfiles::i();
-    $files->lock();
     if (!empty($item['preview']) && ($image = http::get($item['preview']))) {
       $ext = substr($item['preview'], strrpos($item['preview'], '.'));
       $filename = sprintf('thumbnail.%s%s', $item['filename'], $ext);
@@ -83,7 +111,6 @@ class tyoutubefeed extends tplugin {
     
     $id = $files->insert($item);
     if ($item['preview'] != 0) $files->setvalue($item['preview'], 'parent', $id);
-    $files->unlock();
     return $id;
   }
   

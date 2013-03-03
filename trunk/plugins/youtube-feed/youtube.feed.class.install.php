@@ -16,7 +16,7 @@ tthemeparser::i()->parsed = $self->themeparsed;
   ttheme::clearcache();
   
     $man = tdbmanager::i();
-    $man->alter('files', "modify `media` enum('bin','image','icon','audio','video','document','executable','text','archive', 'youtube') default 'bin'");
+    $man->addenum('files', 'media', 'youtube');
 }
 
 function tyoutubefeedUninstall($self) {
@@ -24,4 +24,19 @@ function tyoutubefeedUninstall($self) {
   $admin->deleteurl('/admin/files/youtube/');
   
 tthemeparser::i()->unbind($self);
+
+//delete all thumbnails for youtube
+$db = $self->getdb('files');
+if ($list = implode(',', $db->idselect("media = 'youtube'"))) {
+$img = $db->res2assoc($db->select("parent in ($list)"));
+foreach ($img as $item) {
+@unlink(litepublisher::$paths->files . $item['filename']);
+}
+
+$db->delete("id in ($list) or parent in ($list)");
+$self->getdb('imghashes')->delete("id in ($list)");
+}
+
+    $man = tdbmanager::i();
+    $man->delete_enum('files', 'media', 'youtube');
 }
