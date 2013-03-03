@@ -47,9 +47,7 @@ $html->table($args) .
       $args->step = 2;
       $args->formtitle = $lang->feedtitle;
       $args->url = $feed->url;
-      $result = $html->adminform('[text:url] [hidden:step]', $args);
-      
-      return $result;
+return $html->adminform('[text:url] [hidden:step]', $args);
     }
   }
   
@@ -63,10 +61,8 @@ $feed->items= $feed->parsefeed($feed->url);
       break;
       
       case 3:
-      $files = tfiles::i();
       foreach ($_POST as $k => $v) {
-        if (strbegin($k, 'youtubeid-') && isset($feed->items[$v]) && !$files->exists($v)) {
-          $feed->addtofiles($feed->items[$v]);
+        if (strbegin($k, 'youtubeid-')) $feed->add($v);
         }
       }
       break;
