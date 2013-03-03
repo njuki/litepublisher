@@ -273,6 +273,43 @@ return $this->add(array(
 'enabledpreview' => false
 ));
 }
+
+//$filename must be specefied before such as  thumb/img004893.jpg
+public function uploadthumb($filename, &$content) {
+$hash = trim(base64_encode(md5($content, true)), '=');
+    $files = tfiles::i();
+    if (($id = $files->IndexOf('hash', $hash)) ||
+    ($id = $files->getdb('imghashes')->findid('hash = '. dbquote($hash)))) {
+      return $id;
+    }
+
+if ($image = imagecreatefromstring($content)) {
+if (!strbegin($filename, litepublisher::$paths->files)) $filename = litepublisher::$paths->files. ltrim($filename, '/\');
+    $destfilename = self::replace_ext($filename, '.jpg');
+    $destfilename = self::makeunique($destfilename);
+    if (self::createthumb($image, $destfilename, $this->previewwidth, $this->previewheight, $this->ratio, $this->clipbounds, $this->quality_snapshot)) {
+      $info = getimagesize($destfilename);
+      $item = $this->getdefaultvalues(str_replace(DIRECTORY_SEPARATOR, '/', substr($destfilename, strlen(litepublisher::$paths->files))));
+      $item['media'] = 'image';
+      $item['mime'] = $info['mime'];
+      $item['width'] = $info[0];
+      $item['height'] = $info[1];
+
+    $id = $files->additem($item);
+    IF ($hash != $files->getvalue($id, 'hash')) {
+      $files->getdb('imghashes')->insert(array(
+      'id' => $id,
+      'hash' => $hash
+      ));
+    }
+    
+    $this->added($id);
+    return $id;
+    }
+  }
+}
+    return false;
+}
   
   public function getdefaultvalues($filename) {
     return array(
@@ -417,6 +454,7 @@ return $this->add(array(
     imagecopyresampled($dest, $source, 0, 0, 0, 0, $x, $y, $sourcex, $sourcey);
     imagejpeg($dest, $destfilename, $quality_snapshot);
     imagedestroy($dest);
+@chmod($destfilename, 0666);
     return true;
   }
   
