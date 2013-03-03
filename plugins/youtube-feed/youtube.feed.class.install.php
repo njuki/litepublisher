@@ -17,6 +17,10 @@ tthemeparser::i()->parsed = $self->themeparsed;
   
     $man = tdbmanager::i();
     $man->addenum('files', 'media', 'youtube');
+
+$dir = litepublisher::$paths->files . 'youtube';
+@mkdir($dir, 0777);
+@chmod($dir, 0666);
 }
 
 function tyoutubefeedUninstall($self) {
@@ -39,4 +43,6 @@ $self->getdb('imghashes')->delete("id in ($list)");
 
     $man = tdbmanager::i();
     $man->delete_enum('files', 'media', 'youtube');
+
+tfiler::delete(litepublisher::$paths->files . 'youtube');
 }
