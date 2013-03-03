@@ -15,6 +15,7 @@ class tyoutubefeed extends tplugin {
 
   protected function create() {
     parent::create();
+    $this->data['idpreview'] = 0;
     $this->data['url'] = '';
     $this->addmap('items', array());
   }
@@ -68,7 +69,7 @@ if (!isset($this->items[$videoid])) return false;
 if ($id = $files->exists($videoid)) return $id;
 
 $video = $this->items[$videoid];
-$idpreview = 0;
+$idpreview = $this->idpreview;
     if (!empty($video['thumb']) && ($s = http::get($video['thumb']))) {
 $parser = tmediaparser::i();
 $idpreview = $parser->uploadthumb("youtube/$videoid.jpg", $s);
@@ -89,7 +90,8 @@ $idpreview = $parser->uploadthumb("youtube/$videoid.jpg", $s);
       );
 
     $id = $files->insert($item);
-    if ($idpreview) {
+
+    if ($idpreview !!= $this->idpreview) {
 $files->setvalue($idpreview, 'parent', $id);
     }
 

@@ -21,6 +21,20 @@ tthemeparser::i()->parsed = $self->themeparsed;
 $dir = litepublisher::$paths->files . 'youtube';
 @mkdir($dir, 0777);
 @chmod($dir, 0666);
+
+copy(dirname(__file__) . '/default.jpg', $dir . '/default.jpg');
+@chmod($dir . '/default.jpg', 0666);
+
+$self->idpreview = tfiles::i()->additem(array(
+'filename' => 'youtube/default.jpg',
+'title' => 'Default youtube player',
+'media' => 'image',
+'mime' => 'image/jpeg',
+'width' => 120,
+'height' => 120,
+));
+
+$self->save();
 }
 
 function tyoutubefeedUninstall($self) {
