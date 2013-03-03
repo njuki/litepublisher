@@ -186,7 +186,7 @@ return $this->add(array(
 }
 
   public function add(array $file) {
-if (!isset($file['filename') || !isset($file['tempfilename'])) $this->error('No file name');
+if (!isset($file['filename']) || !isset($file['tempfilename'])) $this->error('No file name');
     $files = tfiles::i();
     $hash =$files->gethash(litepublisher::$paths->files . $file['tempfilename']);
     if (($id = $files->IndexOf('hash', $hash)) ||
@@ -209,14 +209,14 @@ if (!isset($file['filename') || !isset($file['tempfilename'])) $this->error('No 
 $maxwidth = isset($file['maxwidth']) ? $file['maxwidth'] : $this->maxwidth;
 $maxheight = isset($file['maxheight']) ? $file['maxheight'] : $this->maxheight;
       $resize = ($maxwidth > 0) && ($maxheight > 0) && (($item['width'] > $maxwidth ) || ($item['height'] > $maxheight));
-$enablepreview = isset($file['enablepreview']) ? $file['enablepreview'] : $this->enablepreview;
+$enablepreview = isset($file['enablepreview']) ? $file['enablepreview'] : (isset($file['ispreview']) ? $file['ispreview'] : $this->enablepreview);
       if (($resize || $enablepreview) && ($image = self::readimage($srcfilename))) {
         $this->onimage($image);
         if ($enablepreview && ($preview = $this->getsnapshot($srcfilename, $image))) {
-          $preview['title'] = $title;
+          $preview['title'] = $file['title'];
 if (isset($file['ispreview']) && $file['ispreview']) {
 $item['filename'] = $preview['filename'];
-$item['width'] => $preview['width'];
+$item['width'] = $preview['width'];
 $item['height'] = $preview['height'];
 $item['mime'] = $preview['mime'];
 @unlink($srcfilename);
