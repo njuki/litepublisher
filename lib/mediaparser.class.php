@@ -284,7 +284,7 @@ $hash = trim(base64_encode(md5($content, true)), '=');
     }
 
 if ($image = imagecreatefromstring($content)) {
-if (!strbegin($filename, litepublisher::$paths->files)) $filename = litepublisher::$paths->files. ltrim($filename, '/\');
+if (!strbegin($filename, litepublisher::$paths->files)) $filename = litepublisher::$paths->files. ltrim($filename, '\/');
     $destfilename = self::replace_ext($filename, '.jpg');
     $destfilename = self::makeunique($destfilename);
     if (self::createthumb($image, $destfilename, $this->previewwidth, $this->previewheight, $this->ratio, $this->clipbounds, $this->quality_snapshot)) {
@@ -307,7 +307,6 @@ if (!strbegin($filename, litepublisher::$paths->files)) $filename = litepublishe
     return $id;
     }
   }
-}
     return false;
 }
   

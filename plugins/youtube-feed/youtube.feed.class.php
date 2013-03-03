@@ -26,28 +26,37 @@ class tyoutubefeed extends tplugin {
     ));
   }
 
-  public function findthumb($id, array $video) {
-    foreach( $video['media$group']['media$thumbnail'] as $item) {
+  public function findthumb(array $video) {
+if (isset($video['media$group']['media$thumbnail'])) {
+echo "yes<br>";
+    foreach($video['media$group']['media$thumbnail'] as $item) {
 //return first image
 return $item['url'];
       //if (($item['width'] < 200) return $item['url'];
     }
+} else echo "no<br>";
     return false;
   }
   
-  public static function parsefeed($url) {
+  public function parsefeed($url) {
     $result = array();
+/*
+set_time_limit(90);
+$s = file_get_contents('json.txt');
+$js = json_decode($s, true);
+*/
       if ($s = http::get($url))  {
 $js = json_decode($s, true);
-} else return array();
-
+} else {return array();}
+file_put_contents('json.txt', $s);
       foreach ($js['feed']['entry'] as $video) {
+echo implode(', ', array_keys($video)), '<br>';
 $videoid = $this->getvideoid($video);
 $result[$videoid] = array(
 'id' => $videoid,
         'title' => tcontentfilter::escape(tcontentfilter::unescape($video['title']['$t'])),
         'posted' => sqldate(strtotime($video['published']['$t'])),
-'thumb' => $this->findthumb($item)
+'thumb' => $this->findthumb($video)
 );
     }
     return $result;

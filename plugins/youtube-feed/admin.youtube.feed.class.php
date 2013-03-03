@@ -29,7 +29,7 @@ class tadminyoutubefeed implements iadmin {
       <td><a href="http://www.youtube.com/watch?v=$id">$title</a></td></tr>';
 
       $items = '';
-      foreach ($feed->items as $item) {
+      foreach ($feed->items as $id => $item) {
         $args->add($item);
         $args->checked = $files->exists($id) ? false : true;
         $items .= $html->parsearg($tml, $args);
@@ -63,7 +63,6 @@ $feed->items= $feed->parsefeed($feed->url);
       case 3:
       foreach ($_POST as $k => $v) {
         if (strbegin($k, 'youtubeid-')) $feed->add($v);
-        }
       }
       break;
     }
