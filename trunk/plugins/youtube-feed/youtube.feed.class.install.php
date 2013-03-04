@@ -24,14 +24,15 @@ $dir = litepublisher::$paths->files . 'youtube';
 
 copy(dirname(__file__) . '/default.jpg', $dir . '/default.jpg');
 @chmod($dir . '/default.jpg', 0666);
+      $info = getimagesize($dir . '/default.jpg');
 
 $self->idpreview = tfiles::i()->additem(array(
 'filename' => 'youtube/default.jpg',
 'title' => 'Default youtube player',
 'media' => 'image',
 'mime' => 'image/jpeg',
-'width' => 120,
-'height' => 120,
+'width' => $info[0],
+'height' => $info[1],
 ));
 
 $self->save();
