@@ -46,8 +46,8 @@ form#moderateform input,.quote input{font-size:11px}
 #wrapper{width:980px;margin:0 auto;background:#dfe9f5;position:relative;}
 #main{width:100%;float:left;min-height:400px;position:relative;overflow:hidden;}
 #top:after{clear:both;content:".";display:block;height:0;font-size:0;visibility:hidden}
-#content{width:645px;padding:10px 25px;margin:0 285px 0 0;background:#fff}
-#rs{float:left;width:260px;margin-left:-285px;margin-right:-3px;padding:10px 10px 0 15px}
+#content{width:645px;padding:10px 25px;margin:0 285px 0 0;background:#fff;position:relative}
+#rs{float:left;width:260px;margin-left:-285px;margin-right:-3px;padding:10px 10px 0 15px;position:relative}
 #btm{clear:both;background:#bebebe;border-top:1px solid #7E7E7E;color:#222;font-size:10px;margin:0 auto;padding:10px 20px;text-align:center;width:940px}
 .post{clear:both;border-bottom:1px dotted #cdcdcd;position:relative}
 .meta{clear:both;color:#666;font-size:11px;line-height:16px;margin:15px 0}
