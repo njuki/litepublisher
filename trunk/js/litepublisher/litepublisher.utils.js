@@ -6,14 +6,14 @@
 **/
 
 (function ($, document, window) {
-var rurl = /^([\w.+-]+:)(?:\/\/([^\/?#:]*)(?::(\d+)|)|)/;
-var dom = rurl.exec(ltoptions.url);
-var href = rurl.exec(location.href.toLowerCase()) || [];
-if (dom[2] != href[2]) {
-ltoptions.url = ltoptions.url.replace(dom[2], href[2]);
-ltoptions.files = ltoptions.files.replace(dom[2], href[2]);
-}
-
+  var rurl = /^([\w.+-]+:)(?:\/\/([^\/?#:]*)(?::(\d+)|)|)/;
+  var dom = rurl.exec(ltoptions.url);
+  var href = rurl.exec(location.href.toLowerCase()) || [];
+  if (dom[2] != href[2]) {
+    ltoptions.url = ltoptions.url.replace(dom[2], href[2]);
+    ltoptions.files = ltoptions.files.replace(dom[2], href[2]);
+  }
+  
   //litepublisher namespace
   window.litepubl = {
   tml: {}, //namespace for templates

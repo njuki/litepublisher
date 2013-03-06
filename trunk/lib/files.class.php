@@ -8,7 +8,7 @@
 
 class tfiles extends titems {
   public $itemsposts;
-public $cachetml;
+  public $cachetml;
   
   public static function i() {
     return getinstance(__class__);
@@ -22,7 +22,7 @@ public $cachetml;
     $this->addevents('changed', 'edited', 'ongetfilelist', 'onlist');
     $this->itemsposts = tfileitems ::i();
     $this->data['videoplayer'] = '/js/litepublisher/icons/videoplayer.jpg';
-$this->cachetml = array();
+    $this->cachetml = array();
   }
   
   public function preload(array $items) {
@@ -145,26 +145,26 @@ $this->cachetml = array();
   
   public function getfilelist(array $list, $excerpt) {
     if ($result = $this->ongetfilelist($list, $excerpt)) return $result;
-if (count($list) == 0) return '';
-
+    if (count($list) == 0) return '';
+    
     return $this->getlist($list, $excerpt ?
     $this->gettml('content.excerpts.excerpt.filelist') :
     $this->gettml('content.post.filelist'));
-}
-
-public function gettml($basekey) {
-if (isset($this->cachetml[$basekey])) return $this->cachetml[$basekey];
+  }
+  
+  public function gettml($basekey) {
+    if (isset($this->cachetml[$basekey])) return $this->cachetml[$basekey];
     $theme = ttheme::i();
     $result = array(
-'all' => $theme->templates[$basekey],
-);
-
-$key = $basekey . '.';
-foreach  ($theme->templates as $k => $v) {
-if (strbegin($k, $key)) $result[substr($k, strlen($key))] = $v;
-}
-
-$this->cachetml[$basekey] = $result;
+    'all' => $theme->templates[$basekey],
+    );
+    
+    $key = $basekey . '.';
+    foreach  ($theme->templates as $k => $v) {
+      if (strbegin($k, $key)) $result[substr($k, strlen($key))] = $v;
+    }
+    
+    $this->cachetml[$basekey] = $result;
     return $result;
   }
   
@@ -175,7 +175,7 @@ $this->cachetml[$basekey] = $result;
     $this->preload($list);
     //sort by media type
     $items = array();
-        foreach ($list as $id) {
+    foreach ($list as $id) {
       if (!isset($this->items[$id])) continue;
       $item = $this->items[$id];
       $type = $item['media'];
@@ -185,7 +185,7 @@ $this->cachetml[$basekey] = $result;
         $items['file'][] = $id;
       }
     }
-
+    
     $theme = ttheme::i();
     $args = new targs();
     $url = litepublisher::$site->files . '/files/';
@@ -224,7 +224,7 @@ $this->cachetml[$basekey] = $result;
         $args->json = str_replace('"', '&quot;', json_encode($item));
         $sublist .= $theme->parsearg($tml[$type], $args);
       }
-
+      
       $result .=  str_replace('$' . $type, $sublist, $tml[$type . 's']);
     }
     

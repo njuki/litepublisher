@@ -660,8 +660,15 @@ class tpost extends titem implements  itemplate {
       $lang = tlocal::i('comment');
       $result .= $theme->templates['head.post.rss'];
     }
-    
-    return $theme->parse($result);
+    $result = $theme->parse($result);
+    $this->factory->posts->callevent('onhead', array($this, &$result));
+    return $result;
+  }
+  
+  public function getanhead() {
+    $result = '';
+    $this->factory->posts->callevent('onanhead', array($this, &$result));
+    return $result;
   }
   
   public function getkeywords() {
@@ -1095,7 +1102,7 @@ class tposts extends titems {
     $this->childtable = '';
     $this->rawtable = 'rawposts';
     $this->basename = 'posts/index';
-    $this->addevents('edited', 'changed', 'singlecron', 'beforecontent', 'aftercontent', 'beforeexcerpt', 'afterexcerpt', 'onselect');
+    $this->addevents('edited', 'changed', 'singlecron', 'beforecontent', 'aftercontent', 'beforeexcerpt', 'afterexcerpt', 'onselect', 'onhead', 'onanhead');
     $this->data['archivescount'] = 0;
     $this->data['revision'] = 0;
     $this->data['syncmeta'] = false;
@@ -1388,6 +1395,17 @@ class tposts extends titems {
     litepublisher::$urlmap->clearcache();
   }
   
+  public function getanhead(array $items) {
+    if (count($items) == 0) return '';
+    $this->loaditems($items);
+    
+    $result = '';
+    foreach($items as $id) {
+      $result .= tpost::i($id)->anhead;
+    }
+    return $result;
+  }
+  
   //fix call reference
   public function beforecontent($post, &$result) {
     $this->callevent('beforecontent', array($post, &$result));
@@ -1404,7 +1422,6 @@ class tposts extends titems {
   public function afterexcerpt($post, &$result) {
     $this->callevent('afterexcerpt', array($post, &$result));
   }
-  
   
   public function getsitemap($from, $count) {
     return $this->externalfunc(__class__, 'Getsitemap', array($from, $count));
@@ -1948,7 +1965,9 @@ class tcommontags extends titems implements  itemplate {
   public function gethead() {
     $result = $this->contents->getvalue($this->id, 'head');
     $result .= tview::getview($this)->theme->templates['head.tags'];
-    return $result;
+    $list = $this->getidposts($this->id);
+    $result .=     $this->factory->posts->getanhead($list);
+    return ttheme::i()->parse($result);
   }
   
   public function getkeywords() {
@@ -2010,7 +2029,7 @@ class tcommontags extends titems implements  itemplate {
   
   public function get_sorted_posts($id, $count, $invert) {
     $itemstable  = $this->itemsposts->thistable;
-    $posts = tposts::i();
+    $posts = $this->factory->posts;
     $poststable = $posts->thistable;
     $order = $invert ? 'asc' : 'desc';
     return $posts->select("$poststable.status = 'published' and $poststable.id in
@@ -2025,7 +2044,7 @@ class tcommontags extends titems implements  itemplate {
     $includeparents = (int) $item['includeparents'];
     $includechilds = (int) $item['includechilds'];
     $perpage = (int) $item['lite'] ? $item['liteperpage'] : litepublisher::$options->perpage;
-    $posts = litepublisher::$classes->posts;
+    $posts = $this->factory->posts;
     
     if ($includeparents || $includechilds) {
       $this->loadall();
@@ -2320,6 +2339,7 @@ class ttagfactory extends tdata {
 //files.class.php
 class tfiles extends titems {
   public $itemsposts;
+  public $cachetml;
   
   public static function i() {
     return getinstance(__class__);
@@ -2333,6 +2353,7 @@ class tfiles extends titems {
     $this->addevents('changed', 'edited', 'ongetfilelist', 'onlist');
     $this->itemsposts = tfileitems ::i();
     $this->data['videoplayer'] = '/js/litepublisher/icons/videoplayer.jpg';
+    $this->cachetml = array();
   }
   
   public function preload(array $items) {
@@ -2455,41 +2476,47 @@ class tfiles extends titems {
   
   public function getfilelist(array $list, $excerpt) {
     if ($result = $this->ongetfilelist($list, $excerpt)) return $result;
-    $theme = ttheme::i();
+    if (count($list) == 0) return '';
+    
     return $this->getlist($list, $excerpt ?
-    $theme->gettag('content.excerpts.excerpt.filelist') :
-    $theme->gettag('content.post.filelist'));
+    $this->gettml('content.excerpts.excerpt.filelist') :
+    $this->gettml('content.post.filelist'));
   }
   
-  public function getlist(array $list,  $templates) {
+  public function gettml($basekey) {
+    if (isset($this->cachetml[$basekey])) return $this->cachetml[$basekey];
+    $theme = ttheme::i();
+    $result = array(
+    'all' => $theme->templates[$basekey],
+    );
+    
+    $key = $basekey . '.';
+    foreach  ($theme->templates as $k => $v) {
+      if (strbegin($k, $key)) $result[substr($k, strlen($key))] = $v;
+    }
+    
+    $this->cachetml[$basekey] = $result;
+    return $result;
+  }
+  
+  public function getlist(array $list,  array $tml) {
     if (count($list) == 0) return '';
     $this->onlist($list);
     $result = '';
     $this->preload($list);
-    
     //sort by media type
     $items = array();
-    $types = array(
-    'file' => $templates->file,
-    'files' => $templates->files,
-    'preview' => $templates->preview
-    );
-    
     foreach ($list as $id) {
       if (!isset($this->items[$id])) continue;
       $item = $this->items[$id];
       $type = $item['media'];
-      if (isset($types[$type])) {
+      if (isset($tml[$type])) {
         $items[$type][] = $id;
-      } elseif (isset($templates->$type)) {
-        $items[$type][] = $id;
-        $types[$type] = $templates->$type;
-        $type .= 's';
-        $types[$type] = $templates->$type;
       } else {
         $items['file'][] = $id;
       }
     }
+    
     $theme = ttheme::i();
     $args = new targs();
     $url = litepublisher::$site->files . '/files/';
@@ -2521,19 +2548,19 @@ class tfiles extends titems {
         
         if (count($preview->array)) {
           $preview->link = $url . $preview->filename;
-          $args->preview = $theme->parsearg($types['preview'], $args);
+          $args->preview = $theme->parsearg($tml['preview'], $args);
         }
         
         unset($item['title'], $item['keywords'], $item['description']);
         $args->json = str_replace('"', '&quot;', json_encode($item));
-        $sublist .= $theme->parsearg($types[$type], $args);
+        $sublist .= $theme->parsearg($tml[$type], $args);
       }
-      $sublist = str_replace('$' . $type, $sublist, $types[$type . 's']);
-      $result .= $sublist;
+      
+      $result .=  str_replace('$' . $type, $sublist, $tml[$type . 's']);
     }
     
     unset(ttheme::$vars['preview'], $preview);
-    return str_replace('$files', $result, $theme->parse((string) $templates));
+    return str_replace('$files', $result, $theme->parse($tml['all']));
   }
   
   public function postedited($idpost) {

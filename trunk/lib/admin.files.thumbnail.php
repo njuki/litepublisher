@@ -71,25 +71,25 @@ class tadminfilethumbnails extends tadminmenu {
     $newtemp = $parser->gettempname($parts);
     if (!move_uploaded_file($tempfilename, litepublisher::$paths->files . $newtemp)) return sprintf($this->html->h4->attack, $_FILES["filename"]["name"]);
     
-$resize = !isset($_POST['noresize']);
-
-$idpreview = $parser->add(array(
-'filename' => $filename,
-'tempfilename' => $newtemp,
-'enabledpreview' => $resize,
-'ispreview' => $resize
-));
-
-if ($idpreview) {
-    if ($item['preview'] > 0) $files->delete($item['preview']);
-    $files->setvalue($id, 'preview', $idpreview);
-    $files->setvalue($idpreview, 'parent', $id);
-    if ($item['idperm'] > 0) {
-      $files->setvalue($idpreview, 'idperm', $item['idperm']);
-      tprivatefiles::i()->setperm($idpreview, (int) $item['idperm']);
+    $resize = !isset($_POST['noresize']);
+    
+    $idpreview = $parser->add(array(
+    'filename' => $filename,
+    'tempfilename' => $newtemp,
+    'enabledpreview' => $resize,
+    'ispreview' => $resize
+    ));
+    
+    if ($idpreview) {
+      if ($item['preview'] > 0) $files->delete($item['preview']);
+      $files->setvalue($id, 'preview', $idpreview);
+      $files->setvalue($idpreview, 'parent', $id);
+      if ($item['idperm'] > 0) {
+        $files->setvalue($idpreview, 'idperm', $item['idperm']);
+        tprivatefiles::i()->setperm($idpreview, (int) $item['idperm']);
+      }
+      return $this->html->h4->success;
     }
-    return $this->html->h4->success;
-}
   }
   
 }//class
