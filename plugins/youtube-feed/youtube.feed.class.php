@@ -91,7 +91,7 @@ $idpreview = $parser->uploadthumb("youtube/$videoid.jpg", $s);
 
     $id = $files->insert($item);
 
-    if ($idpreview !!= $this->idpreview) {
+    if ($idpreview != $this->idpreview) {
 $files->setvalue($idpreview, 'parent', $id);
     }
 
