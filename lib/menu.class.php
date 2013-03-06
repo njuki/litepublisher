@@ -496,7 +496,7 @@ public function save() {}
 }//class
 
 class tsinglemenu extends tmenu {
-
+  
   public function __construct() {
     parent::__construct();
     if ($id = $this->getowner()->class2id(get_class($this))) {

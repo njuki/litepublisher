@@ -501,16 +501,16 @@ class tpost extends titem implements  itemplate {
       $lang = tlocal::i('comment');
       $result .= $theme->templates['head.post.rss'];
     }
-$result = $theme->parse($result);    
-$this->factory->posts->callevent('onhead', array($this, &$result));
+    $result = $theme->parse($result);
+    $this->factory->posts->callevent('onhead', array($this, &$result));
     return $result;
   }
-
-public function getanhead() {
-$result = '';
-$this->factory->posts->callevent('onanhead', array($this, &$result));
+  
+  public function getanhead() {
+    $result = '';
+    $this->factory->posts->callevent('onanhead', array($this, &$result));
     return $result;
-}
+  }
   
   public function getkeywords() {
     return empty($this->data['keywords']) ? $this->Gettagnames() : $this->data['keywords'];

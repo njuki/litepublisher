@@ -42,22 +42,22 @@ class tarchives extends titems_itemplate implements  itemplate {
     $this->items = array();
     //sort archive by months
     $linkgen = tlinkgenerator::i();
-      $db = litepublisher::$db;
-      $res = $db->query("SELECT YEAR(posted) AS 'year', MONTH(posted) AS 'month', count(id) as 'count' FROM  $db->posts
-      where status = 'published' GROUP BY YEAR(posted), MONTH(posted) ORDER BY posted DESC ");
-
-      while ($r = $db->fetchassoc($res)) {
-        $this->date = mktime(0,0,0, $r['month'] , 1, $r['year']);
-        $this->items[$this->date] = array(
-        'idurl' => 0,
-        'url' => $linkgen->Createlink($this, 'archive', false),
-        'title' => tlocal::date($this->date, 'F Y'),
-        'year' => $r['year'],
-        'month' => $r['month'],
-        'count' => $r['count']
-        );
-      }
-
+    $db = litepublisher::$db;
+    $res = $db->query("SELECT YEAR(posted) AS 'year', MONTH(posted) AS 'month', count(id) as 'count' FROM  $db->posts
+    where status = 'published' GROUP BY YEAR(posted), MONTH(posted) ORDER BY posted DESC ");
+    
+    while ($r = $db->fetchassoc($res)) {
+      $this->date = mktime(0,0,0, $r['month'] , 1, $r['year']);
+      $this->items[$this->date] = array(
+      'idurl' => 0,
+      'url' => $linkgen->Createlink($this, 'archive', false),
+      'title' => tlocal::date($this->date, 'F Y'),
+      'year' => $r['year'],
+      'month' => $r['month'],
+      'count' => $r['count']
+      );
+    }
+    
     $this->CreatePageLinks();
     $this->unlock();
   }
@@ -90,12 +90,12 @@ class tarchives extends titems_itemplate implements  itemplate {
       return sprintf("<?php litepublisher::$urlmap->redir('%s');",$item['url']);
     }
   }
-
-public function gethead() {
-$result = parent::gethead();
-$result .= tposts::i()->getanhead($this->getidposts());
-return $result;
-}
+  
+  public function gethead() {
+    $result = parent::gethead();
+    $result .= tposts::i()->getanhead($this->getidposts());
+    return $result;
+  }
   
   public function gettitle() {
     return $this->items[$this->date]['title'];
@@ -115,9 +115,9 @@ return $result;
   
   public function getidposts() {
     if (isset($this->_idposts)) return $this->_idposts;
-      $item = $this->items[$this->date];
-  $this->_idposts = $this->getdb('posts')->idselect("status = 'published' and year(posted) = '{$item['year']}' and month(posted) = '{$item['month']}' ORDER BY posted DESC ");
-      return $this->_idposts;
+    $item = $this->items[$this->date];
+$this->_idposts = $this->getdb('posts')->idselect("status = 'published' and year(posted) = '{$item['year']}' and month(posted) = '{$item['month']}' ORDER BY posted DESC ");
+    return $this->_idposts;
   }
   
   public function getsitemap($from, $count) {

@@ -175,18 +175,18 @@ class tmediaparser extends tevents {
   }
   
   public function addfile($filename, $tempfilename, $title, $description, $keywords, $overwrite) {
-return $this->add(array(
-'filename' => $filename, 
-'tempfilename' => $tempfilename,
-'title' => $title,
-'description' => $description,
- 'keywords' => $keywords,
-'overwrite' => $overwrite
-));
-}
-
+    return $this->add(array(
+    'filename' => $filename,
+    'tempfilename' => $tempfilename,
+    'title' => $title,
+    'description' => $description,
+    'keywords' => $keywords,
+    'overwrite' => $overwrite
+    ));
+  }
+  
   public function add(array $file) {
-if (!isset($file['filename']) || !isset($file['tempfilename'])) $this->error('No file name');
+    if (!isset($file['filename']) || !isset($file['tempfilename'])) $this->error('No file name');
     $files = tfiles::i();
     $hash =$files->gethash(litepublisher::$paths->files . $file['tempfilename']);
     if (($id = $files->IndexOf('hash', $hash)) ||
@@ -206,23 +206,23 @@ if (!isset($file['filename']) || !isset($file['tempfilename'])) $this->error('No
     $preview = false;
     if ($item['media'] == 'image') {
       $srcfilename = litepublisher::$paths->files . str_replace('/', DIRECTORY_SEPARATOR, $item['filename']);
-$maxwidth = isset($file['maxwidth']) ? $file['maxwidth'] : $this->maxwidth;
-$maxheight = isset($file['maxheight']) ? $file['maxheight'] : $this->maxheight;
+      $maxwidth = isset($file['maxwidth']) ? $file['maxwidth'] : $this->maxwidth;
+      $maxheight = isset($file['maxheight']) ? $file['maxheight'] : $this->maxheight;
       $resize = ($maxwidth > 0) && ($maxheight > 0) && (($item['width'] > $maxwidth ) || ($item['height'] > $maxheight));
-$enablepreview = isset($file['enablepreview']) ? $file['enablepreview'] : (isset($file['ispreview']) ? $file['ispreview'] : $this->enablepreview);
+      $enablepreview = isset($file['enablepreview']) ? $file['enablepreview'] : (isset($file['ispreview']) ? $file['ispreview'] : $this->enablepreview);
       if (($resize || $enablepreview) && ($image = self::readimage($srcfilename))) {
         $this->onimage($image);
         if ($enablepreview && ($preview = $this->getsnapshot($srcfilename, $image))) {
           $preview['title'] = $file['title'];
-if (isset($file['ispreview']) && $file['ispreview']) {
-$item['filename'] = $preview['filename'];
-$item['width'] = $preview['width'];
-$item['height'] = $preview['height'];
-$item['mime'] = $preview['mime'];
-@unlink($srcfilename);
-$resize = false;
-$preview = false;
-}
+          if (isset($file['ispreview']) && $file['ispreview']) {
+            $item['filename'] = $preview['filename'];
+            $item['width'] = $preview['width'];
+            $item['height'] = $preview['height'];
+            $item['mime'] = $preview['mime'];
+            @unlink($srcfilename);
+            $resize = false;
+            $preview = false;
+          }
         }
         
         if ($resize) {
@@ -232,7 +232,7 @@ $preview = false;
             $fixfilename = self::replace_ext($srcfilename, '.jpg');
             $fixfilename = self::makeunique($fixfilename);
             rename($srcfilename, $fixfilename);
-@chmod($fixfilename, 0666);
+            @chmod($fixfilename, 0666);
             $item['filename'] = str_replace(DIRECTORY_SEPARATOR, '/', substr($fixfilename, strlen(litepublisher::$paths->files)));
           }
         } else {
@@ -266,49 +266,49 @@ $preview = false;
     $linkgen = tlinkgenerator::i();
     $filename = $linkgen->filterfilename($filename);
     $tempfilename = $this->doupload($filename, $content);
-
-return $this->add(array(
-'filename' => $filename,
-'tempfilename' => $tempfilename,
-'enabledpreview' => false
-));
-}
-
-//$filename must be specefied before such as  thumb/img004893.jpg
-public function uploadthumb($filename, &$content) {
-$hash = trim(base64_encode(md5($content, true)), '=');
+    
+    return $this->add(array(
+    'filename' => $filename,
+    'tempfilename' => $tempfilename,
+    'enabledpreview' => false
+    ));
+  }
+  
+  //$filename must be specefied before such as  thumb/img004893.jpg
+  public function uploadthumb($filename, &$content) {
+    $hash = trim(base64_encode(md5($content, true)), '=');
     $files = tfiles::i();
     if (($id = $files->IndexOf('hash', $hash)) ||
     ($id = $files->getdb('imghashes')->findid('hash = '. dbquote($hash)))) {
       return $id;
     }
-
-if ($image = imagecreatefromstring($content)) {
-if (!strbegin($filename, litepublisher::$paths->files)) $filename = litepublisher::$paths->files. ltrim($filename, '\/');
-    $destfilename = self::replace_ext($filename, '.jpg');
-    $destfilename = self::makeunique($destfilename);
-    if (self::createthumb($image, $destfilename, $this->previewwidth, $this->previewheight, $this->ratio, $this->clipbounds, $this->quality_snapshot)) {
-      $info = getimagesize($destfilename);
-      $item = $this->getdefaultvalues(str_replace(DIRECTORY_SEPARATOR, '/', substr($destfilename, strlen(litepublisher::$paths->files))));
-      $item['media'] = 'image';
-      $item['mime'] = $info['mime'];
-      $item['width'] = $info[0];
-      $item['height'] = $info[1];
-
-    $id = $files->additem($item);
-    IF ($hash != $files->getvalue($id, 'hash')) {
-      $files->getdb('imghashes')->insert(array(
-      'id' => $id,
-      'hash' => $hash
-      ));
-    }
     
-    $this->added($id);
-    return $id;
+    if ($image = imagecreatefromstring($content)) {
+      if (!strbegin($filename, litepublisher::$paths->files)) $filename = litepublisher::$paths->files. ltrim($filename, '\/');
+      $destfilename = self::replace_ext($filename, '.jpg');
+      $destfilename = self::makeunique($destfilename);
+      if (self::createthumb($image, $destfilename, $this->previewwidth, $this->previewheight, $this->ratio, $this->clipbounds, $this->quality_snapshot)) {
+        $info = getimagesize($destfilename);
+        $item = $this->getdefaultvalues(str_replace(DIRECTORY_SEPARATOR, '/', substr($destfilename, strlen(litepublisher::$paths->files))));
+        $item['media'] = 'image';
+        $item['mime'] = $info['mime'];
+        $item['width'] = $info[0];
+        $item['height'] = $info[1];
+        
+        $id = $files->additem($item);
+        IF ($hash != $files->getvalue($id, 'hash')) {
+          $files->getdb('imghashes')->insert(array(
+          'id' => $id,
+          'hash' => $hash
+          ));
+        }
+        
+        $this->added($id);
+        return $id;
+      }
     }
-  }
     return false;
-}
+  }
   
   public function getdefaultvalues($filename) {
     return array(
@@ -453,7 +453,7 @@ if (!strbegin($filename, litepublisher::$paths->files)) $filename = litepublishe
     imagecopyresampled($dest, $source, 0, 0, 0, 0, $x, $y, $sourcex, $sourcey);
     imagejpeg($dest, $destfilename, $quality_snapshot);
     imagedestroy($dest);
-@chmod($destfilename, 0666);
+    @chmod($destfilename, 0666);
     return true;
   }
   

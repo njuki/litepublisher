@@ -323,15 +323,15 @@ class tposts extends titems {
   
   public function getanhead(array $items) {
     if (count($items) == 0) return '';
-$this->loaditems($items);
+    $this->loaditems($items);
     
     $result = '';
     foreach($items as $id) {
       $result .= tpost::i($id)->anhead;
-}    
+    }
     return $result;
   }
-
+  
   //fix call reference
   public function beforecontent($post, &$result) {
     $this->callevent('beforecontent', array($post, &$result));
@@ -349,7 +349,7 @@ $this->loaditems($items);
     $this->callevent('afterexcerpt', array($post, &$result));
   }
   
-    public function getsitemap($from, $count) {
+  public function getsitemap($from, $count) {
     return $this->externalfunc(__class__, 'Getsitemap', array($from, $count));
   }
   
