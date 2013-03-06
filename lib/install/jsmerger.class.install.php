@@ -51,6 +51,7 @@ function tjsmergerInstall($self) {
   $self->add($section, '/js/litepublisher/filelist.min.js');
   $self->add($section, '/js/litepublisher/players.min.js');
   $self->add($section, '/js/litepublisher/prettyphoto.dialog.min.js');
+  $self->add($section, '/js/litepublisher/youtubefix.min.js');
   $self->addtext($section, 'pretty',
   '$(document).ready(function() {
     $("a[rel^=\'prettyPhoto\']").prettyPhoto({

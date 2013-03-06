@@ -29,29 +29,23 @@ class tyoutubefeed extends tplugin {
 
   public function findthumb(array $video) {
 if (isset($video['media$group']['media$thumbnail'])) {
-echo "yes<br>";
     foreach($video['media$group']['media$thumbnail'] as $item) {
 //return first image
 return $item['url'];
       //if (($item['width'] < 200) return $item['url'];
     }
-} else echo "no<br>";
+}
+
     return false;
   }
   
   public function parsefeed($url) {
     $result = array();
-/*
-set_time_limit(90);
-$s = file_get_contents('json.txt');
-$js = json_decode($s, true);
-*/
       if ($s = http::get($url))  {
 $js = json_decode($s, true);
 } else {return array();}
-file_put_contents('json.txt', $s);
+
       foreach ($js['feed']['entry'] as $video) {
-echo implode(', ', array_keys($video)), '<br>';
 $videoid = $this->getvideoid($video);
 $result[$videoid] = array(
 'id' => $videoid,
