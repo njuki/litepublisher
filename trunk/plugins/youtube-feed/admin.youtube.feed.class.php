@@ -26,7 +26,7 @@ class tadminyoutubefeed implements iadmin {
       $args->formtitle = $lang->feeditems;
 
       $tml = '<tr><td align="center"><input type="checkbox" name="youtubeid-$id" id="youtubeid-$id" value="$id" $checked /></td>
-      <td><a href="http://www.youtube.com/watch?v=$id">$title</a></td></tr>';
+      <td><a href="http://www.youtube.com/watch?v=$id" rel="youtube">$title</a></td></tr>';
 
       $items = '';
       foreach ($feed->items as $id => $item) {

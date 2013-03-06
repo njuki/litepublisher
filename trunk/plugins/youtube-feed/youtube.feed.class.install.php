@@ -35,6 +35,7 @@ $self->idpreview = tfiles::i()->additem(array(
 'height' => $info[1],
 ));
 
+$self->url = 'http://gdata.youtube.com/feeds/api/standardfeeds/top_rated?alt=json&orderby=published&format=5';
 $self->save();
 }
 
