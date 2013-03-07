@@ -20,7 +20,7 @@ class tcommontags extends titems implements  itemplate {
   protected function create() {
     $this->dbversion = dbversion;
     parent::create();
-    $this->addevents('changed');
+    $this->addevents('changed', 'onbeforecontent', 'oncontent');
     $this->factory = litepublisher::$classes->getfactory($this);
     $this->data['lite'] = false;
     $this->data['includechilds'] = false;
@@ -354,6 +354,8 @@ class tcommontags extends titems implements  itemplate {
   }
   
   public function getcont() {
+$result = '';
+$this->callevent('onbeforecontent', array(&$result));
     $theme = ttheme::i();
     if ($this->id == 0) {
       $items = $this->getsortedcontent(array(
@@ -362,19 +364,20 @@ class tcommontags extends titems implements  itemplate {
       'subitems' =>       '<ul>$item</ul>'
       ),
       0, 'count', 0, 0, false);
-      return sprintf('<ul>%s</ul>', $items);
+      $result .= sprintf('<ul>%s</ul>', $items);
+$this->callevent('oncontent', array(&$result));
+return $result;
     }
     
     if ($this->getcontent()) {
       ttheme::$vars['menu'] = $this;
-      $result = $theme->parse($theme->templates['content.menu']);
-    } else {
-      $result = '';
+      $result .= $theme->parse($theme->templates['content.menu']);
     }
     
     $list = $this->getidposts($this->id);
     $item = $this->getitem($this->id);
     $result .= $theme->getpostsnavi($list, (int) $item['lite'], $item['url'], $item['itemscount'], $item['liteperpage']);
+$this->callevent('oncontent', array(&$result));
     return $result;
   }
   
