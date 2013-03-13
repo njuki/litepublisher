@@ -5,9 +5,16 @@ display: block;
 }
 
 .files-block:after{clear:both;content:'.';display:block;height:0;visibility:hidden}
-
+.clear-after:after{clear:both;content:'.';display:block;height:0;visibility:hidden}
 .image{float:left;margin:5px 15px 5px 0} 
 
+img {
+  vertical-align: middle;
+  border: 0;
+  -ms-interpolation-mode: bicubic;
+}
+
+/* old style */
 .filelist ul {
 	float: left;
 	overflow:hidden;

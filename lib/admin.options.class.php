@@ -237,7 +237,7 @@ class Tadminoptions extends tadminmenu {
     if ($form = $this->getautoform($this->name)) return $form->processform();
     extract($_POST, EXTR_SKIP);
     $options = litepublisher::$options;
-
+    
     switch ($this->name) {
       case 'home':
       $home = thomepage::i();
