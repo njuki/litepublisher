@@ -354,8 +354,8 @@ class tcommontags extends titems implements  itemplate {
   }
   
   public function getcont() {
-$result = '';
-$this->callevent('onbeforecontent', array(&$result));
+    $result = '';
+    $this->callevent('onbeforecontent', array(&$result));
     $theme = ttheme::i();
     if ($this->id == 0) {
       $items = $this->getsortedcontent(array(
@@ -365,8 +365,8 @@ $this->callevent('onbeforecontent', array(&$result));
       ),
       0, 'count', 0, 0, false);
       $result .= sprintf('<ul>%s</ul>', $items);
-$this->callevent('oncontent', array(&$result));
-return $result;
+      $this->callevent('oncontent', array(&$result));
+      return $result;
     }
     
     if ($this->getcontent()) {
@@ -377,7 +377,7 @@ return $result;
     $list = $this->getidposts($this->id);
     $item = $this->getitem($this->id);
     $result .= $theme->getpostsnavi($list, (int) $item['lite'], $item['url'], $item['itemscount'], $item['liteperpage']);
-$this->callevent('oncontent', array(&$result));
+    $this->callevent('oncontent', array(&$result));
     return $result;
   }
   

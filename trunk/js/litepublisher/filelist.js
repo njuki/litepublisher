@@ -12,8 +12,8 @@
       var images = $("span.image", self);
       if (images.length <= 2) {
         var parent = images.parent();
-        images.insertAfter(this);
-        images.nextAll("p,div").first().addClass("files-block");
+        images.insertAfter(self);
+        images.nextAll("p,div").first().addClass("clear-after");
         parent.remove();
       }
       if (self.children().length == 0) self.remove();
