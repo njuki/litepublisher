@@ -338,6 +338,7 @@ class tmenu extends titem implements  itemplate {
   public static function iteminstance($class, $id = 0) {
     $single = getinstance($class);
     if ($single->id == $id) return $single;
+    if (($id == 0) && ($single->id > 0)) return $single;
     if (($single->id == 0) && ($id > 0)) return $single->loaddata($id);
     return parent::iteminstance($class, $id);
   }

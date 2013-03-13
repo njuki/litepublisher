@@ -76,7 +76,6 @@ class Tadminoptions extends tadminmenu {
       $args->idhome =  $home->id;
       $menus = tmenus::i();
       $args->homemenu =  $menus->home;
-      
       $args->includecats = tposteditor::getcategories($home->includecats);
       $args->excludecats = str_replace('category-', 'exclude_category-',
       tposteditor::getcategories($home->excludecats));
@@ -238,7 +237,7 @@ class Tadminoptions extends tadminmenu {
     if ($form = $this->getautoform($this->name)) return $form->processform();
     extract($_POST, EXTR_SKIP);
     $options = litepublisher::$options;
-    
+
     switch ($this->name) {
       case 'home':
       $home = thomepage::i();
