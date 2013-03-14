@@ -18,9 +18,10 @@ class admintmlstorage implements iadmin {
 $args->formtitle = 'Template storage';
 $html = tadminhtml::i();
     $tabs = new tuitabs();
-foreach ($plugin->items as $classname => $items) {
+foreach ($plugin->items as $classname) {
       $tab = new tuitabs();
-foreach ($items as $key => $value) {
+$obj = getinstance($classname);
+foreach ($obj->data['tml'] as $key => $value) {
         $tab->add($key, $html->getinput('editor',
         $classname . '_text_' . $key, tadminhtml::specchars($value), $key));
 }
@@ -34,12 +35,13 @@ $html->adminform($tabs->get(), $args);
   public function processform() {
     $plugin = tmlstorage::i();
 foreach ($plugin->items as $classname => $items) {
-foreach ($items as $key => $value) {
-        $plugin->items[$classname][$key] = $_POST[$classname . '_text_' . $key];
+$obj = getinstance($classname);
+foreach ($obj->data['tml'] as $key => $value) {
+        $obj->data['tml'][$key] = $_POST[$classname . '_text_' . $key];
 }
+$obj->save();
 }
    
-    $plugin->save();
   }
   
 }//class
