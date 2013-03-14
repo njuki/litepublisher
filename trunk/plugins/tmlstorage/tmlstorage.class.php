@@ -19,7 +19,7 @@ class tmlstorage extends titems {
   }
 
 public function classdeleted($classname) {
-if (isset($this->items[$classname'])) {
+if (isset($this->items[$classname])) {
 unset($this->items[$classname]);
 $this->save();
 }
