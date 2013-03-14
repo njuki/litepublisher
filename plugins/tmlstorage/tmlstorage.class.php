@@ -6,41 +6,31 @@
 * and GPL (gpl.txt) licenses.
 **/
 
-class tmlstorage extends titems {
+class tmlstorage extends tplugin {
+public $items;
 
   public static function i() {
     return getinstance(__class__);
   }
 
   protected function create() {
-    $this->dbversion = false;
     parent::create();
-    $this->basename = 'tmlstorage';
+    $this->addmap('items', array());
   }
 
-public function classdeleted($classname) {
-if (isset($this->items[$classname])) {
-unset($this->items[$classname]);
+public function classadded($classname) {
+$obj = getinstance($classname);
+if (isset($obj->data['tml'])) {
+$this->items[] = $classname;
 $this->save();
 }
 }
   
-  public function get($obj, $key) {
-$classname = get_class($obj);
-if (isset($this->items[$classname][$key])) return $this->items[$classname][$key];
-return '';
+public function classdeleted($classname) {
+if (false !== ($i = array_search($classname, $this->items)) {
+array_splice($this->items, $i, 1);
+$this->save();
 }
-
-  public function set($obj, $key, $value) {
-$classname = get_class($obj);
-if (isset($this->items[$classname])) {
-    $this->items[$classname][$key] = $value;
-} else {
-    $this->items[$classname] = array(
-$key => $value
-);
 }
-    $this->save();
-  }
   
 }//class

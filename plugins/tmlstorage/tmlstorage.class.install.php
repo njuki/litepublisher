@@ -7,6 +7,7 @@
 **/
 
 function tmlstorageInstall($self) {
+litepublisher::$classes->added = $self->classadded;
 litepublisher::$classes->deleted = $self->classdeleted;
 }
 
