@@ -24,5 +24,3 @@ function tkeptcommentsInstall($self) {
     $manager->CreateTable($self->table, file_get_contents($dir .'comments.kept.sql'));
   }
 }
-
-?>
