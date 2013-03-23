@@ -108,13 +108,15 @@ class tjsonserver extends titems {
     }
     
     $this->callevent('aftercall', array(&$result, $args));
-    $js = json_encode($result);
+// json options supported in php 5.3
+$jsattr =defined('JSON_NUMERIC_CHECK') ? (JSON_NUMERIC_CHECK | (defined('JSON_UNESCAPED_UNICODE') ? JSON_UNESCAPED_UNICODE : 0)) : null;
+    $js = json_encode($result, $jsattr);
     //if (litepublisher::$debug) tfiler::log("response:\n".$js, 'json.txt');
     
     return "<?php
     header('Connection: close');
     header('Content-Length: ". strlen($js) . "');
-    header('Content-Type: text/javascript');
+    header('Content-Type: text/javascript; charset=utf-8');
     header('Date: ".date('r') . "');
     Header( 'Cache-Control: no-cache, must-revalidate');
     Header( 'Pragma: no-cache');
