@@ -48,9 +48,6 @@ error: function(mesg) {
           $.messagebox(lang.dialog.error, mesg);
 },
 
-    geturl: function() {
-      return this.url + '/admin/jsonserver.php?random=' + Math.random();
-    },
 
 uploaded: function(filename, resp) {
             this.items.push(resp);
