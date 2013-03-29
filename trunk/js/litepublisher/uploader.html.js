@@ -8,7 +8,7 @@ init: function(owner) {
 this.owner = owner;
 this.queue = [];
 var self = this;
-	$(owner.tml.htmlinput, owner.holder).fileReaderJS({
+	$(owner.tml.htmlfile, owner.holder).fileReaderJS({
 		on: {
 			load: function(e, file) {
 self.queue.push(file);
