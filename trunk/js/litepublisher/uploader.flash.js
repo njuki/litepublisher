@@ -40,8 +40,7 @@ self.error(message);
         
         upload_success_handler : function(file, serverData) {
           try {
-            var r = $.parseJSON(serverData);
-            self.uploaded(file, r);
+            self.uploaded(r);
         } catch(e) { alert('error ' + e.message); }
         },
         
@@ -50,7 +49,6 @@ self.error(message);
           try {
             /*  I want the next upload to continue automatically so I'll call startUpload here */
             if (this.getStats().files_queued === 0) {
-self.hideprogress();
               self.complete();
             } else {
               this.startUpload();
