@@ -101,7 +101,10 @@ $js = "var lang;\nif (lang == undefined) lang = {};\n";
   
   $section = 'posteditor';
   $self->add($section, '/js/swfupload/swfupload.min.js');
+  $self->add($section, '/js/plugins/filereader.min.js');
   $self->add($section, '/js/litepublisher/uploader.min.js');
+  $self->add($section, '/js/litepublisher/uploader.html.min.js');
+  $self->add($section, '/js/litepublisher/uploader.flash.min.js');
   $self->add($section, '/js/jquery/ui-$site.jqueryui_version/jquery.ui.progressbar.min.js');
   $self->add($section, '/js/litepublisher/posteditor.min.js');
   $self->add($section, '/js/litepublisher/fileman.min.js');

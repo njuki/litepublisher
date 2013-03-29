@@ -1,21 +1,23 @@
 (function ($, litepubl, window) {
 window.litepubl.tml.uploader = {
-flash: '<div id="uploader">\
-<div id="posteditor-fileperms"></div>\
-    <div id="upload"><span id="uploadbutton"></span></div>\
-    <div id="progressbar"></div>\
-</div>',
+html: '<div id="posteditor-fileperms" class="hidden"></div>\
+    <div id="upload">\
+	<input type="file" id="file-input" name="filedata" multiple />\
+	<div id="dropzone">\
+		Drag and drop files from your desktop here (or select them from the input above).\
+	</div>\
+</div>\
+    <div id="progressbar"></div>',
 
-html: '<div id="uploader">\
-<div id="posteditor-fileperms"></div>\
-    <div id="upload"><span id="uploadbutton"></span></div>\
-    <div id="progressbar"></div>\
-</div>',
-
+htmlfile: "#file-input, #dropzone",
     progressbar: "#progressbar",
+
+flash: '<div id="posteditor-fileperms" class="hidden"></div>\
+    <div id="upload"><span id="uploadbutton"></span></div>\
+    <div id="progressbar"></div>',
+
 // without # for native javascript
-flashbutton: "uploadbutton",
-htmlinput: "#file-input, #dropzone"
+flashbutton: "uploadbutton"
 };
 
   litepubl.Uploader = Class.extend({
