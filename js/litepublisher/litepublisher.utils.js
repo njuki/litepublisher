@@ -24,7 +24,7 @@
         data: data,
         success: callback,
         dataType: "json",
-        cache: true
+        cache: ("cache" in data ? data.cache : true)
       });
     },
     
@@ -97,10 +97,10 @@
     },
     
     litejsontype: function(type, data, callback) {
-      var c = get_cookie("litepubl_user");
+      var c = $.cookie("litepubl_user");
       if (c != '') {
         data.litepubl_user = c;
-        c = get_cookie("litepubl_user_id");
+        c = $.cookie("litepubl_user_id");
         if (c != '') data.litepubl_user_id = c;
       }
       if (type != "post") type = "get";
@@ -111,7 +111,7 @@
         data: data,
         success: callback,
         dataType: "json",
-        cache: false
+        cache: "cache" in data ? data.cache : false
       });
     },
     
