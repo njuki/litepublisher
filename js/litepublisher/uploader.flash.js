@@ -1,28 +1,30 @@
 (function ($, litepubl, window) {
-  litepubl.flashUploader = litepubl.Uploader.extend({
+  litepubl.flashUploader = Class.extend({
+owner: false,
 swf: false,
     onsettings: $.noop,
 
-    init_handler: function() {
+    init: function(owner) {
+this.owner = owner;
       var url = ltoptions.uploadurl == undefined ? ltoptions.url: ltoptions.uploadurl;
       var self = this;
       var settings = {
         flash_url : url + "/js/swfupload/swfupload.swf",
         upload_url: url + "/admin/jsonserver.php",
         // prevent_swf_caching: false,
-        post_params: this.postdata,
-        file_size_limit : this.maxsize + " MB",
-        file_types : this.types,
+        post_params: owner.postdata,
+        file_size_limit : owner.maxsize + " MB",
+        file_types : owner.types,
         file_types_description : "All Files",
         file_upload_limit : 0,
         file_queue_limit : 0,
-        button_placeholder_id : "uploadbutton",
+        button_placeholder_id : owner.tml.flashbutton,
         //debug: true,
         
         file_dialog_complete_handler : function(numFilesSelected, numFilesQueued) {
-self.setpercent(0);
+owner.setpercent(0);
           this.setUploadURL(self.geturl());
-          self.before(this);
+          owner.before(this);
           this.startUpload();
         },
         
@@ -31,16 +33,16 @@ self.setpercent(0);
         },
         
         upload_progress_handler : function(file, bytesLoaded, bytesTotal) {
-self.setprogress(bytesLoaded, bytesTotal);
+owner.setprogress(bytesLoaded, bytesTotal);
         },
         
         upload_error_handler : function(file, errorCode, message) {
-self.error(message);
+owner.error(message);
         },
         
         upload_success_handler : function(file, serverData) {
           try {
-            self.uploaded(r);
+            owner.uploaded(r);
         } catch(e) { alert('error ' + e.message); }
         },
         
@@ -49,7 +51,7 @@ self.error(message);
           try {
             /*  I want the next upload to continue automatically so I'll call startUpload here */
             if (this.getStats().files_queued === 0) {
-              self.complete();
+              owner.complete();
             } else {
               this.startUpload();
             }
