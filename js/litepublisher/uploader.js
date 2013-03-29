@@ -48,12 +48,12 @@ error: function(mesg) {
           $.messagebox(lang.dialog.error, mesg);
 },
 
+uploaded: function(resp) {
+            var r = $.parseJSON(resp);
 
-uploaded: function(filename, resp) {
             this.items.push(resp);
 $(this).trigger({
 type: "upload",
-filename: filename,
 resp: resp
 });
 },
@@ -89,10 +89,11 @@ uploader: this
     },
     
     complete: function() {
+this.hideprogress();
       $(this).trigger({
 type: "oncomplete",
 uploader: this,
-files: this.items
+items: this.items
 });
       this.items.length = 0;
     }
