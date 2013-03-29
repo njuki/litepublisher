@@ -1,12 +1,14 @@
 (function ($, litepubl, window) {
-  litepubl.HTMLUploader = litepubl.Uploader.extend({
+  litepubl.HTMLUploader = Class.extend({
+owner: false,
 jq: false,
 queue: false,
 
-init_handler: function() {
+init: function(owner) {
+this.owner = owner;
 this.queue = [];
 var self = this;
-	$("#file-input, #dropzone").fileReaderJS({
+	$(owner.tml.htmlinput, owner.holder).fileReaderJS({
 		on: {
 			load: function(e, file) {
 self.queue.push(file);
@@ -29,30 +31,34 @@ next: function() {
 if (this.queue.length) {
 this.queue.shift();
 this.start();
-if (this.queue.length == 0) this.complete();
+if (this.queue.length == 0) {
+this.jq = false;
+this.owner.complete();
+}
 }
 },
 
 uploadfile: function(file) {
-this.before(file);
+var owner = this.owner;
+owner.before(file);
 var formdata = new FormData();
 formdata.append("filedata", file);
 
-for (var name in this.postdata) {
-formdata.append(name, this.postdata[name]);
+for (var name in owner.postdata) {
+formdata.append(name, owner.postdata[name]);
 }
 
 var self = this;
 this.jq = $.ajax({
 type: "post",
-url: this.url,
+url: owner.url,
 cache: false,
 data: formdata,
     contentType: false,
     processData: false,
 
         success: function(r) {
-self.uploaded(r);
+owner.uploaded(r);
 self.next();
 },
 
@@ -61,7 +67,7 @@ var result = $.ajaxSettings.xhr();
 if ("upload" in result) {
     result.upload.addEventListener("progress", function(event){
       if (event.lengthComputable) {  
-self.setprogress(event.loaded, event.total);
+owner.setprogress(event.loaded, event.total);
       }
     }, false); 
 
@@ -80,6 +86,7 @@ return result;
 })
           .fail( function(jq, textStatus, errorThrown) {
 self.next();
+owner.error(jq.responseText);
 });
 }
 
