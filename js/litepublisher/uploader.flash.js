@@ -1,12 +1,9 @@
 (function ($, litepubl, window) {
   litepubl.flashUploader = litepubl.Uploader.extend({
-    before: function(uploader) {
-      var perm = $("#combo-idperm_upload");
-      if (perm.length) uploader.addPostParam("idperm", perm.val());
-      this.onbefore(uploader);
-    },
-    
-    init: function() {
+swf: false,
+    onsettings: $.noop,
+
+    init_handler: function() {
       var url = ltoptions.uploadurl == undefined ? ltoptions.url: ltoptions.uploadurl;
       var self = this;
       var settings = {
@@ -44,7 +41,7 @@ self.error(message);
         upload_success_handler : function(file, serverData) {
           try {
             var r = $.parseJSON(serverData);
-            self.upload(file, r);
+            self.uploaded(file, r);
         } catch(e) { alert('error ' + e.message); }
         },
         
@@ -82,9 +79,17 @@ self.hideprogress();
       
       try {
         this.onsettings(settings);
-        this.uploader= new SWFUpload(settings);
+        this.swf = new SWFUpload(settings);
     } catch(e) { alert('Error create swfupload ' + e.message); }
-    }
+    },
+
+    addparam: function(name, value) {
+this.swf.addPostParam(name, value);
+    },
     
-  });
+    geturl: function() {
+      return this.url + '/admin/jsonserver.php?random=' + Math.random();
+    }
+
+      });
 }(jQuery, litepubl, window));

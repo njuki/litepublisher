@@ -24,6 +24,7 @@ url: "",
           method: "files_upload"
         };
 
+this.init_handler();
 if ("FileReader" in window) {
 this.handler =  new litepubl.HTMLUploader(this);
 } else {
@@ -41,10 +42,6 @@ this.setprogress(Math.ceil((current / total) * 100));
 
 hideprogress: function() {
               $(this.progressbar).progressbar( "destroy" );
-},
-
-showprogress: function() {
-
 },
 
 error: function(mesg) {
@@ -77,13 +74,20 @@ $(this).bind("onupload", fn);
 $(this).bind("oncomplete", fn);
 },
 
-    before: function() {
+    addparam: function(name, value) {
+this.postdata[name] = value;
+},
+
+addperm: function() {
       var perm = $("#combo-idperm_upload");
-      if (perm.length) this.handler.addparam("idperm", perm.val());
+      if (perm.length) this.addparam("idperm", perm.val());
+},
+
+    before: function() {
+this.addperm();
       $(this).trigger({
 type: "onbefore",
-uploader: this,
-handler: this.handler
+uploader: this
 });
     },
     
