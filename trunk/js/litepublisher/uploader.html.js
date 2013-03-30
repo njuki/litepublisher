@@ -57,6 +57,7 @@ type: "post",
 url: owner.geturl(),
 cache: false,
 data: formdata,
+        dataType: "json",
     contentType: false,
     processData: false,
 

@@ -2,7 +2,7 @@
 window.litepubl.tml.uploader = {
 html: '<div id="posteditor-fileperms" class="hidden"></div>\
     <div id="upload">\
-	<input type="file" id="file-input" name="filedata" multiple />\
+	<input type="file" id="file-input" name="Filedata" multiple />\
 	<div id="dropzone">\
 		Drag and drop files from your desktop here (or select them from the input above).\
 	</div>\
@@ -87,14 +87,15 @@ error: function(mesg) {
           $.messagebox(lang.dialog.error, mesg);
 },
 
-uploaded: function(resp) {
-            var r = $.parseJSON(resp);
-
-            this.items.push(resp);
+uploaded: function(data) {
+try {
+        if (typeof data == "string") data = $.parseJSON(data);
+            this.items.push(data);
 $(this).trigger({
 type: "onupload",
-resp: resp
+data: data
 });
+    } catch(e) {erralert(e);}
 },
     
     addparam: function(name, value) {

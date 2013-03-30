@@ -71,5 +71,5 @@ margin: 5px;
 clear: both;
 }
 
-	#dropzone { padding:20px; height: 50px;  border: solid 3px blue; }
-	#dropzone.drag { border: solid 4px green; }
+	#dropzone { padding:20px;  border: solid 1px blue;}
+	#dropzone.drag { border: solid 3px green;}

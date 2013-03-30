@@ -48,7 +48,7 @@
       var self = this;
       this.uploader = new litepubl.Uploader();
       this.uploader.onupload(function(e) {
-        self.uploaded(e.resp);
+        self.uploaded(e.data);
       });
     },
     
@@ -168,7 +168,6 @@
     
     uploaded: function(r) {
       try {
-        //var r = $.parseJSON(serverData);
         /*
         r = {
           id: int idfile,

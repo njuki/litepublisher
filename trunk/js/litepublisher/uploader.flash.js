@@ -42,7 +42,7 @@ owner.error(message);
         
         upload_success_handler : function(file, serverData) {
           try {
-            owner.uploaded(r);
+            owner.uploaded(serverData);
         } catch(e) { alert('error ' + e.message); }
         },
         
