@@ -3,9 +3,7 @@ window.litepubl.tml.uploader = {
 html: '<div id="posteditor-fileperms" class="hidden"></div>\
     <div id="upload">\
 	<input type="file" id="file-input" name="Filedata" multiple />\
-	<div id="dropzone">\
-		Drag and drop files from your desktop here (or select them from the input above).\
-	</div>\
+	<div id="dropzone">%%lang.dragfiles%%</div>\
 </div>\
     <div id="progressbar"></div>',
 
@@ -46,6 +44,7 @@ this.holder = $(options.holder);
 this.random = 	$.now();
 
 this.tml = litepubl.tml.uploader;
+this.tml.html = this.tml.html.replace('%%lang.dragfiles%%', lang.posteditor.dragfiles);
       this.items = new Array();
 
       var cookie = $.cookie("litepubl_user");
