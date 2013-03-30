@@ -28,13 +28,24 @@ handler: false,
 postdata: false,
 url: "",
     maxsize: 100,
-    types: "*.*",
+mime: false, // regexp for html as 'image/*' to only accept images
+    types: "*.*", // for flash uploader
 
-    init: function(holder) {
-this.holder = $(holder);
+    init: function(options) {
+options = $.extend({
+      url: (ltoptions.uploadurl == undefined ? ltoptions.url: ltoptions.uploadurl) + '/admin/jsonserver.php',
+holder: "#uploader",
+maxsize: 100,
+mime: false,
+types: "*.*"
+}, options);
+
+$.extend(this, options);
+this.holder = $(options.holder);
+
 this.tml = litepubl.tml.uploader;
       this.items = new Array();
-      this.url = ltoptions.uploadurl == undefined ? ltoptions.url: ltoptions.uploadurl;
+
       var cookie = $.cookie("litepubl_user");
       if (!cookie) cookie = $.cookie("admin");
 
@@ -76,7 +87,7 @@ uploaded: function(resp) {
 
             this.items.push(resp);
 $(this).trigger({
-type: "upload",
+type: "onupload",
 resp: resp
 });
 },

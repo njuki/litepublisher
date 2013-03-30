@@ -88,7 +88,7 @@ this.swf.addPostParam(name, value);
     },
     
     geturl: function() {
-      return this.url + '/admin/jsonserver.php?random=' + Math.random();
+      return this.owner.url + '?random=' + Math.random();
     }
 
       });

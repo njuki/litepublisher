@@ -47,8 +47,8 @@
     init_upload: function() {
       var self = this;
       this.uploader = new litepubl.Uploader();
-      this.uploader.onupload = function(file, r) {
-        self.uploaded(file, r);
+      this.uploader.onupload(function(e) {
+        self.uploaded(e.resp);
       };
     },
     
@@ -67,7 +67,7 @@
     
     set_uploaded: function(r) {
       if ("fileperm" in r) {
-        $("#posteditor-fileperms").html(r.fileperm);
+        $("#posteditor-fileperms", this.uploader.holder).removeClass("hidden").html(r.fileperm);
       }
       
       this.set_tabs_count(r.count);
@@ -166,7 +166,7 @@
       }
     },
     
-    uploaded: function(file, r) {
+    uploaded: function(r) {
       try {
         //var r = $.parseJSON(serverData);
         /*
