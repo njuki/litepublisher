@@ -20,15 +20,7 @@ class tposteditor extends tadminmenu {
     $template = ttemplate::i();
     $template->ltoptions['idpost'] = $this->idget();
     $template->ltoptions['lang'] = litepublisher::$options->language;
-    
-    $result .= '<link type="text/css" href="$site.files/js/litepublisher/css/fileman.css" rel="stylesheet" />';
     $result .= $template->getjavascript($template->jsmerger_posteditor);
-    /*
-    $result .= $template->getjavascript('/js/litepublisher/swfuploader.js');
-    $result .= $template->getjavascript('/js/litepublisher/POSTEDITOR.js');
-    $result .= $template->getjavascript('/js/litepublisher/fileman.js');
-    $result .= $template->getjavascript('/js/litepublisher/fileman.templates.js');
-    */
     
     if ($this->isauthor &&($h = tauthor_rights::i()->gethead()))  $result .= $h;
     return $result;
