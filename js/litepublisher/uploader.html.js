@@ -9,6 +9,7 @@ this.owner = owner;
 this.queue = [];
 var self = this;
 	$(owner.tml.htmlfile, owner.holder).fileReaderJS({
+accept: owner.mime,
 		on: {
 			load: function(e, file) {
 self.queue.push(file);
@@ -16,8 +17,8 @@ if (self.queue.length == 1) self.start(file);
 },
 
 			beforestart: function(file) {
-//alert('before');
-//dump(file);
+//litepubl.dump(file);
+if (owner.maxsize && (file.size > (owner.maxsize * 1024 * 1024))) return false;
 }
 }
 });
@@ -41,6 +42,7 @@ this.owner.complete();
 uploadfile: function(file) {
 var owner = this.owner;
 owner.before(file);
+
 var formdata = new FormData();
 formdata.append("filedata", file);
 
