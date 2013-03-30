@@ -49,7 +49,7 @@
       this.uploader = new litepubl.Uploader();
       this.uploader.onupload(function(e) {
         self.uploaded(e.resp);
-      };
+      });
     },
     
     load_current_files: function() {

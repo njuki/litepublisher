@@ -28,10 +28,7 @@
     %%lang.keywords%%: %%keywords%%<br />\
     </p>',
     
-    tabs: '<div id="posteditor-fileperms"></div>\
-    <div id="upload"><span id="uploadbutton"></span></div>\
-    <div id="progressbar"></div>\
-    \
+    tabs: '<div id="uploader"></div>\
     <div id="posteditor-files-tabs">\
     <ul>\
     <li><a href="#current-files"><span>%%lang.currentfiles%%</span></a></li>\

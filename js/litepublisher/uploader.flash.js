@@ -23,7 +23,7 @@ this.owner = owner;
         
         file_dialog_complete_handler : function(numFilesSelected, numFilesQueued) {
 owner.setpercent(0);
-          this.setUploadURL(self.geturl());
+          this.setUploadURL(owner.geturl());
           owner.before(this);
           this.startUpload();
         },
@@ -85,11 +85,7 @@ owner.error(message);
 
     addparam: function(name, value) {
 this.swf.addPostParam(name, value);
-    },
-    
-    geturl: function() {
-      return this.owner.url + '?random=' + Math.random();
     }
-
+    
       });
 }(jQuery, litepubl, window));

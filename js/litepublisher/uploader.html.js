@@ -44,7 +44,8 @@ var owner = this.owner;
 owner.before(file);
 
 var formdata = new FormData();
-formdata.append("filedata", file);
+// warning: Filedata is same in flash and can not be changed
+formdata.append("Filedata", file);
 
 for (var name in owner.postdata) {
 formdata.append(name, owner.postdata[name]);
@@ -53,7 +54,7 @@ formdata.append(name, owner.postdata[name]);
 var self = this;
 this.jq = $.ajax({
 type: "post",
-url: owner.url,
+url: owner.geturl(),
 cache: false,
 data: formdata,
     contentType: false,
