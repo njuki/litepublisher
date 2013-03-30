@@ -8,12 +8,13 @@
 
 function set_comments_lang($self) {
   $lang = tlocal::admin('comments');
+$jsattr =defined('JSON_UNESCAPED_UNICODE') ? JSON_UNESCAPED_UNICODE : null;
   $self->addtext('comments', 'lang',
-  sprintf('var lang = $.extend(true, lang, {
+  sprintf('window.lang = $.extend(true, window.lang, {
     comment: %s,
     comments: %s
   });',
-  json_encode($lang->ini['comment']),
+  json_encode($lang->ini['comment'], $jsattr),
   json_encode(array(
   'del' => $lang->delete,
   'edit' => $lang->edit,
@@ -26,7 +27,7 @@ function set_comments_lang($self) {
   'notmoderated' => $lang->notmoderated,
   'errorrecieved' => $lang->errorrecieved,
   'notedited' => $lang->notedited,
-  ))
+  ), $jsattr)
   ));
 }
 
@@ -38,6 +39,7 @@ function tjsmergerInstall($self) {
   file_put_contents($file, ' ');
   @chmod($file, 0666);
   
+$jsattr =defined('JSON_UNESCAPED_UNICODE') ? JSON_UNESCAPED_UNICODE : null;
   $self->lock();
   $self->items = array();
   $section = 'default';
@@ -69,13 +71,13 @@ function tjsmergerInstall($self) {
   set_comments_lang($self);
   
   tlocal::usefile('admin');
-$js = "var lang;\nif (lang == undefined) lang = {};\n";
+$js = 'window.lang = window.lang || {};';
   $widgetlang = array(
   'expand' => tlocal::get('default', 'expand'),
   'colapse' => tlocal::get('default', 'colapse')
   );
   $lang = tlocal::admin('common');
-  $self->addtext('default', 'widgetlang', $js . sprintf('lang.widgetlang= %s;',  json_encode($widgetlang)));
+  $self->addtext('default', 'widgetlang', $js . sprintf('lang.widgetlang= %s;',  json_encode($widgetlang, $jsattr)));
   $self->addtext('default', 'dialog', $js . sprintf('lang.dialog = %s;',  json_encode(
   array(
   'error' => $lang->error,
@@ -85,7 +87,7 @@ $js = "var lang;\nif (lang == undefined) lang = {};\n";
   'yes' => $lang->yesword,
   'no' => $lang->noword,
   )
-  )));
+  ), $jsattr));
   
   $section = 'admin';
   $self->add($section, '/js/jquery/ui-$site.jqueryui_version/jquery-ui-$site.jqueryui_version.custom.min.js');
@@ -126,7 +128,7 @@ $js = "var lang;\nif (lang == undefined) lang = {};\n";
   'keywords' => $lang->keywords,'file' => $lang->file,
   'filesize' => $lang->filesize,
   )
-  )));
+  ), $jsattr));
   
   $self->unlock();
   
