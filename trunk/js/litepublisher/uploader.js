@@ -26,6 +26,7 @@ tml: false,
 progressbar: false,
 handler: false,
 postdata: false,
+random: 0,
 url: "",
     maxsize: 100,
 mime: false, // regexp for html as 'image/*' to only accept images
@@ -42,6 +43,7 @@ types: "*.*"
 
 $.extend(this, options);
 this.holder = $(options.holder);
+this.random = 	$.now();
 
 this.tml = litepubl.tml.uploader;
       this.items = new Array();
@@ -66,8 +68,11 @@ this.handler = new litepubl.FlashUploader(this);
 this.progressbar = $(this.tml.progressbar, this.holder);
 },
 
-setpercent: function(percent) {
-        this.progressbar.progressbar({value: percent});
+geturl: function() {
+      return this.url + '?_=' + this.random++;
+},
+
+setpercent: function(percent) {        this.progressbar.progressbar({value: percent});
 },
 
 setprogress: function(current, total) {
