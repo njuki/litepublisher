@@ -115,6 +115,7 @@ $js = "var lang;\nif (lang == undefined) lang = {};\n";
   array(
   'emptytitle' => $lang->emptytitle,
   'upload' => $lang->upload,
+  'dragfiles' => $lang->dragfiles,
   'currentfiles' => $lang->currentfiles,
   'newupload' => $lang->newupload,
   'add' => $lang->add,
