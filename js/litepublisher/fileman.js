@@ -10,13 +10,21 @@
   items: {},
     curr: [],
     indialog: false,
+holder: false,
     
-    init: function(holder) {
+    init: function(options) {
       try {
+options = $.extend({
+    'holder': '#posteditor-files',
+    'pages' : 0,
+    'items': false,
+}, options);
+
         this.init_templates();
+this.holder = $(options.holder);
         var self = this;
-        $(holder).html(this.tml.tabs);
-        var tabs = $("#posteditor-files-tabs");
+        //$(holder).html(this.tml.tabs);
+        var tabs = $("#posteditor-files-tabs", this.holder);
         tabs.tabs({
           beforeLoad: litepubl.uibefore,
           beforeActivate: function(event, ui) {
@@ -26,13 +34,16 @@
           }
         });
         
-        this.load_current_files();
-        
         $('form:first').submit(function() {
           $("input[name='files']").val(self.curr.join(','));
         });
         
         this.init_upload();
+if (options.items) {
+          this.set_uploaded(options.pages, options.items);
+} else {
+        this.load_current_files();
+}
     } catch(e) {erralert(e);}
     },
     
@@ -56,7 +67,7 @@
       var self = this;
     $.litejson({method: "files_getpost", idpost: ltoptions.idpost}, function (r) {
         try {
-          self.set_uploaded(r);
+          self.set_uploaded(r.count, r.files);
       } catch(e) {erralert(e);}
       })
       .fail( function(jq, textStatus, errorThrown) {
@@ -65,18 +76,19 @@
       });
     },
     
-    set_uploaded: function(r) {
+    set_uploaded: function(tabscount, items) {
       if ("fileperm" in r) {
         $("#posteditor-fileperms", this.uploader.holder).removeClass("hidden").html(r.fileperm);
       }
       
-      this.set_tabs_count(r.count);
-      for (var id in r.files) {
-        this.items[id] = r.files[id];
-        if (r.files[id].parent == "0") this.curr.push(id);
+      this.set_tabs_count(tabscount);
+      for (var i in items) {
+var item = items[i];
+        this.items[item.id] = item;
+        if (parseInt(item.parent) == 0) this.curr.push(item.id);
       }
       
-      this.setpage("#current-files", r.files);
+      this.setpage("#current-files", items);
       //to assign events
     this.setpage("#new-files", {});
     },
