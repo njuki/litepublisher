@@ -27,7 +27,8 @@
     %%lang.description%%: %%description%%<br />\
     %%lang.keywords%%: %%keywords%%<br />\
     </p>',
-    
+
+/*    
     tabs: '<div id="uploader"></div>\
     <div id="posteditor-files-tabs">\
     <ul>\
@@ -46,7 +47,8 @@
     \
     </div>\
     <p class="hidden"><input type="hidden" name="files" value="" /></p>',
-    
+  */  
+
     tab: '<div class="files-tab" id="filepage-%%index%%">\
     <div class="file-items"></div>\
     <div class="file-items-after"></div>\
