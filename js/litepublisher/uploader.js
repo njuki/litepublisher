@@ -1,8 +1,13 @@
+/**
+* Lite Publisher
+* Copyright (C) 2010, 2012 Vladimir Yushko http://litepublisher.com/
+* Dual licensed under the MIT (mit.txt)
+* and GPL (gpl.txt) licenses.
+**/
+
 (function ($, litepubl, window) {
 window.litepubl.tml.uploader = {
-html: '<div id="posteditor-fileperms" class="hidden"></div>\
-    <div id="upload">\
-	<input type="file" id="file-input" name="Filedata" multiple />\
+html: '<div id="upload"><input type="file" id="file-input" name="Filedata" multiple />\
 	<div id="dropzone">%%lang.dragfiles%%</div>\
 </div>\
     <div id="progressbar"></div>',
@@ -10,8 +15,7 @@ html: '<div id="posteditor-fileperms" class="hidden"></div>\
 htmlfile: "#file-input, #dropzone",
     progressbar: "#progressbar",
 
-flash: '<div id="posteditor-fileperms" class="hidden"></div>\
-    <div id="upload"><span id="uploadbutton"></span></div>\
+flash: '<div id="upload"><span id="uploadbutton"></span></div>\
     <div id="progressbar"></div>',
 
 // without # for native javascript

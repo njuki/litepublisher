@@ -74,8 +74,7 @@ class tposteditor extends tadminmenu {
   }
 
 // $posteditor.files in template editor
-public function getfiles() {
-$result = '';
+public function getfilelist() {
 $html = $this->html;
 $args = new targs();
       $args->fileperm = litepublisher::$options->show_file_perm ? tadminperms::getcombo(0, 'idperm_upload') : '';
@@ -83,8 +82,7 @@ $args = new targs();
 $post = ttheme::$vars['post'];
     $files = tfiles::i();
     $where = litepublisher::$options->ingroup('editor') ? '' : ' and author = ' . litepublisher::$options->user;
-$pages = (int) ceil($files->db->getcount(" parent = 0 $where") / 20);
-
+$args->pages = (int) ceil($files->db->getcount(" parent = 0 $where") / 20);
 $args->jsitems = '{}';
     if ($post->id) {
       $list = $files->itemsposts->getitems($idpost);

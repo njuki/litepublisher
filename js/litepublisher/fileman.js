@@ -7,13 +7,15 @@
 
 (function ($, litepubl, document, window) {
   litepubl.Fileman = Class.extend({
-  items: {},
-    curr: [],
+  items: false,
+    curr: false,
     indialog: false,
 holder: false,
     
     init: function(options) {
       try {
+this.items = {};
+this.curr = [],
 options = $.extend({
     'holder': '#posteditor-files',
     'pages' : 0,
@@ -34,8 +36,8 @@ this.holder = $(options.holder);
           }
         });
         
-        $('form:first').submit(function() {
-          $("input[name='files']").val(self.curr.join(','));
+this.holder.closest('form').submit(function() {
+          $("input[name='files']", self.holder).val(self.curr.join(','));
         });
         
         this.init_upload();
@@ -77,10 +79,11 @@ if (options.items) {
     },
     
     set_uploaded: function(tabscount, items) {
+/*
       if ("fileperm" in r) {
         $("#posteditor-fileperms", this.uploader.holder).removeClass("hidden").html(r.fileperm);
       }
-      
+  */    
       this.set_tabs_count(tabscount);
       for (var i in items) {
 var item = items[i];
@@ -95,13 +98,13 @@ var item = items[i];
     
     set_tabs_count: function(count) {
       if (count < 1) return;
-      var tabs = $("#posteditor-files-tabs");
+      var tabs = $("#posteditor-files-tabs", this.holder);
       var tabhead = $(".ui-tabs-nav", tabs);
       for (var i =1; i <= count; i++) {
         $(this.tml.tab.replace('%%index%%', i)).appendTo(tabs).data("page", i).data("files", "empty");
         $(this.tml.tabli.replace(/%%index%%/gim, i)).appendTo(tabhead);
-        tabs.tabs( "refresh" );
       }
+        tabs.tabs( "refresh" );
     },
     
     setpage: function(uipanel, files) {

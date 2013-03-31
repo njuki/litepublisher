@@ -1,8 +1,6 @@
 <?php
 
 function update553() {
-tcssmerger::i()->save();
-
 $js = tjsmerger::i();
 $js->lock();
 $section = 'posteditor';
