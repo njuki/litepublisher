@@ -503,4 +503,3 @@ return$useGzip ? gzencode($this->tar_file) : $this->tar_file;
 }
 
 }
-?>

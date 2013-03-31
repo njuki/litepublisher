@@ -30,4 +30,9 @@ $admin->heads = str_replace(
 '$site.files$template.cssmerger_admin',
 $admin->heads);
 $admin->save();
+
+$lm = tlocalmerger::i();
+$lm->lock();
+  $lm->addhtml('lib/languages/posteditor.ini');
+$lm->unlock();
 }
