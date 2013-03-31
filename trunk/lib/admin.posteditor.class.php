@@ -72,6 +72,34 @@ class tposteditor extends tadminmenu {
     if (count($postitems) == 0) $postitems = array($categories->defaultid);
     return self::getcategories($postitems);
   }
+
+// $posteditor.files in template editor
+public function getfiles() {
+$result = '';
+$html = $this->html;
+$args = new targs();
+      $args->fileperm = litepublisher::$options->show_file_perm ? tadminperms::getcombo(0, 'idperm_upload') : '';
+
+$post = ttheme::$vars['post'];
+    $files = tfiles::i();
+    $where = litepublisher::$options->ingroup('editor') ? '' : ' and author = ' . litepublisher::$options->user;
+$pages = (int) ceil($files->db->getcount(" parent = 0 $where") / 20);
+
+$args->filelist = '';
+    if ($post->id) {
+      $list = $files->itemsposts->getitems($idpost);
+$args->filelist = $files->getlist($list, array(
+'image' => str_replace('$content', $html->image, $html->fileitem),
+'images' => '',
+'preview' => ttheme::i()->templates['content.post.filelist.preview'],
+'file' => str_replace('$content', $html->file, $html->fileitem),
+'files' => ''
+));
+    }
+    
+
+return $html->filelist($args);
+}
   
   public function canrequest() {
     $this->isauthor = false;
@@ -130,14 +158,15 @@ class tposteditor extends tadminmenu {
     $html = $this->html;
     $post = tpost::i($this->idpost);
     ttheme::$vars['post'] = $post;
-    $args = targs::i();
+    ttheme::$vars['posteditor'] = $this;
+    $args = new targs();
     $this->getpostargs($post, $args);
     
     $result = $post->id == 0 ? '' : $html->h4($this->lang->formhead . ' ' . $post->bookmark);
     if ($this->isauthor &&($r = tauthor_rights::i()->getposteditor($post, $args)))  return $r;
     
     $result .= $html->form($args);
-    unset(ttheme::$vars['post']);
+    unset(ttheme::$vars['post'], ttheme::$vars['posteditor']);
     return $html->fixquote($result);
   }
   
