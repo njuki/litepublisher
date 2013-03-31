@@ -85,18 +85,15 @@ $post = ttheme::$vars['post'];
     $where = litepublisher::$options->ingroup('editor') ? '' : ' and author = ' . litepublisher::$options->user;
 $pages = (int) ceil($files->db->getcount(" parent = 0 $where") / 20);
 
-$args->filelist = '';
+$args->jsitems = '{}';
     if ($post->id) {
       $list = $files->itemsposts->getitems($idpost);
-$args->filelist = $files->getlist($list, array(
-'image' => str_replace('$content', $html->image, $html->fileitem),
-'images' => '',
-'preview' => ttheme::i()->templates['content.post.filelist.preview'],
-'file' => str_replace('$content', $html->file, $html->fileitem),
-'files' => ''
-));
+      if (count($list)) {
+        $items = implode(',', $list);
+$jsattr =defined('JSON_NUMERIC_CHECK') ? (JSON_NUMERIC_CHECK | (defined('JSON_UNESCAPED_UNICODE') ? JSON_UNESCAPED_UNICODE : 0)) : null;
+$args->jsitems = json_encode($files->db->res2items($files->db->query("select * from $files->thistable where id in ($items) or parent in ($items)")), $jsattr);
+      }
     }
-    
 
 return $html->filelist($args);
 }
