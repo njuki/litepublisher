@@ -10,12 +10,18 @@
 owner: false,
 jq: false,
 queue: false,
+html: '<div id="upload">\
+<p><label for="file-input"%%lang.%%upload%%</label><input type="file" id="file-input" name="Filedata" multiple /></p>\
+	<div id="dropzone">%%lang.dragfiles%%</div>\
+</div>',
+idhtml: "#file-input, #dropzone",
 
 init: function(owner) {
 this.owner = owner;
 this.queue = [];
+this.html = $.simpletml(this.html, {lang: lang.posteditor});
 var self = this;
-	$(owner.tml.htmlfile, owner.holder).fileReaderJS({
+$(this.html).appendTo(owner.holder).find(this.idhtml).fileReaderJS({
 accept: owner.mime,
 		on: {
 			load: function(e, file) {

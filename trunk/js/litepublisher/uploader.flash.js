@@ -10,10 +10,14 @@
 owner: false,
 swf: false,
     onsettings: $.noop,
+html: '<div id="upload"><span id="uploadbutton"></span></div>',
+// no jquery selector
+idbutton: "uploadbutton",
 
     init: function(owner) {
 this.owner = owner;
       var url = ltoptions.uploadurl == undefined ? ltoptions.url: ltoptions.uploadurl;
+owner.append(this.html);
       var self = this;
       var settings = {
         flash_url : url + "/js/swfupload/swfupload.swf",
@@ -25,7 +29,7 @@ this.owner = owner;
         file_types_description : "All Files",
         file_upload_limit : 0,
         file_queue_limit : 0,
-        button_placeholder_id : owner.tml.flashbutton,
+        button_placeholder_id : this.idbutton,
         //debug: true,
         
         file_dialog_complete_handler : function(numFilesSelected, numFilesQueued) {
