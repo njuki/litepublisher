@@ -61,7 +61,7 @@ if (options.items) {
       var self = this;
       this.uploader = new litepubl.Uploader();
       this.uploader.onupload(function(e) {
-        self.uploaded(e.data);
+        self.uploaded(e.resp);
       });
     },
     

@@ -6,26 +6,7 @@
 **/
 
 (function ($, litepubl, window) {
-window.litepubl.tml.uploader = {
-html: '<div id="upload"><input type="file" id="file-input" name="Filedata" multiple />\
-	<div id="dropzone">%%lang.dragfiles%%</div>\
-</div>\
-    <div id="progressbar"></div>',
-
-htmlfile: "#file-input, #dropzone",
-    progressbar: "#progressbar",
-
-flash: '<div id="upload"><span id="uploadbutton"></span></div>\
-    <div id="progressbar"></div>',
-
-// without # for native javascript
-flashbutton: "uploadbutton"
-};
-
   litepubl.Uploader = Class.extend({
-holder: false,
-tml: false,
-progressbar: false,
 handler: false,
 postdata: false,
 random: 0,
@@ -33,6 +14,10 @@ url: "",
     maxsize: 100,
 mime: false, // regexp for html as 'image/*' to only accept images
     types: "*.*", // for flash uploader
+holder: false,
+progressbar: false,
+    htmlprogress: '<div id="progressbar"></div>',
+idprogress: "#progressbar",
 
     init: function(options) {
 options = $.extend({
@@ -47,8 +32,6 @@ $.extend(this, options);
 this.holder = $(options.holder);
 this.random = 	$.now();
 
-this.tml = litepubl.tml.uploader;
-this.tml.html = this.tml.html.replace('%%lang.dragfiles%%', lang.posteditor.dragfiles);
       this.items = new Array();
 
       var cookie = $.cookie("litepubl_user");
@@ -61,14 +44,12 @@ this.tml.html = this.tml.html.replace('%%lang.dragfiles%%', lang.posteditor.drag
         };
 
 if ("FileReader" in window) {
-this.holder.append(this.tml.html);
 this.handler =  new litepubl.HTMLUploader(this);
 } else {
-this.holder.append(this.tml.flash);
 this.handler = new litepubl.FlashUploader(this);
 }
 
-this.progressbar = $(this.tml.progressbar, this.holder);
+this.progressbar = $(this.htmlprogress).appendTo(this.holder).find(this.idprogress);
 },
 
 geturl: function() {
@@ -90,13 +71,13 @@ error: function(mesg) {
           $.messagebox(lang.dialog.error, mesg);
 },
 
-uploaded: function(data) {
+uploaded: function(resp) {
 try {
-        if (typeof data == "string") data = $.parseJSON(data);
-            this.items.push(data);
+        if (typeof resp == "string") resp = $.parseJSON(resp);
+            this.items.push(resp);
 $(this).trigger({
 type: "onupload",
-data: data
+resp: resp
 });
     } catch(e) {erralert(e);}
 },
