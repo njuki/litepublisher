@@ -9,6 +9,7 @@
 class tdatabase {
   public $result;
   public $sql;
+  public $dbname;
   public $table;
   public $prefix;
   public $history;
@@ -26,6 +27,7 @@ class tdatabase {
     if (!isset(litepublisher::$options->dbconfig)) return false;
     $dbconfig = litepublisher::$options->dbconfig;
     $this->table = '';
+    $this->dbname =  $dbconfig['dbname'];
     $this->prefix =  $dbconfig['prefix'];
     $this->sql = '';
     $this->history = array();
@@ -154,11 +156,6 @@ class tdatabase {
         $value =$value ? '1' : '0';
         $list[] = sprintf('%s = %s ', $name, $value);
         continue;
-        /*
-      } elseif (is_array($value)) {
-        $list[] = sprintf('%s = \'%s\'', $name, implode('\',\'', $value));
-        continue;
-        */
       }
       
       $list[] = sprintf('%s = %s', $name,  $this->quote($value));

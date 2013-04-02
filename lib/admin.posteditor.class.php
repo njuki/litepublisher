@@ -72,29 +72,31 @@ class tposteditor extends tadminmenu {
     if (count($postitems) == 0) $postitems = array($categories->defaultid);
     return self::getcategories($postitems);
   }
-
-// $posteditor.files in template editor
-public function getfilelist() {
-$html = $this->html;
-$args = new targs();
-      $args->fileperm = litepublisher::$options->show_file_perm ? tadminperms::getcombo(0, 'idperm_upload') : '';
-
-$post = ttheme::$vars['post'];
+  
+  // $posteditor.files in template editor
+  public function getfilelist() {
+    $html = $this->html;
+    $args = new targs();
+    $args->fileperm = litepublisher::$options->show_file_perm ? tadminperms::getcombo(0, 'idperm_upload') : '';
+    
+    $post = ttheme::$vars['post'];
     $files = tfiles::i();
     $where = litepublisher::$options->ingroup('editor') ? '' : ' and author = ' . litepublisher::$options->user;
-$args->pages = (int) ceil($files->db->getcount(" parent = 0 $where") / 20);
-$args->jsitems = '{}';
+    $args->pages = (int) ceil($files->db->getcount(" parent = 0 $where") / 20);
+  $args->jsitems = '{}';
+    $args->files = '';
     if ($post->id) {
-      $list = $files->itemsposts->getitems($idpost);
+      $list = $files->itemsposts->getitems($post->id);
       if (count($list)) {
         $items = implode(',', $list);
-$jsattr =defined('JSON_NUMERIC_CHECK') ? (JSON_NUMERIC_CHECK | (defined('JSON_UNESCAPED_UNICODE') ? JSON_UNESCAPED_UNICODE : 0)) : null;
-$args->jsitems = json_encode($files->db->res2items($files->db->query("select * from $files->thistable where id in ($items) or parent in ($items)")), $jsattr);
+        $args->files = $items;
+        $jsattr =defined('JSON_NUMERIC_CHECK') ? (JSON_NUMERIC_CHECK | (defined('JSON_UNESCAPED_UNICODE') ? JSON_UNESCAPED_UNICODE : 0)) : null;
+        $args->jsitems = json_encode($files->db->res2items($files->db->query("select * from $files->thistable where id in ($items) or parent in ($items)")), $jsattr);
       }
     }
-
-return $html->filelist($args);
-}
+    
+    return $html->filelist($args);
+  }
   
   public function canrequest() {
     $this->isauthor = false;

@@ -5,25 +5,30 @@
 * and GPL (gpl.txt) licenses.
 **/
 
-(function ($, litepubl, document, window) {
+(function ($, litepubl, window) {
+  //method to override
+  litepubl.init_fileman = function(options) {
+    return new litepubl.Fileman(options);
+  };
+  
   litepubl.Fileman = Class.extend({
-  items: false,
+    items: false,
     curr: false,
     indialog: false,
-holder: false,
+    holder: false,
     
     init: function(options) {
       try {
-this.items = {};
-this.curr = [],
-options = $.extend({
-    holder: '#posteditor-filelist',
-    pages: 0,
-    items: false
-}, options);
-
+      this.items = {};
+        this.curr = [],
+        options = $.extend({
+          holder: '#posteditor-filelist',
+          pages: 0,
+          items: false
+        }, options);
+        
         this.init_templates();
-this.holder = $(options.holder);
+        this.holder = $(options.holder);
         var self = this;
         //$(holder).html(this.tml.tabs);
         var tabs = $("#posteditor-files-tabs", this.holder);
@@ -36,16 +41,16 @@ this.holder = $(options.holder);
           }
         });
         
-this.holder.closest('form').submit(function() {
+        this.holder.closest('form').submit(function() {
           $("input[name='files']", self.holder).val(self.curr.join(','));
         });
         
         this.init_upload();
-if (options.items) {
+        if (options.items) {
           this.set_uploaded(options.pages, options.items);
-} else {
-        this.load_current_files();
-}
+        } else {
+          this.load_current_files();
+        }
     } catch(e) {erralert(e);}
     },
     
@@ -79,14 +84,14 @@ if (options.items) {
     },
     
     set_uploaded: function(tabscount, items) {
-/*
+      /*
       if ("fileperm" in r) {
         $("#posteditor-fileperms", this.uploader.holder).removeClass("hidden").html(r.fileperm);
       }
-  */    
+      */
       this.set_tabs_count(tabscount);
       for (var i in items) {
-var item = items[i];
+        var item = items[i];
         this.items[item.id] = item;
         if (parseInt(item.parent) == 0) this.curr.push(item.id);
       }
@@ -104,7 +109,7 @@ var item = items[i];
         $(this.tml.tab.replace('%%index%%', i)).appendTo(tabs).data("page", i).data("files", "empty");
         $(this.tml.tabli.replace(/%%index%%/gim, i)).appendTo(tabhead);
       }
-        tabs.tabs( "refresh" );
+      tabs.tabs( "refresh" );
     },
     
     setpage: function(uipanel, files) {
@@ -288,4 +293,4 @@ var item = items[i];
     }
     
   });//fileman
-}(jQuery, litepubl, document, window));
+}(jQuery, litepubl, window));

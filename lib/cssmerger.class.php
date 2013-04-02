@@ -22,8 +22,8 @@ class tcssmerger extends tfilemerger {
     $url = realpath($url);
     $url = substr($url, strlen(litepublisher::$paths->home));
     $url = str_replace(DIRECTORY_SEPARATOR, '/', $url);
-$url = litepublisher::$site->files. '/' .  ltrim($url, '/');
-$url = substr($url, strpos($url, '/', 9));
+    $url = litepublisher::$site->files. '/' .  ltrim($url, '/');
+    $url = substr($url, strpos($url, '/', 9));
     return sprintf(' url(%s)', $url);
   }
   

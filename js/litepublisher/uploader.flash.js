@@ -7,17 +7,17 @@
 
 (function ($, litepubl, window) {
   litepubl.FlashUploader = Class.extend({
-owner: false,
-swf: false,
+    owner: false,
+    swf: false,
     onsettings: $.noop,
-html: '<div id="upload"><span id="uploadbutton"></span></div>',
-// no jquery selector
-idbutton: "uploadbutton",
-
+    html: '<div id="upload"><span id="uploadbutton"></span></div>',
+    // no jquery selector
+    idbutton: "uploadbutton",
+    
     init: function(owner) {
-this.owner = owner;
+      this.owner = owner;
       var url = ltoptions.uploadurl == undefined ? ltoptions.url: ltoptions.uploadurl;
-owner.holder.append(this.html);
+      owner.holder.append(this.html);
       var self = this;
       var settings = {
         flash_url : url + "/js/swfupload/swfupload.swf",
@@ -33,7 +33,7 @@ owner.holder.append(this.html);
         //debug: true,
         
         file_dialog_complete_handler : function(numFilesSelected, numFilesQueued) {
-owner.setpercent(0);
+          owner.setpercent(0);
           this.setUploadURL(owner.geturl());
           owner.before(this);
           this.startUpload();
@@ -44,11 +44,11 @@ owner.setpercent(0);
         },
         
         upload_progress_handler : function(file, bytesLoaded, bytesTotal) {
-owner.setprogress(bytesLoaded, bytesTotal);
+          owner.setprogress(bytesLoaded, bytesTotal);
         },
         
         upload_error_handler : function(file, errorCode, message) {
-owner.error(message);
+          owner.error(message);
         },
         
         upload_success_handler : function(file, serverData) {
@@ -93,10 +93,10 @@ owner.error(message);
         this.swf = new SWFUpload(settings);
     } catch(e) { alert('Error create swfupload ' + e.message); }
     },
-
+    
     addparam: function(name, value) {
-this.swf.addPostParam(name, value);
+      this.swf.addPostParam(name, value);
     }
     
-      });
+  });
 }(jQuery, litepubl, window));

@@ -8,7 +8,7 @@
 
 function set_comments_lang($self) {
   $lang = tlocal::admin('comments');
-$jsattr =defined('JSON_UNESCAPED_UNICODE') ? JSON_UNESCAPED_UNICODE : null;
+  $jsattr =defined('JSON_UNESCAPED_UNICODE') ? JSON_UNESCAPED_UNICODE : null;
   $self->addtext('comments', 'lang',
   sprintf('window.lang = $.extend(true, window.lang, {
     comment: %s,
@@ -39,7 +39,7 @@ function tjsmergerInstall($self) {
   file_put_contents($file, ' ');
   @chmod($file, 0666);
   
-$jsattr =defined('JSON_UNESCAPED_UNICODE') ? JSON_UNESCAPED_UNICODE : null;
+  $jsattr =defined('JSON_UNESCAPED_UNICODE') ? JSON_UNESCAPED_UNICODE : null;
   $self->lock();
   $self->items = array();
   $section = 'default';

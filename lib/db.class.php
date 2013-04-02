@@ -9,7 +9,7 @@
 class tdatabase {
   public $result;
   public $sql;
-public $dbname;
+  public $dbname;
   public $table;
   public $prefix;
   public $history;

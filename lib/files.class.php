@@ -192,8 +192,8 @@ class tfiles extends titems {
     $preview = new tarray2prop();
     ttheme::$vars['preview'] = $preview;
     $index = 0;
-// json options supported in php 5.3
-$jsattr =defined('JSON_NUMERIC_CHECK') ? (JSON_NUMERIC_CHECK | (defined('JSON_UNESCAPED_UNICODE') ? JSON_UNESCAPED_UNICODE : 0)) : null;
+    // json options supported in php 5.3
+    $jsattr =defined('JSON_NUMERIC_CHECK') ? (JSON_NUMERIC_CHECK | (defined('JSON_UNESCAPED_UNICODE') ? JSON_UNESCAPED_UNICODE : 0)) : null;
     foreach ($items as $type => $subitems) {
       $sublist = '';
       foreach ($subitems as $typeindex => $id) {
