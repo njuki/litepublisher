@@ -193,7 +193,7 @@ class tfiles extends titems {
     ttheme::$vars['preview'] = $preview;
     $index = 0;
     // json options supported in php 5.3
-    $jsattr =defined('JSON_NUMERIC_CHECK') ? (JSON_NUMERIC_CHECK | (defined('JSON_UNESCAPED_UNICODE') ? JSON_UNESCAPED_UNICODE : 0)) : null;
+    $jsattr =defined('JSON_NUMERIC_CHECK') ? (JSON_NUMERIC_CHECK | (defined('JSON_UNESCAPED_UNICODE') ? JSON_UNESCAPED_UNICODE : 0)) : false;
     foreach ($items as $type => $subitems) {
       $sublist = '';
       foreach ($subitems as $typeindex => $id) {
@@ -223,7 +223,13 @@ class tfiles extends titems {
         }
         
         unset($item['title'], $item['keywords'], $item['description']);
-        $args->json = str_replace('"', '&quot;', json_encode($item, jsattr));
+        if ($jsattr) {
+          $js = json_encode($item, $jsattr);
+        } else {
+          $js = json_encode($item);
+        }
+        $args->json = str_replace('"', '&quot;', $js);
+        
         $sublist .= $theme->parsearg($tml[$type], $args);
       }
       

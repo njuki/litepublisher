@@ -90,8 +90,13 @@ class tposteditor extends tadminmenu {
       if (count($list)) {
         $items = implode(',', $list);
         $args->files = $items;
-        $jsattr =defined('JSON_NUMERIC_CHECK') ? (JSON_NUMERIC_CHECK | (defined('JSON_UNESCAPED_UNICODE') ? JSON_UNESCAPED_UNICODE : 0)) : null;
-        $args->jsitems = json_encode($files->db->res2items($files->db->query("select * from $files->thistable where id in ($items) or parent in ($items)")), $jsattr);
+        
+        if (defined('JSON_NUMERIC_CHECK')) {
+          $jsattr = JSON_NUMERIC_CHECK | (defined('JSON_UNESCAPED_UNICODE') ? JSON_UNESCAPED_UNICODE : 0);
+          $args->jsitems = json_encode($files->db->res2items($files->db->query("select * from $files->thistable where id in ($items) or parent in ($items)")), $jsattr);
+        } else {
+          $args->jsitems = json_encode($files->db->res2items($files->db->query("select * from $files->thistable where id in ($items) or parent in ($items)")), $jsattr);
+        }
       }
     }
     
