@@ -108,8 +108,12 @@ class tjsonserver extends titems {
     
     $this->callevent('aftercall', array(&$result, $args));
     // json options supported in php 5.3
-    $jsattr =defined('JSON_NUMERIC_CHECK') ? (JSON_NUMERIC_CHECK | (defined('JSON_UNESCAPED_UNICODE') ? JSON_UNESCAPED_UNICODE : 0)) : null;
-    $js = json_encode($result, $jsattr);
+    if (defined('JSON_NUMERIC_CHECK')) {
+      $jsattr = JSON_NUMERIC_CHECK | (defined('JSON_UNESCAPED_UNICODE') ? JSON_UNESCAPED_UNICODE : 0);
+      $js = json_encode($result, $jsattr);
+    } else {
+      $js = json_encode($result);
+    }
     //if (litepublisher::$debug) tfiler::log("response:\n".$js, 'json.txt');
     
     return "<?php

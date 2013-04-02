@@ -9,13 +9,7 @@
 function set_comments_lang($self) {
   $lang = tlocal::admin('comments');
   $jsattr =defined('JSON_UNESCAPED_UNICODE') ? JSON_UNESCAPED_UNICODE : null;
-  $self->addtext('comments', 'lang',
-  sprintf('window.lang = $.extend(true, window.lang, {
-    comment: %s,
-    comments: %s
-  });',
-  json_encode($lang->ini['comment'], $jsattr),
-  json_encode(array(
+  $comments = array(
   'del' => $lang->delete,
   'edit' => $lang->edit,
   'approve' => $lang->approve,
@@ -27,7 +21,15 @@ function set_comments_lang($self) {
   'notmoderated' => $lang->notmoderated,
   'errorrecieved' => $lang->errorrecieved,
   'notedited' => $lang->notedited,
-  ), $jsattr)
+  );
+  
+  $self->addtext('comments', 'lang',
+  sprintf('window.lang = $.extend(true, window.lang, {
+    comment: %s,
+    comments: %s
+  });',
+  $jsattr ? json_encode($lang->ini['comment'], $jsattr) : json_encode($lang->ini['comment']),
+  $jsattr ? json_encode($comments, $jsattr) : json_encode($comments)
   ));
 }
 
@@ -39,7 +41,7 @@ function tjsmergerInstall($self) {
   file_put_contents($file, ' ');
   @chmod($file, 0666);
   
-  $jsattr =defined('JSON_UNESCAPED_UNICODE') ? JSON_UNESCAPED_UNICODE : null;
+  $jsattr =defined('JSON_UNESCAPED_UNICODE') ? JSON_UNESCAPED_UNICODE : false;
   $self->lock();
   $self->items = array();
   $section = 'default';
@@ -77,17 +79,18 @@ $js = 'window.lang = window.lang || {};';
   'colapse' => tlocal::get('default', 'colapse')
   );
   $lang = tlocal::admin('common');
-  $self->addtext('default', 'widgetlang', $js . sprintf('lang.widgetlang= %s;',  json_encode($widgetlang, $jsattr)));
-  $self->addtext('default', 'dialog', $js . sprintf('lang.dialog = %s;',  json_encode(
-  array(
+  $self->addtext('default', 'widgetlang', $js . sprintf('lang.widgetlang= %s;',  $jsattr ? json_encode($widgetlang, $jsattr) : json_encode($widgetlang)));
+  
+  $dialog =   array(
   'error' => $lang->error,
   'confirm' => $lang->confirm,
   'confirmdelete' => $lang->confirmdelete,
   'cancel' => $lang->cancel,
   'yes' => $lang->yesword,
   'no' => $lang->noword,
-  )
-  ), $jsattr));
+  );
+  
+  $self->addtext('default', 'dialog', $js . sprintf('lang.dialog = %s;', $jsattr ? json_encode($dialog, $jsattr) : json_encode($dialog)));
   
   $section = 'admin';
   $self->add($section, '/js/jquery/ui-$site.jqueryui_version/jquery-ui-$site.jqueryui_version.custom.min.js');
@@ -128,7 +131,7 @@ $js = 'window.lang = window.lang || {};';
   'keywords' => $lang->keywords,'file' => $lang->file,
   'filesize' => $lang->filesize,
   )
-  ), $jsattr));
+  )));
   
   $self->unlock();
   
