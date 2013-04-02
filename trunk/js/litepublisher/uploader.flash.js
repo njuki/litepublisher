@@ -6,7 +6,7 @@
 **/
 
 (function ($, litepubl, window) {
-  litepubl.flashUploader = Class.extend({
+  litepubl.FlashUploader = Class.extend({
 owner: false,
 swf: false,
     onsettings: $.noop,
@@ -17,7 +17,7 @@ idbutton: "uploadbutton",
     init: function(owner) {
 this.owner = owner;
       var url = ltoptions.uploadurl == undefined ? ltoptions.url: ltoptions.uploadurl;
-owner.append(this.html);
+owner.holder.append(this.html);
       var self = this;
       var settings = {
         flash_url : url + "/js/swfupload/swfupload.swf",

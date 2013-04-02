@@ -19,7 +19,7 @@ this.curr = [],
 options = $.extend({
     holder: '#posteditor-filelist',
     pages: 0,
-    items: false,
+    items: false
 }, options);
 
         this.init_templates();
