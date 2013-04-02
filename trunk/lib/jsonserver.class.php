@@ -77,13 +77,13 @@ class tjsonserver extends titems {
     $this->callevent('beforecall', $a);
     try {
       //tfiler::log(var_export($_POST, true));
-/*
+      /*
       //tfiler::log(var_export($_COOKIE, true));
       tfiler::log(var_export($_GET, true));
       tfiler::log(var_export($_POST, true));
       tfiler::log(var_export($_FILES, true));
       tfiler::log(var_export($args, true));
-*/
+      */
       
       $result = $this->callevent($method, $a);
       //tfiler::log(var_export($result, true));
@@ -107,11 +107,11 @@ class tjsonserver extends titems {
     }
     
     $this->callevent('aftercall', array(&$result, $args));
-// json options supported in php 5.3
-$jsattr =defined('JSON_NUMERIC_CHECK') ? (JSON_NUMERIC_CHECK | (defined('JSON_UNESCAPED_UNICODE') ? JSON_UNESCAPED_UNICODE : 0)) : null;
+    // json options supported in php 5.3
+    $jsattr =defined('JSON_NUMERIC_CHECK') ? (JSON_NUMERIC_CHECK | (defined('JSON_UNESCAPED_UNICODE') ? JSON_UNESCAPED_UNICODE : 0)) : null;
     $js = json_encode($result, $jsattr);
     //if (litepublisher::$debug) tfiler::log("response:\n".$js, 'json.txt');
-
+    
     return "<?php
     header('Connection: close');
     header('Content-Length: ". strlen($js) . "');

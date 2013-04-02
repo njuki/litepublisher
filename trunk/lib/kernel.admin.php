@@ -1029,15 +1029,7 @@ class tposteditor extends tadminmenu {
     $template = ttemplate::i();
     $template->ltoptions['idpost'] = $this->idget();
     $template->ltoptions['lang'] = litepublisher::$options->language;
-    
-    $result .= '<link type="text/css" href="$site.files/js/litepublisher/css/fileman.css" rel="stylesheet" />';
     $result .= $template->getjavascript($template->jsmerger_posteditor);
-    /*
-    $result .= $template->getjavascript('/js/litepublisher/swfuploader.js');
-    $result .= $template->getjavascript('/js/litepublisher/POSTEDITOR.js');
-    $result .= $template->getjavascript('/js/litepublisher/fileman.js');
-    $result .= $template->getjavascript('/js/litepublisher/fileman.templates.js');
-    */
     
     if ($this->isauthor &&($h = tauthor_rights::i()->gethead()))  $result .= $h;
     return $result;
@@ -1088,6 +1080,31 @@ class tposteditor extends tadminmenu {
     $categories = tcategories::i();
     if (count($postitems) == 0) $postitems = array($categories->defaultid);
     return self::getcategories($postitems);
+  }
+  
+  // $posteditor.files in template editor
+  public function getfilelist() {
+    $html = $this->html;
+    $args = new targs();
+    $args->fileperm = litepublisher::$options->show_file_perm ? tadminperms::getcombo(0, 'idperm_upload') : '';
+    
+    $post = ttheme::$vars['post'];
+    $files = tfiles::i();
+    $where = litepublisher::$options->ingroup('editor') ? '' : ' and author = ' . litepublisher::$options->user;
+    $args->pages = (int) ceil($files->db->getcount(" parent = 0 $where") / 20);
+  $args->jsitems = '{}';
+    $args->files = '';
+    if ($post->id) {
+      $list = $files->itemsposts->getitems($post->id);
+      if (count($list)) {
+        $items = implode(',', $list);
+        $args->files = $items;
+        $jsattr =defined('JSON_NUMERIC_CHECK') ? (JSON_NUMERIC_CHECK | (defined('JSON_UNESCAPED_UNICODE') ? JSON_UNESCAPED_UNICODE : 0)) : null;
+        $args->jsitems = json_encode($files->db->res2items($files->db->query("select * from $files->thistable where id in ($items) or parent in ($items)")), $jsattr);
+      }
+    }
+    
+    return $html->filelist($args);
   }
   
   public function canrequest() {
@@ -1147,14 +1164,15 @@ class tposteditor extends tadminmenu {
     $html = $this->html;
     $post = tpost::i($this->idpost);
     ttheme::$vars['post'] = $post;
-    $args = targs::i();
+    ttheme::$vars['posteditor'] = $this;
+    $args = new targs();
     $this->getpostargs($post, $args);
     
     $result = $post->id == 0 ? '' : $html->h4($this->lang->formhead . ' ' . $post->bookmark);
     if ($this->isauthor &&($r = tauthor_rights::i()->getposteditor($post, $args)))  return $r;
     
     $result .= $html->form($args);
-    unset(ttheme::$vars['post']);
+    unset(ttheme::$vars['post'], ttheme::$vars['posteditor']);
     return $html->fixquote($result);
   }
   

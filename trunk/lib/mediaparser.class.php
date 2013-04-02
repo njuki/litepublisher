@@ -206,7 +206,7 @@ class tmediaparser extends tevents {
     $preview = false;
     if ($item['media'] == 'image') {
       $srcfilename = litepublisher::$paths->files . str_replace('/', DIRECTORY_SEPARATOR, $item['filename']);
-$this->callevent('onbefore', array(&$item, $srcfilename));
+      $this->callevent('onbefore', array(&$item, $srcfilename));
       $maxwidth = isset($file['maxwidth']) ? $file['maxwidth'] : $this->maxwidth;
       $maxheight = isset($file['maxheight']) ? $file['maxheight'] : $this->maxheight;
       $resize = ($maxwidth > 0) && ($maxheight > 0) && (($item['width'] > $maxwidth ) || ($item['height'] > $maxheight));
