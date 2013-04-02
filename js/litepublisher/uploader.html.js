@@ -11,7 +11,7 @@ owner: false,
 jq: false,
 queue: false,
 html: '<div id="upload">\
-<p><label for="file-input"%%lang.%%upload%%</label><input type="file" id="file-input" name="Filedata" multiple /></p>\
+<p><label for="file-input">%%lang.upload%%:</label><input type="file" id="file-input" name="Filedata" multiple /></p>\
 	<div id="dropzone">%%lang.dragfiles%%</div>\
 </div>',
 idhtml: "#file-input, #dropzone",

@@ -46,7 +46,7 @@ this.random = 	$.now();
 if ("FileReader" in window) {
 this.handler =  new litepubl.HTMLUploader(this);
 } else {
-this.handler = new litepubl.FlashUploader(this);
+this.handler = new litepubl.FlashUploader (this);
 }
 
 this.progressbar = $(this.htmlprogress).appendTo(this.holder).find(this.idprogress);
