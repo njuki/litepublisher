@@ -64,6 +64,7 @@
         formdata.append(name, owner.postdata[name]);
       }
       
+owner.setprogress(0);
       var self = this;
       this.jq = $.ajax({
         type: "post",
@@ -83,10 +84,12 @@
           var result = $.ajaxSettings.xhr();
           if ("upload" in result) {
             result.upload.addEventListener("progress", function(event){
+//result.upload.onprogress =function(event){
               if (event.lengthComputable) {
                 owner.setprogress(event.loaded, event.total);
               }
             }, false);
+//};
             
             //Download progress
             /*
