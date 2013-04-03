@@ -49,14 +49,15 @@
         this.handler = new litepubl.FlashUploader (this);
       }
       
-      this.progressbar = $(this.htmlprogress).appendTo(this.holder).find(this.idprogress);
+      this.progressbar = this.holder.append(this.htmlprogress).find(this.idprogress);
     },
     
     geturl: function() {
       return this.url + '?_=' + this.random++;
     },
     
-  setpercent: function(percent) {        this.progressbar.progressbar({value: percent});
+  setpercent: function(percent) {
+        this.progressbar.progressbar({value: percent});
     },
     
     setprogress: function(current, total) {
@@ -91,7 +92,7 @@
     },
     
     addparams: function() {
-      var perm = $("#combo-idperm_upload", this.holder);
+      var perm = $("#combo-idperm_upload", this.holder.parent());
       if (perm.length) this.addparam("idperm", perm.val());
     },
     
