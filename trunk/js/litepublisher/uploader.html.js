@@ -64,7 +64,7 @@
         formdata.append(name, owner.postdata[name]);
       }
       
-owner.setprogress(0);
+      owner.setprogress(0);
       var self = this;
       this.jq = $.ajax({
         type: "post",
@@ -84,31 +84,31 @@ owner.setprogress(0);
           var result = $.ajaxSettings.xhr();
           if ("upload" in result) {
             result.upload.addEventListener("progress", function(event){
-//result.upload.onprogress =function(event){
-              if (event.lengthComputable) {
-                owner.setprogress(event.loaded, event.total);
-              }
-            }, false);
-//};
-            
-            //Download progress
-            /*
-            result.addEventListener("progress", function(event){
-              if (event.lengthComputable) {
-                var percentComplete = event.loaded / event.total;
-              }
-            }, false);
-            */
+              //result.upload.onprogress =function(event){
+                if (event.lengthComputable) {
+                  owner.setprogress(event.loaded, event.total);
+                }
+              }, false);
+              
+              
+              //Download progress
+              /*
+              result.addEventListener("progress", function(event){
+                if (event.lengthComputable) {
+                  var percentComplete = event.loaded / event.total;
+                }
+              }, false);
+              */
+            }
+            return result;
           }
-          return result;
-        }
-        
-      })
-      .fail( function(jq, textStatus, errorThrown) {
-        self.next();
-        owner.error(jq.responseText);
-      });
-    }
-    
-  });
-}(jQuery, litepubl, window));
+          
+        })
+        .fail( function(jq, textStatus, errorThrown) {
+          self.next();
+          owner.error(jq.responseText);
+        });
+      }
+      
+    });
+  }(jQuery, litepubl, window));

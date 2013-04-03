@@ -56,8 +56,8 @@
       return this.url + '?_=' + this.random++;
     },
     
-  setpercent: function(percent) {
-        this.progressbar.progressbar({value: percent});
+    setpercent: function(percent) {
+    this.progressbar.progressbar({value: percent});
     },
     
     setprogress: function(current, total) {
