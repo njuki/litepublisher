@@ -10,7 +10,7 @@
     owner: false,
     swf: false,
     onsettings: $.noop,
-    html: '<div id="upload"><span id="uploadbutton"></span></div>',
+    html: '<div id="flash-uploader"><span id="uploadbutton"></span></div>',
     // no jquery selector
     idbutton: "uploadbutton",
     
