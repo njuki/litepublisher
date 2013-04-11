@@ -171,7 +171,7 @@ class tdbmanager  {
     $result .= "-- Datetime: ".date('Y-m-d H:i:s') . "\n";
   $result .= "-- Host: {$options->dbconfig['host']}\n";
   $result .= "-- Database: {$options->dbconfig['dbname']}\n\n";
-    $result .= "/*!40030 SET max_allowed_packet=$this->max_allowed_packet */;\n\n";
+    //$result .= "/*!40030 SET max_allowed_packet=$this->max_allowed_packet */;\n\n";
     
     $tables = $this->gettables();
     foreach ($tables as $table) {

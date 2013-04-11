@@ -6,14 +6,13 @@
 * and GPL (gpl.txt) licenses.
 **/
 
-class tjsonserver extends titems {
+class tjsonserver extends tevents {
   
   public static function i() {
     return getinstance(__class__);
   }
   
   protected function create() {
-    $this->dbversion = false;
     parent::create();
     $this->basename = 'jsonserver';
     $this->cache = false;
@@ -131,6 +130,14 @@ class tjsonserver extends titems {
   public function addevent($name, $class, $func) {
     if (!in_array($name, $this->eventnames)) $this->eventnames[] = $name;
     return parent::addevent($name, $class, $func);
+  }
+
+  public function delete_event($name) {
+if (isset($this->events($name)) {
+unset($this->events[$name]);
+    array_delete_value($this->eventnames, $name);
+$this->save();
+}
   }
   
 }//class

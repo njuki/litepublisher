@@ -24,9 +24,9 @@ class tcommentform extends tevents {
     if (litepublisher::$options->commentsdisabled) return 404;
     if ( 'POST' != $_SERVER['REQUEST_METHOD'] ) {
       return "<?php
-      @header('HTTP/1.1 405 Method Not Allowed', true, 405);
-      @header('Allow: POST');
-      @header('Content-Type: text/plain');
+      header('HTTP/1.1 405 Method Not Allowed', true, 405);
+      header('Allow: POST');
+      header('Content-Type: text/plain');
       ?>";
     }
     
