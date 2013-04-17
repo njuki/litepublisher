@@ -41,7 +41,7 @@
     </div>\
     \
     <div id="new-files" class="files-tab">\
-    <div class="file-items"</div>\
+    <div class="file-items"></div>\
     <div class="file-items-after"></div>\
     </div>\
     \

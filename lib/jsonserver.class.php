@@ -133,7 +133,7 @@ class tjsonserver extends tevents {
   }
 
   public function delete_event($name) {
-if (isset($this->events($name)) {
+if (isset($this->events[$name])) {
 unset($this->events[$name]);
     array_delete_value($this->eventnames, $name);
 $this->save();
