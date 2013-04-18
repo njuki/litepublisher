@@ -131,13 +131,13 @@ class tjsonserver extends tevents {
     if (!in_array($name, $this->eventnames)) $this->eventnames[] = $name;
     return parent::addevent($name, $class, $func);
   }
-
+  
   public function delete_event($name) {
-if (isset($this->events[$name])) {
-unset($this->events[$name]);
-    array_delete_value($this->eventnames, $name);
-$this->save();
-}
+    if (isset($this->events[$name])) {
+      unset($this->events[$name]);
+      array_delete_value($this->eventnames, $name);
+      $this->save();
+    }
   }
   
 }//class

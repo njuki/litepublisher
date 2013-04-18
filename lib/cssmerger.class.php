@@ -19,8 +19,10 @@ class tcssmerger extends tfilemerger {
   
   public function replaceurl($m) {
     $url = $m[1];
-    $url = realpath($url);
-    $url = substr($url, strlen(litepublisher::$paths->home));
+    if($realfile = realpath($url)) {
+      $url = substr($realfile, strlen(litepublisher::$paths->home));
+    } // else must be absolute url
+    
     $url = str_replace(DIRECTORY_SEPARATOR, '/', $url);
     $url = litepublisher::$site->files. '/' .  ltrim($url, '/');
     $url = substr($url, strpos($url, '/', 9));
