@@ -19,18 +19,18 @@ class admintmlstorage implements iadmin {
     $html = tadminhtml::i();
     $tabs = new tuitabs();
     foreach ($plugin->items as $classname) {
-if (is_array($obj->data['tml'])) {
-      $tab = new tuitabs();
-      $obj = getinstance($classname);
-      foreach ($obj->data['tml'] as $key => $value) {
-        $tab->add($key, $html->getinput('editor',
-        $classname . '_text_' . $key, tadminhtml::specchars($value), $key));
-      }
-      $tabs->add($classname, $tab->get());
-} else {
-      $tabs->add($classname, $html->getinput('editor',
+      if (is_array($obj->data['tml'])) {
+        $tab = new tuitabs();
+        $obj = getinstance($classname);
+        foreach ($obj->data['tml'] as $key => $value) {
+          $tab->add($key, $html->getinput('editor',
+          $classname . '_text_' . $key, tadminhtml::specchars($value), $key));
+        }
+        $tabs->add($classname, $tab->get());
+      } else {
+        $tabs->add($classname, $html->getinput('editor',
         $classname . '_text', tadminhtml::specchars($obj->data['tml']), $classname ));
-}
+      }
     }
     
     return tuitabs::gethead() .
@@ -41,13 +41,13 @@ if (is_array($obj->data['tml'])) {
     $plugin = tmlstorage::i();
     foreach ($plugin->items as $classname => $items) {
       $obj = getinstance($classname);
-if (is_array($obj->data['tml'])) {
-      foreach ($obj->data['tml'] as $key => $value) {
-        $obj->data['tml'][$key] = $_POST[$classname . '_text_' . $key];
-      }
-} else {
+      if (is_array($obj->data['tml'])) {
+        foreach ($obj->data['tml'] as $key => $value) {
+          $obj->data['tml'][$key] = $_POST[$classname . '_text_' . $key];
+        }
+      } else {
         $obj->data['tml'] = $_POST[$classname . '_text'];
-}
+      }
       $obj->save();
     }
     
