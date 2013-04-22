@@ -451,7 +451,7 @@ function dumpstr($s) {
   echo "<pre>\n", htmlspecialchars($s), "</pre>\n";
 }
 
-function dumpvar(&$v) {
+function dumpvar($v) {
   echo "<pre>\n";
   var_dump($v);
   echo "</pre>\n";

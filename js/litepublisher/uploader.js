@@ -31,7 +31,11 @@
       $.extend(this, options);
       this.holder = $(options.holder);
       this.random = 	$.now();
-      
+
+this.onbefore = $.Callbacks();
+this.oncomplete = $.Callbacks();
+this.onupload = $.Callbacks();      
+
       this.items = new Array();
       
       var cookie = $.cookie("litepubl_user");
@@ -76,10 +80,7 @@
       try {
         if (typeof resp == "string") resp = $.parseJSON(resp);
         this.items.push(resp);
-        $(this).trigger({
-          type: "onupload",
-          resp: resp
-        });
+this.onupload.fire(resp);
     } catch(e) {erralert(e);}
     },
     
@@ -98,33 +99,13 @@
     
     before: function() {
       this.addparams();
-      $(this).trigger({
-        type: "onbefore",
-        uploader: this
-      });
+this.onbefore.fire(this);
     },
     
     complete: function() {
       this.hideprogress();
-      $(this).trigger({
-        type: "oncomplete",
-        uploader: this,
-        items: this.items
-      });
+this.oncomplete.fire(this, this.items);
       this.items.length = 0;
-    },
-    
-    //events
-    onbefore: function(fn) {
-      $(this).bind("onbefore", fn);
-    },
-    
-    onupload: function(fn) {
-      $(this).bind("onupload", fn);
-    },
-    
-    oncomplete: function(fn) {
-      $(this).bind("oncomplete", fn);
     }
     
   });
