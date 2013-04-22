@@ -63,11 +63,8 @@
     },
     
     init_upload: function() {
-      var self = this;
       this.uploader = new litepubl.Uploader();
-      this.uploader.onupload(function(e) {
-        self.uploaded(e.resp);
-      });
+      this.uploader.onupload.add($.proxy(this.uploaded, this));
     },
     
     load_current_files: function() {
