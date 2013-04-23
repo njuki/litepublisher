@@ -59,7 +59,15 @@ class tmediaparser extends tevents {
     $parts = pathinfo($filename);
     $newtemp = $this->gettempname($parts);
     if (!move_uploaded_file($tempfilename, litepublisher::$paths->files . $newtemp)) return $this->error("Error access to uploaded file");
-    return $this->addfile($filename, $newtemp, $title, $description, $keywords, $overwrite);
+    //return $this->addfile($filename, $newtemp, $title, $description, $keywords, $overwrite);
+    return $this->add(array(
+    'filename' => $filename,
+    'tempfilename' => $newtemp,
+    'title' => $title,
+    'description' => $description,
+    'keywords' => $keywords,
+    'overwrite' => $overwrite
+    ));
   }
   
   public static function move_uploaded($filename, $tempfilename, $subdir) {
@@ -227,7 +235,9 @@ class tmediaparser extends tevents {
         }
         
         if ($resize) {
-          $this->resize($srcfilename, $image, $maxwidth, $maxheight);
+          $sizes = $this->resize($srcfilename, $image, $maxwidth, $maxheight);
+$item['width'] = $sizes['width'];
+$item['height'] = $sizes['height'];
           // after resize only jpg format
           if (!strend($srcfilename, '.jpg')) {
             $fixfilename = self::replace_ext($srcfilename, '.jpg');
@@ -484,13 +494,21 @@ class tmediaparser extends tevents {
       } else {
         $y = $x /$ratio;
       }
-      
+
+$x = intval($x);
+$y = intval($y);
+
       $dest = imagecreatetruecolor($x, $y);
       imagecopyresampled($dest, $image, 0, 0, 0, 0, $x, $y, $sourcex, $sourcey);
       $this->onresize($dest);
       imagejpeg($dest, $filename, $this->quality_original);
       imagedestroy($dest);
       @chmod($filename, 0666);
+
+return array(
+'width' =>$x,
+'height' => $y,
+);
     }
   }
   
