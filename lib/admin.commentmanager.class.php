@@ -20,7 +20,7 @@ class tadmincommentmanager extends tadminmenu {
     $result = '';
     $cm = tcommentmanager::i();
     $options = litepublisher::$options;
-    $html = $this->gethtml('commentmanager');
+    $html = $this->gethtml('comments');
     $lang = tlocal::admin('commentmanager');
     $args = new targs();
     $tabs = new tuitabs();
