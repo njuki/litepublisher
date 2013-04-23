@@ -1023,6 +1023,11 @@ class tposteditor extends tadminmenu {
     return parent::iteminstance(__class__, $id);
   }
   
+  public function gethtml($name = '') {
+    if (!$name) $name = 'editor';
+    return parent::gethtml($name);
+  }
+  
   public function gethead() {
     $result = parent::gethead();
     

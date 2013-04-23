@@ -236,8 +236,8 @@ class tmediaparser extends tevents {
         
         if ($resize) {
           $sizes = $this->resize($srcfilename, $image, $maxwidth, $maxheight);
-$item['width'] = $sizes['width'];
-$item['height'] = $sizes['height'];
+          $item['width'] = $sizes['width'];
+          $item['height'] = $sizes['height'];
           // after resize only jpg format
           if (!strend($srcfilename, '.jpg')) {
             $fixfilename = self::replace_ext($srcfilename, '.jpg');
@@ -494,21 +494,21 @@ $item['height'] = $sizes['height'];
       } else {
         $y = $x /$ratio;
       }
-
-$x = intval($x);
-$y = intval($y);
-
+      
+      $x = intval($x);
+      $y = intval($y);
+      
       $dest = imagecreatetruecolor($x, $y);
       imagecopyresampled($dest, $image, 0, 0, 0, 0, $x, $y, $sourcex, $sourcey);
       $this->onresize($dest);
       imagejpeg($dest, $filename, $this->quality_original);
       imagedestroy($dest);
       @chmod($filename, 0666);
-
-return array(
-'width' =>$x,
-'height' => $y,
-);
+      
+      return array(
+      'width' =>$x,
+      'height' => $y,
+      );
     }
   }
   

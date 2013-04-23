@@ -61,8 +61,8 @@
       title: "",
       html: "",
       width: 300,
-    open: function() {},
-    close: function() {},
+      open: $.noop,
+      close: $.noop,
       buttons: [
       {
         title: "Ok",
