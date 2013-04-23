@@ -80,7 +80,7 @@ var button = '<button type="button" class="pp_dialog_btn_{index}">{title}</butto
     }
     
     var id = "pp_dialog_id_" + (Math.random() + '').replace('.', '');
-    var div = $('<div id="' + id + '"></div>').appendTo("body").hide();
+    var div = $('<div CLASS="HIDDEN" id="' + id + '"></div>').appendTo("body");
     div.html('<div class="pp_dialog_title">' +
     '<h3>' + options.title + '</h3></div>' +
     options.html +
