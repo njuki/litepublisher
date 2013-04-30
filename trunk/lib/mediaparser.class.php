@@ -25,6 +25,7 @@ class tmediaparser extends tevents {
     $this->data['maxheight'] = 900;
     $this->data['quality_snapshot'] = 94;
     $this->data['quality_original'] = 92;
+$this->data['alwaysresize'] = false;
     
     $this->data['audioext'] = 'mp3|wav |flac';
     $this->data['videoext'] = 'mp4|ogv|webm';
@@ -217,7 +218,8 @@ class tmediaparser extends tevents {
       $this->callevent('onbefore', array(&$item, $srcfilename));
       $maxwidth = isset($file['maxwidth']) ? $file['maxwidth'] : $this->maxwidth;
       $maxheight = isset($file['maxheight']) ? $file['maxheight'] : $this->maxheight;
-      $resize = ($maxwidth > 0) && ($maxheight > 0) && (($item['width'] > $maxwidth ) || ($item['height'] > $maxheight));
+$resize = $this->alwaysresize && ($maxwidth > 0) && ($maxheight > 0);
+if (!$resize) $resize = (($item['width'] > $maxwidth ) || ($item['height'] > $maxheight));
       $enablepreview = isset($file['enablepreview']) ? $file['enablepreview'] : (isset($file['ispreview']) ? $file['ispreview'] : $this->enablepreview);
       if (($resize || $enablepreview) && ($image = self::readimage($srcfilename))) {
         $this->onimage($image);

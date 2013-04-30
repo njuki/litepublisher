@@ -127,6 +127,7 @@ class Tadminoptions extends tadminmenu {
       
       $args->maxwidth = $parser->maxwidth;
       $args->maxheight = $parser->maxheight;
+      $args->alwaysresize = $parser->alwaysresize;
       
       $args->quality_original = $parser->quality_original;
       $args->quality_snapshot = $parser->quality_snapshot;
@@ -140,6 +141,7 @@ class Tadminoptions extends tadminmenu {
       $args->formtitle = $lang->files;
       return $html->adminform('
       <h4>$lang.imagesize</h4>
+[checkbox=alwaysresize]
       [text=maxwidth]
       [text=maxheight]
       [text=quality_original]
@@ -316,6 +318,7 @@ class Tadminoptions extends tadminmenu {
       
       $parser->maxwidth = (int) trim($maxwidth);
       $parser->maxheight = (int) trim($maxheight);
+      $parser->alwaysresize = isset($alwaysresize);
       
       $parser->quality_snapshot= (int) trim($quality_snapshot);
       $parser->quality_original = (int) trim($quality_original);
