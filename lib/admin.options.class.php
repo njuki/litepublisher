@@ -165,10 +165,24 @@ class Tadminoptions extends tadminmenu {
       
       case 'links':
       $linkgen = tlinkgenerator::i();
-      ttheme::$vars['linkgen'] = $linkgen;
       $args->urlencode = $linkgen->urlencode;
-      break;
-      
+$args->post = $linkgen->post;
+$args->menu = $linkgen->menu;
+$args->category = $linkgen->category;
+$args->tag = $linkgen->tag;
+$args->archive = $linkgen->archive;
+
+$args->formtitle = $lang->schemalinks;
+      return $html->adminform('
+<p>$lang.taglinks</p>
+[checkbox=urlencode]
+[text=post]
+[text=menu]
+[text=category]
+[text=tag]
+[text=archive]
+', $args);
+
       case 'cache':
       $args->cache = $options->cache;
       $args->admincache = $options->admincache;
