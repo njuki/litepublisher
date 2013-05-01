@@ -193,7 +193,7 @@ class tregservice extends tplugin {
       $user = $users->getitem($id);
       $backurl =  tusergroups::i()->gethome($user['idgroups'][0]);
     }
-    
+
     return litepublisher::$urlmap->redir($backurl);
   }
   
