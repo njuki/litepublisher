@@ -219,7 +219,7 @@ $this->data['alwaysresize'] = false;
       $maxwidth = isset($file['maxwidth']) ? $file['maxwidth'] : $this->maxwidth;
       $maxheight = isset($file['maxheight']) ? $file['maxheight'] : $this->maxheight;
 $resize = $this->alwaysresize && ($maxwidth > 0) && ($maxheight > 0);
-if (!$resize) $resize = (($item['width'] > $maxwidth ) || ($item['height'] > $maxheight));
+if (!$resize) $resize = ($item['width'] > $maxwidth ) || ($item['height'] > $maxheight);
       $enablepreview = isset($file['enablepreview']) ? $file['enablepreview'] : (isset($file['ispreview']) ? $file['ispreview'] : $this->enablepreview);
       if (($resize || $enablepreview) && ($image = self::readimage($srcfilename))) {
         $this->onimage($image);
@@ -255,7 +255,7 @@ if (!$resize) $resize = (($item['width'] > $maxwidth ) || ($item['height'] > $ma
         imagedestroy($image);
       }
     }
-    
+
     $id = $files->additem($item);
     IF ($hash != $files->getvalue($id, 'hash')) {
       $files->getdb('imghashes')->insert(array(
@@ -489,7 +489,7 @@ if (!$resize) $resize = (($item['width'] > $maxwidth ) || ($item['height'] > $ma
   public function resize($filename, $image, $x, $y) {
     $sourcex = imagesx($image);
     $sourcey = imagesy($image);
-    if (($y > 0) && ($x > 0) && (($sourcex > $x) || ($sourcey > $y))) {
+    if (($y == 0) || ($x == 0) || ($sourcex == 0) || ($sourcey == 0)) return false;
       $ratio = $sourcex / $sourcey;
       if ($x/$y > $ratio) {
         $x = $y *$ratio;
@@ -497,8 +497,8 @@ if (!$resize) $resize = (($item['width'] > $maxwidth ) || ($item['height'] > $ma
         $y = $x /$ratio;
       }
       
-      $x = intval($x);
-      $y = intval($y);
+      $x = intval(round($x));
+      $y = intval(round($y));
       
       $dest = imagecreatetruecolor($x, $y);
       imagecopyresampled($dest, $image, 0, 0, 0, 0, $x, $y, $sourcex, $sourcey);
@@ -511,7 +511,6 @@ if (!$resize) $resize = (($item['width'] > $maxwidth ) || ($item['height'] > $ma
       'width' =>$x,
       'height' => $y,
       );
-    }
   }
   
   private function getaudioinfo($filename) {
