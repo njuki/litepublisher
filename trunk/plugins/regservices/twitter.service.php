@@ -54,7 +54,7 @@ class ttwitterregservice extends tregservice {
     $oauth = $this->getoauth();
     $oauth->settokens($tokens['oauth_token'], $tokens['oauth_token_secret']);
     
-    if ($tokens  = $oauth->getaccesstoken()) {
+    if ($tokens  = $oauth->getaccesstoken($_REQUEST['oauth_verifier'])) {
       if ($r = $oauth->get_data('https://api.twitter.com/1/account/verify_credentials.json')) {
         $info = json_decode($r);
         return $this->adduser(array(

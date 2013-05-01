@@ -221,8 +221,9 @@ class toauth extends tdata {
     rawurlencode($this->token), rawurlencode($this->urllist['callback']));
   }
   
-  public function getaccesstoken() {
+  public function getaccesstoken($oauth_verifier) {
     $keys = $this->getkeys();
+    $keys['oauth_token'] = $this->token;
     $keys['oauth_token'] = $this->token;
     if ($result = $this->getaccess($keys)) {
       return $result;
