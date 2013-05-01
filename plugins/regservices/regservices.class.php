@@ -66,21 +66,21 @@ class tregservices extends titems {
     
     // hook for clien disabled cookies
     if (!isset($_GET['cookietest'])) {
+$backurl = !empty($_GET['backurl']) ? $_GET['backurl'] : (!empty($_GET['amp;backurl']) ? $_GET['amp;backurl'] :  (isset($_COOKIE['backurl']) ? $_COOKIE['backurl'] : ''));
+if ($backurl) setcookie('backurl', $backurl, time() + 8 * 3600, litepublisher::$site->subdir . '/', false);
       setcookie('litepubl_cookie_test', 'test', time() + 8000, litepublisher::$site->subdir . '/', false);
       return litepublisher::$urlmap->redir(litepublisher::$urlmap->url . '&cookietest=true');
     }
-    
+
     if (!isset($_COOKIE['litepubl_cookie_test'])) return 403;
     setcookie('litepubl_cookie_test', '', 0, litepublisher::$site->subdir . '/', false);
-    
+
     $id = empty($_GET['id']) ? 0 : $_GET['id'];
     if (!isset($this->items[$id])) return 404;
     $service = getinstance($this->items[$id]);
     if (!$service->valid()) return 403;
     $url = $service->getauthurl();
     if (!$url) return 403;
-    if (!empty($_GET['backurl'])) setcookie('backurl', $_GET['backurl'], time() + 8 * 3600, litepublisher::$site->subdir . '/', false);
-    
     return litepublisher::$urlmap->redir($url);
   }
   

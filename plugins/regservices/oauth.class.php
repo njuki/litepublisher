@@ -224,7 +224,7 @@ class toauth extends tdata {
   public function getaccesstoken($oauth_verifier) {
     $keys = $this->getkeys();
     $keys['oauth_token'] = $this->token;
-    $keys['oauth_token'] = $this->token;
+    $keys['oauth_verifier'] = $oauth_verifier;
     if ($result = $this->getaccess($keys)) {
       return $result;
     }
