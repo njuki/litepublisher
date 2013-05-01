@@ -141,7 +141,7 @@ class Tadminoptions extends tadminmenu {
       $args->formtitle = $lang->files;
       return $html->adminform('
       <h4>$lang.imagesize</h4>
-[checkbox=alwaysresize]
+      [checkbox=alwaysresize]
       [text=maxwidth]
       [text=maxheight]
       [text=quality_original]
@@ -166,23 +166,23 @@ class Tadminoptions extends tadminmenu {
       case 'links':
       $linkgen = tlinkgenerator::i();
       $args->urlencode = $linkgen->urlencode;
-$args->post = $linkgen->post;
-$args->menu = $linkgen->menu;
-$args->category = $linkgen->category;
-$args->tag = $linkgen->tag;
-$args->archive = $linkgen->archive;
-
-$args->formtitle = $lang->schemalinks;
+      $args->post = $linkgen->post;
+      $args->menu = $linkgen->menu;
+      $args->category = $linkgen->category;
+      $args->tag = $linkgen->tag;
+      $args->archive = $linkgen->archive;
+      
+      $args->formtitle = $lang->schemalinks;
       return $html->adminform('
-<p>$lang.taglinks</p>
-[checkbox=urlencode]
-[text=post]
-[text=menu]
-[text=category]
-[text=tag]
-[text=archive]
-', $args);
-
+      <p>$lang.taglinks</p>
+      [checkbox=urlencode]
+      [text=post]
+      [text=menu]
+      [text=category]
+      [text=tag]
+      [text=archive]
+      ', $args);
+      
       case 'cache':
       $args->cache = $options->cache;
       $args->admincache = $options->admincache;

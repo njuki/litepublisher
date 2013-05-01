@@ -25,7 +25,7 @@ class tmediaparser extends tevents {
     $this->data['maxheight'] = 900;
     $this->data['quality_snapshot'] = 94;
     $this->data['quality_original'] = 92;
-$this->data['alwaysresize'] = false;
+    $this->data['alwaysresize'] = false;
     
     $this->data['audioext'] = 'mp3|wav |flac';
     $this->data['videoext'] = 'mp4|ogv|webm';
@@ -218,8 +218,8 @@ $this->data['alwaysresize'] = false;
       $this->callevent('onbefore', array(&$item, $srcfilename));
       $maxwidth = isset($file['maxwidth']) ? $file['maxwidth'] : $this->maxwidth;
       $maxheight = isset($file['maxheight']) ? $file['maxheight'] : $this->maxheight;
-$resize = $this->alwaysresize && ($maxwidth > 0) && ($maxheight > 0);
-if (!$resize) $resize = ($item['width'] > $maxwidth ) || ($item['height'] > $maxheight);
+      $resize = $this->alwaysresize && ($maxwidth > 0) && ($maxheight > 0);
+      if (!$resize) $resize = ($item['width'] > $maxwidth ) || ($item['height'] > $maxheight);
       $enablepreview = isset($file['enablepreview']) ? $file['enablepreview'] : (isset($file['ispreview']) ? $file['ispreview'] : $this->enablepreview);
       if (($resize || $enablepreview) && ($image = self::readimage($srcfilename))) {
         $this->onimage($image);
@@ -255,7 +255,7 @@ if (!$resize) $resize = ($item['width'] > $maxwidth ) || ($item['height'] > $max
         imagedestroy($image);
       }
     }
-
+    
     $id = $files->additem($item);
     IF ($hash != $files->getvalue($id, 'hash')) {
       $files->getdb('imghashes')->insert(array(
@@ -490,27 +490,27 @@ if (!$resize) $resize = ($item['width'] > $maxwidth ) || ($item['height'] > $max
     $sourcex = imagesx($image);
     $sourcey = imagesy($image);
     if (($y == 0) || ($x == 0) || ($sourcex == 0) || ($sourcey == 0)) return false;
-      $ratio = $sourcex / $sourcey;
-      if ($x/$y > $ratio) {
-        $x = $y *$ratio;
-      } else {
-        $y = $x /$ratio;
-      }
-      
-      $x = intval(round($x));
-      $y = intval(round($y));
-      
-      $dest = imagecreatetruecolor($x, $y);
-      imagecopyresampled($dest, $image, 0, 0, 0, 0, $x, $y, $sourcex, $sourcey);
-      $this->onresize($dest);
-      imagejpeg($dest, $filename, $this->quality_original);
-      imagedestroy($dest);
-      @chmod($filename, 0666);
-      
-      return array(
-      'width' =>$x,
-      'height' => $y,
-      );
+    $ratio = $sourcex / $sourcey;
+    if ($x/$y > $ratio) {
+      $x = $y *$ratio;
+    } else {
+      $y = $x /$ratio;
+    }
+    
+    $x = intval(round($x));
+    $y = intval(round($y));
+    
+    $dest = imagecreatetruecolor($x, $y);
+    imagecopyresampled($dest, $image, 0, 0, 0, 0, $x, $y, $sourcex, $sourcey);
+    $this->onresize($dest);
+    imagejpeg($dest, $filename, $this->quality_original);
+    imagedestroy($dest);
+    @chmod($filename, 0666);
+    
+    return array(
+    'width' =>$x,
+    'height' => $y,
+    );
   }
   
   private function getaudioinfo($filename) {
