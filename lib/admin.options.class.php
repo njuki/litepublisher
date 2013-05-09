@@ -83,12 +83,32 @@ class Tadminoptions extends tadminmenu {
       break;
       
       case 'mail':
-      ttheme::$vars['subscribers'] = tsubscribers::i();
-      ttheme::$vars['mailer'] = TSMTPMailer ::i();
-      $args->mailerchecked = $options->mailer == 'smtp';
-      break;
+$args->adminemail = $options->email;
+$args->fromemail = $options->fromemail;
+      $args->mailer = $options->mailer == 'smtp';
+
+$subscribers = tsbscribers::i();
+$args->subscribeemail = $subscribers->fromemail;
+
+$mailer = TSMTPMailer ::i();
+$args->host = $mailer->host;
+$args->smtplogin = $mailer->login;
+$args->password = $mailer->password;
+$args->port = $mailer->port;
+
+$args->formtitle = $lang->mailoptions;
+return $html->adminform('
+[text=adminemail]
+[text=fromemail]
+[text=subscribeemail]
+[checkbox=mailer]
+[text=host]
+[text=smtplogin]
+[password=password]
+[text=port]
+', $args);
       
-      case 'view':
+      case'view':
       $args->perpage = $options->perpage;
       $filter = tcontentfilter::i();
       $args->usefilter = $filter->usefilter;
@@ -273,22 +293,21 @@ class Tadminoptions extends tadminmenu {
       break;
       
       case 'mail':
-      $options->lock();
-      if(!empty($email)) $options->email = $email;
+      if(!empty($adminemail)) $options->email = $adminemail;
       if(!empty($fromemail)) $options->fromemail = $fromemail;
       $options->mailer = empty($mailer) ? '': 'smtp';
-      $options->unlock();
-      if (!empty($subscribeemail)) {
+
+      if (!empty($subscribeemail )) {
         $subscribe = tsubscribers::i();
-        $subscribe->fromemail = $subscribeemail;
+        $subscribe->fromemail = $subscribeemail ;
         $subscribe->save();
-        $options->fromemail = $subscribeemail;
+        $options->fromemail = $subscribeemail ;
       }
       
       $mailer = TSMTPMailer ::i();
       $mailer->lock();
       $mailer->host = $host;
-      $mailer->login = $login;
+      $mailer->login = $smtplogin;
       $mailer->password = $password;
       $mailer->port= (int) $port;
       $mailer->unlock();
