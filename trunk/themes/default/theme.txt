@@ -762,7 +762,7 @@ $checkbox= [<p><input type="checkbox" name="$name" id="checkbox-$name" $value />
 $combo = [<p><label for="combo-$name"><strong>$lang.$name:</strong></label>
 <select name="$name" id="combo-$name">$value</select></p>]
 
-radioitem = [<p><label><input type="radio" name="$name" id="radio_$name_$index" value="$index" $checked />$value</label></p>]
+$radioitem = [<p><label><input type="radio" name="$name" id="radio_$name_$index" value="$index" $checked />$value</label></p>]
 
 $radio = [<div><h4>$lang.$name:</h4>$value</div>]
 

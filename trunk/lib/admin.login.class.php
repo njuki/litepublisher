@@ -33,7 +33,7 @@ class tadminlogin extends tadminform {
     if (litepublisher::$options->cookieenabled) {
       if (litepublisher::$options->user) litepublisher::$options->logout();
 $backurl = !empty($_GET['backurl']) ? $_GET['backurl'] : (!empty($_GET['amp;backurl']) ? $_GET['amp;backurl'] :  (isset($_COOKIE['backurl']) ? $_COOKIE['backurl'] : ''));
-      if ($backurl) return litepublisher::$urlmap->redir(backurl);
+      if ($backurl) return litepublisher::$urlmap->redir($backurl);
     } else {
       $auth = tauthdigest::i();
       if ($auth->auth()) $auth->logout();

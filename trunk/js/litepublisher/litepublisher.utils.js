@@ -26,15 +26,13 @@
         dataType: "json",
         cache: ("cache" in data ? data.cache : true)
       });
-    },
-    
-    dump: function(obj) {
-      var s = '';
-      for (var prop in obj) s = s + prop + " = " + obj[prop] + "\n";
-      alert(s);
     }
-  };
-  
+};
+    
+  window.dump = function(obj) {
+alert(JSON.stringify(obj));
+};
+
   window.get_get=  function (name) {
     var q = window.location.search.substring(1);
     var vars = q.split('&');
@@ -51,7 +49,10 @@
   };
   
   window.set_cookie = function(name, value, expires){
-  $.cookie(name, value, { expires: 3650});
+  $.cookie(name, value, {
+path: '/',
+ expires: expires ? expires : 3650
+});
   };
   
   window.$ready = function(fn) {
