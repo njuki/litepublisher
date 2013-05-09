@@ -20,7 +20,7 @@ function tcommontagsInstall($self) {
   $urlmap->add("/$self->PermalinkIndex/", get_class($self), 0);
   
   if (dbversion) {
-    $manager = TDBManager ::i();
+    $manager = tdbanager ::i();
     $dir = dirname(__file__) . DIRECTORY_SEPARATOR;
     $manager->createtable($self->table, file_get_contents($dir .'tags.sql'));
     $manager->createtable($self->itemsposts->table, file_get_contents($dir .'items.posts.sql'));
