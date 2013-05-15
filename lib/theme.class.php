@@ -385,7 +385,7 @@ class ttheme extends tevents {
   }
   
   public function getwidget($title, $content, $template, $sidebar) {
-    $args = targs::i();
+    $args = new targs();
     $args->title = $title;
     $args->items = $content;
     return $this->parsearg($this->getwidgettml($sidebar, $template, ''), $args);
@@ -410,7 +410,7 @@ class ttheme extends tevents {
   }
   
   public function getajaxtitle($id, $title, $sidebar, $tml) {
-    $args = targs::i();
+    $args = new targs();
     $args->title = $title;
     $args->id = $id;
     $args->sidebar = $sidebar;
@@ -542,6 +542,7 @@ class targs {
   public function __construct($thisthis = null) {
     if (!isset(ttheme::$defaultargs)) ttheme::set_defaultargs();
     $this->data = ttheme::$defaultargs;
+    
     if (isset($thisthis)) $this->data['$this'] = $thisthis;
   }
   

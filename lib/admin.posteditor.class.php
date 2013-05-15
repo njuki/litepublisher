@@ -80,7 +80,8 @@ class tposteditor extends tadminmenu {
   
   // $posteditor.files in template editor
   public function getfilelist() {
-    $html = $this->html;
+    $html = tadminhtml::i();
+    $html->push_section('editor');
     $args = new targs();
     $args->fileperm = litepublisher::$options->show_file_perm ? tadminperms::getcombo(0, 'idperm_upload') : '';
     
@@ -105,7 +106,9 @@ class tposteditor extends tadminmenu {
       }
     }
     
-    return $html->filelist($args);
+    $result = $html->filelist($args);
+    $html->pop_section();
+    return $result;
   }
   
   public function canrequest() {
