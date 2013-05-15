@@ -25,7 +25,7 @@ $template.content.notfound = [<h1 class="center">$lang.notfound</h1><h3 class="c
 content.menu = [<div class="post" id="menu-$menu.id"><h1>$menu.title</h1>$menu.content</div>]
 
 content.post = [
-<div class="post" id="post-$post.id"><h1>$post.title</h1>
+<div class="post" id="post-$post.id"><h1>$post.bookmark</h1>
 <div class="meta">$post.catlinks <span class="date">$post.date</span></div>
 <div class="entry">$post.filelist  $post.content</div>
 <div class="meta">$post.taglinks <address class="vcard author">$post.authorlink</address></div>
@@ -109,7 +109,7 @@ $excerpt = [
 <div class="post" id="post-$post.id">
 <h2><a href="$post.link" rel="bookmark" title="$lang.permalink: $post.title">$post.title</a></h2>
 <div class="meta">$post.catlinks <span class="date">$post.excerptdate = [d M Y]</span></div>
-<div class="entry">$post.excerptfilelist $post.excerptcontent $post.morelink = [[...]]</div>
+<div class="entry">$post.excerptfilelist $post.excerptcontent $post.morelink = [<a href="$post.link#more-$post.id" class="more-link">...</a>]</div>
 <div class="meta">$post.taglinks <span class="votes">$post.commentslink</span></div>
 </div>]]
 

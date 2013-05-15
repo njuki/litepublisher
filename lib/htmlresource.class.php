@@ -249,7 +249,7 @@ class tadminhtml {
     $tml .= '</tr>';
     
     $theme = ttheme::i();
-    $args = targs::i();
+    $args = new targs();
     foreach ($items as $id => $item) {
       $args->add($item);
       if (!isset($item['id'])) $args->id = $id;
@@ -282,7 +282,31 @@ class tadminhtml {
     $args->tablebody = $body;
     return $theme->parsearg($this->ini['common']['table'], $args);
   }
-  
+
+  public function tableposts(array $items, array $struct) {
+    $head = '';
+    $body = '';
+    $tml = '<tr>';
+    foreach ($struct as $elem) {
+      $head .= sprintf('<th align="%s">%s</th>', $elem[0], $elem[1]);
+      $tml .= sprintf('<td align="%s">%s</td>', $elem[0], $elem[2]);
+    }
+    $tml .= '</tr>';
+    
+    $theme = ttheme::i();
+    $args = new targs();
+    foreach ($items as $id) {
+      $post = tpost::i($id);
+ttheme::$vars['post'] = $post;
+      $args->id = $id;
+      $body .= $theme->parsearg($tml, $args);
+    }
+
+    $args->tablehead  = $head;
+    $args->tablebody = $body;
+    return $theme->parsearg($this->ini['common']['table'], $args);
+  }  
+
   public function get_table_checkbox($name) {
     return array('center', $this->invertcheckbox, str_replace('$checkboxname', $name, $this->checkbox));
   }
