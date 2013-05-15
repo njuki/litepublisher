@@ -7,7 +7,7 @@
 **/
 
 class titemsposts extends titems {
-public $tablepost;
+  public $tablepost;
   
   public static function i() {
     return getinstance(__class__);

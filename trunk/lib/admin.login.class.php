@@ -32,7 +32,7 @@ class tadminlogin extends tadminform {
   private function logout() {
     if (litepublisher::$options->cookieenabled) {
       if (litepublisher::$options->user) litepublisher::$options->logout();
-$backurl = !empty($_GET['backurl']) ? $_GET['backurl'] : (!empty($_GET['amp;backurl']) ? $_GET['amp;backurl'] :  (isset($_COOKIE['backurl']) ? $_COOKIE['backurl'] : ''));
+      $backurl = !empty($_GET['backurl']) ? $_GET['backurl'] : (!empty($_GET['amp;backurl']) ? $_GET['amp;backurl'] :  (isset($_COOKIE['backurl']) ? $_COOKIE['backurl'] : ''));
       if ($backurl) return litepublisher::$urlmap->redir($backurl);
     } else {
       $auth = tauthdigest::i();
@@ -62,7 +62,7 @@ $backurl = !empty($_GET['backurl']) ? $_GET['backurl'] : (!empty($_GET['amp;back
     $cookie = md5uniq();
     litepublisher::$options->setcookies($cookie, $expired);
     $url = !empty($_GET['backurl']) ? $_GET['backurl'] : (!empty($_GET['amp;backurl']) ? $_GET['amp;backurl'] :  (isset($_COOKIE['backurl']) ? $_COOKIE['backurl'] : ''));
-if (!$url) {
+    if (!$url) {
       $url = '/admin/';
       if (litepublisher::$options->group != 'admin') {
         $groups = tusergroups::i();
