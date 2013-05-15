@@ -45,17 +45,6 @@ class Tadminoptions extends tadminmenu {
     return $form;
   }
   
-  public function gethead() {
-    $result = parent::gethead();
-    switch ($this->name) {
-      case 'home':
-      $template = ttemplate::i();
-    $result .= $template->getready('$("#tabs").tabs({ beforeLoad: litepubl.uibefore});');
-      break;
-    }
-    return $result;
-  }
-  
   public function getcontent() {
     if ($form = $this->getautoform($this->name)) return $form->getform();
     $options = litepublisher::$options;
@@ -69,6 +58,7 @@ class Tadminoptions extends tadminmenu {
     switch ($this->name) {
       case 'home':
       $home = thomepage::i();
+$tabs = new tuitabs();
       $args->hideposts = $home->hideposts;
       $args->parsetags = $home->parsetags;
       $args->invertorder = $home->invertorder;
@@ -76,37 +66,53 @@ class Tadminoptions extends tadminmenu {
       $args->idhome =  $home->id;
       $menus = tmenus::i();
       $args->homemenu =  $menus->home;
-      $args->includecats = tposteditor::getcategories($home->includecats);
-      $args->excludecats = str_replace('category-', 'exclude_category-',
-      tposteditor::getcategories($home->excludecats));
-      $args->formtitle = '';
-      break;
-      
-      case 'mail':
-$args->adminemail = $options->email;
-$args->fromemail = $options->fromemail;
+$tabs->add($lang->options, '
+[checkbox:hideposts]
+[checkbox:invertorder]
+[checkbox:homemenu]
+[checkbox=parsetags]
+[text:image]
+');
+
+$tabs->add($lang->includecats, 
+$html->h4->includehome .
+tposteditor::getcategories($home->includecats));
+
+$tabs->add($lang->excludecats, 
+$html->h4->excludehome . str_replace('category-', 'exclude_category-',
+      tposteditor::getcategories($home->excludecats)));
+
+      $args->formtitle = $lang->homeform;
+    return tuitabs::gethead() .
+    $html->adminform(
+'<h4><a href="$site.url/admin/menu/edit/{$site.q}id=$idhome">$lang.hometext</a></h4>' .
+$tabs->get(), $args);
+
+            case 'mail':
+      $args->adminemail = $options->email;
+      $args->fromemail = $options->fromemail;
       $args->mailer = $options->mailer == 'smtp';
-
-$subscribers = tsbscribers::i();
-$args->subscribeemail = $subscribers->fromemail;
-
-$mailer = TSMTPMailer ::i();
-$args->host = $mailer->host;
-$args->smtplogin = $mailer->login;
-$args->password = $mailer->password;
-$args->port = $mailer->port;
-
-$args->formtitle = $lang->mailoptions;
-return $html->adminform('
-[text=adminemail]
-[text=fromemail]
-[text=subscribeemail]
-[checkbox=mailer]
-[text=host]
-[text=smtplogin]
-[password=password]
-[text=port]
-', $args);
+      
+      $subscribers = tsubscribers::i();
+      $args->subscribeemail = $subscribers->fromemail;
+      
+      $mailer = TSMTPMailer ::i();
+      $args->host = $mailer->host;
+      $args->smtplogin = $mailer->login;
+      $args->password = $mailer->password;
+      $args->port = $mailer->port;
+      
+      $args->formtitle = $lang->mailoptions;
+      return $html->adminform('
+      [text=adminemail]
+      [text=fromemail]
+      [text=subscribeemail]
+      [checkbox=mailer]
+      [text=host]
+      [text=smtplogin]
+      [password=password]
+      [text=port]
+      ', $args);
       
       case'view':
       $args->perpage = $options->perpage;
@@ -296,7 +302,7 @@ return $html->adminform('
       if(!empty($adminemail)) $options->email = $adminemail;
       if(!empty($fromemail)) $options->fromemail = $fromemail;
       $options->mailer = empty($mailer) ? '': 'smtp';
-
+      
       if (!empty($subscribeemail )) {
         $subscribe = tsubscribers::i();
         $subscribe->fromemail = $subscribeemail ;

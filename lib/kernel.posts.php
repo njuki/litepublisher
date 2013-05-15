@@ -7,6 +7,7 @@
 **/
 //items.posts.class.php
 class titemsposts extends titems {
+  public $tablepost;
   
   public static function i() {
     return getinstance(__class__);
@@ -16,6 +17,7 @@ class titemsposts extends titems {
     parent::create();
     $this->basename = 'itemsposts';
     $this->table = 'itemsposts';
+    $this->tablepost = 'posts';
   }
   
   public function add($idpost, $iditem) {
@@ -127,15 +129,15 @@ class titemsposts extends titems {
   }
   
   public function getpostscount($ititem) {
-    $db = $this->getdb('posts');
-    return $db->getcount("$db->posts.status = 'published' and id in (select post from $this->thistable where item = $ititem)");
+    $db = $this->getdb($this->tablepost);
+    return $db->getcount("$db->prefix$this->tablepost.status = 'published' and id in (select post from $this->thistable where item = $ititem)");
   }
   
   public function updateposts(array $list, $propname) {
     $db = $this->db;
     foreach ($list as $idpost) {
       $items = $this->getitems($idpost);
-      $db->table = 'posts';
+      $db->table = $this->tablepost;
       $db->setvalue($idpost, $propname, implode(', ', $items));
     }
   }

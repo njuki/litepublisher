@@ -50,11 +50,11 @@ class tadminmenus extends tmenus {
     }
   }
   
-
-public function createurl($parent, $name) {
-return $parent == 0 ? "/admin/$name/" : $this->items[$parent]['url'] . "$name/";
-}
-
+  
+  public function createurl($parent, $name) {
+    return $parent == 0 ? "/admin/$name/" : $this->items[$parent]['url'] . "$name/";
+  }
+  
   public function createitem($parent, $name, $group, $class) {
     $title = $this->getadmintitle($name);
     $url = $this->createurl($parent, $name);
