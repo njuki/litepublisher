@@ -27,12 +27,12 @@
         cache: ("cache" in data ? data.cache : true)
       });
     }
-};
-    
+  };
+  
   window.dump = function(obj) {
-alert(JSON.stringify(obj));
-};
-
+    alert(JSON.stringify(obj));
+  };
+  
   window.get_get=  function (name) {
     var q = window.location.search.substring(1);
     var vars = q.split('&');
@@ -49,10 +49,10 @@ alert(JSON.stringify(obj));
   };
   
   window.set_cookie = function(name, value, expires){
-  $.cookie(name, value, {
-path: '/',
- expires: expires ? expires : 3650
-});
+    $.cookie(name, value, {
+      path: '/',
+      expires: expires ? expires : 3650
+    });
   };
   
   window.$ready = function(fn) {
