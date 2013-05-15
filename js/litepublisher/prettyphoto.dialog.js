@@ -73,13 +73,14 @@
       ]
     }, o);
     
-var button = '<button type="button" class="pp_dialog_btn_{index}">{title}</button>';
+var button = '<button type="button" class="pp_dialog_btn_%%index%%">%%title%%</button>';
     var buttons = '';
     for (var i =0, l= options.buttons.length;  i < l; i++) {
-  buttons += button.replace(/{index}/g, i).replace(/{title}/g, options.buttons[i].title);
+  buttons += button.replace(/%%index%%/g, i).replace(/%%title%%/g, options.buttons[i].title);
     }
-    
-    var id = "pp_dialog_id_" + (Math.random() + '').replace('.', '');
+
+if (!("pp_dialog_id" in $)) $.pp_dialog_id = 	$.now();
+    var id = "pp_dialog_id_" + $.pp_dialog_id++;
     var div = $('<div CLASS="HIDDEN" id="' + id + '"></div>').appendTo("body");
     div.html('<div class="pp_dialog_title">' +
     '<h3>' + options.title + '</h3></div>' +
