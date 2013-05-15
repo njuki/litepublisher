@@ -30,7 +30,7 @@ class tticketeditor extends tposteditor {
     }
   }
   
-  public function camrequest() {
+  public function canrequest() {
     if ($s = parent::canrequest()) return $s;
     $this->basename = 'tickets';
     if ($this->idpost > 0) {
@@ -54,14 +54,15 @@ class tticketeditor extends tposteditor {
     $this->basename = 'tickets';
     $ticket = tticket::i($this->idpost);
     ttheme::$vars['ticket'] = $ticket;
-    $args = targs::i();
+    ttheme::$vars['post'] = $ticket;
+    $args = new targs();
     $args->id = $this->idpost;
     $args->title = tcontentfilter::unescape($ticket->title);
     $args->ajax = tadminhtml::getadminlink('/admin/ajaxposteditor.htm', "id=$ticket->id&get");
     $ajaxeditor = tajaxposteditor ::i();
     $args->raw = $ajaxeditor->geteditor('raw', $ticket->rawcontent, true);
     
-    $html = $this->html;
+    $html = $this->gethtml('tickets');;
     $lang = tlocal::admin('tickets');
     
     $args->code = $html->getinput('editor', 'code', tadminhtml::specchars($ticket->code), $lang->codetext);

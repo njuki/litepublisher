@@ -1919,7 +1919,7 @@ class tsite extends tevents_storage {
   public function getuserlink() {
     if ($id = litepublisher::$options->user) {
       if (!isset($this->users)) $this->users = array();
-      if (isset($this->users[$id])) return $this->users;
+      if (isset($this->users[$id])) return $this->users[$id];
       $item = tusers::i()->getitem($id);
       if ($item['website']) {
         $result = sprintf('<a href="%s">%s</a>', $item['website'], $item['name']);

@@ -49,25 +49,32 @@ class tadmintickets extends tadminmenu {
     }
     
     $html = $this->html;
-    $result .=sprintf($html->h2->count, $from, $from + count($items), $count);
-    $result .= $html->listhead();
-    $args = targs::i();
-    $args->adminurl = $this->adminurl;
-    $args->editurl = tadminhtml::getadminlink('/admin/tickets/editor/', 'id');
+    $result .=sprintf($html->h4->count, $from, $from + count($items), $count);
     $lang = tlocal::admin('tickets');
-    foreach ($items  as $id ) {
-      $ticket = tticket::i($id);
-      ttheme::$vars['ticket'] = $ticket;
-    $args->status = $lang->{$ticket->status};
-    $args->prio = $lang->{$ticket->prio};
-    $args->state = $lang->{$ticket->state};
-      $result .= $html->itemlist($args);
-    }
-    $result .= $html->footer();
+    ttheme::$vars['ticket_status'] = new ticket_status();
+    $table = $html->tableposts($items, array(
+    array('center',
+    '<input type="checkbox" name="invertcheck" class="invertcheck" />',
+    '<input type="checkbox" name="checkbox-$post.id" id="checkbox-$post.id" value="$post.id"/>$post.id'),
+    array('center', $lang->date, '$post.date'),
+    array('left', $lang->posttitle, '$post.bookmark'),
+    array('left', $lang->author, '$post.authorlink'),
+    array('left', $lang->status, '$ticket_status.status'),
+    array('left', $lang->category, '$post.category'),
+    array('left', $lang->state, '$ticket_status.state'),
+    array('center', $lang->edit, '<a href="' . tadminhtml::getadminlink('/admin/tickets/editor/', 'id') . '=$post.id">' . $lang->edit . '</a>'),
+    ));
+    
+    unset(ttheme::$vars['ticket_status']);
+    //wrap form
     if (litepublisher::$options->group != 'ticket') {
-      $result  = "<form name='form' action='' method='post'>" . $result;
-      $result .= $html->listfooter();
+      $args = new targs();
+      $args->table = $table;
+      $result .= $html->tableform ($args);
+    } else {
+      $result .= $table;
     }
+    
     $result = $html->fixquote($result);
     
     $theme = ttheme::i();
@@ -96,6 +103,26 @@ class tadmintickets extends tadminmenu {
         $tickets->edit($ticket);
       }
     }
+  }
+  
+}//class
+
+class ticket_status {
+  
+  public function __get($name) {
+    $ticket = ttheme::$vars['post'];
+    $lang = tlocal::i();
+    switch ($name) {
+      case 'status':
+    return $lang->{$ticket->status};
+      
+      case 'prio':
+    return $lang->{$ticket->prio};
+      
+      case 'state':
+    return $lang->{$ticket->state};
+    }
+    return '';
   }
   
 }//class

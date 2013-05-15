@@ -301,7 +301,7 @@ class tadminhtml {
       throw new Exception("the requested $name item not found in $this->section section");
     }
     
-    $args = isset($params[0]) && $params[0] instanceof targs ? $params[0] : targs::i();
+    $args = isset($params[0]) && $params[0] instanceof targs ? $params[0] : new targs();
     return $this->parsearg($s, $args);
   }
   
@@ -340,6 +340,7 @@ class tadminhtml {
         $s = str_replace($item[0], $tag, $s);
       }
     }
+    
     $s = strtr($s, $args->data);
     return $theme->parse($s);
   }
@@ -486,7 +487,7 @@ class tadminhtml {
     $tml .= '</tr>';
     
     $theme = ttheme::i();
-    $args = targs::i();
+    $args = new targs();
     foreach ($items as $id => $item) {
       $args->add($item);
       if (!isset($item['id'])) $args->id = $id;
@@ -515,6 +516,30 @@ class tadminhtml {
       $args->id = $id;
       $body .= $theme->parsearg($tml, $args);
     }
+    $args->tablehead  = $head;
+    $args->tablebody = $body;
+    return $theme->parsearg($this->ini['common']['table'], $args);
+  }
+  
+  public function tableposts(array $items, array $struct) {
+    $head = '';
+    $body = '';
+    $tml = '<tr>';
+    foreach ($struct as $elem) {
+      $head .= sprintf('<th align="%s">%s</th>', $elem[0], $elem[1]);
+      $tml .= sprintf('<td align="%s">%s</td>', $elem[0], $elem[2]);
+    }
+    $tml .= '</tr>';
+    
+    $theme = ttheme::i();
+    $args = new targs();
+    foreach ($items as $id) {
+      $post = tpost::i($id);
+      ttheme::$vars['post'] = $post;
+      $args->id = $id;
+      $body .= $theme->parsearg($tml, $args);
+    }
+    
     $args->tablehead  = $head;
     $args->tablebody = $body;
     return $theme->parsearg($this->ini['common']['table'], $args);
@@ -1094,7 +1119,8 @@ class tposteditor extends tadminmenu {
   
   // $posteditor.files in template editor
   public function getfilelist() {
-    $html = $this->html;
+    $html = tadminhtml::i();
+    $html->push_section('editor');
     $args = new targs();
     $args->fileperm = litepublisher::$options->show_file_perm ? tadminperms::getcombo(0, 'idperm_upload') : '';
     
@@ -1119,7 +1145,9 @@ class tposteditor extends tadminmenu {
       }
     }
     
-    return $html->filelist($args);
+    $result = $html->filelist($args);
+    $html->pop_section();
+    return $result;
   }
   
   public function canrequest() {

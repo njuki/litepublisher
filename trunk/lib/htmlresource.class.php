@@ -64,7 +64,7 @@ class tadminhtml {
       throw new Exception("the requested $name item not found in $this->section section");
     }
     
-    $args = isset($params[0]) && $params[0] instanceof targs ? $params[0] : targs::i();
+    $args = isset($params[0]) && $params[0] instanceof targs ? $params[0] : new targs();
     return $this->parsearg($s, $args);
   }
   
@@ -103,6 +103,7 @@ class tadminhtml {
         $s = str_replace($item[0], $tag, $s);
       }
     }
+    
     $s = strtr($s, $args->data);
     return $theme->parse($s);
   }
@@ -282,7 +283,7 @@ class tadminhtml {
     $args->tablebody = $body;
     return $theme->parsearg($this->ini['common']['table'], $args);
   }
-
+  
   public function tableposts(array $items, array $struct) {
     $head = '';
     $body = '';
@@ -297,16 +298,16 @@ class tadminhtml {
     $args = new targs();
     foreach ($items as $id) {
       $post = tpost::i($id);
-ttheme::$vars['post'] = $post;
+      ttheme::$vars['post'] = $post;
       $args->id = $id;
       $body .= $theme->parsearg($tml, $args);
     }
-
+    
     $args->tablehead  = $head;
     $args->tablebody = $body;
     return $theme->parsearg($this->ini['common']['table'], $args);
-  }  
-
+  }
+  
   public function get_table_checkbox($name) {
     return array('center', $this->invertcheckbox, str_replace('$checkboxname', $name, $this->checkbox));
   }

@@ -58,7 +58,7 @@ class Tadminoptions extends tadminmenu {
     switch ($this->name) {
       case 'home':
       $home = thomepage::i();
-$tabs = new tuitabs();
+      $tabs = new tuitabs();
       $args->hideposts = $home->hideposts;
       $args->parsetags = $home->parsetags;
       $args->invertorder = $home->invertorder;
@@ -66,29 +66,29 @@ $tabs = new tuitabs();
       $args->idhome =  $home->id;
       $menus = tmenus::i();
       $args->homemenu =  $menus->home;
-$tabs->add($lang->options, '
-[checkbox:hideposts]
-[checkbox:invertorder]
-[checkbox:homemenu]
-[checkbox=parsetags]
-[text:image]
-');
-
-$tabs->add($lang->includecats, 
-$html->h4->includehome .
-tposteditor::getcategories($home->includecats));
-
-$tabs->add($lang->excludecats, 
-$html->h4->excludehome . str_replace('category-', 'exclude_category-',
+      $tabs->add($lang->options, '
+      [checkbox:hideposts]
+      [checkbox:invertorder]
+      [checkbox:homemenu]
+      [checkbox=parsetags]
+      [text:image]
+      ');
+      
+      $tabs->add($lang->includecats,
+      $html->h4->includehome .
+      tposteditor::getcategories($home->includecats));
+      
+      $tabs->add($lang->excludecats,
+      $html->h4->excludehome . str_replace('category-', 'exclude_category-',
       tposteditor::getcategories($home->excludecats)));
-
+      
       $args->formtitle = $lang->homeform;
-    return tuitabs::gethead() .
-    $html->adminform(
-'<h4><a href="$site.url/admin/menu/edit/{$site.q}id=$idhome">$lang.hometext</a></h4>' .
-$tabs->get(), $args);
-
-            case 'mail':
+      return tuitabs::gethead() .
+      $html->adminform(
+    '<h4><a href="$site.url/admin/menu/edit/{$site.q}id=$idhome">$lang.hometext</a></h4>' .
+      $tabs->get(), $args);
+      
+      case 'mail':
       $args->adminemail = $options->email;
       $args->fromemail = $options->fromemail;
       $args->mailer = $options->mailer == 'smtp';
