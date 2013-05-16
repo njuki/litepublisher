@@ -49,13 +49,10 @@ class tadmintickets extends tadminmenu {
     }
     
     $html = $this->html;
-    $result .=sprintf($html->h4->count, $from, $from + count($items), $count);
+    $result .=$html->getitemscount($from, $from + count($items), $count);
     $lang = tlocal::admin('tickets');
     ttheme::$vars['ticket_status'] = new ticket_status();
     $table = $html->tableposts($items, array(
-    array('center',
-    '<input type="checkbox" name="invertcheck" class="invertcheck" />',
-    '<input type="checkbox" name="checkbox-$post.id" id="checkbox-$post.id" value="$post.id"/>$post.id'),
     array('center', $lang->date, '$post.date'),
     array('left', $lang->posttitle, '$post.bookmark'),
     array('left', $lang->author, '$post.authorlink'),
