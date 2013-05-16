@@ -29,7 +29,7 @@ class tadmindownloaditems extends tadminmenu {
     $args = targs::i();
     $args->adminurl = $this->adminurl;
     $args->editurl = tadminhtml::getadminlink('/admin/downloaditems/editor/', 'id');
-    $lang = tlocal::i('downloaditems');
+    $lang = tlocal::admin('downloaditems');
     
     $downloaditems = tdownloaditems::i();
     $perpage = 20;
@@ -58,20 +58,20 @@ class tadmindownloaditems extends tadminmenu {
     }  else {
       $items = array();
     }
+
+    $result .=$html->getitemscount($from, $from + count($items), $count);    
+    ttheme::$vars['dlitem_status'] = new dlitem_status();
+    $result .= $html->tableposts($items, array(
+    array('right', $lang->downloads, '$post.downloads'),
+    array('left', $lang->posttitle, '$post.bookmark'),
+    array('left', $lang->status, '$ticket_status.status'),
+    array('left', $lang->tags, '$post.tagnames'),
+    array('center', $lang->edit, '<a href="' . tadminhtml::getadminlink('/admin/downloaditems/editor/', 'id') . '=$post.id">' . $lang->edit . '</a>'),
+    ));
     
-    $tablebody = '';
-    foreach ($items  as $id ) {
-      $downloaditem = tdownloaditem::i($id);
-      ttheme::$vars['downloaditem'] = $downloaditem;
-    $args->status = $lang->{$downloaditem->status};
-      $args->type = tlocal::get('downloaditem', $downloaditem->type);
-      $tablebody .= $html->itemlist($args);
-    }
-    
-    $result .=sprintf($html->h2->count, $from, $from + count($items), $count);
-    $result .= $html->gettable($html->listhead(), $tablebody);
-    $result .= $html->footer();
-    $result = $html->fixquote($result);
+    unset(ttheme::$vars['dlitem_status']);
+
+    $result .= $html->footer();    $result = $html->fixquote($result);
     
     $theme = ttheme::i();
     $result .= $theme->getpages($this->url, litepublisher::$urlmap->page, ceil($count/$perpage));
@@ -104,6 +104,23 @@ class tadmindownloaditems extends tadminmenu {
         $downloaditems->edit($downloaditem);
       }
     }
+  }
+  
+}//class
+
+class dlitem_status {
+  
+  public function __get($name) {
+    $dl = ttheme::$vars['post'];
+    $lang = tlocal::i();
+    switch ($name) {
+      case 'status':
+    return $lang->{$dl->status};
+      
+      case 'type':
+    return tlocal::get('downloaditem', $dl->type);
+    }
+    return '';
   }
   
 }//class
