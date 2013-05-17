@@ -370,7 +370,24 @@ return sprintf($this->h4->itemscount, $from, $to, $count);
     tfilestorage::savevar($datafile, $ini);
     return $ini;
   }
+
+public function getres($class) {
+if (isset(litepublisher::$classes->included_files[$class])) {
+$dir = dirname(litepublisher::$classes->included_files[$class]);
+} else {
+$dir = dirname(litepublisher::$classes->getclassfilename($class));
+}
   
+$dir .= '/resource/';
+$html = self::cacheini($dir . 'html.ini');
+      if (is_array($html)) $this->ini = $html + $this->ini;
+
+$inilang = self::cacheini($dir . litepublisher::$options->languages . '.admin.ini');
+if (is_array($inilang)) {
+$lang = tlocal::i();
+      $lang->ini = $inilang + $lang->ini ;
+}
+
 }//class
 
 class tautoform {
