@@ -232,7 +232,7 @@ class ttheme extends tevents {
     array_push($this->parsing, $s);
     try {
       $s = preg_replace('/%%([a-zA-Z0-9]*+)_(\w\w*+)%%/', '\$$1.$2', $s);
-      $result = preg_replace_callback('/\$([a-zA-Z]\w*+)\.(\w\w*+)/', array(&$this, 'parsecallback'), $s);
+      $result = preg_replace_callback('/\$([a-zA-Z]\w*+)\.(\w\w*+)/', array($this, 'parsecallback'), $s);
     } catch (Exception $e) {
       $result = '';
       litepublisher::$options->handexception($e);
