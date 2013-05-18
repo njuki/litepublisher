@@ -39,12 +39,6 @@ class tticketeditor extends tposteditor {
     }
   }
   
-  public function gethtml($name = '') {
-    $lang = tlocal::admin('tickets');
-    $lang->ini['tickets'] = $lang->ini['ticket'] + $lang->ini['tickets'];
-    return parent::gethtml($name);
-  }
-  
   protected function getlogoutlink() {
     return $this->gethtml('login')->logout();
   }
@@ -62,8 +56,9 @@ class tticketeditor extends tposteditor {
     $ajaxeditor = tajaxposteditor ::i();
     $args->raw = $ajaxeditor->geteditor('raw', $ticket->rawcontent, true);
     
-    $html = $this->gethtml('tickets');;
+    $html = $this->inihtml('tickets');;
     $lang = tlocal::admin('tickets');
+    $lang->ini['tickets'] = $lang->ini['ticket'] + $lang->ini['tickets'];
     
     $args->code = $html->getinput('editor', 'code', tadminhtml::specchars($ticket->code), $lang->codetext);
     

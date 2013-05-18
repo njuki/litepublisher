@@ -20,17 +20,12 @@ class tdownloaditemeditor extends tposteditor {
     }
   }
   
-  public function gethtml($name = '') {
-    $lang = tlocal::admin();
-    $lang->ini['downloaditems'] = $lang->ini['downloaditem'] + $lang->ini['downloaditems'];
-    return parent::gethtml($name);
-  }
-  
   public function getcontent() {
     $result = '';
     $this->basename = 'downloaditems';
-    $html = $this->html;
+    $html = $this->inihtml();
     $lang = tlocal::admin('downloaditems');
+    $lang->ini['downloaditems'] = $lang->ini['downloaditem'] + $lang->ini['downloaditems'];
     $html->push_section('editor');
     
     $downloaditem = tdownloaditem::i($this->idpost);

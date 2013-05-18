@@ -12,12 +12,6 @@ class tadmintickets extends tadminmenu {
     return parent::iteminstance(__class__, $id);
   }
   
-  public function gethtml($name = '') {
-    $lang = tlocal::admin('tickets');
-    $lang->ini['tickets'] = $lang->ini['ticket'] + $lang->ini['tickets'];
-    return parent::gethtml($name);
-  }
-  
   protected function getlogoutlink() {
     return $this->gethtml('login')->logout();
   }
@@ -48,21 +42,23 @@ class tadmintickets extends tadminmenu {
       $items = array();
     }
     
-    $html = $this->html;
-    $result .=$html->getitemscount($from, $from + count($items), $count);
+    $html = $this->inihtml();
     $lang = tlocal::admin('tickets');
-    ttheme::$vars['ticket_status'] = new ticket_status();
+    $lang->ini['tickets'] = $lang->ini['ticket'] + $lang->ini['tickets'];
+    $result .=$html->getitemscount($from, $from + count($items), $count);
+
+    ttheme::$vars['poststatus'] = new poststatus();
     $table = $html->tableposts($items, array(
     array('center', $lang->date, '$post.date'),
     array('left', $lang->posttitle, '$post.bookmark'),
     array('left', $lang->author, '$post.authorlink'),
-    array('left', $lang->status, '$ticket_status.status'),
+    array('left', $lang->status, '$poststatus.status'),
     array('left', $lang->category, '$post.category'),
-    array('left', $lang->state, '$ticket_status.state'),
+    array('left', $lang->state, '$poststatus.state'),
     array('center', $lang->edit, '<a href="' . tadminhtml::getadminlink('/admin/tickets/editor/', 'id') . '=$post.id">' . $lang->edit . '</a>'),
     ));
     
-    unset(ttheme::$vars['ticket_status']);
+    unset(ttheme::$vars['poststatus']);
     //wrap form
     if (litepublisher::$options->group != 'ticket') {
       $args = new targs();
@@ -100,26 +96,6 @@ class tadmintickets extends tadminmenu {
         $tickets->edit($ticket);
       }
     }
-  }
-  
-}//class
-
-class ticket_status {
-  
-  public function __get($name) {
-    $ticket = ttheme::$vars['post'];
-    $lang = tlocal::i();
-    switch ($name) {
-      case 'status':
-    return $lang->{$ticket->status};
-      
-      case 'prio':
-    return $lang->{$ticket->prio};
-      
-      case 'state':
-    return $lang->{$ticket->state};
-    }
-    return '';
   }
   
 }//class

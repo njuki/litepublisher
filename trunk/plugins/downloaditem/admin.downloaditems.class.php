@@ -12,24 +12,20 @@ class tadmindownloaditems extends tadminmenu {
     return parent::iteminstance(__class__, $id);
   }
   
-  public function gethtml($name = '') {
-    $lang = tlocal::admin();
-    $lang->ini['downloaditems'] = $lang->ini['downloaditem'] + $lang->ini['downloaditems'];
-    return parent::gethtml($name);
-  }
-  
   protected function getlogoutlink() {
     return $this->gethtml('login')->logout();
   }
   
   public function getcontent() {
     $result = '';
-    //$result = $this->logoutlink;
-    $html = $this->html;
-    $args = targs::i();
-    $args->adminurl = $this->adminurl;
-    $args->editurl = tadminhtml::getadminlink('/admin/downloaditems/editor/', 'id');
+    $html = $this->inihtml();
     $lang = tlocal::admin('downloaditems');
+    $lang->ini['downloaditems'] = $lang->ini['downloaditem'] + $lang->ini['downloaditems'];
+
+    $args = new targs();
+    $args->adminurl = $this->adminurl;
+$editurl = tadminhtml::getadminlink('/admin/downloaditems/editor/', 'id');
+    $args->editurl = $editurl;
     
     $downloaditems = tdownloaditems::i();
     $perpage = 20;
@@ -60,16 +56,16 @@ class tadmindownloaditems extends tadminmenu {
     }
 
     $result .=$html->getitemscount($from, $from + count($items), $count);    
-    ttheme::$vars['dlitem_status'] = new dlitem_status();
+    ttheme::$vars['poststatus'] = new poststatus();
     $result .= $html->tableposts($items, array(
     array('right', $lang->downloads, '$post.downloads'),
     array('left', $lang->posttitle, '$post.bookmark'),
     array('left', $lang->status, '$ticket_status.status'),
     array('left', $lang->tags, '$post.tagnames'),
-    array('center', $lang->edit, '<a href="' . tadminhtml::getadminlink('/admin/downloaditems/editor/', 'id') . '=$post.id">' . $lang->edit . '</a>'),
+    array('center', $lang->edit, '<a href="' . $editurl . '=$post.id">' . $lang->edit . '</a>'),
     ));
     
-    unset(ttheme::$vars['dlitem_status']);
+    unset(ttheme::$vars['poststatus']);
 
     $result .= $html->footer();    $result = $html->fixquote($result);
     
@@ -104,23 +100,6 @@ class tadmindownloaditems extends tadminmenu {
         $downloaditems->edit($downloaditem);
       }
     }
-  }
-  
-}//class
-
-class dlitem_status {
-  
-  public function __get($name) {
-    $dl = ttheme::$vars['post'];
-    $lang = tlocal::i();
-    switch ($name) {
-      case 'status':
-    return $lang->{$dl->status};
-      
-      case 'type':
-    return tlocal::get('downloaditem', $dl->type);
-    }
-    return '';
   }
   
 }//class
