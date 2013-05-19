@@ -1,0 +1,17 @@
+(function(window){
+window.lang= window.lang || {};
+window.lang.dialog = {
+  'error': 'Error',
+  'confirm' : 'Confirm',
+  'confirmdelete': "Do you realy want to delete?",
+  'cancel' : 'Cancel',
+  'yes' : 'Yes',
+  'no' : 'No'
+};
+
+window.lang.widgetlang = {
+  'expand': 'Expand',
+  'colapse': 'Colapse'
+};
+
+})( window);
