@@ -22,16 +22,18 @@ class tadminposts extends tadminmenu {
   
   public function getcontent() {
     if (isset($_GET['action']) && in_array($_GET['action'], array('delete', 'setdraft', 'publish'))) {
-      $action = $_GET['action'];
-    } else {
-      return $this->getlist();
+return $this->doaction(tposts::i(), $_GET['action']);
+}
+
+      return $this->gettable(tposts::i(),     $where = "status <> 'deleted' ");
     }
-    
+
+public function     doaction($posts, $action) {
     $id = $this->idget();
-    $posts= tposts::i();
     if (!$posts->itemexists($id)) return $this->notfound;
     $post = tpost::i($id);
     if ($this->isauthor && ($r = tauthor_rights::i()->changeposts($action))) return $r;
+if ($this->isauthor  && (litepublisher::$options->user != $post->author)) return $this->notfound;
     if (!$this->confirmed) {
       $args = new targs();
       $args->id = $id;
@@ -42,28 +44,31 @@ class tadminposts extends tadminmenu {
     }
     
 $html = $this->html;
+$html->push_section('posts');
     switch ($_GET['action']) {
       case 'delete' :
       $posts->delete($id);
-      return $html->h4->confirmeddelete;
+      $result = $html->h4->confirmeddelete;
+break;
       
       case 'setdraft':
       $post->status = 'draft';
       $posts->edit($post);
-      return $html->h4->confirmedsetdraft;
+      $result = $html->h4->confirmedsetdraft;
+break;
       
       case 'publish':
       $post->status = 'published';
       $posts->edit($post);
-      return $html->h4->confirmedpublish;
+      $result = $html->h4->confirmedpublish;
+break;
     }
-    
+        $html->pop_section();
+return $result;
   }
   
-  private function getlist() {
-    $posts = tposts::i();
+  public function gettable($posts, $where) {
     $perpage = 20;
-    $where = "status <> 'deleted' ";
     if ($this->isauthor) $where .= ' and author = ' . litepublisher::$options->user;
     $count = $posts->db->getcount($where);
     $from = $this->getfrom($perpage, $count);
@@ -71,7 +76,8 @@ $html = $this->html;
     if (!$items) $items = array();
     
     $html = $this->html;
-$lang = tlocal::admin('posts');
+$lang = tlocal::admin();
+$html->push_section('posts');
     $result =$html->getitemscount($from, $from + count($items), $count);
     $result .= $html->tableposts($items, array(
     array('center', $lang->date, '$post.date'),
@@ -85,9 +91,10 @@ $lang = tlocal::admin('posts');
     $result .= $html->formbuttons();
 $result = str_replace('$form',$result, $html->simpleform);
     $result = $html->fixquote($result);
-    
+
     $theme = ttheme::i();
     $result .= $theme->getpages('/admin/posts/', litepublisher::$urlmap->page, ceil($count/$perpage));
+    $html->pop_section();
     return $result;
   }
   
@@ -96,13 +103,16 @@ $result = str_replace('$form',$result, $html->simpleform);
     $posts->lock();
     $status = isset($_POST['publish']) ? 'published' : (isset($_POST['setdraft']) ? 'draft' : 'delete');
     if ($this->isauthor && ($r = tauthor_rights::i()->changeposts($status))) return $r;
+$iduser = litepublisher::$options->user;
     foreach ($_POST as $key => $id) {
       if (!is_numeric($id))  continue;
       $id = (int) $id;
       if ($status == 'delete') {
+if ($this->isauthor  && ($iduser != $posts->db->getvalue('author'))) continue;
         $posts->delete($id);
       } else {
         $post = tpost::i($id);
+if ($this->isauthor  && ($iduser != $post->author)) continue;
         $post->status = $status;
         $posts->edit($post);
       }
@@ -111,4 +121,3 @@ $result = str_replace('$form',$result, $html->simpleform);
   }
   
 }//class
-?>
