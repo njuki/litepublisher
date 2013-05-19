@@ -42,7 +42,7 @@ function tjsmergerInstall($self) {
   @chmod($file, 0666);
   
   $jsattr =defined('JSON_UNESCAPED_UNICODE') ? JSON_UNESCAPED_UNICODE : false;
-    $language = litepublisher::$options->language;
+  $language = litepublisher::$options->language;
   $self->lock();
   $self->items = array();
   $section = 'default';
@@ -73,8 +73,8 @@ function tjsmergerInstall($self) {
   $self->add($section, '/js/litepublisher/confirmcomment.min.js');
   $self->add($section, '/js/litepublisher/moderate.min.js');
   $self->add($section, "/lib/languages/$language/comments.min.js");
-
-/*
+  
+  /*
   set_comments_lang($self);
   
   tlocal::usefile('admin');
@@ -97,7 +97,7 @@ $js = 'window.lang = window.lang || {};';
   
   $self->addtext('default', 'dialog', $js . sprintf('lang.dialog = %s;', $jsattr ? json_encode($dialog, $jsattr) : json_encode($dialog)));
   */
-
+  
   $section = 'admin';
   $self->add($section, '/js/jquery/ui-$site.jqueryui_version/jquery-ui-$site.jqueryui_version.custom.min.js');
   $self->add($section, '/js/litepublisher/admin.min.js');
@@ -121,8 +121,8 @@ $js = 'window.lang = window.lang || {};';
   $self->add($section, '/js/litepublisher/fileman.min.js');
   $self->add($section, '/js/litepublisher/fileman.templates.min.js');
   $self->add($section, "/lib/languages/$language/posteditor.min.js");
-
-/*  
+  
+  /*
   $lang =tlocal::admin('editor');
   $self->addtext($section, 'lang', $js . sprintf('lang.posteditor= %s;',  json_encode(
   array(

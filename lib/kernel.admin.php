@@ -196,7 +196,7 @@ public function canrequest() { }
   public function gethtml($name = '') {
     $result = tadminhtml::i();
     if ($name == '') $name = $this->basename;
-    if (!isset($result->ini[$name])) {
+    if (!isset($result->ini[$name]) && $this->parent) {
       $name = $this->owner->items[$this->parent]['name'];
     }
     
@@ -207,6 +207,12 @@ public function canrequest() { }
   
   public function getlang() {
     return tlocal::i($this->name);
+  }
+  
+  public function inihtml($name = '') {
+    $html = $this->gethtml($name);
+    $html->iniplugin(get_class($this));
+    return $html;
   }
   
   public function getconfirmed() {
@@ -522,9 +528,9 @@ class tadminhtml {
   }
   
   public function tableposts(array $items, array $struct) {
-    $head = '';
     $body = '';
-    $tml = '<tr>';
+    $head = '<th align="center"><input type="checkbox" name="invertcheck" class="invertcheck" /></th>';
+    $tml = '<tr><td align="center"><input type="checkbox" name="checkbox-$post.id" id="checkbox-$post.id" value="$post.id"/>$post.id</td>';
     foreach ($struct as $elem) {
       $head .= sprintf('<th align="%s">%s</th>', $elem[0], $elem[1]);
       $tml .= sprintf('<td align="%s">%s</td>', $elem[0], $elem[2]);
@@ -543,6 +549,10 @@ class tadminhtml {
     $args->tablehead  = $head;
     $args->tablebody = $body;
     return $theme->parsearg($this->ini['common']['table'], $args);
+  }
+  
+  public function getitemscount($from, $to, $count) {
+    return sprintf($this->h4->itemscount, $from, $to, $count);
   }
   
   public function get_table_checkbox($name) {
@@ -602,6 +612,26 @@ class tadminhtml {
     $ini = parse_ini_file($filename, true);
     tfilestorage::savevar($datafile, $ini);
     return $ini;
+  }
+  
+  public function inidir($dir) {
+    $html_ini = self::cacheini($dir . 'html.ini');
+    if (is_array($html_ini)) $this->ini = $html_ini + $this->ini;
+    
+    $lang_ini = self::cacheini($dir . litepublisher::$options->language . '.admin.ini');
+    if (is_array($lang_ini)) {
+      $lang = tlocal::i();
+      $lang->ini = $lang_ini + $lang->ini ;
+    }
+  }
+  
+  public function iniplugin($class) {
+    if (isset(litepublisher::$classes->included_files[$class])) {
+      $dir = dirname(litepublisher::$classes->included_files[$class]);
+    } else {
+      $dir = dirname(litepublisher::$classes->getclassfilename($class));
+    }
+    $this->inidir($dir . '/resource/');
   }
   
 }//class
@@ -1293,5 +1323,14 @@ class tposteditor extends tadminmenu {
   }
   
 }//class
+
+class poststatus {
+  public function __get($name) {
+    $post = ttheme::$vars['post'];
+  $value = $post->{$name};
+    $lang = tlocal::i();
+  return $lang->{$value};
+  }
+}
 
 ?>

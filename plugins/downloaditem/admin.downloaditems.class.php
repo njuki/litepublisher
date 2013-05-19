@@ -21,10 +21,10 @@ class tadmindownloaditems extends tadminmenu {
     $html = $this->inihtml();
     $lang = tlocal::admin('downloaditems');
     $lang->ini['downloaditems'] = $lang->ini['downloaditem'] + $lang->ini['downloaditems'];
-
+    
     $args = new targs();
     $args->adminurl = $this->adminurl;
-$editurl = tadminhtml::getadminlink('/admin/downloaditems/editor/', 'id');
+    $editurl = tadminhtml::getadminlink('/admin/downloaditems/editor/', 'id');
     $args->editurl = $editurl;
     
     $downloaditems = tdownloaditems::i();
@@ -54,21 +54,23 @@ $editurl = tadminhtml::getadminlink('/admin/downloaditems/editor/', 'id');
     }  else {
       $items = array();
     }
-
-$args->formtitle = $html->editlink;
-    ttheme::$vars['poststatus'] = new poststatus();
-    $result .= $html->adminform(
-$html->getitemscount($from, $from + count($items), $count) .
-$html->tableposts($items, array(
+    
+    $result .= $html->editlink();
+    $result .= $html->getitemscount($from, $from + count($items), $count);
+    $result .= $html->tableposts($items, array(
     array('right', $lang->downloads, '$post.downloads'),
     array('left', $lang->posttitle, '$post.bookmark'),
     array('left', $lang->status, '$ticket_status.status'),
     array('left', $lang->tags, '$post.tagnames'),
     array('center', $lang->edit, '<a href="' . $editurl . '=$post.id">' . $lang->edit . '</a>'),
-    )) . $html->footer(), $args);
-    unset(ttheme::$vars['poststatus']);    
+    ));
+    
+    $html->push_section('posts');
+    $result .= $html->formbuttons();
+    $result = str_replace('$form',$result, $html->simpleform);
     $result = $html->fixquote($result);
-
+    $html->pop_section();
+    
     $theme = ttheme::i();
     $result .= $theme->getpages($this->url, litepublisher::$urlmap->page, ceil($count/$perpage));
     return $result;

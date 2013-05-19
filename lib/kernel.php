@@ -1352,7 +1352,7 @@ class tclasses extends titems {
   public $remap;
   public $factories;
   public $instances;
-  private $included_files;
+  public $included_files;
   
   public static function i() {
     if (!isset(litepublisher::$classes)) {
@@ -1473,6 +1473,7 @@ class tclasses extends titems {
   public function _autoload($class) {
     if ($filename = $this->getclassfilename($class)) {
       $this->include_file($filename);
+      $this->included_files[$class] = $filename;
     }
   }
   
@@ -1483,7 +1484,7 @@ class tclasses extends titems {
     }
     
     if (in_array($filename, $this->included_files)) return;
-    $this->included_files[] = $filename;
+    
     if ($s =  tfilestorage::$memcache->get($filename)) {
       $i = strpos($s, ';');
       $revision = substr($s, 0, $i);

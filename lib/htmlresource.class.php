@@ -286,8 +286,8 @@ class tadminhtml {
   
   public function tableposts(array $items, array $struct) {
     $body = '';
-      $head = '<th align="center"><input type="checkbox" name="invertcheck" class="invertcheck" /></th>';
-      $tml = '<tr><td align="center"><input type="checkbox" name="checkbox-$post.id" id="checkbox-$post.id" value="$post.id"/>$post.id</td>';
+    $head = '<th align="center"><input type="checkbox" name="invertcheck" class="invertcheck" /></th>';
+    $tml = '<tr><td align="center"><input type="checkbox" name="checkbox-$post.id" id="checkbox-$post.id" value="$post.id"/>$post.id</td>';
     foreach ($struct as $elem) {
       $head .= sprintf('<th align="%s">%s</th>', $elem[0], $elem[1]);
       $tml .= sprintf('<td align="%s">%s</td>', $elem[0], $elem[2]);
@@ -307,10 +307,10 @@ class tadminhtml {
     $args->tablebody = $body;
     return $theme->parsearg($this->ini['common']['table'], $args);
   }
-
-public function getitemscount($from, $to, $count) {
-return sprintf($this->h4->itemscount, $from, $to, $count);
-}
+  
+  public function getitemscount($from, $to, $count) {
+    return sprintf($this->h4->itemscount, $from, $to, $count);
+  }
   
   public function get_table_checkbox($name) {
     return array('center', $this->invertcheckbox, str_replace('$checkboxname', $name, $this->checkbox));
@@ -370,27 +370,27 @@ return sprintf($this->h4->itemscount, $from, $to, $count);
     tfilestorage::savevar($datafile, $ini);
     return $ini;
   }
-
-public function inidir($dir) {
-$html_ini = self::cacheini($dir . 'html.ini');
-      if (is_array($html_ini)) $this->ini = $html_ini + $this->ini;
-
-$lang_ini = self::cacheini($dir . litepublisher::$options->language . '.admin.ini');
-if (is_array($lang_ini)) {
-$lang = tlocal::i();
+  
+  public function inidir($dir) {
+    $html_ini = self::cacheini($dir . 'html.ini');
+    if (is_array($html_ini)) $this->ini = $html_ini + $this->ini;
+    
+    $lang_ini = self::cacheini($dir . litepublisher::$options->language . '.admin.ini');
+    if (is_array($lang_ini)) {
+      $lang = tlocal::i();
       $lang->ini = $lang_ini + $lang->ini ;
-}
-}
-
-public function iniplugin($class) {
-if (isset(litepublisher::$classes->included_files[$class])) {
-$dir = dirname(litepublisher::$classes->included_files[$class]);
-} else {
-$dir = dirname(litepublisher::$classes->getclassfilename($class));
-}
-$this->inidir($dir . '/resource/');
-}  
-
+    }
+  }
+  
+  public function iniplugin($class) {
+    if (isset(litepublisher::$classes->included_files[$class])) {
+      $dir = dirname(litepublisher::$classes->included_files[$class]);
+    } else {
+      $dir = dirname(litepublisher::$classes->getclassfilename($class));
+    }
+    $this->inidir($dir . '/resource/');
+  }
+  
 }//class
 
 class tautoform {
