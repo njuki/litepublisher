@@ -45,6 +45,7 @@ class tadmintickets extends tadminmenu {
     $html = $this->inihtml();
     $lang = tlocal::admin('tickets');
     $lang->ini['tickets'] = $lang->ini['ticket'] + $lang->ini['tickets'];
+    $result .=$html->editlink();
     $result .=$html->getitemscount($from, $from + count($items), $count);
 
     ttheme::$vars['poststatus'] = new poststatus();

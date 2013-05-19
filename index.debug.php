@@ -1,5 +1,5 @@
 <?php
-//set_time_limit(1);
+//set_time_limit(4);
 error_reporting(E_ALL | E_NOTICE | E_STRICT | E_WARNING );
 ini_set('display_errors', 1);
  Header( 'Cache-Control: no-cache, must-revalidate');
@@ -100,11 +100,11 @@ if (dbversion) litepublisher::$db = new tdatabase();
 
   litepublisher::$urlmap = turlmap::i();
 
-ttheme::clearcache();
+//ttheme::clearcache();
 tlocal::clearcache();
 litepublisher::$urlmap->clearcache();
 //tthemegenerator::i()->parseselectors();
-//tupdater::i()->run(5.56);
+//tupdater::i()->run(5.59);
 
 /*
 litepublisher::$urlmap->onclose(function() {

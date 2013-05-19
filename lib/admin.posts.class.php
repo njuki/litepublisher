@@ -33,7 +33,7 @@ class tadminposts extends tadminmenu {
     $post = tpost::i($id);
     if ($this->isauthor && ($r = tauthor_rights::i()->changeposts($action))) return $r;
     if (!$this->confirmed) {
-      $args = targs::i();
+      $args = new targs();
       $args->id = $id;
       $args->adminurl = $this->adminurl;
       $args->action = $action;
@@ -41,27 +41,26 @@ class tadminposts extends tadminmenu {
       return $this->html->confirmform($args);
     }
     
-    $h4 = $this->html->h4;
+$html = $this->html;
     switch ($_GET['action']) {
       case 'delete' :
       $posts->delete($id);
-      return $h4->confirmeddelete;
+      return $html->h4->confirmeddelete;
       
       case 'setdraft':
       $post->status = 'draft';
       $posts->edit($post);
-      return $h4->confirmedsetdraft;
+      return $html->h4->confirmedsetdraft;
       
       case 'publish':
       $post->status = 'published';
       $posts->edit($post);
-      return $h4->confirmedpublish;
+      return $html->h4->confirmedpublish;
     }
     
   }
   
   private function getlist() {
-    $result = '';
     $posts = tposts::i();
     $perpage = 20;
     $where = "status <> 'deleted' ";
@@ -72,18 +71,19 @@ class tadminposts extends tadminmenu {
     if (!$items) $items = array();
     
     $html = $this->html;
-    $result .=sprintf($html->h4->count, $from, $from + count($items), $count);
-    $result .= $html->listhead();
-    $args = targs::i();
-    $args->adminurl = $this->adminurl;
-    $args->editurl = tadminhtml::getadminlink($this->url . 'editor/', 'id');
-    foreach ($items  as $id ) {
-      $post = tpost::i($id);
-      ttheme::$vars['post'] = $post;
-    $args->status = $this->lang->{$post->status};
-      $result .= $html->itemlist($args);
-    }
-    $result .= $html->listfooter();
+$lang = tlocal::admin('posts');
+    $result =$html->getitemscount($from, $from + count($items), $count);
+    $result .= $html->tableposts($items, array(
+    array('center', $lang->date, '$post.date'),
+    array('left', $lang->posttitle, '$post.bookmark'),
+    array('left', $lang->category, '$post.category'),
+    array('left', $lang->status, '$poststatus.status'),
+    array('center', $lang->edit, '<a href="' . tadminhtml::getadminlink('/admin/posts/editor/', 'id') . '=$post.id">' . $lang->edit . '</a>'),
+    array('center', $lang->delete, '<a href="' . $this->adminurl . '=$post.id&action=delete">' . $lang->delete . '</a>'),
+    ));
+
+    $result .= $html->formbuttons();
+$result = str_replace('$form',$result, $html->simpleform);
     $result = $html->fixquote($result);
     
     $theme = ttheme::i();

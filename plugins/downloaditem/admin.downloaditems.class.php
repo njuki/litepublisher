@@ -55,20 +55,20 @@ $editurl = tadminhtml::getadminlink('/admin/downloaditems/editor/', 'id');
       $items = array();
     }
 
-    $result .=$html->getitemscount($from, $from + count($items), $count);    
+$args->formtitle = $html->editlink;
     ttheme::$vars['poststatus'] = new poststatus();
-    $result .= $html->tableposts($items, array(
+    $result .= $html->adminform(
+$html->getitemscount($from, $from + count($items), $count) .
+$html->tableposts($items, array(
     array('right', $lang->downloads, '$post.downloads'),
     array('left', $lang->posttitle, '$post.bookmark'),
     array('left', $lang->status, '$ticket_status.status'),
     array('left', $lang->tags, '$post.tagnames'),
     array('center', $lang->edit, '<a href="' . $editurl . '=$post.id">' . $lang->edit . '</a>'),
-    ));
-    
-    unset(ttheme::$vars['poststatus']);
+    )) . $html->footer(), $args);
+    unset(ttheme::$vars['poststatus']);    
+    $result = $html->fixquote($result);
 
-    $result .= $html->footer();    $result = $html->fixquote($result);
-    
     $theme = ttheme::i();
     $result .= $theme->getpages($this->url, litepublisher::$urlmap->page, ceil($count/$perpage));
     return $result;
