@@ -371,22 +371,25 @@ return sprintf($this->h4->itemscount, $from, $to, $count);
     return $ini;
   }
 
-public function getres($class) {
+public function inidir($dir) {
+$html_ini = self::cacheini($dir . 'html.ini');
+      if (is_array($html_ini)) $this->ini = $html_ini + $this->ini;
+
+$lang_ini = self::cacheini($dir . litepublisher::$options->language . '.admin.ini');
+if (is_array($lang_ini)) {
+$lang = tlocal::i();
+      $lang->ini = $lang_ini + $lang->ini ;
+}
+}
+
+public function iniplugin($class) {
 if (isset(litepublisher::$classes->included_files[$class])) {
 $dir = dirname(litepublisher::$classes->included_files[$class]);
 } else {
 $dir = dirname(litepublisher::$classes->getclassfilename($class));
 }
-  
-$dir .= '/resource/';
-$html = self::cacheini($dir . 'html.ini');
-      if (is_array($html)) $this->ini = $html + $this->ini;
-
-$inilang = self::cacheini($dir . litepublisher::$options->languages . '.admin.ini');
-if (is_array($inilang)) {
-$lang = tlocal::i();
-      $lang->ini = $inilang + $lang->ini ;
-}
+$this->inidir($dir . '/resource/');
+}  
 
 }//class
 

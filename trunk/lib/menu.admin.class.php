@@ -196,7 +196,7 @@ public function canrequest() { }
   public function gethtml($name = '') {
     $result = tadminhtml::i();
     if ($name == '') $name = $this->basename;
-    if (!isset($result->ini[$name])) {
+    if (!isset($result->ini[$name]) && $this->parent) {
       $name = $this->owner->items[$this->parent]['name'];
     }
     
@@ -207,6 +207,12 @@ public function canrequest() { }
   
   public function getlang() {
     return tlocal::i($this->name);
+  }
+
+  public function inihtml($name = '') {
+    $html = $this->gethtml($name);
+$html->iniplugin(get_class($this));
+return $html;
   }
   
   public function getconfirmed() {

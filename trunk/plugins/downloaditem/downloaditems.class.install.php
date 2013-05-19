@@ -19,8 +19,7 @@ function tdownloaditemsInstall($self) {
   $optimizer->addevent('postsdeleted', get_class($self), 'postsdeleted');
   $optimizer->unlock();
   
-  $merger = tlocalmerger::i();
-  $merger->addplugin(tplugins::getname(__file__));
+  tlocalmerger::i()->add('default', "plugins/" . basename(dirname(__file__)) . "/resource/" . litepublisher::$options->language . ".ini");
   
   $ini = parse_ini_file($dir . litepublisher::$options->language . '.install.ini', false);
   
@@ -47,7 +46,10 @@ function tdownloaditemsInstall($self) {
   $classes->Add('taboutparser', 'about.parser.class.php', $base);
   $classes->unlock();
   
+tadminhtml::i()->inidir(dirname(__file__) . '/resource/');
   $lang = tlocal::i('downloaditems');
+    $lang->ini['downloaditems'] = $lang->ini['downloaditem'] + $lang->ini['downloaditems'];
+
   $adminmenus = tadminmenus::i();
   $adminmenus->lock();
   $parent = $adminmenus->createitem(0, 'downloaditems', 'editor', 'tadmindownloaditems');

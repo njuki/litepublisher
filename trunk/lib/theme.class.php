@@ -189,6 +189,8 @@ class ttheme extends tevents {
       if (!$var) {
         if (isset($classes->classes[$name])) {
           $var = $classes->getinstance($classes->classes[$name]);
+          } elseif (isset($classes->items[$name])) {
+$var = $classes->getinstance($name);
         } else {
           $class = 't' . $name;
           if (isset($classes->items[$class])) $var = $classes->getinstance($class);

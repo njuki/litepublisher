@@ -246,9 +246,11 @@ class tmenus extends titems {
       }
       return $result;
     }
+
     $parents = array($id);
     $parent = $this->items[$id]['parent'];
-    while ($parent != 0) {
+// fix of circle bug
+    while ($parent && ($parent != $id)) {
       array_unshift ($parents, $parent);
       $parent = $this->items[$parent]['parent'];
     }

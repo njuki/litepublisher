@@ -18,7 +18,7 @@ class tclasses extends titems {
   public $remap;
   public $factories;
   public $instances;
-  ppublic $included_files;
+  public $included_files;
   
   public static function i() {
     if (!isset(litepublisher::$classes)) {
