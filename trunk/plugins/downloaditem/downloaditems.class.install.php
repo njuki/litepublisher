@@ -46,10 +46,10 @@ function tdownloaditemsInstall($self) {
   $classes->Add('taboutparser', 'about.parser.class.php', $base);
   $classes->unlock();
   
-tadminhtml::i()->inidir(dirname(__file__) . '/resource/');
+  tadminhtml::i()->inidir(dirname(__file__) . '/resource/');
   $lang = tlocal::i('downloaditems');
-    $lang->ini['downloaditems'] = $lang->ini['downloaditem'] + $lang->ini['downloaditems'];
-
+  $lang->ini['downloaditems'] = $lang->ini['downloaditem'] + $lang->ini['downloaditems'];
+  
   $adminmenus = tadminmenus::i();
   $adminmenus->lock();
   $parent = $adminmenus->createitem(0, 'downloaditems', 'editor', 'tadmindownloaditems');

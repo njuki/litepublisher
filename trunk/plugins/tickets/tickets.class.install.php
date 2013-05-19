@@ -13,11 +13,11 @@ function tticketsInstall($self) {
   
   $dirname = basename(dirname(__file__));
   tlocalmerger::i()->add('default', "plugins/$dirname/resource/" . litepublisher::$options->language . ".ini");
-tadminhtml::i()->inidir(dirname(__file__) . '/resource/');
-    $lang = tlocal::admin('tickets');
-    $lang->ini['tickets'] = $lang->ini['ticket'] + $lang->ini['tickets'];
-
-    $self->data['cats'] = array();
+  tadminhtml::i()->inidir(dirname(__file__) . '/resource/');
+  $lang = tlocal::admin('tickets');
+  $lang->ini['tickets'] = $lang->ini['ticket'] + $lang->ini['tickets'];
+  
+  $self->data['cats'] = array();
   $self->data['idcomauthor'] =  tusers::i()->add(array(
   'email' => '',
   'name' => tlocal::get('ticket', 'comname'),

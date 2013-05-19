@@ -208,11 +208,11 @@ public function canrequest() { }
   public function getlang() {
     return tlocal::i($this->name);
   }
-
+  
   public function inihtml($name = '') {
     $html = $this->gethtml($name);
-$html->iniplugin(get_class($this));
-return $html;
+    $html->iniplugin(get_class($this));
+    return $html;
   }
   
   public function getconfirmed() {
