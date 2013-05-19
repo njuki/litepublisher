@@ -20,4 +20,20 @@ $name = 'downloaditem';
 
 $lm->unlock();
 
+$js = tjsmerger::i();
+$js->lock();
+  $section = 'default';
+$js->deletetext($section, 'widgetlang');
+$js->deletetext($section, 'dialog');
+  $js->add($section, "/lib/languages/$language/default.min.js");
+
+  $section = 'comments';
+$js->deletetext($section, 'lang');
+  $js->add($section, "/lib/languages/$language/comments.min.js");
+
+  $section = 'posteditor';
+$js->deletetext($section, 'lang');
+  $js->add($section, "/lib/languages/$language/posteditor.min.js");
+
+$js->unlock();
 }
