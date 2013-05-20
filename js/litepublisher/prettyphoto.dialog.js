@@ -6,11 +6,14 @@
 **/
 
 (function( $ ){
-  $.messagebox = function(title, mesg) {
+  $.messagebox = function(title, mesg, callback) {
     return $.prettyPhotoDialog({
       title: title,
       html: "<p>" + mesg + "</p>",
-      width: 200
+      width: 200,
+close: function() {
+if ($.isFunction(callback)) callback();
+}
     });
   };
   
