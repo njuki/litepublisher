@@ -73,3 +73,10 @@ clear: both;
 
 	#dropzone { border: solid 1px blue;}
 	#dropzone.drag { border: solid 3px green;}
+
+.flash-hidden {
+     position: absolute;
+     left: -10000px; 
+  width: 0;
+   height: 0; 
+}
