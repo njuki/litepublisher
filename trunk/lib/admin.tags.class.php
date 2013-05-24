@@ -44,7 +44,7 @@ class tadmintags extends tadminmenu {
     if (isset($_GET['action']) && ($_GET['action'] == 'delete') && $tags->itemexists($id)) {
       if  ($this->confirmed) {
         $tags->delete($id);
-        $result .= $html->h2->successdeleted;
+        $result .= $html->h4->successdeleted;
       } else {
         return $html->confirmdelete($id, $this->adminurl, $lang->confirmdelete);
       }
@@ -155,6 +155,3 @@ class tadmintags extends tadminmenu {
   }
   
 }//class
-
-
-?>
