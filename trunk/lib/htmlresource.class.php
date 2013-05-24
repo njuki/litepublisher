@@ -383,12 +383,17 @@ class tadminhtml {
   }
   
   public function iniplugin($class) {
+    $this->inidir($this->getresourcedir($class));
+}
+
+public function getresourcedir($class) {
     if (isset(litepublisher::$classes->included_files[$class])) {
       $dir = dirname(litepublisher::$classes->included_files[$class]);
     } else {
       $dir = dirname(litepublisher::$classes->getclassfilename($class));
     }
-    $this->inidir($dir . '/resource/');
+
+return $dir . '/resource/';
   }
   
 }//class

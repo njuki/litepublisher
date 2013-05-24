@@ -28,14 +28,29 @@ class tnode {
     Return $result;
   }
   
-  
-  public static function addcdata($node, $name, $value) {
+    public static function addcdata($node, $name, $value) {
     $result = $node->ownerDocument->createElement($name);
     $textnode = $node->ownerDocument->createCDATASection($value);
     $result->appendChild($textnode);
     $node->appendChild($result);
     Return $result;
   }
+
+public static function clone($node){
+    $result = $node->ownerDocument->createElement($node->nodeName);
+                foreach($node->attributes as $value) $result->setAttribute($value->nodeName,$value->value);
+                if(!$node->childNodes) return $result;
+
+                    foreach($node->childNodes as $child) {
+        if($child->nodeName=="#text") {
+            $result->appendChild($node->ownerDocument->createTextNode($child->nodeValue));
+} else {
+            $result->appendChild(self::clone($child));
+}
+    }
+            
+    return $result;
+}
   
 }//class
 function _struct_to_array(&$values, &$i)  {
@@ -178,5 +193,5 @@ class tdomrss extends domDocument {
     $s = $this->saveXML();
     return substr($s, strpos($s, '?>') + 2);
   }
-  
+
 }//class
