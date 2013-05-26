@@ -62,15 +62,14 @@ class tmenus extends titems {
       if (array_key_exists($prop, $item->data)) unset($item->data[$prop]);
     }
     $item->id = $id;
-    $urlmap = turlmap::i();
-    $item->idurl = $urlmap->Add($item->url, get_class($item), $item->id);
+    $item->idurl = litepublisher::$urlmap->Add($item->url, get_class($item), $item->id);
     if ($item->status != 'draft') $item->status = 'published';
     $this->lock();
     $this->sort();
     $item->save();
     $this->unlock();
     $this->added($id);
-    $urlmap->clearcache();
+    litepublisher::$urlmap->clearcache();
     return $id;
   }
   
