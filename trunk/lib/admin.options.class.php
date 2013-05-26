@@ -250,7 +250,7 @@ class Tadminoptions extends tadminmenu {
       
       case 'secure':
       $args->echoexception = $options->echoexception;
-      $args->cookie = $options->cookieenabled;
+      $args->cookieenabled = $options->cookieenabled;
       $args->usersenabled = $options->usersenabled;
       $args->reguser = $options->reguser;
       $args->parsepost = $options->parsepost;
@@ -268,7 +268,32 @@ class Tadminoptions extends tadminmenu {
       'ftpsocket' => 'ftpsocket',
       //'ssh2' => 'ssh2'
       ), $backuper->filertype);
-      break;
+
+$args->formtitle = $lang->securehead;
+$result = $html->adminform('
+[checkbox=echoexception]
+[checkbox=cookieenabled]
+[checkbox=xxxcheck]
+[checkbox=usersenabled]
+[checkbox=reguser]
+[checkbox=removephp]
+[checkbox=phpcode]
+[checkbox=parsepost]
+[checkbox=show_draft_post]
+[combo=filertype]
+[checkbox=useshell]
+', $args);
+
+$args->formtitle = $lang->changepassword;
+$args->oldpassword = '';
+$args->newpassword = '';
+$args->repassword = '';
+$args->items = $html->parsearg('[password=oldpassword]
+[password=newpassword]
+[password=repassword]', $args);
+
+$result .= $html->secondform($args);
+return $result;
     }
     
   $result  = $this->html->{$this->name}($args);
@@ -441,7 +466,7 @@ class Tadminoptions extends tadminmenu {
         return $h2->passwordchanged;
       } else {
         $options->echoexception = isset($echoexception);
-        $options->cookieenabled = isset($cookie);
+        $options->cookieenabled = isset($cookieenabled);
         $options->reguser = isset($reguser);
         $this->usersenabled = isset($usersenabled);
         $options->parsepost = isset($parsepost);
