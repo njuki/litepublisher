@@ -87,7 +87,18 @@ class tlocal {
   public static function usefile($name) {
     self::i()->check($name);
   }
-  
+
+public static function inifile($class, $filename) {
+$self = self::i();
+    $ini = ttheme::inifile($class,  litepublisher::$options->language . $filename);
+    if (is_array($ini)) {
+      $self->ini = $ini + $self->ini ;
+$keys = array_keys($ini);
+$self->section = array_shift($keys);
+}
+return $self;
+  }
+
   //backward
   public static function loadlang($name) {
     self::usefile($name);

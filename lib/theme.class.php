@@ -428,6 +428,19 @@ class ttheme extends tevents {
     tfiler::delete(litepublisher::$paths->data . 'themes', false, false);
     litepublisher::$urlmap->clearcache();
   }
+
+  public static function cacheini($filename) {
+    $datafile = tlocal::getcachedir() . sprintf('cacheini.%s.php', md5($filename));
+    if (tfilestorage::loadvar($datafile, $ini) && is_array($ini)) return $ini;
+    $ini = parse_ini_file($filename, true);
+    tfilestorage::savevar($datafile, $ini);
+    return $ini;
+  }
+  
+  public static function inifile($class, $filename) {
+$dir = litepublisher::$classes->getresourcedir($class);
+return self::cacheini($dir . $filename);
+  }
   
   public static function getwidgetpath($path) {
     if ($path === '') return '';

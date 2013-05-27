@@ -64,6 +64,7 @@ class tlocalmerger extends tfilemerger {
     $ini = array();
     foreach ($this->items[$name]['files'] as $filename) {
       $realfilename = $this->getrealfilename($filename);
+      if  (!file_exists($realfilename)) continue;
       if  (!file_exists($realfilename)) $this->error(sprintf('The file "%s" not found', $filename));
       if (!($parsed = parse_ini_file($realfilename, true))) $this->error(sprintf('Error parse "%s" ini file', $realfilename));
       if (count($ini) == 0) {
