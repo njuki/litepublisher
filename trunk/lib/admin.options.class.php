@@ -505,6 +505,7 @@ return $result;
     $menus = tadminmenus::i();
     $menus->lock();
     if ($value) {
+if (!$menus->url2id('/admin/users/')) {
       $id = $menus->createitem(0, 'users', 'admin', 'tadminusers');
       $menus->createitem($id, 'pages', 'author', 'tadminuserpages');
       $menus->createitem($id, 'groups', 'admin', 'tadmingroups');
@@ -514,6 +515,7 @@ return $result;
       
       $menus->createitem($menus->url2id('/admin/posts/'),
       'authorpage', 'author', 'tadminuserpages');
+}
     } else {
       $menus->deletetree($menus->url2id('/admin/users/'));
     }

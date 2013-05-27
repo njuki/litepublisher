@@ -201,6 +201,17 @@ class tclasses extends titems {
       if (@is_a($instance, $classname)) return $this->getinstance($factory);
     }
   }
+
+public function getresourcedir($c) {
+    $class = self::get_class_name($c);
+    if (isset($this->included_files[$class])) {
+      $dir = dirname($this->included_files[$class]);
+    } else {
+      $dir = dirname($this->getclassfilename($class));
+    }
+
+return $dir . '/resource/';
+  }
   
 }//class
 

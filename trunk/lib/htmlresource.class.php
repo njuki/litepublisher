@@ -363,19 +363,11 @@ class tadminhtml {
     return $result;
   }
   
-  public static function cacheini($filename) {
-    $datafile = tlocal::getcachedir() . sprintf('cacheini.%s.php', md5($filename));
-    if (tfilestorage::loadvar($datafile, $ini) && is_array($ini)) return $ini;
-    $ini = parse_ini_file($filename, true);
-    tfilestorage::savevar($datafile, $ini);
-    return $ini;
-  }
-  
   public function inidir($dir) {
-    $html_ini = self::cacheini($dir . 'html.ini');
+    $html_ini = ttheme::cacheini($dir . 'html.ini');
     if (is_array($html_ini)) $this->ini = $html_ini + $this->ini;
     
-    $lang_ini = self::cacheini($dir . litepublisher::$options->language . '.admin.ini');
+    $lang_ini = ttheme::cacheini($dir . litepublisher::$options->language . '.admin.ini');
     if (is_array($lang_ini)) {
       $lang = tlocal::i();
       $lang->ini = $lang_ini + $lang->ini ;
@@ -383,19 +375,9 @@ class tadminhtml {
   }
   
   public function iniplugin($class) {
-    $this->inidir($this->getresourcedir($class));
+    return $this->inidir(litepublisher::$classes->getresourcedir($class));
 }
 
-public function getresourcedir($class) {
-    if (isset(litepublisher::$classes->included_files[$class])) {
-      $dir = dirname(litepublisher::$classes->included_files[$class]);
-    } else {
-      $dir = dirname(litepublisher::$classes->getclassfilename($class));
-    }
-
-return $dir . '/resource/';
-  }
-  
 }//class
 
 class tautoform {
