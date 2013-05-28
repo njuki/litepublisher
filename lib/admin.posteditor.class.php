@@ -112,6 +112,7 @@ class tposteditor extends tadminmenu {
   }
   
   public function canrequest() {
+tlocal::admin()->searchsect[] = 'editor';
     $this->isauthor = false;
     $this->basename = 'editor';
     $this->idpost = $this->idget();
