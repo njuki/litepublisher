@@ -43,9 +43,10 @@
         return false;
       });
       
-      $('form:first').submit(function() {
+      $('form:first').submit(function(event) {
 var title = $("input[name='title']");
         if ("" == $.trim(title.val())) {
+event.stopImmediatePropagation();
           $.messagebox(lang.dialog.error, lang.posteditor.emptytitle, function() {
 title.focus();
 });
