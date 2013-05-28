@@ -11,6 +11,7 @@ class tlocal {
   public $loaded;
   public $ini;
   public $section;
+public $searchsect;
   
   public static function i($section = '') {
     if (!isset(self::$self)) {
@@ -30,6 +31,7 @@ class tlocal {
   public function __construct() {
     $this->ini = array();
     $this->loaded = array();
+$this->searchsect = array('common', 'default');
   }
   
   public static function get($section, $key) {
@@ -39,15 +41,19 @@ class tlocal {
   
   public function __get($name) {
     if (isset($this->ini[$this->section][$name])) return $this->ini[$this->section][$name];
-    if (isset($this->ini['common'][$name])) return $this->ini['common'][$name];
-    if (isset($this->ini['default'][$name])) return $this->ini['default'][$name];
+foreach ($this->searchsect as $section) {
+    if (isset($this->ini[$section][$name])) return $this->ini[$section][$name];
+}
     return '';
   }
   
   public function __isset($name) {
-    return isset($this->ini[$this->section][$name]) ||
-    isset($this->ini['common'][$name]) ||
-    isset($this->ini['default'][$name]);
+if (isset($this->ini[$this->section][$name])) return true;
+foreach ($this->searchsect as $section) {
+    if (isset($this->ini[$section][$name])) return true;
+}
+
+return false;
   }
   
   public function __call($name, $args) {

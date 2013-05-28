@@ -36,7 +36,7 @@ class tnode {
     Return $result;
   }
 
-public static function clone($node){
+public static function copy($node){
     $result = $node->ownerDocument->createElement($node->nodeName);
                 foreach($node->attributes as $value) $result->setAttribute($value->nodeName,$value->value);
                 if(!$node->childNodes) return $result;
@@ -45,7 +45,7 @@ public static function clone($node){
         if($child->nodeName=="#text") {
             $result->appendChild($node->ownerDocument->createTextNode($child->nodeValue));
 } else {
-            $result->appendChild(self::clone($child));
+            $result->appendChild(self::copy($child));
 }
     }
             

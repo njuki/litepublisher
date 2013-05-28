@@ -101,6 +101,7 @@ $js = 'window.lang = window.lang || {};';
   $section = 'admin';
   $self->add($section, '/js/jquery/ui-$site.jqueryui_version/jquery-ui-$site.jqueryui_version.custom.min.js');
   $self->add($section, '/js/litepublisher/admin.min.js');
+  $self->add($section, '/js/litepublisher/calendar.min.js');
   
   $section = 'adminviews';
   $self->add($section, '/js/jquery/ui-$site.jqueryui_version/interact/jquery.ui.draggable.min.js');
@@ -122,25 +123,6 @@ $js = 'window.lang = window.lang || {};';
   $self->add($section, '/js/litepublisher/fileman.templates.min.js');
   $self->add($section, "/lib/languages/$language/posteditor.min.js");
   
-  /*
-  $lang =tlocal::admin('editor');
-  $self->addtext($section, 'lang', $js . sprintf('lang.posteditor= %s;',  json_encode(
-  array(
-  'emptytitle' => $lang->emptytitle,
-  'upload' => $lang->upload,
-  'dragfiles' => $lang->dragfiles,
-  'currentfiles' => $lang->currentfiles,
-  'newupload' => $lang->newupload,
-  'add' => $lang->add,
-  'del' => $lang->delete,
-  'property' => $lang->property,
-  'title' => $lang->title,
-  'description' => $lang->description,
-  'keywords' => $lang->keywords,'file' => $lang->file,
-  'filesize' => $lang->filesize,
-  )
-  )));
-  */
   $self->unlock();
   
   $template = ttemplate::i();

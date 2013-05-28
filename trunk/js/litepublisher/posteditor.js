@@ -7,8 +7,7 @@
 
 (function ($, document, window) {
   litepubl.Posteditor = Class.extend({
-ui_datepicker: false,
-    
+
     init: function() {
       var tabs = $("#tabs");
       if (tabs.length == 0) return;
@@ -80,7 +79,7 @@ title.focus();
       //replace html in comment
       var holder = $("#datetime-holder", uipanel);
       holder.replaceWith(holder.get(0).firstChild.nodeValue);
-      this.load_ui_datepicker(function() {
+      litepubl.calendar.load(function() {
         var cur = $("#text-date").val();
         $("#datepicker").datepicker({
           altField: "#text-date",
@@ -92,16 +91,6 @@ title.focus();
         });
         
         //$("#datepicker").datepicker("setDate", cur);
-      });
-    },
-    
-    load_ui_datepicker: function(callback) {
-if (this.ui_datepicker) return this.ui_datepicker.done(callback);
-
-var self = this;
-      this.ui_datepicker= $.load_script(ltoptions.files + '/js/jquery/ui-' + $.ui.version + '/jquery.ui.datepicker.min.js', function() {
-        if (ltoptions.lang == 'en') return callback();
-        self.ui_datepicker= $.load_script(ltoptions.files + '/js/jquery/ui-' + $.ui.version + '/jquery.ui.datepicker-' + ltoptions.lang + '.min.js', callback);
       });
     },
     

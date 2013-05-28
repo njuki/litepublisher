@@ -232,6 +232,38 @@ class tadminhtml {
   public function getcombo($name, $value, $title) {
     return $this->getinput('combo', $name, $value, $title);
   }
+
+  public function getcalendar($name, $date) {
+if (is_numeric($date)) {
+$date = intval($date);
+} else if ($date == '0000-00-00 00:00:00') {
+$date = 0;
+} elseif ($date == '0000-00-00') {
+$date = 0;
+} elseif (!trim($date)) {
+$date = 0;
+} else {
+$date = strtotime($date);
+}
+
+    return strtr($this->ini['common']['calendar'], array(
+'$title' => tlocal::i()->__get($name),
+    '$name' => $name,
+'$date' => $date? date('d.m.Y', $date) : '',
+'$time' => $date ?date('H:i', $date) : '',
+    ));
+  }
+
+public static function getdatetime($name) {
+    if (!empty($_POST[$name]) && @sscanf(trim($_POST[$name]), '%d.%d.%d', $d, $m, $y)) {
+$h = 0;
+$min  = 0;
+if (!empty($_POST[$name . '-time'])) @sscanf(trim($_POST[$name . '-time']), '%d:%d', $h, $min);
+return mktime($h,$min,0, $m, $d, $y);
+    }
+
+return 0;
+}
   
   public function gettable($head, $body) {
     return strtr($this->ini['common']['table'], array(
@@ -365,13 +397,21 @@ class tadminhtml {
   
   public function inidir($dir) {
     $html_ini = ttheme::cacheini($dir . 'html.ini');
-    if (is_array($html_ini)) $this->ini = $html_ini + $this->ini;
-    
+    if (is_array($html_ini)) {
+$this->ini = $html_ini + $this->ini;
+$keys = array_keys($html_ini);
+$this->section = array_shift($keys);
+}
+
     $lang_ini = ttheme::cacheini($dir . litepublisher::$options->language . '.admin.ini');
     if (is_array($lang_ini)) {
       $lang = tlocal::i();
       $lang->ini = $lang_ini + $lang->ini ;
+$keys = array_keys($lang_ini);
+$lang->section = array_shift($keys);
     }
+
+return $this;
   }
   
   public function iniplugin($class) {
