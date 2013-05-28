@@ -104,7 +104,7 @@ if (dbversion) litepublisher::$db = new tdatabase();
 tlocal::clearcache();
 litepublisher::$urlmap->clearcache();
 //tthemegenerator::i()->parseselectors();
-//tupdater::i()->run(5.59);
+//tupdater::i()->run(5.60);
 
 /*
 litepublisher::$urlmap->onclose(function() {

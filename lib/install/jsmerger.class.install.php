@@ -102,6 +102,7 @@ $js = 'window.lang = window.lang || {};';
   $self->add($section, '/js/jquery/ui-$site.jqueryui_version/jquery-ui-$site.jqueryui_version.custom.min.js');
   $self->add($section, '/js/litepublisher/admin.min.js');
   $self->add($section, '/js/litepublisher/calendar.min.js');
+  $self->add($section, "/lib/languages/$language/admin.min.js");
   
   $section = 'adminviews';
   $self->add($section, '/js/jquery/ui-$site.jqueryui_version/interact/jquery.ui.draggable.min.js');
