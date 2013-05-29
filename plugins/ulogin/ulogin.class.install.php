@@ -7,25 +7,17 @@
 **/
 
 function uloginInstall($self) {
-  tusers::i()->deleted = tregserviceuser::i()->delete;
-    tdbmanager::i()->createtable('regservices',
-    "id int unsigned NOT NULL default 0,
-    service enum('$names') default 'google',
-    uid varchar(22) NOT NULL default '',
-    
-    key `id` (`id`),
-    KEY (`service`, `uid`)
-    ");
-  }
-  
-  litepublisher::$urlmap->addget($self->url, get_class($self));
+    tdbmanager::i()->createtable($self->table, file_get_contents(dirname(__file__) . '/ulogin.sql'));
+  tusers::i()->deleted = $self->delete;
   tcommentform::i()->oncomuser = $self->oncomuser;
+
+  litepublisher::$urlmap->addget($self->url, get_class($self));
   litepublisher::$urlmap->clearcache();
 }
 
 function uloginUninstall($self) {
   tcommentform::i()->unbind($self);
-  turlmap::unsub($self);
   tusers::i()->unbind('tregserviceuser');
-  tdbmanager::i()->deletetable('regservices');
+  turlmap::unsub($self);
+  tdbmanager::i()->deletetable('$self->table);
 }

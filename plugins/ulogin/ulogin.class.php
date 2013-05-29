@@ -6,15 +6,34 @@
 * and GPL (gpl.txt) licenses.
 **/
 
-class ulogin extends tplugin {
+class ulogin extends titems {
   
   public static function i() {
     return getinstance(__class__);
   }
   
   protected function create() {
+$this->dbversion = true;
     parent::create();
-    $this->data['url'] = '/admin/regservice.htm';
+$this->basename = 'ulogin';
+$this->table = 'ulogin';
+    $this->data['url'] = '/admin/ulogin.htm';
+  }
+
+  public function add($id, $service, $uid) {
+    if (($id == 0) || ($service == '') || ($uid == '')) return;
+    $this->db->insert(array(
+    'id' => $id,
+    'service' => $service,
+    'uid' => $uid
+    ));
+    
+    $this->added($id, $service);
+return $id;
+  }
+  
+  public function find($service, $uid) {
+    return $this->db->findid('service = '. dbquote($service) . ' and uid = ' . dbquote($uid));
   }
   
 public function set() {
@@ -34,42 +53,54 @@ public function set() {
     $tc->save();
   }
 
-  public function adduser(array $item, $rawdata) {
+  public function request($arg) {
+    $this->cache = false;
+    Header( 'Cache-Control: no-cache, must-revalidate');
+    Header( 'Pragma: no-cache');
+
+    if (empty($_POST['token'])) return 403;
+if (!($s = http::get('http://ulogin.ru/token.php?token=' . $_POST['token'] . '&host=' . $_SERVER['HTTP_HOST']))) rturn 403;
+if (!($info = json_decode($s, true))) rturn 403;
+if (isset($info['error']) || !isset($info['network'])) return 403;
+
+$name =!empty($info['first_name']) ? $info['first_name'] : '';
+$name .=!empty($info['last_name']) ? ' . ' . $info['last_name'] : '';
+
+
     $users = tusers::i();
-    $reguser =tregserviceuser::i();
-    if (!empty($item['email'])) {
-      if ($id = $users->emailexists($item['email'])) {
+    if (!empty($info['email'])) {
+      if ($id = $users->emailexists($info['email'])) {
         $user = $users->getitem($id);
         if ($user['status'] == 'comuser') $users->approve($id);
       } elseif (litepublisher::$options->reguser) {
         $id = $users->add(array(
-        'email' => $item['email'],
-        'name' => $item['name'],
-        'website' => isset($item['website']) ? tcontentfilter::clean_website($item['website']) : ''
+        'email' => $info['email'],
+        'name' => $name,
+        'website' => empty($info['profile']) ? '' : tcontentfilter::clean_website($info['profile']),
         ));
-        if (isset($item['uid'])) {
-          $uid = $item['uid'];
+        if (!empty($info['uid'])) {
+          $uid = $info['uid'];
           if (strlen($uid) >= 22) $uid = basemd5($uid);
-          $reguser->add($id, $this->name, $uid);
+          $this->add($id, $info['network'], $uid);
         }
       } else {
         //registration disabled
         return 403;
       }
     } else {
-      $uid = !empty($item['uid']) ? $item['uid'] : (!empty($item['website']) ? $item['website'] : '');
+      $uid = !empty($info['uid']) ? $info['uid'] : (!empty($info['profile']) ? $info['profile'] : '');
       if ($uid) {
         if (strlen($uid) >= 22) $uid = basemd5($uid);
-        if ($id = $reguser->find($this->name, $uid)){
+        if ($id = $this->find($info['network'], $uid)){
           //nothing
         } elseif (litepublisher::$options->reguser) {
           $id = $users->add(array(
           'email' => '',
-          'name' => $item['name'],
-          'website' => isset($item['website']) ? tcontentfilter::clean_website($item['website']) : ''
+          'name' => $name,
+        'website' => empty($info['profile']) ? '' : tcontentfilter::clean_website($info['profile']),
           ));
           $users->approve($id);
-          $reguser->add($id, $this->name, $uid);
+          $this->add($id, $info['network'], $uid);
         } else {
           //registration disabled
           return 403;
@@ -87,7 +118,7 @@ public function set() {
     litepublisher::$options->setcookies($cookie, $expired);
     if (litepublisher::$options->ingroup('admin')) setcookie('litepubl_user_flag', 'true', $expired, litepublisher::$site->subdir . '/', false);
     
-    setcookie('litepubl_regservice', $this->name, $expired, litepublisher::$site->subdir . '/', false);
+    setcookie('litepubl_regservice', $info['network'], $expired, litepublisher::$site->subdir . '/', false);
     
     $this->onadd($id, $rawdata);
     
@@ -103,27 +134,6 @@ public function set() {
     }
     
     return litepublisher::$urlmap->redir($backurl);
-  }
-  
-  public function request($arg) {
-    $this->cache = false;
-    Header( 'Cache-Control: no-cache, must-revalidate');
-    Header( 'Pragma: no-cache');
-    
-    // hook for clien disabled cookies
-    if (!isset($_GET['cookietest'])) {
-      $backurl = !empty($_GET['backurl']) ? $_GET['backurl'] : (!empty($_GET['amp;backurl']) ? $_GET['amp;backurl'] :  (isset($_COOKIE['backurl']) ? $_COOKIE['backurl'] : ''));
-      if ($backurl) setcookie('backurl', $backurl, time() + 8 * 3600, litepublisher::$site->subdir . '/', false);
-      setcookie('litepubl_cookie_test', 'test', time() + 8000, litepublisher::$site->subdir . '/', false);
-      return litepublisher::$urlmap->redir(litepublisher::$urlmap->url . '&cookietest=true');
-    }
-    
-    if (!isset($_COOKIE['litepubl_cookie_test'])) return 403;
-    setcookie('litepubl_cookie_test', '', 0, litepublisher::$site->subdir . '/', false);
-    
-    $url = $service->getauthurl();
-    if (!$url) return 403;
-    return litepublisher::$urlmap->redir($url);
   }
   
   public function oncomuser(array $values, $comfirmed) {
