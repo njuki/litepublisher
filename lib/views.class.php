@@ -162,6 +162,13 @@ class tviews extends titems_storage {
     }
     return parent::delete($id);
   }
+
+public function get($name) {
+foreach ($this->items as $id => $item) {
+if ($name == $item['name']) return tview::i($id);
+}
+return false;
+}
   
   public function widgetdeleted($idwidget) {
     $deleted = false;

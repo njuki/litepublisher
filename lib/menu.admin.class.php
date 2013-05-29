@@ -35,23 +35,13 @@ class tadminmenus extends tmenus {
   public function getadmintitle($name) {
     $lang = tlocal::i();
     $ini = &$lang->ini;
-    if (isset($ini[$name]['title'])) {
-      return $ini[$name]['title'];
-    } elseif (isset($ini[$lang->section][$name])) {
-      return $ini[$lang->section][$name];
-    } elseif (isset($ini['names'][$name])) {
-      return $ini['names'][$name];
-    } elseif (isset($ini['default'][$name])) {
-      return $ini['default'][$name];
-    } elseif (isset($ini['common'][$name])) {
-      return $ini['common'][$name];
-    } else {
+    if (isset($ini[$name]['title'])) return $ini[$name]['title'];
+if (!in_array('names', $lang->searchsect)) array_unshift($lang->searchsect, 'names');
+if ($result = $lang->__get($name)) return $result;
       return $name;
-    }
   }
   
-  
-  public function createurl($parent, $name) {
+    public function createurl($parent, $name) {
     return $parent == 0 ? "/admin/$name/" : $this->items[$parent]['url'] . "$name/";
   }
   

@@ -105,7 +105,7 @@ tlocal::clearcache();
 litepublisher::$urlmap->clearcache();
 //tthemegenerator::i()->parseselectors();
 //tupdater::i()->run(5.60);
-
+//shoptheme::i()->install();
 /*
 litepublisher::$urlmap->onclose(function() {
 echo "in close<br>";
