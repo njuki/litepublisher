@@ -65,7 +65,11 @@ if (isset($info['error']) || !isset($info['network'])) return 403;
 
 $name =!empty($info['first_name']) ? $info['first_name'] : '';
 $name .=!empty($info['last_name']) ? ' . ' . $info['last_name'] : '';
+if (!$name && !empty($info['nickname'])) $name = $info['nickname'];
 
+      $uid = !empty($info['uid']) ? $info['uid'] : (!empty($info['identity']) ? $info['identity'] : 
+(!empty($info['profile']) ? $info['profile'] : ''));
+        if (strlen($uid) >= 22) $uid = basemd5($uid);
 
     $users = tusers::i();
     if (!empty($info['email'])) {
@@ -78,9 +82,7 @@ $name .=!empty($info['last_name']) ? ' . ' . $info['last_name'] : '';
         'name' => $name,
         'website' => empty($info['profile']) ? '' : tcontentfilter::clean_website($info['profile']),
         ));
-        if (!empty($info['uid'])) {
-          $uid = $info['uid'];
-          if (strlen($uid) >= 22) $uid = basemd5($uid);
+        if ($uid) {
           $this->add($id, $info['network'], $uid);
         }
       } else {
@@ -88,9 +90,7 @@ $name .=!empty($info['last_name']) ? ' . ' . $info['last_name'] : '';
         return 403;
       }
     } else {
-      $uid = !empty($info['uid']) ? $info['uid'] : (!empty($info['profile']) ? $info['profile'] : '');
       if ($uid) {
-        if (strlen($uid) >= 22) $uid = basemd5($uid);
         if ($id = $this->find($info['network'], $uid)){
           //nothing
         } elseif (litepublisher::$options->reguser) {
