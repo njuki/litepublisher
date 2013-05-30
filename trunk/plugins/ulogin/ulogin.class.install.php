@@ -10,6 +10,10 @@ function uloginInstall($self) {
     tdbmanager::i()->createtable($self->table, file_get_contents(dirname(__file__) . '/ulogin.sql'));
   tusers::i()->deleted = $self->userdeleted;
 
+$self->panel = 
+$self->button = 
+$self->save();
+
     $alogin = tadminlogin::i();
     $alogin ->widget = $self->addpanel($alogin ->widget, $self->panel);
     $alogin->save();
