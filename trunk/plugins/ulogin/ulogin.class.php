@@ -58,31 +58,15 @@ $this->db->delete("id = $id");
 if (!($s = http::get('http://ulogin.ru/token.php?token=' . $_POST['token'] . '&host=' . $_SERVER['HTTP_HOST']))) return 403;
 if (!($info = json_decode($s, true))) return 403;
 if (isset($info['error']) || !isset($info['network'])) return 403;
-$info = array(
-  "verified_email"=>
-  "1",
-  "uid"=>
- "100002117680760",
-  "network"=>
-"facebook",
-  "profile"=>
-"http://www.facebook.com/vladimir.yushko.5",
-  "email"=>"yarrowsoft@gmail.com",
-  "last_name"=>
-"Yushko",
-  "nickname"=>"vladimir.yushko.5",
-  "first_name"=>
- "Vladimir",
-  "identity"=>
-  "http://www.facebook.com/vladimir.yushko.5",
-);
 
 $name =!empty($info['first_name']) ? $info['first_name'] : '';
 $name .=!empty($info['last_name']) ? ' . ' . $info['last_name'] : '';
 if (!$name && !empty($info['nickname'])) $name = $info['nickname'];
 
-      $uid = !empty($info['uid']) ? $info['uid'] : (!empty($info['identity']) ? $info['identity'] : 
-(!empty($info['profile']) ? $info['profile'] : ''));
+      $uid = !empty($info['uid']) ? $info['uid'] :
+(!empty($info['id']) ? $info['id'] : 
+(!empty($info['identity']) ? $info['identity'] : 
+(!empty($info['profile']) ? $info['profile'] : '')));
         if (strlen($uid) >= 22) $uid = basemd5($uid);
 
     $users = tusers::i();
@@ -135,16 +119,16 @@ if (!$name && !empty($info['nickname'])) $name = $info['nickname'];
     setcookie('litepubl_regservice', $info['network'], $expired, litepublisher::$site->subdir . '/', false);
     
     $this->onadd($id, $info);
-    
-    if (!empty($_COOKIE['backurl'])) {
-      $backurl = $_COOKIE['backurl'];
-    } elseif (!empty($_GET['backurl'])) {
+
+if (!empty($_GET['backurl'])) {
       $backurl = $_GET['backurl'];
+        } elseif (!empty($_COOKIE['backurl'])) {
+      $backurl = $_COOKIE['backurl'];
     } else {
       $user = $users->getitem($id);
       $backurl =  tusergroups::i()->gethome($user['idgroups'][0]);
     }
-    
+
     return litepublisher::$urlmap->redir($backurl);
   }
   
