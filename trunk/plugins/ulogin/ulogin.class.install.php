@@ -38,7 +38,8 @@ $tc->save();
 
 $js = tjsmerger::i();
 $js->lock();
-$js->add('default', '/plugins/ulogin/ulogin.min.js');
+$js->add('default', '/plugins/ulogin/ulogin.popup.min.js');
+$js->add('default', '/plugins/ulogin/' . litepublisher::$options->language . '.ulogin.popup.min.js');
 $js->unlock();
 }
 
@@ -61,6 +62,7 @@ $tc->save();
 
 $js = tjsmerger::i();
 $js->lock();
-$js->deletefile('default', '/plugins/ulogin/ulogin.min.js');
+$js->deletefile('default', '/plugins/ulogin/ulogin.popup.min.js');
+$js->deletefile('default', '/plugins/ulogin/' . litepublisher::$options->language . '.ulogin.popup.min.js');
 $js->unlock();
 }
