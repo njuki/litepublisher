@@ -10,8 +10,15 @@ function uloginInstall($self) {
     tdbmanager::i()->createtable($self->table, file_get_contents(dirname(__file__) . '/ulogin.sql'));
   tusers::i()->deleted = $self->userdeleted;
 
-$self->panel = 
-$self->button = 
+    $lang = tplugins::getnamelang(basename(dirname(__file__)));
+
+$self->panel = '<h4>' . $lang->panel_title . '</h4>
+<script src="//ulogin.ru/js/ulogin.js"></script>
+<div id="uLogin" data-ulogin="display=small;fields=email,first_name,last_name;optional=phone,nickname;providers=vkontakte,odnoklassniki,mailru,yandex,facebook,google,twitter;hidden=other;redirect_uri=' .
+urlencode(litepublisher::$site->url . $self->url . '?) . 'backurl=;"></div>';
+
+$self->button = '<div><button type="button id="ulogin-comment-button"><span>' $lang->button_title . '</span></button></div>';
+
 $self->save();
 
     $alogin = tadminlogin::i();
@@ -28,6 +35,11 @@ $tc->save();
 
   litepublisher::$urlmap->addget($self->url, get_class($self));
   litepublisher::$urlmap->clearcache();
+
+$js = tjsmerger::i();
+$js->lock();
+$js->add('default', '/plugins/ulogin/ulogin.min.js');
+$js->unlock();
 }
 
 function uloginUninstall($self) {
@@ -46,4 +58,9 @@ function uloginUninstall($self) {
     $tc = ttemplatecomments::i();
       $tc->regaccount = $self->deletepanel($tc->regaccount);
 $tc->save();
+
+$js = tjsmerger::i();
+$js->lock();
+$js->deletefile('default', '/plugins/ulogin/ulogin.min.js');
+$js->unlock();
 }
