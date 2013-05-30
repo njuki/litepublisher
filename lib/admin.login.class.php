@@ -82,8 +82,11 @@ class tadminlogin extends tadminform {
     $args->password = !empty($_POST['password']) ? strip_tags($_POST['password']) : '';
     $args->remember = isset($_POST['remember']);
     $result = $this->widget;
-    if (isset($_GET['backurl'])) $result = str_replace(array('&backurl=', '&amp;backurl='),
-    '&amp;backurl=' . urlencode($_GET['backurl']), $result);
+    if (isset($_GET['backurl'])) {
+$result = str_replace('&amp;backurl=', '&backurl=', $result);
+$result = str_replace('backurl=', 'backurl=' . urlencode($_GET['backurl']), $result);
+}
+
     $result .= $html->adminform('[text=email]
     [password=password]
     [checkbox=remember]',

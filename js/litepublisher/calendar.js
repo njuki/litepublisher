@@ -55,9 +55,7 @@ open: function() {
 
       buttons: [{
         title: lang.dialog.close,
-        click: function() {
-          $.prettyPhoto.close();
-       }
+          click: $.proxy($.prettyPhoto.close, $.prettyPhoto)
       }]
     });
   });
