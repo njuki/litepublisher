@@ -6,18 +6,19 @@
 * and GPL (gpl.txt) licenses.
 **/
 
-class ulogin extends titems {
+class ulogin extends tplugin {
   
   public static function i() {
     return getinstance(__class__);
   }
   
   protected function create() {
-$this->dbversion = true;
     parent::create();
-$this->basename = 'ulogin';
+$this->addevents('added', 'onadd');
 $this->table = 'ulogin';
     $this->data['url'] = '/admin/ulogin.htm';
+$this->data['panel'] = '';
+$this->data['button'] = '';
   }
 
   public function add($id, $service, $uid) {
@@ -35,23 +36,11 @@ return $id;
   public function find($service, $uid) {
     return $this->db->findid('service = '. dbquote($service) . ' and uid = ' . dbquote($uid));
   }
-  
-public function set() {
-    $admin = tadminlogin::i();
-    $admin->widget = $this->widget;
-    $admin->save();
-    
-    $admin = tadminreguser::i();
-    $admin->widget = $this->widget;
-    $admin->save();
-    
-    $tc = ttemplatecomments::i();
-    if ($i = strpos($tc->regaccount, $this->widget_title)) {
-      $tc->regaccount = trim(substr($tc->regaccount, 0, $i));
-    }
-    $tc->regaccount .= "\n" . $this->widget;
-    $tc->save();
-  }
+
+public function userdeleted($id) {
+$this->db->delete("id = $id");
+}
+
 
   public function request($arg) {
     $this->cache = false;
@@ -120,11 +109,7 @@ if (!$name && !empty($info['nickname'])) $name = $info['nickname'];
     
     setcookie('litepubl_regservice', $info['network'], $expired, litepublisher::$site->subdir . '/', false);
     
-    $this->onadd($id, $rawdata);
-    
-    if (isset($this->sessdata['comuser'])) {
-      return tcommentform::i()->processform($this->sessdata['comuser'], true);
-    }
+    $this->onadd($id, $info);
     
     if (!empty($_COOKIE['backurl'])) {
       $backurl = $_COOKIE['backurl'];
@@ -136,42 +121,25 @@ if (!$name && !empty($info['nickname'])) $name = $info['nickname'];
     return litepublisher::$urlmap->redir($backurl);
   }
   
-  public function oncomuser(array $values, $comfirmed) {
-    //ignore $comfirmed, always return redirect
-    $form = tcommentform::i();
-    if ($err = $form->processcomuser($values)) return $err;
-    $email = strtolower(trim($values['email']));
-    $host = substr($email, strpos($email, '@') + 1);
-    switch ($host) {
-      case 'gmail.com':
-      $name = 'google';
-      break;
-      
-      case 'yandex.ru':
-      $name = 'yandex';
-      break;
-      
-      case 'mail.ru':
-      case 'inbox.ru':
-      case 'list.ru':
-      case 'bk.ru':
-      $name = 'mailru';
-      break;
-      
-      default:
-      return false;
-    }
-    
-    if (!isset($this->items[$name])) return false;
-    $service = getinstance($this->items[$name]);
-    if (!$service->valid) return false;
-    $service->sessdata['comuser'] = $values;
-    $url = $service->getauthurl();
-    if (!$url) return false;
-    
-    return $form->sendresult($url, array(
-    ini_get('session.name') => $service->session_id
-    ));
-  }
-  
+public function addpanel($s, $panel) {
+$open = '<!--ulogin-->';
+$close = '<!--/ulogin-->';
+$s = $this->deletepanel($s);
+return $open . $panel . $close;
+}
+
+public function deletepanel($s) {
+$open = '<!--ulogin-->';
+$close = '<!--/ulogin-->';
+    if (false !== ($i = strpos($s, $open))) {
+if ($j = strpos($s, $close)) {
+$s = trim(substr($s, 0, $i)) .
+ trim(substr($s, $j + strlen($close) + 1));
+} else {
+$s = trim(substr($s, 0, $i));
+}
+}
+return $s;
+}
+
 }//class
