@@ -5,7 +5,7 @@
 * and GPL (gpl.txt) licenses.
 **/
 
-(function ($, window) {
+(function ($, document, window) {
   $(document).ready(function() {
     litepubl.uloginpopup = new litepubl.Uloginpopup();
   });
@@ -24,6 +24,11 @@ if ($.cookie('litepubl_user')) return;
         self.open($(this).attr("href"));
         return false;
       });
+
+$("#ulogin-comment-button").click(function() {
+self.open(location.href);
+return false;
+});
     },
     
     open: function(url) {
@@ -60,4 +65,4 @@ return this.script = $.load_script('http://ulogin.ru/js/ulogin.js', callback);
     
   });
   
-}(jQuery, geo, window));
+}(jQuery, document, window));

@@ -19,10 +19,17 @@ $this->table = 'ulogin';
     $this->data['url'] = '/admin/ulogin.htm';
 $this->data['panel'] = '';
 $this->data['button'] = '';
+$this->data['nets'] = array();
   }
 
   public function add($id, $service, $uid) {
     if (($id == 0) || ($service == '') || ($uid == '')) return;
+if (!in_array($service, $this->data['nets'])) {
+$this->data['nets'][] = $service;
+$this->save();
+tdbmanager::i()->add_enum($this->table, 'service', $service);
+}
+
     $this->db->insert(array(
     'id' => $id,
     'service' => $service,
@@ -46,11 +53,30 @@ $this->db->delete("id = $id");
     $this->cache = false;
     Header( 'Cache-Control: no-cache, must-revalidate');
     Header( 'Pragma: no-cache');
-
+/*
     if (empty($_POST['token'])) return 403;
-if (!($s = http::get('http://ulogin.ru/token.php?token=' . $_POST['token'] . '&host=' . $_SERVER['HTTP_HOST']))) rturn 403;
-if (!($info = json_decode($s, true))) rturn 403;
+if (!($s = http::get('http://ulogin.ru/token.php?token=' . $_POST['token'] . '&host=' . $_SERVER['HTTP_HOST']))) return 403;
+if (!($info = json_decode($s, true))) return 403;
 if (isset($info['error']) || !isset($info['network'])) return 403;
+*/
+$info = array(
+  "verified_email"=>
+  "1",
+  "uid"=>
+ "100002117680760",
+  "network"=>
+"facebook",
+  "profile"=>
+"http://www.facebook.com/vladimir.yushko.5",
+  "email"=>"yarrowsoft@gmail.com",
+  "last_name"=>
+"Yushko",
+  "nickname"=>"vladimir.yushko.5",
+  "first_name"=>
+ "Vladimir",
+  "identity"=>
+  "http://www.facebook.com/vladimir.yushko.5",
+);
 
 $name =!empty($info['first_name']) ? $info['first_name'] : '';
 $name .=!empty($info['last_name']) ? ' . ' . $info['last_name'] : '';
@@ -113,6 +139,8 @@ if (!$name && !empty($info['nickname'])) $name = $info['nickname'];
     
     if (!empty($_COOKIE['backurl'])) {
       $backurl = $_COOKIE['backurl'];
+    if (!empty($_GET['backurl'])) {
+      $backurl = $_GET['backurl'];
     } else {
       $user = $users->getitem($id);
       $backurl =  tusergroups::i()->gethome($user['idgroups'][0]);
