@@ -16,8 +16,8 @@ $self->data['nets'] = array('vkontakte', 'odnoklassniki', 'mailru', 'facebook', 
 
 $self->panel = '<h4>' . $lang->panel_title . '</h4>
 <script src="//ulogin.ru/js/ulogin.js"></script>
-<div id="uLogin" data-ulogin="display=small;fields=email,first_name,last_name;optional=phone,nickname;providers=vkontakte,odnoklassniki,mailru,yandex,facebook,google,twitter;hidden=other;redirect_uri=' .
-urlencode(litepublisher::$site->url . $self->url . '?') . 'backurl=;"></div>';
+<div id="uLogin" data-ulogin="display=small;fields=first_name,last_name;optional=email,phone,nickname;providers=vkontakte,odnoklassniki,mailru,yandex,facebook,google,twitter;hidden=other;redirect_uri=' .
+urlencode(litepublisher::$site->url . $self->url . '?backurl=') . ';"></div>';
 
 $self->button = '<div><button type="button" id="ulogin-comment-button"><span>' . $lang->button_title . '</span></button></div>';
 

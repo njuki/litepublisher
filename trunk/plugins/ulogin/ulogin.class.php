@@ -53,12 +53,11 @@ $this->db->delete("id = $id");
     $this->cache = false;
     Header( 'Cache-Control: no-cache, must-revalidate');
     Header( 'Pragma: no-cache');
-/*
+
     if (empty($_POST['token'])) return 403;
 if (!($s = http::get('http://ulogin.ru/token.php?token=' . $_POST['token'] . '&host=' . $_SERVER['HTTP_HOST']))) return 403;
 if (!($info = json_decode($s, true))) return 403;
 if (isset($info['error']) || !isset($info['network'])) return 403;
-*/
 $info = array(
   "verified_email"=>
   "1",
@@ -139,7 +138,7 @@ if (!$name && !empty($info['nickname'])) $name = $info['nickname'];
     
     if (!empty($_COOKIE['backurl'])) {
       $backurl = $_COOKIE['backurl'];
-    if (!empty($_GET['backurl'])) {
+    } elseif (!empty($_GET['backurl'])) {
       $backurl = $_GET['backurl'];
     } else {
       $user = $users->getitem($id);

@@ -193,7 +193,7 @@ class toptions extends tevents_storage {
     } else {
       $user = tusers::i()->getitem($this->_user);
       $this->idgroups = $user['idgroups'];
-      $this->group = tusergroups::i()->items[$user['idgroups'][0]]['name'];
+      $this->group = count($this->idgroups) ? tusergroups::i()->items[$this->idgroups[0]]['name'] : '';
     }
   }
   

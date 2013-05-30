@@ -10,8 +10,8 @@
     window.setTimeout(function() {
       var prettyClose = $.prettyPhoto.close;
       $.prettyPhoto.close = function() {
-        // if youtube opened in pretty
-        var iframe = $('#pp_full_res').children('iframe:first[src*=youtube]');
+        // if iframe opened in pretty
+        var iframe = $('#pp_full_res').find('iframe:first');
         if (iframe.length == 0) {
           prettyClose();
         } else {

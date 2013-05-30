@@ -34,15 +34,15 @@ $ulogin->button = trim($_POST['button']);
 $ulogin->save();
 
     $alogin = tadminlogin::i();
-    $alogin ->widget = $self->addpanel($alogin ->widget, $self->panel);
+    $alogin ->widget = $ulogin->addpanel($alogin ->widget, $ulogin->panel);
     $alogin->save();
     
     $areg = tadminreguser::i();
-    $areg->widget = $self->addpanel($areg->widget, $self->panel);
+    $areg->widget = $ulogin->addpanel($areg->widget, $ulogin->panel);
     $areg->save();
 
     $tc = ttemplatecomments::i();
-      $tc->regaccount = $self->addpanel($tc->regaccount, $self->button);
+      $tc->regaccount = $ulogin->addpanel($tc->regaccount, $ulogin->button);
 $tc->save();
 }
 
