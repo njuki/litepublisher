@@ -7,7 +7,9 @@
 **/
 
 function uloginInstall($self) {
-    tdbmanager::i()->createtable($self->table, file_get_contents(dirname(__file__) . '/ulogin.sql'));
+$self->data['nets'] = array('vkontakte', 'odnoklassniki', 'mailru', 'facebook', 'twitter', 'google', 'yandex', 'livejournal', 'openid', 'flickr', 'lastfm', 'linkedin', 'liveid', 'soundcloud', 'steam', 'vimeo', 'webmoney', 'youtube', 'foursquare', 'tumblr', 'googleplus');
+
+    tdbmanager::i()->createtable($self->table, str_replace('$names', implode("', '", $self->data['nets']), file_get_contents(dirname(__file__) . '/ulogin.sql')));
   tusers::i()->deleted = $self->userdeleted;
 
     $lang = tplugins::getnamelang(basename(dirname(__file__)));
@@ -15,9 +17,9 @@ function uloginInstall($self) {
 $self->panel = '<h4>' . $lang->panel_title . '</h4>
 <script src="//ulogin.ru/js/ulogin.js"></script>
 <div id="uLogin" data-ulogin="display=small;fields=email,first_name,last_name;optional=phone,nickname;providers=vkontakte,odnoklassniki,mailru,yandex,facebook,google,twitter;hidden=other;redirect_uri=' .
-urlencode(litepublisher::$site->url . $self->url . '?) . 'backurl=;"></div>';
+urlencode(litepublisher::$site->url . $self->url . '?') . 'backurl=;"></div>';
 
-$self->button = '<div><button type="button id="ulogin-comment-button"><span>' $lang->button_title . '</span></button></div>';
+$self->button = '<div><button type="button" id="ulogin-comment-button"><span>' . $lang->button_title . '</span></button></div>';
 
 $self->save();
 
@@ -46,7 +48,7 @@ $js->unlock();
 function uloginUninstall($self) {
   tusers::i()->unbind('tregserviceuser');
   turlmap::unsub($self);
-  tdbmanager::i()->deletetable('$self->table);
+  tdbmanager::i()->deletetable($self->table);
 
     $alogin = tadminlogin::i();
     $alogin ->widget = $self->deletepanel($alogin ->widget);
