@@ -110,6 +110,7 @@ class tadminreguser extends tadminform {
 //normalize
 $result = str_replace('&amp;backurl=', '&backurl=', $result);
 $result = str_replace('backurl=', 'backurl=' . urlencode($_GET['backurl']), $result);
+$result = str_replace('backurl%3D', 'backurl%3D' . urlencode(urlencode($_GET['backurl'])), $result);
 }
 
     $result .= $html->adminform($form, $args);

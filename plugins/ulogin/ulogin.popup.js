@@ -13,8 +13,8 @@
   litepubl.Uloginpopup= Class.extend({
 script: false,
 dialogopened: false,
-    html: '<div style="display:block;overflow:hidden;width:300px;height:200px;">\
-<div id="ulogin-holder" data-ulogin="display=small;fields=email,first_name,last_name;optional=phone,nickname;providers=vkontakte,odnoklassniki,mailru,yandex,facebook,google,twitter;hidden=other;redirect_uri=%%redirurl%%;"></div>',
+    html: '<div style="display:block;overflow:hidden;width:300px;height:50px;">\
+<div id="ulogin-holder" data-ulogin="display=small;fields=first_name,last_name;optional=email,phone,nickname;providers=vkontakte,odnoklassniki,mailru,yandex,facebook,google,twitter;hidden=other;redirect_uri=%%redirurl%%;"></div>',
 
     init: function() {
 if ($.cookie('litepubl_user')) return;
@@ -40,7 +40,7 @@ self.dialogopened = true;
 
       $.prettyPhotoDialog({
         title: lang.ulogin.title,
-        html: self.html.replace(/BACKURL=/gim, 'BACKURL=' + encodeURIComponent(url)),
+        html: self.html.replace(/backurl%3D/gim, 'backurl%3D' + encodeURIComponent(encodeURIComponent(url))),
         width: 300,
 close: function() {
 self.dialogopened = false;
