@@ -14,11 +14,9 @@ class ulogin extends tplugin {
   
   protected function create() {
     parent::create();
-$this->addevents('added', 'onadd');
+$this->addevents('added', 'onadd', 'onphone');
 $this->table = 'ulogin';
     $this->data['url'] = '/admin/ulogin.php';
-    $this->data['phoneurl'] = '/admin/ulogin-phone.php';
-$this->data['confirmphone'] = false;
 $this->data['panel'] = '';
 $this->data['button'] = '';
 $this->data['nets'] = array();
@@ -70,7 +68,7 @@ if (!$name && !empty($info['nickname'])) $name = $info['nickname'];
 (!empty($info['profile']) ? $info['profile'] : '')));
         if (strlen($uid) >= 22) $uid = basemd5($uid);
 
-$phone = !empty($info['phone']) ? $this->filterphone($info['phone']) : false;
+$phone = !empty($info['phone']) ? self::filterphone($info['phone']) : false;
 
 $newreg = false;
     $users = tusers::i();
@@ -78,7 +76,7 @@ $newreg = false;
       if ($id = $users->emailexists($info['email'])) {
         $user = $users->getitem($id);
         if ($user['status'] == 'comuser') $users->approve($id);
-if ($phone && empty($user['phone])) $users->setvalue($id, 'phone', $phone);
+if ($phone && empty($user['phone'])) $users->setvalue($id, 'phone', $phone);
       } elseif (litepublisher::$options->reguser) {
 $newreg = true;
         $id = $users->add(array(
@@ -138,8 +136,8 @@ if (!empty($_GET['backurl'])) {
       $backurl =  tusergroups::i()->gethome($user['idgroups'][0]);
     }
 
-if ($this->confirmphone && !$users->db->getvalue($id, 'phone')) {
-    return litepublisher::$urlmap->redir($this->phoneurl . '?backurl=' . urlencode($backurl));
+if (!$users->db->getvalue($id, 'phone')) {
+if ($url = $this->onphone($backurl))     return litepublisher::$urlmap->redir($url);
 }
 
     return litepublisher::$urlmap->redir($backurl);
@@ -166,7 +164,7 @@ $s = trim(substr($s, 0, $i));
 return $s;
 }
 
-public function filterphone($phone) {
+public static function filterphone($phone) {
 $phone = trim(str_replace(array(' ', '+', '=', '-', '_', '(', ')', '.'), '', trim($phone)));
 if (strlen($phone) && ($phone[0] == '9')) $phone = '7' . $phone;
 return intval($phone);
