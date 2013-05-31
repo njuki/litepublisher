@@ -16,7 +16,9 @@ class ulogin extends tplugin {
     parent::create();
 $this->addevents('added', 'onadd');
 $this->table = 'ulogin';
-    $this->data['url'] = '/admin/ulogin.htm';
+    $this->data['url'] = '/admin/ulogin.php';
+    $this->data['phoneurl'] = '/admin/ulogin-phone.php';
+$this->data['confirmphone'] = false;
 $this->data['panel'] = '';
 $this->data['button'] = '';
 $this->data['nets'] = array();
@@ -48,7 +50,6 @@ public function userdeleted($id) {
 $this->db->delete("id = $id");
 }
 
-
   public function request($arg) {
     $this->cache = false;
     Header( 'Cache-Control: no-cache, must-revalidate');
@@ -69,17 +70,23 @@ if (!$name && !empty($info['nickname'])) $name = $info['nickname'];
 (!empty($info['profile']) ? $info['profile'] : '')));
         if (strlen($uid) >= 22) $uid = basemd5($uid);
 
+$phone = !empty($info['phone']) ? $this->filterphone($info['phone']) : false;
+
+$newreg = false;
     $users = tusers::i();
     if (!empty($info['email'])) {
       if ($id = $users->emailexists($info['email'])) {
         $user = $users->getitem($id);
         if ($user['status'] == 'comuser') $users->approve($id);
+if ($phone && empty($user['phone])) $users->setvalue($id, 'phone', $phone);
       } elseif (litepublisher::$options->reguser) {
+$newreg = true;
         $id = $users->add(array(
         'email' => $info['email'],
         'name' => $name,
         'website' => empty($info['profile']) ? '' : tcontentfilter::clean_website($info['profile']),
         ));
+if ($phone) $users->db->setvalue($id, 'phone', $phone);
         if ($uid) {
           $this->add($id, $info['network'], $uid);
         }
@@ -92,12 +99,14 @@ if (!$name && !empty($info['nickname'])) $name = $info['nickname'];
         if ($id = $this->find($info['network'], $uid)){
           //nothing
         } elseif (litepublisher::$options->reguser) {
+$newreg = true;
           $id = $users->add(array(
           'email' => '',
           'name' => $name,
         'website' => empty($info['profile']) ? '' : tcontentfilter::clean_website($info['profile']),
           ));
           $users->approve($id);
+if ($phone) $users->db->setvalue($id, 'phone', $phone);
           $this->add($id, $info['network'], $uid);
         } else {
           //registration disabled
@@ -118,7 +127,7 @@ if (!$name && !empty($info['nickname'])) $name = $info['nickname'];
     
     setcookie('litepubl_regservice', $info['network'], $expired, litepublisher::$site->subdir . '/', false);
     
-    $this->onadd($id, $info);
+    $this->onadd($id, $info, $newreg);
 
 if (!empty($_GET['backurl'])) {
       $backurl = $_GET['backurl'];
@@ -128,6 +137,10 @@ if (!empty($_GET['backurl'])) {
       $user = $users->getitem($id);
       $backurl =  tusergroups::i()->gethome($user['idgroups'][0]);
     }
+
+if ($this->confirmphone && !$users->db->getvalue($id, 'phone')) {
+    return litepublisher::$urlmap->redir($this->phoneurl . '?backurl=' . urlencode($backurl));
+}
 
     return litepublisher::$urlmap->redir($backurl);
   }
@@ -151,6 +164,12 @@ $s = trim(substr($s, 0, $i));
 }
 }
 return $s;
+}
+
+public function filterphone($phone) {
+$phone = trim(str_replace(array(' ', '+', '=', '-', '_', '(', ')', '.'), '', trim($phone)));
+if (strlen($phone) && ($phone[0] == '9')) $phone = '7' . $phone;
+return intval($phone);
 }
 
 }//class
