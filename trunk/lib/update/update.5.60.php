@@ -1,8 +1,12 @@
 <?php
 
 function update560() {
+  litepublisher::$site->jquery_version = '1.10.1';
+litepublisher::$site->jqueryui_version = '1.10.3';
+
 litepublisher::$classes->add('adminitems', 'admin.items.class.php');
 litepublisher::$classes->save();
+
 
 
 $js = tjsmerger::i();
