@@ -37,7 +37,6 @@ $self->save();
 $tc->save();
 
   litepublisher::$urlmap->addget($self->url, get_class($self));
-  litepublisher::$urlmap->addget($self->phoneurl, get_class($self));
 
 $js = tjsmerger::i();
 $js->lock();
