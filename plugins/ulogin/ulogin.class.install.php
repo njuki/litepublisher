@@ -9,7 +9,8 @@
 function uloginInstall($self) {
 $self->data['nets'] = array('vkontakte', 'odnoklassniki', 'mailru', 'facebook', 'twitter', 'google', 'yandex', 'livejournal', 'openid', 'flickr', 'lastfm', 'linkedin', 'liveid', 'soundcloud', 'steam', 'vimeo', 'webmoney', 'youtube', 'foursquare', 'tumblr', 'googleplus');
 
-    tdbmanager::i()->createtable($self->table, str_replace('$names', implode("', '", $self->data['nets']), file_get_contents(dirname(__file__) . '/ulogin.sql')));
+    $man = tdbmanager::i();
+$man->createtable($self->table, str_replace('$names', implode("', '", $self->data['nets']), file_get_contents(dirname(__file__) . '/ulogin.sql')));
   tusers::i()->deleted = $self->userdeleted;
 
     $lang = tplugins::getnamelang(basename(dirname(__file__)));
@@ -36,19 +37,22 @@ $self->save();
 $tc->save();
 
   litepublisher::$urlmap->addget($self->url, get_class($self));
-  litepublisher::$urlmap->clearcache();
+  litepublisher::$urlmap->addget($self->phoneurl, get_class($self));
 
 $js = tjsmerger::i();
 $js->lock();
 $js->add('default', '/plugins/ulogin/ulogin.popup.min.js');
 $js->add('default', '/plugins/ulogin/' . litepublisher::$options->language . '.ulogin.popup.min.js');
 $js->unlock();
+
+$man->alter('users', "add phone bigint not null default '0' after status");
 }
 
 function uloginUninstall($self) {
   tusers::i()->unbind('tregserviceuser');
   turlmap::unsub($self);
-  tdbmanager::i()->deletetable($self->table);
+  $man = tdbmanager::i();
+$man->deletetable($self->table);
 
     $alogin = tadminlogin::i();
     $alogin ->widget = $self->deletepanel($alogin ->widget);
@@ -67,4 +71,6 @@ $js->lock();
 $js->deletefile('default', '/plugins/ulogin/ulogin.popup.min.js');
 $js->deletefile('default', '/plugins/ulogin/' . litepublisher::$options->language . '.ulogin.popup.min.js');
 $js->unlock();
+
+$man->alter('users', "drop phone");
 }
