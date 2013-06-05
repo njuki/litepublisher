@@ -10,6 +10,7 @@ class ttheme extends tevents {
   public static $instances = array();
   public static $vars = array();
   public static $defaultargs;
+  public static $inifiles;
   public $name;
   public $parsing;
   public $templates;
@@ -430,10 +431,17 @@ class ttheme extends tevents {
   }
 
   public static function cacheini($filename) {
+if (!isset(self::$inifiles)) self::$inifiles = array();
+if (isset(self::$inifiles[$filename)) return self::$inifiles[$filename];
     $datafile = tlocal::getcachedir() . sprintf('cacheini.%s.php', md5($filename));
-    if (tfilestorage::loadvar($datafile, $ini) && is_array($ini)) return $ini;
+    if (tfilestorage::loadvar($datafile, $ini) && is_array($ini)) {
+self::$inifiles[$filename] = $ini;
+return $ini;
+}
+
     $ini = parse_ini_file($filename, true);
     tfilestorage::savevar($datafile, $ini);
+self::$inifiles[$filename] = $ini;
     return $ini;
   }
   
