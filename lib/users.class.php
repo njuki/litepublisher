@@ -57,7 +57,6 @@ class tusers extends titems {
   
   public function edit($id, array $values) {
     return tusersman::i()->edit($id, $values);
-    
   }
   
   public function setgroups($id, array $idgroups) {

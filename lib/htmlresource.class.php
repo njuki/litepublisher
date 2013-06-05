@@ -284,10 +284,12 @@ return 0;
     $theme = ttheme::i();
     $args = new targs();
     foreach ($items as $id => $item) {
+ttheme::$vars['item'] = $item;
       $args->add($item);
       if (!isset($item['id'])) $args->id = $id;
       $body .= $theme->parsearg($tml, $args);
     }
+unset(ttheme::$vars['item']);
     $args->tablehead  = $head;
     $args->tablebody = $body;
     return $theme->parsearg($this->ini['common']['table'], $args);
