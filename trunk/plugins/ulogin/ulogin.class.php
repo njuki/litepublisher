@@ -54,9 +54,28 @@ $this->db->delete("id = $id");
     Header( 'Pragma: no-cache');
 
     if (empty($_POST['token'])) return 403;
-if (!($s = http::get('http://ulogin.ru/token.php?token=' . $_POST['token'] . '&host=' . $_SERVER['HTTP_HOST']))) return 403;
-if (!($info = json_decode($s, true))) return 403;
-if (isset($info['error']) || !isset($info['network'])) return 403;
+if (!($cookies = $this->auth($_POST['token']))) return 403;
+
+if (!empty($_GET['backurl'])) {
+      $backurl = $_GET['backurl'];
+        } elseif (!empty($_COOKIE['backurl'])) {
+      $backurl = $_COOKIE['backurl'];
+    } else {
+      $user = tusers::i()->getitem($cookies['id']);
+      $backurl =  tusergroups::i()->gethome($user['idgroups'][0]);
+    }
+
+if (!tusers::i()->db->getvalue($cookies['id'], 'phone')) {
+if ($url = $this->onphone($backurl))     return litepublisher::$urlmap->redir($url);
+}
+
+    return litepublisher::$urlmap->redir($backurl);
+}
+
+public function auth($token) {
+if (!($s = http::get('http://ulogin.ru/token.php?token=' . $token . '&host=' . $_SERVER['HTTP_HOST']))) return false;
+if (!($info = json_decode($s, true))) return false;
+if (isset($info['error']) || !isset($info['network'])) return false;
 
 $name =!empty($info['first_name']) ? $info['first_name'] : '';
 $name .=!empty($info['last_name']) ? ' . ' . $info['last_name'] : '';
@@ -90,7 +109,7 @@ if ($phone) $users->db->setvalue($id, 'phone', $phone);
         }
       } else {
         //registration disabled
-        return 403;
+        return false;
       }
     } else {
       if ($uid) {
@@ -108,11 +127,11 @@ if ($phone) $users->db->setvalue($id, 'phone', $phone);
           $this->add($id, $info['network'], $uid);
         } else {
           //registration disabled
-          return 403;
+          return false;
         }
       } else {
         //nothing found and hasnt email or uid
-        return 403;
+        return false;
       }
     }
     
@@ -124,24 +143,28 @@ if ($phone) $users->db->setvalue($id, 'phone', $phone);
     if (litepublisher::$options->ingroup('admin')) setcookie('litepubl_user_flag', 'true', $expired, litepublisher::$site->subdir . '/', false);
     
     setcookie('litepubl_regservice', $info['network'], $expired, litepublisher::$site->subdir . '/', false);
-    
-    $this->onadd($id, $info, $newreg);
+        $this->onadd($id, $info, $newreg);
 
-if (!empty($_GET['backurl'])) {
-      $backurl = $_GET['backurl'];
-        } elseif (!empty($_COOKIE['backurl'])) {
-      $backurl = $_COOKIE['backurl'];
-    } else {
-      $user = $users->getitem($id);
-      $backurl =  tusergroups::i()->gethome($user['idgroups'][0]);
-    }
-
-if (!$users->db->getvalue($id, 'phone')) {
-if ($url = $this->onphone($backurl))     return litepublisher::$urlmap->redir($url);
+return array(
+'id' => $id,
+'pass' => $cookie,
+'regservice' => $info['network']
+);
 }
 
-    return litepublisher::$urlmap->redir($backurl);
-  }
+public function ulogin_auth(array $args) {
+if (!($token = $args['token']))) return 403;
+if (!($result = $this->auth($token))) return 403;
+if (!empty($args['callback'])) {
+$callback = $args['callback'];
+try {
+$result['callback'] = tjsonserver::i()->callevent($callback['method'], $callback);
+    } catch (Exception $e) {
+$result['error'] = $e->getMessage();
+}
+}
+return $result;
+}
   
 public function addpanel($s, $panel) {
 $open = '<!--ulogin-->';

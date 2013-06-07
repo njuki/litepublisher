@@ -7,17 +7,18 @@
 
 (function ($, document, window) {
   $(document).ready(function() {
-    litepubl.uloginpopup = new litepubl.Uloginpopup();
+    litepubl.ulogin = new litepubl.Ulogin();
   });
   
-  litepubl.Uloginpopup= Class.extend({
+  litepubl.Ulogin = Class.extend({
+registered: false,
 script: false,
 dialogopened: false,
     html: '<div style="display:block;overflow:hidden;width:300px;height:50px;">\
-<div id="ulogin-holder" data-ulogin="display=small;fields=first_name,last_name;optional=email,phone,nickname;providers=vkontakte,odnoklassniki,mailru,yandex,facebook,google,twitter;hidden=other;redirect_uri=%%redirurl%%;"></div>',
+<div id="ulogin-holder" data-ulogin="display=small;fields=first_name,last_name;optional=email,phone,nickname;providers=vkontakte,odnoklassniki,mailru,yandex,facebook,google,twitter;hidden=other;redirect_uri=%%redirurl%%;%%callback%%"></div>',
 
     init: function() {
-if ($.cookie('litepubl_user')) return;
+this.registered = $.cookie('litepubl_user');
       this.html = this.html.replace(/%%redirurl%%/gim, encodeURIComponent(ltoptions.url + "/admin/ulogin.php?backurl="));
       var self = this;
       $('a[href^="' + ltoptions.url + '/admin/"], a[href^="/admin/"]').click(function() {
@@ -31,16 +32,28 @@ return false;
 });
     },
     
-    open: function(url) {
+    open: function(url, callback) {
 if (this.dialogopened) return false;
 set_cookie('backurl', url);
 var self = this;
 self.ready(function() {
 self.dialogopened = true;
+var html = self.html.replace(/backurl%3D/gim, 'backurl%3D' + encodeURIComponent(encodeURIComponent(url)));
+if ($.isFunction(callback)) {
+html = html.replace(/%%callback%%/gim, "callback=ulogincallback");
+window.ulogincallback = function(token) {
+$.prettyPhoto.close();
+try {
+callback(token);
+        } catch(e) {erralert(e);}
+};
+} else {
+html = html.replace(/%%callback%%/gim, "");
+}
 
       $.prettyPhotoDialog({
         title: lang.ulogin.title,
-        html: self.html.replace(/backurl%3D/gim, 'backurl%3D' + encodeURIComponent(encodeURIComponent(url))),
+        html: html,
         width: 300,
 close: function() {
 self.dialogopened = false;
@@ -61,6 +74,15 @@ uLogin.customInit('ulogin-holder');
 ready: function(callback) {
 if (this.script) return this.script.done(callback);
 return this.script = $.load_script('http://ulogin.ru/js/ulogin.js', callback);
+},
+
+auth: function(token, json_callback, callback) {
+$.litejson({method: "ulogin_auth", token: token, callback: json_callback}, function(r) {
+set_cookie("litepubl_user_id", r.iduser);
+set_cookie("litepubl_user", r.pass);
+set_cookie("litepubl_regservice", r.regservice);
+if (r.callback) callback(r.callback);
+});
 }
     
   });
