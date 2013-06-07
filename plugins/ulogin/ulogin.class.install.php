@@ -44,6 +44,9 @@ $js->add('default', '/plugins/ulogin/ulogin.popup.min.js');
 $js->add('default', '/plugins/ulogin/' . litepublisher::$options->language . '.ulogin.popup.min.js');
 $js->unlock();
 
+$json = tjsonserver::i();
+  $json->addevent('ulogin_auth', get_class($self), 'ulogin_auth');
+
 $man->alter('users', "add phone bigint not null default '0' after status");
 }
 
@@ -70,6 +73,8 @@ $js->lock();
 $js->deletefile('default', '/plugins/ulogin/ulogin.popup.min.js');
 $js->deletefile('default', '/plugins/ulogin/' . litepublisher::$options->language . '.ulogin.popup.min.js');
 $js->unlock();
+
+  tjsonserver::i()->unbind($self);
 
 $man->alter('users', "drop phone");
 }
