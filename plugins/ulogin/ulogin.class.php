@@ -155,14 +155,17 @@ return array(
 public function ulogin_auth(array $args) {
 if (!($token = $args['token']))) return 403;
 if (!($result = $this->auth($token))) return 403;
-if (!empty($args['callback'])) {
+if (isset($args['callback'] && $args['callback'])) {
 $callback = $args['callback'];
+if ($callback != 'false') {
 try {
 $result['callback'] = tjsonserver::i()->callevent($callback['method'], $callback);
     } catch (Exception $e) {
 $result['error'] = $e->getMessage();
 }
 }
+}
+
 return $result;
 }
   
