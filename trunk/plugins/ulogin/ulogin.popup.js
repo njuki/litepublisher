@@ -77,11 +77,20 @@ return this.script = $.load_script('http://ulogin.ru/js/ulogin.js', callback);
 },
 
 auth: function(token, json_callback, callback) {
-$.litejson({method: "ulogin_auth", token: token, callback: json_callback}, function(r) {
+var self =this;
+return $.litejson({method: "ulogin_auth", token: token, callback: json_callback ? json_callback : false}, function(r) {
 set_cookie("litepubl_user_id", r.iduser);
 set_cookie("litepubl_user", r.pass);
 set_cookie("litepubl_regservice", r.regservice);
-if (r.callback) callback(r.callback);
+self.registered = true;
+if (r.callback&& $.isFunction(callback)) callback(r.callback);
+});
+},
+
+login: function(json_callback, callback) {
+var self = this;
+self.open(location.href, function(token) {
+self.auth(token, json_callback, callback);
 });
 }
     
