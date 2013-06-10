@@ -36,6 +36,7 @@ class turlmap extends titems {
     $this->basename = 'urlmap';
     $this->addevents('beforerequest', 'afterrequest', 'onclearcache');
     $this->data['revision'] = 0;
+$this->data['disabledcron'] = false;
     $this->is404 = false;
     $this->isredir = false;
     $this->adminpanel = false;
@@ -416,6 +417,7 @@ class turlmap extends titems {
   
   protected function close() {
     $this->call_close_events();
+if ($this->disabledcron) return;
     if (tfilestorage::$memcache) {
       $memcache = tfilestorage::$memcache;
       $k =litepublisher::$domain . ':lastpinged';
