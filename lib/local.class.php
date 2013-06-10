@@ -59,6 +59,13 @@ return false;
   public function __call($name, $args) {
     return strtr ($this->__get($name), $args->data);
   }
+
+public function addsearch() {
+    $a = func_get_args();
+foreach ($a as $sect) {
+if (!in_array($sect, $this->searchsect)) $this->searchsect[] = $sect;
+}
+}
   
   public static function date($date, $format = '') {
     if (empty($format)) $format = self::i()->getdateformat();

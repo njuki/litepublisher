@@ -7,7 +7,10 @@ litepublisher::$site->jqueryui_version = '1.10.3';
 litepublisher::$classes->add('adminitems', 'admin.items.class.php');
 litepublisher::$classes->save();
 
-
+if (!isset(litepublisher::$urlmap->data['disabledcron'])) {
+litepublisher::$urlmap->data['disabledcron'] = false;
+litepublisher::$urlmap->save();
+}
 
 $js = tjsmerger::i();
 $js->lock();
