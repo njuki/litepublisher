@@ -39,7 +39,7 @@ class tmailruregservice extends tregservice {
   public function request($arg) {
     if ($err = parent::request($arg)) return $err;
     $code = $_REQUEST['code'];
-    $resp = self::http_post('https://connect.mail.ru/oauth/token', array(
+    $resp = http::post('https://connect.mail.ru/oauth/token', array(
     'code' => $code,
     'client_id' => $this->client_id,
     'client_secret' => $this->client_secret,

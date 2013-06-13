@@ -52,8 +52,13 @@ class ttickets extends tposts {
   
   private function notify(tticket $ticket) {
     ttheme::$vars['ticket'] = $ticket;
-    $args = targs::i();
+    $args = new targs();
     $args->adminurl = litepublisher::$site->url . '/admin/tickets/editor/'. litepublisher::$site->q . 'id=' . $ticket->id;
+    $html = tadminhtml::i();
+    $html->iniplugin($this);
+    $lang = tlocal::admin('tickets');
+    $lang->addsearch('ticket');
+
     $mailtemplate = tmailtemplate::i('tickets');
     $subject = $mailtemplate->subject($args);
     $body = $mailtemplate->body($args);

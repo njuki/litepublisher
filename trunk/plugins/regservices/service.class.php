@@ -43,22 +43,6 @@ class tregservice extends tplugin {
     turlmap::unsub($this);
   }
   
-  public static function http_post($url, array $post) {
-    $ch = curl_init();
-    curl_setopt($ch, CURLOPT_URL, $url);
-    curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
-    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);
-    curl_setopt($ch, CURLOPT_TIMEOUT, 2);
-    curl_setopt($ch, CURLOPT_POST, TRUE);
-    curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($post));
-    
-    $response = curl_exec($ch);
-    $headers = curl_getinfo($ch);
-    curl_close($ch);
-    if ($headers['http_code'] != '200') return false;
-    return $response;
-  }
-  
   public function start_session() {
     tsession::init(1);
     session_start();

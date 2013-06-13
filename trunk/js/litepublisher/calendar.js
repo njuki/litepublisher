@@ -7,12 +7,13 @@
 
 (function ($, document, window) {
   litepubl.Calendar = Class.extend({
+buttonclass: ".calendar-button",
 ui_datepicker: false,
 dialogopened: false,
 
 init: function() {
 var self = this;
-$(".calendar-button").click(function() {
+$(this.buttonclass).click(function() {
 var edit = $(this).parent().find('input:first');
 self.open(edit);
 return false;
