@@ -31,7 +31,7 @@ class tgoogleregservice extends tregservice {
   public function request($arg) {
     if ($err = parent::request($arg)) return $err;
     $code = $_REQUEST['code'];
-    $resp = self::http_post('https://accounts.google.com/o/oauth2/token', array(
+    $resp = http::post('https://accounts.google.com/o/oauth2/token', array(
     'code' => $code,
     'client_id' => $this->client_id,
     'client_secret' => $this->client_secret,

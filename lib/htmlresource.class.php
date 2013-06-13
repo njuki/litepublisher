@@ -361,6 +361,16 @@ unset(ttheme::$vars['item']);
     '$adminurl' => $adminurl
     )));
   }
+
+public function tableprops($item) {
+$body = ''
+$lang = tlocal::i();
+foreach ($item as $k => $v) {
+$body .= sprintf('<tr><td>%s</td><td>%s</td></tr>', $lang->__get($k), $v);
+}
+
+return $this->gettable("<th>$lang->name</th> <th>$lang->value</th>", $body);
+}
   
   public function confirmdelete($id, $adminurl, $mesg) {
     $args = targs::i();

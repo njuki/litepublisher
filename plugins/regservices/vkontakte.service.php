@@ -30,7 +30,7 @@ class tvkontakteregservice extends tregservice {
   public function request($arg) {
     if ($err = parent::request($arg)) return $err;
     $code = $_REQUEST['code'];
-    $resp = self::http_post('https://oauth.vk.com/access_token', array(
+    $resp = http::post('https://oauth.vk.com/access_token', array(
     'code' => $code,
     'client_id' => $this->client_id,
     'client_secret' => $this->client_secret,

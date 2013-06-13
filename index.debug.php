@@ -105,6 +105,11 @@ tlocal::clearcache();
 litepublisher::$urlmap->clearcache();
 //tthemegenerator::i()->parseselectors();
 //tupdater::i()->run(5.60);
+/*
+litepublisher::$classes->add('orderreports', 'admin.reports.php', 'shop/orders');
+$m = adminshopmenus ::i();
+$m->createitem($m->url2id('/admin/shop/orders/'), 'reports', 'editor', 'orderreports', 'reports');
+*/
 //tplugins::i()->delete('shop');
 //shoptheme::i()->install();
 /*

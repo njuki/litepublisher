@@ -43,7 +43,7 @@ class todnoklassnikiservice extends tregservice {
   public function request($arg) {
     if ($err = parent::request($arg)) return $err;
     $code = $_REQUEST['code'];
-    $resp = self::http_post('http://api.odnoklassniki.ru/oauth/token.do', array(
+    $resp = http::post('http://api.odnoklassniki.ru/oauth/token.do', array(
     'grant_type' => 'authorization_code',
     'code' => $code,
     'client_id' => $this->client_id,
@@ -65,7 +65,7 @@ class todnoklassnikiservice extends tregservice {
       $params['sig'] = strtolower($this->sign($params, md5($tokens->access_token . $this->client_secret)));
       $params['access_token'] = $tokens->access_token;
       
-      if ($r = self::http_post('http://api.odnoklassniki.ru/fb.do', $params)) {
+      if ($r = http::post('http://api.odnoklassniki.ru/fb.do', $params)) {
         $js = json_decode($r);
         if (!isset($js->error)) {
           return $this->adduser(array(
