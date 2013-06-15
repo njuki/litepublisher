@@ -129,7 +129,7 @@ class topenid extends tevents {
   private function nomode() {
     $result = tsimplecontent::html(tlocal::get('openidserver', 'nomode'));
     $js = ttemplate::i()->getready('var s = window.location.toString();
-    if (-1 == s.indexOf("?")) {
+    if (-1 == s.indexof("?")) {
       window.location = ltoptions.url + "/";
     }');
     $result = str_replace('</head>', $js . '</head>', $result);

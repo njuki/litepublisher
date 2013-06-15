@@ -22,7 +22,7 @@ class texternallinks extends titems {
   }
   
   public function add($url) {
-    if ($id = $this->IndexOf('url', $url)) return $id;
+    if ($id = $this->indexof('url', $url)) return $id;
     $item = array(
     'url' => $url,
     'clicked' => 0

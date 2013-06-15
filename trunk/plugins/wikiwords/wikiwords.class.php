@@ -80,7 +80,7 @@ class twikiwords extends titems {
     if (isset($this->words[$word])) {
       $id = $this->words[$word];
     } else {
-      $id = $this->IndexOf('word', $word);
+      $id = $this->indexof('word', $word);
       if (!$id) $id = $this->additem(array('word' => $word));
       $this->words[$word] = $id;
     }
@@ -105,7 +105,7 @@ class twikiwords extends titems {
   }
   
   public function deleteword($word) {
-    if ($id = $this->IndexOf('word', $word)) return $this->delete($id);
+    if ($id = $this->indexof('word', $word)) return $this->delete($id);
   }
   
   public function getword($word) {

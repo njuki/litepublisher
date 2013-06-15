@@ -1170,7 +1170,7 @@ class tposteditor extends tadminmenu {
           $jsattr = JSON_NUMERIC_CHECK | (defined('JSON_UNESCAPED_UNICODE') ? JSON_UNESCAPED_UNICODE : 0);
           $args->jsitems = json_encode($files->db->res2items($files->db->query("select * from $files->thistable where id in ($items) or parent in ($items)")), $jsattr);
         } else {
-          $args->jsitems = json_encode($files->db->res2items($files->db->query("select * from $files->thistable where id in ($items) or parent in ($items)")), $jsattr);
+          $args->jsitems = json_encode($files->db->res2items($files->db->query("select * from $files->thistable where id in ($items) or parent in ($items)")));
         }
       }
     }
