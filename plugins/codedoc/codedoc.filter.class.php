@@ -118,7 +118,7 @@ class tcodedocfilter extends titems {
   public function find_class($class) {
     //check cache array
     if (isset($this->classes[$class])) return $this->classes[$class];
-    $result = $this->IndexOf('class', $class);
+    $result = $this->indexof('class', $class);
     $this->classes[$class] = $result;
     return $result;
   }

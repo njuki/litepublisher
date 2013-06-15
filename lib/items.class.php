@@ -111,7 +111,7 @@ class titems extends tevents {
     return false;
   }
   
-  public function IndexOf($name, $value) {
+  public function indexof($name, $value) {
     if ($this->dbversion){
       return $this->db->findid("$name = ". dbquote($value));
     }

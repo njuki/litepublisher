@@ -135,7 +135,7 @@ class tcommontags extends titems implements  itemplate {
   public function add($parent, $title) {
     $title = trim($title);
     if (empty($title)) return false;
-    if ($id  = $this->IndexOf('title', $title)) return $id;
+    if ($id  = $this->indexof('title', $title)) return $id;
     $parent = (int) $parent;
     if (($parent != 0) && !$this->itemexists($parent)) $parent = 0;
     

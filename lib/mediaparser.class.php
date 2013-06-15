@@ -198,7 +198,7 @@ class tmediaparser extends tevents {
     if (!isset($file['filename']) || !isset($file['tempfilename'])) $this->error('No file name');
     $files = tfiles::i();
     $hash =$files->gethash(litepublisher::$paths->files . $file['tempfilename']);
-    if (($id = $files->IndexOf('hash', $hash)) ||
+    if (($id = $files->indexof('hash', $hash)) ||
     ($id = $files->getdb('imghashes')->findid('hash = '. dbquote($hash)))) {
       @unlink(litepublisher::$paths->files . $file['tempfilename']);
       return $id;
@@ -291,7 +291,7 @@ class tmediaparser extends tevents {
   public function uploadthumb($filename, &$content) {
     $hash = trim(base64_encode(md5($content, true)), '=');
     $files = tfiles::i();
-    if (($id = $files->IndexOf('hash', $hash)) ||
+    if (($id = $files->indexof('hash', $hash)) ||
     ($id = $files->getdb('imghashes')->findid('hash = '. dbquote($hash)))) {
       return $id;
     }

@@ -140,7 +140,7 @@ class tfiles extends titems {
   }
   
   public function exists($filename) {
-    return $this->IndexOf('filename', $filename);
+    return $this->indexof('filename', $filename);
   }
   
   public function getfilelist(array $list, $excerpt) {
