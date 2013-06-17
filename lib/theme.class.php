@@ -429,25 +429,25 @@ class ttheme extends tevents {
     tfiler::delete(litepublisher::$paths->data . 'themes', false, false);
     litepublisher::$urlmap->clearcache();
   }
-
+  
   public static function cacheini($filename) {
-if (!isset(self::$inifiles)) self::$inifiles = array();
-if (isset(self::$inifiles[$filename])) return self::$inifiles[$filename];
+    if (!isset(self::$inifiles)) self::$inifiles = array();
+    if (isset(self::$inifiles[$filename])) return self::$inifiles[$filename];
     $datafile = tlocal::getcachedir() . sprintf('cacheini.%s.php', md5($filename));
     if (tfilestorage::loadvar($datafile, $ini) && is_array($ini)) {
-self::$inifiles[$filename] = $ini;
-return $ini;
-}
-
+      self::$inifiles[$filename] = $ini;
+      return $ini;
+    }
+    
     $ini = parse_ini_file($filename, true);
     tfilestorage::savevar($datafile, $ini);
-self::$inifiles[$filename] = $ini;
+    self::$inifiles[$filename] = $ini;
     return $ini;
   }
   
   public static function inifile($class, $filename) {
-$dir = litepublisher::$classes->getresourcedir($class);
-return self::cacheini($dir . $filename);
+    $dir = litepublisher::$classes->getresourcedir($class);
+    return self::cacheini($dir . $filename);
   }
   
   public static function getwidgetpath($path) {

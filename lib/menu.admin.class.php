@@ -36,12 +36,12 @@ class tadminmenus extends tmenus {
     $lang = tlocal::i();
     $ini = &$lang->ini;
     if (isset($ini[$name]['title'])) return $ini[$name]['title'];
-if (!in_array('names', $lang->searchsect)) array_unshift($lang->searchsect, 'names');
-if ($result = $lang->__get($name)) return $result;
-      return $name;
+    if (!in_array('names', $lang->searchsect)) array_unshift($lang->searchsect, 'names');
+    if ($result = $lang->__get($name)) return $result;
+    return $name;
   }
   
-    public function createurl($parent, $name) {
+  public function createurl($parent, $name) {
     return $parent == 0 ? "/admin/$name/" : $this->items[$parent]['url'] . "$name/";
   }
   

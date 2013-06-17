@@ -11,9 +11,9 @@
       title: title,
       html: "<p>" + mesg + "</p>",
       width: 200,
-close: function() {
-if ($.isFunction(callback)) callback();
-}
+      close: function() {
+        if ($.isFunction(callback)) callback();
+      }
     });
   };
   

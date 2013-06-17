@@ -88,7 +88,6 @@ function tadminmenusInstall($self) {
   {
     $self->createitem($service, 'backup', 'admin', 'tadminservice');
     $self->createitem($service, 'upload', 'admin', 'tadminservice');
-    $self->createitem($service, 'engine', 'admin', 'tadminservice');
     $self->createitem($service, 'run', 'admin', 'tadminservice');
   }
   

@@ -31,16 +31,16 @@ class tadminlogin extends tadminform {
   
   private function logout() {
     if (litepublisher::$options->cookieenabled) {
-if (litepublisher::$options->user) {
-litepublisher::$options->logout();
-}
-
-$subdir = litepublisher::$site->subdir . '/';
-    setcookie('litepubl_user_id', '', 0, $subdir, false);
-    setcookie('litepubl_user', '', 0, $subdir, false);
+      if (litepublisher::$options->user) {
+        litepublisher::$options->logout();
+      }
+      
+      $subdir = litepublisher::$site->subdir . '/';
+      setcookie('litepubl_user_id', '', 0, $subdir, false);
+      setcookie('litepubl_user', '', 0, $subdir, false);
       setcookie('litepubl_user_flag', '', 0, $subdir, false);
       setcookie('backurl', '', 0, $subdir, false);
-return litepublisher::$urlmap->redir('/admin/login/');
+      return litepublisher::$urlmap->redir('/admin/login/');
     } else {
       $auth = tauthdigest::i();
       if ($auth->auth()) $auth->logout();
@@ -90,12 +90,12 @@ return litepublisher::$urlmap->redir('/admin/login/');
     $args->remember = isset($_POST['remember']);
     $result = $this->widget;
     if (isset($_GET['backurl'])) {
-$result = str_replace('&amp;backurl=', '&backurl=', $result);
-$result = str_replace('backurl=', 'backurl=' . urlencode($_GET['backurl']), $result);
-//support ulogin
-$result = str_replace('backurl%3D', 'backurl%3D' . urlencode(urlencode($_GET['backurl'])), $result);
-}
-
+      $result = str_replace('&amp;backurl=', '&backurl=', $result);
+      $result = str_replace('backurl=', 'backurl=' . urlencode($_GET['backurl']), $result);
+      //support ulogin
+      $result = str_replace('backurl%3D', 'backurl%3D' . urlencode(urlencode($_GET['backurl'])), $result);
+    }
+    
     $result .= $html->adminform('[text=email]
     [password=password]
     [checkbox=remember]',

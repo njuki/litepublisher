@@ -7,7 +7,7 @@
 
 (function ($, document, window) {
   litepubl.Posteditor = Class.extend({
-
+    
     init: function() {
       var tabs = $("#tabs");
       if (tabs.length == 0) return;
@@ -44,12 +44,12 @@
       });
       
       $('form:first').submit(function(event) {
-var title = $("input[name='title']");
+        var title = $("input[name='title']");
         if ("" == $.trim(title.val())) {
-event.stopImmediatePropagation();
+          event.stopImmediatePropagation();
           $.messagebox(lang.dialog.error, lang.posteditor.emptytitle, function() {
-title.focus();
-});
+            title.focus();
+          });
           return false;
         }
       });

@@ -11,6 +11,7 @@ class tlocal {
   public $loaded;
   public $ini;
   public $section;
+  public $searchsect;
   
   public static function i($section = '') {
     if (!isset(self::$self)) {
@@ -30,6 +31,7 @@ class tlocal {
   public function __construct() {
     $this->ini = array();
     $this->loaded = array();
+    $this->searchsect = array('common', 'default');
   }
   
   public static function get($section, $key) {
@@ -39,19 +41,30 @@ class tlocal {
   
   public function __get($name) {
     if (isset($this->ini[$this->section][$name])) return $this->ini[$this->section][$name];
-    if (isset($this->ini['common'][$name])) return $this->ini['common'][$name];
-    if (isset($this->ini['default'][$name])) return $this->ini['default'][$name];
+    foreach ($this->searchsect as $section) {
+      if (isset($this->ini[$section][$name])) return $this->ini[$section][$name];
+    }
     return '';
   }
   
   public function __isset($name) {
-    return isset($this->ini[$this->section][$name]) ||
-    isset($this->ini['common'][$name]) ||
-    isset($this->ini['default'][$name]);
+    if (isset($this->ini[$this->section][$name])) return true;
+    foreach ($this->searchsect as $section) {
+      if (isset($this->ini[$section][$name])) return true;
+    }
+    
+    return false;
   }
   
   public function __call($name, $args) {
     return strtr ($this->__get($name), $args->data);
+  }
+  
+  public function addsearch() {
+    $a = func_get_args();
+    foreach ($a as $sect) {
+      if (!in_array($sect, $this->searchsect)) $this->searchsect[] = $sect;
+    }
   }
   
   public static function date($date, $format = '') {
@@ -86,6 +99,17 @@ class tlocal {
   
   public static function usefile($name) {
     self::i()->check($name);
+  }
+  
+  public static function inifile($class, $filename) {
+    $self = self::i();
+    $ini = ttheme::inifile($class,  litepublisher::$options->language . $filename);
+    if (is_array($ini)) {
+      $self->ini = $ini + $self->ini ;
+      $keys = array_keys($ini);
+      $self->section = array_shift($keys);
+    }
+    return $self;
   }
   
   //backward
@@ -266,6 +290,13 @@ class tviews extends titems_storage {
       if ($id == $iddefault) $this->defaults[$name] = 1;
     }
     return parent::delete($id);
+  }
+  
+  public function get($name) {
+    foreach ($this->items as $id => $item) {
+      if ($name == $item['name']) return tview::i($id);
+    }
+    return false;
   }
   
   public function widgetdeleted($idwidget) {
@@ -596,6 +627,7 @@ class ttheme extends tevents {
   public static $instances = array();
   public static $vars = array();
   public static $defaultargs;
+  public static $inifiles;
   public $name;
   public $parsing;
   public $templates;
@@ -1013,6 +1045,26 @@ class ttheme extends tevents {
   public static function clearcache() {
     tfiler::delete(litepublisher::$paths->data . 'themes', false, false);
     litepublisher::$urlmap->clearcache();
+  }
+  
+  public static function cacheini($filename) {
+    if (!isset(self::$inifiles)) self::$inifiles = array();
+    if (isset(self::$inifiles[$filename])) return self::$inifiles[$filename];
+    $datafile = tlocal::getcachedir() . sprintf('cacheini.%s.php', md5($filename));
+    if (tfilestorage::loadvar($datafile, $ini) && is_array($ini)) {
+      self::$inifiles[$filename] = $ini;
+      return $ini;
+    }
+    
+    $ini = parse_ini_file($filename, true);
+    tfilestorage::savevar($datafile, $ini);
+    self::$inifiles[$filename] = $ini;
+    return $ini;
+  }
+  
+  public static function inifile($class, $filename) {
+    $dir = litepublisher::$classes->getresourcedir($class);
+    return self::cacheini($dir . $filename);
   }
   
   public static function getwidgetpath($path) {

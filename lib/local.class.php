@@ -11,7 +11,7 @@ class tlocal {
   public $loaded;
   public $ini;
   public $section;
-public $searchsect;
+  public $searchsect;
   
   public static function i($section = '') {
     if (!isset(self::$self)) {
@@ -31,7 +31,7 @@ public $searchsect;
   public function __construct() {
     $this->ini = array();
     $this->loaded = array();
-$this->searchsect = array('common', 'default');
+    $this->searchsect = array('common', 'default');
   }
   
   public static function get($section, $key) {
@@ -41,31 +41,31 @@ $this->searchsect = array('common', 'default');
   
   public function __get($name) {
     if (isset($this->ini[$this->section][$name])) return $this->ini[$this->section][$name];
-foreach ($this->searchsect as $section) {
-    if (isset($this->ini[$section][$name])) return $this->ini[$section][$name];
-}
+    foreach ($this->searchsect as $section) {
+      if (isset($this->ini[$section][$name])) return $this->ini[$section][$name];
+    }
     return '';
   }
   
   public function __isset($name) {
-if (isset($this->ini[$this->section][$name])) return true;
-foreach ($this->searchsect as $section) {
-    if (isset($this->ini[$section][$name])) return true;
-}
-
-return false;
+    if (isset($this->ini[$this->section][$name])) return true;
+    foreach ($this->searchsect as $section) {
+      if (isset($this->ini[$section][$name])) return true;
+    }
+    
+    return false;
   }
   
   public function __call($name, $args) {
     return strtr ($this->__get($name), $args->data);
   }
-
-public function addsearch() {
+  
+  public function addsearch() {
     $a = func_get_args();
-foreach ($a as $sect) {
-if (!in_array($sect, $this->searchsect)) $this->searchsect[] = $sect;
-}
-}
+    foreach ($a as $sect) {
+      if (!in_array($sect, $this->searchsect)) $this->searchsect[] = $sect;
+    }
+  }
   
   public static function date($date, $format = '') {
     if (empty($format)) $format = self::i()->getdateformat();
@@ -100,18 +100,18 @@ if (!in_array($sect, $this->searchsect)) $this->searchsect[] = $sect;
   public static function usefile($name) {
     self::i()->check($name);
   }
-
-public static function inifile($class, $filename) {
-$self = self::i();
+  
+  public static function inifile($class, $filename) {
+    $self = self::i();
     $ini = ttheme::inifile($class,  litepublisher::$options->language . $filename);
     if (is_array($ini)) {
       $self->ini = $ini + $self->ini ;
-$keys = array_keys($ini);
-$self->section = array_shift($keys);
-}
-return $self;
+      $keys = array_keys($ini);
+      $self->section = array_shift($keys);
+    }
+    return $self;
   }
-
+  
   //backward
   public static function loadlang($name) {
     self::usefile($name);

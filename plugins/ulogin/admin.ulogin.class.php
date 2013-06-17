@@ -18,21 +18,21 @@ class adminulogin implements iadmin {
     $args = new targs();
     $lang = tplugins::getnamelang('ulogin');
     $args->formtitle = $lang->options;
-$args->panel = $ulogin->panel;
-$args->button = $ulogin->button;
-
+    $args->panel = $ulogin->panel;
+    $args->button = $ulogin->button;
+    
     return $html->adminform('
-[editor=panel]
-[editor=button]
-', $args);
+    [editor=panel]
+    [editor=button]
+    ', $args);
   }
   
   public function processform() {
     $ulogin = ulogin ::i();
-$ulogin->panel = trim($_POST['panel']);
-$ulogin->button = trim($_POST['button']);
-$ulogin->save();
-
+    $ulogin->panel = trim($_POST['panel']);
+    $ulogin->button = trim($_POST['button']);
+    $ulogin->save();
+    
     $alogin = tadminlogin::i();
     $alogin ->widget = $ulogin->addpanel($alogin ->widget, $ulogin->panel);
     $alogin->save();
@@ -40,10 +40,10 @@ $ulogin->save();
     $areg = tadminreguser::i();
     $areg->widget = $ulogin->addpanel($areg->widget, $ulogin->panel);
     $areg->save();
-
+    
     $tc = ttemplatecomments::i();
-      $tc->regaccount = $ulogin->addpanel($tc->regaccount, $ulogin->button);
-$tc->save();
-}
-
+    $tc->regaccount = $ulogin->addpanel($tc->regaccount, $ulogin->button);
+    $tc->save();
+  }
+  
 }//class

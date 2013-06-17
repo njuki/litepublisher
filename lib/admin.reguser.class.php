@@ -107,12 +107,12 @@ class tadminreguser extends tadminform {
     $args->data['$lang.email'] = 'email';
     $result .= $this->widget;
     if (isset($_GET['backurl'])) {
-//normalize
-$result = str_replace('&amp;backurl=', '&backurl=', $result);
-$result = str_replace('backurl=', 'backurl=' . urlencode($_GET['backurl']), $result);
-$result = str_replace('backurl%3D', 'backurl%3D' . urlencode(urlencode($_GET['backurl'])), $result);
-}
-
+      //normalize
+      $result = str_replace('&amp;backurl=', '&backurl=', $result);
+      $result = str_replace('backurl=', 'backurl=' . urlencode($_GET['backurl']), $result);
+      $result = str_replace('backurl%3D', 'backurl%3D' . urlencode(urlencode($_GET['backurl'])), $result);
+    }
+    
     $result .= $html->adminform($form, $args);
     $result = str_replace(' action=""',' action="' . litepublisher::$site->url . '/admin/reguser/"', $result);
     $this->callevent('oncontent', array(&$result));
