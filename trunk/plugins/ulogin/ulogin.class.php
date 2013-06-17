@@ -153,9 +153,9 @@ return array(
 }
 
 public function ulogin_auth(array $args) {
-if (!($token = $args['token']))) return 403;
+if (!($token = $args['token'])) return 403;
 if (!($result = $this->auth($token))) return 403;
-if (isset($args['callback'] && $args['callback'])) {
+if (isset($args['callback']) && $args['callback']) {
 $callback = $args['callback'];
 if ($callback != 'false') {
 try {
