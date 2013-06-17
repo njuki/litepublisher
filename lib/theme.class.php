@@ -432,7 +432,7 @@ class ttheme extends tevents {
 
   public static function cacheini($filename) {
 if (!isset(self::$inifiles)) self::$inifiles = array();
-if (isset(self::$inifiles[$filename)) return self::$inifiles[$filename];
+if (isset(self::$inifiles[$filename])) return self::$inifiles[$filename];
     $datafile = tlocal::getcachedir() . sprintf('cacheini.%s.php', md5($filename));
     if (tfilestorage::loadvar($datafile, $ini) && is_array($ini)) {
 self::$inifiles[$filename] = $ini;

@@ -20,6 +20,7 @@ dialogopened: false,
     init: function() {
 this.registered = $.cookie('litepubl_user');
       this.html = this.html.replace(/%%redirurl%%/gim, encodeURIComponent(ltoptions.url + "/admin/ulogin.php?backurl="));
+if (this.registered) return;
       var self = this;
       $('a[href^="' + ltoptions.url + '/admin/"], a[href^="/admin/"]').click(function() {
         self.open($(this).attr("href"));

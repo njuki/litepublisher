@@ -55,7 +55,7 @@ class tposts extends titems {
     if (!isset(titem::$instances['post'])) titem::$instances['post'] = array();
 $loaded = array_keys(titem::$instances['post']);
       $newitems = array_diff($items, $loaded);
-    if (!count($newitems)) return items;
+    if (!count($newitems)) return $items;
     $newitems = $this->select(sprintf('%s.id in (%s)', $this->thistable, implode(',', $newitems)), '');
 return array_merge($newitems, array_diff($loaded, $items));
   }
