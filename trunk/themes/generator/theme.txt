@@ -113,14 +113,6 @@ $excerpt = [
 <div class="meta">$post.taglinks <span class="votes">$post.commentslink</span></div>
 </div>]]
 
-content.excerpts.excerpt.filelist = [<span class="image" id="files-$post.id">
-$images= [$image = [<span class="image"><a title="$title" rel="prettyPhoto[gallery-$post.id]" href="$link">$preview</a></span>]
-$preview = [<img class="photo" src="$preview.link" alt="$title" title="$description" />]]
-$files = [<!---->]
-$audios = [<!---->]
-$videos = [<!---->]
-</span>]
-
 content.excerpts.lite = [<h1>$lang.posts $template.title</h1><ul>
 $excerpt = [<li><a href="$post.link" title="$lang.permalink: &laquo;$post.title&raquo;">$post.title</a></li>]</ul>
 ]

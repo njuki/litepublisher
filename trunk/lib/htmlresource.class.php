@@ -363,7 +363,7 @@ unset(ttheme::$vars['item']);
   }
 
 public function tableprops($item) {
-$body = ''
+$body = '';
 $lang = tlocal::i();
 foreach ($item as $k => $v) {
 $body .= sprintf('<tr><td>%s</td><td>%s</td></tr>', $lang->__get($k), $v);
@@ -647,12 +647,13 @@ class tuitabs {
   public $body;
   public $tabs;
   private static $index = 0;
+private $tabindex;
   private $items;
   
   public function __construct() {
-    self::$index++;
+$this->tabindex = ++self::$index;
     $this->items = array();
-    $this->head = '<li><a href="#tab-' . self::$index. '-%d"><span>%s</span></a></li>';
+    $this->head = '<li><a href="%s"><span>%s</span></a></li>';
     $this->body = '<div id="tab-' . self::$index . '-%d">%s</div>';
     $this->tabs = '<div id="tabs-' . self::$index . '" class="admintabs">
     <ul>%s</ul>
@@ -664,8 +665,12 @@ class tuitabs {
     $head= '';
     $body = '';
     foreach ($this->items as $i => $item) {
-      $head .= sprintf($this->head, $i, $item['title']);
+if (isset($item['url'])) {
+      $head .= sprintf($this->head, $item['url'], $item['title']);
+} else {
+      $head .= sprintf($this->head, "#tab-$this->tabindex-$i", $item['title']);
       $body .= sprintf($this->body, $i, $item['body']);
+}
     }
     return sprintf($this->tabs, $head, $body);
   }
@@ -676,9 +681,16 @@ class tuitabs {
     'body' => $body
     );
   }
+
+  public function ajax($title, $url) {
+    $this->items[] = array(
+'url' => $url,
+    'title' => $title,
+    );
+  }
   
   public static function gethead() {
-    return ttemplate::i()->getready('$($("div.admintabs").get().reverse()).tabs()');
+    return ttemplate::i()->getready('$($("div.admintabs").get().reverse()).tabs({ beforeLoad: litepubl.uibefore})');
   }
   
 }//class

@@ -15,8 +15,8 @@ function tticketsInstall($self) {
   tlocalmerger::i()->add('default', "plugins/$dirname/resource/" . litepublisher::$options->language . ".ini");
   tadminhtml::i()->inidir(dirname(__file__) . '/resource/');
   $lang = tlocal::admin('tickets');
-  $lang->ini['tickets'] = $lang->ini['ticket'] + $lang->ini['tickets'];
-  
+  $lang->addsearch('ticket', 'tickets');
+
   $self->data['cats'] = array();
   $self->data['idcomauthor'] =  tusers::i()->add(array(
   'email' => '',

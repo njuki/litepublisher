@@ -12,16 +12,6 @@ class tadmintags extends tadminmenu {
     return parent::iteminstance(__class__, $id);
   }
   
-  public function gethead() {
-    $result = parent::gethead();
-    
-    $template = ttemplate::i();
-    $template->ltoptions['lang'] = litepublisher::$options->language ;
-  $result .= $template->getready('$("#tabs").tabs({ beforeLoad: litepubl.uibefore});');
-    
-    return $result . tajaxtageditor::i()->gethead();
-  }
-  
   public function getcontent() {
     $result = '';
     $istags = $this->name == 'tags';
@@ -62,7 +52,19 @@ class tadmintags extends tadminmenu {
       $args->add($item);
       $args->parent = tadminhtml::array2combo($parents, $item['parent']);
       $args->order = tadminhtml::array2combo(range(0,9), $item['customorder']);
-      $result .= $html->form($args);
+$ajax = tadminhtml::getadminlink('/admin/ajaxtageditor.htm', sprintf('id=%d&type=%s&get', $id, $istags  ? 'tags' : 'categories'));
+$tabs = new tuitabs();
+$tabs->add($lang->title, '
+[text=title]
+[combo=parent]
+[combo=order]
+[hidden=id]');
+
+$tabs->ajax($lang->text, "$ajax=text");
+$tabs->ajax($lang->view, "$ajax=view");
+$tabs->ajax('SEO', "$ajax=seo");
+$args->formtitle = $lang->edit;
+      $result .= $html->adminform($tabs->get(), $args);
     }
     
     //table

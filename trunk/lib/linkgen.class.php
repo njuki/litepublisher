@@ -22,7 +22,7 @@ class tlinkgenerator extends tevents {
     'tag' => '/tag/[title].htm',
     'category' => '/category/[title].htm',
     'archive' => '/[year]/[month].htm',
-    'file' => '/[medium]/[filename]/',
+    'file' => '/[media]/[filename]/',
     ));
     $this->data['urlencode'] = false;
     $this->addevents('onencode');
