@@ -58,7 +58,7 @@ class ttickets extends tposts {
     $html->iniplugin($this);
     $lang = tlocal::admin('tickets');
     $lang->addsearch('ticket');
-
+    
     $mailtemplate = tmailtemplate::i('tickets');
     $subject = $mailtemplate->subject($args);
     $body = $mailtemplate->body($args);

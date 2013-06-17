@@ -268,32 +268,32 @@ class Tadminoptions extends tadminmenu {
       'ftpsocket' => 'ftpsocket',
       //'ssh2' => 'ssh2'
       ), $backuper->filertype);
-
-$args->formtitle = $lang->securehead;
-$result = $html->adminform('
-[checkbox=echoexception]
-[checkbox=cookieenabled]
-[checkbox=xxxcheck]
-[checkbox=usersenabled]
-[checkbox=reguser]
-[checkbox=removephp]
-[checkbox=phpcode]
-[checkbox=parsepost]
-[checkbox=show_draft_post]
-[combo=filertype]
-[checkbox=useshell]
-', $args);
-
-$args->formtitle = $lang->changepassword;
-$args->oldpassword = '';
-$args->newpassword = '';
-$args->repassword = '';
-$args->items = $html->parsearg('[password=oldpassword]
-[password=newpassword]
-[password=repassword]', $args);
-
-$result .= $html->secondform($args);
-return $result;
+      
+      $args->formtitle = $lang->securehead;
+      $result = $html->adminform('
+      [checkbox=echoexception]
+      [checkbox=cookieenabled]
+      [checkbox=xxxcheck]
+      [checkbox=usersenabled]
+      [checkbox=reguser]
+      [checkbox=removephp]
+      [checkbox=phpcode]
+      [checkbox=parsepost]
+      [checkbox=show_draft_post]
+      [combo=filertype]
+      [checkbox=useshell]
+      ', $args);
+      
+      $args->formtitle = $lang->changepassword;
+      $args->oldpassword = '';
+      $args->newpassword = '';
+      $args->repassword = '';
+      $args->items = $html->parsearg('[password=oldpassword]
+      [password=newpassword]
+      [password=repassword]', $args);
+      
+      $result .= $html->secondform($args);
+      return $result;
     }
     
   $result  = $this->html->{$this->name}($args);
@@ -505,17 +505,17 @@ return $result;
     $menus = tadminmenus::i();
     $menus->lock();
     if ($value) {
-if (!$menus->url2id('/admin/users/')) {
-      $id = $menus->createitem(0, 'users', 'admin', 'tadminusers');
-      $menus->createitem($id, 'pages', 'author', 'tadminuserpages');
-      $menus->createitem($id, 'groups', 'admin', 'tadmingroups');
-      $menus->createitem($id, 'options', 'admin', 'tadminuseroptions');
-      $menus->createitem($id, 'perms', 'admin', 'tadminperms');
-      $menus->createitem($id, 'search', 'admin', 'tadminusersearch');
-      
-      $menus->createitem($menus->url2id('/admin/posts/'),
-      'authorpage', 'author', 'tadminuserpages');
-}
+      if (!$menus->url2id('/admin/users/')) {
+        $id = $menus->createitem(0, 'users', 'admin', 'tadminusers');
+        $menus->createitem($id, 'pages', 'author', 'tadminuserpages');
+        $menus->createitem($id, 'groups', 'admin', 'tadmingroups');
+        $menus->createitem($id, 'options', 'admin', 'tadminuseroptions');
+        $menus->createitem($id, 'perms', 'admin', 'tadminperms');
+        $menus->createitem($id, 'search', 'admin', 'tadminusersearch');
+        
+        $menus->createitem($menus->url2id('/admin/posts/'),
+        'authorpage', 'author', 'tadminuserpages');
+      }
     } else {
       $menus->deletetree($menus->url2id('/admin/users/'));
     }

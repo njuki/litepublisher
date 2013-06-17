@@ -52,6 +52,6 @@ class http {
     curl_close($ch);
     if ($headers['http_code'] != '200') return false;
     return $response;
-}
-
+  }
+  
 }//class

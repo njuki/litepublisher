@@ -1175,7 +1175,7 @@ class titems extends tevents {
     return false;
   }
   
-  public function IndexOf($name, $value) {
+  public function indexof($name, $value) {
     if ($this->dbversion){
       return $this->db->findid("$name = ". dbquote($value));
     }
@@ -1536,6 +1536,17 @@ class tclasses extends titems {
     }
   }
   
+  public function getresourcedir($c) {
+    $class = self::get_class_name($c);
+    if (isset($this->included_files[$class])) {
+      $dir = dirname($this->included_files[$class]);
+    } else {
+      $dir = dirname($this->getclassfilename($class));
+    }
+    
+    return $dir . '/resource/';
+  }
+  
 }//class
 
 function getinstance($class) {
@@ -1730,7 +1741,7 @@ class toptions extends tevents_storage {
     } else {
       $user = tusers::i()->getitem($this->_user);
       $this->idgroups = $user['idgroups'];
-      $this->group = tusergroups::i()->items[$user['idgroups'][0]]['name'];
+      $this->group = count($this->idgroups) ? tusergroups::i()->items[$this->idgroups[0]]['name'] : '';
     }
   }
   
@@ -1916,6 +1927,9 @@ class tsite extends tevents_storage {
     return litepublisher::$options->data['language'];
   }
   
+  public function getdomain() {
+    return litepublisher::$domain;
+  }
   
   public function getuserlink() {
     if ($id = litepublisher::$options->user) {
@@ -1971,6 +1985,7 @@ class turlmap extends titems {
     $this->basename = 'urlmap';
     $this->addevents('beforerequest', 'afterrequest', 'onclearcache');
     $this->data['revision'] = 0;
+    $this->data['disabledcron'] = false;
     $this->is404 = false;
     $this->isredir = false;
     $this->adminpanel = false;
@@ -2351,6 +2366,7 @@ class turlmap extends titems {
   
   protected function close() {
     $this->call_close_events();
+    if ($this->disabledcron) return;
     if (tfilestorage::$memcache) {
       $memcache = tfilestorage::$memcache;
       $k =litepublisher::$domain . ':lastpinged';
@@ -2620,7 +2636,6 @@ class tusers extends titems {
   
   public function edit($id, array $values) {
     return tusersman::i()->edit($id, $values);
-    
   }
   
   public function setgroups($id, array $idgroups) {

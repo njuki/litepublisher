@@ -42,26 +42,6 @@ class tadminservice extends tadminmenu {
       }
       break;
       
-      case 'engine':
-      $result = '';
-      $checkboxes = '';
-      $item = $html->engineitem;
-      $item .= "\n";
-      
-      $inifile = parse_ini_file(litepublisher::$paths->lib . 'install' . DIRECTORY_SEPARATOR . 'classes.ini', true);
-      $ini = &$inifile['items'];
-      foreach ($ini as $name => $value) {
-        $checkboxes .= sprintf($item, $name, $value, !isset(litepublisher::$classes->items[$name]) ? "checked='checked'" : '');
-      }
-      
-      foreach (litepublisher::$classes->items as $name => $value) {
-        if (isset($ini[$name])) continue;
-        $checkboxes .= sprintf($item, $name, $value[0], '');
-      }
-      
-      $args->checkboxes = $checkboxes;
-      $result .= $html->engineform($args);
-      return $html->fixquote($result);
       
       case 'backup':
       if (empty($_GET['action'])) {
@@ -164,33 +144,6 @@ class tadminservice extends tadminmenu {
     switch ($this->name) {
       case 'service':
       return $this->doupdate($_POST);
-      
-      case 'engine':
-      $inifile = parse_ini_file(litepublisher::$paths->lib . 'install' . DIRECTORY_SEPARATOR . 'classes.ini', true);
-      $ini = &$inifile['items'];
-      $lang = tlocal::i('service');
-      litepublisher::$classes->lock();
-      foreach ($_POST as $name => $value) {
-        if ( isset($ini[$name]) || isset(litepublisher::$classes->items[$name])) {
-          switch ($_POST['submit']) {
-            case $lang->install:
-            litepublisher::$classes->add($name, $ini[$name]);
-            break;
-            
-            case $lang->uninstall:
-            $plugins = tplugins::i();
-            $plugins->deleteclass($name);
-            litepublisher::$classes->delete($name);
-            break;
-            
-            case $lang->reinstall:
-            litepublisher::$classes->reinstall($name);
-            break;
-          }
-        }
-      }
-      litepublisher::$classes->unlock();
-      break;
       
       case 'backup':
       if (!$this->checkbackuper()) return $html->h3->erroraccount;

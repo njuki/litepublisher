@@ -232,38 +232,38 @@ class tadminhtml {
   public function getcombo($name, $value, $title) {
     return $this->getinput('combo', $name, $value, $title);
   }
-
+  
   public function getcalendar($name, $date) {
-if (is_numeric($date)) {
-$date = intval($date);
-} else if ($date == '0000-00-00 00:00:00') {
-$date = 0;
-} elseif ($date == '0000-00-00') {
-$date = 0;
-} elseif (!trim($date)) {
-$date = 0;
-} else {
-$date = strtotime($date);
-}
-
+    if (is_numeric($date)) {
+      $date = intval($date);
+    } else if ($date == '0000-00-00 00:00:00') {
+      $date = 0;
+    } elseif ($date == '0000-00-00') {
+      $date = 0;
+    } elseif (!trim($date)) {
+      $date = 0;
+    } else {
+      $date = strtotime($date);
+    }
+    
     return strtr($this->ini['common']['calendar'], array(
-'$title' => tlocal::i()->__get($name),
+    '$title' => tlocal::i()->__get($name),
     '$name' => $name,
-'$date' => $date? date('d.m.Y', $date) : '',
-'$time' => $date ?date('H:i', $date) : '',
+    '$date' => $date? date('d.m.Y', $date) : '',
+    '$time' => $date ?date('H:i', $date) : '',
     ));
   }
-
-public static function getdatetime($name) {
+  
+  public static function getdatetime($name) {
     if (!empty($_POST[$name]) && @sscanf(trim($_POST[$name]), '%d.%d.%d', $d, $m, $y)) {
-$h = 0;
-$min  = 0;
-if (!empty($_POST[$name . '-time'])) @sscanf(trim($_POST[$name . '-time']), '%d:%d', $h, $min);
-return mktime($h,$min,0, $m, $d, $y);
+      $h = 0;
+      $min  = 0;
+      if (!empty($_POST[$name . '-time'])) @sscanf(trim($_POST[$name . '-time']), '%d:%d', $h, $min);
+      return mktime($h,$min,0, $m, $d, $y);
     }
-
-return 0;
-}
+    
+    return 0;
+  }
   
   public function gettable($head, $body) {
     return strtr($this->ini['common']['table'], array(
@@ -284,12 +284,12 @@ return 0;
     $theme = ttheme::i();
     $args = new targs();
     foreach ($items as $id => $item) {
-ttheme::$vars['item'] = $item;
+      ttheme::$vars['item'] = $item;
       $args->add($item);
       if (!isset($item['id'])) $args->id = $id;
       $body .= $theme->parsearg($tml, $args);
     }
-unset(ttheme::$vars['item']);
+    unset(ttheme::$vars['item']);
     $args->tablehead  = $head;
     $args->tablebody = $body;
     return $theme->parsearg($this->ini['common']['table'], $args);
@@ -361,16 +361,16 @@ unset(ttheme::$vars['item']);
     '$adminurl' => $adminurl
     )));
   }
-
-public function tableprops($item) {
-$body = '';
-$lang = tlocal::i();
-foreach ($item as $k => $v) {
-$body .= sprintf('<tr><td>%s</td><td>%s</td></tr>', $lang->__get($k), $v);
-}
-
-return $this->gettable("<th>$lang->name</th> <th>$lang->value</th>", $body);
-}
+  
+  public function tableprops($item) {
+    $body = '';
+    $lang = tlocal::i();
+    foreach ($item as $k => $v) {
+      $body .= sprintf('<tr><td>%s</td><td>%s</td></tr>', $lang->__get($k), $v);
+    }
+    
+    return $this->gettable("<th>$lang->name</th> <th>$lang->value</th>", $body);
+  }
   
   public function confirmdelete($id, $adminurl, $mesg) {
     $args = targs::i();
@@ -410,26 +410,26 @@ return $this->gettable("<th>$lang->name</th> <th>$lang->value</th>", $body);
   public function inidir($dir) {
     $html_ini = ttheme::cacheini($dir . 'html.ini');
     if (is_array($html_ini)) {
-$this->ini = $html_ini + $this->ini;
-$keys = array_keys($html_ini);
-$this->section = array_shift($keys);
-}
-
+      $this->ini = $html_ini + $this->ini;
+      $keys = array_keys($html_ini);
+      $this->section = array_shift($keys);
+    }
+    
     $lang_ini = ttheme::cacheini($dir . litepublisher::$options->language . '.admin.ini');
     if (is_array($lang_ini)) {
       $lang = tlocal::i();
       $lang->ini = $lang_ini + $lang->ini ;
-$keys = array_keys($lang_ini);
-$lang->section = array_shift($keys);
+      $keys = array_keys($lang_ini);
+      $lang->section = array_shift($keys);
     }
-
-return $this;
+    
+    return $this;
   }
   
   public function iniplugin($class) {
     return $this->inidir(litepublisher::$classes->getresourcedir($class));
-}
-
+  }
+  
 }//class
 
 class tautoform {
@@ -647,11 +647,11 @@ class tuitabs {
   public $body;
   public $tabs;
   private static $index = 0;
-private $tabindex;
+  private $tabindex;
   private $items;
   
   public function __construct() {
-$this->tabindex = ++self::$index;
+    $this->tabindex = ++self::$index;
     $this->items = array();
     $this->head = '<li><a href="%s"><span>%s</span></a></li>';
     $this->body = '<div id="tab-' . self::$index . '-%d">%s</div>';
@@ -665,12 +665,12 @@ $this->tabindex = ++self::$index;
     $head= '';
     $body = '';
     foreach ($this->items as $i => $item) {
-if (isset($item['url'])) {
-      $head .= sprintf($this->head, $item['url'], $item['title']);
-} else {
-      $head .= sprintf($this->head, "#tab-$this->tabindex-$i", $item['title']);
-      $body .= sprintf($this->body, $i, $item['body']);
-}
+      if (isset($item['url'])) {
+        $head .= sprintf($this->head, $item['url'], $item['title']);
+      } else {
+        $head .= sprintf($this->head, "#tab-$this->tabindex-$i", $item['title']);
+        $body .= sprintf($this->body, $i, $item['body']);
+      }
     }
     return sprintf($this->tabs, $head, $body);
   }
@@ -681,16 +681,16 @@ if (isset($item['url'])) {
     'body' => $body
     );
   }
-
+  
   public function ajax($title, $url) {
     $this->items[] = array(
-'url' => $url,
+    'url' => $url,
     'title' => $title,
     );
   }
   
   public static function gethead() {
-    return ttemplate::i()->getready('$($("div.admintabs").get().reverse()).tabs({ beforeLoad: litepubl.uibefore})');
+  return ttemplate::i()->getready('$($("div.admintabs").get().reverse()).tabs({ beforeLoad: litepubl.uibefore})');
   }
   
 }//class

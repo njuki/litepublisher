@@ -40,31 +40,34 @@ class tadmintags extends tadminmenu {
       }
     }
     
-    if ($id ==  0) {
-      $result .= $html->togglehead();
-      $result .= $html->addscript;
-      $args->title = '';
-      $args->parent = tadminhtml::array2combo($parents, 0);
-      $args->order = tadminhtml::array2combo(range(0,9), 1);
-      $result .= $html->form($args);
-    } elseif ($tags->itemexists($id)) {
-      $item = $tags->getitem($id);
-      $args->add($item);
-      $args->parent = tadminhtml::array2combo($parents, $item['parent']);
-      $args->order = tadminhtml::array2combo(range(0,9), $item['customorder']);
-$ajax = tadminhtml::getadminlink('/admin/ajaxtageditor.htm', sprintf('id=%d&type=%s&get', $id, $istags  ? 'tags' : 'categories'));
-$tabs = new tuitabs();
-$tabs->add($lang->title, '
-[text=title]
-[combo=parent]
-[combo=order]
-[hidden=id]');
-
-$tabs->ajax($lang->text, "$ajax=text");
-$tabs->ajax($lang->view, "$ajax=view");
-$tabs->ajax('SEO', "$ajax=seo");
-$args->formtitle = $lang->edit;
+    if (!$id ||$tags->itemexists($id)) {
+      if ($id ==  0) {
+        $result .= $html->togglehead();
+        $result .= $html->addscript;
+        $args->title = '';
+        $args->parent = tadminhtml::array2combo($parents, 0);
+        $args->order = tadminhtml::array2combo(range(0,9), 1);
+      } else {
+        $item = $tags->getitem($id);
+        $args->add($item);
+        $args->parent = tadminhtml::array2combo($parents, $item['parent']);
+        $args->order = tadminhtml::array2combo(range(0,9), $item['customorder']);
+      }
+      
+      $ajax = tadminhtml::getadminlink('/admin/ajaxtageditor.htm', sprintf('id=%d&type=%s&get', $id, $istags  ? 'tags' : 'categories'));
+      $tabs = new tuitabs();
+      $tabs->add($lang->title, '
+      [text=title]
+      [combo=parent]
+      [combo=order]
+      [hidden=id]');
+      
+      $tabs->ajax($lang->text, "$ajax=text");
+      $tabs->ajax($lang->view, "$ajax=view");
+      $tabs->ajax('SEO', "$ajax=seo");
+      $args->formtitle = $lang->edit;
       $result .= $html->adminform($tabs->get(), $args);
+      $result .= tuitabs::gethead();
     }
     
     //table

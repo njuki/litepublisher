@@ -35,21 +35,11 @@ class tadminmenus extends tmenus {
   public function getadmintitle($name) {
     $lang = tlocal::i();
     $ini = &$lang->ini;
-    if (isset($ini[$name]['title'])) {
-      return $ini[$name]['title'];
-    } elseif (isset($ini[$lang->section][$name])) {
-      return $ini[$lang->section][$name];
-    } elseif (isset($ini['names'][$name])) {
-      return $ini['names'][$name];
-    } elseif (isset($ini['default'][$name])) {
-      return $ini['default'][$name];
-    } elseif (isset($ini['common'][$name])) {
-      return $ini['common'][$name];
-    } else {
-      return $name;
-    }
+    if (isset($ini[$name]['title'])) return $ini[$name]['title'];
+    if (!in_array('names', $lang->searchsect)) array_unshift($lang->searchsect, 'names');
+    if ($result = $lang->__get($name)) return $result;
+    return $name;
   }
-  
   
   public function createurl($parent, $name) {
     return $parent == 0 ? "/admin/$name/" : $this->items[$parent]['url'] . "$name/";
@@ -476,6 +466,38 @@ class tadminhtml {
     return $this->getinput('combo', $name, $value, $title);
   }
   
+  public function getcalendar($name, $date) {
+    if (is_numeric($date)) {
+      $date = intval($date);
+    } else if ($date == '0000-00-00 00:00:00') {
+      $date = 0;
+    } elseif ($date == '0000-00-00') {
+      $date = 0;
+    } elseif (!trim($date)) {
+      $date = 0;
+    } else {
+      $date = strtotime($date);
+    }
+    
+    return strtr($this->ini['common']['calendar'], array(
+    '$title' => tlocal::i()->__get($name),
+    '$name' => $name,
+    '$date' => $date? date('d.m.Y', $date) : '',
+    '$time' => $date ?date('H:i', $date) : '',
+    ));
+  }
+  
+  public static function getdatetime($name) {
+    if (!empty($_POST[$name]) && @sscanf(trim($_POST[$name]), '%d.%d.%d', $d, $m, $y)) {
+      $h = 0;
+      $min  = 0;
+      if (!empty($_POST[$name . '-time'])) @sscanf(trim($_POST[$name . '-time']), '%d:%d', $h, $min);
+      return mktime($h,$min,0, $m, $d, $y);
+    }
+    
+    return 0;
+  }
+  
   public function gettable($head, $body) {
     return strtr($this->ini['common']['table'], array(
     '$tablehead' => $head,
@@ -495,10 +517,12 @@ class tadminhtml {
     $theme = ttheme::i();
     $args = new targs();
     foreach ($items as $id => $item) {
+      ttheme::$vars['item'] = $item;
       $args->add($item);
       if (!isset($item['id'])) $args->id = $id;
       $body .= $theme->parsearg($tml, $args);
     }
+    unset(ttheme::$vars['item']);
     $args->tablehead  = $head;
     $args->tablebody = $body;
     return $theme->parsearg($this->ini['common']['table'], $args);
@@ -571,6 +595,16 @@ class tadminhtml {
     )));
   }
   
+  public function tableprops($item) {
+    $body = '';
+    $lang = tlocal::i();
+    foreach ($item as $k => $v) {
+      $body .= sprintf('<tr><td>%s</td><td>%s</td></tr>', $lang->__get($k), $v);
+    }
+    
+    return $this->gettable("<th>$lang->name</th> <th>$lang->value</th>", $body);
+  }
+  
   public function confirmdelete($id, $adminurl, $mesg) {
     $args = targs::i();
     $args->id = $id;
@@ -606,32 +640,27 @@ class tadminhtml {
     return $result;
   }
   
-  public static function cacheini($filename) {
-    $datafile = tlocal::getcachedir() . sprintf('cacheini.%s.php', md5($filename));
-    if (tfilestorage::loadvar($datafile, $ini) && is_array($ini)) return $ini;
-    $ini = parse_ini_file($filename, true);
-    tfilestorage::savevar($datafile, $ini);
-    return $ini;
-  }
-  
   public function inidir($dir) {
-    $html_ini = self::cacheini($dir . 'html.ini');
-    if (is_array($html_ini)) $this->ini = $html_ini + $this->ini;
+    $html_ini = ttheme::cacheini($dir . 'html.ini');
+    if (is_array($html_ini)) {
+      $this->ini = $html_ini + $this->ini;
+      $keys = array_keys($html_ini);
+      $this->section = array_shift($keys);
+    }
     
-    $lang_ini = self::cacheini($dir . litepublisher::$options->language . '.admin.ini');
+    $lang_ini = ttheme::cacheini($dir . litepublisher::$options->language . '.admin.ini');
     if (is_array($lang_ini)) {
       $lang = tlocal::i();
       $lang->ini = $lang_ini + $lang->ini ;
+      $keys = array_keys($lang_ini);
+      $lang->section = array_shift($keys);
     }
+    
+    return $this;
   }
   
   public function iniplugin($class) {
-    if (isset(litepublisher::$classes->included_files[$class])) {
-      $dir = dirname(litepublisher::$classes->included_files[$class]);
-    } else {
-      $dir = dirname(litepublisher::$classes->getclassfilename($class));
-    }
-    $this->inidir($dir . '/resource/');
+    return $this->inidir(litepublisher::$classes->getresourcedir($class));
   }
   
 }//class
@@ -851,12 +880,13 @@ class tuitabs {
   public $body;
   public $tabs;
   private static $index = 0;
+  private $tabindex;
   private $items;
   
   public function __construct() {
-    self::$index++;
+    $this->tabindex = ++self::$index;
     $this->items = array();
-    $this->head = '<li><a href="#tab-' . self::$index. '-%d"><span>%s</span></a></li>';
+    $this->head = '<li><a href="%s"><span>%s</span></a></li>';
     $this->body = '<div id="tab-' . self::$index . '-%d">%s</div>';
     $this->tabs = '<div id="tabs-' . self::$index . '" class="admintabs">
     <ul>%s</ul>
@@ -868,8 +898,12 @@ class tuitabs {
     $head= '';
     $body = '';
     foreach ($this->items as $i => $item) {
-      $head .= sprintf($this->head, $i, $item['title']);
-      $body .= sprintf($this->body, $i, $item['body']);
+      if (isset($item['url'])) {
+        $head .= sprintf($this->head, $item['url'], $item['title']);
+      } else {
+        $head .= sprintf($this->head, "#tab-$this->tabindex-$i", $item['title']);
+        $body .= sprintf($this->body, $i, $item['body']);
+      }
     }
     return sprintf($this->tabs, $head, $body);
   }
@@ -881,8 +915,15 @@ class tuitabs {
     );
   }
   
+  public function ajax($title, $url) {
+    $this->items[] = array(
+    'url' => $url,
+    'title' => $title,
+    );
+  }
+  
   public static function gethead() {
-    return ttemplate::i()->getready('$($("div.admintabs").get().reverse()).tabs()');
+  return ttemplate::i()->getready('$($("div.admintabs").get().reverse()).tabs({ beforeLoad: litepubl.uibefore})');
   }
   
 }//class
@@ -1181,6 +1222,7 @@ class tposteditor extends tadminmenu {
   }
   
   public function canrequest() {
+    tlocal::admin()->searchsect[] = 'editor';
     $this->isauthor = false;
     $this->basename = 'editor';
     $this->idpost = $this->idget();

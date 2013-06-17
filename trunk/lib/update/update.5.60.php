@@ -18,4 +18,7 @@ $js->lock();
 $js->add('admin', 'js/litepublisher/calendar.min.js');
   $js->add('admin', "/lib/languages/$language/admin.min.js");
 $js->unlock();
+
+$m = tadminmenus::i();
+$m->deleteurl('/admin/service/engine/');
 }

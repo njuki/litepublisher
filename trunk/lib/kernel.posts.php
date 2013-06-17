@@ -1128,12 +1128,12 @@ class tposts extends titems {
   
   public function loaditems(array $items) {
     //exclude already loaded items
-    if (isset(titem::$instances['post'])) {
-      $items = array_diff($items, array_keys(titem::$instances['post']));
-    }
-    if (count($items) == 0) return;
-    $list = implode(',', $items);
-    return $this->select("$this->thistable.id in ($list)", '');
+    if (!isset(titem::$instances['post'])) titem::$instances['post'] = array();
+    $loaded = array_keys(titem::$instances['post']);
+    $newitems = array_diff($items, $loaded);
+    if (!count($newitems)) return $items;
+    $newitems = $this->select(sprintf('%s.id in (%s)', $this->thistable, implode(',', $newitems)), '');
+    return array_merge($newitems, array_diff($loaded, $items));
   }
   
   public function setassoc(array $items) {
@@ -1786,7 +1786,7 @@ class tcommontags extends titems implements  itemplate {
   public function add($parent, $title) {
     $title = trim($title);
     if (empty($title)) return false;
-    if ($id  = $this->IndexOf('title', $title)) return $id;
+    if ($id  = $this->indexof('title', $title)) return $id;
     $parent = (int) $parent;
     if (($parent != 0) && !$this->itemexists($parent)) $parent = 0;
     
@@ -2476,7 +2476,7 @@ class tfiles extends titems {
   }
   
   public function exists($filename) {
-    return $this->IndexOf('filename', $filename);
+    return $this->indexof('filename', $filename);
   }
   
   public function getfilelist(array $list, $excerpt) {

@@ -52,11 +52,11 @@ class tuseroptions extends titems {
     $this->items[$id][$name] = $value;
     $item[$name] = $value;
     $item['id'] = $id;
-$this->setitem($item);
-}
-
-public function setitem($item) {
-$this->items[intval($item['id'])] = $item;
+    $this->setitem($item);
+  }
+  
+  public function setitem($item) {
+    $this->items[intval($item['id'])] = $item;
     $i = array_search($item['id'], $this->defitems);
     if ($i === false) {
       $this->db->updateassoc($item);
@@ -64,6 +64,6 @@ $this->items[intval($item['id'])] = $item;
       $this->db->insert($item);
       array_splice($this->defitems, $i, 1);
     }
-}
+  }
   
 }//class

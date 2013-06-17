@@ -16,7 +16,7 @@ function tticketsInstall($self) {
   tadminhtml::i()->inidir(dirname(__file__) . '/resource/');
   $lang = tlocal::admin('tickets');
   $lang->addsearch('ticket', 'tickets');
-
+  
   $self->data['cats'] = array();
   $self->data['idcomauthor'] =  tusers::i()->add(array(
   'email' => '',

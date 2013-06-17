@@ -61,10 +61,10 @@ class tsite extends tevents_storage {
   public function getlanguage() {
     return litepublisher::$options->data['language'];
   }
-
-public function getdomain() {
-return litepublisher::$domain;
-}
+  
+  public function getdomain() {
+    return litepublisher::$domain;
+  }
   
   public function getuserlink() {
     if ($id = litepublisher::$options->user) {
