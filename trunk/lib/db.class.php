@@ -161,7 +161,7 @@ class tdatabase {
       $list[] = sprintf('%s = %s', $name,  $this->quote($value));
     }
     
-    return $this->update(implode(', ', $list), 'id = '. $a['id']);
+    return $this->update(implode(', ', $list), 'id = '. $a['id'] . ' limit 1');
   }
   
   public function insertrow($row) {
