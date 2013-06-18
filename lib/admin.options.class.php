@@ -210,14 +210,28 @@ class Tadminoptions extends tadminmenu {
       ', $args);
       
       case 'cache':
-      $args->cache = $options->cache;
+      $args->enabledcache = $options->cache;
+$args->expiredcache = $options->expiredcache;
       $args->admincache = $options->admincache;
       $args->ob_cache = $options->ob_cache;
       $args->compress = $options->compress;
       $args->commentspull = $options->commentspull;
       $args->memcache_classes = litepublisher::$classes->memcache;
-      break;
-      
+
+$args->formtitle = $lang->optionscache;
+$result = $html->adminform('
+[checkbox=enabledcache]
+[text=expiredcache]
+[checkbox=ob_cache]
+[checkbox=admincache]
+[checkbox=commentspull]
+[checkbox=memcache_classes]
+', $args);
+
+$args->form = $html->getsubmit('clearcache');
+$result .= $html->simpleform ($args);
+return $result;
+
       case 'catstags':
       case 'lite': //old version suports
       $args->litearch= litepublisher::$classes->archives->lite;
@@ -420,9 +434,9 @@ class Tadminoptions extends tadminmenu {
         }
         
         $options->lock();
-        $options->cache = isset($cache );
+        $options->cache = isset($enabledcache);
         $options->admincache = isset($admincache );
-        if (!empty($cacheexpired)) $options->expiredcache = (int) $cacheexpired;
+        if (!empty($expiredcache)) $options->expiredcache = (int) $expiredcache;
         $options->ob_cache = isset($ob_cache);
         $options->compress = isset($compress);
         $options->commentspull = isset($commentspull);
