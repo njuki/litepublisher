@@ -19,6 +19,7 @@ public function __construct($tag) { $this->tag = $tag; }
 class tadminhtml {
   public static $tags = array('h1', 'h2', 'h3', 'h4', 'p', 'li', 'ul', 'strong');
   public $section;
+  public $searchsect;
   public $ini;
   private $map;
   private $section_stack;
@@ -38,36 +39,28 @@ class tadminhtml {
   
   public function __construct() {
     $this->ini = array();
+    $this->searchsect = array('common');
     tlocal::usefile('admin');
   }
   
   public function __get($name) {
-    if (isset($this->ini[$this->section][$name]))  {
-      return $this->ini[$this->section][$name];
-    } elseif (isset($this->ini['common'][$name]))  {
-      return $this->ini['common'][$name];
-    } elseif (in_array($name, self::$tags)) {
-      return new thtmltag($name);
-    } else {
-      throw new Exception("the requested $name item not found in $this->section section");
+    if (isset($this->ini[$this->section][$name])) return $this->ini[$this->section][$name];
+    foreach ($this->searchsect as $section) {
+      if (isset($this->ini[$section][$name])) return $this->ini[$section][$name];
     }
+
+if (in_array($name, self::$tags)) return new thtmltag($name);
+      throw new Exception("the requested $name item not found in $this->section section");
   }
   
   public function __call($name, $params) {
-    if (isset($this->ini[$this->section][$name]))  {
-      $s = $this->ini[$this->section][$name];
-    } elseif (isset($this->ini['common'][$name]))  {
-      $s = $this->ini['common'][$name];
-    } elseif (in_array($name, self::$tags)) {
-      return sprintf('<%1$s>%2$s</%1$s>', $name, $params[0]);
-    } else {
-      throw new Exception("the requested $name item not found in $this->section section");
-    }
-    
-    $args = isset($params[0]) && $params[0] instanceof targs ? $params[0] : new targs();
+$s = $this->__get($name);
+if (is_object($s) && ($s instanceof thtmltag))  return sprintf('<%1$s>%2$s</%1$s>', $name, $params[0]);
+
+   $args = isset($params[0]) && $params[0] instanceof targs ? $params[0] : new targs();
     return $this->parsearg($s, $args);
   }
-  
+
   public function parsearg($s, targs $args) {
     if (!is_string($s)) $s = (string) $s;
     $theme = ttheme::i();
@@ -106,6 +99,13 @@ class tadminhtml {
     
     $s = strtr($s, $args->data);
     return $theme->parse($s);
+  }
+
+  public function addsearch() {
+    $a = func_get_args();
+    foreach ($a as $sect) {
+      if (!in_array($sect, $this->searchsect)) $this->searchsect[] = $sect;
+    }
   }
   
   public function push_section($section) {
