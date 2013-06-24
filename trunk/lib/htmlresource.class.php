@@ -76,23 +76,29 @@ if (is_object($s) && ($s instanceof thtmltag))  return sprintf('<%1$s>%2$s</%1$s
       $s = substr_replace($s, $replace, $i, strlen('[/form]'));
     }
     
-    if (preg_match_all('/\[(editor|checkbox|text|password|combo|hidden)(:|=)(\w*+)\]/i', $s, $m, PREG_SET_ORDER)) {
+    if (preg_match_all('/\[(editor|checkbox|text|password|combo|hidden|calendar)(:|=)(\w*+)\]/i', $s, $m, PREG_SET_ORDER)) {
       foreach ($m as $item) {
         $type = $item[1];
         $name = $item[3];
         $varname = '$' . $name;
         //convert spec charsfor editor
-        if (!(($type == 'checkbox') || ($type == 'combo'))) {
+        if (!(($type == 'checkbox') || ($type == 'combo') || ($type == 'calendar'))) {
           if (isset($args->data[$varname])) {
             $args->data[$varname] = self::specchars($args->data[$varname]);
           } else {
             $args->data[$varname] = '';
           }
         }
+
+if ($type == 'calendar') {
+$tag = $this->getcalendar($name, $varname);
+} else {
         $tag = strtr($theme->templates["content.admin.$type"], array(
         '$name' => $name,
-        '$value' =>$varname
+        '$value' => $varname
         ));
+}
+
         $s = str_replace($item[0], $tag, $s);
       }
     }

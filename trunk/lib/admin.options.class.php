@@ -16,13 +16,6 @@ class Tadminoptions extends tadminmenu {
   public function getautoform($name) {
     if (isset($this->_form)) return $this->_form;
     switch ($name) {
-      case 'options':
-      $form = new tautoform(litepublisher::$site, 'options', 'blogdescription');
-      $form->add($form->fixedurl, $form->url, $form->name, $form->description, $form->keywords, $form->author);
-      $form->obj = ttemplate::i();
-      $form->add($form->footer('editor'));
-      break;
-      
       case 'rss':
       $form = new tautoform(trss::i(), 'options', 'rssoptions');
       $form->add($form->feedburner, $form->feedburnercomments, $form->template('editor'));
@@ -56,6 +49,29 @@ class Tadminoptions extends tadminmenu {
     $html = $this->html;
     
     switch ($this->name) {
+      case 'options':
+$site = litepublisher::$site;
+$args->fixedurl = $site->fixedurl;
+$args->redirdom = litepublisher::$urlmap->redirdom;
+ $args->url = $site->url;
+$args->name = $site->name;
+ $args->description = $site->description;
+ $args->keywords = $site->keywords;
+ $args->author = $site->author;
+$args->footer= $template->footer; 
+
+$args->formtitle = $lang->options;
+return $html->adminform('
+[checkbox=fixedurl]
+[checkbox=redirdom]
+[text=url]
+[text=name]
+[text=description]
+[text=keywords]
+[text=author]
+[editor=footer]
+', $args);
+      
       case 'home':
       $home = thomepage::i();
       $tabs = new tuitabs();
@@ -320,6 +336,18 @@ return $result;
     $options = litepublisher::$options;
     
     switch ($this->name) {
+      case 'options':
+litepublisher::$urlmap->redirdom = isset($redirdom);
+$site = litepublisher::$site;
+$site->fixedurl = isset($fixedurl);
+ $site->url = $url;
+$site->name = $name;
+ $site->description = $description;
+ $site->keywords = $keywords;
+ $site->author = $author;
+ttemplate::i()->footer = $footer;
+break;
+
       case 'home':
       $home = thomepage::i();
       $home->lock();
