@@ -124,6 +124,7 @@ class tsubscribers extends titemsposts {
     
     $users = tusers::i();
     $users->loaditems($subscribers);
+$list = array();
     foreach ($subscribers as $uid) {
       $user = $users->getitem($uid);
       if ($user['status'] == 'hold') continue;
@@ -142,9 +143,17 @@ class tsubscribers extends titemsposts {
         $admin .= rawurlencode($user['cookie']);
       }
       
-      tmailer::sendmail(litepublisher::$site->name, $this->fromemail,  $user['name'], $email,
-      $subject, $body . $admin);
+$list[] = array(
+'fromname' => litepublisher::$site->name,
+'fromemail' =>  $this->fromemail,
+'toname' => $user['name'],
+'toemail' =>  $email,
+     'subject' => $subject,
+'body' => $body . $admin
+);
     }
+
+if (count($list)) tmailer::sendlist($list);
   }
   
 }//class

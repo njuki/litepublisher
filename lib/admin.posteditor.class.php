@@ -24,7 +24,6 @@ class tposteditor extends tadminmenu {
     
     $template = ttemplate::i();
     $template->ltoptions['idpost'] = $this->idget();
-    $template->ltoptions['lang'] = litepublisher::$options->language;
     $result .= $template->getjavascript($template->jsmerger_posteditor);
     
     if ($this->isauthor &&($h = tauthor_rights::i()->gethead()))  $result .= $h;

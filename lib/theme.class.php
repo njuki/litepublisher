@@ -439,10 +439,12 @@ class ttheme extends tevents {
       return $ini;
     }
     
+if (file_exists($filename)) {
     $ini = parse_ini_file($filename, true);
     tfilestorage::savevar($datafile, $ini);
     self::$inifiles[$filename] = $ini;
     return $ini;
+}
   }
   
   public static function inifile($class, $filename) {

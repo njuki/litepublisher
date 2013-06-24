@@ -54,12 +54,46 @@ class tmailer {
     return self::sendmail(litepublisher::$site->name, litepublisher::$options->fromemail,
     'admin', litepublisher::$options->email, $subject, $body);
   }
-  
+
   public static function onshutdown() {
+    if (litepublisher::$options->mailer == 'smtp') {
+      $mailer = TSMTPMailer ::i();
+if ($mailer->auth()) {
+$fromname= litepublisher::$site->name;
+$fromemail = litepublisher::$options->fromemail;
+ $toemail = litepublisher::$options->email;
+
+    foreach (self::$hold as $i => $item) {
+      $mailer->send($fromname, $fromemail, 'admin', $toemail, $item['subject'], $item['body'], false);
+      unset(self::$hold[$i]);
+    }
+$mailer->close();
+}
+} else {
     foreach (self::$hold as $i => $item) {
       self::sendtoadmin($item['subject'], $item['body'], false);
       unset(self::$hold[$i]);
     }
+}
+  }
+
+  public static function sendlist(array $list) {
+if (!count($list)) return;
+    if (litepublisher::$options->mailer == 'smtp') {
+      $mailer = TSMTPMailer ::i();
+if ($mailer->auth()) {
+    foreach ($list as $item) {
+      $mailer->send($item['fromname'], $item['fromemail'], $item['toname'], $item['toemail'], $item['subject'], $item['body']);
+    }
+$mailer->close();
+return true;
+}
+return false;
+} else {
+    foreach ($list as $item) {
+      self::sendmail($item['fromname'], $item['fromemail'], $item['toname'], $item['toemail'], $item['subject'], $item['body']);
+    }
+}
   }
   
   public static function  SendAttachmentToAdmin($subj, $body, $filename, $attachment) {
@@ -94,10 +128,7 @@ class tmailer {
 } //class
 
 class TSMTPMailer extends tevents {
-  //public $host;
-  //public $login;
-  //public $password;
-  //public $port;
+private $smtp;
   
   public static function i() {
     return getinstance(__class__);
@@ -113,29 +144,48 @@ class TSMTPMailer extends tevents {
     'port' => 25
     );
   }
-  
+
   public function Mail($fromname,  $fromemail, $toname, $toemail, $subj, $body) {
-    $result = false;
-    $options =     litepublisher::$options;
+if ($this->auth()) {
+$this->send($fromname,  $fromemail, $toname, $toemail, $subj, $body);
+$this->close();
+return true;
+}
+return false;
+}
+
+  public function auth() {
     litepublisher::$classes->include_file(litepublisher::$paths->libinclude . 'class-smtp.php');
-    $smtp = new SMTP();
-    if($smtp->Connect($this->host, $this->port, 10)) {
-      $smtp->Hello($_SERVER['SERVER_NAME']);
-      if ($smtp->Authenticate($this->login, $this->password)) {
-        if ($smtp->Mail($this->login) && $smtp->Recipient($toemail)) {
+    $this->smtp = new SMTP();
+    if($this->smtp->Connect($this->host, $this->port, 10)) {
+      $this->smtp->Hello($_SERVER['SERVER_NAME']);
+      if ($this->smtp->Authenticate($this->login, $this->password)) {
+return true;
+}
+}
+return false;
+}
+
+  public function send($fromname,  $fromemail, $toname, $toemail, $subj, $body) {
+        if ($this->smtp->Mail($this->login) && $this->smtp->Recipient($toemail)) {
+    $options =     litepublisher::$options;
           $subj = $subj == '' ? '' : '=?utf-8?B?'.@base64_encode($subj). '?=';
           $date = date('r');
           $from = tmailer::CreateEmail($fromname, $fromemail);
           $to = tmailer::CreateEmail($toname, $toemail);
           
-          $smtp->data("To: $to\nFrom: $from\nReply-To: $from\nContent-Type: text/plain; charset=\"utf-8\"\nContent-Transfer-Encoding: 8bit\nDate: $date\nSubject: $subj\nX-Priority: 3\nX-Mailer: Lite Publisher ver $options->version\n\n$body");
-          $result = true;
-        }
-        $smtp->Quit();
-        $smtp->Close();
+          $this->smtp->data("To: $to\nFrom: $from\nReply-To: $from\nContent-Type: text/plain; charset=\"utf-8\"\nContent-Transfer-Encoding: 8bit\nDate: $date\nSubject: $subj\nX-Priority: 3\nX-Mailer: Lite Publisher ver $options->version\n\n$body");
+return true;
+}
+return false;
+}
+
+public function close() {
+if ($this->smtp) {
+        $this->smtp->Quit();
+        $this->smtp->Close();
+$this->smtp = false;
+}
       }
-    }
-    return $result;
-  }
-  
+
 }//class
