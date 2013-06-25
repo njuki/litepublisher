@@ -312,7 +312,7 @@ class TXMLRPCMetaWeblog extends TXMLRPCAbstract {
     'categories' => $categories->getnames($post->categories),
     'mt_excerpt' => $post->excerpt,
     'mt_text_more' => '',
-    'mt_allow_comments' => $post->constaytus != 'closed' ? 1 : 0,
+    'mt_allow_comments' => $post->comstatus != 'closed' ? 1 : 0,
     'mt_allow_pings' => $post->pingenabled ? 1 : 0,
     'mt_keywords' => $post->tagnames,
     'wp_slug' => $post->url,
