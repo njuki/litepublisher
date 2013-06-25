@@ -104,7 +104,10 @@ if (dbversion) litepublisher::$db = new tdatabase();
 tlocal::clearcache();
 litepublisher::$urlmap->clearcache();
 //tthemegenerator::i()->parseselectors();
-//tupdater::i()->run(5.60);
+//tupdater::i()->run(5.61);
+
+//yandexfeed::i()->cron();
+//admincashmethod::i()->install();
 /*
 litepublisher::$classes->add('orderreports', 'admin.reports.php', 'shop/orders');
 $m = adminshopmenus ::i();
@@ -136,3 +139,5 @@ echo $man->performance();
 echo round(microtime(true) - litepublisher::$microtime, 2), "\n";
 */
 //tdebugproxy::showperformance();
+
+

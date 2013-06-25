@@ -20,6 +20,7 @@ class tcron extends tevents {
     $this->addevents('added', 'deleted');
     $this->data['password'] = '';
     $this->data['path'] = '';
+    $this->data['disableping'] = false;
     $this->cache = false;
     $this->disableadd = false;
     $this->table = 'cron';
@@ -46,6 +47,7 @@ class tcron extends tevents {
         } else {
           litepublisher::$urlmap->close_connection();
         }
+
         if (ob_get_level()) ob_end_flush ();
         flush();
         
@@ -63,11 +65,32 @@ class tcron extends tevents {
     }
     return 'locked';
   }
+
+public function run() {
+        if (ob_get_level()) ob_end_flush ();
+        flush();
+
+    if (($fh = @fopen($this->lockpath .'cron.lok', 'w')) &&       flock($fh, LOCK_EX | LOCK_NB)) {
+        set_time_limit(300);
+          //ignore_user_abort(true);
+
+try {
+        $this->execute();
+      } catch (Exception $e) {
+        litepublisher::$options->handexception($e);
+      }
+
+      flock($fh, LOCK_UN);
+      fclose($fh);
+      @chmod($this->lockpath .'cron.lok', 0666);
+      return true;
+    }
+
+    return false;
+  }
   
-  protected function execute() {
-    echo "<pre>\n";
+  public function execute() {
     while ($item = $this->db->getassoc(sprintf("date <= '%s' order by date asc limit 1", sqldate()))) {
-      //sleep(2);
       extract($item);
   $this->log("task started:\n{$class}->{$func}($arg)");
       $arg = unserialize($arg);
@@ -96,8 +119,7 @@ class tcron extends tevents {
       if ($type == 'single') {
         $this->db->iddelete($id);
       } else {
-        $date = sqldate(strtotime("+1 $type"));
-        $this->db->setvalue($id, 'date', $date);
+        $this->db->setvalue($id, 'date', sqldate(strtotime("+1 $type")));
       }
     }
   }
@@ -106,28 +128,16 @@ class tcron extends tevents {
     if (!preg_match('/^single|hour|day|week$/', $type)) $this->error("Unknown cron type $type");
     if ($this->disableadd) return false;
     $id = $this->doadd($type, $class, $func, $arg);
-    if (($type == 'single') && !self::$pinged) {
+
+    if (($type == 'single') && !$this->disableping && !self::$pinged) {
+        if (litepublisher::$debug) tfiler::log("cron added $id");
       if (tfilestorage::$memcache) {
-        tfiler::log("cron added $id");
-        $memcache = tfilestorage::$memcache;
-        $k =litepublisher::$domain . ':lastpinged';
-        $lastpinged = $memcache->get($k);
-        if ($lastpinged && (time() > $lastpinged + 300)) {
-          self::pingonshutdown();
-        } else {
-          $k =litepublisher::$domain . ':singlepinged';
-          $singlepinged = $memcache->get($k);
-          if (!$singlepinged) {
-            $memcache->set($k, time(), false, 3600);
-          } elseif (time() > $singlepinged  + 300) {
-            self::pingonshutdown();
-          }
-        }
-      } else {
+$this->pingmemcache();
+} else {
         self::pingonshutdown();
-      }
-    }
-    
+}
+}
+
     return $id;
   }
   
@@ -178,8 +188,27 @@ class tcron extends tevents {
     $class = self::get_class_name($c);
     $this->db->delete("class = '$class'");
   }
-  
-  public static function pingonshutdown() {
+
+public function pingmemcache() {
+        $memcache = tfilestorage::$memcache;
+$expired = time() - 300;
+        $key_last =litepublisher::$domain . ':lastpinged';
+        $lastpinged = $memcache->get($key_last );
+        if ($lastpinged && ($expired >= $lastpinged)) {
+          return self::pingonshutdown();
+}
+
+          $key_single =litepublisher::$domain . ':singlepinged';
+          $singlepinged = $memcache->get($key_single);
+          if (!$singlepinged) {
+            $memcache->set($key_single, time(), false, 3600);
+          } elseif ($expired >= $singlepinged ) {
+            self::pingonshutdown();
+          }
+
+    }
+    
+ public static function pingonshutdown() {
     if (self::$pinged) return;
     self::$pinged = true;
     

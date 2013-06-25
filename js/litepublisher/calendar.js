@@ -12,8 +12,12 @@
     dialogopened: false,
     
     init: function() {
+this.on(this.buttonclass);
+},
+
+on: function(buttons) {
       var self = this;
-      $(this.buttonclass).click(function() {
+      $(buttons).off("click.calendar").on("click.calendar", function() {
         var edit = $(this).parent().find('input:first');
         self.open(edit);
         return false;

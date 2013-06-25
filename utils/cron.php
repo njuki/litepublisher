@@ -13,4 +13,3 @@ echo "mustbe start<br>";
 flush();
 var_dump($cron->request(null));
 echo "finish";
-?>

@@ -19,7 +19,7 @@ return false;
     //only logged users
 var iduser = get_cookie("litepubl_user_id");
     if (iduser) {
-if ((iduser == 1) || ($iduser == $("#forum-edit-link").data("author"))) $("#forum-edit-link").show();
+if ((iduser == 1) || (iduser == $("#forum-edit-link").data("author"))) $("#forum-edit-link").show();
 }
   });
   

@@ -10,8 +10,9 @@ $template.menu = [
 $hover = [true]
 <script type="text/javascript">
 $(document).ready(function() {
-$("#nav a[href='" + window.location + "']").addClass("current_page_link");
-$("#nav li").hover(function(){$(this).addClass("jshover");}, function(){$(this).removeClass("jshover");}); 
+var menu = $("#nav");
+$("a[href='" + window.location + "']", menu).addClass("current_page_link");
+$("li", menu).hover(function(){$(this).addClass("jshover");}, function(){$(this).removeClass("jshover");}); 
 });
 </script>
 <ul id="nav">
