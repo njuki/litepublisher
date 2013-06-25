@@ -18,7 +18,7 @@ class tkeywordsplugin  extends tplugin {
     $this->addmap('blackwords', array());
   }
   
-  public function urldeleted($item) {
+  public function urldeleted($id) {
     tfiler::deletemask(litepublisher::$paths->data . 'keywords' . DIRECTORY_SEPARATOR. $item['id'] . ".*.php");
   }
   

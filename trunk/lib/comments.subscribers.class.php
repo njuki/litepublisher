@@ -100,8 +100,12 @@ class tsubscribers extends titemsposts {
     if (!$comments->itemexists($id)) return;
     $item = $comments->getitem($id);
     if (($item['status'] != 'approved')) return;
-    
+
+    if (litepublisher::$options->mailer == 'smtp') {    
     tcron::i()->add('single', get_class($this),  'cronsendmail', (int) $id);
+} else {
+$this->cronsendmail($id);
+}
   }
   
   public function cronsendmail($id) {
