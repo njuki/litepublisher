@@ -246,10 +246,10 @@ $tag = $this->getcalendar($name, $varname);
       $date = 0;
     } elseif ($date == '0000-00-00') {
       $date = 0;
-    } elseif (!trim($date)) {
-      $date = 0;
-    } else {
+    } elseif (trim($date)) {
       $date = strtotime($date);
+    } else {
+      $date = 0;
     }
     
     return strtr($this->ini['common']['calendar'], array(
@@ -277,9 +277,8 @@ $tag = $this->getcalendar($name, $varname);
     '$tablebody' => $body));
   }
   
-  public function buildtable(array $items, array $tablestruct) {
+  public function tablestruct(array $tablestruct) {
     $head = '';
-    $body = '';
     $tml = '<tr>';
     foreach ($tablestruct as $elem) {
       $head .= sprintf('<th align="%s">%s</th>', $elem[0], $elem[1]);
@@ -287,6 +286,12 @@ $tag = $this->getcalendar($name, $varname);
     }
     $tml .= '</tr>';
     
+return array($head, $tml);
+}
+
+  public function buildtable(array $items, array $tablestruct) {
+$body = '';
+list($head, $tml) = $this->tablestruct($tablestruct);
     $theme = ttheme::i();
     $args = new targs();
     foreach ($items as $id => $item) {
@@ -377,8 +382,29 @@ $tag = $this->getcalendar($name, $varname);
     
     return $this->gettable("<th>$lang->name</th> <th>$lang->value</th>", $body);
   }
+
+  public function tablevalues(array $a) {
+    $body = '';
+    foreach ($a as $k => $v) {
+      $body .= sprintf('<tr><td>%s</td><td>%s</td></tr>', $k, $v);
+    }
+    
+    return $this->gettable("<th>$lang->name</th> <th>$lang->value</th>", $body);
+  }
+
+  public function singlerow(array $a) {
+    $head = '';
+    $body = '<tr>';
+    foreach ($a as $$k => $v) {
+      $head .= sprintf('<th>%s</th>', $k);
+      $body .= sprintf('<td>%s</td>', $v);
+    }
+    $body .= '</tr>';
+    
+    return $this->gettable($head, $body);
+  }
   
-  public function confirmdelete($id, $adminurl, $mesg) {
+      public function confirmdelete($id, $adminurl, $mesg) {
     $args = targs::i();
     $args->id = $id;
     $args->action = 'delete';
