@@ -281,6 +281,7 @@ $tag = $this->getcalendar($name, $varname);
     $head = '';
     $tml = '<tr>';
     foreach ($tablestruct as $elem) {
+if (!$elem || !count($elem)) continue;
       $head .= sprintf('<th align="%s">%s</th>', $elem[0], $elem[1]);
       $tml .= sprintf('<td align="%s">%s</td>', $elem[0], $elem[2]);
     }
@@ -377,6 +378,7 @@ list($head, $tml) = $this->tablestruct($tablestruct);
     $body = '';
     $lang = tlocal::i();
     foreach ($item as $k => $v) {
+if (($k === false) || ($v === false)) continue;
       $body .= sprintf('<tr><td>%s</td><td>%s</td></tr>', $lang->__get($k), $v);
     }
     
