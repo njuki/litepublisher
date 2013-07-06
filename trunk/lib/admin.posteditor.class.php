@@ -76,13 +76,17 @@ class tposteditor extends tadminmenu {
     if (count($postitems) == 0) $postitems = array($categories->defaultid);
     return self::getcategories($postitems);
   }
+
+public function getfileperm() {
+return litepublisher::$options->show_file_perm ? tadminperms::getcombo(0, 'idperm_upload') : '';
+}
   
   // $posteditor.files in template editor
   public function getfilelist() {
     $html = tadminhtml::i();
     $html->push_section('editor');
     $args = new targs();
-    $args->fileperm = litepublisher::$options->show_file_perm ? tadminperms::getcombo(0, 'idperm_upload') : '';
+    $args->fileperm = $this->getfileperm();
     
     $post = ttheme::$vars['post'];
     $files = tfiles::i();

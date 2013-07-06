@@ -390,14 +390,15 @@ if (($k === false) || ($v === false)) continue;
     foreach ($a as $k => $v) {
       $body .= sprintf('<tr><td>%s</td><td>%s</td></tr>', $k, $v);
     }
-    
+
+$lang = tlocal::i();    
     return $this->gettable("<th>$lang->name</th> <th>$lang->value</th>", $body);
   }
 
   public function singlerow(array $a) {
     $head = '';
     $body = '<tr>';
-    foreach ($a as $$k => $v) {
+    foreach ($a as $k => $v) {
       $head .= sprintf('<th>%s</th>', $k);
       $body .= sprintf('<td>%s</td>', $v);
     }
