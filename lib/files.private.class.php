@@ -49,7 +49,7 @@ class tprivatefiles extends tevents {
     if (!$files->itemexists($id)) return 404;
     $item = $files->getitem($id);
     $filename = '/files/' . $item['filename'];
-    if ($item['idperm'] == 0) {
+    if (intval($item['idperm']) == 0) {
       if ($filename == litepublisher::$urlmap->url) {
         header('HTTP/1.1 500 Internal Server Error', true, 500);
         exit();
@@ -61,8 +61,13 @@ class tprivatefiles extends tevents {
     $this->id = $id;
     $this->item = $item;
     
+$result = '<?php
+      Header(\'Cache-Control: no-cache, must-revalidate\');
+      Header(\'Pragma: no-cache\');
+?>';
+
     $perm = tperm::i($item['idperm']);
-    $result = $perm->getheader($this);
+    $result .= $perm->getheader($this);
     $result .= sprintf('<?php %s::sendfile(%s); ?>', get_class($this), var_export($item, true));
     //die(htmlspecialchars($result));
     return $result;

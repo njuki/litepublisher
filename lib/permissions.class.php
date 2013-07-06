@@ -94,7 +94,7 @@ class tperms extends titems_storage {
     parent::create();
     $this->basename = 'perms';
     $this->addmap('classes', array());
-    $this->tables = array('posts', 'tags', 'categories');
+    $this->tables = array('files', 'posts', 'tags', 'categories');
   }
   
   public function addclass(tperm $perm) {

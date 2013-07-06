@@ -66,6 +66,15 @@ class tlocal {
       if (!in_array($sect, $this->searchsect)) $this->searchsect[] = $sect;
     }
   }
+
+  public function firstsearch() {
+    $a = array_reverse(func_get_args());
+    foreach ($a as $sect) {
+  $i = array_search($sect, $this->searchsect);
+  if ($i !== false)         array_splice($this->searchsect, $i, 1);
+  array_unshift($this->searchsect, $sect);
+    }
+  }
   
   public static function date($date, $format = '') {
     if (empty($format)) $format = self::i()->getdateformat();
