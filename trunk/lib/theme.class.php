@@ -1,7 +1,7 @@
 <?php
 /**
 * Lite Publisher
-* Copyright (C) 2010, 2012 Vladimir Yushko http://litepublisher.com/
+* Copyright (C) 2010 - 2013 Vladimir Yushko http://litepublisher.ru/ http://litepublisher.com/
 * Dual licensed under the MIT (mit.txt)
 * and GPL (gpl.txt) licenses.
 **/
@@ -439,12 +439,12 @@ class ttheme extends tevents {
       return $ini;
     }
     
-if (file_exists($filename)) {
-    $ini = parse_ini_file($filename, true);
-    tfilestorage::savevar($datafile, $ini);
-    self::$inifiles[$filename] = $ini;
-    return $ini;
-}
+    if (file_exists($filename)) {
+      $ini = parse_ini_file($filename, true);
+      tfilestorage::savevar($datafile, $ini);
+      self::$inifiles[$filename] = $ini;
+      return $ini;
+    }
   }
   
   public static function inifile($class, $filename) {

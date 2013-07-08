@@ -1,7 +1,7 @@
 <?php
 /**
 * Lite Publisher
-* Copyright (C) 2010, 2012 Vladimir Yushko http://litepublisher.com/
+* Copyright (C) 2010 - 2013 Vladimir Yushko http://litepublisher.ru/ http://litepublisher.com/
 * Dual licensed under the MIT (mit.txt)
 * and GPL (gpl.txt) licenses.
 **/
@@ -66,13 +66,13 @@ class tlocal {
       if (!in_array($sect, $this->searchsect)) $this->searchsect[] = $sect;
     }
   }
-
+  
   public function firstsearch() {
     $a = array_reverse(func_get_args());
     foreach ($a as $sect) {
-  $i = array_search($sect, $this->searchsect);
-  if ($i !== false)         array_splice($this->searchsect, $i, 1);
-  array_unshift($this->searchsect, $sect);
+      $i = array_search($sect, $this->searchsect);
+      if ($i !== false)         array_splice($this->searchsect, $i, 1);
+      array_unshift($this->searchsect, $sect);
     }
   }
   

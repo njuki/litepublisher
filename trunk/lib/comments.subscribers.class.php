@@ -1,7 +1,7 @@
 <?php
 /**
 * Lite Publisher
-* Copyright (C) 2010, 2012 Vladimir Yushko http://litepublisher.com/
+* Copyright (C) 2010 - 2013 Vladimir Yushko http://litepublisher.ru/ http://litepublisher.com/
 * Dual licensed under the MIT (mit.txt)
 * and GPL (gpl.txt) licenses.
 **/
@@ -100,12 +100,12 @@ class tsubscribers extends titemsposts {
     if (!$comments->itemexists($id)) return;
     $item = $comments->getitem($id);
     if (($item['status'] != 'approved')) return;
-
-    if (litepublisher::$options->mailer == 'smtp') {    
-    tcron::i()->add('single', get_class($this),  'cronsendmail', (int) $id);
-} else {
-$this->cronsendmail($id);
-}
+    
+    if (litepublisher::$options->mailer == 'smtp') {
+      tcron::i()->add('single', get_class($this),  'cronsendmail', (int) $id);
+    } else {
+      $this->cronsendmail($id);
+    }
   }
   
   public function cronsendmail($id) {
@@ -128,7 +128,7 @@ $this->cronsendmail($id);
     
     $users = tusers::i();
     $users->loaditems($subscribers);
-$list = array();
+    $list = array();
     foreach ($subscribers as $uid) {
       $user = $users->getitem($uid);
       if ($user['status'] == 'hold') continue;
@@ -147,17 +147,17 @@ $list = array();
         $admin .= rawurlencode($user['cookie']);
       }
       
-$list[] = array(
-'fromname' => litepublisher::$site->name,
-'fromemail' =>  $this->fromemail,
-'toname' => $user['name'],
-'toemail' =>  $email,
-     'subject' => $subject,
-'body' => $body . $admin
-);
+      $list[] = array(
+      'fromname' => litepublisher::$site->name,
+      'fromemail' =>  $this->fromemail,
+      'toname' => $user['name'],
+      'toemail' =>  $email,
+      'subject' => $subject,
+      'body' => $body . $admin
+      );
     }
-
-if (count($list)) tmailer::sendlist($list);
+    
+    if (count($list)) tmailer::sendlist($list);
   }
   
 }//class

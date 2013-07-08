@@ -1,6 +1,6 @@
 /**
 * Lite Publisher
-* Copyright (C) 2010, 2012 Vladimir Yushko http://litepublisher.com/
+* Copyright (C) 2010 - 2013 Vladimir Yushko http://litepublisher.ru/ http://litepublisher.com/
 * Dual licensed under the MIT (mit.txt)
 * and GPL (gpl.txt) licenses.
 **/
@@ -21,8 +21,10 @@
       this.queue = [];
     this.html = $.simpletml(this.html, {lang: lang.posteditor});
       var self = this;
+      var fr = new window.FileReader();
       $(this.html).appendTo(owner.holder).find(this.idhtml).fileReaderJS({
         accept: owner.mime,
+        readAsDefault: ('readAsBinaryString' in fr ? 'BinaryString' : 'ArrayBuffer'),
         on: {
           load: function(e, file) {
             self.queue.push(file);

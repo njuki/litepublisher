@@ -1,7 +1,7 @@
 <?php
 /**
 * Lite Publisher
-* Copyright (C) 2010, 2012 Vladimir Yushko http://litepublisher.com/
+* Copyright (C) 2010 - 2013 Vladimir Yushko http://litepublisher.ru/ http://litepublisher.com/
 * Dual licensed under the MIT (mit.txt)
 * and GPL (gpl.txt) licenses.
 **/
@@ -61,11 +61,11 @@ class tprivatefiles extends tevents {
     $this->id = $id;
     $this->item = $item;
     
-$result = '<?php
-      Header(\'Cache-Control: no-cache, must-revalidate\');
-      Header(\'Pragma: no-cache\');
-?>';
-
+    $result = '<?php
+    Header(\'Cache-Control: no-cache, must-revalidate\');
+    Header(\'Pragma: no-cache\');
+    ?>';
+    
     $perm = tperm::i($item['idperm']);
     $result .= $perm->getheader($this);
     $result .= sprintf('<?php %s::sendfile(%s); ?>', get_class($this), var_export($item, true));

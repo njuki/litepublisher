@@ -1,7 +1,7 @@
 <?php
 /**
 * Lite Publisher
-* Copyright (C) 2010, 2012 Vladimir Yushko http://litepublisher.com/
+* Copyright (C) 2010 - 2013 Vladimir Yushko http://litepublisher.ru/ http://litepublisher.com/
 * Dual licensed under the MIT (mit.txt)
 * and GPL (gpl.txt) licenses.
 **/
@@ -47,7 +47,7 @@ class tcron extends tevents {
         } else {
           litepublisher::$urlmap->close_connection();
         }
-
+        
         if (ob_get_level()) ob_end_flush ();
         flush();
         
@@ -65,27 +65,27 @@ class tcron extends tevents {
     }
     return 'locked';
   }
-
-public function run() {
-        if (ob_get_level()) ob_end_flush ();
-        flush();
-
+  
+  public function run() {
+    if (ob_get_level()) ob_end_flush ();
+    flush();
+    
     if (($fh = @fopen($this->lockpath .'cron.lok', 'w')) &&       flock($fh, LOCK_EX | LOCK_NB)) {
-        set_time_limit(300);
-          //ignore_user_abort(true);
-
-try {
+      set_time_limit(300);
+      //ignore_user_abort(true);
+      
+      try {
         $this->execute();
       } catch (Exception $e) {
         litepublisher::$options->handexception($e);
       }
-
+      
       flock($fh, LOCK_UN);
       fclose($fh);
       @chmod($this->lockpath .'cron.lok', 0666);
       return true;
     }
-
+    
     return false;
   }
   
@@ -128,16 +128,16 @@ try {
     if (!preg_match('/^single|hour|day|week$/', $type)) $this->error("Unknown cron type $type");
     if ($this->disableadd) return false;
     $id = $this->doadd($type, $class, $func, $arg);
-
+    
     if (($type == 'single') && !$this->disableping && !self::$pinged) {
-        if (litepublisher::$debug) tfiler::log("cron added $id");
+      if (litepublisher::$debug) tfiler::log("cron added $id");
       if (tfilestorage::$memcache) {
-$this->pingmemcache();
-} else {
+        $this->pingmemcache();
+      } else {
         self::pingonshutdown();
-}
-}
-
+      }
+    }
+    
     return $id;
   }
   
@@ -188,27 +188,27 @@ $this->pingmemcache();
     $class = self::get_class_name($c);
     $this->db->delete("class = '$class'");
   }
-
-public function pingmemcache() {
-        $memcache = tfilestorage::$memcache;
-$expired = time() - 300;
-        $key_last =litepublisher::$domain . ':lastpinged';
-        $lastpinged = $memcache->get($key_last );
-        if ($lastpinged && ($expired >= $lastpinged)) {
-          return self::pingonshutdown();
-}
-
-          $key_single =litepublisher::$domain . ':singlepinged';
-          $singlepinged = $memcache->get($key_single);
-          if (!$singlepinged) {
-            $memcache->set($key_single, time(), false, 3600);
-          } elseif ($expired >= $singlepinged ) {
-            self::pingonshutdown();
-          }
-
+  
+  public function pingmemcache() {
+    $memcache = tfilestorage::$memcache;
+    $expired = time() - 300;
+    $key_last =litepublisher::$domain . ':lastpinged';
+    $lastpinged = $memcache->get($key_last );
+    if ($lastpinged && ($expired >= $lastpinged)) {
+      return self::pingonshutdown();
     }
     
- public static function pingonshutdown() {
+    $key_single =litepublisher::$domain . ':singlepinged';
+    $singlepinged = $memcache->get($key_single);
+    if (!$singlepinged) {
+      $memcache->set($key_single, time(), false, 3600);
+    } elseif ($expired >= $singlepinged ) {
+      self::pingonshutdown();
+    }
+    
+  }
+  
+  public static function pingonshutdown() {
     if (self::$pinged) return;
     self::$pinged = true;
     

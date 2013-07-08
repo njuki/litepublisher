@@ -1,7 +1,7 @@
 <?php
 /**
 * Lite Publisher
-* Copyright (C) 2010, 2012 Vladimir Yushko http://litepublisher.com/
+* Copyright (C) 2010 - 2013 Vladimir Yushko http://litepublisher.ru/ http://litepublisher.com/
 * Dual licensed under the MIT (mit.txt)
 * and GPL (gpl.txt) licenses.
 **/
@@ -48,19 +48,19 @@ class tadminhtml {
     foreach ($this->searchsect as $section) {
       if (isset($this->ini[$section][$name])) return $this->ini[$section][$name];
     }
-
-if (in_array($name, self::$tags)) return new thtmltag($name);
-      throw new Exception("the requested $name item not found in $this->section section");
+    
+    if (in_array($name, self::$tags)) return new thtmltag($name);
+    throw new Exception("the requested $name item not found in $this->section section");
   }
   
   public function __call($name, $params) {
-$s = $this->__get($name);
-if (is_object($s) && ($s instanceof thtmltag))  return sprintf('<%1$s>%2$s</%1$s>', $name, $params[0]);
-
-   $args = isset($params[0]) && $params[0] instanceof targs ? $params[0] : new targs();
+    $s = $this->__get($name);
+    if (is_object($s) && ($s instanceof thtmltag))  return sprintf('<%1$s>%2$s</%1$s>', $name, $params[0]);
+    
+    $args = isset($params[0]) && $params[0] instanceof targs ? $params[0] : new targs();
     return $this->parsearg($s, $args);
   }
-
+  
   public function parsearg($s, targs $args) {
     if (!is_string($s)) $s = (string) $s;
     $theme = ttheme::i();
@@ -89,16 +89,16 @@ if (is_object($s) && ($s instanceof thtmltag))  return sprintf('<%1$s>%2$s</%1$s
             $args->data[$varname] = '';
           }
         }
-
-if ($type == 'calendar') {
-$tag = $this->getcalendar($name, $varname);
-} else {
-        $tag = strtr($theme->templates["content.admin.$type"], array(
-        '$name' => $name,
-        '$value' => $varname
-        ));
-}
-
+        
+        if ($type == 'calendar') {
+          $tag = $this->getcalendar($name, $varname);
+        } else {
+          $tag = strtr($theme->templates["content.admin.$type"], array(
+          '$name' => $name,
+          '$value' => $varname
+          ));
+        }
+        
         $s = str_replace($item[0], $tag, $s);
       }
     }
@@ -106,7 +106,7 @@ $tag = $this->getcalendar($name, $varname);
     $s = strtr($s, $args->data);
     return $theme->parse($s);
   }
-
+  
   public function addsearch() {
     $a = func_get_args();
     foreach ($a as $sect) {
@@ -281,18 +281,18 @@ $tag = $this->getcalendar($name, $varname);
     $head = '';
     $tml = '<tr>';
     foreach ($tablestruct as $elem) {
-if (!$elem || !count($elem)) continue;
+      if (!$elem || !count($elem)) continue;
       $head .= sprintf('<th align="%s">%s</th>', $elem[0], $elem[1]);
       $tml .= sprintf('<td align="%s">%s</td>', $elem[0], $elem[2]);
     }
     $tml .= '</tr>';
     
-return array($head, $tml);
-}
-
+    return array($head, $tml);
+  }
+  
   public function buildtable(array $items, array $tablestruct) {
-$body = '';
-list($head, $tml) = $this->tablestruct($tablestruct);
+    $body = '';
+    list($head, $tml) = $this->tablestruct($tablestruct);
     $theme = ttheme::i();
     $args = new targs();
     foreach ($items as $id => $item) {
@@ -378,23 +378,23 @@ list($head, $tml) = $this->tablestruct($tablestruct);
     $body = '';
     $lang = tlocal::i();
     foreach ($item as $k => $v) {
-if (($k === false) || ($v === false)) continue;
+      if (($k === false) || ($v === false)) continue;
       $body .= sprintf('<tr><td>%s</td><td>%s</td></tr>', $lang->__get($k), $v);
     }
     
     return $this->gettable("<th>$lang->name</th> <th>$lang->value</th>", $body);
   }
-
+  
   public function tablevalues(array $a) {
     $body = '';
     foreach ($a as $k => $v) {
       $body .= sprintf('<tr><td>%s</td><td>%s</td></tr>', $k, $v);
     }
-
-$lang = tlocal::i();    
+    
+    $lang = tlocal::i();
     return $this->gettable("<th>$lang->name</th> <th>$lang->value</th>", $body);
   }
-
+  
   public function singlerow(array $a) {
     $head = '';
     $body = '<tr>';
@@ -407,7 +407,7 @@ $lang = tlocal::i();
     return $this->gettable($head, $body);
   }
   
-      public function confirmdelete($id, $adminurl, $mesg) {
+  public function confirmdelete($id, $adminurl, $mesg) {
     $args = targs::i();
     $args->id = $id;
     $args->action = 'delete';

@@ -831,7 +831,11 @@ class tsubscribers extends titemsposts {
     $item = $comments->getitem($id);
     if (($item['status'] != 'approved')) return;
     
-    tcron::i()->add('single', get_class($this),  'cronsendmail', (int) $id);
+    if (litepublisher::$options->mailer == 'smtp') {
+      tcron::i()->add('single', get_class($this),  'cronsendmail', (int) $id);
+    } else {
+      $this->cronsendmail($id);
+    }
   }
   
   public function cronsendmail($id) {
@@ -854,6 +858,7 @@ class tsubscribers extends titemsposts {
     
     $users = tusers::i();
     $users->loaditems($subscribers);
+    $list = array();
     foreach ($subscribers as $uid) {
       $user = $users->getitem($uid);
       if ($user['status'] == 'hold') continue;
@@ -872,9 +877,17 @@ class tsubscribers extends titemsposts {
         $admin .= rawurlencode($user['cookie']);
       }
       
-      tmailer::sendmail(litepublisher::$site->name, $this->fromemail,  $user['name'], $email,
-      $subject, $body . $admin);
+      $list[] = array(
+      'fromname' => litepublisher::$site->name,
+      'fromemail' =>  $this->fromemail,
+      'toname' => $user['name'],
+      'toemail' =>  $email,
+      'subject' => $subject,
+      'body' => $body . $admin
+      );
     }
+    
+    if (count($list)) tmailer::sendlist($list);
   }
   
 }//class

@@ -103,6 +103,8 @@ if (dbversion) litepublisher::$db = new tdatabase();
 //ttheme::clearcache();
 tlocal::clearcache();
 litepublisher::$urlmap->clearcache();
+//cabinetmenus::i()->uninstall();
+//cabinetmenus::i()->install();
 //tthemegenerator::i()->parseselectors();
 //tupdater::i()->run(5.61);
 

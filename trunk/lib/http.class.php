@@ -1,14 +1,14 @@
 <?php
 /**
 * Lite Publisher
-* Copyright (C) 2010, 2012 Vladimir Yushko http://litepublisher.com/
+* Copyright (C) 2010 - 2013 Vladimir Yushko http://litepublisher.ru/ http://litepublisher.com/
 * Dual licensed under the MIT (mit.txt)
 * and GPL (gpl.txt) licenses.
 **/
 
 class http {
-    public static $timeout = 10;
-
+  public static $timeout = 10;
+  
   public static function get($url) {
     $parsed = @parse_url($url);
     if ( !$parsed || !is_array($parsed) ) return false;
@@ -45,7 +45,7 @@ class http {
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
     curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);
     curl_setopt($ch, CURLOPT_TIMEOUT, self::$timeout);
-      curl_setopt ($ch, CURLOPT_CONNECTTIMEOUT, 2);
+    curl_setopt ($ch, CURLOPT_CONNECTTIMEOUT, 2);
     curl_setopt($ch, CURLOPT_POST, TRUE);
     curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($post));
     

@@ -252,6 +252,7 @@ public function __construct($tag) { $this->tag = $tag; }
 class tadminhtml {
   public static $tags = array('h1', 'h2', 'h3', 'h4', 'p', 'li', 'ul', 'strong');
   public $section;
+  public $searchsect;
   public $ini;
   private $map;
   private $section_stack;
@@ -271,31 +272,23 @@ class tadminhtml {
   
   public function __construct() {
     $this->ini = array();
+    $this->searchsect = array('common');
     tlocal::usefile('admin');
   }
   
   public function __get($name) {
-    if (isset($this->ini[$this->section][$name]))  {
-      return $this->ini[$this->section][$name];
-    } elseif (isset($this->ini['common'][$name]))  {
-      return $this->ini['common'][$name];
-    } elseif (in_array($name, self::$tags)) {
-      return new thtmltag($name);
-    } else {
-      throw new Exception("the requested $name item not found in $this->section section");
+    if (isset($this->ini[$this->section][$name])) return $this->ini[$this->section][$name];
+    foreach ($this->searchsect as $section) {
+      if (isset($this->ini[$section][$name])) return $this->ini[$section][$name];
     }
+    
+    if (in_array($name, self::$tags)) return new thtmltag($name);
+    throw new Exception("the requested $name item not found in $this->section section");
   }
   
   public function __call($name, $params) {
-    if (isset($this->ini[$this->section][$name]))  {
-      $s = $this->ini[$this->section][$name];
-    } elseif (isset($this->ini['common'][$name]))  {
-      $s = $this->ini['common'][$name];
-    } elseif (in_array($name, self::$tags)) {
-      return sprintf('<%1$s>%2$s</%1$s>', $name, $params[0]);
-    } else {
-      throw new Exception("the requested $name item not found in $this->section section");
-    }
+    $s = $this->__get($name);
+    if (is_object($s) && ($s instanceof thtmltag))  return sprintf('<%1$s>%2$s</%1$s>', $name, $params[0]);
     
     $args = isset($params[0]) && $params[0] instanceof targs ? $params[0] : new targs();
     return $this->parsearg($s, $args);
@@ -316,29 +309,42 @@ class tadminhtml {
       $s = substr_replace($s, $replace, $i, strlen('[/form]'));
     }
     
-    if (preg_match_all('/\[(editor|checkbox|text|password|combo|hidden)(:|=)(\w*+)\]/i', $s, $m, PREG_SET_ORDER)) {
+    if (preg_match_all('/\[(editor|checkbox|text|password|combo|hidden|calendar)(:|=)(\w*+)\]/i', $s, $m, PREG_SET_ORDER)) {
       foreach ($m as $item) {
         $type = $item[1];
         $name = $item[3];
         $varname = '$' . $name;
         //convert spec charsfor editor
-        if (!(($type == 'checkbox') || ($type == 'combo'))) {
+        if (!(($type == 'checkbox') || ($type == 'combo') || ($type == 'calendar'))) {
           if (isset($args->data[$varname])) {
             $args->data[$varname] = self::specchars($args->data[$varname]);
           } else {
             $args->data[$varname] = '';
           }
         }
-        $tag = strtr($theme->templates["content.admin.$type"], array(
-        '$name' => $name,
-        '$value' =>$varname
-        ));
+        
+        if ($type == 'calendar') {
+          $tag = $this->getcalendar($name, $varname);
+        } else {
+          $tag = strtr($theme->templates["content.admin.$type"], array(
+          '$name' => $name,
+          '$value' => $varname
+          ));
+        }
+        
         $s = str_replace($item[0], $tag, $s);
       }
     }
     
     $s = strtr($s, $args->data);
     return $theme->parse($s);
+  }
+  
+  public function addsearch() {
+    $a = func_get_args();
+    foreach ($a as $sect) {
+      if (!in_array($sect, $this->searchsect)) $this->searchsect[] = $sect;
+    }
   }
   
   public function push_section($section) {
@@ -473,10 +479,10 @@ class tadminhtml {
       $date = 0;
     } elseif ($date == '0000-00-00') {
       $date = 0;
-    } elseif (!trim($date)) {
-      $date = 0;
-    } else {
+    } elseif (trim($date)) {
       $date = strtotime($date);
+    } else {
+      $date = 0;
     }
     
     return strtr($this->ini['common']['calendar'], array(
@@ -504,16 +510,22 @@ class tadminhtml {
     '$tablebody' => $body));
   }
   
-  public function buildtable(array $items, array $tablestruct) {
+  public function tablestruct(array $tablestruct) {
     $head = '';
-    $body = '';
     $tml = '<tr>';
     foreach ($tablestruct as $elem) {
+      if (!$elem || !count($elem)) continue;
       $head .= sprintf('<th align="%s">%s</th>', $elem[0], $elem[1]);
       $tml .= sprintf('<td align="%s">%s</td>', $elem[0], $elem[2]);
     }
     $tml .= '</tr>';
     
+    return array($head, $tml);
+  }
+  
+  public function buildtable(array $items, array $tablestruct) {
+    $body = '';
+    list($head, $tml) = $this->tablestruct($tablestruct);
     $theme = ttheme::i();
     $args = new targs();
     foreach ($items as $id => $item) {
@@ -599,10 +611,33 @@ class tadminhtml {
     $body = '';
     $lang = tlocal::i();
     foreach ($item as $k => $v) {
+      if (($k === false) || ($v === false)) continue;
       $body .= sprintf('<tr><td>%s</td><td>%s</td></tr>', $lang->__get($k), $v);
     }
     
     return $this->gettable("<th>$lang->name</th> <th>$lang->value</th>", $body);
+  }
+  
+  public function tablevalues(array $a) {
+    $body = '';
+    foreach ($a as $k => $v) {
+      $body .= sprintf('<tr><td>%s</td><td>%s</td></tr>', $k, $v);
+    }
+    
+    $lang = tlocal::i();
+    return $this->gettable("<th>$lang->name</th> <th>$lang->value</th>", $body);
+  }
+  
+  public function singlerow(array $a) {
+    $head = '';
+    $body = '<tr>';
+    foreach ($a as $k => $v) {
+      $head .= sprintf('<th>%s</th>', $k);
+      $body .= sprintf('<td>%s</td>', $v);
+    }
+    $body .= '</tr>';
+    
+    return $this->gettable($head, $body);
   }
   
   public function confirmdelete($id, $adminurl, $mesg) {
@@ -1134,7 +1169,6 @@ class tposteditor extends tadminmenu {
     
     $template = ttemplate::i();
     $template->ltoptions['idpost'] = $this->idget();
-    $template->ltoptions['lang'] = litepublisher::$options->language;
     $result .= $template->getjavascript($template->jsmerger_posteditor);
     
     if ($this->isauthor &&($h = tauthor_rights::i()->gethead()))  $result .= $h;
@@ -1188,12 +1222,16 @@ class tposteditor extends tadminmenu {
     return self::getcategories($postitems);
   }
   
+  public function getfileperm() {
+    return litepublisher::$options->show_file_perm ? tadminperms::getcombo(0, 'idperm_upload') : '';
+  }
+  
   // $posteditor.files in template editor
   public function getfilelist() {
     $html = tadminhtml::i();
     $html->push_section('editor');
     $args = new targs();
-    $args->fileperm = litepublisher::$options->show_file_perm ? tadminperms::getcombo(0, 'idperm_upload') : '';
+    $args->fileperm = $this->getfileperm();
     
     $post = ttheme::$vars['post'];
     $files = tfiles::i();
