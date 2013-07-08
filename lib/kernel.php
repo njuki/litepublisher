@@ -161,7 +161,7 @@ class tdatabase {
       $list[] = sprintf('%s = %s', $name,  $this->quote($value));
     }
     
-    return $this->update(implode(', ', $list), 'id = '. $a['id']);
+    return $this->update(implode(', ', $list), 'id = '. $a['id'] . ' limit 1');
   }
   
   public function insertrow($row) {
@@ -1986,6 +1986,7 @@ class turlmap extends titems {
     $this->addevents('beforerequest', 'afterrequest', 'onclearcache');
     $this->data['revision'] = 0;
     $this->data['disabledcron'] = false;
+    $this->data['redirdom'] = false;
     $this->is404 = false;
     $this->isredir = false;
     $this->adminpanel = false;
@@ -2016,6 +2017,13 @@ class turlmap extends titems {
   public function request($host, $url) {
     $this->prepareurl($host, $url);
     $this->adminpanel = strbegin($this->url, '/admin/') || ($this->url == '/admin');
+    if ($this->redirdom) {
+      $parsedurl = parse_url(litepublisher::$site->url . '/');
+      if ($host != strtolower($parsedurl['host'])) {
+        return $this->redir($url);
+      }
+    }
+    
     $this->beforerequest();
     if (!litepublisher::$debug && litepublisher::$options->ob_cache) ob_start();
     try {
@@ -2274,7 +2282,7 @@ class turlmap extends titems {
     if ($items =
     $this->db->getitems("class = '$class'")) {
       $this->db->delete("class = '$class'");
-      foreach ($items as $item) $this->deleted($item);
+      foreach ($items as $item) $this->deleted($item['id']);
     }
     $this->clearcache();
   }
@@ -2282,7 +2290,7 @@ class turlmap extends titems {
   public function deleteitem($id) {
     if ($item = $this->db->getitem($id)) {
       $this->db->iddelete($id);
-      $this->deleted($item);
+      $this->deleted($id);
     }
     $this->clearcache();
   }

@@ -1,7 +1,7 @@
 <?php
 /**
 * Lite Publisher
-* Copyright (C) 2010, 2012 Vladimir Yushko http://litepublisher.com/
+* Copyright (C) 2010 - 2013 Vladimir Yushko http://litepublisher.ru/ http://litepublisher.com/
 * Dual licensed under the MIT (mit.txt)
 * and GPL (gpl.txt) licenses.
 **/
@@ -33,11 +33,13 @@ class tuseroptions extends titems {
   
   public function getitem($id) {
     $id = (int) $id;
-    if (!isset($this->items[$id]) && !$this->select("$this->thistable.id = $id", 'limit 1')) {
-      $this->items[$id] = $this->defvalues;
-      $this->defitems[] = $id;
-    }
-    return $this->items[$id];
+    if (isset($this->items[$id]) || $this->select("$this->thistable.id = $id", 'limit 1'))     return $this->items[$id];
+    
+    $item = $this->defvalues;
+    $item['id'] = $id;
+    $this->items[$id] = $item;
+    $this->defitems[] = $id;
+    return $item;
   }
   
   public function getvalue($id, $name) {

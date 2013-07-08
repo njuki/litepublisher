@@ -1,7 +1,7 @@
 <?php
 /**
 * Lite Publisher
-* Copyright (C) 2010, 2012 Vladimir Yushko http://litepublisher.com/
+* Copyright (C) 2010 - 2013 Vladimir Yushko http://litepublisher.ru/ http://litepublisher.com/
 * Dual licensed under the MIT (mit.txt)
 * and GPL (gpl.txt) licenses.
 **/
@@ -50,27 +50,27 @@ class Tadminoptions extends tadminmenu {
     
     switch ($this->name) {
       case 'options':
-$site = litepublisher::$site;
-$args->fixedurl = $site->fixedurl;
-$args->redirdom = litepublisher::$urlmap->redirdom;
- $args->url = $site->url;
-$args->name = $site->name;
- $args->description = $site->description;
- $args->keywords = $site->keywords;
- $args->author = $site->author;
-$args->footer= $template->footer; 
-
-$args->formtitle = $lang->options;
-return $html->adminform('
-[checkbox=fixedurl]
-[checkbox=redirdom]
-[text=url]
-[text=name]
-[text=description]
-[text=keywords]
-[text=author]
-[editor=footer]
-', $args);
+      $site = litepublisher::$site;
+      $args->fixedurl = $site->fixedurl;
+      $args->redirdom = litepublisher::$urlmap->redirdom;
+      $args->url = $site->url;
+      $args->name = $site->name;
+      $args->description = $site->description;
+      $args->keywords = $site->keywords;
+      $args->author = $site->author;
+      $args->footer= $template->footer;
+      
+      $args->formtitle = $lang->options;
+      return $html->adminform('
+      [checkbox=fixedurl]
+      [checkbox=redirdom]
+      [text=url]
+      [text=name]
+      [text=description]
+      [text=keywords]
+      [text=author]
+      [editor=footer]
+      ', $args);
       
       case 'home':
       $home = thomepage::i();
@@ -227,27 +227,27 @@ return $html->adminform('
       
       case 'cache':
       $args->enabledcache = $options->cache;
-$args->expiredcache = $options->expiredcache;
+      $args->expiredcache = $options->expiredcache;
       $args->admincache = $options->admincache;
       $args->ob_cache = $options->ob_cache;
       $args->compress = $options->compress;
       $args->commentspull = $options->commentspull;
       $args->memcache_classes = litepublisher::$classes->memcache;
-
-$args->formtitle = $lang->optionscache;
-$result = $html->adminform('
-[checkbox=enabledcache]
-[text=expiredcache]
-[checkbox=ob_cache]
-[checkbox=admincache]
-[checkbox=commentspull]
-[checkbox=memcache_classes]
-', $args);
-
-$args->form = $html->getsubmit('clearcache');
-$result .= $html->simpleform ($args);
-return $result;
-
+      
+      $args->formtitle = $lang->optionscache;
+      $result = $html->adminform('
+      [checkbox=enabledcache]
+      [text=expiredcache]
+      [checkbox=ob_cache]
+      [checkbox=admincache]
+      [checkbox=commentspull]
+      [checkbox=memcache_classes]
+      ', $args);
+      
+      $args->form = $html->getsubmit('clearcache');
+      $result .= $html->simpleform ($args);
+      return $result;
+      
       case 'catstags':
       case 'lite': //old version suports
       $args->litearch= litepublisher::$classes->archives->lite;
@@ -337,17 +337,17 @@ return $result;
     
     switch ($this->name) {
       case 'options':
-litepublisher::$urlmap->redirdom = isset($redirdom);
-$site = litepublisher::$site;
-$site->fixedurl = isset($fixedurl);
- $site->url = $url;
-$site->name = $name;
- $site->description = $description;
- $site->keywords = $keywords;
- $site->author = $author;
-ttemplate::i()->footer = $footer;
-break;
-
+      litepublisher::$urlmap->redirdom = isset($redirdom);
+      $site = litepublisher::$site;
+      $site->fixedurl = isset($fixedurl);
+      $site->url = $url;
+      $site->name = $name;
+      $site->description = $description;
+      $site->keywords = $keywords;
+      $site->author = $author;
+      ttemplate::i()->footer = $footer;
+      break;
+      
       case 'home':
       $home = thomepage::i();
       $home->lock();

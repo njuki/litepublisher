@@ -771,7 +771,7 @@ $submit =   [<input type="submit" name="submit-$name" id="submitbutton-$name" va
 
 $form = [
 <h3>$formtitle</h3>
-<form name="form" action="" method="post" >
+<form action="" method="post" >
 $items
   <p><input type="submit" name="submitbutton" id="submit_button" value="$lang.update" /></p>
 </form>]

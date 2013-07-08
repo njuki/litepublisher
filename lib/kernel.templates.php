@@ -67,6 +67,15 @@ class tlocal {
     }
   }
   
+  public function firstsearch() {
+    $a = array_reverse(func_get_args());
+    foreach ($a as $sect) {
+      $i = array_search($sect, $this->searchsect);
+      if ($i !== false)         array_splice($this->searchsect, $i, 1);
+      array_unshift($this->searchsect, $sect);
+    }
+  }
+  
   public static function date($date, $format = '') {
     if (empty($format)) $format = self::i()->getdateformat();
     return self::i()->translate(date($format, $date), 'datetime');
@@ -1056,10 +1065,12 @@ class ttheme extends tevents {
       return $ini;
     }
     
-    $ini = parse_ini_file($filename, true);
-    tfilestorage::savevar($datafile, $ini);
-    self::$inifiles[$filename] = $ini;
-    return $ini;
+    if (file_exists($filename)) {
+      $ini = parse_ini_file($filename, true);
+      tfilestorage::savevar($datafile, $ini);
+      self::$inifiles[$filename] = $ini;
+      return $ini;
+    }
   }
   
   public static function inifile($class, $filename) {

@@ -84,7 +84,13 @@ set_cookie("litepubl_user_id", r.iduser);
 set_cookie("litepubl_user", r.pass);
 set_cookie("litepubl_regservice", r.regservice);
 self.registered = true;
-if (r.callback&& $.isFunction(callback)) callback(r.callback);
+if ($.isFunction(callback)) {
+if (r.callback) {
+callback(r.callback);
+} else {
+callback();
+}
+}
 });
 },
 

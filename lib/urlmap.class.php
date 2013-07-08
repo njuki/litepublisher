@@ -1,7 +1,7 @@
 <?php
 /**
 * Lite Publisher
-* Copyright (C) 2010, 2012 Vladimir Yushko http://litepublisher.com/
+* Copyright (C) 2010 - 2013 Vladimir Yushko http://litepublisher.ru/ http://litepublisher.com/
 * Dual licensed under the MIT (mit.txt)
 * and GPL (gpl.txt) licenses.
 **/
@@ -68,13 +68,13 @@ class turlmap extends titems {
   public function request($host, $url) {
     $this->prepareurl($host, $url);
     $this->adminpanel = strbegin($this->url, '/admin/') || ($this->url == '/admin');
-if ($this->redirdom) {
-    $parsedurl = parse_url(litepublisher::$site->url . '/');
-if ($host != strtolower($parsedurl['host'])) {
-return $this->redir($url);
-}
-}
-
+    if ($this->redirdom) {
+      $parsedurl = parse_url(litepublisher::$site->url . '/');
+      if ($host != strtolower($parsedurl['host'])) {
+        return $this->redir($url);
+      }
+    }
+    
     $this->beforerequest();
     if (!litepublisher::$debug && litepublisher::$options->ob_cache) ob_start();
     try {

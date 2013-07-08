@@ -1,7 +1,7 @@
 <?php
 /**
 * Lite Publisher
-* Copyright (C) 2010, 2012 Vladimir Yushko http://litepublisher.com/
+* Copyright (C) 2010 - 2013 Vladimir Yushko http://litepublisher.ru/ http://litepublisher.com/
 * Dual licensed under the MIT (mit.txt)
 * and GPL (gpl.txt) licenses.
 **/
@@ -247,7 +247,7 @@ class tadminlinkswidget extends tadminwidget {
     $result = parent::getcontent();
     $widget = $this->widget;
     $html= $this->html;
-    $args = targs::i();
+    $args = new targs();
     $id = isset($_GET['idlink']) ? (int) $_GET['idlink'] : 0;
     if (isset($widget->items[$id])) {
       $item = $widget->items[$id];
@@ -263,16 +263,24 @@ class tadminlinkswidget extends tadminwidget {
     
     $args->add($item);
     $args->linktitle = isset($item['title']) ? $item['title'] : (isset($item['linktitle']) ? $item['linktitle'] : '');
-    $result .= $html->linkform($args);
+    $lang = tlocal::i();
+    $args->formtitle = $lang->editlink;
+    $result .= $html->adminform('
+    [text=url]
+    [text=text]
+    [text=linktitle]
+    [hidden=mode]', $args);
     
-    $args->adminurl = $this->adminurl . $_GET['idwidget'] . '&idlink';
-    $result .= $html->linkstableheader ();
-    foreach ($widget->items as $id => $item) {
-      $args->id = $id;
-      $args->add($item);
-      $result .= $html->linkitem($args);
-    }
-    $result .= $html->linkstablefooter();
+    $adminurl = $this->adminurl . $_GET['idwidget'] . '&idlink';
+    $args->table = $html->buildtable($widget->items, array(
+    $html->get_table_checkbox('checklink'),
+    array('left', $lang->url, '<a href=\'$url\'>$url</a>'),
+    array('left', $lang->anchor, '$text'),
+    array('left', $lang->description, '$title'),
+    array('center', $lang->edit, "<a href='$adminurl=\$id'>$lang->edit</a>"),
+    ));
+    
+    $result .= $html->deletetable($args);
     return $result;
   }
   

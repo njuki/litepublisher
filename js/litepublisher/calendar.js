@@ -1,6 +1,6 @@
 /**
 * Lite Publisher
-* Copyright (C) 2010, 2012 Vladimir Yushko http://litepublisher.com/
+* Copyright (C) 2010 - 2013 Vladimir Yushko http://litepublisher.ru/ http://litepublisher.com/
 * Dual licensed under the MIT (mit.txt)
 * and GPL (gpl.txt) licenses.
 **/
@@ -12,10 +12,10 @@
     dialogopened: false,
     
     init: function() {
-this.on(this.buttonclass);
-},
-
-on: function(buttons) {
+      this.on(this.buttonclass);
+    },
+    
+    on: function(buttons) {
       var self = this;
       $(buttons).off("click.calendar").on("click.calendar", function() {
         var edit = $(this).parent().find('input:first');
