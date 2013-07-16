@@ -14,14 +14,14 @@ class tmenus extends titems {
   }
   
   protected function create() {
+    $this->dbversion = false;
     parent::create();
     $this->addevents('edited', 'onprocessform', 'onbeforemenu', 'onmenu', 'onitems', 'onsubitems');
-    
-    $this->dbversion = false;
     $this->basename = 'menus' . DIRECTORY_SEPARATOR   . 'index';
     $this->addmap('tree', array());
     $this->data['idhome'] = 0;
     $this->data['home'] = false;
+    $this->data['showsubmenu'] = false;
   }
   
   public function getlink($id) {
@@ -313,8 +313,35 @@ class tmenus extends titems {
     }
     return $result;
   }
+
+  public function getbeforemenu($current) {
+    if (!count($this->tree) > 0) return '';
+if (isset($this->tree[$current])) {
+$subitems =  $this->tree[$current];
+} else {
+$id = $current;
+while ($this->items[$id]['parent']) $id = $this->items[$id]['parent'];
+$subitems =  $this->tree[$id];
+}
+
+    $result = '';
+      $theme = ttheme::i();
+        $tml = $theme->templates['menu.item'];
+      $args = new targs();
+        $args->submenu = '';
+
+        foreach ($subitems as $id => $subsubitems) {
+          if ($this->exclude($id)) continue;
+          $args->add($this->items[$id]);
+          $result .= $current == $id ? $theme->parsearg($theme->templates['menu.current'], $args) : $theme->parsearg($tml, $args);
+        }
+      
+      $args->item =  $result;
+      $result = $theme->parsearg($theme->templates['menu'], $args);
+    return $result;
+  }
   
-  public function class2id($class) {
+    public function class2id($class) {
     foreach($this->items as $id => $item) {
       if ($class == $item['class']) return $id;
     }
@@ -462,7 +489,11 @@ class tmenu extends titem implements  itemplate {
   }
   
   public function getcont() {
-    return ttheme::parsevar('menu', $this, ttheme::i()->templates['content.menu']);
+$result = '';
+$owner = $this->owner;
+if ($owner->showsubmenu) $result .= $owner->getbeforemenu($this->id);
+    $result .= ttheme::parsevar('menu', $this, ttheme::i()->templates['content.menu']);
+return $result;
   }
   
   public function getlink() {

@@ -14,8 +14,9 @@
 registered: false,
 script: false,
 dialogopened: false,
-    html: '<div style="display:block;overflow:hidden;width:300px;height:50px;">\
-<div id="ulogin-holder" data-ulogin="display=small;fields=first_name,last_name;optional=email,phone,nickname;providers=vkontakte,odnoklassniki,mailru,yandex,facebook,google,twitter;hidden=other;redirect_uri=%%redirurl%%;%%callback%%"></div>',
+    html: '<div><div style="display:block;overflow:hidden;width:300px;height:50px;">\
+<div id="ulogin-holder" data-ulogin="display=small;fields=first_name,last_name;optional=email,phone,nickname;providers=vkontakte,odnoklassniki,mailru,yandex,facebook,google,twitter;hidden=other;redirect_uri=%%redirurl%%;%%callback%%"></div></div>\
+<div><a href="%%url%%">%%lang.emaillogin%%</a></div></div>',
 
     init: function() {
 this.registered = $.cookie('litepubl_user');
@@ -39,7 +40,10 @@ set_cookie('backurl', url);
 var self = this;
 self.ready(function() {
 self.dialogopened = true;
-var html = self.html.replace(/backurl%3D/gim, 'backurl%3D' + encodeURIComponent(encodeURIComponent(url)));
+var html = self.html.replace(/backurl%3D/gim, 'backurl%3D' + encodeURIComponent(encodeURIComponent(url)))
+.replace(/%%lang.emaillogin%%/gim, lang.ulogin.emaillogin)
+.replace(/%%url%%/gim, url);
+
 if ($.isFunction(callback)) {
 html = html.replace(/%%callback%%/gim, "callback=ulogincallback");
 window.ulogincallback = function(token) {
