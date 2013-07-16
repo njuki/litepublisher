@@ -65,8 +65,8 @@ class tadminhtml {
     if (!is_string($s)) $s = (string) $s;
     $theme = ttheme::i();
     // parse tags [form] .. [/form]
-    $form = $theme->templates['content.admin.form'];
     if (is_int($i = strpos($s, '[form]'))) {
+    $form = $theme->templates['content.admin.form'];
       $replace = substr($form, 0, strpos($form, '$items'));
       $s = substr_replace($s, $replace, $i, strlen('[form]'));
     }
@@ -450,6 +450,7 @@ if (!isset(ttheme::$inifiles[$filename])) {
       $this->ini = $html_ini + $this->ini;
       $keys = array_keys($html_ini);
       $this->section = array_shift($keys);
+$this->searchsect[] = $this->section;
     }
 }
     
@@ -461,6 +462,7 @@ if (!isset(ttheme::$inifiles[$filename])) {
       $lang->ini = $lang_ini + $lang->ini ;
       $keys = array_keys($lang_ini);
       $lang->section = array_shift($keys);
+$lang->addsearch($lang->section);
     }
 }
     

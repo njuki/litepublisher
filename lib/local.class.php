@@ -112,7 +112,7 @@ class tlocal {
   
   public static function inifile($class, $filename) {
     $self = self::i();
-$filename = litepublisher::$classes->getresourcedir($class) . litepublisher::$options->language . $filename);
+$filename = litepublisher::$classes->getresourcedir($class) . litepublisher::$options->language . $filename;
 if (!isset(ttheme::$inifiles[$filename])) {
     $ini = ttheme::cacheini($filename);
     if (is_array($ini)) {

@@ -48,8 +48,8 @@ class tusergroups extends titems {
   }
   
   public function save() {
-    parent::save(); $this->update();
-    if ($this->lockcount == 0) $this->update();
+    parent::save();
+ $this->update();
   }
   
   public function update() {
@@ -72,6 +72,27 @@ class tusergroups extends titems {
     $name = trim($name);
     return isset(litepublisher::$options->groupnames[$name]) ? litepublisher::$options->groupnames[$name] : false;
   }
+
+public function addparent($id, $name) {
+if (!isset($this->items[$id])) return false;
+if ($idparent = $this->getidgroup($name)) {
+if (in_array($idparent, $this->items[$id]['parents'])) return false;
+$this->items[$id]['parents'][] = $idparent;
+$this->save();
+return $idparent;
+}
+}
+
+public function addchild($id, $name) {
+if (!isset($this->items[$id])) return false;
+if ($idchild = $this->getidgroup($name)) {
+if (in_array($id, $this->items[$idchild]['parents'])) return false;
+$this->items[$idchild]['parents'][] = $id;
+$this->save();
+return $idchild;
+}
+}
+  
   
   public function gethome($name) {
     if ($id = $this->getidgroup($name)) {
