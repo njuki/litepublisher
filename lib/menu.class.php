@@ -313,35 +313,35 @@ class tmenus extends titems {
     }
     return $result;
   }
-
+  
   public function getbeforemenu($current) {
     if (!count($this->tree) > 0) return '';
-if (isset($this->tree[$current])) {
-$subitems =  $this->tree[$current];
-} else {
-$id = $current;
-while ($this->items[$id]['parent']) $id = $this->items[$id]['parent'];
-$subitems =  $this->tree[$id];
-}
-
+    if (isset($this->tree[$current])) {
+      $subitems =  $this->tree[$current];
+    } else {
+      $id = $current;
+      while ($this->items[$id]['parent']) $id = $this->items[$id]['parent'];
+      $subitems =  $this->tree[$id];
+    }
+    
     $result = '';
-      $theme = ttheme::i();
-        $tml = $theme->templates['menu.item'];
-      $args = new targs();
-        $args->submenu = '';
-
-        foreach ($subitems as $id => $subsubitems) {
-          if ($this->exclude($id)) continue;
-          $args->add($this->items[$id]);
-          $result .= $current == $id ? $theme->parsearg($theme->templates['menu.current'], $args) : $theme->parsearg($tml, $args);
-        }
-      
-      $args->item =  $result;
-      $result = $theme->parsearg($theme->templates['menu'], $args);
+    $theme = ttheme::i();
+    $tml = $theme->templates['menu.item'];
+    $args = new targs();
+    $args->submenu = '';
+    
+    foreach ($subitems as $id => $subsubitems) {
+      if ($this->exclude($id)) continue;
+      $args->add($this->items[$id]);
+      $result .= $current == $id ? $theme->parsearg($theme->templates['menu.current'], $args) : $theme->parsearg($tml, $args);
+    }
+    
+    $args->item =  $result;
+    $result = $theme->parsearg($theme->templates['menu'], $args);
     return $result;
   }
   
-    public function class2id($class) {
+  public function class2id($class) {
     foreach($this->items as $id => $item) {
       if ($class == $item['class']) return $id;
     }
@@ -489,11 +489,11 @@ class tmenu extends titem implements  itemplate {
   }
   
   public function getcont() {
-$result = '';
-$owner = $this->owner;
-if ($owner->showsubmenu) $result .= $owner->getbeforemenu($this->id);
+    $result = '';
+    $owner = $this->owner;
+    if ($owner->showsubmenu) $result .= $owner->getbeforemenu($this->id);
     $result .= ttheme::parsevar('menu', $this, ttheme::i()->templates['content.menu']);
-return $result;
+    return $result;
   }
   
   public function getlink() {

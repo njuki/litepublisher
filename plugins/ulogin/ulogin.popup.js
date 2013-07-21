@@ -20,7 +20,6 @@ dialogopened: false,
 
     init: function() {
 this.registered = $.cookie('litepubl_user');
-      this.html = this.html.replace(/%%redirurl%%/gim, encodeURIComponent(ltoptions.url + "/admin/ulogin.php?backurl="));
 if (this.registered) return;
       var self = this;
       $('a[href^="' + ltoptions.url + '/admin/"], a[href^="/admin/"]').click(function() {
@@ -40,12 +39,13 @@ set_cookie('backurl', url);
 var self = this;
 self.ready(function() {
 self.dialogopened = true;
-var html = self.html.replace(/backurl%3D/gim, 'backurl%3D' + encodeURIComponent(encodeURIComponent(url)))
-.replace(/%%lang.emaillogin%%/gim, lang.ulogin.emaillogin)
+if (!url) url = ltoptions.url + "/admin/login/?backurl=" + encodeURIComponent(location.href);
+var html = self.html.replace(/%%lang.emaillogin%%/gim, lang.ulogin.emaillogin)
 .replace(/%%url%%/gim, url);
 
 if ($.isFunction(callback)) {
-html = html.replace(/%%callback%%/gim, "callback=ulogincallback");
+html = html.replace(/%%callback%%/gim, "callback=ulogincallback")
+.replace(/%%redirurl%%/gim, '');
 window.ulogincallback = function(token) {
 $.prettyPhoto.close();
 try {
@@ -53,7 +53,8 @@ callback(token);
         } catch(e) {erralert(e);}
 };
 } else {
-html = html.replace(/%%callback%%/gim, "");
+html = html.replace(/%%callback%%/gim, "")
+.replace(/%%redirurl%%/gim, encodeURIComponent(ltoptions.url + "/admin/ulogin.php?backurl=" + encodeURIComponent(url)));
 }
 
       $.prettyPhotoDialog({
@@ -81,9 +82,9 @@ if (this.script) return this.script.done(callback);
 return this.script = $.load_script('http://ulogin.ru/js/ulogin.js', callback);
 },
 
-auth: function(token, json_callback, callback) {
+auth: function(token, remote_callback, callback) {
 var self =this;
-return $.litejson({method: "ulogin_auth", token: token, callback: json_callback ? json_callback : false}, function(r) {
+return $.litejson({method: "ulogin_auth", token: token, callback: remote_callback ? remote_callback : false}, function(r) {
 set_cookie("litepubl_user_id", r.iduser);
 set_cookie("litepubl_user", r.pass);
 set_cookie("litepubl_regservice", r.regservice);
@@ -98,10 +99,10 @@ callback();
 });
 },
 
-login: function(json_callback, callback) {
+login: function(backurl, remote_callback, callback) {
 var self = this;
-self.open(location.href, function(token) {
-self.auth(token, json_callback, callback);
+self.open(backurl, function(token) {
+self.auth(token, remote_callback, callback);
 });
 }
     

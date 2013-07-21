@@ -111,16 +111,20 @@ class tlocal {
   }
   
   public static function inifile($class, $filename) {
+    return self::inicache(litepublisher::$classes->getresourcedir($class) . litepublisher::$options->language . $filename);
+  }
+  
+  public static function inicache($filename) {
     $self = self::i();
-$filename = litepublisher::$classes->getresourcedir($class) . litepublisher::$options->language . $filename;
-if (!isset(ttheme::$inifiles[$filename])) {
-    $ini = ttheme::cacheini($filename);
-    if (is_array($ini)) {
-      $self->ini = $ini + $self->ini ;
-      $keys = array_keys($ini);
-      $self->section = array_shift($keys);
+    if (!isset(ttheme::$inifiles[$filename])) {
+      $ini = ttheme::cacheini($filename);
+      if (is_array($ini)) {
+        $self->ini = $ini + $self->ini ;
+        $keys = array_keys($ini);
+        $self->section = array_shift($keys);
+        $self->addsearch($self->section);
+      }
     }
-}
     return $self;
   }
   

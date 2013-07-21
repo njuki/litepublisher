@@ -1,6 +1,6 @@
 <?php
 /**
-cl* Lite Publisher
+* Lite Publisher
 * Copyright (C) 2010 - 2013 Vladimir Yushko http://litepublisher.ru/ http://litepublisher.com/
 * Dual licensed under the MIT (mit.txt)
 * and GPL (gpl.txt) licenses.
@@ -283,6 +283,14 @@ class twidgets extends titems_storage {
     $this->save();
     foreach ($deleted as $id)     $this->deleted($id);
   }
+
+  public function class2id($class) {
+    foreach ($this->items as $id => $item) {
+      if($class == $item['class']) return $id;
+   }
+
+return false;
+}
   
   public function getwidget($id) {
     if (!isset($this->items[$id])) return $this->error("The requested $id widget not found");

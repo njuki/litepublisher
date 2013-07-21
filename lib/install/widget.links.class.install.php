@@ -7,6 +7,7 @@
 **/
 
 function tlinkswidgetInstall($self) {
+  if (get_class($self) != 'tlinkswidget') return;
   tlocal::usefile('admin');
   $lang = tlocal::i('installation');
   $self->add($lang->homeurl, $lang->homedescription, $lang->homename);
@@ -20,5 +21,6 @@ function tlinkswidgetInstall($self) {
 }
 
 function tlinkswidgetUninstall($self) {
+  if (get_class($self) != 'tlinkswidget') return;
   turlmap::unsub($self);
 }

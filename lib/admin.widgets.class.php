@@ -235,13 +235,27 @@ public function load() {}
     }
     return false;
   }
-  
+
+  public function deleteclass($classname) {
+if ($id = twidgets::i()->class2id($classname)) {
+tviews::i()->widgetdeleted($id);
+}
+  }
+
   public function indexof($id, $index) {
     foreach ($this->items[$index] as $i => $item) {
       if ($id == $item['id']) return $i;
     }
     return false;
   }
+
+public function setajax($id, $ajax) {
+foreach ($this->items as $index => $items) {
+if ($pos = $this->indexof($id, $index)) {
+$this->items[$index][$pos]['ajax'] = $ajax;
+}
+}
+}
   
   public function move($id, $index, $neworder) {
     if ($old = $this->indexof($id, $index)) {
@@ -272,7 +286,7 @@ public function load() {}
       }
     }
   }
-  
+
   public static function fix() {
     $widgets = twidgets::i();
     foreach ($widgets->classes as $classname => &$items) {
