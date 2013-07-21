@@ -53,8 +53,19 @@ class ulogin extends tplugin {
     Header( 'Cache-Control: no-cache, must-revalidate');
     Header( 'Pragma: no-cache');
     
-    if (empty($_POST['token'])) return 403;
-    if (!($cookies = $this->auth($_POST['token']))) return 403;
+$token = isset($_POST['token']) ? $_POST['token'] : (isset($_GET['token']) ? $_GET['token'] : '');
+if (!$token) {
+//try fix ulogin bug double symbol ?
+$uri = $_SERVER['REQUEST_URI'];
+if (substr_count($uri, '?') <= 1)  return 403;
+$q = substr($uri, strpos($uri, '?') +1);
+$q = str_replace('?', '&', $q);
+parse_str($q, $_GET);
+$token = isset($_GET['token']) ? $_GET['token'] : '';
+if (!$token) return 403;
+}
+
+    if (!($cookies = $this->auth($token))) return 403;
     
     if (!empty($_GET['backurl'])) {
       $backurl = $_GET['backurl'];
@@ -78,7 +89,7 @@ class ulogin extends tplugin {
     if (isset($info['error']) || !isset($info['network'])) return false;
     
     $name =!empty($info['first_name']) ? $info['first_name'] : '';
-    $name .=!empty($info['last_name']) ? ' . ' . $info['last_name'] : '';
+    $name .= !empty($info['last_name']) ? ' ' . $info['last_name'] : '';
     if (!$name && !empty($info['nickname'])) $name = $info['nickname'];
     
     $uid = !empty($info['uid']) ? $info['uid'] :

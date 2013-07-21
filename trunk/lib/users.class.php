@@ -19,7 +19,7 @@ class tusers extends titems {
     $this->basename = 'users';
     $this->table = 'users';
     $this->grouptable = 'usergroup';
-$this->addevents('beforedelete');
+    $this->addevents('beforedelete');
   }
   
   public function res2items($res) {
@@ -61,11 +61,11 @@ $this->addevents('beforedelete');
   }
   
   public function setgroups($id, array $idgroups) {
-$idgroups = array_unique($idgroups);
+    $idgroups = array_unique($idgroups);
     array_delete_value($idgroups, '');
     array_delete_value($idgroups, false);
     array_delete_value($idgroups, null);
-
+    
     $this->items[$id]['idgroups'] = $idgroups;
     $db = $this->getdb($this->grouptable);
     $db->delete("iduser = $id");
@@ -79,7 +79,7 @@ $idgroups = array_unique($idgroups);
   
   public function delete($id) {
     if ($id == 1) return;
-$this->beforedelete($id);
+    $this->beforedelete($id);
     $this->getdb($this->grouptable)->delete('iduser = ' .(int)$id);
     tuserpages::i()->delete($id);
     $this->getdb('comments')->update("status = 'deleted'", "author = $id");

@@ -103,13 +103,15 @@ if (dbversion) litepublisher::$db = new tdatabase();
 //ttheme::clearcache();
 tlocal::clearcache();
 litepublisher::$urlmap->clearcache();
+//tfiler::log(var_export($_POST, true));
 //cabinetmenus::i()->uninstall();
 //cabinetmenus::i()->install();
 //tthemegenerator::i()->parseselectors();
 //tupdater::i()->run(5.61);
-
+//adminshopwidget::i()->install();
 //yandexfeed::i()->cron();
 //admincashmethod::i()->install();
+//deliveries::i()->delete('method');
 /*
 litepublisher::$classes->add('orderreports', 'admin.reports.php', 'shop/orders');
 $m = adminshopmenus ::i();

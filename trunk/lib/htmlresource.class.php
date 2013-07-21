@@ -66,7 +66,7 @@ class tadminhtml {
     $theme = ttheme::i();
     // parse tags [form] .. [/form]
     if (is_int($i = strpos($s, '[form]'))) {
-    $form = $theme->templates['content.admin.form'];
+      $form = $theme->templates['content.admin.form'];
       $replace = substr($form, 0, strpos($form, '$items'));
       $s = substr_replace($s, $replace, $i, strlen('[form]'));
     }
@@ -443,29 +443,18 @@ class tadminhtml {
   }
   
   public function inidir($dir) {
-$filename = $dir . 'html.ini';
-if (!isset(ttheme::$inifiles[$filename])) {
-    $html_ini = ttheme::cacheini($filename);
-    if (is_array($html_ini)) {
-      $this->ini = $html_ini + $this->ini;
-      $keys = array_keys($html_ini);
-      $this->section = array_shift($keys);
-$this->searchsect[] = $this->section;
+    $filename = $dir . 'html.ini';
+    if (!isset(ttheme::$inifiles[$filename])) {
+      $html_ini = ttheme::cacheini($filename);
+      if (is_array($html_ini)) {
+        $this->ini = $html_ini + $this->ini;
+        $keys = array_keys($html_ini);
+        $this->section = array_shift($keys);
+        $this->searchsect[] = $this->section;
+      }
     }
-}
     
-$filename = $dir . litepublisher::$options->language . '.admin.ini';
-if (!isset(ttheme::$inifiles[$filename])) {
-    $lang_ini = ttheme::cacheini($filename);
-    if (is_array($lang_ini)) {
-      $lang = tlocal::i();
-      $lang->ini = $lang_ini + $lang->ini ;
-      $keys = array_keys($lang_ini);
-      $lang->section = array_shift($keys);
-$lang->addsearch($lang->section);
-    }
-}
-    
+tlocal::inicache($dir . litepublisher::$options->language . '.admin.ini');
     return $this;
   }
   
