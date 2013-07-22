@@ -30,13 +30,14 @@ class tposteditor extends tadminmenu {
     return $result;
   }
   
-  private static function getsubcategories($parent, array $postitems) {
+  protected static function getsubcategories($parent, array $postitems, $exclude = false) {
     $result = '';
     $categories = tcategories::i();
     $html = tadminhtml::getinstance('editor');
     $args = targs::i();
     foreach ($categories->items  as $id => $item) {
       if ($parent != $item['parent']) continue;
+if ($exclude && in_array($id, $exclude)) continue;
       $args->add($item);
       $args->checked = in_array($item['id'], $postitems);
       $args->subcount = '';

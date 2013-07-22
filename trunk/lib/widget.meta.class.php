@@ -22,7 +22,7 @@ class tmetawidget extends twidget {
   }
   
   public function getdeftitle() {
-    return tlocal::get('default', 'meta');
+    return tlocal::get('default', 'subscribe');
   }
   
   public function add($name, $url, $title) {
