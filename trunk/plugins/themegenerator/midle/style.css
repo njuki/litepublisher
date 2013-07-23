@@ -30,7 +30,7 @@ abbr,acronym{border-bottom:1px dotted;cursor:help}
 cite,dfn,em,i,var{font-style:italic;color:#444}
 b,strong,dt,th{font-weight:bold}
 code,kbd,samp,tt,var,pre{font-family:"Courier New", Courier, monospace}
-code{background:#ffebff;;border:1px solid #ddd;color:#444;display:block;max-height:500px;padding:5px;white-space:pre;*white-space:normal;overflow:auto}
+code{background:#ffebff;;border:1px solid #ddd;color:#444;display:block;max-height:500px;padding:5px;white-space:pre;white-space:normal;overflow:auto}
 pre{display:inline;white-space:normal}
 sub,sup{font-size:9px}
 sub{margin-bottom:-5px}

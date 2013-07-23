@@ -120,6 +120,7 @@ class tposts extends titems {
       $subitems = $db->res2items($db->query("select $childtable.*
       from $childtable where id in ($list)"));
       */
+
       $subitems = call_user_func_array(array($class, 'selectitems'), array($list));
       foreach ($subitems as $id => $subitem) {
         $items[$id] = array_merge($items[$id], $subitem);

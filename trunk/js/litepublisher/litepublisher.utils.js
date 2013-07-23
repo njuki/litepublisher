@@ -106,13 +106,20 @@
       }
       if (type != "post") type = "get";
       
+var         cache =  "cache" in data ? data.cache : false;
+var nocache = '';
+if (!cache && (type == "post")) {
+if (!("random" in litepubl)) litepubl.random = $.now();
+nocache = '?_=' + litepubl.random++;
+}
+
       return $.ajax({
         type: type,
-        url: ltoptions.url + "/admin/jsonserver.php",
+        url: ltoptions.url + "/admin/jsonserver.php" + nocache,
         data: data,
         success: callback,
         dataType: "json",
-        cache: "cache" in data ? data.cache : false
+        cache: cache
       });
     },
     
