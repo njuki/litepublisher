@@ -100,7 +100,7 @@ if (dbversion) litepublisher::$db = new tdatabase();
 
   litepublisher::$urlmap = turlmap::i();
 
-//ttheme::clearcache();
+ttheme::clearcache();
 tlocal::clearcache();
 litepublisher::$urlmap->clearcache();
 //tfiler::log(var_export($_POST, true));
@@ -108,10 +108,13 @@ litepublisher::$urlmap->clearcache();
 //cabinetmenus::i()->install();
 //tthemegenerator::i()->parseselectors();
 //tupdater::i()->run(5.61);
+//litepublisher::$site->currency = litepublisher::$options->data['currencies'][litepublisher::$options->currency]['short'];
+
+//litepublisher::$classes->add('product', 'product.class.php', 'shop/product');
 //adminshopwidget::i()->install();
 //yandexfeed::i()->cron();
-//admincashmethod::i()->install();
 //deliveries::i()->delete('method');
+tfiler::log($_SERVER['REQUEST_URI']);
 /*
 litepublisher::$classes->add('orderreports', 'admin.reports.php', 'shop/orders');
 $m = adminshopmenus ::i();

@@ -350,10 +350,10 @@ class ttheme extends tevents {
     
     $result = '';
     self::$vars['lang'] = tlocal::i('default');
-    $tml = $lite ? $this->templates['content.excerpts.lite.excerpt'] : $this->templates['content.excerpts.excerpt'];
+    //$tml = $lite ? $this->templates['content.excerpts.lite.excerpt'] : $this->templates['content.excerpts.excerpt'];
     foreach($items as $id) {
-      self::$vars['post'] = tpost::i($id);
-      $result .= $this->parse($tml);
+$post = tpost::i($id);
+      $result .= $post->getcontexcerpt($lite);
       // has $author.* tags in tml
       if (isset(self::$vars['author'])) unset(self::$vars['author']);
     }
