@@ -27,7 +27,7 @@ class tadminuseroptions extends tadminmenu {
     $args->linkschema = $linkgen->data['user'];
     
     return $html->adminform(
-    '[[checkbox=createpage]
+    '[checkbox=createpage]
     [checkbox=lite]
     [text=linkschema]'
     . $html->h4->defaults.
