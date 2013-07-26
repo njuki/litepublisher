@@ -133,7 +133,11 @@ public function save() { return true; }
       if (!$auth->Auth())  return $auth->headers();
     }
     
-    if (!litepublisher::$options->hasgroup($group)) return 403;
+    if (!litepublisher::$options->hasgroup($group)) {
+$url = tusergroups::i()->gethome(litepublisher::$options->group);
+        return litepublisher::$urlmap->redir($url);
+//return 403;
+}
   }
   
   public function request($id) {
