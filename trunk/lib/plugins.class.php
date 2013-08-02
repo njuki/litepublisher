@@ -120,7 +120,7 @@ class tplugins extends TItems {
     return array_keys($this->items);
   }
   
-  public function update($list) {
+  public function update(array $list) {
     $add = array_diff($list, array_keys($this->items));
     $delete  = array_diff(array_keys($this->items), $list);
     $delete  = array_intersect($delete, tfiler::getdir(litepublisher::$paths->plugins));
