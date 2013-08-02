@@ -494,12 +494,14 @@ class turlmap extends titems {
   public static function htmlheader($cache) {
     return sprintf('<?php turlmap::sendheader(%s); ?>', $cache ? 'true' : 'false');
   }
-  
-  public static function sendheader($cache) {
-    if (!$cache) {
+
+public static function nocache() {
       Header( 'Cache-Control: no-cache, must-revalidate');
       Header( 'Pragma: no-cache');
-    }
+}
+  
+  public static function sendheader($cache) {
+    if (!$cache) self::nocache();
     header('Content-Type: text/html; charset=utf-8');
     header('Last-Modified: ' . date('r'));
     header('X-Pingback: ' . litepublisher::$site->url . '/rpc.xml');
