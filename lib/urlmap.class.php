@@ -219,6 +219,7 @@ class turlmap extends titems {
     if ($this->cache_enabled) {
       if ($this->include_file($this->getcachefile($item))) return;
     }
+
     if (class_exists($item['class']))  {
       return $this->GenerateHTML($item);
     } else {

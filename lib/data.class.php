@@ -391,6 +391,11 @@ function sqldate($date = 0) {
   return date('Y-m-d H:i:s', $date);
 }
 
+function sqltime($date = 0) {
+  if ($date == 0) return '0000-00-00 00:00:00';
+  return date('Y-m-d H:i:s', $date);
+}
+
 function dbquote($s) {
   return litepublisher::$db->quote($s);
 }

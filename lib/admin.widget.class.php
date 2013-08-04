@@ -154,7 +154,7 @@ class tadmincustomwidget extends tadminwidget {
   
   public function getcontent() {
     $widget = $this->widget;
-    $args = targs::i();
+    $args = new targs();
     $id = (int) tadminhtml::getparam('idwidget', 0);
     if (isset($widget->items[$id])) {
       $item = $widget->items[$id];
@@ -182,21 +182,14 @@ class tadmincustomwidget extends tadminwidget {
     [hidden=idwidget]',
     $args));
     
-    $result .= $this->getlist($widget);
-    return $result;
-  }
-  
-  public function getlist(twidget $widget) {
-    $args = targs::i();
-    $html = $this->html;
-    $result = $html->customheader();
-    $args->adminurl = $this->adminurl;
-    foreach ($widget->items as $id => $item) {
-      $args->idwidget = $id;
-      $args->add($item);
-      $result .= $html->customitem($args);
-    }
-    $result .= $html->customfooter();
+$lang = tlocal::i();
+$args->formtitle = $lang->widgets;
+$args->table = $html->buildtable($widget->items, array(
+$html->get_table_checkbox('widgetcheck'),
+array('left', $lang->widgettitle, "<a href=\"$this->adminurl\$id\" title=\"\$title\">\$title</a>"),
+));
+
+$result .= $html->deletetable($args);
     return $result;
   }
   
@@ -215,7 +208,7 @@ class tadmincustomwidget extends tadminwidget {
         $widget->edit($id, $title, $text, $template);
         break;
       }
-    } else {
+    } elseif (isset($_POST['delete']))  {
       $this->deletewidgets($widget);
     }
   }

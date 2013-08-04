@@ -91,7 +91,7 @@ class tadminhtml {
         }
         
         if ($type == 'calendar') {
-          $tag = $this->getcalendar($name, $varname);
+          $tag = $this->getcalendar($name, $args->data[$varname]);
         } else {
           $tag = strtr($theme->templates["content.admin.$type"], array(
           '$name' => $name,
@@ -251,7 +251,7 @@ class tadminhtml {
     } else {
       $date = 0;
     }
-    
+
     return strtr($this->ini['common']['calendar'], array(
     '$title' => tlocal::i()->__get($name),
     '$name' => $name,
