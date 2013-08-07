@@ -75,19 +75,7 @@ class tjsonserver extends tevents {
     $a = array($args);
     $this->callevent('beforecall', $a);
     try {
-      //tfiler::log(var_export($_POST, true));
-      /*
-      //tfiler::log(var_export($_COOKIE, true));
-      tfiler::log(var_export($_GET, true));
-      tfiler::log(var_export($_POST, true));
-      tfiler::log(var_export($_FILES, true));
-      tfiler::log(var_export($args, true));
-      */
-      
       $result = $this->callevent($method, $a);
-      //tfiler::log(var_export($result, true));
-      //tfiler::log(json_encode($result));
-      //dumpvar($result);
     } catch (Exception $e) {
       if (litepublisher::$debug) {
         litepublisher::$options->handexception($e);

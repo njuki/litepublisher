@@ -742,6 +742,14 @@ class tpost extends titem implements  itemplate {
     return $this->parsetml('content.post');
   }
   
+  public function getcontexcerpt($lite) {
+    //no use self theme because post in other context
+    $theme = ttheme::i();
+    $tml = $lite ? $theme->templates['content.excerpts.lite.excerpt'] : $theme->templates['content.excerpts.excerpt'];
+    ttheme::$vars['post'] = $this;
+    return $theme->parse($tml);
+  }
+  
   public function getrsslink() {
     if ($this->hascomm) {
       return $this->parsetml('content.post.rsslink');
@@ -1196,6 +1204,7 @@ class tposts extends titems {
       $subitems = $db->res2items($db->query("select $childtable.*
       from $childtable where id in ($list)"));
       */
+      
       $subitems = call_user_func_array(array($class, 'selectitems'), array($list));
       foreach ($subitems as $id => $subitem) {
         $items[$id] = array_merge($items[$id], $subitem);

@@ -133,7 +133,11 @@ public function save() { return true; }
       if (!$auth->Auth())  return $auth->headers();
     }
     
-    if (!litepublisher::$options->hasgroup($group)) return 403;
+    if (!litepublisher::$options->hasgroup($group)) {
+      $url = tusergroups::i()->gethome(litepublisher::$options->group);
+      return litepublisher::$urlmap->redir($url);
+      //return 403;
+    }
   }
   
   public function request($id) {
@@ -324,7 +328,7 @@ class tadminhtml {
         }
         
         if ($type == 'calendar') {
-          $tag = $this->getcalendar($name, $varname);
+          $tag = $this->getcalendar($name, $args->data[$varname]);
         } else {
           $tag = strtr($theme->templates["content.admin.$type"], array(
           '$name' => $name,
@@ -535,6 +539,7 @@ class tadminhtml {
       $body .= $theme->parsearg($tml, $args);
     }
     unset(ttheme::$vars['item']);
+    
     $args->tablehead  = $head;
     $args->tablebody = $body;
     return $theme->parsearg($this->ini['common']['table'], $args);
@@ -615,7 +620,7 @@ class tadminhtml {
       $body .= sprintf('<tr><td>%s</td><td>%s</td></tr>', $lang->__get($k), $v);
     }
     
-    return $this->gettable("<th>$lang->name</th> <th>$lang->value</th>", $body);
+    return $this->gettable("<th>$lang->name</th> <th>$lang->property</th>", $body);
   }
   
   public function tablevalues(array $a) {
@@ -687,18 +692,7 @@ class tadminhtml {
       }
     }
     
-    $filename = $dir . litepublisher::$options->language . '.admin.ini';
-    if (!isset(ttheme::$inifiles[$filename])) {
-      $lang_ini = ttheme::cacheini($filename);
-      if (is_array($lang_ini)) {
-        $lang = tlocal::i();
-        $lang->ini = $lang_ini + $lang->ini ;
-        $keys = array_keys($lang_ini);
-        $lang->section = array_shift($keys);
-        $lang->addsearch($lang->section);
-      }
-    }
-    
+    tlocal::inicache($dir . litepublisher::$options->language . '.admin.ini');
     return $this;
   }
   
@@ -1183,13 +1177,14 @@ class tposteditor extends tadminmenu {
     return $result;
   }
   
-  private static function getsubcategories($parent, array $postitems) {
+  protected static function getsubcategories($parent, array $postitems, $exclude = false) {
     $result = '';
     $categories = tcategories::i();
     $html = tadminhtml::getinstance('editor');
     $args = targs::i();
     foreach ($categories->items  as $id => $item) {
       if ($parent != $item['parent']) continue;
+      if ($exclude && in_array($id, $exclude)) continue;
       $args->add($item);
       $args->checked = in_array($item['id'], $postitems);
       $args->subcount = '';

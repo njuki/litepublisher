@@ -37,7 +37,7 @@ class tposteditor extends tadminmenu {
     $args = targs::i();
     foreach ($categories->items  as $id => $item) {
       if ($parent != $item['parent']) continue;
-if ($exclude && in_array($id, $exclude)) continue;
+      if ($exclude && in_array($id, $exclude)) continue;
       $args->add($item);
       $args->checked = in_array($item['id'], $postitems);
       $args->subcount = '';

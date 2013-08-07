@@ -17,7 +17,7 @@ class tusergroups extends titems {
     parent::create();
     $this->basename = 'usergroups';
     $this->addmap('defaults', array());
-$this->data['defaulthome'] = '/admin/';
+    $this->data['defaulthome'] = '/admin/';
   }
   
   public function add($name, $title, $home) {

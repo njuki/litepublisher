@@ -219,7 +219,7 @@ class turlmap extends titems {
     if ($this->cache_enabled) {
       if ($this->include_file($this->getcachefile($item))) return;
     }
-
+    
     if (class_exists($item['class']))  {
       return $this->GenerateHTML($item);
     } else {
@@ -495,11 +495,11 @@ class turlmap extends titems {
   public static function htmlheader($cache) {
     return sprintf('<?php turlmap::sendheader(%s); ?>', $cache ? 'true' : 'false');
   }
-
-public static function nocache() {
-      Header( 'Cache-Control: no-cache, must-revalidate');
-      Header( 'Pragma: no-cache');
-}
+  
+  public static function nocache() {
+    Header( 'Cache-Control: no-cache, must-revalidate');
+    Header( 'Pragma: no-cache');
+  }
   
   public static function sendheader($cache) {
     if (!$cache) self::nocache();

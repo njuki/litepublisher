@@ -251,7 +251,7 @@ class tadminhtml {
     } else {
       $date = 0;
     }
-
+    
     return strtr($this->ini['common']['calendar'], array(
     '$title' => tlocal::i()->__get($name),
     '$name' => $name,
@@ -302,7 +302,7 @@ class tadminhtml {
       $body .= $theme->parsearg($tml, $args);
     }
     unset(ttheme::$vars['item']);
-
+    
     $args->tablehead  = $head;
     $args->tablebody = $body;
     return $theme->parsearg($this->ini['common']['table'], $args);
@@ -383,7 +383,7 @@ class tadminhtml {
       $body .= sprintf('<tr><td>%s</td><td>%s</td></tr>', $lang->__get($k), $v);
     }
     
-    return $this->gettable("<th>$lang->name</th> <th>$lang->value</th>", $body);
+    return $this->gettable("<th>$lang->name</th> <th>$lang->property</th>", $body);
   }
   
   public function tablevalues(array $a) {
@@ -455,7 +455,7 @@ class tadminhtml {
       }
     }
     
-tlocal::inicache($dir . litepublisher::$options->language . '.admin.ini');
+    tlocal::inicache($dir . litepublisher::$options->language . '.admin.ini');
     return $this;
   }
   

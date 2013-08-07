@@ -100,17 +100,20 @@ if (dbversion) litepublisher::$db = new tdatabase();
 
   litepublisher::$urlmap = turlmap::i();
 
-ttheme::clearcache();
+//ttheme::clearcache();
 tlocal::clearcache();
 litepublisher::$urlmap->clearcache();
 //tfiler::log(var_export($_POST, true));
 //cabinetmenus::i()->uninstall();
 //cabinetmenus::i()->install();
 //tthemegenerator::i()->parseselectors();
-//tupdater::i()->run(5.61);
+//tupdater::i()->run(5.62);
+//cabinethosting::i()->uninstall();
+//cabinethosting::i()->install();
+  //litepublisher::$classes->add('admin_hosting_run', 'admin.hosting.run.php', 'shop-hosting');
 //litepublisher::$site->currency = litepublisher::$options->data['currencies'][litepublisher::$options->currency]['short'];
 
-//litepublisher::$classes->add('product', 'product.class.php', 'shop/product');
+//litepublisher::$classes->add('shopservice', 'service.shop.php', 'shop/updater');
 //adminshopwidget::i()->install();
 //yandexfeed::i()->cron();
 //deliveries::i()->delete('method');

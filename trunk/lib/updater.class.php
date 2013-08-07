@@ -87,13 +87,15 @@ class tupdater extends tevents {
     if ($log) tfiler::log("update finished", 'update');
   }
   
-  public function autoupdate() {
-    //protect timeout
-    if (ob_get_level()) @ob_end_clean ();
-    Header( 'Cache-Control: no-cache, must-revalidate');
-    Header( 'Pragma: no-cache');
-    echo "\n";
-    flush();
+  public function autoupdate($protecttimeout = true) {
+    if ($protecttimeout) {
+      if (ob_get_level()) @ob_end_clean ();
+      Header( 'Cache-Control: no-cache, must-revalidate');
+      Header( 'Pragma: no-cache');
+      echo "\n";
+      flush();
+    }
+    
     $lang = tlocal::i('service');
     $backuper = tbackuper::i();
     if ($this->useshell) {

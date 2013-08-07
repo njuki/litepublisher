@@ -352,7 +352,7 @@ class ttheme extends tevents {
     self::$vars['lang'] = tlocal::i('default');
     //$tml = $lite ? $this->templates['content.excerpts.lite.excerpt'] : $this->templates['content.excerpts.excerpt'];
     foreach($items as $id) {
-$post = tpost::i($id);
+      $post = tpost::i($id);
       $result .= $post->getcontexcerpt($lite);
       // has $author.* tags in tml
       if (isset(self::$vars['author'])) unset(self::$vars['author']);
@@ -434,17 +434,17 @@ $post = tpost::i($id);
     if (isset(self::$inifiles[$filename])) return self::$inifiles[$filename];
     $datafile = tlocal::getcachedir() . sprintf('cacheini.%s.php', md5($filename));
     if (!tfilestorage::loadvar($datafile, $ini) || !is_array($ini)) {
-        if (file_exists($filename)) {
-      $ini = parse_ini_file($filename, true);
-      tfilestorage::savevar($datafile, $ini);
-} else {
-$ini = array();
-}
-}
-
+      if (file_exists($filename)) {
+        $ini = parse_ini_file($filename, true);
+        tfilestorage::savevar($datafile, $ini);
+      } else {
+        $ini = array();
+      }
+    }
+    
     if (!isset(self::$inifiles)) self::$inifiles = array();
-      self::$inifiles[$filename] = $ini;
-      return $ini;
+    self::$inifiles[$filename] = $ini;
+    return $ini;
   }
   
   public static function inifile($class, $filename) {

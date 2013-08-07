@@ -283,14 +283,14 @@ class twidgets extends titems_storage {
     $this->save();
     foreach ($deleted as $id)     $this->deleted($id);
   }
-
+  
   public function class2id($class) {
     foreach ($this->items as $id => $item) {
       if($class == $item['class']) return $id;
-   }
-
-return false;
-}
+    }
+    
+    return false;
+  }
   
   public function getwidget($id) {
     if (!isset($this->items[$id])) return $this->error("The requested $id widget not found");
