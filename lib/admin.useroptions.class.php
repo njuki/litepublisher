@@ -25,15 +25,15 @@ class tadminuseroptions extends tadminmenu {
     
     $linkgen = tlinkgenerator::i();
     $args->linkschema = $linkgen->data['user'];
-
-$groups = tusergroups::i();
-$args->defaulthome = $groups->defaulthome;
+    
+    $groups = tusergroups::i();
+    $args->defaulthome = $groups->defaulthome;
     
     return $html->adminform(
     '[checkbox=createpage]
     [checkbox=lite]
     [text=linkschema]
-[text=defaulthome]'
+    [text=defaulthome]'
     . $html->h4->defaults.
     tadmingroups::getgroups($groups->defaults)
     , $args);
@@ -47,7 +47,7 @@ $args->defaulthome = $groups->defaulthome;
     
     $groups = tusergroups::i();
     $groups->defaults = tadminhtml::check2array('idgroup-');
-$groups->defaulthome = trim($_POST['defaulthome']);
+    $groups->defaulthome = trim($_POST['defaulthome']);
     $groups->save();
     
     $linkgen = tlinkgenerator::i();

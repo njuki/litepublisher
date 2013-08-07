@@ -134,10 +134,10 @@ public function save() { return true; }
     }
     
     if (!litepublisher::$options->hasgroup($group)) {
-$url = tusergroups::i()->gethome(litepublisher::$options->group);
-        return litepublisher::$urlmap->redir($url);
-//return 403;
-}
+      $url = tusergroups::i()->gethome(litepublisher::$options->group);
+      return litepublisher::$urlmap->redir($url);
+      //return 403;
+    }
   }
   
   public function request($id) {

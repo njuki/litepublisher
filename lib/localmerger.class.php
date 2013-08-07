@@ -52,7 +52,7 @@ class tlocalmerger extends tfilemerger {
   public function merge() {
     $lang = getinstance('tlocal');
     $lang->ini = array();
-ttheme::$inifiles = array();
+    ttheme::$inifiles = array();
     foreach ($this->items as $name => $items) {
       $this->parse($name);
     }

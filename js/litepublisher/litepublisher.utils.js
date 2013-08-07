@@ -106,13 +106,13 @@
       }
       if (type != "post") type = "get";
       
-var         cache =  "cache" in data ? data.cache : false;
-var nocache = '';
-if (!cache && (type == "post")) {
-if (!("random" in litepubl)) litepubl.random = $.now();
-nocache = '?_=' + litepubl.random++;
-}
-
+      var         cache =  "cache" in data ? data.cache : false;
+      var nocache = '';
+      if (!cache && (type == "post")) {
+        if (!("random" in litepubl)) litepubl.random = $.now();
+        nocache = '?_=' + litepubl.random++;
+      }
+      
       return $.ajax({
         type: type,
         url: ltoptions.url + "/admin/jsonserver.php" + nocache,

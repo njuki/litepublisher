@@ -122,6 +122,7 @@ class tlocal {
         $self->ini = $ini + $self->ini ;
         $keys = array_keys($ini);
         $self->section = array_shift($keys);
+        $self->addsearch($self->section);
       }
     }
     return $self;
@@ -982,10 +983,10 @@ class ttheme extends tevents {
     
     $result = '';
     self::$vars['lang'] = tlocal::i('default');
-    $tml = $lite ? $this->templates['content.excerpts.lite.excerpt'] : $this->templates['content.excerpts.excerpt'];
+    //$tml = $lite ? $this->templates['content.excerpts.lite.excerpt'] : $this->templates['content.excerpts.excerpt'];
     foreach($items as $id) {
-      self::$vars['post'] = tpost::i($id);
-      $result .= $this->parse($tml);
+      $post = tpost::i($id);
+      $result .= $post->getcontexcerpt($lite);
       // has $author.* tags in tml
       if (isset(self::$vars['author'])) unset(self::$vars['author']);
     }
@@ -1063,20 +1064,20 @@ class ttheme extends tevents {
   }
   
   public static function cacheini($filename) {
-    if (!isset(self::$inifiles)) self::$inifiles = array();
     if (isset(self::$inifiles[$filename])) return self::$inifiles[$filename];
     $datafile = tlocal::getcachedir() . sprintf('cacheini.%s.php', md5($filename));
-    if (tfilestorage::loadvar($datafile, $ini) && is_array($ini)) {
-      self::$inifiles[$filename] = $ini;
-      return $ini;
+    if (!tfilestorage::loadvar($datafile, $ini) || !is_array($ini)) {
+      if (file_exists($filename)) {
+        $ini = parse_ini_file($filename, true);
+        tfilestorage::savevar($datafile, $ini);
+      } else {
+        $ini = array();
+      }
     }
     
-    if (file_exists($filename)) {
-      $ini = parse_ini_file($filename, true);
-      tfilestorage::savevar($datafile, $ini);
-      self::$inifiles[$filename] = $ini;
-      return $ini;
-    }
+    if (!isset(self::$inifiles)) self::$inifiles = array();
+    self::$inifiles[$filename] = $ini;
+    return $ini;
   }
   
   public static function inifile($class, $filename) {
@@ -1522,6 +1523,14 @@ class twidgets extends titems_storage {
     if (isset($this->classes[$class])) unset($this->classes[$class]);
     $this->save();
     foreach ($deleted as $id)     $this->deleted($id);
+  }
+  
+  public function class2id($class) {
+    foreach ($this->items as $id => $item) {
+      if($class == $item['class']) return $id;
+    }
+    
+    return false;
   }
   
   public function getwidget($id) {

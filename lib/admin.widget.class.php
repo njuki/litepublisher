@@ -182,14 +182,14 @@ class tadmincustomwidget extends tadminwidget {
     [hidden=idwidget]',
     $args));
     
-$lang = tlocal::i();
-$args->formtitle = $lang->widgets;
-$args->table = $html->buildtable($widget->items, array(
-$html->get_table_checkbox('widgetcheck'),
-array('left', $lang->widgettitle, "<a href=\"$this->adminurl\$id\" title=\"\$title\">\$title</a>"),
-));
-
-$result .= $html->deletetable($args);
+    $lang = tlocal::i();
+    $args->formtitle = $lang->widgets;
+    $args->table = $html->buildtable($widget->items, array(
+    $html->get_table_checkbox('widgetcheck'),
+    array('left', $lang->widgettitle, "<a href=\"$this->adminurl\$id\" title=\"\$title\">\$title</a>"),
+    ));
+    
+    $result .= $html->deletetable($args);
     return $result;
   }
   

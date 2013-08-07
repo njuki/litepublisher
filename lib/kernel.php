@@ -721,6 +721,11 @@ function sqldate($date = 0) {
   return date('Y-m-d H:i:s', $date);
 }
 
+function sqltime($date = 0) {
+  if ($date == 0) return '0000-00-00 00:00:00';
+  return date('Y-m-d H:i:s', $date);
+}
+
 function dbquote($s) {
   return litepublisher::$db->quote($s);
 }
@@ -2168,6 +2173,7 @@ class turlmap extends titems {
     if ($this->cache_enabled) {
       if ($this->include_file($this->getcachefile($item))) return;
     }
+    
     if (class_exists($item['class']))  {
       return $this->GenerateHTML($item);
     } else {
@@ -2444,11 +2450,13 @@ class turlmap extends titems {
     return sprintf('<?php turlmap::sendheader(%s); ?>', $cache ? 'true' : 'false');
   }
   
+  public static function nocache() {
+    Header( 'Cache-Control: no-cache, must-revalidate');
+    Header( 'Pragma: no-cache');
+  }
+  
   public static function sendheader($cache) {
-    if (!$cache) {
-      Header( 'Cache-Control: no-cache, must-revalidate');
-      Header( 'Pragma: no-cache');
-    }
+    if (!$cache) self::nocache();
     header('Content-Type: text/html; charset=utf-8');
     header('Last-Modified: ' . date('r'));
     header('X-Pingback: ' . litepublisher::$site->url . '/rpc.xml');

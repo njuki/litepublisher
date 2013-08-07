@@ -580,12 +580,12 @@ class tpost extends titem implements  itemplate {
   public function getcont() {
     return $this->parsetml('content.post');
   }
-
+  
   public function getcontexcerpt($lite) {
-//no use self theme because post in other context
-$theme = ttheme::i();
+    //no use self theme because post in other context
+    $theme = ttheme::i();
     $tml = $lite ? $theme->templates['content.excerpts.lite.excerpt'] : $theme->templates['content.excerpts.excerpt'];
-      ttheme::$vars['post'] = $this;
+    ttheme::$vars['post'] = $this;
     return $theme->parse($tml);
   }
   
