@@ -1423,6 +1423,7 @@ class tclasses extends titems {
   
   public function __get($name) {
     if (isset($this->classes[$name])) return $this->getinstance($this->classes[$name]);
+    if (isset($this->items[$name])) return $this->getinstance($name);
     $class = 't' . $name;
     if (isset($this->items[$class])) return $this->getinstance($class);
     return parent::__get($name);
@@ -2038,11 +2039,14 @@ class turlmap extends titems {
     }
     
     if (!litepublisher::$debug && litepublisher::$options->ob_cache) {
-      if ($this->isredir || count($this->close_events)) $this->close_connection();
+      litepublisher::$options->showerrors();
+      litepublisher::$options->errorlog = '';
+      $afterclose = $this->isredir || count($this->close_events);
+      if ($afterclose) $this->close_connection();
       while (@ob_end_flush ());
       flush();
       //prevent output while client connected
-      if ($this->isredir || count($this->close_events)) ob_start();
+      if ($afterclose) ob_start();
     }
     $this->afterrequest($this->url);
     $this->close();

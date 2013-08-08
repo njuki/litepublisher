@@ -84,6 +84,7 @@ class tclasses extends titems {
   
   public function __get($name) {
     if (isset($this->classes[$name])) return $this->getinstance($this->classes[$name]);
+    if (isset($this->items[$name])) return $this->getinstance($name);
     $class = 't' . $name;
     if (isset($this->items[$class])) return $this->getinstance($class);
     return parent::__get($name);
