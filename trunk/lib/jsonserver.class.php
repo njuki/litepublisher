@@ -7,6 +7,7 @@
 **/
 
 class tjsonserver extends tevents {
+  public $debug;
   
   public static function i() {
     return getinstance(__class__);
@@ -20,6 +21,7 @@ class tjsonserver extends tevents {
     $this->data['eventnames'] = &$this->eventnames;
     $this->map['eventnames'] = 'eventnames';
     $this->data['url'] = '/admin/jsonserver.php';
+    $this->debug = false;
   }
   
   public function getpostbody() {
@@ -77,7 +79,7 @@ class tjsonserver extends tevents {
     try {
       $result = $this->callevent($method, $a);
     } catch (Exception $e) {
-      if (litepublisher::$debug) {
+      if (litepublisher::$debug || $this->debug) {
         litepublisher::$options->handexception($e);
         throw new Exception(litepublisher::$options->errorlog);
       }
