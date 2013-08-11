@@ -166,17 +166,26 @@ class ulogin extends tplugin {
   public function ulogin_auth(array $args) {
     if (!($token = $args['token'])) return 403;
     if (!($result = $this->auth($token))) return 403;
+
+/*
+    $result = array(
+    'id' => litepublisher::$options->user,
+    'pass' => $_COOKIE['litepubl_user'],
+    'regservice' => $_COOKIE['litepubl_regservice'],
+    );
+*/
+
     if (isset($args['callback']) && $args['callback']) {
       $callback = $args['callback'];
       if ($callback != 'false') {
         try {
-          $result['callback'] = tjsonserver::i()->callevent($callback['method'], $callback);
+          $result['callback'] = tjsonserver::i()->callevent($callback['method'], array($callback));
         } catch (Exception $e) {
           $result['error'] = $e->getMessage();
         }
       }
     }
-    
+
     return $result;
   }
   
