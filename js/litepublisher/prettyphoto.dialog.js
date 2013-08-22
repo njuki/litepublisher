@@ -94,6 +94,7 @@
     var a = $("<a title=''></a>").appendTo(tmp);
     a.attr("href", "#" +id);
     
+    $(document).off('keydown.prettyphoto');
     a.prettyPhoto({
       default_width: options.width,
       opacity: 0.60, /* Value between 0 and 1 */

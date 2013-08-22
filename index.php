@@ -95,8 +95,8 @@ try {
   litepublisher::$classes = tclasses::i();
   litepublisher::$options = toptions::i();
   litepublisher::$site = tsite::i();
-  litepublisher::$db = tdatabase::i();
   litepublisher::$urlmap = turlmap::i();
+  litepublisher::$db = tdatabase::i();
   
   if (!defined('litepublisher_mode')) {
     litepublisher::$urlmap->request(strtolower($_SERVER['HTTP_HOST']), $_SERVER['REQUEST_URI']);

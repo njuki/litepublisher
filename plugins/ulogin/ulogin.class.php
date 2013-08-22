@@ -166,15 +166,15 @@ class ulogin extends tplugin {
   public function ulogin_auth(array $args) {
     if (!($token = $args['token'])) return 403;
     if (!($result = $this->auth($token))) return 403;
-
-/*
+    
+    /*
     $result = array(
     'id' => litepublisher::$options->user,
     'pass' => $_COOKIE['litepubl_user'],
     'regservice' => $_COOKIE['litepubl_regservice'],
     );
-*/
-
+    */
+    
     if (isset($args['callback']) && $args['callback']) {
       $callback = $args['callback'];
       if ($callback != 'false') {
@@ -185,7 +185,7 @@ class ulogin extends tplugin {
         }
       }
     }
-
+    
     return $result;
   }
   
@@ -213,7 +213,7 @@ class ulogin extends tplugin {
   public static function filterphone($phone) {
     $phone = trim(str_replace(array(' ', '+', '=', '-', '_', '(', ')', '.'), '', trim($phone)));
     if (strlen($phone) && ($phone[0] == '9')) $phone = '7' . $phone;
-    return intval($phone);
+    return floatval($phone);
   }
   
 }//class

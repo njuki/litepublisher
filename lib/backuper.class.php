@@ -519,8 +519,7 @@ class tbackuper extends tevents {
     }
     
     //upload plugin or theme
-    public function uploaditem($content, $archtype, $itemtype) {
-      $itemtype = $itemtype == 'theme' ? 'themes/' : 'plugins/';
+    public function uploaditem($content, $archtype, $itemtype = false) {
       set_time_limit(300);
       if ($archtype == 'zip') $archtype = 'unzip';
       $this->archtype = $archtype;
@@ -535,7 +534,7 @@ class tbackuper extends tevents {
         }
         
         foreach ($this->tar->files as $item) {
-          if (strbegin($item['name'], $itemtype)){
+          if (strbegin($item['name'], 'themes/') || strbegin($item['name'], 'plugins/')){
             if (!$this->uploadfile($item['name'],$item['file'], $item['mode'])) return $this->errorwrite($item['name']);
           }
         }
@@ -549,7 +548,7 @@ class tbackuper extends tevents {
         foreach ($this->unzip->Entries as  $item) {
           if ($item->Error != 0) continue;
           $filename = $item->Path . '/' . $item->Name;
-          if (strbegin($filename, $itemtype)) {
+          if (strbegin($filename, 'themes/') || strbegin($filename, 'plugins/')){
             if (!$this->uploadfile($filename, $item->Data, $mode)) return $this->errorwrite($item->Path . $item->Name);
           }
         }

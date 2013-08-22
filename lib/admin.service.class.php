@@ -221,7 +221,6 @@ class tadminservice extends tadminmenu {
       case 'upload':
       $backuper = tbackuper::i();
       if (!$this->checkbackuper()) return $html->h3->erroraccount;
-      $itemtype = tadminhtml::getparam('itemtype', 'theme');
       if (is_uploaded_file($_FILES['filename']['tmp_name']) && !(isset($_FILES['filename']['error']) && ($_FILES['filename']['error'] > 0))) {
         $s = file_get_contents($_FILES['filename']['tmp_name']);
         $archtype = $backuper->getarchtype($_FILES['filename']['name']);
@@ -237,7 +236,7 @@ class tadminservice extends tadminmenu {
         $archtype = strbegin($s, "\x50\x4b\x03\x04") ? 'zip' : 'tar';
       }
       
-      if ($backuper->uploaditem($s, $archtype, $itemtype)) {
+      if ($backuper->uploaditem($s, $archtype)) {
         return $html->h3->itemuploaded;
       } else {
         return sprintf('<h3>%s</h3>', $backuper->result);

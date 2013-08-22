@@ -560,6 +560,8 @@ class Tadminoptions extends tadminmenu {
       }
     } else {
       $menus->deletetree($menus->url2id('/admin/users/'));
+      $menus->deleteurl('/admin/posts/authorpage/');
+      
     }
     $menus->unlock();
   }
