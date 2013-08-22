@@ -53,7 +53,7 @@ class tpollsman extends tplugin {
     $item = $polls->getitem($id);
     $item['status'] = $status;
     if ($id_tml != $item['id_tml']) {
-      if (!($tml = $polls->get_tml($id_tml))) $this->eror(sprintf('The "%d" poll template not found', $id_tml));
+      if (!($tml = $polls->get_tml($id_tml))) $this->error(sprintf('The "%d" poll template not found', $id_tml));
       $votes = $polls->get_item_votes($id);
       $db = $polls->getdb($polls->votes);
       $db->iddelete($id);

@@ -27,7 +27,7 @@ class tcron extends tevents {
   }
   
   protected function geturl() {
-    return '/croncron.htm' . litepublisher::$site->q . "cronpass=$this->password";
+    return sprintf('/croncron.htm%scronpass=%s', litepublisher::$site->q, urlencode($this->password));
   }
   
   public function getlockpath() {

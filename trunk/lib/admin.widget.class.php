@@ -317,9 +317,7 @@ class tadminmetawidget extends tadminwidget {
     $html = $this->html;
     $result = '';
     foreach ($widget->items as $name => $item) {
-      $args->add($item);
-      $args->name = $name;
-      $result .= $html->metaitem($args);
+      $result .= $html->getinput('checkbox', $name, $item['enabled'] ? 'checked="checked"' : '', $item['title']);
     }
     return $result;
   }

@@ -172,6 +172,7 @@ class trss extends tevents {
     
     $guid  = tnode::addvalue($item, 'guid', $post->link);
     tnode::attr($guid, 'isPermaLink', 'true');
+    
     if (class_exists   ('tprofile')) {
       $profile = tprofile::i();
       tnode::addvalue($item, 'dc:creator', $profile->nick);

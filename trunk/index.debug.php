@@ -1,4 +1,6 @@
 <?php
+//$_COOKIE = array ( 'litepubl_regservice' => 'twitter', 'litepubl_user_id' => '1', 'litepubl_user' => '3U+bl6S+No/lHRd3mGTP7g', 'litepubl_user_flag' => 'true', );
+//$_COOKIE = array ( 'litepubl_regservice' => 'twitter', 'litepubl_user_id' => '3', 'litepubl_user' => 'Nc241SNn1C/VIOkJ0pNeNQ', );
 //set_time_limit(4);
 error_reporting(E_ALL | E_NOTICE | E_STRICT | E_WARNING );
 ini_set('display_errors', 1);
@@ -94,13 +96,9 @@ require_once(litepublisher::$paths->lib .'install' . DIRECTORY_SEPARATOR . 'inst
   litepublisher::$classes = tclasses::i();
   litepublisher::$options = toptions::i();
   litepublisher::$site = tsite::i();
-
-  //if (dbversion) litepublisher::$db = tdatabase::i();
-if (dbversion) litepublisher::$db = new tdatabase();
-
   litepublisher::$urlmap = turlmap::i();
+litepublisher::$db = new tdatabase();
 
-//ttheme::clearcache();
 tlocal::clearcache();
 litepublisher::$urlmap->clearcache();
 //tfiler::log(var_export($_POST, true));
@@ -108,31 +106,11 @@ litepublisher::$urlmap->clearcache();
 //cabinetmenus::i()->install();
 //tthemegenerator::i()->parseselectors();
 //tupdater::i()->run(5.62);
-//cabinethosting::i()->uninstall();
-//cabinethosting::i()->install();
-  //litepublisher::$classes->add('admin_hosting_run', 'admin.hosting.run.php', 'shop-hosting');
-//litepublisher::$site->currency = litepublisher::$options->data['currencies'][litepublisher::$options->currency]['short'];
-
-//litepublisher::$classes->add('shopservice', 'service.shop.php', 'shop/updater');
-//adminshopwidget::i()->install();
-//yandexfeed::i()->cron();
-//deliveries::i()->delete('method');
+  //litepublisher::$classes->items['adminpayments'][1] = 'shop/orders';
+  //litepublisher::$classes->save();
+//tusers::i()->db->setvalue(3, 'phone', 0);
 tfiler::log($_SERVER['REQUEST_URI']);
-/*
-litepublisher::$classes->add('orderreports', 'admin.reports.php', 'shop/orders');
-$m = adminshopmenus ::i();
-$m->createitem($m->url2id('/admin/shop/orders/'), 'reports', 'editor', 'orderreports', 'reports');
-*/
-//tplugins::i()->delete('shop');
-//shoptheme::i()->install();
-/*
-litepublisher::$urlmap->onclose(function() {
-echo "in close<br>";
-set_time_limit(200);
-sleep(50);
-tfiler::log(connection_status () . ' connection_status ');
-});
-*/
+
   if (!defined('litepublisher_mode')) {
     litepublisher::$urlmap->request(strtolower($_SERVER['HTTP_HOST']), $_SERVER['REQUEST_URI']);
   }
@@ -150,4 +128,6 @@ echo round(microtime(true) - litepublisher::$microtime, 2), "\n";
 */
 //tdebugproxy::showperformance();
 
-
+return;
+echo "<pre>\n";
+var_export($_COOKIE);

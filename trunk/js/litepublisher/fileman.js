@@ -224,7 +224,12 @@
     
     del: function(idfile, holder) {
       var i = $.inArray(idfile, this.curr);
-      if (i < 0) return;
+      if (i < 0) {
+        idfile = parseInt(idfile);
+        var i = $.inArray(idfile, this.curr);
+        if (i < 0) return;
+      }
+      
       this.curr.splice(i, 1);
       var parent = holder.parent();
       holder.remove();

@@ -109,10 +109,9 @@ require_once(litepublisher::$paths->lib .'install' . DIRECTORY_SEPARATOR . 'inst
   litepublisher::$classes = tclasses::i();
   litepublisher::$options = toptions::i();
   litepublisher::$site = tsite::i();
-  //if (!litepublisher::$options->installed) require_once(litepublisher::$paths->lib .'install' . DIRECTORY_SEPARATOR . 'install.php');
+  litepublisher::$urlmap = turlmap::i();
   litepublisher::$db = tdatabase::i();
   
-  litepublisher::$urlmap = turlmap::i();
   if (!defined('litepublisher_mode')) {
     litepublisher::$urlmap->request(strtolower($_SERVER['HTTP_HOST']), $_SERVER['REQUEST_URI']);
   }

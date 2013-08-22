@@ -79,6 +79,8 @@ class http {
       $code = $headers['http_code'];
       if ($code == 301 || $code == 302 || $code == 307) {
         curl_setopt($ch, CURLOPT_URL, $headers['redirect_url']);
+      } else {
+        break;
       }
     } while ($maxredirect --);
     
