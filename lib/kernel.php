@@ -207,7 +207,7 @@ class tdatabase {
   public function getcount($where = '') {
     $sql = "SELECT COUNT(*) as count FROM $this->prefix$this->table";
     if ($where != '') $sql .= ' where '. $where;
-    if ($r = $this->query($sql)->fetch_assoc()) {
+    if (($res = $this->query($sql)) && ($r = $res->fetch_assoc()) {
       return (int) $r['count'];
     }
     return false;
