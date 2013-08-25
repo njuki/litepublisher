@@ -86,7 +86,7 @@ class tadminmoderator extends tadmincommoncomments {
     $args->content = $comment->rawcontent;
     $args->adminurl =$this->adminurl . "=$id&action";
     $result = $this->html->info($args);
-$args->formtitle = tlocal::i()->editform;
+    $args->formtitle = tlocal::i()->editform;
     $result .= $this->html->adminform('[editor=content]', $args);
     return $result;
   }
@@ -96,14 +96,14 @@ $args->formtitle = tlocal::i()->editform;
     ttheme::$vars['comment'] = $comment;
     $args = new targs();
     $args->adminurl =$this->adminurl . "=$id&action";
-$args->pid = $comment->post;
-$args->formtitle = tlocal::i()->replyform;
+    $args->pid = $comment->post;
+    $args->formtitle = tlocal::i()->replyform;
     $result = $this->html->info($args);
-$args->content = '';
+    $args->content = '';
     $result .= $this->html->adminform('
-[editor=content]
-[hidden=pid]
-', $args);
+    [editor=content]
+    [hidden=pid]
+    ', $args);
     return $result;
   }
   

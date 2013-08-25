@@ -84,11 +84,11 @@ class tadminpingbacks extends tadminmenu {
     $pingbacks = tpingbacks::i();
     $args = targs::i();
     $args->add($pingbacks->getitem($id));
-$args->formtitle = tlocal::i()->edit;
+    $args->formtitle = tlocal::i()->edit;
     return $this->html->adminform('
-[text=title]
-[text=url]
-', $args);
+    [text=title]
+    [text=url]
+    ', $args);
   }
   
   public function processform() {
