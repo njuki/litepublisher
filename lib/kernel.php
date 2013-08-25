@@ -207,7 +207,7 @@ class tdatabase {
   public function getcount($where = '') {
     $sql = "SELECT COUNT(*) as count FROM $this->prefix$this->table";
     if ($where != '') $sql .= ' where '. $where;
-    if (($res = $this->query($sql)) && ($r = $res->fetch_assoc()) {
+    if (($res = $this->query($sql)) && ($r = $res->fetch_assoc())) {
       return (int) $r['count'];
     }
     return false;
@@ -1997,7 +1997,6 @@ class turlmap extends titems {
     $this->isredir = false;
     $this->adminpanel = false;
     $this->mobile= false;
-    $this->data['revision'] = 0;
     if (tfilestorage::$memcache) {
       $this->cache = new tlitememcache();
     } else {
@@ -2480,7 +2479,7 @@ class tlitememcache {
   public $prefix;
   
   public function __construct() {
-    $this->revision =&litepublisher::$urlmap->data['revision'];
+    $this->revision = &litepublisher::$urlmap->data['revision'];
     $this->prefix = litepublisher::$domain . ':cache:';
   }
   

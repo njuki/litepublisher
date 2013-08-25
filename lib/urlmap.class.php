@@ -42,7 +42,6 @@ class turlmap extends titems {
     $this->isredir = false;
     $this->adminpanel = false;
     $this->mobile= false;
-    $this->data['revision'] = 0;
     if (tfilestorage::$memcache) {
       $this->cache = new tlitememcache();
     } else {
@@ -525,7 +524,7 @@ class tlitememcache {
   public $prefix;
   
   public function __construct() {
-    $this->revision =&litepublisher::$urlmap->data['revision'];
+    $this->revision = &litepublisher::$urlmap->data['revision'];
     $this->prefix = litepublisher::$domain . ':cache:';
   }
   

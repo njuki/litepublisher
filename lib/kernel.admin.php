@@ -1339,7 +1339,15 @@ class tposteditor extends tadminmenu {
   protected function set_post(tpost $post) {
     extract($_POST, EXTR_SKIP);
     $post->title = $title;
-    $post->categories = self::processcategories();
+    
+    $cats = self::processcategories();
+    $cats = array_unique($cats);
+    array_delete_value($cats, 0);
+    array_delete_value($cats, '');
+    array_delete_value($cats, false);
+    array_delete_value($cats, null);
+    $post->categories= $cats;
+    
     if (($post->id == 0) && (litepublisher::$options->user >1)) $post->author = litepublisher::$options->user;
     if (isset($tags)) $post->tagnames = $tags;
     if (isset($icon)) $post->icon = (int) $icon;

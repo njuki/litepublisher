@@ -25,7 +25,7 @@ function tadminmenusInstall($self) {
   $moder = $self->createitem(0, 'comments', 'commentator', 'tadminmoderator');
   {
     $self->createitem($moder, 'hold', 'commentator', 'tadminmoderator');
-    $self->createitem($moder, 'authors', 'moderator', 'tadminmoderator');
+    $self->createitem($moder, 'authors', 'moderator', 'tadmincomusers');
     $self->createitem($moder, 'pingback', 'moderator', 'tadminpingbacks');
   }
   

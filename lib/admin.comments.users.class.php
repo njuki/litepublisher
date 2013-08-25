@@ -35,17 +35,15 @@ class tadmincomusers extends tadminmenu {
     $items = litepublisher::$db->res2assoc($res);
     
     $result .= sprintf($html->h4->listhead, $from, $from + count($items), $total);
-    $args->tablehead = $html->header();
-    $args->adminurl = $this->adminurl;
-    $args->editurl = tadminhtml::getadminlink('/admin/users/', 'id');
-    $tablebody = '';
-    foreach ($items as $id => $item) {
-      $args->add($item);
-      $tablebody .= $html->item($args);
-    }
-    
-    $args->tablebody = $tablebody;
-    $result .= $html->table($args);
+    $adminurl = $this->adminurl;
+    $editurl = tadminhtml::getadminlink('/admin/users/', 'id');
+    $result .= $html->buildtable($items, array(
+    array('left', $lang->author, '$name'),
+    array('left', 'E-Mail', '$email'),
+    array('left', $lang->website, '$website'),
+    array('center', $lang->edit, "<a href='$editurl=\$id&action=edit'>$lang->edit</a>"),
+    array('center', $lang->delete, "<a href='$adminurl=\$id&action=delete'>$lang->delete</a>"),
+    ));
     
     $theme = ttheme::i();
     $result .= $theme->getpages($this->url, litepublisher::$urlmap->page, ceil($total/$perpage));
@@ -86,6 +84,12 @@ class tadmincomusers extends tadminmenu {
     }
     
     return $html->fixquote($result);
+    /*
+    subscribeitem = "<tr>
+    <td align ='center'><input type='checkbox' name='$id' id='$id' $subscribed /></td>
+    <td  align='left'><a href='$site.url$url'>$title</a></td>
+    </tr>"
+    */
   }
   
   public function processform() {
