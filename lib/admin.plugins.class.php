@@ -52,7 +52,17 @@ class tadminplugins extends tadminmenu {
     $plugins = tplugins::i();
     if (empty($_GET['plugin'])) {
       $result .= $html->formhead();
-      $args = targs::i();
+      $args = new targs();
+      $lang = $this->lang;
+      list($head, $tml) = $html->tablestruct(array(
+      array('center', ' ', '<input type="checkbox" name="$name" id="$name" $checked />'),
+      array('left', $lang->name, '$short'),
+      array('right', $lang->version, '$version'),
+      array('left', $lang->author, '<a target="_blank" href="$url">$author</a>'),
+      array('left', $lang->description, '$description'),
+      ));
+      
+      $body = '';
       foreach ($this->names as $name) {
         if (in_array($name, $plugins->deprecated)) continue;
         $about = tplugins::getabout($name);
@@ -60,9 +70,14 @@ class tadminplugins extends tadminmenu {
         $args->name = $name;
         $args->checked = isset($plugins->items[$name]);
         $args->short = $about['name'];
-        $result .= $html->item($args);
+        $body .= $html->parsearg($tml, $args);
       }
-      $result .= $html->formfooter();
+      
+      $args->tablehead  = $head;
+      $args->tablebody = $body;
+      //$table = $html->parsearg($html->ini['common']['table'], $args);
+      $args->formtitle = $lang->formhead;
+      $result .= $html->adminform($html->ini['common']['table'], $args);
       $result = $html->fixquote($result);
     } else {
       $name = $_GET['plugin'];

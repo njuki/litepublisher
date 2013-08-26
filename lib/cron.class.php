@@ -9,6 +9,7 @@
 class tcron extends tevents {
   public static $pinged = false;
   public $disableadd;
+  private $socket;
   
   public static function i() {
     return getinstance(__class__);
@@ -230,8 +231,10 @@ class tcron extends tevents {
   
   private function pinghost($host, $path) {
     //$this->log("pinged host $host$path");
-    if (		$socket = @fsockopen( $host, 80, $errno, $errstr, 0.10)) {
-      fputs( $socket, "GET $path HTTP/1.0\r\nHost: $host\r\n\r\n");
+    if (		$this->socket = @fsockopen( $host, 80, $errno, $errstr, 0.10)) {
+      fputs($this->socket, "GET $path HTTP/1.0\r\nHost: $host\r\n\r\n");
+      //0.01 sec
+      usleep(10000);
     }
   }
   
