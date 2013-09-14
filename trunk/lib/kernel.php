@@ -1984,6 +1984,15 @@ class turlmap extends titems {
     return getinstance(__class__);
   }
   
+  public function __construct() {
+    parent::__construct();
+    if (tfilestorage::$memcache) {
+      $this->cache = new tlitememcache($this);
+    } else {
+      $this->cache = new tfilecache();
+    }
+  }
+  
   protected function create() {
     $this->dbversion = true;
     parent::create();
@@ -1997,12 +2006,6 @@ class turlmap extends titems {
     $this->isredir = false;
     $this->adminpanel = false;
     $this->mobile= false;
-    if (tfilestorage::$memcache) {
-      $this->cache = new tlitememcache();
-    } else {
-      $this->cache = new tfilecache();
-    }
-    
     $this->cache_enabled =     litepublisher::$options->cache && !litepublisher::$options->admincookie;
     $this->page = 1;
     $this->close_events = array();
@@ -2478,8 +2481,8 @@ class tlitememcache {
   public $revision;
   public $prefix;
   
-  public function __construct() {
-    $this->revision = &litepublisher::$urlmap->data['revision'];
+  public function __construct($urlmap) {
+    $this->revision = &$urlmap->data['revision'];
     $this->prefix = litepublisher::$domain . ':cache:';
   }
   
