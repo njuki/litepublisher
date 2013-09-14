@@ -106,6 +106,7 @@ litepublisher::$urlmap->clearcache();
 //cabinetmenus::i()->install();
 //tthemegenerator::i()->parseselectors();
 //tupdater::i()->run(5.67);
+//shopupdater::i()->run(1.09);
   //litepublisher::$classes->items['adminpayments'][1] = 'shop/orders';
   //litepublisher::$classes->save();
 //tusers::i()->db->setvalue(3, 'phone', 0);

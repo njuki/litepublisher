@@ -203,6 +203,10 @@ public function canrequest() { }
     return tlocal::i($this->name);
   }
   
+  public function getadminlang() {
+    return tlocal::inifile($this, '.admin.ini');
+  }
+  
   public function inihtml($name = '') {
     $html = $this->gethtml($name);
     $html->iniplugin(get_class($this));
