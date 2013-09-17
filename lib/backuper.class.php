@@ -39,10 +39,10 @@ class tbackuper extends tevents {
     $this->basename = 'backuper';
     $this->addevents('onuploaded');
     $this->data['ftproot'] = '';
-    $this->__filer = null;
-    $this->tar = null;
-    $this->zip = null;
-    $this->unzip = null;
+    $this->__filer = false;
+    $this->tar = false;
+    $this->zip = false;
+    $this->unzip = false;
     $this->archtype = 'zip';
     $this->lastdir = '';
     $this->data['filertype'] = 'ftp';
@@ -78,7 +78,7 @@ class tbackuper extends tevents {
   }
   
   public function getfiler() {
-    if (isset($this->__filer)) return $this->__filer;
+    if ($this->__filer) return $this->__filer;
     switch ($this->filertype) {
       case 'ftp':
       $result = new tftpfiler();
@@ -144,12 +144,12 @@ class tbackuper extends tevents {
     switch ($this->archtype) {
       case 'tar':
       $result = $this->tar->savetostring(true);
-      unset($this->tar);
+      $this->tar = false;
       return $result;
       
       case 'zip':
       $result = $this->zip->file();
-      unset($this->zip);
+      $this->zip = false;
       return $result;
       
       default:
@@ -463,7 +463,7 @@ class tbackuper extends tevents {
         case 'tar':
         $this->tar->loadfromstring($content);
         if (!is_array($this->tar->files)) {
-          unset($this->tar);
+          $this->tar = false;
           return $this->errorarch();
         }
         
@@ -471,7 +471,7 @@ class tbackuper extends tevents {
           if (!$this->uploadfile($item['name'],$item['file'], $item['mode'])) return $this->errorwrite($item['name']);
         }
         $this->onuploaded($this);
-        unset($this->tar);
+        $this->tar = false;
         break;
         
         case 'unzip':
@@ -483,13 +483,13 @@ class tbackuper extends tevents {
           return $this->errorwrite($item->Path . $item->Name);
         }
         $this->onuploaded($this);
-        unset($this->unzip);
+        $this->unzip = false;
         break;
         
         default:
         $this->unknown_archive();
       }
-      unset($this->existingfolders);
+      $this->existingfolders= false;
       if ($this->hasdata) $this->renamedata();
       return true;
     }
@@ -529,7 +529,7 @@ class tbackuper extends tevents {
         case 'tar':
         $this->tar->loadfromstring($content);
         if (!is_array($this->tar->files)) {
-          unset($this->tar);
+          $this->tar = false;
           return $this->errorarch();
         }
         
@@ -539,7 +539,7 @@ class tbackuper extends tevents {
           }
         }
         //$this->onuploaded($this);
-        unset($this->tar);
+        $this->tar = false;
         break;
         
         case 'unzip':
@@ -553,13 +553,13 @@ class tbackuper extends tevents {
           }
         }
         //$this->onuploaded($this);
-        unset($this->unzip);
+        $this->unzip = false;
         break;
         
         default:
         $this->unknown_archive();
       }
-      unset($this->existingfolders);
+      $this->existingfolders = false;
       return true;
     }
     
@@ -609,7 +609,7 @@ class tbackuper extends tevents {
     public function createbackup(){
       /*
       $filer = $this->__filer;
-      if (!isset($filer) || ! ($filer instanceof tlocalfiler)) {
+      if (!$filer || ! ($filer instanceof tlocalfiler)) {
         $this->__filer = tlocalfiler::i();
       }
       */
