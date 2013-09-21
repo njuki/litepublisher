@@ -97,9 +97,7 @@ class titemsposts extends titems {
   }
   
   public function setitems($idpost, array $items) {
-    $items = array_unique($items);
-    // delete zero item
-    if (false !== ($i = array_search(0, $items))) array_splice($items, $i, 1);
+array_clean($items);
     $db = $this->db;
     $old = $this->getitems($idpost);
     $add = array_diff($items, $old);
