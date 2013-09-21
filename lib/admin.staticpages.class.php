@@ -51,14 +51,12 @@ class tadminstaticpages extends tadminmenu {
       $result .= $this->editform($args);
     }
     
-    //table
-    $result .= $html->listhead();
-    foreach ($pages->items as $id => $item) {
-      $args->add($item);
-      $args->id = $id;
-      $result .= $html->itemlist($args);
-    }
-    $result .= $html->listfooter;
+    $result .= $html->buildtable($pages->items, array(
+    array('left', $lang->title, '<a href="$site.url$url">$title</a>'),
+    array('center', $lang->edit, "<a href='$this->adminurl=\$id'>$lang->edit</a>"),
+    array('center', $lang->delete, "<a href='$this->adminurl=\$id&action=delete'>$lang->delete</a>"),
+    ));
+    
     return $html->fixquote($result);
   }
   

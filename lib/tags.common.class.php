@@ -101,10 +101,10 @@ class tcommontags extends titems implements  itemplate {
   
   public function postedited($idpost) {
     $post = $this->factory->getpost((int) $idpost);
-$items = $post->{$this->postpropname};
-array_clean($items);
-if (count($items)) $items = $this->db->idselect(sprintf('id in (%s)', implode(',', $items));
-  $changed = $this->itemsposts->setitems($idpost, $items);
+  $items = $post->{$this->postpropname};
+    array_clean($items);
+    if (count($items)) $items = $this->db->idselect(sprintf('id in (%s)', implode(',', $items)));
+    $changed = $this->itemsposts->setitems($idpost, $items);
     $this->updatecount($changed);
   }
   
