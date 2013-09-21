@@ -97,9 +97,7 @@ class titemsposts extends titems {
   }
   
   public function setitems($idpost, array $items) {
-    $items = array_unique($items);
-    // delete zero item
-    if (false !== ($i = array_search(0, $items))) array_splice($items, $i, 1);
+    array_clean($items);
     $db = $this->db;
     $old = $this->getitems($idpost);
     $add = array_diff($items, $old);
@@ -1761,10 +1759,11 @@ class tcommontags extends titems implements  itemplate {
   
   public function postedited($idpost) {
     $post = $this->factory->getpost((int) $idpost);
-    $this->lock();
-  $changed = $this->itemsposts->setitems($idpost, $post->{$this->postpropname});
+  $items = $post->{$this->postpropname};
+    array_clean($items);
+    if (count($items)) $items = $this->db->idselect(sprintf('id in (%s)', implode(',', $items)));
+    $changed = $this->itemsposts->setitems($idpost, $items);
     $this->updatecount($changed);
-    $this->unlock();
   }
   
   public function postdeleted($idpost) {

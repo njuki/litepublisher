@@ -435,11 +435,11 @@ function array_delete_value(array &$a, $value) {
 }
 
 function array_clean(array &$items) {
-    $items = array_unique($items);
-foreach (array(0, false, null, '') as $v) {
-  $i = array_search($v, $items);
-  if ($i !== false)         array_splice($items, $i, 1);
-}
+  $items = array_unique($items);
+  foreach (array(0, false, null, '') as $v) {
+    $i = array_search($v, $items);
+    if ($i !== false)         array_splice($items, $i, 1);
+  }
 }
 
 function array_insert(array &$a, $item, $index) {
