@@ -347,7 +347,7 @@ class tmenu extends titem implements  itemplate {
   
   public static function singleinstance($class) {
     $single = getinstance($class);
-    if ($id = $single->getowner()->class2id($class)) {
+    if ($id = $single->get_owner()->class2id($class)) {
       if ($single->id == $id) return $single;
       if (($single->id == 0) && ($id > 0)) return $single->loaddata($id);
     }
@@ -361,6 +361,10 @@ class tmenu extends titem implements  itemplate {
   public static function getowner() {
     return tmenus::i();
   }
+
+  public function get_owner() {
+return call_user_func_array(array(get_class($this), 'getowner'), array());
+}
   
   protected function create() {
     parent::create();
@@ -391,16 +395,22 @@ class tmenu extends titem implements  itemplate {
   
   public function __get($name) {
     if ($name == 'content') return $this->formresult . $this->getcontent();
-    if (in_array($name, self::$ownerprops)) {
-      if ($this->id == 0) {
-        return $this->data[$name];
-      } else {
-        return $this->owner->items[$this->id][$name];
-      }
-    }
+    if ($name == 'id') return $this->data['id'];
+    if (method_exists($this, $get = 'get' . $name))  return $this->$get();
+
+    if (in_array($name, self::$ownerprops)) return $this->getownerprop($name);
     return parent::__get($name);
   }
-  
+
+public function getownerprop($name) {
+$id = $this->data['id'];
+      if ($id == 0) {
+        return $this->data[$name];
+      } else {
+        return $this->getowner()->items[$id][$name];
+      }
+    }
+
   public function __set($name, $value) {
     if (in_array($name, self::$ownerprops)) {
       if ($this->id == 0) {
@@ -440,7 +450,7 @@ class tmenu extends titem implements  itemplate {
   }
   
   public function gettitle() {
-    return $this->__get('title');
+    return $this->getownerprop('title');
   }
   
   public function getkeywords() {

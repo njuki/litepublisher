@@ -50,7 +50,7 @@ class tadminmenumanager extends tadminmenu {
       
       $html = $this->html;
       $lang = tlocal::i('menu');
-      $args = targs::i();
+      $args = new targs();
       $args->adminurl = $this->adminurl;
       $args->ajax = tadminhtml::getadminlink('/admin/ajaxmenueditor.htm', "id=$id&get");
       $args->editurl = tadminhtml::getadminlink('/admin/menu/edit', 'id');
@@ -88,10 +88,23 @@ class tadminmenumanager extends tadminmenu {
         [hidden=id]', $args);
       }
       
+$tabs = new tuitabs();
+$tabs->add($lang->title, '
+[text=title]
+[combo=parent]
+[combo=order]
+[combo=status]
+[hidden=id]
+');
+
+$ajaxurl = tadminhtml::getadminlink('/admin/ajaxmenueditor.htm', "id=$id&get");
+$tabs->ajax($lang->view,"$ajaxurl=view");
+$tabs->ajax('SEO', "$ajaxurl=seo");
+
       $ajaxeditor = tajaxmenueditor::i();
-      $args->editor = $ajaxeditor->geteditor('raw', $id == 0 ? '' : $menuitem->rawcontent, true);
-      $html->section = 'menu';
-      return $html->form($args);
+$args->formtitle = $lang->edit;
+    return tuitabs::gethead() . $html->adminform($tabs->get() .
+sprintf('<div>%s</div>', $ajaxeditor->geteditor('raw', $id == 0 ? '' : $menuitem->rawcontent, true)), $args);
     }
   }
   
