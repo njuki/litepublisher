@@ -229,11 +229,11 @@ class tinstaller extends tdata {
       echo 'LitePublisher requires PHP 5.1.4 or later. You are using PHP ' . PHP_VERSION ;
       exit;
     }
-
-if (!class_exists('domDocument')) {
+    
+    if (!class_exists('domDocument')) {
       echo 'LitePublisher requires "domDocument" class and domxml extension';
       exit;
-}
+    }
   }
   
   public function CheckApache($rewrite) {

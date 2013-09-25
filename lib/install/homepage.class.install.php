@@ -10,14 +10,16 @@ function thomepageInstall($self) {
   litepublisher::$site->home = '/';
   $menus = tmenus::i();
   $menus->lock();
+  $self->lock();
   $self->url = '/';
-  $self->title = tlocal::get('default', 'home');
+  $self->title = tlocal::i()->home;
   $self->idview = tviews::i()->add(tlocal::get('names', 'home'));
   $homeview = tview::i($self->idview);
   $homeview->disableajax = true;
   $homeview->save();
   
   $menus->idhome = $menus->add($self);
+  $self->unlock();
   $menus->unlock();
   
   tposts::i()->addevent('changed', get_class($self), 'postschanged');

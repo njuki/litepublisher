@@ -58,9 +58,14 @@ class tmenus extends titems {
     );
     //move props
     foreach (tmenu::$ownerprops as $prop) {
-      $this->items[$id][$prop] = $item->$prop;
-      if (array_key_exists($prop, $item->data)) unset($item->data[$prop]);
+      if (array_key_exists($prop, $item->data)) {
+        $this->items[$id][$prop] = $item->data[$prop];
+        unset($item->data[$prop]);
+      } else {
+        $this->items[$id][$prop] = $item->$prop;
+      }
     }
+    
     $item->id = $id;
     $item->idurl = litepublisher::$urlmap->Add($item->url, get_class($item), $item->id);
     if ($item->status != 'draft') $item->status = 'published';
@@ -96,8 +101,8 @@ class tmenus extends titems {
       $this->items[$id][$prop] = $item->$prop;
       if (array_key_exists($prop, $item->data)) unset($item->data[$prop]);
     }
+    
     $item->id = $id;
-    if ($item->status != 'draft') $item->status = 'published';
     $this->lock();
     $this->sort();
     $this->unlock();
@@ -361,10 +366,10 @@ class tmenu extends titem implements  itemplate {
   public static function getowner() {
     return tmenus::i();
   }
-
+  
   public function get_owner() {
-return call_user_func_array(array(get_class($this), 'getowner'), array());
-}
+    return call_user_func_array(array(get_class($this), 'getowner'), array());
+  }
   
   protected function create() {
     parent::create();
@@ -397,20 +402,20 @@ return call_user_func_array(array(get_class($this), 'getowner'), array());
     if ($name == 'content') return $this->formresult . $this->getcontent();
     if ($name == 'id') return $this->data['id'];
     if (method_exists($this, $get = 'get' . $name))  return $this->$get();
-
+    
     if (in_array($name, self::$ownerprops)) return $this->getownerprop($name);
     return parent::__get($name);
   }
-
-public function getownerprop($name) {
-$id = $this->data['id'];
-      if ($id == 0) {
-        return $this->data[$name];
-      } else {
-        return $this->getowner()->items[$id][$name];
-      }
+  
+  public function getownerprop($name) {
+    $id = $this->data['id'];
+    if ($id == 0) {
+      return $this->data[$name];
+    } else {
+      return $this->getowner()->items[$id][$name];
     }
-
+  }
+  
   public function __set($name, $value) {
     if (in_array($name, self::$ownerprops)) {
       if ($this->id == 0) {
