@@ -145,19 +145,19 @@ sprintf('<div>%s</div>', $ajaxeditor->geteditor('raw', $id == 0 ? '' : $menuitem
   
   private function getmenulist() {
     $menus = tmenus::i();
-    $args = targs::i();
-    $args->adminurl = $this->adminurl;
-    $args->editurl = litepublisher::$site->url .$this->url . 'edit/' . litepublisher::$site->q . 'id';
+$lang = tlocal::admin();
+    $editurl = litepublisher::$site->url .$this->url . 'edit/' . litepublisher::$site->q . 'id';
     $html = $this->html;
-    $result = $html->listhead();
-    foreach ($menus->items as $id => $item) {
-      $args->add($item);
-      $args->link = $menus->getlink($id);
-      $args->status = tlocal::get('common', $item['status']);
-      $args->parent = $item['parent'] == 0 ? '---' : $menus->getlink($item['parent']);
-      $result .=$html->itemlist($args);
-    }
-    $result .= $html->listfooter;
+ttheme::$vars['menuitem'] = new menu_item();
+$result = $html->buildtable($menus->items, array(
+array('left', $lang->menutitle, '$menuitem.link'),
+array('center', $lang->order, '$order'),
+array('center', $lang->parent, '$menuitem.parent'),
+array('center', $lang->edit, "<a href='$editurl=\$id'>$lang->edit</a>"),
+array('center', $lang->delete, "<a href='$this->adminurl=\$id&action=delete'>$lang->delete</a>"),
+));
+
+unset(ttheme::$vars['menuitem']);
     return str_replace("'", '"', $result);
   }
   
@@ -195,4 +195,28 @@ sprintf('<div>%s</div>', $ajaxeditor->geteditor('raw', $id == 0 ? '' : $menuitem
   }
   
 }//class
-?>
+
+class menu_item {
+public $menus;
+
+public function __construct() {
+$this->menus = tmenus::i();
+}
+
+public function __get($name) {
+$item = ttheme::$vars['item'];
+switch ($name) {
+case 'parent':
+return $item['parent'] == 0 ? '---' : $this->menus->getlink($item['parent']);
+
+case 'status':
+return tlocal::get('common', $item['status']);
+
+case 'link':
+return $this->menus->getlink($item['id']);
+}
+
+return '';
+}
+
+}

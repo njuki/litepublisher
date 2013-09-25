@@ -51,7 +51,7 @@ class http {
     return false;
   }
   
-  public static function post($url, array $post, array $headers = false) {
+  public static function post($url, array $post, $headers = false) {
     $ch = curl_init();
     curl_setopt($ch, CURLOPT_URL, $url);
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
@@ -59,7 +59,7 @@ class http {
     curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, FALSE);
     curl_setopt ($ch, CURLOPT_CONNECTTIMEOUT, self::$timeout);
     curl_setopt($ch, CURLOPT_TIMEOUT, self::$timeout);
-if (is_array($headers) && count($headers)) curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+    if (is_array($headers) && count($headers)) curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
     curl_setopt($ch, CURLOPT_POST, TRUE);
     curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($post));
     
