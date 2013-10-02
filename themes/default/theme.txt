@@ -433,11 +433,10 @@ content.post.templatecomments.regform = [
 								<p id="respond">$lang.leavereply</p>
 								<form action="$site.url/send-comment.php" method="post" id="commentform">
 									<p><textarea name="content" id="comment" rows="10" cols="60%"></textarea></p>
-<p>
-									<input type="hidden" name="postid" value="$postid" />
-									<input type="hidden" name="antispam" value="$antispam" />
-
-									<input type="submit" name="submitcomment" id="id-submitcomment" value="$lang.send" /></p>
+<div style="text-align: center;">
+<input type="hidden" name="postid" value="$postid" />
+<input type="hidden" name="antispam" value="$antispam" />
+<div style="margin: auto;"><button type="submit" name="submitcomment" class="button" id="id-submitcomment"><span>$lang.send</span></button></div></div>
 								</form>
 ]
 
@@ -464,12 +463,10 @@ content.post.templatecomments.form = [
 									<label for="subscribe">$lang.subscribe</label></p>
 
 									<p><textarea name="content" id="comment" rows="10" cols="60%"></textarea></p>
-
-<p>
-									<input type="hidden" name="postid" value="$postid" />
-									<input type="hidden" name="antispam" value="$antispam" />
-
-									<input name="submitbutton" type="submit" id="submitbutton" value="$lang.send" /></p>
+<div style="text-align: center;">
+<input type="hidden" name="postid" value="$postid" />
+<input type="hidden" name="antispam" value="$antispam" />
+<div style="margin: auto;"><button type="submit" name="submitcomment" class="button" id="id-submitcomment"><span>$lang.send</span></button></div></div>
 								</form>
 ]
 
@@ -767,13 +764,13 @@ $radioitem = [<p><label><input type="radio" name="$name" id="radio_$name_$index"
 $radio = [<div><h4>$lang.$name:</h4>$value</div>]
 
 $hidden = [<input type="hidden" name="$name" id="hidden-$name" value="$value" />]
-$submit =   [<input type="submit" name="submit-$name" id="submitbutton-$name" value="$lang.$name" />]
+$submit =   [<button type="submit" name="submitbutton-$name" id="id-submitbutton-$name" class="button"><span>$lang.$name</span></button>]
 
 $form = [
 <h3>$formtitle</h3>
 <form action="" method="post" >
 $items
-  <p><input type="submit" name="submitbutton" id="submit_button" value="$lang.update" /></p>
+        <div style="text-align: center;"><div style="margin: auto;"><button type="submit" name="submitbutton" class="button"><span>$lang.update</span></button></div></div>
 </form>]
 
 ]

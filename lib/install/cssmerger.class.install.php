@@ -14,6 +14,7 @@ function tcssmergerInstall($self) {
   $self->add($section, '/js/litepublisher/css/prettyphoto.dialog.min.css');
   $self->add($section, '/js/litepublisher/css/filelist.min.css');
   $self->add($section, '/js/litepublisher/css/table.min.css');
+  $self->add($section, '/js/litepublisher/css/button.min.css');
 $self->addtext($section, 'hidden', '.hidden{display:none}');
   
   $section = 'admin';
