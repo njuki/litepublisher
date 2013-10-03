@@ -81,7 +81,7 @@ class tadminlogin extends tadminform {
   }
   
   public function getcontent() {
-    $args = targs::i();
+    $args = new targs();
     $html = $this->html;
     $lang = tlocal::admin('login');
     $args->formtitle = $lang->formhead;
@@ -108,7 +108,8 @@ class tadminlogin extends tadminform {
       $args->email = '';
       $args->name = '';
       $form = $html->adminform('[text=email] [text=name]', $args);
-      $result .= str_replace('action=""', sprintf('action="%s/admin/reguser/"', litepublisher::$site->url), $form);
+$backurl = isset($_GET['backurl']) ? $_GET['backurl'] : '';
+      $result .= str_replace('action=""', sprintf('action="%s/admin/reguser/%s"', litepublisher::$site->url, $backurl ? '?backurl=' . urlencode($backurl) : ''), $form);
     }
     $this->callevent('oncontent', array(&$result));
     return $result;

@@ -58,9 +58,9 @@ class tadminpassword extends tadminform {
   public function processform() {
     $html = $this->html;
     $email = strtolower(trim($_POST['email']));
-    if (empty($email)) return $html->h2->error;
+    if (empty($email)) return $html->h4->error;
     $id = $this->getiduser($email);
-    if (!$id) return $html->h2->error;
+    if (!$id) return $html->h4->error;
     $args = targs::i();
     
     tsession::start('password-restore-' .md5($email));
