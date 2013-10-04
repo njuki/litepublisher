@@ -130,15 +130,7 @@ $divider = []
 content.admin = [
 $editor = [<p><label for="editor-$name"><strong>$lang.$name:</strong></label></p><textarea name="$name" id="editor-$name" cols="64%" rows="15">$value</textarea>]
 $text = [<p><input type="text" name="$name" id="text-$name" value="$value" size="40" /> <label for="text-$name"><strong>$lang.$name</strong></label></p>]
-$password = [<p><input type="password" name="$name" id="password-$name" value="$value" size='30' /> <label for="password-$name"><strong>$lang.$name</strong></label></p>]
-$checkbox= [<p><input type="checkbox" name="$name" id="checkbox-$name" $value /> <label for="checkbox-$name"><strong>$lang.$name</strong></label></p>]
-$combo = [<p><label for="combo-$name"><strong>$lang.$name:</strong></label> <select name="$name" id="combo-$name">$value</select></p>]
-$hidden = [<input type="hidden" name="$name" id="hidden-$name" value="$value" />]
-
-$form = [<h3>$formtitle</h3>
-<form name="form" action="" method="post" >$items
-<p><input type="submit" name="submitbutton" id="submitbutton" value="$lang.update" /></p>
-</form>]]
+]
 
 $template.sidebar = [
 $widget = [<h3>$title</h3>

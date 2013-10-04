@@ -76,7 +76,7 @@
       ]
     }, o);
     
-    var button = '<button type="button" class="pp_dialog_btn_%%index%%">%%title%%</button>';
+    var button = '<button type="button" class="button pp_dialog_btn_%%index%%"><span>%%title%%</span></button>';
     var buttons = '';
     for (var i =0, l= options.buttons.length;  i < l; i++) {
       buttons += button.replace(/%%index%%/g, i).replace(/%%title%%/g, options.buttons[i].title);
