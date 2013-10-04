@@ -449,7 +449,6 @@ class Tadminoptions extends tadminmenu {
       $linkgen->save();
       break;
       
-      
       case 'cache':
       if (isset($clearcache)) {
         ttheme::clearcache();

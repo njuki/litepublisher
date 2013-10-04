@@ -17,7 +17,7 @@ public function __construct($tag) { $this->tag = $tag; }
 }//class
 
 class tadminhtml {
-  public static $tags = array('h1', 'h2', 'h3', 'h4', 'p', 'li', 'ul', 'strong');
+  public static $tags = array('h1', 'h2', 'h3', 'h4', 'p', 'li', 'ul', 'strong', 'div');
   public $section;
   public $searchsect;
   public $ini;
@@ -48,8 +48,9 @@ class tadminhtml {
     foreach ($this->searchsect as $section) {
       if (isset($this->ini[$section][$name])) return $this->ini[$section][$name];
     }
-    
+
     if (in_array($name, self::$tags)) return new thtmltag($name);
+
     throw new Exception("the requested $name item not found in $this->section section");
   }
   
@@ -226,7 +227,7 @@ class tadminhtml {
   
   public function getsubmit($name) {
     return strtr(ttheme::i()->templates['content.admin.submit'], array(
-    '$lang.$name' => tlocal::i()->$name,
+    '$lang.$name' => tlocal::i()->__get($name),
     '$name' => $name,
     ));
   }

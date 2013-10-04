@@ -65,12 +65,15 @@ class tadmindownloaditems extends tadminmenu {
     array('center', $lang->edit, '<a href="' . $editurl . '=$post.id">' . $lang->edit . '</a>'),
     ));
     
-    $html->push_section('posts');
-    $result .= $html->formbuttons();
+$result .= $html->div(
+$html->getsubmit('publish') .
+$html->getsubmit('setdraft') .
+$html->getsubmit('delete') 
+);
+
     $result = str_replace('$form',$result, $html->simpleform);
     $result = $html->fixquote($result);
-    $html->pop_section();
-    
+
     $theme = ttheme::i();
     $result .= $theme->getpages($this->url, litepublisher::$urlmap->page, ceil($count/$perpage));
     return $result;
