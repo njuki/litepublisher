@@ -53,28 +53,35 @@ class tadminpingbacks extends tadminmenu {
     $perpage = 20;
     $total = $pingbacks->getcount();
     $from = $this->getfrom($perpage, $total);
-    $items = $pingbacks->db->getitems("status <> 'deleted' order by posted desc limit $from, $perpage");
+$db = $pingbacks->db;
+$t = $pingbacks->thistable;
+    $items = $db->res2assoc($db->query(
+"select $t.*, $db->posts.title as posttitle, $db->urlmap.url as posturl
+from $t, $db->posts, $db->urlmap
+where $t.status <> 'deleted' and $db->posts.id = $t.post and $db->urlmap.id = $db->posts.idurl
+order by $t.posted desc limit $from, $perpage"));
+
     $html = $this->html;
-    $result .= sprintf($html->h2->pingbackhead, $from, $from + count($items), $total);
-    $result .= $html->pingbackheader();
-    $args = targs::i();
-    $args->adminurl = $this->adminurl;
-    foreach ($items as $item) {
-      $args->add($item);
-      $args->idpost = $item['post'];
-      unset($args->data['$post']);
-      $args->website = sprintf('<a href="%1$s">%1$s</a>', $item['url']);
-      $args->localstatus = tlocal::get('commentstatus', $item['status']);
-      $args->date = tlocal::date(strtotime($item['posted']));
-      $post = tpost::i($item['post']);
-      ttheme::$vars['post'] = $post;
-      $args->posttitle =$post->title;
-      $args->postlink = $post->link;
-      $result .=$html->pingbackitem($args);
-    }
-    $result .= $html->tablefooter();
-    $result = $html->fixquote($result);
-    
+$lang = tlocal::i();
+
+    $result =$html->getitemscount($from, $from + count($items), $total);
+ttheme::$vars['pingitem'] = new pingitem();
+$result .= $html->buildtable($items, array(
+$html->get_table_checkbox('id'),
+array('left', $lang->date , '$pingitem.date'),
+array('left', $lang->status, '$pingitem.status'),
+array('left', $lang->title, '$title'),
+array('left', $lang->url, '<a href="$url">$url</a>'),
+array('left', 'IP', '$ip'),
+array('left', $lang->post, '<a href="$posturl">$posttitle</a>'),
+array('center', $lang->edit, "<a href='$this->adminurl=\$id&action=edit'>$lang->edit</a>"),
+));
+
+unset(ttheme::$vars['pingitem']);
+
+$result .= $html->div($html->getsubmit('approve', 'hold', 'delete'));
+$result = $html->getsimple($result);
+
     $theme = ttheme::i();
     $result .= $theme->getpages($this->url, litepublisher::$urlmap->page, ceil($total/$perpage));
     return $result;
@@ -98,8 +105,8 @@ class tadminpingbacks extends tadminmenu {
       $pingbacks->edit($this->idget(), $title, $url);
     } else {
       $status = isset($_POST['approve']) ? 'approve' : (isset($_POST['hold']) ? 'hold' : 'delete');
-      foreach ($_POST as $id => $value) {
-        if (!is_numeric($id))  continue;
+      foreach ($_POST as $k => $id) {
+        if (!strbegin($k, 'id-') || !is_numeric($id))  continue;
         $id = (int) $id;
         if ($status == 'delete') {
           $pingbacks->delete($id);
@@ -113,3 +120,20 @@ class tadminpingbacks extends tadminmenu {
   }
   
 }//class
+
+class pingitem {
+
+public function __get($name) {
+$item = ttheme::$vars['item'];
+switch ($name) {
+case 'status':
+return tlocal::get('commentstatus', $item['status']);
+
+case 'date':
+return tlocal::date(strtotime($item['posted']));
+}
+
+return '';
+}
+
+}
