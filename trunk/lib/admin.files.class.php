@@ -22,11 +22,22 @@ class tadminfiles extends tadminmenu {
       $args->adminurl = $this->url;
       $args->perm = litepublisher::$options->show_file_perm ?  tadminperms::getcombo(0, 'idperm') : '';
       $args->add(array(
+'mode' => 'file',
+'downloadurl' => '',
       'title' => '',
       'description' => '',
       'keywords' => ''
       ));
-      $result .= $html->uploadform($args);
+
+      $result .= $html->getuploadform(
+$html->uploadfile() .
+'[hidden=mode]
+[text=downloadurl]
+[text=title]
+[text=description]
+[text=keywords]
+[checkbox=overwrite]' .
+$perm, $args);
     } else {
       $id = $this->idget();
       if (!$files->itemexists($id)) return $this->notfound;

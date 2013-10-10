@@ -559,8 +559,8 @@ content.post.templatecomments.comments.comment = [
   <div class="commentcontent" id="commentcontent-$comment.id" >$comment.content</div>
   $quotebuttons = [
   <div class="replyquotebuttons">
-   <button type="button" class="replycomment" data-idcomment="$comment.id" data-authorname="$comment.name">$lang.reply</button>
-   <button type="button" class="quotecomment" data-idcomment="$comment.id" data-authorname="$comment.name">$lang.quote</button>
+   <button type="button" class="button replycomment" data-idcomment="$comment.id" data-authorname="$comment.name"><span>$lang.reply</span></button>
+   <button type="button" class="button quotecomment" data-idcomment="$comment.id" data-authorname="$comment.name"><span>$lang.quote</span></button>
   </div>
 ]
  </li>
@@ -622,8 +622,8 @@ $comment.author - уникальный id автора
         // селектор владельца, куда будут вставлены кнопки модерирования, в теме по умолчанию это <div class="moderationbuttons" ...
         buttons:".moderationbuttons",
         // шаблон кнопки модерирования, %%title%% будет заменен на название кнопки (одобрит, задержать, редактировать, удалить)
-        button: '<button type="button">%%title%%</button>',
-        // селектор формы комментариев, здес id тега form
+        button: '<button type="button" class="button"><span>%%title%%</span></button>',
+        // селектор формы комментариев, здесь id тега form
         form: "#commentform",
         // селектор редактора, то есть textarea формы
         editor: "#comment"
