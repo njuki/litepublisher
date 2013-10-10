@@ -18,7 +18,21 @@
       });
       $(this).prop("checked", false);
     });
-    
+
+//upload form
+$('#text-downloadurl').parent().hide();
+$('#files-source').click(function() {
+var mode = $('#uploadmode');
+if (mode.val() == 'upload') {
+mode.val('download');
+ } else {
+mode.val('upload');
+}
+$('#uploadedit').toggle();
+$('#text-downloadurl').parent().toggle();
+return false;
+});
+
   });
   
   litepubl.uibefore = function( event, ui) {

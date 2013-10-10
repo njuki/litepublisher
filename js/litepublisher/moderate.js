@@ -16,7 +16,7 @@
         comment: "#comment-",
         content: "#commentcontent-",
         buttons:".moderationbuttons",
-        button: '<button type="button">%%title%%</button>',
+        button: '<button type="button" class="button"><span>%%title%%</span></button>',
         form: "#commentform"
       }, ltoptions.theme.comments, opt);
       

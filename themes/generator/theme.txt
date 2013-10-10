@@ -59,10 +59,10 @@ content.post.templatecomments.form = [
 <input type="text" name="url" id="url" value="$url" size="22" /> <label for="url">$lang.url</label></p>
 <p><input type="checkbox" name="subscribe" id="subscribe" $subscribe size="22" /> <label for="subscribe">$lang.subscribe</label></p>
 <textarea name="content" id="comment" rows="10" cols="62%"></textarea>
-<p>
+<div style="text-align: center;">
 <input type="hidden" name="postid" value="$postid" />
 <input type="hidden" name="antispam" value="$antispam" />
-<input name="submitbutton" type="submit" id="submitbutton" value="$lang.send" /></p>
+<div style="margin: auto;"><button type="submit" name="submitcomment" class="button" id="id-submitcomment"><span>$lang.send</span></button></div></div>
 </form>
 ]
 
@@ -71,10 +71,10 @@ content.post.templatecomments.regform = [
 <h3>$lang.leavereply</h3>
 <form action="$site.url/send-comment.php" method="post" id="commentform">
 <textarea name="content" id="comment" rows="10" cols="62%"></textarea>
-<p>
+<div style="text-align: center;">
 <input type="hidden" name="postid" value="$postid" />
 <input type="hidden" name="antispam" value="$antispam" />
-<input name="submitbutton" type="submit" id="submit_button" value="$lang.send" /></p>
+<div style="margin: auto;"><button type="submit" name="submitcomment" class="button" id="id-submitcomment"><span>$lang.send</span></button></div></div>
 </form>
 ]
 
@@ -99,7 +99,9 @@ content.post.templatecomments.comments.comment = [
 <small class="dtreviewed date">$comment.date = [d M Y] <span class="time"> $lang.attime $comment.time</span></small> <em class="reviewer vcard">$comment.authorlink</em>
 <ins class="description" id="commentcontent-$comment.id">$comment.content
 <p class="moderate"><span class="moderationbuttons hidden" data-idcomment="$comment.id" data-idauthor="$comment.author"></span>
-$quotebuttons = [ <input type="button" value="$lang.reply" class="replycomment" data-idcomment="$comment.id" data-authorname="$comment.name" /><input type="button" value="$lang.quote" class="quotecomment" data-idcomment="$comment.id" data-authorname="$comment.name" />]</p></ins></li>]
+$quotebuttons = [
+<button type="button" class="button replycomment" data-idcomment="$comment.id" data-authorname="$comment.name"><span>$lang.reply</span></button>
+   <button type="button" class="button quotecomment" data-idcomment="$comment.id" data-authorname="$comment.name"><span>$lang.quote</span></button>]</p></ins></li>]
 
 content.post.templatecomments.pingbacks = [<h3>$lang.pingbacks</h3>
 <ol class="commentlist" start="1">$pingback = [<li id="pingback-$pingback.id"><a href="$pingback.url">$pingback.title</a></li>]</ol>

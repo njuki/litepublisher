@@ -201,6 +201,13 @@ public function getsimple($form) {
     $result = str_replace('$form',$form, $this->simpleform);
 return $this->fixquote($result);
 }
+
+  public function getuploadform($title, $fields, targs $args, $actionurl= '') {
+$args->formtitle = $title;
+$args->actionurl = $actionurl;
+    $args->form = $this->parsearg($fields, $args);
+    return $this->uploadform($args);
+  }
   
   public function getcheckbox($name, $value) {
     return $this->getinput('checkbox', $name, $value ? 'checked="checked"' : '', '$lang.' . $name);
