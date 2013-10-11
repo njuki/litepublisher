@@ -202,13 +202,17 @@ public function getsimple($form) {
 return $this->fixquote($result);
 }
 
-  public function getuploadform($title, $fields, targs $args, $actionurl= '') {
+  public function getuploadform($title, $form, targs $args, $actionurl= '') {
 $args->formtitle = $title;
 $args->actionurl = $actionurl;
-    $args->form = $this->parsearg($fields, $args);
-    return $this->uploadform($args);
+    $args->form = $this->parsearg($form, $args);
+    return $this->parsearg($this->ini['common']['uploadform'], $args);
   }
-  
+
+  public function getinputfile($name) {
+return str_replace('$name', $name, $this->ini['common']['inputfile']);
+}
+
   public function getcheckbox($name, $value) {
     return $this->getinput('checkbox', $name, $value ? 'checked="checked"' : '', '$lang.' . $name);
   }

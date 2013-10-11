@@ -19,19 +19,23 @@
       $(this).prop("checked", false);
     });
 
-//upload form
+// switcher template see in lib/admin.files.class.php
+var switcher = $('#files-source');
+if (switcher.length) {
 $('#text-downloadurl').parent().hide();
-$('#files-source').click(function() {
-var mode = $('#uploadmode');
-if (mode.val() == 'upload') {
-mode.val('download');
+switcher.click(function() {
+var mode = $('#hidden-uploadmode');
+if (mode.val() == 'file') {
+mode.val('url');
  } else {
-mode.val('upload');
+mode.val('url');
 }
-$('#uploadedit').toggle();
+
+$('#file-filename').parent().toggle();
 $('#text-downloadurl').parent().toggle();
 return false;
 });
+}
 
   });
   
