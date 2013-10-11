@@ -18,25 +18,25 @@
       });
       $(this).prop("checked", false);
     });
-
-// switcher template see in lib/admin.files.class.php
-var switcher = $('#files-source');
-if (switcher.length) {
-$('#text-downloadurl').parent().hide();
-switcher.click(function() {
-var mode = $('#hidden-uploadmode');
-if (mode.val() == 'file') {
-mode.val('url');
- } else {
-mode.val('url');
-}
-
-$('#file-filename').parent().toggle();
-$('#text-downloadurl').parent().toggle();
-return false;
-});
-}
-
+    
+    // switcher template see in lib/admin.files.class.php
+    var switcher = $('#files-source');
+    if (switcher.length) {
+      $('#text-downloadurl').parent().hide();
+      switcher.click(function() {
+        var mode = $('#hidden-uploadmode');
+        if (mode.val() == 'file') {
+          mode.val('url');
+        } else {
+          mode.val('url');
+        }
+        
+        $('#file-filename').parent().toggle();
+        $('#text-downloadurl').parent().toggle();
+        return false;
+      });
+    }
+    
   });
   
   litepubl.uibefore = function( event, ui) {

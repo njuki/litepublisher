@@ -258,7 +258,7 @@ public function __construct($tag) { $this->tag = $tag; }
 }//class
 
 class tadminhtml {
-  public static $tags = array('h1', 'h2', 'h3', 'h4', 'p', 'li', 'ul', 'strong');
+  public static $tags = array('h1', 'h2', 'h3', 'h4', 'p', 'li', 'ul', 'strong', 'div');
   public $section;
   public $searchsect;
   public $ini;
@@ -291,6 +291,7 @@ class tadminhtml {
     }
     
     if (in_array($name, self::$tags)) return new thtmltag($name);
+    
     throw new Exception("the requested $name item not found in $this->section section");
   }
   
@@ -437,6 +438,23 @@ class tadminhtml {
     return $this->parsearg(ttheme::i()->templates['content.admin.form'], $args);
   }
   
+  public function getsimple($form, $actionurl = '') {
+    $result = str_replace('$form',$form, $this->simpleform);
+    if ($actionurl) $result = str_replace("action=''", "action='$actionurl'", $result);
+    return $this->fixquote($result);
+  }
+  
+  public function getuploadform($title, $form, targs $args, $actionurl= '') {
+    $args->formtitle = $title;
+    $args->actionurl = $actionurl;
+    $args->form = $this->parsearg($form, $args);
+    return $this->parsearg($this->ini['common']['uploadform'], $args);
+  }
+  
+  public function getinputfile($name) {
+    return str_replace('$name', $name, $this->ini['common']['inputfile']);
+  }
+  
   public function getcheckbox($name, $value) {
     return $this->getinput('checkbox', $name, $value ? 'checked="checked"' : '', '$lang.' . $name);
   }
@@ -465,11 +483,17 @@ class tadminhtml {
     ));
   }
   
-  public function getsubmit($name) {
-    return strtr(ttheme::i()->templates['content.admin.submit'], array(
-    '$lang.$name' => tlocal::i()->$name,
-    '$name' => $name,
-    ));
+  public function getsubmit() {
+    $result = '';
+    $a = func_get_args();
+    foreach ($a as $name) {
+      $result .= strtr(ttheme::i()->templates['content.admin.submit'], array(
+      '$lang.$name' => tlocal::i()->__get($name),
+      '$name' => $name,
+      ));
+    }
+    
+    return $result;
   }
   
   public function getedit($name, $value, $title) {
@@ -903,13 +927,13 @@ class ttablecolumns {
   }
   
   public function build($body, $buttons) {
-    $args = targs::i();
+    $args = new targs();
     $args->style = $this->style;
     $args->checkboxes = implode("\n", $this->checkboxes);
     $args->head = $this->head;
     $args->body = $body;
     $args->buttons = $buttons;
-    $tml = file_get_contents(litepublisher::$paths->languages . 'tablecolumns.ini');
+    $tml = tfilestorage::getfile(litepublisher::$paths->languages . 'tablecolumns.ini');
     $theme = ttheme::i();
     return $theme->parsearg($tml, $args);
   }

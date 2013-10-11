@@ -28,18 +28,22 @@ class tadminfilethumbnails extends tadminmenu {
     $result = '';
     $files = tfiles::i();
     $html = $this->html;
+    $lang = tlocal::admin();
     $args = new targs();
-    $args->adminurl = $this->adminurl;
     $item = $files->getitem($id);
     $idpreview = $item['preview'];
     if ($idpreview > 0) {
       $args->add($files->getitem($idpreview));
-      $args->idfile = $id;
-      $result .= $html->preview($args);
+      $result .= $html->getsimple($html->p(
+      $html->parsearg('<img src="$site.files/files/$filename" alt="thumbnail" />', $args) .
+      $lang->wantdelete .
+      $html->getsubmit('delete')
+      ), "$this->adminurl=$id");
     }
     
-    $args->id = $id;
-    $result .= $html->uploadthumb($args);
+    $result .= $html->getuploadform($lang->changethumb,
+    $html->getinputfile('filename') .
+    '[checkbox=noresize]', $args, "$this->adminurl=$id");
     return $result;
   }
   
@@ -48,7 +52,7 @@ class tadminfilethumbnails extends tadminmenu {
     $files = tfiles::i();
     $item = $files->getitem($id);
     
-    if (isset($_POST['submitdelete'])) {
+    if (isset($_POST['delete'])) {
       $files->delete($item['preview']);
       $files->setvalue($id, 'preview', 0);
       return $this->html->h4->deleted;

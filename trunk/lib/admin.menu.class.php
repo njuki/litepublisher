@@ -88,23 +88,23 @@ class tadminmenumanager extends tadminmenu {
         [hidden=id]', $args);
       }
       
-$tabs = new tuitabs();
-$tabs->add($lang->title, '
-[text=title]
-[combo=parent]
-[combo=order]
-[combo=status]
-[hidden=id]
-');
-
-$ajaxurl = tadminhtml::getadminlink('/admin/ajaxmenueditor.htm', "id=$id&get");
-$tabs->ajax($lang->view,"$ajaxurl=view");
-$tabs->ajax('SEO', "$ajaxurl=seo");
-
+      $tabs = new tuitabs();
+      $tabs->add($lang->title, '
+      [text=title]
+      [combo=parent]
+      [combo=order]
+      [combo=status]
+      [hidden=id]
+      ');
+      
+      $ajaxurl = tadminhtml::getadminlink('/admin/ajaxmenueditor.htm', "id=$id&get");
+      $tabs->ajax($lang->view,"$ajaxurl=view");
+      $tabs->ajax('SEO', "$ajaxurl=seo");
+      
       $ajaxeditor = tajaxmenueditor::i();
-$args->formtitle = $lang->edit;
-    return tuitabs::gethead() . $html->adminform($tabs->get() .
-sprintf('<div>%s</div>', $ajaxeditor->geteditor('raw', $id == 0 ? '' : $menuitem->rawcontent, true)), $args);
+      $args->formtitle = $lang->edit;
+      return tuitabs::gethead() . $html->adminform($tabs->get() .
+      sprintf('<div>%s</div>', $ajaxeditor->geteditor('raw', $id == 0 ? '' : $menuitem->rawcontent, true)), $args);
     }
   }
   
@@ -145,19 +145,19 @@ sprintf('<div>%s</div>', $ajaxeditor->geteditor('raw', $id == 0 ? '' : $menuitem
   
   private function getmenulist() {
     $menus = tmenus::i();
-$lang = tlocal::admin();
+    $lang = tlocal::admin();
     $editurl = litepublisher::$site->url .$this->url . 'edit/' . litepublisher::$site->q . 'id';
     $html = $this->html;
-ttheme::$vars['menuitem'] = new menu_item();
-$result = $html->buildtable($menus->items, array(
-array('left', $lang->menutitle, '$menuitem.link'),
-array('center', $lang->order, '$order'),
-array('center', $lang->parent, '$menuitem.parent'),
-array('center', $lang->edit, "<a href='$editurl=\$id'>$lang->edit</a>"),
-array('center', $lang->delete, "<a href='$this->adminurl=\$id&action=delete'>$lang->delete</a>"),
-));
-
-unset(ttheme::$vars['menuitem']);
+    ttheme::$vars['menuitem'] = new menu_item();
+    $result = $html->buildtable($menus->items, array(
+    array('left', $lang->menutitle, '$menuitem.link'),
+    array('center', $lang->order, '$order'),
+    array('center', $lang->parent, '$menuitem.parent'),
+    array('center', $lang->edit, "<a href='$editurl=\$id'>$lang->edit</a>"),
+    array('center', $lang->delete, "<a href='$this->adminurl=\$id&action=delete'>$lang->delete</a>"),
+    ));
+    
+    unset(ttheme::$vars['menuitem']);
     return str_replace("'", '"', $result);
   }
   
@@ -197,26 +197,26 @@ unset(ttheme::$vars['menuitem']);
 }//class
 
 class menu_item {
-public $menus;
-
-public function __construct() {
-$this->menus = tmenus::i();
-}
-
-public function __get($name) {
-$item = ttheme::$vars['item'];
-switch ($name) {
-case 'parent':
-return $item['parent'] == 0 ? '---' : $this->menus->getlink($item['parent']);
-
-case 'status':
-return tlocal::get('common', $item['status']);
-
-case 'link':
-return $this->menus->getlink($item['id']);
-}
-
-return '';
-}
-
+  public $menus;
+  
+  public function __construct() {
+    $this->menus = tmenus::i();
+  }
+  
+  public function __get($name) {
+    $item = ttheme::$vars['item'];
+    switch ($name) {
+      case 'parent':
+      return $item['parent'] == 0 ? '---' : $this->menus->getlink($item['parent']);
+      
+      case 'status':
+      return tlocal::get('common', $item['status']);
+      
+      case 'link':
+      return $this->menus->getlink($item['id']);
+    }
+    
+    return '';
+  }
+  
 }

@@ -108,7 +108,7 @@ class tadminlogin extends tadminform {
       $args->email = '';
       $args->name = '';
       $form = $html->adminform('[text=email] [text=name]', $args);
-$backurl = isset($_GET['backurl']) ? $_GET['backurl'] : '';
+      $backurl = isset($_GET['backurl']) ? $_GET['backurl'] : '';
       $result .= str_replace('action=""', sprintf('action="%s/admin/reguser/%s"', litepublisher::$site->url, $backurl ? '?backurl=' . urlencode($backurl) : ''), $form);
     }
     $this->callevent('oncontent', array(&$result));
