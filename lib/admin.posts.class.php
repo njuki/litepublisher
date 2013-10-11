@@ -77,7 +77,7 @@ class tadminposts extends tadminmenu {
     
     $html = $this->html;
     $lang = tlocal::admin();
-
+    
     $result =$html->getitemscount($from, $from + count($items), $count);
     $result .= $html->tableposts($items, array(
     array('center', $lang->date, '$post.date'),
@@ -88,12 +88,12 @@ class tadminposts extends tadminmenu {
     array('center', $lang->delete, '<a href="' . $this->adminurl . '=$post.id&action=delete">' . $lang->delete . '</a>'),
     ));
     
-$result .= $html->div(
-$html->getsubmit('publish') .
-$html->getsubmit('setdraft') .
-$html->getsubmit('delete') 
-);
-
+    $result .= $html->div(
+    $html->getsubmit('publish') .
+    $html->getsubmit('setdraft') .
+    $html->getsubmit('delete')
+    );
+    
     $result = str_replace('$form',$result, $html->simpleform);
     $result = $html->fixquote($result);
     

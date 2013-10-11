@@ -53,35 +53,35 @@ class tadminpingbacks extends tadminmenu {
     $perpage = 20;
     $total = $pingbacks->getcount();
     $from = $this->getfrom($perpage, $total);
-$db = $pingbacks->db;
-$t = $pingbacks->thistable;
+    $db = $pingbacks->db;
+    $t = $pingbacks->thistable;
     $items = $db->res2assoc($db->query(
-"select $t.*, $db->posts.title as posttitle, $db->urlmap.url as posturl
-from $t, $db->posts, $db->urlmap
-where $t.status <> 'deleted' and $db->posts.id = $t.post and $db->urlmap.id = $db->posts.idurl
-order by $t.posted desc limit $from, $perpage"));
-
+    "select $t.*, $db->posts.title as posttitle, $db->urlmap.url as posturl
+    from $t, $db->posts, $db->urlmap
+    where $t.status <> 'deleted' and $db->posts.id = $t.post and $db->urlmap.id = $db->posts.idurl
+    order by $t.posted desc limit $from, $perpage"));
+    
     $html = $this->html;
-$lang = tlocal::i();
-
+    $lang = tlocal::i();
+    
     $result =$html->getitemscount($from, $from + count($items), $total);
-ttheme::$vars['pingitem'] = new pingitem();
-$result .= $html->buildtable($items, array(
-$html->get_table_checkbox('id'),
-array('left', $lang->date , '$pingitem.date'),
-array('left', $lang->status, '$pingitem.status'),
-array('left', $lang->title, '$title'),
-array('left', $lang->url, '<a href="$url">$url</a>'),
-array('left', 'IP', '$ip'),
-array('left', $lang->post, '<a href="$posturl">$posttitle</a>'),
-array('center', $lang->edit, "<a href='$this->adminurl=\$id&action=edit'>$lang->edit</a>"),
-));
-
-unset(ttheme::$vars['pingitem']);
-
-$result .= $html->div($html->getsubmit('approve', 'hold', 'delete'));
-$result = $html->getsimple($result);
-
+    ttheme::$vars['pingitem'] = new pingitem();
+    $result .= $html->buildtable($items, array(
+    $html->get_table_checkbox('id'),
+    array('left', $lang->date , '$pingitem.date'),
+    array('left', $lang->status, '$pingitem.status'),
+    array('left', $lang->title, '$title'),
+    array('left', $lang->url, '<a href="$url">$url</a>'),
+    array('left', 'IP', '$ip'),
+    array('left', $lang->post, '<a href="$posturl">$posttitle</a>'),
+    array('center', $lang->edit, "<a href='$this->adminurl=\$id&action=edit'>$lang->edit</a>"),
+    ));
+    
+    unset(ttheme::$vars['pingitem']);
+    
+    $result .= $html->div($html->getsubmit('approve', 'hold', 'delete'));
+    $result = $html->getsimple($result);
+    
     $theme = ttheme::i();
     $result .= $theme->getpages($this->url, litepublisher::$urlmap->page, ceil($total/$perpage));
     return $result;
@@ -122,18 +122,18 @@ $result = $html->getsimple($result);
 }//class
 
 class pingitem {
-
-public function __get($name) {
-$item = ttheme::$vars['item'];
-switch ($name) {
-case 'status':
-return tlocal::get('commentstatus', $item['status']);
-
-case 'date':
-return tlocal::date(strtotime($item['posted']));
-}
-
-return '';
-}
-
+  
+  public function __get($name) {
+    $item = ttheme::$vars['item'];
+    switch ($name) {
+      case 'status':
+      return tlocal::get('commentstatus', $item['status']);
+      
+      case 'date':
+      return tlocal::date(strtotime($item['posted']));
+    }
+    
+    return '';
+  }
+  
 }

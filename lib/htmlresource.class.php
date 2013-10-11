@@ -48,9 +48,9 @@ class tadminhtml {
     foreach ($this->searchsect as $section) {
       if (isset($this->ini[$section][$name])) return $this->ini[$section][$name];
     }
-
+    
     if (in_array($name, self::$tags)) return new thtmltag($name);
-
+    
     throw new Exception("the requested $name item not found in $this->section section");
   }
   
@@ -196,23 +196,24 @@ class tadminhtml {
     $args->items = $this->parsearg($tml, $args);
     return $this->parsearg(ttheme::i()->templates['content.admin.form'], $args);
   }
-
-public function getsimple($form) {
+  
+  public function getsimple($form, $actionurl = '') {
     $result = str_replace('$form',$form, $this->simpleform);
-return $this->fixquote($result);
-}
-
+    if ($actionurl) $result = str_replace("action=''", "action='$actionurl'", $result);
+    return $this->fixquote($result);
+  }
+  
   public function getuploadform($title, $form, targs $args, $actionurl= '') {
-$args->formtitle = $title;
-$args->actionurl = $actionurl;
+    $args->formtitle = $title;
+    $args->actionurl = $actionurl;
     $args->form = $this->parsearg($form, $args);
     return $this->parsearg($this->ini['common']['uploadform'], $args);
   }
-
+  
   public function getinputfile($name) {
-return str_replace('$name', $name, $this->ini['common']['inputfile']);
-}
-
+    return str_replace('$name', $name, $this->ini['common']['inputfile']);
+  }
+  
   public function getcheckbox($name, $value) {
     return $this->getinput('checkbox', $name, $value ? 'checked="checked"' : '', '$lang.' . $name);
   }
@@ -242,18 +243,18 @@ return str_replace('$name', $name, $this->ini['common']['inputfile']);
   }
   
   public function getsubmit() {
-$result = '';
+    $result = '';
     $a = func_get_args();
-foreach ($a as $name) {
-    $result .= strtr(ttheme::i()->templates['content.admin.submit'], array(
-    '$lang.$name' => tlocal::i()->__get($name),
-    '$name' => $name,
-    ));
-}
-
-return $result;
+    foreach ($a as $name) {
+      $result .= strtr(ttheme::i()->templates['content.admin.submit'], array(
+      '$lang.$name' => tlocal::i()->__get($name),
+      '$name' => $name,
+      ));
+    }
+    
+    return $result;
   }
-
+  
   public function getedit($name, $value, $title) {
     return $this->getinput('text', $name, $value, $title);
   }

@@ -135,12 +135,12 @@ class tadminmoderator extends tadmincommoncomments {
       $args->website =$comment->website == '' ? '' : "<a href='$comment->website'>$comment->website</a>";
       $body .=$html->parsearg($table->body, $args);
     }
-
+    
     $result .= $table->build($body, $html->div(
-$html->getsubmit('approve') .
-$html->getsubmit('hold') .
-$html->getsubmit('delete')
-));
+    $html->getsubmit('approve') .
+    $html->getsubmit('hold') .
+    $html->getsubmit('delete')
+    ));
     
     $theme = ttheme::i();
     
