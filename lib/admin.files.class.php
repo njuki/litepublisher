@@ -19,25 +19,23 @@ class tadminfiles extends tadminmenu {
     $lang = $this->lang;
     $args = new targs();
     if (!isset($_GET['action'])) {
-      $args->adminurl = $this->url;
-      $args->perm = litepublisher::$options->show_file_perm ?  tadminperms::getcombo(0, 'idperm') : '';
       $args->add(array(
-'mode' => 'file',
+'uploadmode' => 'file',
 'downloadurl' => '',
       'title' => '',
       'description' => '',
       'keywords' => ''
       ));
 
-      $result .= $html->getuploadform(
-$html->uploadfile() .
-'[hidden=mode]
+      $result .= $html->getuploadform("<a id='files-source' href='#'>$lang->switchlink</a>",
+$html->getinputfile('filename') .
+'[hidden=uploadmode]
 [text=downloadurl]
 [text=title]
 [text=description]
 [text=keywords]
 [checkbox=overwrite]' .
-$perm, $args);
+(litepublisher::$options->show_file_perm ?  tadminperms::getcombo(0, 'idperm') : ''), $args);
     } else {
       $id = $this->idget();
       if (!$files->itemexists($id)) return $this->notfound;
@@ -101,12 +99,12 @@ $perm, $args);
   
   public function processform() {
     $files = tfiles::i();
+$html = $this->html;
     if (empty($_GET['action'])) {
       $isauthor = 'author' == litepublisher::$options->group;
-      if ($_POST['uploadmode'] == 'upload') {
+      if ($_POST['uploadmode'] == 'file') {
         if (isset($_FILES['filename']['error']) && $_FILES['filename']['error'] > 0) {
-          $error = tlocal::get('uploaderrors', $_FILES["filename"]["error"]);
-          return "<h2>$error</h2>\n";
+return $html->h4(tlocal::get('uploaderrors', $_FILES['filename']['error']));
         }
         if (!is_uploaded_file($_FILES['filename']['tmp_name'])) return sprintf($this->html->h2->attack, $_FILES["filename"]["name"]);
         if ($isauthor && ($r = tauthor_rights::i()->canupload())) return $r;
