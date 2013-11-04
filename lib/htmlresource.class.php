@@ -77,7 +77,7 @@ class tadminhtml {
       $s = substr_replace($s, $replace, $i, strlen('[/form]'));
     }
     
-    if (preg_match_all('/\[(editor|checkbox|text|password|combo|hidden|calendar)(:|=)(\w*+)\]/i', $s, $m, PREG_SET_ORDER)) {
+    if (preg_match_all('/\[(editor|checkbox|text|password|combo|hidden|submit|button|calendar)(:|=)(\w*+)\]/i', $s, $m, PREG_SET_ORDER)) {
       foreach ($m as $item) {
         $type = $item[1];
         $name = $item[3];
@@ -246,7 +246,7 @@ class tadminhtml {
     $result = '';
     $a = func_get_args();
     foreach ($a as $name) {
-      $result .= strtr(ttheme::i()->templates['content.admin.submit'], array(
+      $result .= strtr(ttheme::i()->templates['content.admin.button'], array(
       '$lang.$name' => tlocal::i()->__get($name),
       '$name' => $name,
       ));

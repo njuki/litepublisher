@@ -107,9 +107,9 @@ class tadminservice extends tadminmenu {
       if (!$this->checkbackuper()) return $html->h4->erroraccount;
       if ($updater->autoupdate())       return $html->h4->successupdated;
       return sprintf('<h3>%s</h3>', $updater->result);
-    } elseif (isset($req['update'])) {
+    } elseif (isset($req['manualupdate'])) {
       $updater->update();
-      return $html->h2->successupdated;
+      return $html->h4->successupdated;
     }
     return '';
   }
@@ -149,7 +149,7 @@ class tadminservice extends tadminmenu {
       if (!$this->checkbackuper()) return $html->h3->erroraccount;
       extract($_POST, EXTR_SKIP);
       $backuper = tbackuper::i();
-      if (isset($upload)) {
+      if (isset($restore)) {
         if (!is_uploaded_file($_FILES['filename']['tmp_name'])) {
           return sprintf($html->attack(), $_FILES["filename"]["name"]);
         }
