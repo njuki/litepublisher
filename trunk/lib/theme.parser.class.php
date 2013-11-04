@@ -1228,6 +1228,11 @@ class tthemeparser extends tevents {
         'replace' => ''
         ),
         
+        'content.admin.button' => array(
+        'tag' => '$button',
+        'replace' => ''
+        ),
+
         'content.admin.submit' => array(
         'tag' => '$submit',
         'replace' => ''

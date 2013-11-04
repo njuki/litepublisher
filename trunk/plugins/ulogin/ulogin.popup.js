@@ -49,7 +49,7 @@ if ($.isFunction(callback)) {
 html = html.replace(/%%callback%%/gim, "callback=ulogincallback")
 .replace(/%%redirurl%%/gim, '');
 window.ulogincallback = function(token) {
-$.prettyPhoto.close();
+$.closedialog();
 try {
 callback(token);
         } catch(e) {erralert(e);}
@@ -59,7 +59,7 @@ html = html.replace(/%%callback%%/gim, "")
 .replace(/%%redirurl%%/gim, encodeURIComponent(ltoptions.url + "/admin/ulogin.php?backurl=" + encodeURIComponent(url)));
 }
 
-      $.prettyPhotoDialog({
+      $.litedialog({
         title: lang.ulogin.title,
         html: html,
         width: 300,
@@ -73,7 +73,7 @@ uLogin.customInit('ulogin-holder');
 
         buttons: [{
           title: lang.dialog.close,
-          click: $.proxy($.prettyPhoto.close, $.prettyPhoto)
+          click: $.closedialog
         }]
       });
 });

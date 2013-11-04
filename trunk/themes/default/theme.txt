@@ -766,10 +766,10 @@ $radioitem = [<p><label><input type="radio" name="$name" id="radio_$name_$index"
 $radio = [<div><h4>$lang.$name:</h4>$value</div>]
 
 $hidden = [<input type="hidden" name="$name" id="hidden-$name" value="$value" />]
-$submit =   [<button type="submit" name="$name" id="submitbutton-$name" class="button"><span>$lang.$name</span></button>]
+$button =   [<button type="submit" name="$name" id="submitbutton-$name" class="button"><span>$lang.$name</span></button>]
+$submit =   [        <div style="text-align: center;"><div style="margin: auto;"><button type="submit" name="$name" id="submitbutton-$name" class="button"><span>$lang.$name</span></button></div></div>]
 
-$form = [<h3>$formtitle</h3>
-<form action="" method="post" >
+$form = [<h3>$formtitle</h3><form action="" method="post" >
 $items
         <div style="text-align: center;"><div style="margin: auto;"><button type="submit" name="submitbutton" class="button"><span>$lang.update</span></button></div></div>
 </form>]
@@ -782,7 +782,9 @@ $text - шаблон однострочного редактора
 $editor - шаблон многострочного редактора
 $checkbox - шаблон чекбокса
 $combo - шаблон комбобокса
-$hidden - поле hidden, lдля упрощения генерации
+$hidden - поле hidden, для упрощения генерации
+$button - шаблон кнопки отправки формы
+$submit - шаблон кнопки отправки формы, выровненный по центру
 $form - шаблон формы
 
 Все - мы закончили с тегом $template.content и его шаблонами, перейдем к сайдбарам. За сайдбар отвечает тег $template.sidebar - вы можете в шаблоне полной страницы проставить несколько тегов $template.sidebar и таким образом мы получим несколько сайдбаров. Как же адресовать конкретный шаблон сайдбара? Нумерация сайдбаров идет сверху вниз по мере нахождения в шаблоне полной страницы тегов $template.sidebar. Таким образом первый встретившийся тег $template.sidebar будет означать объявление 0-го сайдбара. В движке есть теги вида $template.sidebar0, $template.sidebar1, $template.sidebar2, которые однозначно задают номер сайдбара. $template.sidebar является синонимом $template.sidebar0. В шаблоне всей страницы вы можете использовать только тег $template.sidebar,  без указания индексов, но в обявлении вы обязаны задать номер декларируемого сайдбара.
