@@ -31,7 +31,7 @@ return ltoptions.download_site + '/admin/service/upload/' + q + args;
 }
 
 function siteurl_dialog(fn) {
-$.prettyPhotoDialog({
+$.litedialog({
 title: ltoptions.siteurl_dialog.title,
 html: ltoptions.siteurl_dialog.html,
 buttons: [
@@ -39,7 +39,7 @@ buttons: [
         title: "Ok",
         click: function() {
 var url = $.trim($("input[name='text_download_site']").val());
-          $.prettyPhoto.close();
+          $.closedialog();
 if (url != '') set_cookie('download_site', url);
 update_siteurl(url);
 if ($.isFunction(fn)) fn();
@@ -48,7 +48,7 @@ if ($.isFunction(fn)) fn();
 {
         title: lang.dialog.cancel,
         click: function() {
-          $.prettyPhoto.close();
+          $.closedialog();
 }
     }
 ]

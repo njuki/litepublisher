@@ -242,7 +242,7 @@
       var fileitem = this.items[idfile];
       var self = this;
       
-      $.prettyPhotoDialog({
+      $.litedialog({
         title: lang.posteditor.property,
         html: this.tml.fileprops,
         open: function(holder) {
@@ -262,14 +262,14 @@
               keywords: $.trim($("input[name='fileprop-keywords']", holder).val())
             };
             
-            $.prettyPhoto.close();
+            $.closedialog();
             self.setprops(idfile, values, owner);
           }
         },
         {
           title: lang.dialog.cancel,
           click: function() {
-            $.prettyPhoto.close();
+            $.closedialog();
             self.indialog = false;
           }
         }

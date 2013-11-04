@@ -40,7 +40,7 @@
       var self = this;
       this.load(function() {
         var cur = edit.val();
-        $.prettyPhotoDialog({
+        $.litedialog({
           title: lang.admin.calendar,
           html: '<div  style="width:290px;height:200px;display:block;overflow:hidden;"><div id="popup-calendar"></div></div>',
           width: 300,
@@ -60,7 +60,7 @@
           
           buttons: [{
             title: lang.dialog.close,
-            click: $.proxy($.prettyPhoto.close, $.prettyPhoto)
+            click: $.closedialog
           }]
         });
       });

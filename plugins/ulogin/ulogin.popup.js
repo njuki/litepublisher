@@ -14,7 +14,8 @@
 registered: false,
 script: false,
 dialogopened: false,
-    html: '<div><div style="display:block;overflow:hidden;width:300px;height:50px;">\
+    html: '<div><p>%%lang.subtitle%%</p>\
+<div style="display:block;overflow:hidden;width:300px;height:50px;">\
 <div id="ulogin-holder" data-ulogin="display=small;fields=first_name,last_name;optional=email,phone,nickname;providers=vkontakte,odnoklassniki,mailru,yandex,facebook,google,twitter;hidden=other;redirect_uri=%%redirurl%%;%%callback%%"></div></div>\
 <div><a href="%%url%%">%%lang.emaillogin%%</a></div></div>',
 
@@ -41,6 +42,7 @@ self.ready(function() {
 self.dialogopened = true;
 if (!url) url = ltoptions.url + "/admin/login/?backurl=" + encodeURIComponent(location.href);
 var html = self.html.replace(/%%lang.emaillogin%%/gim, lang.ulogin.emaillogin)
+.replace(/%%lang.subtitle%%/gim, lang.ulogin.subtitle)
 .replace(/%%url%%/gim, url);
 
 if ($.isFunction(callback)) {
