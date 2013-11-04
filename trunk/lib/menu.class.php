@@ -306,17 +306,23 @@ class tmenus extends titems {
   private function getsubmenu(&$tree, $current) {
     $result = '';
     $theme = ttheme::i();
-    $tml = $theme->templates['menu.item'];
+    $tml_item = $theme->templates['menu.item'];
     $tml_submenu = $theme->templates['menu.item.submenu'];
-    $args = targs::i();
+        $tml_single = $theme->templates['menu.single'];
+                $tml_current = $theme->templates['menu.current'];
+        
+    $args = new targs(();
     foreach ($tree as $id => $items) {
       if ($this->exclude($id)) continue;
       $submenu = count($items) == 0 ? '' :  str_replace('$items', $this->getsubmenu($items, $current), $tml_submenu);
       $this->callevent('onsubitems', array($id, &$subitems));
       $args->submenu = $submenu;
       $args->add($this->items[$id]);
-      $result .= $theme->parsearg($current == $id ?  $theme->templates['menu.current'] : $tml, $args);
+      
+      $tml = $current == $id ?  $tml_current : ($submenu ? $tml_item : $tml_single);
+      $result .= $theme->parsearg($tml, $args);
     }
+    
     return $result;
   }
   

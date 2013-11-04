@@ -389,11 +389,16 @@ class tthemeparser extends tevents {
       
       public function set_value($name, $value) {
         $this->parsedtags[] = $name;
-        //fix old ver
         switch ($name) {
           case 'content.menu':
+                  //fix old ver
           $this->theme->templates['content.author'] = str_replace('menu', 'author', $value);
           break;
+          
+          case 'menu.item':
+                    $this->theme->templates['menu.single'] = $value;
+                                        $this->theme->templates['menu.current'] = $value;
+                    break;
         }
         
         $this->theme->templates[$name] = $value;
@@ -707,7 +712,7 @@ class tthemeparser extends tevents {
         'tag' => '$item',
         'replace' => '$item'
         ),
-        
+
         'menu.current' => array(
         'tag' => '$current',
         'replace' => ''
@@ -718,6 +723,10 @@ class tthemeparser extends tevents {
         'replace' => '$submenu'
         ),
         
+        'menu.single' => array(
+        'tag' => '$single',
+        'replace' => ''
+        ),
         
         'head' => array(
         'tag' => '$template.head',
