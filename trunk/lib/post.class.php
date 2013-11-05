@@ -335,6 +335,11 @@ class tpost extends titem implements  itemplate {
     $theme = $this->theme;
     return $theme->parse($theme->templates[$path]);
   }
+
+  public function getextra() {
+    $theme = $this->theme;
+    return $theme->parse($theme->extratml);
+  }
   
   public function getbookmark() {
     return $this->theme->parse('<a href="$post.link" rel="bookmark" title="$lang.permalink $post.title">$post.iconlink$post.title</a>');
@@ -365,10 +370,19 @@ class tpost extends titem implements  itemplate {
     }
     return false;
   }
+
+  public function getthumb() {
+    if (count($this->files) == 0) return false;
+    $files = $this->factory->files;
+    foreach ($this->files as $id) {
+      $item = $files->getitem($id);
+      if (intval($item['preview'])) return $files->geturl($item['preview']);
+    }
+    return false;
+  }
   
   //template
-  
-  private function get_taglinks($name, $excerpt) {
+    private function get_taglinks($name, $excerpt) {
     $items = $this->$name;
     if (count($items) == 0) return '';
     
