@@ -14,6 +14,7 @@ class ttheme extends tevents {
   public $name;
   public $parsing;
   public $templates;
+    public $extratml;
   private $themeprops;
   
   public static function exists($name) {
@@ -56,6 +57,7 @@ class ttheme extends tevents {
     );
     $this->themeprops = new tthemeprops($this);
     if (!isset(self::$defaultargs)) self::set_defaultargs();
+    $this->extratml = '';
   }
   
   public static function set_defaultargs() {
