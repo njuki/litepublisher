@@ -782,7 +782,22 @@ class tthemeparser extends tevents {
         'tag' => '$author',
         'replace' => ''
         ),
+
+        'content.home' => array(
+        'tag' => '$home',
+        'replace' => ''
+        ),
+
+        'content.home.midle' => array(
+        'tag' => '$midle',
+        'replace' => '$midle'
+        ),
         
+                'content.home.midle.post' => array(
+        'tag' => '$post',
+        'replace' => '$post'
+        ),
+
         'content.post' => array(
         'tag' => '$post',
         'replace' => ''
