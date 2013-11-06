@@ -17,10 +17,13 @@ class thomepage extends tsinglemenu  {
     parent::create();
     $this->basename = 'homepage' ;
     $this->data['image'] = '';
+        $this->data['showmidle'] = false;
+                $this->data['midlecat'] = 0;
     $this->data['hideposts'] = false;
     $this->data['invertorder'] = false;
     $this->data['includecats'] = array();
     $this->data['excludecats'] = array();;
+        $this->data['showpagenator'] = true;
     $this->data['archcount'] = 0;
     $this->data['parsetags'] = false;
     $this->coinstances[] = new tcoevents($this, 'onbeforegetitems', 'ongetitems');
@@ -48,15 +51,20 @@ class thomepage extends tsinglemenu  {
         $image = sprintf('<img src="%s" alt="Home image" />', $image);
       }
       $result .= $theme->simple($image . $this->content);
-      if (litepublisher::$options->parsepost || $this->parsetags) {
-        $result = $theme->parse($result);
-      }
-      
-    }
-    if ($this->hideposts) return $result;
+      if (litepublisher::$options->parsepost || $this->parsetags) $result = $theme->parse($result);
+
     
-    $items =  $this->getidposts();
-    $result .= $theme->getpostsnavi($items, false, $this->url, $this->data['archcount']);
+    if ($this->showmidle && $this->midlecat) {
+    
+    }  
+    }
+    
+    if ($this->showposts) {
+        $items =  $this->getidposts();
+        $result = $theme->getposts($items, false);
+    if ($this->showpagenator) $result .= $this->getpages($this->url, litepublisher::$urlmap->page, ceil($this->data['archcount'] / litepublisher::$options->perpage));
+    }
+    
     return $result;
   }
   
@@ -107,7 +115,7 @@ class thomepage extends tsinglemenu  {
   }
   
   public function postschanged() {
-    if ($this->hideposts) return;
+    if (!$this->showposts || !$this->showpagenator) return;
     $this->data['archcount'] = tposts::i()->db->getcount($this->getwhere());
     $this->save();
   }
