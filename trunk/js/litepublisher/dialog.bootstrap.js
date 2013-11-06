@@ -5,7 +5,7 @@
 * and GPL (gpl.txt) licenses.
 **/
 
-(function( $, document){
+(function( $, window, document){
   $.BootstrapDialog = Class.extend({
   tml: '<div class="modal fade" id="dialog-%%id%%" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">' +
     '<div class="modal-dialog"><div class="modal-content">' +
@@ -103,7 +103,9 @@ var self = this;
   });
   
     $(document).ready(function() {
+        window.setTimeout(function() {
   if ("modal" in $.fn) $.bootstrapDialog = new $.BootstrapDialog();
+      }, 40);
   });
 
-})( jQuery, document );
+})( jQuery, window, document );

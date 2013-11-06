@@ -6,7 +6,9 @@
 **/
 
 (function( $ ){
-$.closedialog = $.proxy($.prettyPhoto.close, $.prettyPhoto);
+$.closedialog = function() {
+$.prettyPhoto.close();
+};
 
   $.litedialog = $.prettyPhotoDialog = function(o) {
     var options = $.extend({
