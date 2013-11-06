@@ -42,22 +42,26 @@ class thomepage extends tsinglemenu  {
   public function gettitle() {
   }
   
+  public function getimg() {
+        if ($url = $this->image) {
+        if (!strbegin($url, 'http://')) $url = litepublisher::$site->files . $url;
+return sprintf('<img src="%s" alt="Home image" />', $url);
+      }
+      return '';
+}
+  
   public function getcont() {
     $result = '';
     $theme = ttheme::i();
+    
     if (litepublisher::$urlmap->page == 1) {
-      if ($image = $this->image) {
-        if (!strbegin($image, 'http://')) $image = litepublisher::$site->files . $image;
-        $image = sprintf('<img src="%s" alt="Home image" />', $image);
-      }
-      $result .= $theme->simple($image . $this->content);
-      if (litepublisher::$options->parsepost || $this->parsetags) $result = $theme->parse($result);
+      if ($content = $this->getimg() . $this->content) {
+           $result .= $theme->simple($content);
+      if ($this->parsetags || litepublisher::$options->parsepost) $result = $theme->parse($result);
+}
 
-    
-    if ($this->showmidle && $this->midlecat) {
-    
-    }  
-    }
+        if ($this->showmidle && $this->midlecat) $result .= $this->getmidle();
+   }
     
     if ($this->showposts) {
         $items =  $this->getidposts();
@@ -76,6 +80,7 @@ class thomepage extends tsinglemenu  {
     $from = (litepublisher::$urlmap->page - 1) * $perpage;
     $include = $this->data['includecats'];
     $exclude = $this->data['excludecats'];
+        if ($this->showmidle && $this->midlecat) $exclude[] = $this->midlecat;) 
     if ((count($include) == 0) && (count($exclude) == 0)) {
       $this->data['archcount'] = $posts->archivescount;
       $result = $posts->getpage(0, litepublisher::$urlmap->page, $perpage, $this->invertorder);
@@ -84,6 +89,7 @@ class thomepage extends tsinglemenu  {
       $result = $posts->select($this->getwhere(),
       'order by ' . $posts->thistable . ".posted $order limit $from, $perpage");
     }
+    
     $this->callevent('ongetitems', array(&$result));
     $this->cacheposts = $result;
     return $result;
@@ -95,6 +101,7 @@ class thomepage extends tsinglemenu  {
     $catstable  = litepublisher::$db->prefix . 'categoriesitems';
     $include = $this->data['includecats'];
     $exclude = $this->data['excludecats'];
+        if ($this->showmidle && $this->midlecat) $exclude[] = $this->midlecat;) 
     
     if (count($include) > 0) {
       $result .= sprintf('%s.item  in (%s)', $catstable , implode(',', $include));
@@ -105,8 +112,7 @@ class thomepage extends tsinglemenu  {
       $result .= sprintf('%s.item  not in (%s)', $catstable , implode(',', $exclude));
     }
     
-    
-    if ($result == '') {
+        if ($result == '') {
       return "$poststable.status = 'published'";
     } else {
       return "$poststable.status = 'published' and $poststable.id in
@@ -119,5 +125,31 @@ class thomepage extends tsinglemenu  {
     $this->data['archcount'] = tposts::i()->db->getcount($this->getwhere());
     $this->save();
   }
+  
+  public function getmidle() {     
+    $result = '';
+    $posts = tposts::i();
+    $p = $posts->thistable;
+    $c = litepublisher::$db->prefix . 'categoriesitems';
+      $items = $posts->select("$p.status = 'published' and $p.id in (select DISTINCT post from $c where $c.item  in ($this->midlecat))",
+      "order by  $p.posted desc limit " . litepublisher::$options->perpage);
+    
+    if (!count($items)) return '';
+
+    ttheme::$vars['lang'] = tlocal::i('default');    
+        $theme = ttheme::i();
+    $tml = $theme->templates['content.home.midle.post'];
+    foreach($items as $id) {
+      ttheme::$vars['post'] = tpost::i($id);
+      $result .= $theme->parse($tml);
+      // has $author.* tags in tml
+      if (isset(ttheme::$vars['author'])) unset(ttheme::$vars['author']);
+    }
+    
+$tml = $theme->templates['content.home.midle'];
+    if ($tml) $result = str_replace('$post', $result, $this->parse($tml));
+    unset(ttheme::$vars['post']);
+return $result;
+}
   
 }//class
