@@ -8,12 +8,13 @@ $section = 'default';
    $js->add($section, '/js/litepublisher/dialog.min.js');
     $js->add($section, '/js/litepublisher/dialog.pretty.min.js');
       $js->add($section, '/js/litepublisher/dialog.bootstrap.min.js');
- 
 $js->unlock();
 
-$css = tcssmerger::i();
-$css->lock();
-  $css->add('default', '/js/litepublisher/css/button.min.css');
-$css->deletefile('default', '/plugins/shop/paymethods/resource/button.min.css');    
-$css->unlock();
+$home = litepublisher::$classes->home;
+$home->data['showposts'] = !$home->data['hideposts'];
+unset($home->data['hideposts']);
+        $home->data['showpagenator'] = true;
+                $home->data['showmidle'] = false;
+                $home->data['midlecat'] = 0;
+$home->save();
 }

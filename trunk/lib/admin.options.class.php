@@ -73,21 +73,28 @@ class Tadminoptions extends tadminmenu {
       ', $args);
       
       case 'home':
-      $home = thomepage::i();
+      $home = litepublisher::$classes->home;
       $tabs = new tuitabs();
-      $args->hideposts = $home->hideposts;
-      $args->parsetags = $home->parsetags;
+            $args->image = $home->image;
+                  $args->parsetags = $home->parsetags;
+                        $args->showmidle = $home->showmidle;
+                              $args->midlecat = tposteditor::getcombocategories(array(), $home->midlecat);
+      $args->showposts = $home->showposts;
       $args->invertorder = $home->invertorder;
-      $args->image = $home->image;
+      $args->showpagenator = $home->showpagenator;
+      
       $args->idhome =  $home->id;
       $menus = tmenus::i();
       $args->homemenu =  $menus->home;
       $tabs->add($lang->options, '
-      [checkbox:hideposts]
-      [checkbox:invertorder]
-      [checkbox:homemenu]
-      [checkbox=parsetags]
-      [text:image]
+            [checkbox=homemenu]
+            [text=image]
+                  [checkbox=parsetags]
+                  [checkbox=showmidle]
+                  [combo=midlecat]
+      [checkbox=showposts]
+      [checkbox=invertorder]
+      [checkbox=showpagenator]
       ');
       
       $tabs->add($lang->includecats,
@@ -352,11 +359,14 @@ class Tadminoptions extends tadminmenu {
       $home = thomepage::i();
       $home->lock();
       $home->image = $image;
-      $home->hideposts = isset($hideposts);
-      $home->parsetags = isset($parsetags);
+            $home->parsetags = isset($parsetags);
+            $home->showmidle = isset($showmidle);
+                  $home->midlecat = intval($midlecat);
+      $home->showposts = isset($showposts);
       $home->invertorder = isset($invertorder);
       $home->includecats = tadminhtml::check2array('category-');
       $home->excludecats = tadminhtml::check2array('exclude_category-');
+            $home->showpagenator = isset($showpagenator);
       $home->postschanged();
       $home->unlock();
       
