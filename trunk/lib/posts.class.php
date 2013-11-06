@@ -92,16 +92,16 @@ class tposts extends titems {
       where $where and  $db->posts.id = $childtable.id and $db->urlmap.id  = $db->posts.idurl $limit")));
     }
     
-    /*
     $items = $db->res2items($db->query("select $db->posts.*, $db->urlmap.url as url  from $db->posts, $db->urlmap
     where $where and  $db->urlmap.id  = $db->posts.idurl $limit"));
-    */
-    
+
+/*    
     $items = $db->res2items($db->query(
     "select $db->posts.*, $db->urlmap.url as url  from $db->posts
     left join  $db->urlmap on $db->urlmap.id  = $db->posts.idurl
     where $where $limit"));
-    
+      */  
+  
     if (count($items) == 0) return array();
     $subclasses = array();
     foreach ($items as &$item) {
