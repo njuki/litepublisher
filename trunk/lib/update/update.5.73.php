@@ -10,7 +10,7 @@ $section = 'default';
       $js->add($section, '/js/litepublisher/dialog.bootstrap.min.js');
 $js->unlock();
 
-$home = litepublisher::$classes->home;
+$home = thomepage::i();
 $home->data['showposts'] = !$home->data['hideposts'];
 unset($home->data['hideposts']);
         $home->data['showpagenator'] = true;

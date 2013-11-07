@@ -62,13 +62,12 @@ class tuserpages extends titems implements itemplate {
   
   public function select($where, $limit) {
     if (!$this->dbversion) $this->error('Select method must be called ffrom database version');
-    if ($where != '') $where = ' where ' . $where;
+    if ($where) $where .= ' and ';
     $db = litepublisher::$db;
     $table = $this->thistable;
     $res = $db->query(
-    "select $table.*, $db->urlmap.url as url from $table
-    left join  $db->urlmap on $db->urlmap.id  = $table.idurl
-    $where $limit");
+    "select $table.*, $db->urlmap.url as url from $table, $db->urlmap
+    where $where $db->urlmap.id  = $table.idurl $limit");
     return $this->res2items($res);
   }
   
