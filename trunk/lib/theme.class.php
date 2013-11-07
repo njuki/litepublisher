@@ -273,13 +273,8 @@ class ttheme extends tevents {
   
   public function gethtml($context) {
     self::$vars['context'] = $context;
-    switch ($this->type) {
-      case 'litepublisher':
-      return $this->parse($this->templates['index']);
-      
-      case 'wordpress':
-      return wordpress::getcontent();
-    }
+    if (isset($context->index_tml) && ($tml = $context->index_tml)) return $this->parse($tml);
+          return $this->parse($this->templates['index']);
   }
   
   public function getnotfount() {

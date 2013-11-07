@@ -73,7 +73,7 @@ class Tadminoptions extends tadminmenu {
       ', $args);
       
       case 'home':
-      $home = litepublisher::$classes->home;
+      $home = thomepage::i();
       $tabs = new tuitabs();
             $args->image = $home->image;
                   $args->parsetags = $home->parsetags;

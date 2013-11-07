@@ -692,6 +692,11 @@ class tthemeparser extends tevents {
         'tag' => '',
         'replace' => ''
         ),
+
+        'index.home' => array(
+        'tag' => '$template.index.home',
+        'replace' => ''
+        ),
         
         'title' => array(
         'tag' => '$template.title',
