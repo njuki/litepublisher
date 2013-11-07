@@ -98,19 +98,20 @@ require_once(litepublisher::$paths->lib .'install' . DIRECTORY_SEPARATOR . 'inst
   litepublisher::$site = tsite::i();
   litepublisher::$urlmap = turlmap::i();
 litepublisher::$db = new tdatabase();
+litepublisher::$db->query('SET sort_buffer_size = ' . 1024*1024*32);
+litepublisher::$db->query('SET read_rnd_buffer_size = ' . 1024*1024*32);
 
-tlocal::clearcache();
-litepublisher::$urlmap->clearcache();
+ tlocal::clearcache();
+ttheme::clearcache();
+//litepublisher::$urlmap->clearcache();
 //tfiler::log(var_export($_POST, true));
-//cabinetmenus::i()->uninstall();
-//cabinetmenus::i()->install();
 //tthemegenerator::i()->parseselectors();
-//tupdater::i()->run(5.67);
+//tupdater::i()->run(5.73);
 //shopupdater::i()->run(1.16);
   //litepublisher::$classes->items['adminpayments'][1] = 'shop/orders';
   //litepublisher::$classes->save();
 //tusers::i()->db->setvalue(3, 'phone', 0);
-tfiler::log($_SERVER['REQUEST_URI']);
+//tfiler::log($_SERVER['REQUEST_URI']);
 
   if (!defined('litepublisher_mode')) {
     litepublisher::$urlmap->request(strtolower($_SERVER['HTTP_HOST']), $_SERVER['REQUEST_URI']);
@@ -127,6 +128,7 @@ $man = tdbmanager::i();
 echo $man->performance();
 echo round(microtime(true) - litepublisher::$microtime, 2), "\n";
 */
+
 //tdebugproxy::showperformance();
 
 return;

@@ -30,6 +30,12 @@ class thomepage extends tsinglemenu  {
     $this->cacheposts = false;
   }
   
+  public function getindex_tml() {
+  $theme = ttheme::i();
+  if (!empty($theme->templates['index.home'])) return $theme->templates['index.home'];
+  return false;
+  }
+  
   public function gethead() {
     $result = parent::gethead();
     if ($this->showposts) {
@@ -49,28 +55,35 @@ return sprintf('<img src="%s" alt="Home image" />', $url);
       }
       return '';
 }
+
+  public function getbefore() {
+      if ($result = $this->getimg() . $this->content) {
+          $theme = ttheme::i();
+           $result = $theme->simple($content);
+      if ($this->parsetags || litepublisher::$options->parsepost) $result = $theme->parse($result);
+      return $result;
+}
+return '';
+    }
   
   public function getcont() {
     $result = '';
-    $theme = ttheme::i();
-    
     if (litepublisher::$urlmap->page == 1) {
-      if ($content = $this->getimg() . $this->content) {
-           $result .= $theme->simple($content);
-      if ($this->parsetags || litepublisher::$options->parsepost) $result = $theme->parse($result);
-}
-
+    $result .= $this->getbefore();
         if ($this->showmidle && $this->midlecat) $result .= $this->getmidle();
    }
     
-    if ($this->showposts) {
-        $items =  $this->getidposts();
+    if ($this->showposts) $result .= $this->getpostnavi();
+        return $result;
+  }
+  
+  public function getpostnavi() {
+          $items =  $this->getidposts();
+            $theme = ttheme::i();
         $result = $theme->getposts($items, false);
     if ($this->showpagenator) $result .= $theme->getpages($this->url, litepublisher::$urlmap->page, ceil($this->data['archcount'] / litepublisher::$options->perpage));
-    }
-    
-    return $result;
-  }
+return $result;
+}
   
   public function getidposts() {
     if ($this->cacheposts) return $this->cacheposts;
