@@ -383,15 +383,18 @@ class tcommontags extends titems implements  itemplate {
   }
   
   public function get_sorted_posts($id, $count, $invert) {
-    $itemstable  = $this->itemsposts->thistable;
+    $ti = $this->itemsposts->thistable;
     $posts = $this->factory->posts;
-    $poststable = $posts->thistable;
+    $p = $posts->thistable;
     $order = $invert ? 'asc' : 'desc';
-    return $posts->select("$poststable.status = 'published' and $poststable.id in
-    (select DISTINCT post from $itemstable  where $itemstable .item = $id)",
-    "order by $poststable.posted $order limit 0, $count");
-  }
-  
+        $result = $this->db->res2id($this->db->query("select $p.id as id, $ti.post as post from $p, $ti
+    where    $ti.item = $id and $p.id = $ti.post and $p.status = 'published'
+    order by $p.posted $order limit 0, $count"));
+    
+    $posts->loaditems($result);
+    return $result;
+    }
+
   public function getidposts($id) {
     if (isset($this->_idposts[$id])) return $this->_idposts[$id];
     $item = $this->getitem($id);
@@ -400,6 +403,9 @@ class tcommontags extends titems implements  itemplate {
     $includechilds = (int) $item['includechilds'];
     $perpage = (int) $item['lite'] ? $item['liteperpage'] : litepublisher::$options->perpage;
     $posts = $this->factory->posts;
+    $p = $posts->thistable;
+    $t = $this->thistable;
+    $ti = $this->itemsposts->thistable;
     
     if ($includeparents || $includechilds) {
       $this->loadall();
@@ -412,15 +418,22 @@ class tcommontags extends titems implements  itemplate {
     }
     
     $from = (litepublisher::$urlmap->page - 1) * $perpage;
-    $itemstable  = $this->itemsposts->thistable;
-    $poststable = $posts->thistable;
     $order = (int) $item['invertorder'] ? 'asc' : 'desc';
-    $this->_idposts[$id] = $posts->select("$poststable.status = 'published' and $poststable.id in
-    (select DISTINCT post from $itemstable  where $itemstable .item $tags)",
-    "order by $poststable.posted $order limit $from, $perpage");
+    /*
+    $this->_idposts[$id] = $posts->select("$p.status = 'published' and $p.id in
+    (select DISTINCT post from $ti where $ti.item $tags)",
+    "order by $p.posted $order limit $from, $perpage");
+*/
+
+    $result = $this->db->res2id($this->db->query("select $p.id as id, $ti.post as post from $p, $ti
+    where    $ti.item $tags and $p.id = $ti.post and $p.status = 'published'
+    order by $p.posted $order limit $from, $perpage"));
     
-    return $this->_idposts[$id];
-  }
+$result = array_unique($result);
+    $posts->loaditems($result);
+        $this->_idposts[$id] = $result;
+    return $result;
+      }
   
   public function getparents($id) {$result = array();
     while ($id = (int) $this->items[$id]['parent']) $result[] = $id;

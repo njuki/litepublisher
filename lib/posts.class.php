@@ -147,10 +147,10 @@ class tposts extends titems {
   
   public function getlinks($where, $tml) {
     $db = $this->db;
+    $t = $this->thistable;
     $items = $db->res2assoc($db->query(
-    "select $this->thistable.id, $this->thistable.title, $db->urlmap.url as url  from $db->posts
-    left join  $db->urlmap on $db->urlmap.id  = $db->posts.idurl
-    where $db->posts.status = 'published' and $where"));
+    "select $t.id, $t.title, $db->urlmap.url as url  from $t, $db->urlmap
+    where $t.status = 'published' and $where and $db->urlmap.id  = $t.idurl"));
     
     if (count($items) == 0) return '';
     
@@ -297,16 +297,18 @@ class tposts extends titems {
   public function getpage($author, $page, $perpage, $invertorder) {
     $author = (int) $author;
     $from = ($page - 1) * $perpage;
-    $where = "status = 'published'";
-    if ($author > 1) $where .= " and author = $author";
+    $t = $this->thistable;
+    $where = "$t.status = 'published'";
+    if ($author > 1) $where .= " and $t.author = $author";
     $order = $invertorder ? 'asc' : 'desc';
-    return $this->finditems($where,  " order by posted $order limit $from, $perpage");
+    return $this->finditems($where,  " order by $t.posted $order limit $from, $perpage");
   }
   
   public function stripdrafts(array $items) {
     if (count($items) == 0) return array();
     $list = implode(', ', $items);
-    return $this->db->idselect("status = 'published' and id in ($list)");
+    $t = $this->thistable;
+    return $this->db->idselect("$t.status = 'published' and $t.id in ($list)");
   }
   
   //coclasses

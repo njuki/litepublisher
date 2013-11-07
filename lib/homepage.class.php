@@ -19,7 +19,7 @@ class thomepage extends tsinglemenu  {
     $this->data['image'] = '';
         $this->data['showmidle'] = false;
                 $this->data['midlecat'] = 0;
-    $this->data['hideposts'] = false;
+    $this->data['showposts'] = true;
     $this->data['invertorder'] = false;
     $this->data['includecats'] = array();
     $this->data['excludecats'] = array();;
@@ -32,7 +32,7 @@ class thomepage extends tsinglemenu  {
   
   public function gethead() {
     $result = parent::gethead();
-    if (!$this->hideposts) {
+    if ($this->showposts) {
       $items =  $this->getidposts();
       $result .= tposts::i()->getanhead($items);
     }
@@ -66,7 +66,7 @@ return sprintf('<img src="%s" alt="Home image" />', $url);
     if ($this->showposts) {
         $items =  $this->getidposts();
         $result = $theme->getposts($items, false);
-    if ($this->showpagenator) $result .= $this->getpages($this->url, litepublisher::$urlmap->page, ceil($this->data['archcount'] / litepublisher::$options->perpage));
+    if ($this->showpagenator) $result .= $theme->getpages($this->url, litepublisher::$urlmap->page, ceil($this->data['archcount'] / litepublisher::$options->perpage));
     }
     
     return $result;
@@ -80,7 +80,7 @@ return sprintf('<img src="%s" alt="Home image" />', $url);
     $from = (litepublisher::$urlmap->page - 1) * $perpage;
     $include = $this->data['includecats'];
     $exclude = $this->data['excludecats'];
-        if ($this->showmidle && $this->midlecat) $exclude[] = $this->midlecat;) 
+        if ($this->showmidle && $this->midlecat) $exclude[] = $this->midlecat;
     if ((count($include) == 0) && (count($exclude) == 0)) {
       $this->data['archcount'] = $posts->archivescount;
       $result = $posts->getpage(0, litepublisher::$urlmap->page, $perpage, $this->invertorder);
@@ -101,7 +101,7 @@ return sprintf('<img src="%s" alt="Home image" />', $url);
     $catstable  = litepublisher::$db->prefix . 'categoriesitems';
     $include = $this->data['includecats'];
     $exclude = $this->data['excludecats'];
-        if ($this->showmidle && $this->midlecat) $exclude[] = $this->midlecat;) 
+        if ($this->showmidle && $this->midlecat) $exclude[] = $this->midlecat;
     
     if (count($include) > 0) {
       $result .= sprintf('%s.item  in (%s)', $catstable , implode(',', $include));

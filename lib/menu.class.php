@@ -311,7 +311,7 @@ class tmenus extends titems {
         $tml_single = $theme->templates['menu.single'];
                 $tml_current = $theme->templates['menu.current'];
         
-    $args = new targs(();
+    $args = new targs();
     foreach ($tree as $id => $items) {
       if ($this->exclude($id)) continue;
       $submenu = count($items) == 0 ? '' :  str_replace('$items', $this->getsubmenu($items, $current), $tml_submenu);
