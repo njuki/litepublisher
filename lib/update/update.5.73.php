@@ -17,4 +17,14 @@ unset($home->data['hideposts']);
                 $home->data['showmidle'] = false;
                 $home->data['midlecat'] = 0;
 $home->save();
+
+
+//delete tree editor
+$m = tadminmenus::i();
+$m->deleteurl('/admin/views/edittheme/');
+
+tlocalmerger::i()->delete('theme');
+
+unset(litepublisher::$classes->items['tadminthemetree']);
+litepublisher::$classes->save();
 }

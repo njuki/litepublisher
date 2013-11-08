@@ -609,12 +609,17 @@ class tthemeparser extends tevents {
         '<div class="moderationbuttons" data-idcomment="$comment.id" data-idauthor="$comment.author"></div>',
         $templates[$comment]);
         
-        if ($this->stylebefore && !strpos($templates['index'], '$template.cssmerger_default')) {
+        if ($this->stylebefore) {
+        foreach (array('index', 'index.home') as $k) {
+if (strpos($templates[$k], '$template.cssmerger_default')) continue;
           //insert css merger before theme css
-          if ($i = strpos($templates['index'], '.css')) {
-            $i = strrpos(substr($templates['index'], 0, $i), '<');
+          if ($i = strpos($templates[$k], '.css')) {
+            $i = strrpos(substr($templates[$k], 0, $i), '<');
             $css = '<link type="text/css" href="$site.files$template.cssmerger_default" rel="stylesheet" />';
-            $templates['index'] = substr_replace($templates['index'], $css, $i - 1, 0);
+            $templates[$k] = substr_replace($templates[$k], $css, $i - 1, 0);
+            }
+            }
+            
             //fix $template.head
             // ignore on installling (class not exists)
             if (!defined('litepublisher_mode')|| (litepublisher_mode != 'install')) {
@@ -625,7 +630,7 @@ class tthemeparser extends tevents {
               }
             }
           }
-        }
+          
       }//method
       
       public static function getmetaclasses($s) {

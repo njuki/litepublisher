@@ -15,8 +15,6 @@ function tlocalmergerInstall($self) {
   $self->lock();
   $self->add('default', "lib/languages/$lang/default.ini");
   $self->add('admin', "lib/languages/$lang/admin.ini");
-  $self->add('theme', "lib/languages/$lang/theme.ini");
-  
   if (litepublisher::$options->language != 'en') {
     $self->add('translit', "lib/languages/$lang/translit.ini");
   } else {
