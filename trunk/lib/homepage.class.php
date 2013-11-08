@@ -59,7 +59,7 @@ return sprintf('<img src="%s" alt="Home image" />', $url);
   public function getbefore() {
       if ($result = $this->getimg() . $this->content) {
           $theme = ttheme::i();
-           $result = $theme->simple($content);
+           $result = $theme->simple($result);
       if ($this->parsetags || litepublisher::$options->parsepost) $result = $theme->parse($result);
       return $result;
 }
@@ -91,16 +91,21 @@ return $result;
     $posts = tposts::i();
     $perpage = litepublisher::$options->perpage;
     $from = (litepublisher::$urlmap->page - 1) * $perpage;
-    $include = $this->data['includecats'];
-    $exclude = $this->data['excludecats'];
-        if ($this->showmidle && $this->midlecat) $exclude[] = $this->midlecat;
-    if ((count($include) == 0) && (count($exclude) == 0)) {
+          $order = $this->invertorder ? 'asc' : 'desc';
+          
+              $p = litepublisher::$db->prefix . 'posts';
+    $ci = litepublisher::$db->prefix . 'categoriesitems';
+
+    if ($where = $this->getwhere()) {
+            $result = $posts->db->res2id($posts->db->query("select $p.id as id, $ci.post as post from $p, $ci
+    where    $where and $p.id = $ci.post and $p.status = 'published'
+      order by  $p.posted $order limit $from, $perpage"));
+      
+    $result = array_unique($result);
+        $posts->loaditems($result);
+} else {        
       $this->data['archcount'] = $posts->archivescount;
       $result = $posts->getpage(0, litepublisher::$urlmap->page, $perpage, $this->invertorder);
-    } else {
-      $order = $this->invertorder ? 'asc' : 'desc';
-      $result = $posts->select($this->getwhere(),
-      'order by ' . $posts->thistable . ".posted $order limit $from, $perpage");
     }
     
     $this->callevent('ongetitems', array(&$result));
@@ -110,45 +115,62 @@ return $result;
   
   public function getwhere() {
     $result = '';
-    $poststable = litepublisher::$db->prefix . 'posts';
-    $catstable  = litepublisher::$db->prefix . 'categoriesitems';
+    $p = litepublisher::$db->prefix . 'posts';
+    $ci = litepublisher::$db->prefix . 'categoriesitems';
     $include = $this->data['includecats'];
     $exclude = $this->data['excludecats'];
         if ($this->showmidle && $this->midlecat) $exclude[] = $this->midlecat;
     
     if (count($include) > 0) {
-      $result .= sprintf('%s.item  in (%s)', $catstable , implode(',', $include));
+      $result .= sprintf('%s.item  in (%s)', $ci, implode(',', $include));
     }
     
     if (count($exclude) > 0) {
       if (count($include) > 0) $result .= ' and ';
-      $result .= sprintf('%s.item  not in (%s)', $catstable , implode(',', $exclude));
+      $result .= sprintf('%s.item  not in (%s)', $ci, implode(',', $exclude));
     }
-    
-        if ($result == '') {
-      return "$poststable.status = 'published'";
-    } else {
-      return "$poststable.status = 'published' and $poststable.id in
-      (select DISTINCT post from $catstable  where $result)";
-    }
+
+return $result;    
   }
   
   public function postschanged() {
     if (!$this->showposts || !$this->showpagenator) return;
-    $this->data['archcount'] = tposts::i()->db->getcount($this->getwhere());
+    
+    if ($where = $this->getwhere()) {
+    $db = $this->db;
+                      $p = litepublisher::$db->prefix . 'posts';
+    $ci = litepublisher::$db->prefix . 'categoriesitems';
+
+    $res = $db->query("select count(DISTINCT $p.id) as count from $p, $ci
+    where    $where and $p.id = $ci.post and $p.status = 'published'");
+    
+if ($r = $res->fetch_assoc()) $this->data['archcount'] = (int) $r['count'];
+      } else {        
+      $this->data['archcount'] = tposts::i()->archivescount;
+    }
+
     $this->save();
   }
   
-  public function getmidle() {     
+    public function getmidletitle() {
+    if ($idcat = $this->midlecat) {
+    return $this->getdb('categories')->getvalue($idcat, 'title');
+    }
+    
+    return '';
+    }
+  
+  public function getmidle() {
     $result = '';
     $posts = tposts::i();
     $p = $posts->thistable;
-    $c = litepublisher::$db->prefix . 'categoriesitems';
-      $items = $posts->select("$p.status = 'published' and $p.id in (select DISTINCT post from $c where $c.item  in ($this->midlecat))",
-      "order by  $p.posted desc limit " . litepublisher::$options->perpage);
+    $ci = litepublisher::$db->prefix . 'categoriesitems';
+            $items = $posts->db->res2id($posts->db->query("select $p.id as id, $ci.post as post from $p, $ci
+    where    $ci.item = $this->midlecat and $p.id = $ci.post and $p.status = 'published'
+      order by  $p.posted desc limit " . litepublisher::$options->perpage));
     
     if (!count($items)) return '';
-
+    $posts->loaditems($items);
     ttheme::$vars['lang'] = tlocal::i('default');    
         $theme = ttheme::i();
     $tml = $theme->templates['content.home.midle.post'];
