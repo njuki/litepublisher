@@ -26,5 +26,6 @@ $m->deleteurl('/admin/views/edittheme/');
 tlocalmerger::i()->delete('theme');
 
 unset(litepublisher::$classes->items['tadminthemetree']);
+litepublisher::$classes->classes['home'] = 'thomepage';
 litepublisher::$classes->save();
 }
