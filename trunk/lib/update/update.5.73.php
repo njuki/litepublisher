@@ -8,6 +8,7 @@ $section = 'default';
    $js->add($section, '/js/litepublisher/dialog.min.js');
     $js->add($section, '/js/litepublisher/dialog.pretty.min.js');
       $js->add($section, '/js/litepublisher/dialog.bootstrap.min.js');
+            $js->add($section, '/js/litepublisher/widgets.bootstrap.min.js');
 $js->unlock();
 
 $home = thomepage::i();

@@ -140,5 +140,20 @@
     $(this).before(result).remove();
     return result;
   };
-  
-}(jQuery, document, window));
+
+$.fn.findcomment = function(id) {
+  var result = false;
+  var node = this.get(0);
+  if (id) id = 'widgetcontent-' + id;
+  do {
+    result = node;
+    while (result = result.nextSibling) {
+      if (result.nodeType  == 8) {
+        if (!id || (id == result.nodeValue)) return result;
+      }
+    }
+  } while (node = node.parentNode);
+  return false;
+};
+
+  }(jQuery, document, window));

@@ -351,7 +351,14 @@ class tcommontags extends titems implements  itemplate {
   }
   
   public function getcontent() {
-    return $this->contents->getcontent($this->id);
+if ($s = $this->contents->getcontent($this->id)) {
+$pages = explode('<!--nextpage-->', $s);
+$page = litepublisher::$urlmap->page - 1;
+if (isset($pages[$page])) return $pages[$page];
+return array_shift($pages);
+}
+
+return '';
   }
   
   public function getcont() {
@@ -537,7 +544,7 @@ class ttagcontent extends tdata {
     $item = $this->getitem($id);
     $filter = tcontentfilter::i();
     $item['rawcontent'] = $content;
-    $item['content'] = $filter->filter($content);
+    $item['content'] = $filter->filterpages($content);
     $item['description'] = tcontentfilter::getexcerpt($content, 80);
     $this->setitem($id, $item);
   }

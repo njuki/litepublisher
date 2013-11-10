@@ -7,7 +7,7 @@
 
 function widget_load(node, id, sidebar) {
   $(node).attr("onclick", "");
-  var comment = widget_findcomment(node, id);
+  var comment = $(node).findcomment(id);
   if (! comment) return alert('Widget not found');
   $.get(ltoptions.url + '/getwidget.htm',
 {id: id, sidebar: sidebar, themename: ltoptions.theme.name, idurl: ltoptions.idurl},
@@ -17,21 +17,11 @@ function widget_load(node, id, sidebar) {
 }
 
 function widget_findcomment(node, id) {
-  var result = false;
-  if (id) id = 'widgetcontent-' + id;
-  do {
-    result = node;
-    while (result = result.nextSibling) {
-      if (result.nodeType  == 8) {
-        if (!id || (id == result.nodeValue)) return result;
-      }
-    }
-  } while (node = node.parentNode);
-  return false;
+return $(node).findcomment(id);
 }
 
 function widget_inline(node) {
-  var comment = widget_findcomment(node, false);
+  var comment = $(node).findcomment(false);
   if (! comment) return alert('Widget not found');
   widget_add(node,   $(comment).replaceComment());
 }
@@ -49,6 +39,7 @@ function widget_toggle(node) {
 }
 
 $(document).ready(function() {
+    window.setTimeout(function() {
   $("*[rel~='inlinewidget']").one('click', function() {
     widget_inline(this);
     return false;
@@ -78,4 +69,5 @@ $(document).ready(function() {
     widget_load(this, self.data("idwidget"), self.data("sidebar"));
     return false;
   });
+  }, 120);
 });
