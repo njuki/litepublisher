@@ -417,7 +417,6 @@ class ttheme extends tevents {
     return $this->parsearg($this->templates[$tml], $args);
   }
   
-  
   public function simple($content) {
     return str_replace('$content', $content, $this->templates['content.simple']);
   }

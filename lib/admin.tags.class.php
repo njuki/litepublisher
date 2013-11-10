@@ -145,7 +145,7 @@ class tadmintags extends tadminmenu {
       if (isset($raw)) {
         $filter = tcontentfilter::i();
         $item['rawcontent'] = $raw;
-        $item['content'] = $filter->filter($raw);
+        $item['content'] = $filter->filterpages($raw);
       }
       if (isset($keywords)) {
         $item['keywords'] = $keywords;
