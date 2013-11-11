@@ -168,7 +168,7 @@ if ($r = $res->fetch_assoc()) $this->data['archcount'] = (int) $r['count'];
             $items = $posts->db->res2id($posts->db->query("select $p.id as id, $ci.post as post from $p, $ci
     where    $ci.item = $this->midlecat and $p.id = $ci.post and $p.status = 'published'
       order by  $p.posted desc limit " . litepublisher::$options->perpage));
-    
+
     if (!count($items)) return '';
     $posts->loaditems($items);
     ttheme::$vars['lang'] = tlocal::i('default');    
@@ -180,9 +180,9 @@ if ($r = $res->fetch_assoc()) $this->data['archcount'] = (int) $r['count'];
       // has $author.* tags in tml
       if (isset(ttheme::$vars['author'])) unset(ttheme::$vars['author']);
     }
-    
+
 $tml = $theme->templates['content.home.midle'];
-    if ($tml) $result = str_replace('$post', $result, $this->parse($tml));
+    if ($tml) $result = str_replace('$post', $result, $theme->parse($tml));
     unset(ttheme::$vars['post']);
 return $result;
 }

@@ -634,7 +634,7 @@ if (strpos($templates[$k], '$template.cssmerger_default')) continue;
           
           //reuse templates
           foreach ($templates as $k => $v) {
-          if (is_string($v) && !strbegin($v, '<') && isset($templates[$v] && is_string($templates[$v]))) {
+          if (is_string($v) && !strbegin($v, '<') && isset($templates[$v]) && is_string($templates[$v])) {
           $templates[$k] = $templates[$v];
           }
           }
