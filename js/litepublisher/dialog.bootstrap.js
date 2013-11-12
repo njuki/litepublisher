@@ -17,10 +17,10 @@
 
 button: '<button type="button" class="btn btn-default" id="%%id%%">%%title%%</button>',
 //singlebutton: '<button type="button" class="btn btn-primary" data-dismiss="modal" id="%%id%%">%%title%%</button>',
+dialog: false,
                     
   init: function() {
         this.id = 	$.now();
-        this.stack = [];
 var self = this;
     this.options = {
       title: "",
@@ -43,23 +43,12 @@ var self = this;
           },
           
           close: function() {
-          if (!this.stack.length) return false;
-          
-var dialog = this.stack.pop();
-dialog.modal("hide");
+if (this.dialog) {
+this.dialog.modal("hide");
+this.dialog = false;
+}
           },
           
-          remove: function(dialog) {
-          var stack = this.stack;
-          for (var i = stack.length -1; i >= 0; i--) {
-          if (dialog == stack[i]) {
-          stack.splice(i, 1);
-          dialog.remove();
-          return;
-          }
-          }
-          },
-  
   open: function(o) {
   var id = this.id++;
     var options = $.extend({}, this.options, o);
@@ -81,23 +70,25 @@ buttons: buttons
 });    
 
         var dialog = $(html).appendTo("body");
+        this.dialog = dialog;
+        
         //assign events to buttons
             for (var i =0, l= options.buttons.length;  i < l; i++) {
             $("#" + idbutton +i, dialog).data("index", i).on("click.dialog", options.buttons[i].click);
             }
             
-        this.stack.push(dialog);
         dialog.modal().on("shown.bs.modal", function() {
-                if ($.isFunction(options.open)) options.open($(".pp_inline"));
+                if ($.isFunction(options.open)) options.open(dialog);
                 });
 
 var self = this;
       dialog.on("hidden.bs.modal", function() {
-        if ($.isFunction(options.close)) options.close();
-        self.remove($(this));
+        if ($.isFunction(options.close)) options.close(dialog);
+        self.dialog = false;
+        dialog.remove();
         });
 
-    return options;
+    return dialog;
   }
   
   });
