@@ -508,7 +508,8 @@ class tthemeparser extends tevents {
       public function afterparse($theme) {
         $this->onfix($theme);
         $templates = &$this->theme->templates;
-        $templates['menu.hover'] = isset($templates['menu.hover']) ? ($templates['menu.hover'] == 'true' ? 'true' : 'false') : 'true';
+        $templates['menu.hover'] = isset($templates['menu.hover']) ? ($templates['menu.hover'] == 'true' ? 'true' : 
+        ($templates['menu.hover'] == 'bootstrap' ? 'bootstrap' : 'false')) : 'true';
         if (!isset($templates['content.post.templatecomments'])) $templates['content.post.templatecomments'] = '';
         if (!isset($templates['content.post.templatecomments.confirmform'])) $this->error('tml not');
         

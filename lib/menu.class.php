@@ -283,7 +283,7 @@ class tmenus extends titems {
       $theme = ttheme::i();
       $args = new targs();
       if ($hover) {
-        $items = $this->getsubmenu($this->tree, $current);
+        $items = $this->getsubmenu($this->tree, $current, $hover == 'bootstrap');
       } else {
         $items = '';
         $tml = $theme->templates['menu.item'];
@@ -303,7 +303,7 @@ class tmenus extends titems {
     return $result;
   }
   
-  private function getsubmenu(&$tree, $current) {
+  private function getsubmenu(&$tree, $current, $bootstrap) {
     $result = '';
     $theme = ttheme::i();
     $tml_item = $theme->templates['menu.item'];
@@ -314,11 +314,16 @@ class tmenus extends titems {
     $args = new targs();
     foreach ($tree as $id => $items) {
       if ($this->exclude($id)) continue;
-      $submenu = count($items) == 0 ? '' :  str_replace('$items', $this->getsubmenu($items, $current), $tml_submenu);
-      $this->callevent('onsubitems', array($id, &$subitems));
+            $args->add($this->items[$id]);
+            $submenu = '';
+if (count($items)) {
+      if ($bootstrap) $submenu= $theme->parsearg($tml_single, $args);
+      $submenu .=  $this->getsubmenu($items, $current, $bootstrap);
+       $submenu = str_replace('$items', $submenu, $tml_submenu);
+ }
+ 
+      $this->callevent('onsubitems', array($id, &$submenu));
       $args->submenu = $submenu;
-      $args->add($this->items[$id]);
-      
       $tml = $current == $id ?  $tml_current : ($submenu ? $tml_item : $tml_single);
       $result .= $theme->parsearg($tml, $args);
     }
