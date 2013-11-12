@@ -1,6 +1,9 @@
 <?php
 
 function update573() {
+  litepublisher::$site->jquery_version = '1.10.2';
+  litepublisher::$site->save();
+  
 $js = tjsmerger::i();
 $js->lock();
 $section = 'default';

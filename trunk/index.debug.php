@@ -103,11 +103,13 @@ litepublisher::$db->query('SET read_rnd_buffer_size = ' . 1024*1024*32);
 
  tlocal::clearcache();
 ttheme::clearcache();
+//tsidebars::fix();
 //litepublisher::$urlmap->clearcache();
 //tfiler::log(var_export($_POST, true));
 //tthemegenerator::i()->parseselectors();
+  //litepublisher::$site->jquery_version = '1.10.2';
 //tupdater::i()->run(5.73);
-//shopupdater::i()->run(1.16);
+//shopupdater::i()->run(1.20);
   //litepublisher::$classes->items['adminpayments'][1] = 'shop/orders';
   //litepublisher::$classes->save();
 //tusers::i()->db->setvalue(3, 'phone', 0);
