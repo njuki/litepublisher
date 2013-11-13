@@ -50,6 +50,7 @@ this.dialog = false;
           },
           
   open: function(o) {
+  if (this.dialog) return alert('Dialog already opened');
   var id = this.id++;
     var options = $.extend({}, this.options, o);
     

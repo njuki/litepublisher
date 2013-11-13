@@ -72,7 +72,12 @@ class tcodedocfilter extends titems {
   
   public function html($key, targs $args) {
     $theme = ttheme::instance();
-    return $theme->parsearg(str_replace("'", '"', tlocal::get('htmlcodedoc', $key)), $args);
+    $s = strtr( tlocal::get('htmlcodedoc', $key)), array(
+    '$tableclass' => $theme->templates['content.admin.tableclass'],
+        "'" => '"',
+        ));
+    return $theme->parsearg(strtr($s, $arg);
+
   }
   
   public function getheaders(array &$a) {

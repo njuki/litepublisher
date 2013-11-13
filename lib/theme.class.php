@@ -234,6 +234,7 @@ class ttheme extends tevents {
   
   public function parse($s) {
     $s = strtr((string) $s, self::$defaultargs);
+    $s = str_replace('$tableclass', $this->templates['content.admin.tableclass'], $s);
     array_push($this->parsing, $s);
     try {
       $s = preg_replace('/%%([a-zA-Z0-9]*+)_(\w\w*+)%%/', '\$$1.$2', $s);
