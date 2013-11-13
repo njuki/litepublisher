@@ -65,6 +65,8 @@ class tadminhtml {
   public function parsearg($s, targs $args) {
     if (!is_string($s)) $s = (string) $s;
     $theme = ttheme::i();
+    $s = str_replace('$tableclass', $theme->templates['content.admin.tableclass'], $s);
+    
     // parse tags [form] .. [/form]
     if (is_int($i = strpos($s, '[form]'))) {
       $form = $theme->templates['content.admin.form'];

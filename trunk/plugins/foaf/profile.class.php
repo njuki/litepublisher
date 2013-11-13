@@ -208,8 +208,9 @@ public function gethead() { }
     'mbox' => 'E-Mail'
     );
     $lang = tlocal::i('foaf');
-    $result = "<div class=\"div-table\">
-    <table class=\"classictable\">
+    $theme = ttheme::i();
+    $result = "<div class=\"table-responsive\">
+    <table class=\"' . $theme->templates['content.admin.tableclass'] . '\">
     <thead>
     <tr>
     <th align=\"left\">$lang->contactname</th>

@@ -1276,6 +1276,11 @@ if (strpos($templates[$k], '$template.cssmerger_default')) continue;
         'tag' => '$form',
         'replace' => ''
         ),
+
+        'content.admin.tableclass' => array(
+        'tag' => '$tableclass',
+        'replace' => ''
+        ),
         
         'custom' => array(
         'tag' => '$custom',
