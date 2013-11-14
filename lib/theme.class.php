@@ -234,7 +234,7 @@ class ttheme extends tevents {
   
   public function parse($s) {
     $s = strtr((string) $s, self::$defaultargs);
-    $s = str_replace('$tableclass', $this->templates['content.admin.tableclass'], $s);
+    if (isset($this->templates['content.admin.tableclass'])) $s = str_replace('$tableclass', $this->templates['content.admin.tableclass'], $s);
     array_push($this->parsing, $s);
     try {
       $s = preg_replace('/%%([a-zA-Z0-9]*+)_(\w\w*+)%%/', '\$$1.$2', $s);
@@ -389,6 +389,16 @@ class ttheme extends tevents {
     $args = new targs();
     $args->title = $title;
     $args->items = $content;
+        $args->sidebar = $sidebar;
+    return $this->parsearg($this->getwidgettml($sidebar, $template, ''), $args);
+  }
+
+  public function getidwidget($id, $title, $content, $template, $sidebar) {
+    $args = new targs();
+    $args->id = $id;
+    $args->title = $title;
+    $args->items = $content;
+    $args->sidebar = $sidebar;
     return $this->parsearg($this->getwidgettml($sidebar, $template, ''), $args);
   }
   

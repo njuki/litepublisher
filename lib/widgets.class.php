@@ -40,6 +40,7 @@ class twidget extends tevents {
   }
   
   public function getwidget($id, $sidebar) {
+  ttheme::$vars['widget'] = $this;    
     try {
       $title = $this->gettitle($id);
       $content = $this->getcontent($id, $sidebar);
@@ -47,9 +48,11 @@ class twidget extends tevents {
       litepublisher::$options->handexception($e);
       return '';
     }
-    
+
     $theme = ttheme::i();
-    return $theme->getwidget($title, $content, $this->template, $sidebar);
+    $result = $theme->getidwidget($title, $content, $this->template, $sidebar);
+    unset(ttheme::$vars['widget']);
+    return $result;
   }
   
   public function getdeftitle() {
@@ -438,7 +441,7 @@ class twidgets extends titems_storage {
     $theme = ttheme::i();
     $title = $theme->getajaxtitle($id, $this->items[$id]['title'], $sidebar, 'ajaxwidget');
     $content = "<!--widgetcontent-$id-->";
-    return $theme->getwidget($title, $content, $this->items[$id]['template'], $sidebar);
+    return $theme->getidwidget($id, $title, $content, $this->items[$id]['template'], $sidebar);
   }
   
   public function getinline($id, $sidebar) {
@@ -452,7 +455,7 @@ class twidgets extends titems_storage {
       $content = $widget->getcontent($id, $sidebar);
     }
     $content = sprintf('<!--%s-->', $content);
-    return $theme->getwidget($title, $content, $this->items[$id]['template'], $sidebar);
+    return $theme->getidwidget($id, $title, $content, $this->items[$id]['template'], $sidebar);
   }
   
   public function getwidgetcache($id, $sidebar) {
@@ -460,7 +463,7 @@ class twidgets extends titems_storage {
     $cache = twidgetscache::i();
     $content = $cache->getcontent($id, $sidebar);
     $theme = ttheme::i();
-    return $theme->getwidget($title, $content, $this->items[$id]['template'], $sidebar);
+    return $theme->getidwidget($id, $title, $content, $this->items[$id]['template'], $sidebar);
   }
   
   private function includewidget($id, $sidebar) {
@@ -472,7 +475,7 @@ class twidgets extends titems_storage {
     }
     
     $theme = ttheme::i();
-    return $theme->getwidget($this->items[$id]['title'], "\n<?php echo litepublisher::\$urlmap->cache->get('$filename'); ?>\n", $this->items[$id]['template'], $sidebar);
+    return $theme->getidwidget($id, $this->items[$id]['title'], "\n<?php echo litepublisher::\$urlmap->cache->get('$filename'); ?>\n", $this->items[$id]['template'], $sidebar);
   }
   
   private function getcode($id, $sidebar) {
