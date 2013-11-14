@@ -142,18 +142,29 @@
   };
 
 $.fn.findcomment = function(id) {
-  var result = false;
-  var node = this.get(0);
-  if (id) id = 'widgetcontent-' + id;
+return $.findcomment(this.get(0), id ? 'widgetcontent-' + id : false);
+  };
+  
+  $.findcomment = function(node, text) {
+    var result = false;
   do {
-    result = node;
-    while (result = result.nextSibling) {
-      if (result.nodeType  == 8) {
-        if (!id || (id == result.nodeValue)) return result;
-      }
-    }
+    if (result = $.nextcomment(node, text)) return result;
   } while (node = node.parentNode);
   return false;
+};
+
+$.nextcomment = function(node, text) {
+do {
+      if (node.nodeType  == 8) {
+        if (!text || (text == node.nodeValue)) return node;
+      }
+      
+                 if (node.firstChild) {
+                  if (result = $.nextcomment(node.firstChild, text)) return result;
+                  }
+} while (node = node.nextSibling);
+
+    return false;
 };
 
   }(jQuery, document, window));
