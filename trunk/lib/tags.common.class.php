@@ -349,6 +349,12 @@ class tcommontags extends titems implements  itemplate {
     $item = $this->getitem($this->id);
     return isset($item['idperm']) ? (int) $item['idperm'] : 0;
   }
+
+  public function getindex_tml() {
+  $theme = ttheme::i();
+  if (!empty($theme->templates['index.tag'])) return $theme->templates['index.tag'];
+  return false;
+  }
   
   public function getcontent() {
 if ($s = $this->contents->getcontent($this->id)) {

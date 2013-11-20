@@ -50,7 +50,7 @@ class twidget extends tevents {
     }
 
     $theme = ttheme::i();
-    $result = $theme->getidwidget($title, $content, $this->template, $sidebar);
+    $result = $theme->getidwidget($id, $title, $content, $this->template, $sidebar);
     unset(ttheme::$vars['widget']);
     return $result;
   }

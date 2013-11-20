@@ -9,13 +9,14 @@
 $.fn.popimage = function(options) {
 options = $.extend({
 title: "Image",
+cursorclass: "cursor-loading",
 width: 40,
 height: 30
 }, options);
 
 //create circle for preload
 var prevlink = false;
-    $(this).each(function(){
+return this.each(function(){
 var link = $(this);
     if (prevlink) { 
     link.data("prevlink", prevlink);
@@ -23,15 +24,18 @@ var link = $(this);
 }
 prevlink = link;
 
-link.one("hover focus click", function() {
+link.one("mouseenter.popinit focus.popinit click.popinit", function() {
 var self = $(this);
+self.off(".popinit");
+self.addClass(options.cursorclass);
 var url = self.attr("href");
 var img = new Image();
 						img.onload = function(){
-						//calc size
+						self.removeClass(options.cursorclass);
+												//calc size
 						if (options.width < 100) {
-						var w = Math.floor($(window).width() * 100 / option.width);
-						var h = Math.floor($(window).height() * 100 / options.height);
+						var w = Math.floor($(window).width() * options.width / 100);
+var h = Math.floor(w * options.height / options.width);
 						} else {
 						var w = options.width;
 						var h = options.height;
@@ -54,10 +58,10 @@ if (/\.(jpg|jpeg|png|bmp)$/.test(title)) title = options.title;
 self.popover({
 container: 'body',
 content: '<img src="' + url + '" width="' + w + '" height="' + h + '" />',
-delay: { show: 100, hide: 100 },
+//delay: { show: 100, hide: 100 },
    html:true,
 placement: 'auto bottom',
- title: self.attr("title"),
+ title: title,
 trigger: 'hover focus click'
    });
    
@@ -82,13 +86,12 @@ alert("Error load image");
 };
 
 img.src = url;
+return false;
 });
 });
-
-return this;
 };
 
    $(document).ready(function(){
-   $("a.popimage").popimage();
+   $("a.photo").popimage();
    });
 })( jQuery, window, document);

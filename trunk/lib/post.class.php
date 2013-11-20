@@ -591,6 +591,12 @@ class tpost extends titem implements  itemplate {
     return $files->getfilelist($this->files, true);
   }
   
+    public function getindex_tml() {
+  $theme = $this->theme;
+  if (!empty($theme->templates['index.post'])) return $theme->templates['index.post'];
+  return false;
+  }
+
   public function getcont() {
     return $this->parsetml('content.post');
   }

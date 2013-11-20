@@ -84,6 +84,7 @@ class tlocalmerger extends tfilemerger {
     tfilestorage::savevar(tlocal::getcachedir() . $name , $ini);
     $lang->ini = $ini + $lang->ini;
     $lang->loaded[] = $name;
+          if (isset($ini['searchsect'])) $lang->joinsearch($ini['searchsect']);
   }
   
   public function addhtml($filename) {

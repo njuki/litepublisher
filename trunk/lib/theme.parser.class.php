@@ -611,7 +611,7 @@ class tthemeparser extends tevents {
         $templates[$comment]);
         
         if ($this->stylebefore) {
-        foreach (array('index', 'index.home') as $k) {
+        foreach (array('index', 'index.home', 'index.post', 'index.tag') as $k) {
 if (strpos($templates[$k], '$template.cssmerger_default')) continue;
           //insert css merger before theme css
           if ($i = strpos($templates[$k], '.css')) {
@@ -711,7 +711,17 @@ if (strpos($templates[$k], '$template.cssmerger_default')) continue;
         'tag' => '$template.index.home',
         'replace' => ''
         ),
+
+        'index.post' => array(
+        'tag' => '$template.index.post',
+        'replace' => ''
+        ),
         
+                'index.tag' => array(
+        'tag' => '$template.index.tag',
+        'replace' => ''
+        ),
+
         'title' => array(
         'tag' => '$template.title',
         'replace' => '$template.title'

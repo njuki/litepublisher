@@ -5,18 +5,8 @@
 * and GPL (gpl.txt) licenses.
 **/
 
-(function ($, document, window) {
+(function ($, document) {
   $(document).ready(function() {
-    $("div.filelist-all").each(function() {
-      var self = $(this);
-      var images = $("span.image", self);
-      if (images.length <= 2) {
-        var parent = images.parent();
-        images.insertAfter(self);
-        images.nextAll("p,div").first().addClass("clear-after");
-        parent.remove();
-      }
-      if (self.children().length == 0) self.remove();
-    });
-  });
-}(jQuery, document, window));
+  $("div.filelist-1, div.filelist-2").next().addClass("clear-after");
+          });
+}(jQuery, document));
