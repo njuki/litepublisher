@@ -58,6 +58,12 @@
   window.$ready = function(fn) {
     $(document).ready(fn);
   };
+
+  window.ready2 = function(fn) {
+    $(document).ready(function() {
+        window.setTimeout(fn, 20);
+        });
+  };
   
   window.erralert = function(e) {
     alert('error ' + e.message);

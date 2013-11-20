@@ -137,7 +137,7 @@ trigger: "manual"
 
 });
 
-$(document).ready(function() {
+ready2(function() {
 litepubl.widgets = new litepubl.BootstrapWidgets();
 });
 })( jQuery , window, document, litepubl);

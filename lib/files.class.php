@@ -188,6 +188,8 @@ class tfiles extends titems {
     
     $theme = ttheme::i();
     $args = new targs();
+    $args->count = count($list);
+    
     $url = litepublisher::$site->files . '/files/';
     $preview = new tarray2prop();
     ttheme::$vars['preview'] = $preview;
@@ -195,6 +197,7 @@ class tfiles extends titems {
     // json options supported in php 5.3
     $jsattr =defined('JSON_NUMERIC_CHECK') ? (JSON_NUMERIC_CHECK | (defined('JSON_UNESCAPED_UNICODE') ? JSON_UNESCAPED_UNICODE : 0)) : false;
     foreach ($items as $type => $subitems) {
+    $args->subcount = count($subitems);
       $sublist = '';
       foreach ($subitems as $typeindex => $id) {
         $item = $this->items[$id];
@@ -232,12 +235,14 @@ class tfiles extends titems {
         
         $sublist .= $theme->parsearg($tml[$type], $args);
       }
-      
-      $result .=  str_replace('$' . $type, $sublist, $tml[$type . 's']);
+
+$args->__set($type, $sublist);
+      $result .=  $theme->parsearg($tml[$type . 's'], $args);
     }
     
     unset(ttheme::$vars['preview'], $preview);
-    return str_replace('$files', $result, $theme->parse($tml['all']));
+        $args->files =  $result;
+    return $theme->parsearg($tml['all'], $args);
   }
   
   public function postedited($idpost) {

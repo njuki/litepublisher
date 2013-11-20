@@ -172,6 +172,7 @@ if ($r = $res->fetch_assoc()) $this->data['archcount'] = (int) $r['count'];
     if (!count($items)) return '';
     $posts->loaditems($items);
     ttheme::$vars['lang'] = tlocal::i('default');    
+        ttheme::$vars['home'] = $this;
         $theme = ttheme::i();
     $tml = $theme->templates['content.home.midle.post'];
     foreach($items as $id) {
@@ -182,8 +183,14 @@ if ($r = $res->fetch_assoc()) $this->data['archcount'] = (int) $r['count'];
     }
 
 $tml = $theme->templates['content.home.midle'];
-    if ($tml) $result = str_replace('$post', $result, $theme->parse($tml));
-    unset(ttheme::$vars['post']);
+    if ($tml) {
+    $args = new targs();
+    $args->post = $result;
+    $args->midletitle = $this->midletitle;
+    $result = $theme->parsearg($tml, $args);
+    }
+    
+    unset(ttheme::$vars['post'],     ttheme::$vars['home']);
 return $result;
 }
   

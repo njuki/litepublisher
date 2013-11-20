@@ -61,8 +61,12 @@ class tlocal {
   }
   
   public function addsearch() {
-    $a = func_get_args();
+$this->joinsearch(func_get_args());
+    }
+    
+      public function joinsearch(array $a) {
     foreach ($a as $sect) {
+    $sect = trim(trim($sect), "\"',;:.");
       if (!in_array($sect, $this->searchsect)) $this->searchsect[] = $sect;
     }
   }
@@ -100,7 +104,8 @@ class tlocal {
     $filename = self::getcachedir() . $name;
     if (tfilestorage::loadvar($filename, $v) && is_array($v)) {
       $this->ini = $v + $this->ini ;
-    } else {
+      if (isset($v['searchsect'])) $this->joinsearch($v['searchsect']);
+          } else {
       $merger = tlocalmerger::i();
       $merger->parse($name);
     }
