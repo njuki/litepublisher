@@ -120,9 +120,13 @@ class tsubscribers extends titemsposts {
     if (!$subscribers  || (count($subscribers ) == 0)) return;
     $comment = $comments->getcomment($id);
     ttheme::$vars['comment'] = $comment;
-    $mailtemplate = tmailtemplate::i('comments');
-    $subject = $mailtemplate->subscribesubj ();
-    $body = $mailtemplate->subscribebody();
+    tlocal::usefile('mail');
+    $lang = tlocal::i('mailcomments');
+    $theme = ttheme::i();
+
+    $subject = $theme->parsearg($lang->subscribesubj, $args);
+    $body = $theme->parsearg($lang->subscribebody, $args);
+
     $body .= "\n";
     $adminurl = litepublisher::$site->url . '/admin/subscribers/';
     

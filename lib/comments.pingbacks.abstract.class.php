@@ -46,10 +46,13 @@ class tabstractpingbacks extends titems {
     $args->posttitle =$post->title;
     $args->postlink = $post->link;
     
-    $mailtemplate = tmailtemplate::i('comments');
-    $subject = $mailtemplate->pingbacksubj($args);
-    $body = $mailtemplate->pingbackbody($args);
-    
+    tlocal::usefile('mail');
+    $lang = tlocal::i('mailcomments');
+    $theme = ttheme::i();
+
+    $subject = $theme->parsearg($lang->pingbacksubj, $args);
+    $body = $theme->parsearg($lang->pingbackbody, $args);
+  
     tmailer::sendmail(litepublisher::$site->name, litepublisher::$options->fromemail,
     'admin', litepublisher::$options->email,  $subject, $body);
     
