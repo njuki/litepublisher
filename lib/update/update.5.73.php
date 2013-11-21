@@ -33,6 +33,7 @@ $m = tadminmenus::i();
 $m->deleteurl('/admin/views/edittheme/');
 
 unset(litepublisher::$classes->items['tadminthemetree']);
+unset(litepublisher::$classes->items['tmailtemplate']);
 litepublisher::$classes->classes['home'] = 'thomepage';
 litepublisher::$classes->save();
 }
