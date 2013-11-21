@@ -1,6 +1,12 @@
 <?php
 
 function update573() {
+$l = tlocalmerger::i();
+$l->lock();
+$l->delete('theme');
+    $l->add('mail', "lib/languages/" . litepublisher::$options->language . "/mail.ini");
+    $l->unlock();
+
   litepublisher::$site->jquery_version = '1.10.2';
   litepublisher::$site->save();
   
@@ -22,12 +28,9 @@ unset($home->data['hideposts']);
                 $home->data['midlecat'] = 0;
 $home->save();
 
-
 //delete tree editor
 $m = tadminmenus::i();
 $m->deleteurl('/admin/views/edittheme/');
-
-tlocalmerger::i()->delete('theme');
 
 unset(litepublisher::$classes->items['tadminthemetree']);
 litepublisher::$classes->classes['home'] = 'thomepage';

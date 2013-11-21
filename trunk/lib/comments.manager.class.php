@@ -87,15 +87,18 @@ class tcommentmanager extends tevents_storage {
     //ignore admin comments
     if ($comment->author == 1) return;
     ttheme::$vars['comment'] = $comment;
-    $args = targs::i();
+    $args = new targs();
     $adminurl = litepublisher::$site->url . '/admin/comments/'. litepublisher::$site->q . "id=$id";
     $ref = md5(litepublisher::$secret . $adminurl);
     $adminurl .= "&ref=$ref&action";
     $args->adminurl = $adminurl;
     
-    $mailtemplate = tmailtemplate::i('comments');
-    $subject = $mailtemplate->subject($args);
-    $body = $mailtemplate->body($args);
+    tlocal::usefile('mail');
+    $lang = tlocal::i('mailcomments');
+    $theme = ttheme::i();
+
+    $subject = $theme->parsearg($lang->subject, $args);
+    $body = $theme->parsearg($lang->body, $args);
     return tmailer::sendtoadmin($subject, $body, false);
   }
   
