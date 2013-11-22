@@ -5,6 +5,14 @@ $l = tlocalmerger::i();
 $l->lock();
 $l->delete('theme');
     $l->add('mail', "lib/languages/" . litepublisher::$options->language . "/mail.ini");
+    if (litepublisher::$classes->exists('tticket')) {
+        $l->add('mail', "plugins/tickets/resource/" . litepublisher::$options->language . ".mail.ini");
+        }
+        
+            if (litepublisher::$classes->exists('tfoaf')) {
+        $l->add('mail', "plugins/foaf/resource/" . litepublisher::$options->language . ".mail.ini");
+        }
+
     $l->unlock();
 
   litepublisher::$site->jquery_version = '1.10.2';
