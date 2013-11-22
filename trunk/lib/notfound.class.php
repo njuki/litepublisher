@@ -62,12 +62,17 @@ class tnotfound404 extends tforbidden {
   }
   
   private function sendmail() {
-    $args = targs::i();
+    $args = new targs();
     $args->url = 'http://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
     $args->ref =  isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : '';
-    $mailtemplate = tmailtemplate::i('notfound');
-    $subject = $mailtemplate->subject($args);
-    $body = $mailtemplate->body($args);
+    
+    tlocal::usefile('mail');
+    $lang = tlocal::i('notfound');
+    $theme = ttheme::i();
+
+    $subject = $theme->parsearg($lang->subject, $args);
+    $body = $theme->parsearg($lang->body, $args);
+
     tmailer::sendtoadmin($subject, $body, true);
   }
   
