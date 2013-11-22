@@ -12,7 +12,12 @@ function tticketsInstall($self) {
   }
   
   $dirname = basename(dirname(__file__));
-  tlocalmerger::i()->add('default', "plugins/$dirname/resource/" . litepublisher::$options->language . ".ini");
+  $l = tlocalmerger::i();
+  $l->lock();
+  $l->add('default', "plugins/$dirname/resource/" . litepublisher::$options->language . ".ini");
+    $l->add('mail', "plugins/$dirname/resource/" . litepublisher::$options->language . ".mail.ini");
+  $l->unlock();
+  
   tadminhtml::i()->inidir(dirname(__file__) . '/resource/');
   $lang = tlocal::admin('tickets');
   $lang->addsearch('ticket', 'tickets');
