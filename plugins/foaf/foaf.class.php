@@ -221,9 +221,14 @@ class tfoaf extends titems {
     $lang = tlocal::i('foaf');
     $event = 'mail' . $event;
     $args->event = $lang->$event;
-    $mailtemplate = tmailtemplate::i('foaf');
-    $subject = $mailtemplate->subject($args);
-    $body = $mailtemplate->body($args);
+
+    tlocal::usefile('mail');
+    $lang = tlocal::i('mailfoaf');
+    $theme = ttheme::i();
+
+    $subject = $theme->parsearg($lang->subject, $args);
+    $body = $theme->parsearg($lang->body, $args);
+
     tmailer::sendtoadmin($subject, $body);
   }
   

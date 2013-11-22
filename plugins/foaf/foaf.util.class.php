@@ -101,9 +101,14 @@ class tfoafutil  extends tevents {
       $result = str_replace('\n', "\n", $result);
       $args = targs::i();
       $args->errors = $result;
-      $mailtemplate = tmailtemplate::i('foaf');
-      $subject = $mailtemplate->errorsubj($args);
-      $body = $mailtemplate->errorbody ($args);
+      
+    tlocal::usefile('mail');
+    $lang = tlocal::i('mailfoaf');
+    $theme = ttheme::i();
+
+    $subject = $theme->parsearg($lang->errorsubj, $args);
+    $body = $theme->parsearg($lang->errorbody, $args);
+
       tmailer::sendtoadmin($subject, $body);
     }
   }
