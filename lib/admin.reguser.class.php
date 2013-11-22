@@ -149,9 +149,12 @@ class tadminreguser extends tadminform {
     $args->password = $password;
     $args->confirmurl = litepublisher::$site->url . '/admin/reguser/' . litepublisher::$site->q . 'email=' . urlencode($email);
     
-    $mailtemplate = tmailtemplate::i($this->section);
-    $subject = $mailtemplate->subject($args);
-    $body = $mailtemplate->body($args);
+    tlocal::usefile('mail');
+    $lang = tlocal::i('mailusers');
+    $theme = ttheme::i();
+
+    $subject = $theme->parsearg($lang->subject, $args);
+    $body = $theme->parsearg($lang->body, $args);
     
     tmailer::sendmail(litepublisher::$site->name, litepublisher::$options->fromemail,
     $name, $email, $subject, $body);
