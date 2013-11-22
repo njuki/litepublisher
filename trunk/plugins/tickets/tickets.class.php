@@ -54,14 +54,15 @@ class ttickets extends tposts {
     ttheme::$vars['ticket'] = $ticket;
     $args = new targs();
     $args->adminurl = litepublisher::$site->url . '/admin/tickets/editor/'. litepublisher::$site->q . 'id=' . $ticket->id;
-    $html = tadminhtml::i();
-    $html->iniplugin($this);
-    $lang = tlocal::admin('tickets');
-    $lang->addsearch('ticket');
-    
-    $mailtemplate = tmailtemplate::i('tickets');
-    $subject = $mailtemplate->subject($args);
-    $body = $mailtemplate->body($args);
+
+    tlocal::usefile('mail');
+    $lang = tlocal::i('mailticket');
+        $lang->addsearch('ticket');
+    $theme = ttheme::i();
+
+    $subject = $theme->parsearg($lang->subject, $args);
+    $body = $theme->parsearg($lang->body, $args);
+
     tmailer::sendtoadmin($subject, $body);
   }
   
