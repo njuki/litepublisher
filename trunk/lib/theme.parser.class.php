@@ -1246,6 +1246,11 @@ if (strpos($templates[$k], '$template.cssmerger_default')) continue;
         'tag' => '$password',
         'replace' => ''
         ),
+
+        'content.admin.upload' => array(
+        'tag' => '$upload',
+        'replace' => ''
+        ),
         
         'content.admin.combo' => array(
         'tag' => '$combo',

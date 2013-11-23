@@ -56,14 +56,14 @@
     
     tabli: '<li><a href="#filepage-%%index%%">%%index%%</a></li>',
     
-    fileprops: '<p><label><input type="text" name="fileprop-title" value="" size="22" />\
-    <strong>%%lang.title%%</strong></label></p>\
-    \
-    <p><label><input type="text" name="fileprop-description" value="" size="22" />\
-    <strong>%%lang.description%%</strong></label></p>\
-    \
-    <p><label><input type="text" name="fileprop-keywords" value="" size="22" />\
-    <strong>%%lang.keywords%%</strong></label></p>'
+    fileprops: '<div class="form-group"><label for="fileprop-title">%%lang.title%%</label>' +
+    '<input type="text" class="form-control" name="fileprop-title" id="text-fileprop-title" value="" /></div>' +
+    
+    '<div class="form-group"><label for="text-fileprop-description">%%lang.description%%</label>' +
+    '<input type="text" class="form-control" name="fileprop-description" id="text-fileprop-description" value="" /></div>' +
+
+    '<div class="form-group"><label for="text-fileprop-keywords">%%lang.keywords%%</label>' +
+    '<input type="text" class="form-control" name="fileprop-keywords" id="text-fileprop-keywords" value="" />'
   };
   
 })( window);
