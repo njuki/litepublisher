@@ -360,13 +360,20 @@ class tpost extends titem implements  itemplate {
   public function getsqldate() {
     return sqldate($this->posted);
   }
-  
-  public function getimage() {
+
+  public function getidimage() {
     if (count($this->files) == 0) return false;
     $files = $this->factory->files;
     foreach ($this->files as $id) {
       $item = $files->getitem($id);
-      if ('image' == $item['media']) return $files->geturl($id);
+      if ('image' == $item['media']) return $id;
+    }
+    return false;
+  }
+  
+  public function getimage() {
+  if ($id = $this->getidimage()) {
+return $this->factory->files->geturl($id);
     }
     return false;
   }

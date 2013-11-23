@@ -16,6 +16,8 @@ height: 30
 
 //create circle for preload
 var prevlink = false;
+// regexp test image extension in url
+var re = /\.(jpg|jpeg|png|bmp)$/;
 return this.each(function(){
 var link = $(this);
     if (prevlink) { 
@@ -24,11 +26,20 @@ var link = $(this);
 }
 prevlink = link;
 
-link.one("mouseenter.popinit focus.popinit click.popinit", function() {
+link.one("mouseenter.popinit focus.popinit click.popinit", function(e) {
 var self = $(this);
 self.off(".popinit");
 self.addClass(options.cursorclass);
 var url = self.attr("href");
+if (re.test(url)) {
+var clicktrigger = " click";
+} else {
+// follow by link if it clicked
+if (e.type == "click") return;
+var clicktrigger = "";
+url = self.data("image");
+}
+
 var img = new Image();
 						img.onload = function(){
 						self.removeClass(options.cursorclass);
@@ -54,7 +65,8 @@ var h = Math.floor(w * options.height / options.width);
 }
 
 var title = self.attr("title");
-if (/\.(jpg|jpeg|png|bmp)$/.test(title)) title = options.title;
+if (re.test(title)) title = options.title;
+
 self.popover({
 container: 'body',
 content: '<img src="' + url + '" width="' + w + '" height="' + h + '" />',
@@ -62,7 +74,7 @@ content: '<img src="' + url + '" width="' + w + '" height="' + h + '" />',
    html:true,
 placement: 'auto bottom',
  title: title,
-trigger: 'hover focus click'
+trigger: 'hover focus' + clicktrigger
    });
    
    self.popover('show');
