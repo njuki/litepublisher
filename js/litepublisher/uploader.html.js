@@ -10,10 +10,11 @@
     owner: false,
     jq: false,
     queue: false,
-    html: '<div id="html-uploader">\
-    <p><label for="file-input">%%lang.upload%%:</label><input type="file" id="file-input" name="Filedata" multiple /></p>\
-    <div id="dropzone">%%lang.dragfiles%%</div>\
-    </div>',
+    html: '<div id="html-uploader" class="form-group"' +
+'<label for="file-input">%%lang.upload%%</label>' +
+'<input type="file" id="file-input" name="Filedata" multiple />' +
+    '<div id="dropzone" class="help-block">%%lang.dragfiles%%</div>' +
+    '</div>',
     idhtml: "#file-input, #dropzone",
     
     init: function(owner) {
