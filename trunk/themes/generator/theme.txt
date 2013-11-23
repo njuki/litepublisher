@@ -130,8 +130,8 @@ $divider = []
 </div>]
 
 content.admin = [
-$editor = [<p><label for="editor-$name"><strong>$lang.$name:</strong></label></p><textarea name="$name" id="editor-$name" cols="64%" rows="15">$value</textarea>]
-$text = [<p><input type="text" name="$name" id="text-$name" value="$value" size="40" /> <label for="text-$name"><strong>$lang.$name</strong></label></p>]
+$editor = [<p><label for="editor-$name">$lang.$name:</label></p><textarea name="$name" id="editor-$name" cols="64%" rows="15">$value</textarea>]
+$text = [<p><input type="text" name="$name" id="text-$name" value="$value" size="40" /> <label for="text-$name">$lang.$name</label></p>]
 ]
 
 $template.sidebar = [

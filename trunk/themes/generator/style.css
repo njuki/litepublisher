@@ -130,3 +130,4 @@ ul#nav{display:block;list-style:none;margin:0 20px;width:940px;position:relative
 div.clear{font-size:0}
 .red{color:red}
 .hidden {display: none}
+label {font-weight: bold;}

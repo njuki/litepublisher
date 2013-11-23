@@ -91,3 +91,4 @@ a:hover{color:#0c588a;}
 .blogolet {float:right;}
 .blogolet a {color:#0c588a;font-size:10px;}
 .post-tags, .post-cat {height:16px;display:block;}
+label {font-weight: bold;}
