@@ -125,10 +125,11 @@ $this->joinsearch(func_get_args());
       $ini = ttheme::cacheini($filename);
       if (is_array($ini)) {
         $self->ini = $ini + $self->ini ;
+              if (isset($ini['searchsect'])) $self->joinsearch($ini['searchsect']);
         $keys = array_keys($ini);
         $self->section = array_shift($keys);
         $self->addsearch($self->section);
-      }
+              }
     }
     return $self;
   }

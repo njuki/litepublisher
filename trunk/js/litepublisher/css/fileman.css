@@ -1,4 +1,11 @@
-.file-item{float:left;width:25%;height:175px;margin-bottom:5px;text-align:center;}
+.file-item{
+float:left;
+width:25%;
+height:175px;
+margin-bottom:5px;
+text-align:center;
+}
+
 .file-toolbar{width:96%;height:30px;text-align:center;}
 .file-toolbar a{background:url(../icons/all.png) no-repeat 0 0;display:inline-block;width:24px;height:24px;margin:3px;}
 a.add-toolbutton{background-position:0 0;}
@@ -9,8 +16,8 @@ a.property-toolbutton{background-position:0 -100px;}
 .file-content{width:96%;height:145px;}
 .file-content img{height:100% !important;width:100% !important;}
 .file-content p{font-size:10px;}
-.files-tab .delete-toolbutton{display:none;}#current-files 
-.add-toolbutton{display:none;}
+.files-tab .delete-toolbutton{display:none;}
+#current-files .add-toolbutton{display:none;}
 .text-right{text-align:right;}
 .file-items{width:100%;overflow:hidden;}
 #dropzone{border:solid 1px blue;}
