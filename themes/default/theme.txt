@@ -792,11 +792,12 @@ $radio = [<div><h4>$lang.$name:</h4>$value</div>]
 
 $hidden = [<input type="hidden" name="$name" id="hidden-$name" value="$value" />]
 $button =   [<button type="submit" name="$name" id="submitbutton-$name" class="button"><span>$lang.$name</span></button>]
-$submit =   [        <div style="text-align: center;"><div style="margin: auto;"><button type="submit" name="$name" id="submitbutton-$name" class="button"><span>$lang.$name</span></button></div></div>]
+$submit =   [        <div class="text-center"><div class="margin-auto"><button type="submit" name="$name" id="submitbutton-$name" class="button"><span>$lang.$name</span></button></div></div>]
 
-$form = [<h3>$formtitle</h3><form action="" method="post" >
+$form = [<h3>$formtitle</h3>
+<form action="" method="post" role="form">
 $items
-        <div style="text-align: center;"><div style="margin: auto;"><button type="submit" name="submitbutton" class="button"><span>$lang.update</span></button></div></div>
+        <div class="text-center"><div class="margin-auto"><button type="submit" name="submitbutton" class="button"><span>$lang.update</span></button></div></div>
 </form>]
 
 ]

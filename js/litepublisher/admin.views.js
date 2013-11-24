@@ -4,10 +4,9 @@
 * Dual licensed under the MIT (mit.txt)
 * and GPL (gpl.txt) licenses.
 **/
-
+(function ($, document, window) {
 function submit_views() {
-  for (var i =0; i < ltoptions.allviews.length; i++) {
-    var idview = ltoptions.allviews[i];
+  for (var idview in ltoptions.allviews) {
     var idwidgets = "#widgets_" + idview + "_";
     $("ul[id^='view_sidebar_" + idview + "_']").each(function() {
       var sidebar = $(this).attr("id").split("_").pop();
@@ -35,28 +34,33 @@ function widget_clicked() {
 }
 
 function _init_views() {
-  $(document).ready(function() {
-    $("div.admintabs").each(function() {
-      var idview = $(this).attr("id").split("_").pop();
+var form = $("form:first");
+/* removed from html
+        $("#checkbox-customsidebar_1", form).attr("disabled", "disabled");
+        $("#checkbox-disableajax_1", form).attr("disabled", "disabled");
+        $("#submitbutton-delete_1", form).attr("disabled", "disabled");
+        */
+
+$(".admintabs        ", form).each(function() {
+var tab = $(this);
+var customdata = tab.data("custom");
+if (!customdata || !("idview" in customdata)) return;
+var idview = customdata.idview;
       if (idview == "1") {
-        $("#customsidebar_1").attr("disabled", "disabled");
-        $("#disableajax_1").attr("disabled", "disabled");
-        $("#delete_1").attr("disabled", "disabled");
         var disabled = [];
       } else {
-        var checked = $("#customsidebar_" + idview).attr("checked");
+        var checked = $("#checkbox-customsidebar_" + idview, tab).attr("checked");
         var disabled = checked ? [] : [0];
-        $("#disableajax_" + idview).attr("disabled", checked ? "disabled" : false);
+        $("#checkbox-disableajax_" + idview, tab).attr("disabled", checked ? "disabled" : false);
       }
       
-      $(this).tabs({
-        beforeLoad: litepubl.uibefore,
+tab.tabs("option", {
         disabled: disabled,
         active: disabled.length == 0 ? 0 : 1,
         activate: function(event, ui) {
           if (        ui.newTab.index() == 0) {
-            var idview = $(ui.newPanel).attr("id").split("_").pop();
-            var showlist = $("#appendwidget_" + idview).data("showlist");
+            var idview = $(ui.newTab).closest(".admintabs").data("custom").idview;
+            var showlist = $("#appendwidget_" + idview, form).data("showlist");
             show_append_widgets(showlist);
           } else {
             show_append_widgets(false);
@@ -64,36 +68,35 @@ function _init_views() {
         }
         
       });
+});
+    
+    $("input[name^='customsidebar_']", form).click(function() {
+    var self = $(this);
+      var idview = self.attr("id").split("_").pop();
+      var checked = self.attr("checked");
+      $("#checkbox-disableajax_" + idview).attr("disabled", checked ? "disabled" : "");
+self.closest(".admintabs").tabs( "option", "disabled", checked  ? [] : [0]);
     });
     
-    $("input[id^='customsidebar_']").click(function() {
-      var idview = $(this).attr("id").split("_").pop();
-      var checked = $(this).attr("checked");
-      $("#disableajax_" + idview).attr("disabled", checked ? "disabled" : "");
-      $( "#viewtab_" + idview ).tabs( "option", "disabled", checked  ? [] : [0]);
-    });
-    
-  $("#allviewtabs").tabs({         beforeLoad: litepubl.uibefore});
-    
-    $("input[id^='delete_']").click(function() {
-      var idview = $(this).attr("id").split("_").pop();
+    $("input[name^='delete_']", form).click(function() {
+      var idview = $(this).attr("name").split("_").pop();
       $.confirmdelete(function() {
-        $("#action").val("delete");
-        $("#action_value").val(idview);
-        $("#form").submit();
+        $("#action", form).val("delete");
+        $("#action_value", form).val(idview);
+form.submit();
       });
     });
     
-    $("#form").submit(function() {
-      if ("delete" == $("#action").val()) return;
-      $("#action").val("widgets");
+form.submit(function() {
+      if ("delete" == $("#hidden-action", form).val()) return;
+      $("#hidden-action", form).val("widgets");
       submit_views();
       //return false;
     });
     
-    $(".view_sidebar li").click(widget_clicked);
+    $(".view_sidebar li", form).click(widget_clicked);
     
-    $(".view_sidebars").each(function() {
+    $(".view_sidebars", form).each(function() {
       $(".view_sidebar", this).sortable({
         connectWith: $(".view_sidebar", this),
         
@@ -115,27 +118,27 @@ function _init_views() {
       });
     });
     
-    $("#append_widgets").sortable({
+    $("#append_widgets", form).sortable({
       connectWith: ".view_sidebar",
       helper: "clone"
     });
     
-    $("input[id^='widget_delete_']").click(function() {
+    $("button[id^='submit-widget_delete_']", form).click(function() {
       var a = $(this).attr("id").split("_");
       var idwidget = a.pop();
       var idview = a.pop();
       $.confirmdelete(function() {
-        $("#widget_" + idview + "_" + idwidget).remove();
-        $("#widgetoptions_" + idview + "_" + idwidget).hide();
+        $("#widget_" + idview + "_" + idwidget, form).remove();
+        $("#widgetoptions_" + idview + "_" + idwidget, form).hide();
       });
     });
     
     //remember init state
-    $("input[id^='inline_']").each(function() {
+    $("input[id^='inline_']", form).each(function() {
       $(this).data("enabled", ! $(this).attr("disabled"));
     });
     //ajax options of single widget
-    $("input[id^='ajax_']").click(function() {
+    $("input[id^='ajax_']", form).click(function() {
       var checked = $(this).attr("checked");
       var id = "#" + $(this).attr("id").replace("ajax_", "inline_");
       if ($(id).data("enabled")) {
@@ -143,19 +146,15 @@ function _init_views() {
       }
     });
     
-    $("a[id^='appendwidget_']").click(function() {
+    $("a[id^='appendwidget_']", form).click(function() {
       var showlist = ! $(this).data("showlist");
       $(this).data("showlist", showlist);
       show_append_widgets(showlist);
       return false;
-      
-      
-  });   });
-}
+});
+   }
 
-if (window.jqloader ===  undefined) {
-  _init_views();
-} else {
-  var script = window.jqloader.load(ltoptions.files + '/js/litepublisher/admin.' + $.fn.jquery + '.min.js');
-  script.done(_init_views);
-}
+$(document).ready(function() {
+_init_views();
+});
+}(jQuery, document, window));

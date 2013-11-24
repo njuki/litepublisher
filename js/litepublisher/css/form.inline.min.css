@@ -1,0 +1,12 @@
+  .form-inline label,
+  .form-inline .form-group,
+    .form-inline .form-control,
+  .form-inline .radio,
+  .form-inline .checkbox {
+    display: inline-block;
+  }
+  
+  .radio label,
+.checkbox label {
+  display: inline;
+}

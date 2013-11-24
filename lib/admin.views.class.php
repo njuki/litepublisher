@@ -115,16 +115,13 @@ return strtr($theme->templates['content.admin.combo'], array(
     $template = ttemplate::i();
     switch ($this->name) {
       case 'views':
+      $result .= tuitabs::gethead();
       $template->ltoptions['allviews'] = array_keys(tviews::i()->items);
       $result .= $template->getjavascript($template->jsmerger_adminviews);
       break;
       
       case 'headers':
       $result .= tuitabs      ::gethead();
-      break;
-      
-      case 'spec':
-    $result .= $template->getready('$("#tabs").tabs({ beforeLoad: litepubl.uibefore});');
       break;
     }
     return $result;
@@ -136,7 +133,7 @@ return strtr($theme->templates['content.admin.combo'], array(
     $html = $this->html;
     $html->section = 'views';
     $lang = tlocal::i('views');
-    $args = targs::i();
+    $args = new targs();
     $args->idview = $idview;
     $args->adminurl = tadminhtml::getadminlink('/admin/views/widgets/', 'idwidget');
     $view_sidebars = '';
@@ -158,11 +155,13 @@ return strtr($theme->templates['content.admin.combo'], array(
         $idwidgets[] = $id;
         $widget = $widgets->getitem($id);
         $args->id = $id;
-        $args->ajax = $_item['ajax'] ? true : false;
-        $args->inline = $_item['ajax'] === 'inline';
         $args->disabled = ($widget['cache'] == 'cache') || ($widget['cache'] == 'nocache') ? '' : 'disabled="disabled"';
         $args->add($widget);
         $widgetlist .= $html->widgetitem($args);
+        $args->controls =         $html->getinput('checkbox', "ajax_{$idview}_$id", $_item['ajax'] ? 'checked="checked"' : '', $lang->ajax) .
+        $html->getinput('checkbox', "inline_{$idview}_$id", $_item['ajax'] === 'inline' ? 'checked="checked"' : '', $lang->inline) .
+        $html->getinput('submit', "widget_delete_{$idview}_$id", '', $lang->widget_delete);
+        
         $widgetoptions .= $html->widgetoption($args);
       }
       $args->sidebarname = $sidebarnames[$index];
@@ -192,9 +191,9 @@ return strtr($theme->templates['content.admin.combo'], array(
     $args = targs::i();
     switch ($this->name) {
       case 'views':
-      $items = '';
-      $content = '';
-      
+      $tabs = new tuitabs();
+              $html->addsearch('views');
+              $lang->addsearch('views');
       $menuitems = array();
       foreach ($views->items as $id => $itemview) {
         $class = $itemview['menuclass'];
@@ -202,18 +201,28 @@ return strtr($theme->templates['content.admin.combo'], array(
       }
       
       foreach ($views->items as $id => $itemview) {
+      $tab = new tuitabs();
+      $tab->customdata = array("idview" => $id);
+              $name = $itemview['name'];
         $args->add($itemview);
-        $items .= $html->itemview($args);
-        $args->view_sidebars = $this->get_view_sidebars($id);
-        $args->view_theme = $this->get_view_theme($id);
-        $html->section = 'views';
-        $args->view_custom = $this->get_custom($id);
-        $args->menucombo = tadminhtml  ::array2combo($menuitems, $itemview['menuclass']);
-        $content .= $html->viewtab($args);
+        $tab->add($lang->widgets, $this->get_view_sidebars($id));
+        $tab->add($lang->name,
+$html->getinput('text', "name_$id", $name, $lang->name) .
+($id == 1 ? '' : (
+$html->getinput('checkbox', "customsidebar_$id", $itemview['customsidebar'] ? 'checked="checked"' : '', $lang->customsidebar) .
+$html->getinput('checkbox', "disableajax_$id", $itemview['disableajax'] ? 'checked="checked"' : '', $lang->disableajax)
+)) .
+$html->getinput('checkbox', "hovermenu_$id", $itemview['hovermenu'] ? 'checked="checked"' : '', $lang->hovermenu) .
+$html->getinput('combo', "menuclass_$id", tadminhtml  ::array2combo($menuitems, $itemview['menuclass']), $lang->menu) .
+($id == 1 ? '' : (
+$html->getinput('submit', "delete_$id", '', $lang->deleteview)
+))
+        );
+        
+$tab->add($lang->theme, $this->get_view_theme($id));
+$tab->add($lang->custom, $this->get_custom($id));
+                $tabs->add($name, $tab->get());
       }
-      $lang->section = 'views';
-      $args->items = $items;
-      $args->content = $content;
       
       $widgetlist = '';
       $widgets = twidgets::i();
@@ -222,8 +231,13 @@ return strtr($theme->templates['content.admin.combo'], array(
         $args->add($item);
         $widgetlist .= $html->addwidget($args);
       }
-      $args->widgetlist=  $widgetlist;
-      $result = $html->allviews($args);
+
+      $args->formtitle = $lang->help;
+      $result = $html->adminform($tabs->get() .
+sprintf($html->appendwidgets, $widgetlist) .
+      '<input type="hidden" name="action" id="hidden-action" value="widgets" />
+<input type="hidden" name="action_value" id="hidden-action_value" value="" />',
+      $args);
       break;
       
       case 'addview':
@@ -240,9 +254,9 @@ return strtr($theme->templates['content.admin.combo'], array(
         $name = substr($classname, 1);
       $args->title = $lang->{$name};
         $inputs = self::getcomboview($obj->idview, "idview-$classname");
-        if (isset($obj->data['keywords'])) $inputs .= $html->getedit("keywords-$classname", $obj->keywords, $lang->keywords);
-        if (isset($obj->data['description'])) $inputs .= $html->getedit("description-$classname", $obj->description, $lang->description);
-        if (isset($obj->data['head'])) $inputs .= $html->getinput('editor', "head-$classname", tadminhtml::specchars($obj->head), $lang->head);
+        if (isset($obj->data['keywords'])) $inputs .= $html->getedit("keywords-$classname", $obj->data['keywords'], $lang->keywords);
+        if (isset($obj->data['description'])) $inputs .= $html->getedit("description-$classname", $obj->data['description'], $lang->description);
+        if (isset($obj->data['head'])) $inputs .= $html->getinput('editor', "head-$classname", tadminhtml::specchars($obj->data['head']), $lang->head);
 
 $tabs->add($lang->{$name}, $inputs);
       }
@@ -252,24 +266,24 @@ $tabs->add($lang->{$name}, $inputs);
       break;
       
       case 'group':
-      $args->formname = 'posts';
       $args->formtitle = $lang->viewposts;
-      $args->items = self::getcomboview($views->defaults['post'], 'postview');
-      $result .= $html->groupform($args);
+      $result .= $html->adminform(
+      self::getcomboview($views->defaults['post'], 'postview') .
+'<input type="hidden" name="action" value="posts" />', $args);
       
-      $args->formname = 'menus';
       $args->formtitle = $lang->viewmenus;
-      $args->items = self::getcomboview($views->defaults['menu'], 'menuview');
-      $result .= $html->groupform($args);
+      $result .= $html->adminform(
+self::getcomboview($views->defaults['menu'], 'menuview') .
+'<input type="hidden" name="action" value="menus" />', $args);
       
-      $args->formname = 'themes';
       $args->formtitle = $lang->themeviews;
       $view = tview::i();
       $list =    tfiler::getdir(litepublisher::$paths->themes);
       sort($list);
       $themes = array_combine($list, $list);
-      $args->items = $html->getcombo('themeview', tadminhtml::array2combo($themes, $view->themename), $lang->themename);
-      $result .= $html->groupform($args);
+            $result .= $html->adminform(
+$html->getcombo('themeview', tadminhtml::array2combo($themes, $view->themename), $lang->themename) .
+'<input type="hidden" name="action" value="themes" />', $args);
       break;
       
       case 'defaults':
@@ -379,15 +393,7 @@ $tabs->add($lang->{$name}, $inputs);
       break;
       
       case 'group':
-      //find action
-      foreach ($_POST as $name => $value) {
-        if (strbegin($name, 'action_')) {
-          $action = substr($name, strlen('action_'));
-          break;
-        }
-      }
-      
-      switch ($action) {
+      switch ($_POST['action']) {
         case 'posts':
         $posts = tposts::i();
         $idview = (int) $_POST['postview'];
