@@ -1,0 +1,4 @@
+  .form-inline label,
+    .form-inline p,
+    display: inline-block;
+  }

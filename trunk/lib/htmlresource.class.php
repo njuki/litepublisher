@@ -712,6 +712,7 @@ class tuitabs {
   public $head;
   public $body;
   public $tabs;
+  public $customdata;
   private static $index = 0;
   private $tabindex;
   private $items;
@@ -721,10 +722,11 @@ class tuitabs {
     $this->items = array();
     $this->head = '<li><a href="%s"><span>%s</span></a></li>';
     $this->body = '<div id="tab-' . self::$index . '-%d">%s</div>';
-    $this->tabs = '<div id="tabs-' . self::$index . '" class="admintabs">
+    $this->tabs = '<div id="tabs-' . self::$index . '" class="admintabs" %s>
     <ul>%s</ul>
     %s
     </div>';
+    $this->customdata = false;
   }
   
   public function get() {
@@ -738,7 +740,9 @@ class tuitabs {
         $body .= sprintf($this->body, $i, $item['body']);
       }
     }
-    return sprintf($this->tabs, $head, $body);
+    
+$data = $this->customdata? sprintf('data-custom="%s"', str_replace('"', '&quot;', json_encode($this->customdata))) : '';
+    return sprintf($this->tabs, $data, $head, $body);
   }
   
   public function add($title, $body) {
