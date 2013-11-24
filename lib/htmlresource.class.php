@@ -78,13 +78,13 @@ class tadminhtml {
       $s = substr_replace($s, $replace, $i, strlen('[/form]'));
     }
     
-    if (preg_match_all('/\[(editor|checkbox|text|password|combo|hidden|submit|button|calendar)(:|=)(\w*+)\]/i', $s, $m, PREG_SET_ORDER)) {
+    if (preg_match_all('/\[(editor|checkbox|text|password|combo|hidden|submit|button|calendar|upload)(:|=)(\w*+)\]/i', $s, $m, PREG_SET_ORDER)) {
       foreach ($m as $item) {
         $type = $item[1];
         $name = $item[3];
         $varname = '$' . $name;
         //convert spec charsfor editor
-        if (!(($type == 'checkbox') || ($type == 'combo') || ($type == 'calendar'))) {
+        if (!in_array($type, array('checkbox', 'combo', 'calendar', 'upload'))) {
           if (isset($args->data[$varname])) {
             $args->data[$varname] = self::specchars($args->data[$varname]);
           } else {
@@ -203,7 +203,15 @@ class tadminhtml {
     if ($actionurl) $result = str_replace("action=''", "action='$actionurl'", $result);
     return $this->fixquote($result);
   }
-  
+
+  public function getinline($tml, $args, $url = '') {
+    $result = strtr($this->inlineform, array(
+    '$url' => (string) $url,
+'$form' => $this->parsearg($tml, $args)
+));
+    return $this->fixquote($result);
+}  
+
   public function getuploadform($title, $form, targs $args, $actionurl= '') {
     $args->formtitle = $title;
     $args->actionurl = $actionurl;
@@ -211,8 +219,8 @@ class tadminhtml {
     return $this->parsearg($this->ini['common']['uploadform'], $args);
   }
   
-  public function getinputfile($name) {
-    return str_replace('$name', $name, $this->ini['common']['inputfile']);
+    public function getupload($name) {
+      return $this->getinput('upload', $name, '', '');
   }
   
   public function getcheckbox($name, $value) {

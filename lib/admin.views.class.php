@@ -14,29 +14,24 @@ class tadminviews extends tadminmenu {
   
   public static function getviewform($url) {
     $html = tadminhtml ::i();
-    $html->push_section('views');
     $lang = tlocal::admin();
     $args = new targs();
-    $args->url = litepublisher::$site->url . $url;
-    $args->items = self::getcombo(tadminhtml::getparam('idview', 1));
-    $r = $html->comboform($args);
-    $html->pop_section();
-    return $r;
+    $args->idview = self::getcombo(tadminhtml::getparam('idview', 1));
+return $html->getinline('[combo=idview]
+[button=select]
+', $args, litepublisher::$site->url . $url);
   }
   
   public static function getcomboview($idview, $name = 'idview') {
     $lang = tlocal::i();
-    $section = $lang->section;
-    $lang->section = 'views';
+    $lang->addsearch('views');
     $theme = ttheme::i();
-    $r = strtr($theme->templates['content.admin.combo'], array(
+return strtr($theme->templates['content.admin.combo'], array(
     '$lang.$name' => $lang->view,
     '$name' => $name,
     '$value' => self::getcombo($idview)
     ));
-    $lang->section = $section;
-    return $r;
-  }
+ }
   
   public static function getcombo($idview) {
     $result = '';

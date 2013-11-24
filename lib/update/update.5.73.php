@@ -28,6 +28,11 @@ $section = 'default';
             $js->add($section, '/js/litepublisher/widgets.bootstrap.min.js');
 $js->unlock();
 
+$css = tcssmerger::i();
+$css->lock();
+  $css->add('default', '/js/litepublisher/css/form.inline.min.css');
+$css->unlock();
+
 $home = thomepage::i();
 $home->data['showposts'] = !$home->data['hideposts'];
 unset($home->data['hideposts']);
