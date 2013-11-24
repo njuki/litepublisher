@@ -205,10 +205,10 @@ class tadminhtml {
   }
 
   public function getinline($tml, $args, $url = '') {
-    $result = strtr($this->inlineform, array(
+    $result = $this->parsearg(strtr($this->inlineform, array(
     '$url' => (string) $url,
-'$form' => $this->parsearg($tml, $args)
-));
+'$form' => $tml
+)), $args);
     return $this->fixquote($result);
 }  
 
