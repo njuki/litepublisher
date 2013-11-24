@@ -42,8 +42,8 @@ class tadminfilethumbnails extends tadminmenu {
     }
     
     $result .= $html->getuploadform($lang->changethumb,
-    $html->getinputfile('filename') .
-    '[checkbox=noresize]', $args, "$this->adminurl=$id");
+'[upload=filename]
+    [checkbox=noresize]', $args, "$this->adminurl=$id");
     return $result;
   }
   

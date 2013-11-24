@@ -28,8 +28,8 @@ class tadminfiles extends tadminmenu {
       ));
       
       $result .= $html->getuploadform("<a id='files-source' href='#'>$lang->switchlink</a>",
-      $html->getinputfile('filename') .
-      '[hidden=uploadmode]
+'[upload=filename]
+      [hidden=uploadmode]
       [text=downloadurl]
       [text=title]
       [text=description]

@@ -34,7 +34,8 @@ class tposteditor extends tadminmenu {
     $result = '';
     $categories = tcategories::i();
     $html = tadminhtml::getinstance('editor');
-    $args = targs::i();
+    $tml = str_replace('$checkbox', $html->getinput('checkbox', 'category-$id', 'value="$id" $checked', '$title'), $html->category);
+    $args = new targs();
     foreach ($categories->items  as $id => $item) {
       if ($parent != $item['parent']) continue;
       if ($exclude && in_array($id, $exclude)) continue;
@@ -42,7 +43,7 @@ class tposteditor extends tadminmenu {
       $args->checked = in_array($item['id'], $postitems);
       $args->subcount = '';
       $args->subitems = self::getsubcategories($id, $postitems);
-      $result .= $html->category($args);
+      $result .= $html->parsearg($tml, $args);
     }
     
     if ($result == '') return '';
@@ -55,7 +56,7 @@ class tposteditor extends tadminmenu {
     $html = tadminhtml::i();
     $html->push_section('editor');
     $result = $html->categorieshead();
-    $result .= self::getsubcategories(0, $items);
+        $result .= self::getsubcategories(0, $items);
     $html->pop_section();
     return str_replace("'", '"', $result);
   }
