@@ -17,9 +17,7 @@ class tadminviews extends tadminmenu {
     $lang = tlocal::admin();
     $args = new targs();
     $args->idview = self::getcombo(tadminhtml::getparam('idview', 1));
-return $html->getinline('[combo=idview]
-[button=select]
-', $args, litepublisher::$site->url . $url);
+return $html->getinline('[combo=idview] [button=select]', $args, litepublisher::$site->url . $url);
   }
   
   public static function getcomboview($idview, $name = 'idview') {
@@ -232,9 +230,10 @@ return strtr($theme->templates['content.admin.combo'], array(
       $args->formtitle = $lang->addview;
       $result .= $html->adminform('[text=name]', $args);
       break;
+      
       case 'spec':
-      $items = '';
-      $content = '';
+      $tabs = new tuitabs();
+      $inputs = '';
       foreach (self::getspecclasses() as $classname) {
         $obj = getinstance($classname);
         $args->classname = $classname;
@@ -244,15 +243,12 @@ return strtr($theme->templates['content.admin.combo'], array(
         if (isset($obj->data['keywords'])) $inputs .= $html->getedit("keywords-$classname", $obj->keywords, $lang->keywords);
         if (isset($obj->data['description'])) $inputs .= $html->getedit("description-$classname", $obj->description, $lang->description);
         if (isset($obj->data['head'])) $inputs .= $html->getinput('editor', "head-$classname", tadminhtml::specchars($obj->head), $lang->head);
-        $args->inputs = $inputs;
-        $items .= $html->spectab($args);
-        $content .=$html->specform($args);
+
+$tabs->add($lang->{$name}, $inputs);
       }
       
-      $args->items = $items;
-      $args->content = $content;
       $args->formtitle = $lang->defaults;
-      $result .= $html->adminform($html->spectabs, $args);
+      $result .= tuitabs::gethead() . $html->adminform($tabs->get(), $args);
       break;
       
       case 'group':
