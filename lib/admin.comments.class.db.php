@@ -79,26 +79,47 @@ class tadminmoderator extends tadmincommoncomments {
     return $result;
   }
   
+    public function getinfo($comment) {
+$html = $this->html;
+$lang = tlocal::admin();
+    $result = $html->tableprops(array(
+'commentonpost' => "<a href=\"$comment->url\">$comment->posttitle</a>",
+'author' => $comment->name,
+'E-Mail' => $comment->email,
+'IP' => $comment->ip,
+'website' => $comment->website ? "<a href=\"$comment->website\">$comment->website</a>" : '',
+'status' => $comment->localstatus,
+    ));
+    
+    $result .= $html->p->content . $html->p($comment->content);
+        $adminurl =$this->adminurl . "=$comment->id&action";
+        $result .= "<p>
+    $lang->cando:
+<a href='$adminurl=reply'>$lang->reply</a>,
+<a href='$adminurl=approve'>$lang->approve</a>,
+<a href='$adminurl=delete'>$lang->delete</a>,
+<a href='$adminurl=hold'>$lang->hold</a>.
+</p>";
+
+    return $result;
+}
+
   private function editcomment($id) {
     $comment = new tcomment($id);
-    ttheme::$vars['comment'] = $comment;
-    $args = targs::i();
+    $args = new targs();
     $args->content = $comment->rawcontent;
-    $args->adminurl =$this->adminurl . "=$id&action";
-    $result = $this->html->info($args);
-    $args->formtitle = tlocal::i()->editform;
+        $args->formtitle = tlocal::i()->editform;
+    $result = $this->getinfo($comment);
     $result .= $this->html->adminform('[editor=content]', $args);
     return $result;
   }
   
   private function reply($id) {
     $comment = new tcomment($id);
-    ttheme::$vars['comment'] = $comment;
     $args = new targs();
-    $args->adminurl =$this->adminurl . "=$id&action";
     $args->pid = $comment->post;
     $args->formtitle = tlocal::i()->replyform;
-    $result = $this->html->info($args);
+    $result = $this->getinfo($comment);
     $args->content = '';
     $result .= $this->html->adminform('
     [editor=content]
@@ -151,20 +172,13 @@ class tadminmoderator extends tadmincommoncomments {
   
   private function moderated($id) {
     $result = $this->html->h4->successmoderated;
-    $result .= $this->getinfo($id);
+    $result .= $this->getinfo(new tcomment($id));
     return $result;
-  }
-  
-  private function getinfo($id) {
-    if (!isset(ttheme::$vars['comment'])) ttheme::$vars['comment'] = new tcomment($id);
-    $args = targs::i();
-    $args->adminurl =$this->adminurl . "=$id&action";
-    return $this->html->info($args);
   }
   
   private function confirmdelete($id) {
     $result = $this->getconfirmform($id, $this->lang->confirmdelete);
-    $result .= $this->getinfo($id);
+        $result .= $this->getinfo(new tcomment($id));
     return $result;
   }
   

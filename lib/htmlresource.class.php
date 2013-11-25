@@ -414,7 +414,9 @@ $tml = '<tr><td align="center"><label><input type="checkbox" name="checkbox-$pos
     $lang = tlocal::i();
     foreach ($item as $k => $v) {
       if (($k === false) || ($v === false)) continue;
-      $body .= sprintf('<tr><td>%s</td><td>%s</td></tr>', $lang->__get($k), $v);
+      $k2 = $lang->__get($k);
+      if (!$k2) $k2 = $k;
+      $body .= sprintf('<tr><td>%s</td><td>%s</td></tr>', $k2, $v);
     }
     
     return $this->gettable("<th>$lang->name</th> <th>$lang->property</th>", $body);
@@ -819,7 +821,8 @@ break;
 
     $result .= "<form $f role=\"form\">";
     $result .= $this->items;
-    $result .= "[submit=$this->submit]\n</form>\n";
+        $result .= $this->class == 'form-inline' ? "[button=$this->submit]" : "[submit=$this->submit]";
+    $result .= "\n</form>\n";
     return tadminhtml::i()->parsearg($result, $this->args);
         }
   
