@@ -107,7 +107,7 @@ $result .= strtr($html->getinline(
     '[button=sendpass]', $args, '$site.url/admin/password/'), array(
     'action=' => 'target="_blank" action=',
     //fix id text input
-    'text-email', => 'lostpass-email'
+    'text-email' => 'lostpass-email'
     ));
 
         if (litepublisher::$options->usersenabled && litepublisher::$options->reguser) {
