@@ -64,27 +64,30 @@ class tadminsubscribers extends tadminform {
     return parent::request($arg);
   }
   
+  public function gethead() {
+  $result = parent::gethead();
+  $result .= tadminmenus::i()->heads;
+  return $result;
+  }
+  
   public function getcontent() {
     $result = '';
     $html= $this->html;
-    $args = targs::i();
-    if ($this->newreg) $result .=$html->newreg();
+    $lang = tlocal::admin();
+    $args = new targs();
+    if ($this->newreg) $result .=$html->h4->newreg;
     
     $subscribers=  tsubscribers::i();
     $items = $subscribers->getposts($this->iduser);
     if (count($items) == 0) return $html->h4->nosubscribtions;
     tposts::i()->loaditems($items);
-    $args->email = tusers::i()->getvalue($this->iduser, 'email');
     $args->default_subscribe = tuseroptions::i()->getvalue($this->iduser, 'subscribe') == 'enabled';
-    $result .=$html->formhead($args);
-    foreach ($items as $postid) {
-      $post = tpost::i($postid);
-      ttheme::$vars['post'] = $post;
-      if ($post->status != 'published') continue;
-      $args->postid = $postid;
-      $result .= $html->formitem($args);
-    }
-    $result .= $html->formfooter();
+    $args->formtitle = tusers::i()->getvalue($this->iduser, 'email') . ' ' . $lang->formhead;
+    $result .= $html->adminform('[checkbox=default_subscribe]' .
+    $table = $html->tableposts($items, array(
+array('left', $lang->post, '<a href="$site.url$post.url" title="$post.title">$post.title</a>')
+)), $args);
+
     return $html->fixquote($result);
   }
   
@@ -93,7 +96,7 @@ class tadminsubscribers extends tadminform {
     
     $subscribers = tsubscribers::i();
     foreach ($_POST as $name => $value) {
-      if (strbegin($name, 'postid-')) {
+      if (strbegin($name, 'checkbox-')) {
         $subscribers->remove((int) $value, $this->iduser);
       }
     }

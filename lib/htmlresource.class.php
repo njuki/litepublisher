@@ -17,7 +17,7 @@ public function __construct($tag) { $this->tag = $tag; }
 }//class
 
 class tadminhtml {
-  public static $tags = array('h1', 'h2', 'h3', 'h4', 'p', 'li', 'ul', 'strong', 'div');
+  public static $tags = array('h1', 'h2', 'h3', 'h4', 'p', 'li', 'ul', 'strong', 'div', 'span');
   public $section;
   public $searchsect;
   public $ini;
@@ -366,8 +366,8 @@ class tadminhtml {
   
   public function tableposts(array $items, array $struct) {
     $body = '';
-    $head = '<th align="center"><input type="checkbox" name="invertcheck" class="invertcheck" /></th>';
-    $tml = '<tr><td align="center"><input type="checkbox" name="checkbox-$post.id" id="checkbox-$post.id" value="$post.id"/>$post.id</td>';
+    $head = sprintf('<th align="center">%s</th>', $this->invertcheckbox );
+$tml = '<tr><td align="center"><label><input type="checkbox" name="checkbox-$post.id" id="id-checkbox-$post.id" value="$post.id"/>$post.id</label><td>';
     foreach ($struct as $elem) {
       $head .= sprintf('<th align="%s">%s</th>', $elem[0], $elem[1]);
       $tml .= sprintf('<td align="%s">%s</td>', $elem[0], $elem[2]);
