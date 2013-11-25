@@ -29,10 +29,10 @@ class tadminservice extends tadminmenu {
 $lang = $this->lang;
       $result .= $html->h3->info;
       $result .= $this->doupdate($_GET);
-      $result .= $html->tablevalues(array(
-"$lang->postscount" => litepublisher::$classes->posts->count,
-"$lang->commentscount" =>litepublisher::$classes->commentmanager->count,
-"$lang->version" => litepublisher::$site->version
+      $result .= $html->tableprops(array(
+'postscount' => litepublisher::$classes->posts->count,
+'commentscount' =>litepublisher::$classes->commentmanager->count,
+'version' => litepublisher::$site->version
       ));
       $updater = tupdater::i();
       $islatest= $updater->islatest();
