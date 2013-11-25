@@ -306,6 +306,7 @@ class tadminhtml {
   
   public function gettable($head, $body) {
     return strtr($this->ini['common']['table'], array(
+    '$tableclass' => ttheme::i()->templates['content.admin.tableclass'],
     '$tablehead' => $head,
     '$tablebody' => $body));
   }
@@ -793,8 +794,13 @@ $this->submit = 'update';
 public function __set($k, $v) {
 switch ($k) {
 case 'upload':
+if ($v) {
 $this->enctype = 'multipart/form-data';
 $this->submit = 'upload';
+} else {
+$this->enctype = '';
+$this->submit = 'update';
+}
 break;
 }
 }

@@ -26,10 +26,14 @@ class tadminservice extends tadminmenu {
         return $html->h2->noupdates;
       }
       
+$lang = $this->lang;
+      $result .= $html->h3->info;
       $result .= $this->doupdate($_GET);
-      $args->postscount = litepublisher::$classes->posts->count;
-      $args->commentscount = litepublisher::$classes->commentmanager->count;
-      $result .= $html->info($args);
+      $result .= $html->tablevalues(array(
+"$lang->postscount" => litepublisher::$classes->posts->count,
+"$lang->commentscount" =>litepublisher::$classes->commentmanager->count,
+"$lang->version" => litepublisher::$site->version
+      ));
       $updater = tupdater::i();
       $islatest= $updater->islatest();
       if ($islatest === false) {
@@ -48,14 +52,32 @@ class tadminservice extends tadminmenu {
       
       case 'backup':
       if (empty($_GET['action'])) {
-        $args->loginform = $this->getloginform();
+      
         $args->plugins = false;
         $args->theme = false;
         $args->lib = false;
         $args->dbversion = dbversion ? '' : 'disabled="disabled"';
         $args->saveurl = true;
-        $result= $html->backupform($args);
-        
+
+      $form = new adminform($args);
+      $form->upload = true;
+      $form->items =  $html->h4->partialform;
+$form->items .= $this->getloginform();
+$form->items .= '[checkbox=plugins]
+[checkbox=theme]
+[checkbox=lib]
+[submit=downloadpartial]';
+
+$form->items .= $html->p->notefullbackup;
+$form->items .= '[submit=fullbackup]
+[submit=sqlbackup]';
+
+$form->items .= $html->h4->uploadhead;
+$form->items .= '[upload=filename]
+[checkbox=saveurl]';
+
+$form->submit = 'restore';
+        $result= $form->get();
         $result .= $this->getbackupfilelist();
       } else {
         $filename = $_GET['id'];
@@ -92,10 +114,16 @@ class tadminservice extends tadminmenu {
       break;
       
       case 'upload':
-      $args->url = tadminhtml::getparam('url', '');
-      $args->loginform = $this->getloginform();
-      $result = str_replace('$mysite', rawurlencode(litepublisher::$site->url),
-      $html->uploaditem($args));
+            $args->url = str_replace('$mysite', rawurlencode(litepublisher::$site->url),tadminhtml::getparam('url', ''));
+      $lang = tlocal::admin();
+      $form = new  adminform($args);
+      $form->title = $lang->uploaditem;
+      $form->upload = true;
+$form->items = '[text=url]
+[upload=filename]' .
+      $this->getloginform();
+      $result = $html->p->uploaditems;
+      $result .= $form->get();
       break;
     }
     
@@ -264,19 +292,23 @@ class tadminservice extends tadminmenu {
   }
   
   private function getbackupfilelist() {
-    $html = $this->html;
-    $result = $html->backupheader();
-    $args = targs::i();
-    $args->adminurl = $this->adminurl;
-    if ($list = glob(litepublisher::$paths->backup . '*.gz;*.zip')) {
+    $list = tfiler::getfiles(litepublisher::$paths->backup );
+if (!count($list)) return '';
+    $items = array();    $html = $this->html;
       foreach($list as $filename) {
-        $args->filename = basename($filename);
-        $result .= $html->backupitem($args);
+      if (strend($filename, '.gz') || strend($filename, '.zip')) {
+$items[]['filename'] = $filename;
+}
       }
-    }
-    $result .= $html->backupfooter;
-    return $result;
-  }
+
+if (!count($items)) return '';
+$lang = $this->lang;
+return $this->html->h4->backupheadern .
+$this->html->buildtable($items, array(
+array('right', $lang->download, "<a href=\"$this->adminurl=\$filename&action=download\">\$filename</a>"),
+array('right', $lang->delete, "<a href=\"$this->adminurl=\$filename&action=delete\">$lang->delete</a>")
+));
+ }
   
 }//class
 ?>
