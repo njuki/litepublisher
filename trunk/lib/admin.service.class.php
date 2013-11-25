@@ -37,12 +37,11 @@ class tadminservice extends tadminmenu {
       } elseif ($islatest <= 0) {
         $result .= $html->h4->islatest;
       } else {
-        $args->formtitle = $lang->requireupdate;
-        $result .= $html->adminform(
-        $this->getloginform().
-'[submit=autoupdate]
-[submit=manualupdate]',
-        $args);
+      $form = new adminform($args);
+        $form->title = tlocal::i()->requireupdate;
+                $form->items = $this->getloginform(). '[submit=autoupdate]';
+        $form->submit = 'manualupdate';
+        $result .= $form->get();
       }
       break;
       
