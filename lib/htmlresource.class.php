@@ -764,3 +764,57 @@ $data = $this->customdata? sprintf('data-custom="%s"', str_replace('"', '&quot;'
   }
   
 }//class
+
+class adminform {
+public $args;
+public$title;
+public $items;
+public $action;
+public $method;
+public $enctype;
+public $id;
+public $class;
+public $target;
+public $submit;
+
+public function __construct($args = null) {
+$this->args = $args;
+$this->title = '';
+$this->items = '';
+$this->action = '';
+$this->method = 'post';
+$this->enctype = '';
+$this->id = '';
+$this->class = '';
+$this->target = '';
+$this->submit = 'update';
+}
+
+public function __set($k, $v) {
+switch ($k) {
+case 'upload':
+$this->enctype = 'multipart/form-data';
+$this->submit = 'upload';
+break;
+}
+}
+
+  public function __tostring() {
+  return $this->get();
+  }
+  
+    public function get() {
+    $result = '';
+    if ($this->title) $result .= "<h3>$this->title</h3>\n";
+    $f = "action=\"$this->action\"";
+    foreach (array('method', 'enctype', 'target', 'id', 'class') as $k) {
+    if ($v = $this->$k) $f .= sprintf(' %s="%s"', $k, $v);
+    }
+
+    $result .= "<form $f role=\"form\">";
+    $result .= $this->items;
+    $result .= "[submit=$this->submit]\n</form>\n";
+    return tadminhtml::i()->parsearg($result, $this->args);
+        }
+  
+}//class
