@@ -19,16 +19,8 @@ class catbread extends  tplugin {
     $this->addmap('tml', array());
 $this->data['showhome'] = true;
 $this->data['showchilds'] = true;
-$this->data['showsane'] = true;
-
-        $this->items[$id] = array(
-    'idtag' => $idtag,
-    'sortname' => 'count',
-    'showsubitems' => true,
-    'showcount' => true,
-    'maxcount' => 0,
-    'template' => 'categories'
-    );
+$this->data['childsortname'] = 'title';
+$this->data['showsame'] = true;
 
     $this->cats = tcategories::i();
   }
@@ -57,14 +49,24 @@ array_clean($list);
 array_delete_value($list, $idcat);
 
 $cats = $this->cats;
+$cats->loadall();
 $parents = $cats->getparents($idcat);
 $parents = array_reverse($parents);
 $list = array_diff($list, $parents);
-$showchilds = $this->showchilds && intval($cats->getvalue($idcat, 'itemscount'));
+$showchilds = false;
+if ($this->showchilds) {
+foreach ($cats->items as $id => $item) {
+if ($idcat == intval($item['parent'])) {
+$showchilds = true;
+break;
+}
+}
+}
 
     $theme = ttheme::i();
 $args = new targs();
 $tml = $this->tml['item'];
+$items = '';
 if ($this->showhome) {
 $args->url = '/';
 $args->title = tlocal::i()->home;
@@ -72,7 +74,7 @@ $items .= $theme->parsearg($tml, $args);
 }
 
 foreach ($parents as $id) {
-$args->add($cat->getitem($id));
+$args->add($cats->getitem($id));
 $items .= $theme->parsearg($tml, $args);
 }
 
@@ -84,15 +86,8 @@ $args->item = $items;
 $result .= $theme->parsearg($this->tml['items'], $args);
 
 if ($showchilds) {
-$items = $cats->getsortedcontent(array(
-    'item' =>$this->tml['childitem'],
-    'subcount' => '',
-    'subitems' => $this->tml['childsubitems'],
-    ), 
-$idcat, $this->childsortname, 0, false);
-
-$args->item = $items;
-$result .= $theme->parsearg($this->tml['child
+$args->item = $this->getchildcats($idcat);
+$result .= $theme->parsearg($this->tml['childitems'], $args);
 }
 
 if ($this->showsame && count($list)) {
@@ -109,4 +104,29 @@ $result .= $theme->parsearg($this->tml['sameitems'], $args);
 return sprintf($this->tml['container'], $result);
   }
   
+  public function getchildcats($parent) {
+$cats = $this->cats;
+    $sorted = $cats->getsorted($parent, $this->childsortname, 0);
+    if (!count($sorted)) return '';
+    $result = '';
+    $theme = ttheme::i();
+    $args = new targs();
+    $args->parent = $parent;
+$tml_sub = $this->tml['childsubitems'];
+    foreach($sorted as $id) {
+      $item = $cats->getitem($id);
+      $args->add($item);
+if ($tml_sub && ($subitems = $this->getchildcats($id))) {
+$args->subitems = $subitems;
+      $args->subitems = $theme->parsearg($this->tml['childsubitems'], $args);
+} else {
+      $args->subitems = '';
+}
+
+      $result .= $theme->parsearg($this->tml['childitem'],$args);
+    }
+
+return $result;  
+}
+
 }//class
