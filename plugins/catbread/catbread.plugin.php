@@ -92,7 +92,7 @@ $result .= $theme->parsearg($this->tml['childitems'], $args);
 
 if ($this->showsame && count($list)) {
 $items = '';
-foreach ($same as $id) {
+foreach ($list as $id) {
 $args->add($cats->getitem($id));
 $items .= $theme->parsearg($this->tml['sameitem'], $args);
 }
