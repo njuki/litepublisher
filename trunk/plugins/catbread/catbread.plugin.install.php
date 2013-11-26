@@ -19,12 +19,12 @@ $item
 </ol></div>',
 'item' => '<li><a href="$link">$title</a></li>',
 'active' => '<li class="active">$title</li>',
-'child' => '<li><a href="#breadcrumbs-childs" data-target="#breadcrumbs-childs" data-toggle="dropdown"></a></li>',
-'childitems' => '<div id="breadcrumbs-childs">
+'child' => '<li><a id="breadcrumbs-toggle" href="#breadcrumbs-childs" data-target="#breadcrumbs-childs" data-toggle="dropdown"><span class="caret"></span>...</a></li>',
+'childitems' => '<div id="breadcrumbs-childs" class="dropdown">
 <ul class="dropdown-menu" role="menu">
 $item
 </ul></div>',
-      'childitem' =>'<li><a href="$link" title="$title">$icon$title</a>$subitems</li>',
+      'childitem' =>'<li><a href="$link" title="$title">$title</a>$subitems</li>',
       'childsubitems' =>       '<ul>$item</ul>',
 
 'sameitem' => '<li><a href="$link">$title</a></li>',
