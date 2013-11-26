@@ -76,7 +76,7 @@ $result .= $theme->parsearg($this->tml['items'], $args);
 
 if ($this->showchilds) {
 $result .= $cats->getsortedcontent(array(
-    'item' => $theme->getwidgetitem($item['template'], $sidebar),
+    'item' =>$this->tml['childitem'],
     'subcount' =>$theme->getwidgettml($sidebar, $item['template'], 'subcount'),
     'subitems' => $item['showsubitems'] ? $theme->getwidgettml($sidebar, $item['template'], 'subitems') : '',
     ), $idcat,
