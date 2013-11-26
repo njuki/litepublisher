@@ -20,7 +20,7 @@ $item
 </ol></div>',
 'item' => '<li><a href="$link">$title</a></li>',
 'active' => '<li class="active">$title</li>',
-'child' => '<li><a id="breadcrumbs-toggle" href="#breadcrumbs-childs" data-target="#breadcrumbs-childs" data-toggle="dropdown"><span class="caret"></span> <span class="sr-only">' . $about['showchilds'] . '</span></a></li>',
+'child' => '<li><button id="breadcrumbs-toggle" class="btn btn-default" data-target="#breadcrumbs-childs" data-toggle="dropdown"><span class="caret"></span> <span class="sr-only">' . $about['showchilds'] . '</span></button></li>',
 'childitems' => '<div id="breadcrumbs-childs" class="dropdown">
 <ul class="dropdown-menu" role="menu">
 $item
