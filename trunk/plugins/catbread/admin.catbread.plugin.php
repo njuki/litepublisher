@@ -18,6 +18,7 @@ $plugin = catbread::i();
     $html= tadminhtml::i();
     $args = new targs();
 $args->add($plugin->tml);
+$args->showhome = $plugin->showhome;
 $args->showchilds = $plugin->showchilds;
 $args->showsame = $plugin->showsame;
 
@@ -26,38 +27,35 @@ $args->showsame = $plugin->showsame;
       $args->data['$lang.invertorder'] = $about['invertorder'];
       $args->formtitle = $lang->formtitle;
       return $html->adminform('
-[text=items]
+[checkbox=showhome]
+
 [text=item]
 [text=active]
+[text=child]
+[editor=items]
 
 [checkbox=showchilds]
 [text=childitems]
 [text=childitem]
+[text=childsubitems]
       [combo=sort]
-      [checkbox=showsubitems]
-      [checkbox=showcount]
-      [text=maxcount]
 
 [checkbox=showsame]
+[text=sameitems]
+[text=sameitem]
 ', $args);
   }
   
   public function processform()  {
       extract($_POST, EXTR_SKIP);
 $plugin = catbread::i();
+$plugin->showhome = isset($showchilds);
 $plugin->showchilds = isset($showchilds);
 $plugin->showsame = isset($showsame);
 foreach ($plugin->tml as $k => $v) {
 $plugin->tml[$k] = trim($_POST[$k]);
 }
 
-      $item = $widget->items[$id];
-
-      $item['maxcount'] = (int) $maxcount;
-      $item['showcount'] = isset($showcount);
-      $item['showsubitems'] = isset($showsubitems);
-      $item['sortname'] = $sort;
-      $widget->items[$id] = $item;
       $plugin->save();
       return '';
     }

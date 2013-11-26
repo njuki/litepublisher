@@ -17,6 +17,7 @@ class catbread extends  tplugin {
   protected function create() {
     parent::create();
     $this->addmap('tml', array());
+$this->data['showhome'] = true;
 $this->data['showchilds'] = true;
 $this->data['showsane'] = true;
 
@@ -58,12 +59,18 @@ array_delete_value($list, $idcat);
 $cats = $this->cats;
 $parents = $cats->getparents($idcat);
 $parents = array_reverse($parents);
-$childs = $cats->getchilds($idcats);
 $list = array_diff($list, $parents);
+$showchilds = $this->showchilds && intval($cats->getvalue($idcat, 'itemscount'));
 
     $theme = ttheme::i();
 $args = new targs();
 $tml = $this->tml['item'];
+if ($this->showhome) {
+$args->url = '/';
+$args->title = tlocal::i()->home;
+$items .= $theme->parsearg($tml, $args);
+}
+
 foreach ($parents as $id) {
 $args->add($cat->getitem($id));
 $items .= $theme->parsearg($tml, $args);
@@ -71,22 +78,35 @@ $items .= $theme->parsearg($tml, $args);
 
 $args->add($cats->getitem($idcat));
 $items .= $theme->parsearg($this->tml['active'], $args);
-$args->items = $items;
+if ($showchilds) $items .= $theme->parsearg($this->tml['child'], $args);
+
+$args->item = $items;
 $result .= $theme->parsearg($this->tml['items'], $args);
 
-if ($this->showchilds) {
-$result .= $cats->getsortedcontent(array(
+if ($showchilds) {
+$items = $cats->getsortedcontent(array(
     'item' =>$this->tml['childitem'],
-    'subcount' =>$theme->getwidgettml($sidebar, $item['template'], 'subcount'),
-    'subitems' => $item['showsubitems'] ? $theme->getwidgettml($sidebar, $item['template'], 'subitems') : '',
-    ), $idcat,
-    $item['sortname'], $item['maxcount'], $item['showcount']);
+    'subcount' => '',
+    'subitems' => $this->tml['childsubitems'],
+    ), 
+$idcat, $this->childsortname, 0, false);
+
+$args->item = $items;
+$result .= $theme->parsearg($this->tml['child
 }
 
-if ($this->showsame) {
+if ($this->showsame && count($list)) {
+$items = '';
+foreach ($same as $id) {
+$args->add($cats->getitem($id));
+$items .= $theme->parsearg($this->tml['sameitem'], $args);
 }
 
-return $result;
+$args->item = $items;
+$result .= $theme->parsearg($this->tml['sameitems'], $args);
+}
+
+return sprintf($this->tml['container'], $result);
   }
   
 }//class
