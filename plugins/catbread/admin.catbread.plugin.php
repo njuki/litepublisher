@@ -14,34 +14,45 @@ clas admincatbread implements iadmin {
   
   public function getcontent() {
 $plugin = catbread::i();
-    $about = tplugins::getabout(tplugins::getname(__file__));
+    $lang = tplugins::getnamelang('catbread');
     $html= tadminhtml::i();
     $args = new targs();
+$args->add($plugin->tml);
+$args->showchilds = $plugin->showchilds;
+$args->showsame = $plugin->showsame;
 
       $args->sort = tadminhtml::array2combo(tlocal::admin()->ini['sortnametags'], $widget->items[$id]['sortname']);
       $args->idwidget = $id;
       $args->data['$lang.invertorder'] = $about['invertorder'];
-      $args->formtitle = $widget->gettitle($id);
+      $args->formtitle = $lang->formtitle;
       return $html->adminform('
+[text=items]
+[text=item]
+[text=active]
+
+[checkbox=showchilds]
+[text=childitems]
+[text=childitem]
       [combo=sort]
       [checkbox=showsubitems]
       [checkbox=showcount]
       [text=maxcount]
-      [hidden=idwidget]',
-      $args);
-    }
-    $tags = array();
-    foreach ($widget->items as $id => $item) {
-      $tags[] = $item['idtag'];
-    }
-    $args->formtitle = $about['formtitle'];
-    return $html->adminform(tposteditor::getcategories($tags), $args);
+
+[checkbox=showsame]
+', $args);
   }
   
   public function processform()  {
-$plugin = catbread::i();
-      $item = $widget->items[$id];
       extract($_POST, EXTR_SKIP);
+$plugin = catbread::i();
+$plugin->showchilds = isset($showchilds);
+$plugin->showsame = isset($showsame);
+foreach ($plugin->tml as $k => $v) {
+$plugin->tml[$k] = trim($_POST[$k]);
+}
+
+      $item = $widget->items[$id];
+
       $item['maxcount'] = (int) $maxcount;
       $item['showcount'] = isset($showcount);
       $item['showsubitems'] = isset($showsubitems);
