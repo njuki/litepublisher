@@ -10,6 +10,7 @@ function catbreadinstall($self) {
 $self->cats->onbeforecontent = $self->beforecat;
 tposts::i()->beforecontent = $self->beforepost;
 
+$about = tplugins::getabout(basename(dirname(__file__)));
 //bootstrap breadcrumb component
 $self->tml = array(
 'container' => '<div id="breadcrumb-container">%s</div>',
@@ -19,7 +20,7 @@ $item
 </ol></div>',
 'item' => '<li><a href="$link">$title</a></li>',
 'active' => '<li class="active">$title</li>',
-'child' => '<li><a id="breadcrumbs-toggle" href="#breadcrumbs-childs" data-target="#breadcrumbs-childs" data-toggle="dropdown"><span class="caret"></span>...</a></li>',
+'child' => '<li><a id="breadcrumbs-toggle" href="#breadcrumbs-childs" data-target="#breadcrumbs-childs" data-toggle="dropdown"><span class="caret"></span> <span class="sr-only">' . $about['showchilds'] . '</span></a></li>',
 'childitems' => '<div id="breadcrumbs-childs" class="dropdown">
 <ul class="dropdown-menu" role="menu">
 $item
@@ -28,7 +29,8 @@ $item
       'childsubitems' =>       '<ul>$item</ul>',
 
 'sameitem' => '<li><a href="$link">$title</a></li>',
-'sameitems' => '<div id=breadcrumbs-same"><ul>$item</ul></div>',
+'sameitems' => '<div id="breadcrumbs-same">' . $about['seealso'] .
+'<ul class="list-inline">$item</ul></div>',
 );
 
 $self->save();
