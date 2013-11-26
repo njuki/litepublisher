@@ -6,7 +6,7 @@
 * and GPL (gpl.txt) licenses.
 **/
 
-clas admincatbread implements iadmin {
+class admincatbread implements iadmin {
   
   public static function i() {
     return getinstance(__class__);
@@ -21,10 +21,7 @@ $args->add($plugin->tml);
 $args->showhome = $plugin->showhome;
 $args->showchilds = $plugin->showchilds;
 $args->showsame = $plugin->showsame;
-
-      $args->sort = tadminhtml::array2combo(tlocal::admin()->ini['sortnametags'], $widget->items[$id]['sortname']);
-      $args->idwidget = $id;
-      $args->data['$lang.invertorder'] = $about['invertorder'];
+      $args->sort = tadminhtml::array2combo(tlocal::admin()->ini['sortnametags'], $plugin->childsortname);
       $args->formtitle = $lang->formtitle;
       return $html->adminform('
 [checkbox=showhome]
@@ -33,16 +30,17 @@ $args->showsame = $plugin->showsame;
 [text=active]
 [text=child]
 [editor=items]
+[editor=container]
 
 [checkbox=showchilds]
-[text=childitems]
+      [combo=sort]
 [text=childitem]
 [text=childsubitems]
-      [combo=sort]
+[editor=childitems]
 
 [checkbox=showsame]
-[text=sameitems]
 [text=sameitem]
+[text=sameitems]
 ', $args);
   }
   
@@ -52,14 +50,13 @@ $plugin = catbread::i();
 $plugin->showhome = isset($showchilds);
 $plugin->showchilds = isset($showchilds);
 $plugin->showsame = isset($showsame);
+$plugin->childsortname = $sort;
 foreach ($plugin->tml as $k => $v) {
 $plugin->tml[$k] = trim($_POST[$k]);
 }
 
       $plugin->save();
       return '';
-    }
-    
   }
   
 }//class
