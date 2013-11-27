@@ -8,7 +8,7 @@
 
 function catbreadinstall($self) {
 $self->cats->onbeforecontent = $self->beforecat;
-tposts::i()->beforecontent = $self->beforepost;
+tthemeparser::i()->parsed = $self->themeparsed;
 
 $about = tplugins::getabout(basename(dirname(__file__)));
 //bootstrap breadcrumb component
@@ -28,9 +28,8 @@ $item
       'childitem' =>'<li><a href="$link" title="$title">$title</a>$subitems</li>',
       'childsubitems' =>       '<ul>$item</ul>',
 
-'sameitem' => '<li><a href="$link">$title</a></li>',
-'sameitems' => '<div id="breadcrumbs-same">' . $about['seealso'] .
-'<ul class="list-inline">$item</ul></div>',
+'sameitem' => '<a href="$link">$title</a> ',
+'sameitems' => '<div id="breadcrumbs-similar">' . $about['seealso'] . ' $item</div>',
 );
 
 $self->save();
@@ -38,5 +37,5 @@ $self->save();
 
 function catbreaduninstall($self) {
 $self->cats->unbind($self);
-tposts::i()->unsub($self);
+tthemeparser::i()->unbind($self);
 }

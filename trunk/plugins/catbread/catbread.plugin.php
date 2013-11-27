@@ -29,30 +29,56 @@ $this->data['showsame'] = true;
   $cats = $this->cats;
     $idcat = $cats->id;
   if (!$idcat) return;
+$result .= $this->getbread($idcat);
+
+if ($this->showsame) {
       $idposts = $cats->getidposts($idcat);
 $list = array();
 foreach ($idposts as $idpost) {
 $list = array_merge($list, tpost::i($idpost)->categories);
 }      
 
-$result .= $this->getbread($idcat, $list);
-  }
-  
-  public function beforepost($post, &$result) {
-if (count($post->categories)) $result .= $this->getbread($post->categories[0], $post->categories);
-  }
-  
-  public function getbread($idcat, $list) {
-if (!$idcat) return '';
-$result = '';
 array_clean($list);
 array_delete_value($list, $idcat);
+$result .= $this->getsimilar($list);
+}
 
+return $result;
+  }
+
+  public function themeparsed($theme) {
+$tag = '$' . get_class($this) . '.catlinks';
+if (strpos($theme->templates['content.post'], $tag)) return;
+$theme->templates['content.post'] = '$' . get_class($this) . '.beforepost' .
+str_replace('$post.catlinks', '$post.catlinks ' . $tag, $theme->templates['content.post']);
+
+//for shop
+if (isset($theme->templates['shop.product'])) $theme->templates['shop.product'] = '$' . get_class($this) . '.beforepost' .
+str_replace('$post.catlinks', '$post.catlinks ' . $tag, $theme->templates['shop.product']);
+
+}
+
+    public function getbeforepost() {
+$post = ttheme::$vars['post'];
+if (!count($post->categories)) return '';
+return  $this->getbread($post->categories[0]);
+  }
+
+public function getcatlinks() {
+if (!$this->showsame) return '';
+$post = ttheme::$vars['post'];
+if (!count($post->categories)) return '';
+return  $this->getsimilar($post->categories);
+}
+  
+  public function getbread($idcat) {
+if (!$idcat) return '';
+$result = '';
 $cats = $this->cats;
 $cats->loadall();
 $parents = $cats->getparents($idcat);
 $parents = array_reverse($parents);
-$list = array_diff($list, $parents);
+
 $showchilds = false;
 if ($this->showchilds) {
 foreach ($cats->items as $id => $item) {
@@ -90,17 +116,6 @@ $args->item = $this->getchildcats($idcat);
 $result .= $theme->parsearg($this->tml['childitems'], $args);
 }
 
-if ($this->showsame && count($list)) {
-$items = '';
-foreach ($list as $id) {
-$args->add($cats->getitem($id));
-$items .= $theme->parsearg($this->tml['sameitem'], $args);
-}
-
-$args->item = $items;
-$result .= $theme->parsearg($this->tml['sameitems'], $args);
-}
-
 return sprintf($this->tml['container'], $result);
   }
   
@@ -127,6 +142,43 @@ $args->subitems = $subitems;
     }
 
 return $result;  
+}
+
+public function getsimilar($list) {
+if (!$this->showsame || !count($list)) return '';
+$cats = $this->cats;
+$cats->loadall();
+$parents = array();
+foreach ($list as $id) {
+$parents[] = $cats->getvalue($id, 'parent');
+}
+
+array_clean($parents);
+if (!count($parents)) return '';
+
+/* without db cant sort
+$similar = array();
+foreach ($cats->items as $id => $item) {
+if (in_array($item['parent'], $parents)) $similar[] = $id;
+}
+*/
+
+$parents = implode(',', $parents);
+$list = implode(',', $list);
+$similar = $cats->db->idselect("parent in ($parents) and id not in ($list) order by $this->childsortname asc");
+array_clean($similar);
+if (!count($similar)) return '';
+
+    $theme = ttheme::i();
+$args = new targs();
+$items = '';
+foreach ($similar as $id) {
+$args->add($cats->getitem($id));
+$items .= $theme->parsearg($this->tml['sameitem'], $args);
+}
+
+$args->item = $items;
+return $theme->parsearg($this->tml['sameitems'], $args);
 }
 
 }//class
