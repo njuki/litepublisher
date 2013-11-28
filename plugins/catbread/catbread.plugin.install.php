@@ -28,8 +28,8 @@ $item
       'childitem' =>'<li><a href="$link" title="$title">$title</a>$subitems</li>',
       'childsubitems' =>       '<ul>$item</ul>',
 
-'sameitem' => '<a href="$link">$title</a> ',
-'sameitems' => '<div id="breadcrumbs-similar">' . $about['seealso'] . ' $item</div>',
+'similaritem' => '<a href="$link">$title</a> ',
+'similaritems' => '<div id="breadcrumbs-similar">' . $about['seealso'] . ' $item</div>',
 );
 
 $self->save();
