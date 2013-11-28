@@ -20,12 +20,23 @@ $plugin = catbread::i();
 $args->add($plugin->tml);
 $args->showhome = $plugin->showhome;
 $args->showchilds = $plugin->showchilds;
-$args->showsame = $plugin->showsame;
+$args->showsimilar = $plugin->showsimilar;
       $args->sort = tadminhtml::array2combo(tlocal::admin()->ini['sortnametags'], $plugin->childsortname);
+
+$pos = array(
+'top' => $lang->top,
+'before' => $lang->before,
+'after' => $lang->after,
+);
+
+      $args->breadpos = tadminhtml::array2combo($pos, $plugin->breadpos);
+      $args->similarpos = tadminhtml::array2combo($pos, $plugin->similarpos);
+
       $args->formtitle = $lang->formtitle;
       return $html->adminform('
 [checkbox=showhome]
 
+[combo=breadpos]
 [text=item]
 [text=active]
 [text=child]
@@ -38,9 +49,10 @@ $args->showsame = $plugin->showsame;
 [text=childsubitems]
 [editor=childitems]
 
-[checkbox=showsame]
-[text=sameitem]
-[text=sameitems]
+[checkbox=showsimilar]
+[combo=similarpos]
+[text=similaritem]
+[text=similaritems]
 ', $args);
   }
   
@@ -49,8 +61,10 @@ $args->showsame = $plugin->showsame;
 $plugin = catbread::i();
 $plugin->showhome = isset($showchilds);
 $plugin->showchilds = isset($showchilds);
-$plugin->showsame = isset($showsame);
+$plugin->showsimilar = isset($showsimilar);
 $plugin->childsortname = $sort;
+$plugin->breadpos = $breadpos;
+$plugin->similarpos = $similarpos;
 foreach ($plugin->tml as $k => $v) {
 $plugin->tml[$k] = trim($_POST[$k]);
 }

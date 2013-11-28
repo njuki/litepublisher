@@ -20,7 +20,9 @@ class catbread extends  tplugin {
 $this->data['showhome'] = true;
 $this->data['showchilds'] = true;
 $this->data['childsortname'] = 'title';
-$this->data['showsame'] = true;
+$this->data['showsimilar'] = true;
+$this->data['breadpos'] = 'after';
+$this->data['similarpos'] = 'after';
 
     $this->cats = tcategories::i();
   }
@@ -31,7 +33,7 @@ $this->data['showsame'] = true;
   if (!$idcat) return;
 $result .= $this->getbread($idcat);
 
-if ($this->showsame) {
+if ($this->showsimilar) {
       $idposts = $cats->getidposts($idcat);
 $list = array();
 foreach ($idposts as $idpost) {
@@ -47,25 +49,38 @@ return $result;
   }
 
   public function themeparsed($theme) {
-$tag = '$' . get_class($this) . '.catlinks';
-if (strpos($theme->templates['content.post'], $tag)) return;
-$theme->templates['content.post'] = '$' . get_class($this) . '.beforepost' .
-str_replace('$post.catlinks', '$post.catlinks ' . $tag, $theme->templates['content.post']);
+$bread = '$' . get_class($this) . '.postbread';
+$similar = '$' . get_class($this) . '.postsimilar';
 
-//for shop
-if (isset($theme->templates['shop.product'])) $theme->templates['shop.product'] = '$' . get_class($this) . '.beforepost' .
-str_replace('$post.catlinks', '$post.catlinks ' . $tag, $theme->templates['shop.product']);
+//prepare replace
+$top =  '';
+if ($this->breadpos == 'top') $top .= $bread;
+if ($this->similarpos == 'top') $top .= $similar;
 
+$catlinks = '';
+if ($this->breadpos == 'before') $catlinks .= $bread;
+if ($this->similarpos == 'before') $catlinks  .= $similar;
+$catlinks .= '$post.catlinks';
+if ($this->breadpos == 'after') $catlinks .= $bread;
+if ($this->similarpos == 'after') $catlinks .= $similar;
+
+foreach (array('content.post', 'shop.product') as $k) {
+if (!isset($theme->templates[$k]) || strpos($theme->templates[$k], $tag)) continue;
+$s = $theme->templates[$k];
+$s = $top . $s;
+$s = str_replace('$post.catlinks', $catlinks, $s);
+$theme->templates[$k] = $s;
+}
 }
 
-    public function getbeforepost() {
+    public function getpostbread() {
 $post = ttheme::$vars['post'];
 if (!count($post->categories)) return '';
 return  $this->getbread($post->categories[0]);
   }
 
-public function getcatlinks() {
-if (!$this->showsame) return '';
+public function getpostsimilar() {
+if (!$this->showsimilar) return '';
 $post = ttheme::$vars['post'];
 if (!count($post->categories)) return '';
 return  $this->getsimilar($post->categories);
@@ -145,7 +160,7 @@ return $result;
 }
 
 public function getsimilar($list) {
-if (!$this->showsame || !count($list)) return '';
+if (!$this->showsimilar || !count($list)) return '';
 $cats = $this->cats;
 $cats->loadall();
 $parents = array();
@@ -174,11 +189,11 @@ $args = new targs();
 $items = '';
 foreach ($similar as $id) {
 $args->add($cats->getitem($id));
-$items .= $theme->parsearg($this->tml['sameitem'], $args);
+$items .= $theme->parsearg($this->tml['similaritem'], $args);
 }
 
 $args->item = $items;
-return $theme->parsearg($this->tml['sameitems'], $args);
+return $theme->parsearg($this->tml['similaritems'], $args);
 }
 
 }//class
