@@ -17,6 +17,7 @@
         $(this).prop("checked", ! $(this).prop("checked"));
       });
       $(this).prop("checked", false);
+      return false;
     });
     
     // switcher template see in lib/admin.files.class.php
