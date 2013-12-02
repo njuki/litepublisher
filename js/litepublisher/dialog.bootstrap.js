@@ -93,11 +93,9 @@ var self = this;
   }
   
   });
-  
-    $(document).ready(function() {
-        window.setTimeout(function() {
+
+ready2(function() {  
   if ("modal" in $.fn) $.bootstrapDialog = new $.BootstrapDialog();
-      }, 40);
   });
 
 })( jQuery, window, document );

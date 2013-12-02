@@ -33,8 +33,13 @@
     alert(JSON.stringify(obj));
   };
   
-  window.get_get=  function (name) {
+  window.get_get=  function (name, url) {
+if (url) {
+    var q = url.substring(url.indexOf('?') + 1);
+} else {
     var q = window.location.search.substring(1);
+}
+
     var vars = q.split('&');
     for (var i=0, l=  vars.length; i < l; i++) {
       var pair = vars[i].split('=');

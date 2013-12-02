@@ -7,7 +7,7 @@
 
 (function( $, window, document, litepubl){
 litepubl.BootstrapWidgets = Class.extend({
-toggleclass: "",
+toggleclass: "fa-expand",
 
 init: function(options) {
 options = $.extend({
@@ -138,6 +138,6 @@ trigger: "manual"
 });
 
 ready2(function() {
-litepubl.widgets = new litepubl.BootstrapWidgets();
+if ("dropdown" in $.fn) litepubl.widgets = new litepubl.BootstrapWidgets();
 });
 })( jQuery , window, document, litepubl);

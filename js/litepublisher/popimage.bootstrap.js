@@ -66,6 +66,8 @@ var h = Math.floor(w * options.height / options.width);
 
 var title = self.attr("title");
 if (re.test(title)) title = options.title;
+// cut long title
+if (title.length * 14 > w) title = title.substring(0, Math.floor(w / 14 - 5))  + '...';
 
 self.popover({
 container: 'body',
@@ -103,7 +105,7 @@ return false;
 });
 };
 
-   $(document).ready(function(){
+ready2(function(){
    $("a.photo").popimage();
    });
 })( jQuery, window, document);
