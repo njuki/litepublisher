@@ -79,6 +79,8 @@ class tmenus extends titems {
   }
   
   public function addfake($url, $title) {
+if ($id = $this->url2id($url)) return $id;
+
     $fake = new tfakemenu();
     $fake->title = $title;
     $fake->url = $url;

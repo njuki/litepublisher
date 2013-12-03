@@ -389,9 +389,9 @@ return $this->factory->files->geturl($id);
   }
   
   //template
-    private function get_taglinks($name, $excerpt) {
+    protected function get_taglinks($name, $excerpt) {
     $items = $this->$name;
-    if (count($items) == 0) return '';
+    if (!count($items)) return '';
     
     $theme = $this->theme;
     $tmlpath= $excerpt ? 'content.excerpts.excerpt' : 'content.post';
@@ -419,8 +419,11 @@ return $this->factory->files->geturl($id);
       }
       $list[] = $theme->parsearg($tmlitem,  $args);
     }
-    
-    return str_replace('$items', ' ' . implode($theme->templates[$tmlpath . '.divider'] , $list), $theme->parse($theme->templates[$tmlpath]));
+
+$args->items =     ' ' . implode($theme->templates[$tmlpath . '.divider'] , $list);
+$result = $theme->parsearg($theme->templates[$tmlpath], $args);
+$this->factory->posts->callevent('ontags', array($tags, $excerpt, &$result));
+return $result;
   }
   
   public function getdate() {
@@ -579,10 +582,7 @@ return $this->factory->files->geturl($id);
   }
   
   public function setfiles(array $list) {
-    $list = array_unique($list);
-    array_delete_value($list, '');
-    array_delete_value($list, false);
-    array_delete_value($list, null);
+array_clean($list);
     $this->data['files'] = $list;
   }
   

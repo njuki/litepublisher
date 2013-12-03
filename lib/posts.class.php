@@ -28,7 +28,8 @@ class tposts extends titems {
     $this->childtable = '';
     $this->rawtable = 'rawposts';
     $this->basename = 'posts/index';
-    $this->addevents('edited', 'changed', 'singlecron', 'beforecontent', 'aftercontent', 'beforeexcerpt', 'afterexcerpt', 'onselect', 'onhead', 'onanhead');
+    $this->addevents('edited', 'changed', 'singlecron', 'beforecontent', 'aftercontent', 'beforeexcerpt', 'afterexcerpt',
+ 'onselect', 'onhead', 'onanhead', 'ontags');
     $this->data['archivescount'] = 0;
     $this->data['revision'] = 0;
     $this->data['syncmeta'] = false;

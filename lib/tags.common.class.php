@@ -62,7 +62,7 @@ class tcommontags extends titems implements  itemplate {
     $result = '';
     $iconenabled = ! litepublisher::$options->icondisabled;
     $theme = ttheme::i();
-    $args = targs::i();
+    $args = new targs();
     $args->rel = $this->PermalinkIndex;
     $args->parent = $parent;
     foreach($sorted as $id) {
@@ -70,7 +70,7 @@ class tcommontags extends titems implements  itemplate {
       $args->add($item);
       $args->icon = $iconenabled ? $this->geticonlink($id) : '';
       $args->subcount =$showcount ? $theme->parsearg($tml['subcount'],$args) : '';
-      $args->subitems = $tml['subitems'] != '' ? $this->getsortedcontent($tml, $id, $sortname, $count, $showcount) : '';
+      $args->subitems = $tml['subitems'] ? $this->getsortedcontent($tml, $id, $sortname, $count, $showcount) : '';
       $result .= $theme->parsearg($tml['item'],$args);
     }
     if ($parent == 0) return $result;
@@ -448,7 +448,8 @@ $result = array_unique($result);
     return $result;
       }
   
-  public function getparents($id) {$result = array();
+  public function getparents($id) {
+$result = array();
     while ($id = (int) $this->items[$id]['parent']) $result[] = $id;
     return $result;
   }
