@@ -24,6 +24,8 @@ $section = 'default';
   $js->deletefile($section, '/js/litepublisher/prettyphoto.dialog.min.js');
    $js->add($section, '/js/litepublisher/dialog.min.js');
     $js->add($section, '/js/litepublisher/dialog.pretty.min.js');
+    $js->add($section, '/js/litepublisher/pretty.init.min.js');
+  $js->deletetext($section, 'pretty');
       $js->add($section, '/js/litepublisher/dialog.bootstrap.min.js');
             $js->add($section, '/js/litepublisher/widgets.bootstrap.min.js');
 $js->unlock();

@@ -723,10 +723,10 @@ class tuitabs {
   public function __construct() {
     $this->tabindex = ++self::$index;
     $this->items = array();
-    $this->head = '<li><a href="%s"><span>%s</span></a></li>';
-    $this->body = '<div id="tab-' . self::$index . '-%d">%s</div>';
+    $this->head = '<li><a href="%s" role="tab"><span>%s</span></a></li>';
+    $this->body = '<div id="tab-' . self::$index . '-%d" role="tabpanel">%s</div>';
     $this->tabs = '<div id="tabs-' . self::$index . '" class="admintabs" %s>
-    <ul>%s</ul>
+    <ul role="tablist">%s</ul>
     %s
     </div>';
     $this->customdata = false;

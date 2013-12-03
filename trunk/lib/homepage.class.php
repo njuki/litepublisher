@@ -8,6 +8,7 @@
 
 class thomepage extends tsinglemenu  {
   public $cacheposts;
+public $midleposts;
   
   public static function i($id = 0) {
     return self::iteminstance(__class__, $id);
@@ -28,6 +29,7 @@ class thomepage extends tsinglemenu  {
     $this->data['parsetags'] = false;
     $this->coinstances[] = new tcoevents($this, 'onbeforegetitems', 'ongetitems');
     $this->cacheposts = false;
+    $this->midleposts = false;
   }
   
   public function getindex_tml() {
@@ -86,7 +88,7 @@ return $result;
 }
   
   public function getidposts() {
-    if ($this->cacheposts) return $this->cacheposts;
+    if (is_array($this->cacheposts)) return $this->cacheposts;
     if($result = $this->onbeforegetitems()) return $result;
     $posts = tposts::i();
     $perpage = litepublisher::$options->perpage;
@@ -97,10 +99,10 @@ return $result;
     $ci = litepublisher::$db->prefix . 'categoriesitems';
 
     if ($where = $this->getwhere()) {
-            $result = $posts->db->res2id($posts->db->query("select $p.id as id, $ci.post as post from $p, $ci
+            $result = $posts->db->res2id($posts->db->query("select $p.id as id, $ci.item as item from $p, $ci
     where    $where and $p.id = $ci.post and $p.status = 'published'
       order by  $p.posted $order limit $from, $perpage"));
-      
+
     $result = array_unique($result);
         $posts->loaditems($result);
 } else {        
@@ -117,16 +119,21 @@ return $result;
     $result = '';
     $p = litepublisher::$db->prefix . 'posts';
     $ci = litepublisher::$db->prefix . 'categoriesitems';
+       if ($this->showmidle && $this->midlecat) {
+$ex = $this->getmidleposts();
+if (count($ex)) $result .= sprintf('%s.id not in (%s) ', $p, implode(',', $ex));
+}
+
     $include = $this->data['includecats'];
     $exclude = $this->data['excludecats'];
-        if ($this->showmidle && $this->midlecat) $exclude[] = $this->midlecat;
-    
+
     if (count($include) > 0) {
+if ($result) $result .= ' and ';
       $result .= sprintf('%s.item  in (%s)', $ci, implode(',', $include));
     }
     
     if (count($exclude) > 0) {
-      if (count($include) > 0) $result .= ' and ';
+if ($result) $result .= ' and ';
       $result .= sprintf('%s.item  not in (%s)', $ci, implode(',', $exclude));
     }
 
@@ -160,17 +167,23 @@ if ($r = $res->fetch_assoc()) $this->data['archcount'] = (int) $r['count'];
     return '';
     }
   
-  public function getmidle() {
-    $result = '';
+  public function getmidleposts() {
+if (is_array($this->midleposts)) return $this->midleposts;
     $posts = tposts::i();
     $p = $posts->thistable;
     $ci = litepublisher::$db->prefix . 'categoriesitems';
-            $items = $posts->db->res2id($posts->db->query("select $p.id as id, $ci.post as post from $p, $ci
+$this->midleposts = $posts->db->res2id($posts->db->query("select $p.id as id, $ci.post as post from $p, $ci
     where    $ci.item = $this->midlecat and $p.id = $ci.post and $p.status = 'published'
       order by  $p.posted desc limit " . litepublisher::$options->perpage));
 
-    if (!count($items)) return '';
-    $posts->loaditems($items);
+    if (count($this->midleposts)) $posts->loaditems($this->midleposts);
+return $this->midleposts;
+}
+
+  public function getmidle() {
+$result = '';
+$items = $this->getmidleposts();
+if (!count($items)) return '';
     ttheme::$vars['lang'] = tlocal::i('default');    
         ttheme::$vars['home'] = $this;
         $theme = ttheme::i();
