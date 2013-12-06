@@ -17,7 +17,12 @@ class tadminviews extends tadminmenu {
     $lang = tlocal::admin();
     $args = new targs();
     $args->idview = self::getcombo(tadminhtml::getparam('idview', 1));
-return $html->getinline('[combo=idview] [button=select]', $args, litepublisher::$site->url . $url);
+$form = new adminform($args);
+$form->action = litepublisher::$site->url . $url;
+$form->inline = true;
+$form->items = '[combo=idview]';
+$form->submit = 'select';
+return $form->get();
   }
   
   public static function getcomboview($idview, $name = 'idview') {

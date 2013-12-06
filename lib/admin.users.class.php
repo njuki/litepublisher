@@ -116,8 +116,13 @@ class tadminusers extends tadminmenu {
     
     $theme = ttheme::i();
     $result .= $theme->getpages($this->url, litepublisher::$urlmap->page, ceil($count/$perpage), $params);
-    
-    $result .= str_replace('post', 'get', $html->getinline('[text=search] [button=find]', $args));
+
+$form = new adminform($args);
+$form->method = 'get';
+$form->inline = true;
+$form->items = '[text=search]';
+$form->submit = 'find';
+    $result .= $form->get();
     return $result;
   }
   
