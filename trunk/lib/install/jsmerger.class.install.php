@@ -54,6 +54,7 @@ function tjsmergerInstall($self) {
   $self->add($section, '/js/litepublisher/widgets.min.js');
     $self->add($section, '/js/litepublisher/widgets.bootstrap.min.js');
   $self->add($section, '/js/litepublisher/simpletml.min.js');
+  $self->add($section, '/js/litepublisher/templates.min.js');
   $self->add($section, '/js/litepublisher/filelist.min.js');
   $self->add($section, '/js/litepublisher/players.min.js');
   $self->add($section, '/js/litepublisher/dialog.min.js');

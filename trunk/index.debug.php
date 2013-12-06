@@ -107,12 +107,9 @@ ttheme::clearcache();
 //litepublisher::$urlmap->clearcache();
 //tfiler::log(var_export($_POST, true));
 //tthemegenerator::i()->parseselectors();
-  //litepublisher::$site->jquery_version = '1.10.2';
 //tupdater::i()->run(5.73);
 //shopupdater::i()->run(1.20);
-  //litepublisher::$classes->items['adminpayments'][1] = 'shop/orders';
-  //litepublisher::$classes->save();
-//tusers::i()->db->setvalue(3, 'phone', 0);
+//shoptheme::i()->install();
 //tfiler::log($_SERVER['REQUEST_URI']);
 
   if (!defined('litepublisher_mode')) {

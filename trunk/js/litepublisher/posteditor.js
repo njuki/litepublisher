@@ -7,12 +7,13 @@
 
 (function ($, document, window) {
   litepubl.Posteditor = Class.extend({
+tabs: false,
     
     init: function() {
-      var tabs = $("#tabs");
-      if (tabs.length == 0) return;
+      this.tabs = $("#tabs");
+      if (!this.tabs.length) return;
       var self = this;
-      tabs.tabs({
+      this.tabs.tabs({
         hide: true,
         show: true,
         beforeLoad: litepubl.uibefore,
@@ -81,17 +82,7 @@
       var holder = $("#datetime-holder", uipanel);
       holder.replaceWith(holder.get(0).firstChild.nodeValue);
       litepubl.calendar.load(function() {
-        var cur = $("#text-date").val();
-        $("#datepicker").datepicker({
-          altField: "#text-date",
-          altFormat: "dd.mm.yy",
-          dateFormat: "dd.mm.yy",
-          defaultDate: cur,
-          changeYear: true
-          //showButtonPanel: true
-        });
-        
-        //$("#datepicker").datepicker("setDate", cur);
+litepubl.calendar.datepicker("#datepicker", $("#text-date"));
       });
     },
     

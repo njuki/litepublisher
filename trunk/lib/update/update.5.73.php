@@ -28,6 +28,7 @@ $section = 'default';
   $js->deletetext($section, 'pretty');
       $js->add($section, '/js/litepublisher/dialog.bootstrap.min.js');
             $js->add($section, '/js/litepublisher/widgets.bootstrap.min.js');
+  $js->add($section, '/js/litepublisher/templates.min.js');
 $js->unlock();
 
 $css = tcssmerger::i();

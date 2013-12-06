@@ -13,7 +13,7 @@
   Deny from All
 </Files>	
 
-<Files ~ ".txt$">
+<Files ~ ".less$">
   Order Allow,Deny
   Deny from All
 </Files>	

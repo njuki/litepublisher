@@ -7,19 +7,22 @@
 
 (function ($, document, window) {
   litepubl.Calendar = Class.extend({
-    buttonclass: ".calendar-button",
+    holderclass: ".calendar",
     ui_datepicker: false,
     dialogopened: false,
     
     init: function() {
-      this.on(this.buttonclass);
+      this.on(this.holderclass);
     },
     
-    on: function(buttons) {
-      var self = this;
-      $(buttons).off("click.calendar").on("click.calendar", function() {
-        var edit = $(this).parent().find('input:first');
-        self.open(edit);
+    on: function(holders) {
+var self = this;
+holders.each(function() {
+var inputs = $("input", this);
+        var date = inputs.eq(0).addClass("date-edit");
+        var time = inputs.eq(1).addClass("time-edit");
+      $("button:first", this).data("date", date).off("click.calendar").on("click.calendar", function() {
+        self.open($(this).data("date"));
         return false;
       });
     },
@@ -33,13 +36,22 @@
         self.ui_datepicker= $.load_script(ltoptions.files + '/js/jquery/ui-' + $.ui.version + '/jquery.ui.datepicker-' + ltoptions.lang + '.min.js', callback);
       });
     },
+
+datepicker: function(holder, edit) {
+            $(holder).datepicker({
+              altField: edit,
+              altFormat: "dd.mm.yy",
+              dateFormat: "dd.mm.yy",
+              defaultDate: edit.val(),
+              changeYear: true
+            });
+},
     
     open: function (edit) {
       if (this.dialogopened) return;
       this.dialogopened = true;
       var self = this;
       this.load(function() {
-        var cur = edit.val();
         $.litedialog({
           title: lang.admin.calendar,
           html: '<div  style="width:290px;height:200px;display:block;overflow:hidden;"><div id="popup-calendar"></div></div>',
@@ -49,13 +61,7 @@
           },
           
           open: function() {
-            $("#popup-calendar").datepicker({
-              altField: edit,
-              altFormat: "dd.mm.yy",
-              dateFormat: "dd.mm.yy",
-              defaultDate: cur,
-              changeYear: true
-            });
+            self.datepicker("#popup-calendar", edit);
           },
           
           buttons: [{

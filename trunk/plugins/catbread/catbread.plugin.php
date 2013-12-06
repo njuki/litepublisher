@@ -21,7 +21,7 @@ $this->data['showhome'] = true;
 $this->data['showchilds'] = true;
 $this->data['childsortname'] = 'title';
 $this->data['showsimilar'] = true;
-$this->data['breadpos'] = 'after';
+$this->data['breadpos'] = 'before';
 $this->data['similarpos'] = 'after';
 
     $this->cats = tcategories::i();
@@ -65,7 +65,7 @@ if ($this->breadpos == 'after') $catlinks .= $bread;
 if ($this->similarpos == 'after') $catlinks .= $similar;
 
 foreach (array('content.post', 'shop.product') as $k) {
-if (!isset($theme->templates[$k]) || strpos($theme->templates[$k], $tag)) continue;
+if (!isset($theme->templates[$k]) || strpos($theme->templates[$k], $similar)) continue;
 $s = $theme->templates[$k];
 $s = $top . $s;
 $s = str_replace('$post.catlinks', $catlinks, $s);
