@@ -80,10 +80,9 @@ tabs: false,
     init_datetime_tab: function (uipanel) {
       //replace html in comment
       var holder = $("#datetime-holder", uipanel);
-      holder.replaceWith(holder.get(0).firstChild.nodeValue);
-      litepubl.calendar.load(function() {
-litepubl.calendar.datepicker("#datepicker", $("#text-date"));
-      });
+      var calendar = $(holder.get(0).firstChild.nodeValue).appendTo(uipanel);
+holder.remove();
+      litepubl.calendar.on(calendar);
     },
     
     init_raw_tabs: function() {
