@@ -63,10 +63,10 @@ class tadminpingbacks extends tadminmenu {
     
     $html = $this->html;
     $lang = tlocal::i();
-    
-    $result =$html->getitemscount($from, $from + count($items), $total);
+    $form = new adminform($args);
+    $form->items =$html->getitemscount($from, $from + count($items), $total);
     ttheme::$vars['pingitem'] = new pingitem();
-    $result .= $html->buildtable($items, array(
+    $form->items .= $html->buildtable($items, array(
     $html->get_table_checkbox('id'),
     array('left', $lang->date , '$pingitem.date'),
     array('left', $lang->status, '$pingitem.status'),
@@ -79,8 +79,9 @@ class tadminpingbacks extends tadminmenu {
     
     unset(ttheme::$vars['pingitem']);
     
-    $result .= $html->div($html->getsubmit('approve', 'hold', 'delete'));
-    $result = $html->getsimple($result);
+    $form->items .= $html->div($html->getsubmit('approve', 'hold', 'delete'));
+$form->submit = false;
+    $result = $form->get();
     
     $theme = ttheme::i();
     $result .= $theme->getpages($this->url, litepublisher::$urlmap->page, ceil($total/$perpage));

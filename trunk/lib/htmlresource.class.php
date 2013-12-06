@@ -198,12 +198,6 @@ class tadminhtml {
     return $this->parsearg(ttheme::i()->templates['content.admin.form'], $args);
   }
   
-  public function getsimple($form, $actionurl = '') {
-    $result = str_replace('$form',$form, $this->simpleform);
-    if ($actionurl) $result = str_replace("action=''", "action='$actionurl'", $result);
-    return $this->fixquote($result);
-  }
-
 public function inline($s) {
 return sprintf($this->ini['common']['inline'], $s);
 }
@@ -784,6 +778,11 @@ $this->submit = 'update';
 $this->inlineclass = 'form-inline';
 }
 
+public function line($s) {
+return "<div class=\"$this->inlineclass\">$s</div>";
+}
+  
+
 public function __set($k, $v) {
 switch ($k) {
 case 'upload':
@@ -821,8 +820,4 @@ if ($this->submit) $result .= $this->class == $this->inlineclass ? "[button=$thi
     return tadminhtml::i()->parsearg($result, $this->args);
         }
 
-public function line($s) {
-return "<div class=\"$this->inlineclass\">$s</div>";
-}
-  
 }//class
