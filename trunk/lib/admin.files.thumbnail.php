@@ -40,10 +40,15 @@ class tadminfilethumbnails extends tadminmenu {
       $html->getsubmit('delete')
       ), "$this->adminurl=$id");
     }
-    
-    $result .= $html->getuploadform($lang->changethumb,
-'[upload=filename]
-    [checkbox=noresize]', $args, "$this->adminurl=$id");
+
+$form = new  adminform($args);
+$form->upload = true;
+$form->action = "$this->adminurl=$id";
+$form->title = $lang->changethumb;
+$form->items = '[upload=filename]
+    [checkbox=noresize]';
+
+$result .= $form->get();
     return $result;
   }
   

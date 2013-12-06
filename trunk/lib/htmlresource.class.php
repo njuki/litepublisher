@@ -204,21 +204,10 @@ class tadminhtml {
     return $this->fixquote($result);
   }
 
-  public function getinline($tml, $args, $url = '') {
-    $result = $this->parsearg(strtr($this->inlineform, array(
-    '$url' => (string) $url,
-'$form' => $tml
-)), $args);
-    return $this->fixquote($result);
-}  
+public function inline($s) {
+return sprintf($this->ini['common']['inline'], $s);
+}
 
-  public function getuploadform($title, $form, targs $args, $actionurl= '') {
-    $args->formtitle = $title;
-    $args->actionurl = $actionurl;
-    $args->form = $this->parsearg($form, $args);
-    return $this->parsearg($this->ini['common']['uploadform'], $args);
-  }
-  
     public function getupload($name) {
       return $this->getinput('upload', $name, '', '');
   }
@@ -283,15 +272,15 @@ class tadminhtml {
       $date = strtotime($date);
     } else {
       $date = 0;
-    }
-    
-    return strtr($this->ini['common']['calendar'], array(
-    '$title' => tlocal::i()->__get($name),
-    '$name' => $name,
-    '$date' => $date? date('d.m.Y', $date) : '',
-    '$time' => $date ?date('H:i', $date) : '',
-    ));
-  }
+}
+
+$lang = tlocal::i();
+$controls = $this->getinput('text', $name, $date? date('d.m.Y', $date) : '', $lang->date);
+$controls .= $this->getinput('text', "$name-time", $date ?date('H:i', $date) : '', $lang->time);
+$controls .= $this->getinput('button', "calendar-$name", '', $lang->calendar);
+
+return sprintf($this->ini['common']['calendar'], $lang->__get($name), $this->inline($controls));
+ }
   
   public static function getdatetime($name) {
     if (!empty($_POST[$name]) && @sscanf(trim($_POST[$name]), '%d.%d.%d', $d, $m, $y)) {
@@ -779,6 +768,7 @@ public $id;
 public $class;
 public $target;
 public $submit;
+public $inlineclass;
 
 public function __construct($args = null) {
 $this->args = $args;
@@ -791,6 +781,7 @@ $this->id = '';
 $this->class = '';
 $this->target = '';
 $this->submit = 'update';
+$this->inlineclass = 'form-inline';
 }
 
 public function __set($k, $v) {
@@ -804,6 +795,10 @@ $this->enctype = '';
 $this->submit = 'update';
 }
 break;
+
+case 'inline':
+$this->class = $v ? $this->inlineclass : '';
+break;
 }
 }
 
@@ -813,7 +808,7 @@ break;
   
     public function get() {
     $result = '';
-    if ($this->title) $result .= "<h3>$this->title</h3>\n";
+    if ($this->title) $result .= "<h4>$this->title</h4>\n";
     $f = "action=\"$this->action\"";
     foreach (array('method', 'enctype', 'target', 'id', 'class') as $k) {
     if ($v = $this->$k) $f .= sprintf(' %s="%s"', $k, $v);
@@ -821,9 +816,13 @@ break;
 
     $result .= "<form $f role=\"form\">";
     $result .= $this->items;
-        $result .= $this->class == 'form-inline' ? "[button=$this->submit]" : "[submit=$this->submit]";
+if ($this->submit) $result .= $this->class == $this->inlineclass ? "[button=$this->submit]" : "[submit=$this->submit]";
     $result .= "\n</form>\n";
     return tadminhtml::i()->parsearg($result, $this->args);
         }
+
+public function line($s) {
+return "<div class=\"$this->inlineclass\">$s</div>";
+}
   
 }//class

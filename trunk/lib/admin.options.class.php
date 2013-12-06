@@ -251,8 +251,9 @@ class Tadminoptions extends tadminmenu {
       [checkbox=memcache_classes]
       ', $args);
       
-      $args->form = $html->getsubmit('clearcache');
-      $result .= $html->simpleform ($args);
+$form = new adminform($args);
+      $form->submit = 'clearcache';
+      $result .= $form->get();
       return $result;
       
       case 'catstags':
@@ -321,15 +322,17 @@ class Tadminoptions extends tadminmenu {
       [checkbox=useshell]
       ', $args);
       
-      $args->formtitle = $lang->changepassword;
+$form = new adminform($args);
+      $form->title = $lang->changepassword;
       $args->oldpassword = '';
       $args->newpassword = '';
       $args->repassword = '';
-      $args->items = $html->parsearg('[password=oldpassword]
+      $form->items = '[password=oldpassword]
       [password=newpassword]
-      [password=repassword]', $args);
-      
-      $result .= $html->secondform($args);
+      [password=repassword]';
+
+$form->submit = 'changepassword';
+            $result .= $form->get();
       return $result;
     }
     
