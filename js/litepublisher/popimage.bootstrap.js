@@ -8,11 +8,14 @@
 (function( $, window, document){
 $.fn.popimage = function(options) {
 options = $.extend({
-title: "Image",
+title: "",
 cursorclass: "cursor-loading",
 width: 40,
 height: 30
 }, options);
+
+// prevent double opened popovers
+var showing = false;
 
 //create circle for preload
 var prevlink = false;
@@ -67,7 +70,7 @@ var h = Math.floor(w * options.height / options.width);
 var title = self.attr("title");
 if (re.test(title)) title = options.title;
 // cut long title
-if (title.length * 14 > w) title = title.substring(0, Math.floor(w / 14 - 5))  + '...';
+//if (title.length * 14 > w) title = title.substring(0, Math.floor(w / 14 - 5))  + '...';
 
 self.popover({
 container: 'body',
@@ -75,11 +78,20 @@ content: '<img src="' + url + '" width="' + w + '" height="' + h + '" />',
 //delay: { show: 100, hide: 100 },
    html:true,
 placement: 'auto bottom',
+  template: '<div class="popover popover-image"><div class="arrow"></div>' +
+'<h3 class="popover-title" style="max-width:' + w + 'px;"></h3>' + 
+'<div class="popover-content"></div></div>',
  title: title,
 trigger: 'hover focus' + clicktrigger
-   });
-   
-   self.popover('show');
+   })
+.on("show.bs.popover", function() {
+showing = true;
+})
+   .on("hide.bs.popover", function() {
+showing = false;
+});
+
+if (!showing) self.popover('show');
    
    						//preload
 var preload = self.data("nextlink");

@@ -21,7 +21,15 @@ $args->add($plugin->tml);
 $args->showhome = $plugin->showhome;
 $args->showchilds = $plugin->showchilds;
 $args->showsimilar = $plugin->showsimilar;
-      $args->sort = tadminhtml::array2combo(tlocal::admin()->ini['sortnametags'], $plugin->childsortname);
+
+$lang->addsearch('sortnametags');
+$sort = array(
+'title' => $lang->title,
+'itemscount' => $lang->count,
+'customorder' => $lang->customorder,
+);
+
+      $args->sort = tadminhtml::array2combo($sort, $plugin->childsortname);
 
 $pos = array(
 'top' => $lang->top,

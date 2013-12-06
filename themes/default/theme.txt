@@ -797,7 +797,7 @@ $submit =   [        <div class="text-center"><div class="margin-auto"><button t
 $form = [<h3>$formtitle</h3>
 <form action="" method="post" role="form">
 $items
-        <div class="text-center"><div class="margin-auto"><button type="submit" name="submitbutton" class="button"><span>$lang.update</span></button></div></div>
+[submit=update]
 </form>]
 
 ]

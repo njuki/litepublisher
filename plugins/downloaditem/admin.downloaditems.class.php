@@ -56,8 +56,9 @@ class tadmindownloaditems extends tadminmenu {
     }
     
     $result .= $html->editlink();
-    $result .= $html->getitemscount($from, $from + count($items), $count);
-    $result .= $html->tableposts($items, array(
+    $form = new  adminform(new targs());
+    $form->items =$html->getitemscount($from, $from + count($items), $count);
+    $form->items .= $html->tableposts($items, array(
     array('right', $lang->downloads, '$post.downloads'),
     array('left', $lang->posttitle, '$post.bookmark'),
     array('left', $lang->status, '$ticket_status.status'),
@@ -65,13 +66,13 @@ class tadmindownloaditems extends tadminmenu {
     array('center', $lang->edit, '<a href="' . $editurl . '=$post.id">' . $lang->edit . '</a>'),
     ));
     
-    $result .= $html->div(
-    $html->getsubmit('publish') .
-    $html->getsubmit('setdraft') .
-    $html->getsubmit('delete')
-    );
+    $form->items .= $html->div(
+'[button=publish]
+[button=setdraft]
+[button=delete]');
     
-    $result = str_replace('$form',$result, $html->simpleform);
+$form->submit = false;
+    $result .= $form->get();
     $result = $html->fixquote($result);
     
     $theme = ttheme::i();

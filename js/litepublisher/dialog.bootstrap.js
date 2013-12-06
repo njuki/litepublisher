@@ -7,7 +7,7 @@
 
 (function( $, window, document){
   $.BootstrapDialog = Class.extend({
-  tml: '<div class="modal fade" id="dialog-%%id%%" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">' +
+  tml: '<div class="modal fade" id="dialog-%%id%%" tabindex="-1" role="dialog" aria-hidden="true">' +
     '<div class="modal-dialog"><div class="modal-content">' +
         '<div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>' +
           '<h4 class="modal-title">%%title%%</h4></div>' +
@@ -78,10 +78,13 @@ buttons: buttons
             $("#" + idbutton +i, dialog).data("index", i).on("click.dialog", options.buttons[i].click);
             }
             
-        dialog.modal().on("shown.bs.modal", function() {
-                if ($.isFunction(options.open)) options.open(dialog);
+                if ($.isFunction(options.open)) {
+        dialog.on("shown.bs.modal", function() {
+options.open(dialog);
                 });
+}
 
+dialog.modal();
 var self = this;
       dialog.on("hidden.bs.modal", function() {
         if ($.isFunction(options.close)) options.close(dialog);

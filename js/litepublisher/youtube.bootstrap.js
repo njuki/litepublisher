@@ -49,6 +49,8 @@ dialog.modal("destroy");
 dialog.remove();
           }, 100);
 });
+
+return false
 });
 }
 
