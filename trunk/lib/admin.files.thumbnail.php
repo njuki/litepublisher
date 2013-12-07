@@ -37,7 +37,7 @@ class tadminfilethumbnails extends tadminmenu {
 $form = new  adminform($args);
 $form->action = "$this->adminurl=$id";
 $form->inline = true;
-$form->items = $html->p('<img src="$site.files/files/$filename" alt="thumbnail" /> . $lang->wantdelete);
+$form->items = $html->p('<img src="$site.files/files/$filename" alt="thumbnail" />' . $lang->wantdelete);
 $form->submit = 'delete';
 $result .= $form->get();
     }
