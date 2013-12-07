@@ -255,7 +255,7 @@ return sprintf($this->ini['common']['inline'], $s);
     return $this->getinput('combo', $name, $value, $title);
   }
   
-  public function getcalendar($name, $date) {
+  public function cleandate($date) {
     if (is_numeric($date)) {
       $date = intval($date);
     } else if ($date == '0000-00-00 00:00:00') {
@@ -268,12 +268,29 @@ return sprintf($this->ini['common']['inline'], $s);
       $date = 0;
 }
 
+return $date;
+}
+
+  public function getcalendar($name, $date) {
+$date = $this->cleandate($date);
 $lang = tlocal::i();
 $controls = $this->getinput('text', $name, $date? date('d.m.Y', $date) : '', $lang->date);
 $controls .= $this->getinput('text', "$name-time", $date ?date('H:i', $date) : '', $lang->time);
 $controls .= $this->getinput('button', "calendar-$name", '', $lang->calendar);
 
 return sprintf($this->ini['common']['calendar'], $lang->__get($name), $this->inline($controls));
+ }
+
+  public function getdaterange($from, $to) {
+$from = $this->cleandate($from);
+$to = $this->cleandate($to);
+$lang = tlocal::i();
+$controls = $this->getinput('text', 'from', $from ? date('d.m.Y', $from) : '', $lang->from);
+$controls .= $this->getinput('button', "calendar-from", '', $lang->calendar);
+$controls .= $this->getinput('text', 'to', $to ? date('d.m.Y', $to) : '', $lang->to);
+$controls .= $this->getinput('button', "calendar-to", '', $lang->calendar);
+
+return sprintf($this->ini['common']['daterange'], $controls);
  }
   
   public static function getdatetime($name) {
