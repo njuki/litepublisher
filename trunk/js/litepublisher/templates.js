@@ -6,18 +6,18 @@
 **/
 
 (function($, litepubl){
-$.extend(litepubl.tml, {
-text:  '<div class="form-group"><label for="text-%%name%%">%%title%%</label>' +
-'<input type="text" class="form-control" name="%%name%%" id="text-%%name%%" value="%%value%%" /></div>',
-
-getedit: function(title, name, value) {
-return $.simpletml(litepubl.tml.text, {
-name: name,
-value: value ? value : '',
-title: title
-});
-}
-
-});
+  $.extend(litepubl.tml, {
+    text:  '<div class="form-group"><label for="text-%%name%%">%%title%%</label>' +
+    '<input type="text" class="form-control" name="%%name%%" id="text-%%name%%" value="%%value%%" /></div>',
+    
+    getedit: function(title, name, value) {
+      return $.simpletml(litepubl.tml.text, {
+        name: name,
+        value: value ? value : '',
+        title: title
+      });
+    }
+    
+  });
   
 }(jQuery, litepubl));

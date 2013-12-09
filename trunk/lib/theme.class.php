@@ -14,7 +14,7 @@ class ttheme extends tevents {
   public $name;
   public $parsing;
   public $templates;
-    public $extratml;
+  public $extratml;
   private $themeprops;
   
   public static function exists($name) {
@@ -275,7 +275,7 @@ class ttheme extends tevents {
   public function gethtml($context) {
     self::$vars['context'] = $context;
     if (isset($context->index_tml) && ($tml = $context->index_tml)) return $this->parse($tml);
-          return $this->parse($this->templates['index']);
+    return $this->parse($this->templates['index']);
   }
   
   public function getnotfount() {
@@ -389,10 +389,10 @@ class ttheme extends tevents {
     $args = new targs();
     $args->title = $title;
     $args->items = $content;
-        $args->sidebar = $sidebar;
+    $args->sidebar = $sidebar;
     return $this->parsearg($this->getwidgettml($sidebar, $template, ''), $args);
   }
-
+  
   public function getidwidget($id, $title, $content, $template, $sidebar) {
     $args = new targs();
     $args->id = $id;
@@ -430,6 +430,22 @@ class ttheme extends tevents {
   
   public function simple($content) {
     return str_replace('$content', $content, $this->templates['content.simple']);
+  }
+  
+  public function getbutton($title) {
+    return strtr($this->templates['content.admin.button'], array(
+    '$lang.$name', '$title',
+    'name="$name"' => '',
+    'id="submitbutton-$name"' => ''
+    ));
+  }
+  
+  public function getsubmit($title) {
+    return strtr($this->templates['content.admin.button'], array(
+    '$lang.$name', '$title',
+    'name="$name"' => '',
+    'id="submitbutton-$name"' => ''
+    ));
   }
   
   public static function clearcache() {

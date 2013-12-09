@@ -29,7 +29,7 @@ class tposts extends titems {
     $this->rawtable = 'rawposts';
     $this->basename = 'posts/index';
     $this->addevents('edited', 'changed', 'singlecron', 'beforecontent', 'aftercontent', 'beforeexcerpt', 'afterexcerpt',
- 'onselect', 'onhead', 'onanhead', 'ontags');
+    'onselect', 'onhead', 'onanhead', 'ontags');
     $this->data['archivescount'] = 0;
     $this->data['revision'] = 0;
     $this->data['syncmeta'] = false;
@@ -95,14 +95,14 @@ class tposts extends titems {
     
     $items = $db->res2items($db->query("select $db->posts.*, $db->urlmap.url as url  from $db->posts, $db->urlmap
     where $where and  $db->urlmap.id  = $db->posts.idurl $limit"));
-
-/*    
+    
+    /*
     $items = $db->res2items($db->query(
     "select $db->posts.*, $db->urlmap.url as url  from $db->posts
     left join  $db->urlmap on $db->urlmap.id  = $db->posts.idurl
     where $where $limit"));
-      */  
-  
+    */
+    
     if (count($items) == 0) return array();
     $subclasses = array();
     foreach ($items as &$item) {

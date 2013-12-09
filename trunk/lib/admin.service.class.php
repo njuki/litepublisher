@@ -26,13 +26,13 @@ class tadminservice extends tadminmenu {
         return $html->h2->noupdates;
       }
       
-$lang = $this->lang;
+      $lang = $this->lang;
       $result .= $html->h3->info;
       $result .= $this->doupdate($_GET);
       $result .= $html->tableprops(array(
-'postscount' => litepublisher::$classes->posts->count,
-'commentscount' =>litepublisher::$classes->commentmanager->count,
-'version' => litepublisher::$site->version
+      'postscount' => litepublisher::$classes->posts->count,
+      'commentscount' =>litepublisher::$classes->commentmanager->count,
+      'version' => litepublisher::$site->version
       ));
       $updater = tupdater::i();
       $islatest= $updater->islatest();
@@ -41,9 +41,9 @@ $lang = $this->lang;
       } elseif ($islatest <= 0) {
         $result .= $html->h4->islatest;
       } else {
-      $form = new adminform($args);
+        $form = new adminform($args);
         $form->title = tlocal::i()->requireupdate;
-                $form->items = $this->getloginform(). '[submit=autoupdate]';
+        $form->items = $this->getloginform(). '[submit=autoupdate]';
         $form->submit = 'manualupdate';
         $result .= $form->get();
       }
@@ -52,31 +52,31 @@ $lang = $this->lang;
       
       case 'backup':
       if (empty($_GET['action'])) {
-      
+        
         $args->plugins = false;
         $args->theme = false;
         $args->lib = false;
         $args->dbversion = dbversion ? '' : 'disabled="disabled"';
         $args->saveurl = true;
-
-      $form = new adminform($args);
-      $form->upload = true;
-      $form->items =  $html->h4->partialform;
-$form->items .= $this->getloginform();
-$form->items .= '[checkbox=plugins]
-[checkbox=theme]
-[checkbox=lib]
-[submit=downloadpartial]';
-
-$form->items .= $html->p->notefullbackup;
-$form->items .= '[submit=fullbackup]
-[submit=sqlbackup]';
-
-$form->items .= $html->h4->uploadhead;
-$form->items .= '[upload=filename]
-[checkbox=saveurl]';
-
-$form->submit = 'restore';
+        
+        $form = new adminform($args);
+        $form->upload = true;
+        $form->items =  $html->h4->partialform;
+        $form->items .= $this->getloginform();
+        $form->items .= '[checkbox=plugins]
+        [checkbox=theme]
+        [checkbox=lib]
+        [submit=downloadpartial]';
+        
+        $form->items .= $html->p->notefullbackup;
+        $form->items .= '[submit=fullbackup]
+        [submit=sqlbackup]';
+        
+        $form->items .= $html->h4->uploadhead;
+        $form->items .= '[upload=filename]
+        [checkbox=saveurl]';
+        
+        $form->submit = 'restore';
         $result= $form->get();
         $result .= $this->getbackupfilelist();
       } else {
@@ -114,13 +114,13 @@ $form->submit = 'restore';
       break;
       
       case 'upload':
-            $args->url = str_replace('$mysite', rawurlencode(litepublisher::$site->url),tadminhtml::getparam('url', ''));
+      $args->url = str_replace('$mysite', rawurlencode(litepublisher::$site->url),tadminhtml::getparam('url', ''));
       $lang = tlocal::admin();
       $form = new  adminform($args);
       $form->title = $lang->uploaditem;
       $form->upload = true;
-$form->items = '[text=url]
-[upload=filename]' .
+      $form->items = '[text=url]
+      [upload=filename]' .
       $this->getloginform();
       $result = $html->p->uploaditems;
       $result .= $form->get();
@@ -293,22 +293,22 @@ $form->items = '[text=url]
   
   private function getbackupfilelist() {
     $list = tfiler::getfiles(litepublisher::$paths->backup );
-if (!count($list)) return '';
+    if (!count($list)) return '';
     $items = array();    $html = $this->html;
-      foreach($list as $filename) {
+    foreach($list as $filename) {
       if (strend($filename, '.gz') || strend($filename, '.zip')) {
-$items[]['filename'] = $filename;
-}
+        $items[]['filename'] = $filename;
       }
-
-if (!count($items)) return '';
-$lang = $this->lang;
-return $this->html->h4->backupheadern .
-$this->html->buildtable($items, array(
-array('right', $lang->download, "<a href=\"$this->adminurl=\$filename&action=download\">\$filename</a>"),
-array('right', $lang->delete, "<a href=\"$this->adminurl=\$filename&action=delete\">$lang->delete</a>")
-));
- }
+    }
+    
+    if (!count($items)) return '';
+    $lang = $this->lang;
+    return $this->html->h4->backupheadern .
+    $this->html->buildtable($items, array(
+    array('right', $lang->download, "<a href=\"$this->adminurl=\$filename&action=download\">\$filename</a>"),
+    array('right', $lang->delete, "<a href=\"$this->adminurl=\$filename&action=delete\">$lang->delete</a>")
+    ));
+  }
   
 }//class
 ?>

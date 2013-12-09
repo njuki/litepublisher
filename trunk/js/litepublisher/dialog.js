@@ -58,12 +58,12 @@
     });
     return this;
   };
-
-$.get_cancel_button = function() {
-return {
-          title: lang.dialog.cancel,
-          click: $.closedialog
-};
-};
-   
+  
+  $.get_cancel_button = function() {
+    return {
+      title: lang.dialog.cancel,
+      click: $.closedialog
+    };
+  };
+  
 })( jQuery );

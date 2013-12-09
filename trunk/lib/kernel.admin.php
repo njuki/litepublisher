@@ -258,7 +258,7 @@ public function __construct($tag) { $this->tag = $tag; }
 }//class
 
 class tadminhtml {
-  public static $tags = array('h1', 'h2', 'h3', 'h4', 'p', 'li', 'ul', 'strong', 'div');
+  public static $tags = array('h1', 'h2', 'h3', 'h4', 'p', 'li', 'ul', 'strong', 'div', 'span');
   public $section;
   public $searchsect;
   public $ini;
@@ -306,6 +306,7 @@ class tadminhtml {
   public function parsearg($s, targs $args) {
     if (!is_string($s)) $s = (string) $s;
     $theme = ttheme::i();
+    
     // parse tags [form] .. [/form]
     if (is_int($i = strpos($s, '[form]'))) {
       $form = $theme->templates['content.admin.form'];
@@ -318,13 +319,13 @@ class tadminhtml {
       $s = substr_replace($s, $replace, $i, strlen('[/form]'));
     }
     
-    if (preg_match_all('/\[(editor|checkbox|text|password|combo|hidden|calendar)(:|=)(\w*+)\]/i', $s, $m, PREG_SET_ORDER)) {
+    if (preg_match_all('/\[(editor|checkbox|text|password|combo|hidden|submit|button|calendar|upload)(:|=)(\w*+)\]/i', $s, $m, PREG_SET_ORDER)) {
       foreach ($m as $item) {
         $type = $item[1];
         $name = $item[3];
         $varname = '$' . $name;
         //convert spec charsfor editor
-        if (!(($type == 'checkbox') || ($type == 'combo') || ($type == 'calendar'))) {
+        if (!in_array($type, array('checkbox', 'combo', 'calendar', 'upload'))) {
           if (isset($args->data[$varname])) {
             $args->data[$varname] = self::specchars($args->data[$varname]);
           } else {
@@ -438,21 +439,12 @@ class tadminhtml {
     return $this->parsearg(ttheme::i()->templates['content.admin.form'], $args);
   }
   
-  public function getsimple($form, $actionurl = '') {
-    $result = str_replace('$form',$form, $this->simpleform);
-    if ($actionurl) $result = str_replace("action=''", "action='$actionurl'", $result);
-    return $this->fixquote($result);
+  public function inline($s) {
+    return sprintf($this->ini['common']['inline'], $s);
   }
   
-  public function getuploadform($title, $form, targs $args, $actionurl= '') {
-    $args->formtitle = $title;
-    $args->actionurl = $actionurl;
-    $args->form = $this->parsearg($form, $args);
-    return $this->parsearg($this->ini['common']['uploadform'], $args);
-  }
-  
-  public function getinputfile($name) {
-    return str_replace('$name', $name, $this->ini['common']['inputfile']);
+  public function getupload($name) {
+    return $this->getinput('upload', $name, '', '');
   }
   
   public function getcheckbox($name, $value) {
@@ -487,7 +479,7 @@ class tadminhtml {
     $result = '';
     $a = func_get_args();
     foreach ($a as $name) {
-      $result .= strtr(ttheme::i()->templates['content.admin.submit'], array(
+      $result .= strtr(ttheme::i()->templates['content.admin.button'], array(
       '$lang.$name' => tlocal::i()->__get($name),
       '$name' => $name,
       ));
@@ -504,7 +496,7 @@ class tadminhtml {
     return $this->getinput('combo', $name, $value, $title);
   }
   
-  public function getcalendar($name, $date) {
+  public function cleandate($date) {
     if (is_numeric($date)) {
       $date = intval($date);
     } else if ($date == '0000-00-00 00:00:00') {
@@ -517,12 +509,29 @@ class tadminhtml {
       $date = 0;
     }
     
-    return strtr($this->ini['common']['calendar'], array(
-    '$title' => tlocal::i()->__get($name),
-    '$name' => $name,
-    '$date' => $date? date('d.m.Y', $date) : '',
-    '$time' => $date ?date('H:i', $date) : '',
-    ));
+    return $date;
+  }
+  
+  public function getcalendar($name, $date) {
+    $date = $this->cleandate($date);
+    $lang = tlocal::i();
+    $controls = $this->getinput('text', $name, $date? date('d.m.Y', $date) : '', $lang->date);
+    $controls .= $this->getinput('text', "$name-time", $date ?date('H:i', $date) : '', $lang->time);
+    $controls .= $this->getinput('button', "calendar-$name", '', $lang->calendar);
+    
+    return sprintf($this->ini['common']['calendar'], $lang->__get($name), $this->inline($controls));
+  }
+  
+  public function getdaterange($from, $to) {
+    $from = $this->cleandate($from);
+    $to = $this->cleandate($to);
+    $lang = tlocal::i();
+    $controls = $this->getinput('text', 'from', $from ? date('d.m.Y', $from) : '', $lang->from);
+    $controls .= $this->getinput('button', "calendar-from", '', $lang->calendar);
+    $controls .= $this->getinput('text', 'to', $to ? date('d.m.Y', $to) : '', $lang->to);
+    $controls .= $this->getinput('button', "calendar-to", '', $lang->calendar);
+    
+    return sprintf($this->ini['common']['daterange'], $controls);
   }
   
   public static function getdatetime($name) {
@@ -538,6 +547,7 @@ class tadminhtml {
   
   public function gettable($head, $body) {
     return strtr($this->ini['common']['table'], array(
+    '$tableclass' => ttheme::i()->templates['content.admin.tableclass'],
     '$tablehead' => $head,
     '$tablebody' => $body));
   }
@@ -598,8 +608,8 @@ class tadminhtml {
   
   public function tableposts(array $items, array $struct) {
     $body = '';
-    $head = '<th align="center"><input type="checkbox" name="invertcheck" class="invertcheck" /></th>';
-    $tml = '<tr><td align="center"><input type="checkbox" name="checkbox-$post.id" id="checkbox-$post.id" value="$post.id"/>$post.id</td>';
+    $head = sprintf('<th align="center">%s</th>', $this->invertcheckbox );
+    $tml = '<tr><td align="center"><label><input type="checkbox" name="checkbox-$post.id" id="id-checkbox-$post.id" value="$post.id"/>$post.id</label><td>';
     foreach ($struct as $elem) {
       $head .= sprintf('<th align="%s">%s</th>', $elem[0], $elem[1]);
       $tml .= sprintf('<td align="%s">%s</td>', $elem[0], $elem[2]);
@@ -645,7 +655,9 @@ class tadminhtml {
     $lang = tlocal::i();
     foreach ($item as $k => $v) {
       if (($k === false) || ($v === false)) continue;
-      $body .= sprintf('<tr><td>%s</td><td>%s</td></tr>', $lang->__get($k), $v);
+      $k2 = $lang->__get($k);
+      if (!$k2) $k2 = $k;
+      $body .= sprintf('<tr><td>%s</td><td>%s</td></tr>', $k2, $v);
     }
     
     return $this->gettable("<th>$lang->name</th> <th>$lang->property</th>", $body);
@@ -944,6 +956,7 @@ class tuitabs {
   public $head;
   public $body;
   public $tabs;
+  public $customdata;
   private static $index = 0;
   private $tabindex;
   private $items;
@@ -951,12 +964,13 @@ class tuitabs {
   public function __construct() {
     $this->tabindex = ++self::$index;
     $this->items = array();
-    $this->head = '<li><a href="%s"><span>%s</span></a></li>';
-    $this->body = '<div id="tab-' . self::$index . '-%d">%s</div>';
-    $this->tabs = '<div id="tabs-' . self::$index . '" class="admintabs">
-    <ul>%s</ul>
+    $this->head = '<li><a href="%s" role="tab"><span>%s</span></a></li>';
+    $this->body = '<div id="tab-' . self::$index . '-%d" role="tabpanel">%s</div>';
+    $this->tabs = '<div id="tabs-' . self::$index . '" class="admintabs" %s>
+    <ul role="tablist">%s</ul>
     %s
     </div>';
+    $this->customdata = false;
   }
   
   public function get() {
@@ -970,7 +984,9 @@ class tuitabs {
         $body .= sprintf($this->body, $i, $item['body']);
       }
     }
-    return sprintf($this->tabs, $head, $body);
+    
+    $data = $this->customdata? sprintf('data-custom="%s"', str_replace('"', '&quot;', json_encode($this->customdata))) : '';
+    return sprintf($this->tabs, $data, $head, $body);
   }
   
   public function add($title, $body) {
@@ -989,6 +1005,81 @@ class tuitabs {
   
   public static function gethead() {
   return ttemplate::i()->getready('$($("div.admintabs").get().reverse()).tabs({ beforeLoad: litepubl.uibefore})');
+  }
+  
+}//class
+
+class adminform {
+  public $args;
+  public$title;
+  public $items;
+  public $action;
+  public $method;
+  public $enctype;
+  public $id;
+  public $class;
+  public $target;
+  public $submit;
+  public $inlineclass;
+  
+  public function __construct($args = null) {
+    $this->args = $args;
+    $this->title = '';
+    $this->items = '';
+    $this->action = '';
+    $this->method = 'post';
+    $this->enctype = '';
+    $this->id = '';
+    $this->class = '';
+    $this->target = '';
+    $this->submit = 'update';
+    $this->inlineclass = 'form-inline';
+  }
+  
+  public function line($s) {
+    return "<div class=\"$this->inlineclass\">$s</div>";
+  }
+  
+  
+  public function __set($k, $v) {
+    switch ($k) {
+      case 'upload':
+      if ($v) {
+        $this->enctype = 'multipart/form-data';
+        $this->submit = 'upload';
+      } else {
+        $this->enctype = '';
+        $this->submit = 'update';
+      }
+      break;
+      
+      case 'inline':
+      $this->class = $v ? $this->inlineclass : '';
+      break;
+    }
+  }
+  
+  public function __tostring() {
+    return $this->get();
+  }
+  
+  public function gettml() {
+    $result = '<div class="form-holder">';
+    if ($this->title) $result .= "<h4>$this->title</h4>\n";
+    $attr = "action=\"$this->action\"";
+    foreach (array('method', 'enctype', 'target', 'id', 'class') as $k) {
+      if ($v = $this->$k) $attr .= sprintf(' %s="%s"', $k, $v);
+    }
+    
+    $result .= "<form $attr role=\"form\">";
+    $result .= $this->items;
+    if ($this->submit) $result .= $this->class == $this->inlineclass ? "[button=$this->submit]" : "[submit=$this->submit]";
+    $result .= "\n</form>\n</div>\n";
+    return $result;
+  }
+  
+  public function get() {
+    return tadminhtml::i()->parsearg($this->gettml(), $this->args);
   }
   
 }//class
@@ -1209,7 +1300,8 @@ class tposteditor extends tadminmenu {
     $result = '';
     $categories = tcategories::i();
     $html = tadminhtml::getinstance('editor');
-    $args = targs::i();
+    $tml = str_replace('$checkbox', $html->getinput('checkbox', 'category-$id', 'value="$id" $checked', '$title'), $html->category);
+    $args = new targs();
     foreach ($categories->items  as $id => $item) {
       if ($parent != $item['parent']) continue;
       if ($exclude && in_array($id, $exclude)) continue;
@@ -1217,7 +1309,7 @@ class tposteditor extends tadminmenu {
       $args->checked = in_array($item['id'], $postitems);
       $args->subcount = '';
       $args->subitems = self::getsubcategories($id, $postitems);
-      $result .= $html->category($args);
+      $result .= $html->parsearg($tml, $args);
     }
     
     if ($result == '') return '';
@@ -1328,8 +1420,7 @@ class tposteditor extends tadminmenu {
     $args->ajax = tadminhtml::getadminlink('/admin/ajaxposteditor.htm', "id=$post->id&get");
     $args->title = tcontentfilter::unescape($post->title);
     $args->categories = $this->getpostcategories($post);
-    $args->date = $post->posted != 0 ?date('d.m.Y', $post->posted) : '';
-    $args->time  = $post->posted != 0 ?date('H:i', $post->posted) : '';
+    $args->date = $post->posted;
     $args->url = $post->url;
     $args->title2 = $post->title2;
     $args->keywords = $post->keywords;
@@ -1384,8 +1475,8 @@ class tposteditor extends tadminmenu {
       $files = trim($files, ', ');
       $post->files = tdatabase::str2array($files);
     }
-    if (isset($date) && ($date != '')  && @sscanf($date, '%d.%d.%d', $d, $m, $y) && @sscanf($time, '%d:%d', $h, $min)) {
-      $post->posted = mktime($h,$min,0, $m, $d, $y);
+    if (isset($date) && (!$date)) {
+      $post->posted = tadminhtml::getdatetime('date');
     }
     
     if (isset($status)) {

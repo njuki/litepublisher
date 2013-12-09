@@ -84,7 +84,7 @@ class tlocalmerger extends tfilemerger {
     tfilestorage::savevar(tlocal::getcachedir() . $name , $ini);
     $lang->ini = $ini + $lang->ini;
     $lang->loaded[] = $name;
-          if (isset($ini['searchsect'])) $lang->joinsearch($ini['searchsect']);
+    if (isset($ini['searchsect'])) $lang->joinsearch($ini['searchsect']);
   }
   
   public function addhtml($filename) {
@@ -127,8 +127,8 @@ class tlocalmerger extends tfilemerger {
     $this->lock();
     if (file_exists($dir . $language . '.ini')) $this->add('default', "plugins/$name/resource/$language.ini");
     if (file_exists($dir . $language . '.admin.ini')) $this->add('admin', "plugins/$name/resource/$language.admin.ini");
-        if (file_exists($dir . $language . '.mail.ini')) $this->add('mail', "plugins/$name/resource/$language.mail.ini");
-            if (file_exists($dir . 'html.ini')) $this->addhtml("plugins/$name/resource/html.ini");
+    if (file_exists($dir . $language . '.mail.ini')) $this->add('mail', "plugins/$name/resource/$language.mail.ini");
+    if (file_exists($dir . 'html.ini')) $this->addhtml("plugins/$name/resource/html.ini");
     $this->unlock();
   }
   
@@ -137,7 +137,7 @@ class tlocalmerger extends tfilemerger {
     $this->lock();
     $this->deletefile('default', "plugins/$name/resource/$language.ini");
     $this->deletefile('admin', "plugins/$name/resource/$language.admin.ini");
-        $this->deletefile('mail', "plugins/$name/resource/$language.mail.ini");
+    $this->deletefile('mail', "plugins/$name/resource/$language.mail.ini");
     $this->deletehtml("plugins/$name/resource/html.ini");
     $this->unlock();
   }

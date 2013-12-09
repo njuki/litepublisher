@@ -79,12 +79,12 @@ class ttemplate extends tevents_storage {
     litepublisher::$classes->instances[get_class($theme)] = $theme;
     $this->path = litepublisher::$paths->themes . $theme->name . DIRECTORY_SEPARATOR ;
     $this->url = litepublisher::$site->files . '/themes/' . $theme->name;
-if ($this->view->hovermenu) {
-    $this->hover = $theme->templates['menu.hover'];
-        if ($this->hover != 'bootstrap')     $this->hover  =     ($this->hover  == 'true');
- } else {
-     $this->hover = false;
-     }
+    if ($this->view->hovermenu) {
+      $this->hover = $theme->templates['menu.hover'];
+      if ($this->hover != 'bootstrap')     $this->hover  =     ($this->hover  == 'true');
+    } else {
+      $this->hover = false;
+    }
     
     $result = $this->httpheader();
     $result  .= $theme->gethtml($context);

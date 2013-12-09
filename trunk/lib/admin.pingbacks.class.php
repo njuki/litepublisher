@@ -80,7 +80,7 @@ class tadminpingbacks extends tadminmenu {
     unset(ttheme::$vars['pingitem']);
     
     $form->items .= $html->div($html->getsubmit('approve', 'hold', 'delete'));
-$form->submit = false;
+    $form->submit = false;
     $result = $form->get();
     
     $theme = ttheme::i();

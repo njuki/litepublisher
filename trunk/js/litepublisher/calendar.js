@@ -8,20 +8,38 @@
 (function ($, document, window) {
   litepubl.Calendar = Class.extend({
     holderclass: ".calendar",
+    rangeclass: ".date-range",
     ui_datepicker: false,
     dialogopened: false,
     
     init: function() {
       this.on(this.holderclass);
+      this.onrange(this.rangeclass);
     },
     
     on: function(holders) {
-var self = this;
-holders.each(function() {
-var inputs = $("input", this);
+      var self = this;
+      holders.each(function() {
+        var inputs = $("input", this);
         var date = inputs.eq(0).addClass("date-edit");
         var time = inputs.eq(1).addClass("time-edit");
-      $("button:first", this).data("date", date).off("click.calendar").on("click.calendar", function() {
+        self.add($("button:first", this), date);
+      });
+    },
+    
+    onrange: function(holders) {
+      var self = this;
+      holders.each(function() {
+        var inputs = $("input", this);
+        var buttons = $("button", this);
+        self.add(buttons.eq(0), inputs.eq(0).addClass("date-edit"));
+        self.add(buttons.eq(1), inputs.eq(1).addClass("date-edit"));
+      });
+    },
+    
+    add: function(button, edit) {
+      var self = this;
+      $(button).data("date", edit).off("click.calendar").on("click.calendar", function() {
         self.open($(this).data("date"));
         return false;
       });
@@ -36,16 +54,16 @@ var inputs = $("input", this);
         self.ui_datepicker= $.load_script(ltoptions.files + '/js/jquery/ui-' + $.ui.version + '/jquery.ui.datepicker-' + ltoptions.lang + '.min.js', callback);
       });
     },
-
-datepicker: function(holder, edit) {
-            $(holder).datepicker({
-              altField: edit,
-              altFormat: "dd.mm.yy",
-              dateFormat: "dd.mm.yy",
-              defaultDate: edit.val(),
-              changeYear: true
-            });
-},
+    
+    datepicker: function(holder, edit) {
+      $(holder).datepicker({
+        altField: edit,
+        altFormat: "dd.mm.yy",
+        dateFormat: "dd.mm.yy",
+        defaultDate: edit.val(),
+        changeYear: true
+      });
+    },
     
     open: function (edit) {
       if (this.dialogopened) return;
@@ -76,8 +94,6 @@ datepicker: function(holder, edit) {
   });//class
   
   $(document).ready(function() {
-    try {
-      litepubl.calendar = new litepubl.Calendar();
-  } catch(e) {erralert(e);}
+    litepubl.calendar = new litepubl.Calendar();
   });
 }(jQuery, document, window));

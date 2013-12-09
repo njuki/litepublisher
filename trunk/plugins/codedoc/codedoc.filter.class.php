@@ -74,10 +74,10 @@ class tcodedocfilter extends titems {
     $theme = ttheme::instance();
     $s = strtr( tlocal::get('htmlcodedoc', $key)), array(
     '$tableclass' => $theme->templates['content.admin.tableclass'],
-        "'" => '"',
-        ));
+    "'" => '"',
+    ));
     return $theme->parsearg(strtr($s, $arg);
-
+    
   }
   
   public function getheaders(array &$a) {

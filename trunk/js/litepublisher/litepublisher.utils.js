@@ -34,12 +34,12 @@
   };
   
   window.get_get=  function (name, url) {
-if (url) {
-    var q = url.substring(url.indexOf('?') + 1);
-} else {
-    var q = window.location.search.substring(1);
-}
-
+    if (url) {
+      var q = url.substring(url.indexOf('?') + 1);
+    } else {
+      var q = window.location.search.substring(1);
+    }
+    
     var vars = q.split('&');
     for (var i=0, l=  vars.length; i < l; i++) {
       var pair = vars[i].split('=');
@@ -63,11 +63,11 @@ if (url) {
   window.$ready = function(fn) {
     $(document).ready(fn);
   };
-
+  
   window.ready2 = function(fn) {
     $(document).ready(function() {
-        window.setTimeout(fn, 20);
-        });
+      window.setTimeout(fn, 20);
+    });
   };
   
   window.erralert = function(e) {
@@ -151,31 +151,31 @@ if (url) {
     $(this).before(result).remove();
     return result;
   };
-
-$.fn.findcomment = function(id) {
-return $.findcomment(this.get(0), id ? 'widgetcontent-' + id : false);
+  
+  $.fn.findcomment = function(id) {
+    return $.findcomment(this.get(0), id ? 'widgetcontent-' + id : false);
   };
   
   $.findcomment = function(node, text) {
     var result = false;
-  do {
-    if (result = $.nextcomment(node, text)) return result;
-  } while (node = node.parentNode);
-  return false;
-};
-
-$.nextcomment = function(node, text) {
-do {
+    do {
+      if (result = $.nextcomment(node, text)) return result;
+    } while (node = node.parentNode);
+    return false;
+  };
+  
+  $.nextcomment = function(node, text) {
+    do {
       if (node.nodeType  == 8) {
         if (!text || (text == node.nodeValue)) return node;
       }
       
-                 if (node.firstChild) {
-                  if (result = $.nextcomment(node.firstChild, text)) return result;
-                  }
-} while (node = node.nextSibling);
-
+      if (node.firstChild) {
+        if (result = $.nextcomment(node.firstChild, text)) return result;
+      }
+    } while (node = node.nextSibling);
+    
     return false;
-};
-
-  }(jQuery, document, window));
+  };
+  
+}(jQuery, document, window));

@@ -79,8 +79,8 @@ class tmenus extends titems {
   }
   
   public function addfake($url, $title) {
-if ($id = $this->url2id($url)) return $id;
-
+    if ($id = $this->url2id($url)) return $id;
+    
     $fake = new tfakemenu();
     $fake->title = $title;
     $fake->url = $url;
@@ -310,20 +310,20 @@ if ($id = $this->url2id($url)) return $id;
     $theme = ttheme::i();
     $tml_item = $theme->templates['menu.item'];
     $tml_submenu = $theme->templates['menu.item.submenu'];
-        $tml_single = $theme->templates['menu.single'];
-                $tml_current = $theme->templates['menu.current'];
-        
+    $tml_single = $theme->templates['menu.single'];
+    $tml_current = $theme->templates['menu.current'];
+    
     $args = new targs();
     foreach ($tree as $id => $items) {
       if ($this->exclude($id)) continue;
-            $args->add($this->items[$id]);
-            $submenu = '';
-if (count($items)) {
-      if ($bootstrap) $submenu= $theme->parsearg($tml_single, $args);
-      $submenu .=  $this->getsubmenu($items, $current, $bootstrap);
-       $submenu = str_replace('$items', $submenu, $tml_submenu);
- }
- 
+      $args->add($this->items[$id]);
+      $submenu = '';
+      if (count($items)) {
+        if ($bootstrap) $submenu= $theme->parsearg($tml_single, $args);
+        $submenu .=  $this->getsubmenu($items, $current, $bootstrap);
+        $submenu = str_replace('$items', $submenu, $tml_submenu);
+      }
+      
       $this->callevent('onsubitems', array($id, &$submenu));
       $args->submenu = $submenu;
       $tml = $current == $id ?  $tml_current : ($submenu ? $tml_item : $tml_single);

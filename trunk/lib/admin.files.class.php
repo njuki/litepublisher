@@ -26,18 +26,18 @@ class tadminfiles extends tadminmenu {
       'description' => '',
       'keywords' => ''
       ));
-
-$form = new  adminform($args);
-$form->upload = true;
-$form->title = "<a id='files-source' href='#'>$lang->switchlink</a>";
-$form->items = '[upload=filename]
+      
+      $form = new  adminform($args);
+      $form->upload = true;
+      $form->title = "<a id='files-source' href='#'>$lang->switchlink</a>";
+      $form->items = '[upload=filename]
       [hidden=uploadmode]
       [text=downloadurl]
       [text=title]
       [text=description]
       [text=keywords]
       [checkbox=overwrite]';
-
+      
       if (litepublisher::$options->show_file_perm) $form->items .= tadminperms::getcombo(0, 'idperm');
       $result .= $form->get();
     } else {

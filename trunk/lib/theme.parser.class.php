@@ -391,14 +391,14 @@ class tthemeparser extends tevents {
         $this->parsedtags[] = $name;
         switch ($name) {
           case 'content.menu':
-                  //fix old ver
+          //fix old ver
           $this->theme->templates['content.author'] = str_replace('menu', 'author', $value);
           break;
           
           case 'menu.item':
-                    $this->theme->templates['menu.single'] = $value;
-                                        $this->theme->templates['menu.current'] = $value;
-                    break;
+          $this->theme->templates['menu.single'] = $value;
+          $this->theme->templates['menu.current'] = $value;
+          break;
         }
         
         $this->theme->templates[$name] = $value;
@@ -508,7 +508,7 @@ class tthemeparser extends tevents {
       public function afterparse($theme) {
         $this->onfix($theme);
         $templates = &$this->theme->templates;
-        $templates['menu.hover'] = isset($templates['menu.hover']) ? ($templates['menu.hover'] == 'true' ? 'true' : 
+        $templates['menu.hover'] = isset($templates['menu.hover']) ? ($templates['menu.hover'] == 'true' ? 'true' :
         ($templates['menu.hover'] == 'bootstrap' ? 'bootstrap' : 'false')) : 'true';
         if (!isset($templates['content.post.templatecomments'])) $templates['content.post.templatecomments'] = '';
         if (!isset($templates['content.post.templatecomments.confirmform'])) $this->error('tml not');
@@ -611,35 +611,35 @@ class tthemeparser extends tevents {
         $templates[$comment]);
         
         if ($this->stylebefore) {
-        foreach (array('index', 'index.home', 'index.post', 'index.tag') as $k) {
-if (strpos($templates[$k], '$template.cssmerger_default')) continue;
-          //insert css merger before theme css
-          if ($i = strpos($templates[$k], '.css')) {
-            $i = strrpos(substr($templates[$k], 0, $i), '<');
-            $css = '<link type="text/css" href="$site.files$template.cssmerger_default" rel="stylesheet" />';
-            $templates[$k] = substr_replace($templates[$k], $css, $i - 1, 0);
-            }
-            }
-            
-            //fix $template.head
-            // ignore on installling (class not exists)
-            if (!defined('litepublisher_mode')|| (litepublisher_mode != 'install')) {
-              $t = ttemplate::i();
-              if ((false !== strpos($t->heads, $css)) && (false === strpos($t->heads, "<!--$css-->"))) {
-                $t->heads = str_replace($css, "<!--$css-->", $t->heads);
-                $t->save();
-              }
+          foreach (array('index', 'index.home', 'index.post', 'index.tag') as $k) {
+            if (strpos($templates[$k], '$template.cssmerger_default')) continue;
+            //insert css merger before theme css
+            if ($i = strpos($templates[$k], '.css')) {
+              $i = strrpos(substr($templates[$k], 0, $i), '<');
+              $css = '<link type="text/css" href="$site.files$template.cssmerger_default" rel="stylesheet" />';
+              $templates[$k] = substr_replace($templates[$k], $css, $i - 1, 0);
             }
           }
           
-          
-          //reuse templates
-          foreach ($templates as $k => $v) {
+          //fix $template.head
+          // ignore on installling (class not exists)
+          if (!defined('litepublisher_mode')|| (litepublisher_mode != 'install')) {
+            $t = ttemplate::i();
+            if ((false !== strpos($t->heads, $css)) && (false === strpos($t->heads, "<!--$css-->"))) {
+              $t->heads = str_replace($css, "<!--$css-->", $t->heads);
+              $t->save();
+            }
+          }
+        }
+        
+        
+        //reuse templates
+        foreach ($templates as $k => $v) {
           if (is_string($v) && !strbegin($v, '<') && isset($templates[$v]) && is_string($templates[$v])) {
-          $templates[$k] = $templates[$v];
+            $templates[$k] = $templates[$v];
           }
-          }
-          
+        }
+        
       }//method
       
       public static function getmetaclasses($s) {
@@ -706,22 +706,22 @@ if (strpos($templates[$k], '$template.cssmerger_default')) continue;
         'tag' => '',
         'replace' => ''
         ),
-
+        
         'index.home' => array(
         'tag' => '$template.index.home',
         'replace' => ''
         ),
-
+        
         'index.post' => array(
         'tag' => '$template.index.post',
         'replace' => ''
         ),
         
-                'index.tag' => array(
+        'index.tag' => array(
         'tag' => '$template.index.tag',
         'replace' => ''
         ),
-
+        
         'title' => array(
         'tag' => '$template.title',
         'replace' => '$template.title'
@@ -741,7 +741,7 @@ if (strpos($templates[$k], '$template.cssmerger_default')) continue;
         'tag' => '$item',
         'replace' => '$item'
         ),
-
+        
         'menu.current' => array(
         'tag' => '$current',
         'replace' => ''
@@ -811,22 +811,22 @@ if (strpos($templates[$k], '$template.cssmerger_default')) continue;
         'tag' => '$author',
         'replace' => ''
         ),
-
+        
         'content.home' => array(
         'tag' => '$home',
         'replace' => ''
         ),
-
+        
         'content.home.midle' => array(
         'tag' => '$midle',
         'replace' => '$midle'
         ),
         
-                'content.home.midle.post' => array(
+        'content.home.midle.post' => array(
         'tag' => '$post',
         'replace' => '$post'
         ),
-
+        
         'content.post' => array(
         'tag' => '$post',
         'replace' => ''
@@ -1246,7 +1246,7 @@ if (strpos($templates[$k], '$template.cssmerger_default')) continue;
         'tag' => '$password',
         'replace' => ''
         ),
-
+        
         'content.admin.upload' => array(
         'tag' => '$upload',
         'replace' => ''
@@ -1281,7 +1281,7 @@ if (strpos($templates[$k], '$template.cssmerger_default')) continue;
         'tag' => '$button',
         'replace' => ''
         ),
-
+        
         'content.admin.submit' => array(
         'tag' => '$submit',
         'replace' => ''
@@ -1291,7 +1291,7 @@ if (strpos($templates[$k], '$template.cssmerger_default')) continue;
         'tag' => '$form',
         'replace' => ''
         ),
-
+        
         'content.admin.tableclass' => array(
         'tag' => '$tableclass',
         'replace' => ''

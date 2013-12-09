@@ -96,7 +96,7 @@ class tcommentmanager extends tevents_storage {
     tlocal::usefile('mail');
     $lang = tlocal::i('mailcomments');
     $theme = ttheme::i();
-
+    
     $subject = $theme->parsearg($lang->subject, $args);
     $body = $theme->parsearg($lang->body, $args);
     return tmailer::sendtoadmin($subject, $body, false);

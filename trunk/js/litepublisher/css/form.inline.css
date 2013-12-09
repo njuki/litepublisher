@@ -4,7 +4,8 @@
     display: inline-block;
   }
 
-.date-edit {
+.date-edit,
+.date-range input {
 width: 10em;
 }
 
@@ -13,5 +14,5 @@ width: 5em;
 }
 
 #text-phone {
-width: 9em;
+width: 10em;
 }

@@ -65,9 +65,9 @@ class tadminsubscribers extends tadminform {
   }
   
   public function gethead() {
-  $result = parent::gethead();
-  $result .= tadminmenus::i()->heads;
-  return $result;
+    $result = parent::gethead();
+    $result .= tadminmenus::i()->heads;
+    return $result;
   }
   
   public function getcontent() {
@@ -85,9 +85,9 @@ class tadminsubscribers extends tadminform {
     $args->formtitle = tusers::i()->getvalue($this->iduser, 'email') . ' ' . $lang->formhead;
     $result .= $html->adminform('[checkbox=default_subscribe]' .
     $table = $html->tableposts($items, array(
-array('left', $lang->post, '<a href="$site.url$post.url" title="$post.title">$post.title</a>')
-)), $args);
-
+    array('left', $lang->post, '<a href="$site.url$post.url" title="$post.title">$post.title</a>')
+    )), $args);
+    
     return $html->fixquote($result);
   }
   

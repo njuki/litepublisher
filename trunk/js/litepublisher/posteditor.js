@@ -7,7 +7,7 @@
 
 (function ($, document, window) {
   litepubl.Posteditor = Class.extend({
-tabs: false,
+    tabs: false,
     
     init: function() {
       this.tabs = $("#tabs");
@@ -81,7 +81,7 @@ tabs: false,
       //replace html in comment
       var holder = $("#datetime-holder", uipanel);
       var calendar = $(holder.get(0).firstChild.nodeValue).appendTo(uipanel);
-holder.remove();
+      holder.remove();
       litepubl.calendar.on(calendar);
     },
     

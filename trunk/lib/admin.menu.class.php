@@ -64,7 +64,7 @@ class tadminmenumanager extends tadminmenu {
         if (!$menus->itemexists($id)) return $this->notfound;
         $menuitem = tmenu::i($id);
         $args->id = $id;
-        $args->title = $menuitem->title;
+        $args->title = $menuitem->getownerprop('title');
         $args->parent = tadminhtml::array2combo($parents, $menuitem->parent);
         $args->order = tadminhtml::array2combo(range(0, 10), $menuitem->order);
         $status = $menuitem->status;

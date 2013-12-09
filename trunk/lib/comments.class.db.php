@@ -230,7 +230,7 @@ class tcomments extends titems {
 
 class tcomment extends tdata {
   private static $md5 = array();
-private $_posted;
+  private $_posted;
   
   public function __construct($id = 0) {
     if (!isset($id)) return false;
@@ -244,7 +244,7 @@ private $_posted;
     $comments = tcomments::i();
     $this->data = $comments->getitem($id);
     if (!isset($this->data['name'])) $this->data = $this->data + tusers::i()->getitem($this->data['author']);
-$this->_posted = false;
+    $this->_posted = false;
   }
   
   public function save() {
@@ -286,7 +286,7 @@ $this->_posted = false;
   }
   
   public function getposted() {
-  if ($this->_posted) return $this->_posted;
+    if ($this->_posted) return $this->_posted;
     return $this->_posted = strtotime($this->data['posted']);
   }
   
@@ -298,11 +298,11 @@ $this->_posted = false;
   public function  gettime() {
     return date('H:i', $this->posted);
   }
-
+  
   public function  getiso() {
     return date('c', $this->posted);
   }
-
+  
   public function  getrfc() {
     return date('r', $this->posted);
   }

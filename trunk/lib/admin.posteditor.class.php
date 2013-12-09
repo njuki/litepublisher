@@ -56,7 +56,7 @@ class tposteditor extends tadminmenu {
     $html = tadminhtml::i();
     $html->push_section('editor');
     $result = $html->categorieshead();
-        $result .= self::getsubcategories(0, $items);
+    $result .= self::getsubcategories(0, $items);
     $html->pop_section();
     return str_replace("'", '"', $result);
   }
@@ -154,11 +154,7 @@ class tposteditor extends tadminmenu {
     $args->ajax = tadminhtml::getadminlink('/admin/ajaxposteditor.htm', "id=$post->id&get");
     $args->title = tcontentfilter::unescape($post->title);
     $args->categories = $this->getpostcategories($post);
-/*
-    $args->date = $post->posted != 0 ?date('d.m.Y', $post->posted) : '';
-    $args->time  = $post->posted != 0 ?date('H:i', $post->posted) : '';
-*/
-$args->posted = $post->posted;
+    $args->date = $post->posted;
     $args->url = $post->url;
     $args->title2 = $post->title2;
     $args->keywords = $post->keywords;
@@ -213,8 +209,8 @@ $args->posted = $post->posted;
       $files = trim($files, ', ');
       $post->files = tdatabase::str2array($files);
     }
-    if (isset($posted) && (!$posted)) {
-      $post->posted = tadminhtml::getdatetime('posted');
+    if (isset($date) && (!$date)) {
+      $post->posted = tadminhtml::getdatetime('date');
     }
     
     if (isset($status)) {

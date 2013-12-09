@@ -123,10 +123,10 @@ class tsubscribers extends titemsposts {
     tlocal::usefile('mail');
     $lang = tlocal::i('mailcomments');
     $theme = ttheme::i();
-
+    
     $subject = $theme->parsearg($lang->subscribesubj, $args);
     $body = $theme->parsearg($lang->subscribebody, $args);
-
+    
     $body .= "\n";
     $adminurl = litepublisher::$site->url . '/admin/subscribers/';
     

@@ -52,18 +52,18 @@ function tjsmergerInstall($self) {
   $self->add($section, '/js/plugins/jquery.cookie.min.js');
   $self->add($section, '/js/litepublisher/litepublisher.utils.min.js');
   $self->add($section, '/js/litepublisher/widgets.min.js');
-    $self->add($section, '/js/litepublisher/widgets.bootstrap.min.js');
+  $self->add($section, '/js/litepublisher/widgets.bootstrap.min.js');
   $self->add($section, '/js/litepublisher/simpletml.min.js');
   $self->add($section, '/js/litepublisher/templates.min.js');
   $self->add($section, '/js/litepublisher/filelist.min.js');
   $self->add($section, '/js/litepublisher/players.min.js');
   $self->add($section, '/js/litepublisher/dialog.min.js');
-    $self->add($section, '/js/litepublisher/dialog.pretty.min.js');
-      $self->add($section, '/js/litepublisher/dialog.bootstrap.min.js');
-    $self->add($section, '/js/litepublisher/pretty.init.min.js');
+  $self->add($section, '/js/litepublisher/dialog.pretty.min.js');
+  $self->add($section, '/js/litepublisher/dialog.bootstrap.min.js');
+  $self->add($section, '/js/litepublisher/pretty.init.min.js');
   $self->add($section, '/js/litepublisher/youtubefix.min.js');
   $self->add($section, "/lib/languages/$language/default.min.js");
-
+  
   $section = 'comments';
   $self->add($section, '/js/litepublisher/comments.min.js');
   $self->add($section, '/js/litepublisher/confirmcomment.min.js');

@@ -11,8 +11,8 @@
     jq: false,
     queue: false,
     html: '<div id="html-uploader" class="form-group"' +
-'<label for="file-input">%%lang.upload%%</label>' +
-'<input type="file" id="file-input" name="Filedata" multiple />' +
+    '<label for="file-input">%%lang.upload%%</label>' +
+    '<input type="file" id="file-input" name="Filedata" multiple />' +
     '<div id="dropzone" class="help-block">%%lang.dragfiles%%</div>' +
     '</div>',
     idhtml: "#file-input, #dropzone",

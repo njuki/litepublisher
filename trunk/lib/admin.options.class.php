@@ -75,10 +75,10 @@ class Tadminoptions extends tadminmenu {
       case 'home':
       $home = thomepage::i();
       $tabs = new tuitabs();
-            $args->image = $home->image;
-                  $args->parsetags = $home->parsetags;
-                        $args->showmidle = $home->showmidle;
-                              $args->midlecat = tposteditor::getcombocategories(array(), $home->midlecat);
+      $args->image = $home->image;
+      $args->parsetags = $home->parsetags;
+      $args->showmidle = $home->showmidle;
+      $args->midlecat = tposteditor::getcombocategories(array(), $home->midlecat);
       $args->showposts = $home->showposts;
       $args->invertorder = $home->invertorder;
       $args->showpagenator = $home->showpagenator;
@@ -87,11 +87,11 @@ class Tadminoptions extends tadminmenu {
       $menus = tmenus::i();
       $args->homemenu =  $menus->home;
       $tabs->add($lang->options, '
-            [checkbox=homemenu]
-            [text=image]
-                  [checkbox=parsetags]
-                  [checkbox=showmidle]
-                  [combo=midlecat]
+      [checkbox=homemenu]
+      [text=image]
+      [checkbox=parsetags]
+      [checkbox=showmidle]
+      [combo=midlecat]
       [checkbox=showposts]
       [checkbox=invertorder]
       [checkbox=showpagenator]
@@ -251,7 +251,7 @@ class Tadminoptions extends tadminmenu {
       [checkbox=memcache_classes]
       ', $args);
       
-$form = new adminform($args);
+      $form = new adminform($args);
       $form->submit = 'clearcache';
       $result .= $form->get();
       return $result;
@@ -322,7 +322,7 @@ $form = new adminform($args);
       [checkbox=useshell]
       ', $args);
       
-$form = new adminform($args);
+      $form = new adminform($args);
       $form->title = $lang->changepassword;
       $args->oldpassword = '';
       $args->newpassword = '';
@@ -330,9 +330,9 @@ $form = new adminform($args);
       $form->items = '[password=oldpassword]
       [password=newpassword]
       [password=repassword]';
-
-$form->submit = 'changepassword';
-            $result .= $form->get();
+      
+      $form->submit = 'changepassword';
+      $result .= $form->get();
       return $result;
     }
     
@@ -362,14 +362,14 @@ $form->submit = 'changepassword';
       $home = thomepage::i();
       $home->lock();
       $home->image = $image;
-            $home->parsetags = isset($parsetags);
-            $home->showmidle = isset($showmidle);
-                  $home->midlecat = intval($midlecat);
+      $home->parsetags = isset($parsetags);
+      $home->showmidle = isset($showmidle);
+      $home->midlecat = intval($midlecat);
       $home->showposts = isset($showposts);
       $home->invertorder = isset($invertorder);
       $home->includecats = tadminhtml::check2array('category-');
       $home->excludecats = tadminhtml::check2array('exclude_category-');
-            $home->showpagenator = isset($showpagenator);
+      $home->showpagenator = isset($showpagenator);
       $home->postschanged();
       $home->unlock();
       

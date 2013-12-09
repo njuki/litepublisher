@@ -6,10 +6,10 @@
 **/
 
 (function( $ ){
-$.closedialog = function() {
-$.prettyPhoto.close();
-};
-
+  $.closedialog = function() {
+    $.prettyPhoto.close();
+  };
+  
   $.litedialog = $.prettyPhotoDialog = function(o) {
     var options = $.extend({
       title: "",

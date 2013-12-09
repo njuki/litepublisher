@@ -349,22 +349,22 @@ class tcommontags extends titems implements  itemplate {
     $item = $this->getitem($this->id);
     return isset($item['idperm']) ? (int) $item['idperm'] : 0;
   }
-
+  
   public function getindex_tml() {
-  $theme = ttheme::i();
-  if (!empty($theme->templates['index.tag'])) return $theme->templates['index.tag'];
-  return false;
+    $theme = ttheme::i();
+    if (!empty($theme->templates['index.tag'])) return $theme->templates['index.tag'];
+    return false;
   }
   
   public function getcontent() {
-if ($s = $this->contents->getcontent($this->id)) {
-$pages = explode('<!--nextpage-->', $s);
-$page = litepublisher::$urlmap->page - 1;
-if (isset($pages[$page])) return $pages[$page];
-return array_shift($pages);
-}
-
-return '';
+    if ($s = $this->contents->getcontent($this->id)) {
+      $pages = explode('<!--nextpage-->', $s);
+      $page = litepublisher::$urlmap->page - 1;
+      if (isset($pages[$page])) return $pages[$page];
+      return array_shift($pages);
+    }
+    
+    return '';
   }
   
   public function getcont() {
@@ -400,14 +400,14 @@ return '';
     $posts = $this->factory->posts;
     $p = $posts->thistable;
     $order = $invert ? 'asc' : 'desc';
-        $result = $this->db->res2id($this->db->query("select $p.id as id, $ti.post as post from $p, $ti
+    $result = $this->db->res2id($this->db->query("select $p.id as id, $ti.post as post from $p, $ti
     where    $ti.item = $id and $p.id = $ti.post and $p.status = 'published'
     order by $p.posted $order limit 0, $count"));
     
     $posts->loaditems($result);
     return $result;
-    }
-
+  }
+  
   public function getidposts($id) {
     if (isset($this->_idposts[$id])) return $this->_idposts[$id];
     $item = $this->getitem($id);
@@ -436,20 +436,20 @@ return '';
     $this->_idposts[$id] = $posts->select("$p.status = 'published' and $p.id in
     (select DISTINCT post from $ti where $ti.item $tags)",
     "order by $p.posted $order limit $from, $perpage");
-*/
-
+    */
+    
     $result = $this->db->res2id($this->db->query("select $p.id as id, $ti.post as post from $p, $ti
     where    $ti.item $tags and $p.id = $ti.post and $p.status = 'published'
     order by $p.posted $order limit $from, $perpage"));
     
-$result = array_unique($result);
+    $result = array_unique($result);
     $posts->loaditems($result);
-        $this->_idposts[$id] = $result;
+    $this->_idposts[$id] = $result;
     return $result;
-      }
+  }
   
   public function getparents($id) {
-$result = array();
+    $result = array();
     while ($id = (int) $this->items[$id]['parent']) $result[] = $id;
     return $result;
   }

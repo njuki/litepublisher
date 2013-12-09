@@ -15,7 +15,7 @@ function tticketsInstall($self) {
   $l = tlocalmerger::i();
   $l->lock();
   $l->add('default', "plugins/$dirname/resource/" . litepublisher::$options->language . ".ini");
-    $l->add('mail', "plugins/$dirname/resource/" . litepublisher::$options->language . ".mail.ini");
+  $l->add('mail', "plugins/$dirname/resource/" . litepublisher::$options->language . ".mail.ini");
   $l->unlock();
   
   tadminhtml::i()->inidir(dirname(__file__) . '/resource/');
