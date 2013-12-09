@@ -100,7 +100,7 @@ class tsitemap extends titems_itemplate implements itemplate {
     $this->lastmod = date('Y-m-d', $this->date);
     $this->openfile();
     
-$home = thomepage::i();
+    $home = thomepage::i();
     $this->prio = 9;
     $this->write('/', $home->showposts && $home->showpagenator ? ceil($home->archcount / litepublisher::$options->perpage) : 1);
     

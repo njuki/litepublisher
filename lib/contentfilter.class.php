@@ -116,17 +116,17 @@ class tcontentfilter extends tevents {
     return trim($s);
   }
   
-    public function filterpages($content) {
+  public function filterpages($content) {
     $result = array();
-        $pages = explode('<!--nextpage-->', $s);
+    $pages = explode('<!--nextpage-->', $s);
     foreach ($pages as $page) {
       if ($page = trim($page)) {
-$result[] = $this->filter($page);
-    }
+        $result[] = $this->filter($page);
+      }
     }
     
-return implode('<!--nextpage-->', $result);
-    }
+    return implode('<!--nextpage-->', $result);
+  }
   
   public function filter($content) {
     if ($this->callevent('beforefilter', array(&$content))) {

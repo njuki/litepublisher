@@ -100,19 +100,19 @@ class tadminlogin extends tadminform {
     [password=password]
     [checkbox=remember]',
     $args);
-
-$form = new adminform($args);
-$form->title = $lang->lostpass;
- $form->action = '$site.url/admin/password/';
-$form->target = '_blank';
-$form->inline = true;
-// double "text-email" input id
-$form->items = str_replace('text-email', 'lostpass-email',
-$html->getinput('text', 'email', '', 'E-Mail'));
-$form->submit = 'sendpass';
-$result .= $form->get();
-
-        if (litepublisher::$options->usersenabled && litepublisher::$options->reguser) {
+    
+    $form = new adminform($args);
+    $form->title = $lang->lostpass;
+    $form->action = '$site.url/admin/password/';
+    $form->target = '_blank';
+    $form->inline = true;
+    // double "text-email" input id
+    $form->items = str_replace('text-email', 'lostpass-email',
+    $html->getinput('text', 'email', '', 'E-Mail'));
+    $form->submit = 'sendpass';
+    $result .= $form->get();
+    
+    if (litepublisher::$options->usersenabled && litepublisher::$options->reguser) {
       $lang = tlocal::admin('users');
       $args->formtitle = $lang->regform;
       $args->email = '';

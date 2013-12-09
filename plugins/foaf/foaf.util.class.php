@@ -102,13 +102,13 @@ class tfoafutil  extends tevents {
       $args = targs::i();
       $args->errors = $result;
       
-    tlocal::usefile('mail');
-    $lang = tlocal::i('mailfoaf');
-    $theme = ttheme::i();
-
-    $subject = $theme->parsearg($lang->errorsubj, $args);
-    $body = $theme->parsearg($lang->errorbody, $args);
-
+      tlocal::usefile('mail');
+      $lang = tlocal::i('mailfoaf');
+      $theme = ttheme::i();
+      
+      $subject = $theme->parsearg($lang->errorsubj, $args);
+      $body = $theme->parsearg($lang->errorbody, $args);
+      
       tmailer::sendtoadmin($subject, $body);
     }
   }

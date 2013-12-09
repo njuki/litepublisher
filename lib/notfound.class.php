@@ -69,10 +69,10 @@ class tnotfound404 extends tforbidden {
     tlocal::usefile('mail');
     $lang = tlocal::i('notfound');
     $theme = ttheme::i();
-
+    
     $subject = $theme->parsearg($lang->subject, $args);
     $body = $theme->parsearg($lang->body, $args);
-
+    
     tmailer::sendtoadmin($subject, $body, true);
   }
   

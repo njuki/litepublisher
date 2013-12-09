@@ -17,7 +17,7 @@ function widget_load(node, id, sidebar) {
 }
 
 function widget_findcomment(node, id) {
-return $(node).findcomment(id);
+  return $(node).findcomment(id);
 }
 
 function widget_inline(node) {
@@ -39,35 +39,35 @@ function widget_toggle(node) {
 }
 
 $(document).ready(function() {
-    window.setTimeout(function() {
-  $("*[rel~='inlinewidget']").one('click', function() {
-    widget_inline(this);
-    return false;
-  });
-  
-  var a = '<a class="expandwidget" href="">' + lang.widgetlang.expand + '</a>';
-  $(".inlinewidget, .ajaxwidget").each(function() {
-    $(a).appendTo(this).one("click", function() {
-      if ($(this).parent().hasClass("inlinewidget")) {
-        widget_inline(this);
-      } else {
-        var rel = $(this).parent().attr("rel").split("-");
-        widget_load(this, rel[1], rel[2]);
-      }
-      return false;
-    })
-    .click(function() {
-      var self = $(this);
-      self.toggleClass("expandwidget colapsewidget");
-      self.text(self.hasClass("expandwidget") ? lang.widgetlang.expand : lang.widgetlang.colapse);
+  window.setTimeout(function() {
+    $("*[rel~='inlinewidget']").one('click', function() {
+      widget_inline(this);
       return false;
     });
-  });
-  
-  $(".widget-load").one("click", function() {
-    var self = $(this);
-    widget_load(this, self.data("idwidget"), self.data("sidebar"));
-    return false;
-  });
+    
+    var a = '<a class="expandwidget" href="">' + lang.widgetlang.expand + '</a>';
+    $(".inlinewidget, .ajaxwidget").each(function() {
+      $(a).appendTo(this).one("click", function() {
+        if ($(this).parent().hasClass("inlinewidget")) {
+          widget_inline(this);
+        } else {
+          var rel = $(this).parent().attr("rel").split("-");
+          widget_load(this, rel[1], rel[2]);
+        }
+        return false;
+      })
+      .click(function() {
+        var self = $(this);
+        self.toggleClass("expandwidget colapsewidget");
+        self.text(self.hasClass("expandwidget") ? lang.widgetlang.expand : lang.widgetlang.colapse);
+        return false;
+      });
+    });
+    
+    $(".widget-load").one("click", function() {
+      var self = $(this);
+      widget_load(this, self.data("idwidget"), self.data("sidebar"));
+      return false;
+    });
   }, 120);
 });

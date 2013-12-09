@@ -89,11 +89,11 @@ class tadminposts extends tadminmenu {
     ));
     
     $form->items .= $html->div(
-'[button=publish]
-[button=setdraft]
-[button=delete]');
+    '[button=publish]
+    [button=setdraft]
+    [button=delete]');
     
-$form->submit = false;
+    $form->submit = false;
     $result = $form->get();
     $result = $html->fixquote($result);
     

@@ -335,7 +335,7 @@ class tpost extends titem implements  itemplate {
     $theme = $this->theme;
     return $theme->parse($theme->templates[$path]);
   }
-
+  
   public function getextra() {
     $theme = $this->theme;
     return $theme->parse($theme->extratml);
@@ -360,7 +360,7 @@ class tpost extends titem implements  itemplate {
   public function getsqldate() {
     return sqldate($this->posted);
   }
-
+  
   public function getidimage() {
     if (count($this->files) == 0) return false;
     $files = $this->factory->files;
@@ -372,12 +372,12 @@ class tpost extends titem implements  itemplate {
   }
   
   public function getimage() {
-  if ($id = $this->getidimage()) {
-return $this->factory->files->geturl($id);
+    if ($id = $this->getidimage()) {
+      return $this->factory->files->geturl($id);
     }
     return false;
   }
-
+  
   public function getthumb() {
     if (count($this->files) == 0) return false;
     $files = $this->factory->files;
@@ -389,7 +389,7 @@ return $this->factory->files->geturl($id);
   }
   
   //template
-    protected function get_taglinks($name, $excerpt) {
+  protected function get_taglinks($name, $excerpt) {
     $items = $this->$name;
     if (!count($items)) return '';
     
@@ -419,11 +419,11 @@ return $this->factory->files->geturl($id);
       }
       $list[] = $theme->parsearg($tmlitem,  $args);
     }
-
-$args->items =     ' ' . implode($theme->templates[$tmlpath . '.divider'] , $list);
-$result = $theme->parsearg($theme->templates[$tmlpath], $args);
-$this->factory->posts->callevent('ontags', array($tags, $excerpt, &$result));
-return $result;
+    
+    $args->items =     ' ' . implode($theme->templates[$tmlpath . '.divider'] , $list);
+    $result = $theme->parsearg($theme->templates[$tmlpath], $args);
+    $this->factory->posts->callevent('ontags', array($tags, $excerpt, &$result));
+    return $result;
   }
   
   public function getdate() {
@@ -582,7 +582,7 @@ return $result;
   }
   
   public function setfiles(array $list) {
-array_clean($list);
+    array_clean($list);
     $this->data['files'] = $list;
   }
   
@@ -598,12 +598,12 @@ array_clean($list);
     return $files->getfilelist($this->files, true);
   }
   
-    public function getindex_tml() {
-  $theme = $this->theme;
-  if (!empty($theme->templates['index.post'])) return $theme->templates['index.post'];
-  return false;
+  public function getindex_tml() {
+    $theme = $this->theme;
+    if (!empty($theme->templates['index.post'])) return $theme->templates['index.post'];
+    return false;
   }
-
+  
   public function getcont() {
     return $this->parsetml('content.post');
   }

@@ -152,7 +152,7 @@ class tadminreguser extends tadminform {
     tlocal::usefile('mail');
     $lang = tlocal::i('mailusers');
     $theme = ttheme::i();
-
+    
     $subject = $theme->parsearg($lang->subject, $args);
     $body = $theme->parsearg($lang->body, $args);
     

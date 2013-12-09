@@ -34,22 +34,22 @@ class tadminfilethumbnails extends tadminmenu {
     $idpreview = $item['preview'];
     if ($idpreview > 0) {
       $args->add($files->getitem($idpreview));
-$form = new  adminform($args);
-$form->action = "$this->adminurl=$id";
-$form->inline = true;
-$form->items = $html->p('<img src="$site.files/files/$filename" alt="thumbnail" />' . $lang->wantdelete);
-$form->submit = 'delete';
-$result .= $form->get();
+      $form = new  adminform($args);
+      $form->action = "$this->adminurl=$id";
+      $form->inline = true;
+      $form->items = $html->p('<img src="$site.files/files/$filename" alt="thumbnail" />' . $lang->wantdelete);
+      $form->submit = 'delete';
+      $result .= $form->get();
     }
-
-$form = new  adminform($args);
-$form->upload = true;
-$form->action = "$this->adminurl=$id";
-$form->title = $lang->changethumb;
-$form->items = '[upload=filename]
+    
+    $form = new  adminform($args);
+    $form->upload = true;
+    $form->action = "$this->adminurl=$id";
+    $form->title = $lang->changethumb;
+    $form->items = '[upload=filename]
     [checkbox=noresize]';
-
-$result .= $form->get();
+    
+    $result .= $form->get();
     return $result;
   }
   

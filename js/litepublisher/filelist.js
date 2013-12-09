@@ -7,6 +7,6 @@
 
 (function ($, document) {
   $(document).ready(function() {
-  $("div.filelist-1, div.filelist-2").next().addClass("clear-after");
-          });
+    $("div.filelist-1, div.filelist-2").next().addClass("clear-after");
+  });
 }(jQuery, document));

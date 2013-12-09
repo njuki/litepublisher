@@ -87,10 +87,10 @@ class tadminpassword extends tadminform {
     tlocal::usefile('mail');
     $lang = tlocal::i('mailpassword');
     $theme = ttheme::i();
-
+    
     $subject = $theme->parsearg($lang->subject, $args);
     $body = $theme->parsearg($lang->body, $args);
-
+    
     tmailer::sendmail(litepublisher::$site->name, litepublisher::$options->fromemail,
     $name, $email, $subject, $body);
     return $html->h4->success;

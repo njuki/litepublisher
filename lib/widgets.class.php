@@ -40,7 +40,7 @@ class twidget extends tevents {
   }
   
   public function getwidget($id, $sidebar) {
-  ttheme::$vars['widget'] = $this;    
+    ttheme::$vars['widget'] = $this;
     try {
       $title = $this->gettitle($id);
       $content = $this->getcontent($id, $sidebar);
@@ -48,7 +48,7 @@ class twidget extends tevents {
       litepublisher::$options->handexception($e);
       return '';
     }
-
+    
     $theme = ttheme::i();
     $result = $theme->getidwidget($id, $title, $content, $this->template, $sidebar);
     unset(ttheme::$vars['widget']);
@@ -437,7 +437,7 @@ class twidgets extends titems_storage {
     return $result;
   }
   
-    public function getajax($id, $sidebar) {
+  public function getajax($id, $sidebar) {
     $theme = ttheme::i();
     $title = $theme->getajaxtitle($id, $this->items[$id]['title'], $sidebar, 'ajaxwidget');
     $content = "<!--widgetcontent-$id-->";

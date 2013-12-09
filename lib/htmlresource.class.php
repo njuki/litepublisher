@@ -65,7 +65,7 @@ class tadminhtml {
   public function parsearg($s, targs $args) {
     if (!is_string($s)) $s = (string) $s;
     $theme = ttheme::i();
-
+    
     // parse tags [form] .. [/form]
     if (is_int($i = strpos($s, '[form]'))) {
       $form = $theme->templates['content.admin.form'];
@@ -198,12 +198,12 @@ class tadminhtml {
     return $this->parsearg(ttheme::i()->templates['content.admin.form'], $args);
   }
   
-public function inline($s) {
-return sprintf($this->ini['common']['inline'], $s);
-}
-
-    public function getupload($name) {
-      return $this->getinput('upload', $name, '', '');
+  public function inline($s) {
+    return sprintf($this->ini['common']['inline'], $s);
+  }
+  
+  public function getupload($name) {
+    return $this->getinput('upload', $name, '', '');
   }
   
   public function getcheckbox($name, $value) {
@@ -266,32 +266,32 @@ return sprintf($this->ini['common']['inline'], $s);
       $date = strtotime($date);
     } else {
       $date = 0;
-}
-
-return $date;
-}
-
+    }
+    
+    return $date;
+  }
+  
   public function getcalendar($name, $date) {
-$date = $this->cleandate($date);
-$lang = tlocal::i();
-$controls = $this->getinput('text', $name, $date? date('d.m.Y', $date) : '', $lang->date);
-$controls .= $this->getinput('text', "$name-time", $date ?date('H:i', $date) : '', $lang->time);
-$controls .= $this->getinput('button', "calendar-$name", '', $lang->calendar);
-
-return sprintf($this->ini['common']['calendar'], $lang->__get($name), $this->inline($controls));
- }
-
+    $date = $this->cleandate($date);
+    $lang = tlocal::i();
+    $controls = $this->getinput('text', $name, $date? date('d.m.Y', $date) : '', $lang->date);
+    $controls .= $this->getinput('text', "$name-time", $date ?date('H:i', $date) : '', $lang->time);
+    $controls .= $this->getinput('button', "calendar-$name", '', $lang->calendar);
+    
+    return sprintf($this->ini['common']['calendar'], $lang->__get($name), $this->inline($controls));
+  }
+  
   public function getdaterange($from, $to) {
-$from = $this->cleandate($from);
-$to = $this->cleandate($to);
-$lang = tlocal::i();
-$controls = $this->getinput('text', 'from', $from ? date('d.m.Y', $from) : '', $lang->from);
-$controls .= $this->getinput('button', "calendar-from", '', $lang->calendar);
-$controls .= $this->getinput('text', 'to', $to ? date('d.m.Y', $to) : '', $lang->to);
-$controls .= $this->getinput('button', "calendar-to", '', $lang->calendar);
-
-return sprintf($this->ini['common']['daterange'], $controls);
- }
+    $from = $this->cleandate($from);
+    $to = $this->cleandate($to);
+    $lang = tlocal::i();
+    $controls = $this->getinput('text', 'from', $from ? date('d.m.Y', $from) : '', $lang->from);
+    $controls .= $this->getinput('button', "calendar-from", '', $lang->calendar);
+    $controls .= $this->getinput('text', 'to', $to ? date('d.m.Y', $to) : '', $lang->to);
+    $controls .= $this->getinput('button', "calendar-to", '', $lang->calendar);
+    
+    return sprintf($this->ini['common']['daterange'], $controls);
+  }
   
   public static function getdatetime($name) {
     if (!empty($_POST[$name]) && @sscanf(trim($_POST[$name]), '%d.%d.%d', $d, $m, $y)) {
@@ -368,7 +368,7 @@ return sprintf($this->ini['common']['daterange'], $controls);
   public function tableposts(array $items, array $struct) {
     $body = '';
     $head = sprintf('<th align="center">%s</th>', $this->invertcheckbox );
-$tml = '<tr><td align="center"><label><input type="checkbox" name="checkbox-$post.id" id="id-checkbox-$post.id" value="$post.id"/>$post.id</label><td>';
+    $tml = '<tr><td align="center"><label><input type="checkbox" name="checkbox-$post.id" id="id-checkbox-$post.id" value="$post.id"/>$post.id</label><td>';
     foreach ($struct as $elem) {
       $head .= sprintf('<th align="%s">%s</th>', $elem[0], $elem[1]);
       $tml .= sprintf('<td align="%s">%s</td>', $elem[0], $elem[2]);
@@ -744,7 +744,7 @@ class tuitabs {
       }
     }
     
-$data = $this->customdata? sprintf('data-custom="%s"', str_replace('"', '&quot;', json_encode($this->customdata))) : '';
+    $data = $this->customdata? sprintf('data-custom="%s"', str_replace('"', '&quot;', json_encode($this->customdata))) : '';
     return sprintf($this->tabs, $data, $head, $body);
   }
   
@@ -769,72 +769,76 @@ $data = $this->customdata? sprintf('data-custom="%s"', str_replace('"', '&quot;'
 }//class
 
 class adminform {
-public $args;
-public$title;
-public $items;
-public $action;
-public $method;
-public $enctype;
-public $id;
-public $class;
-public $target;
-public $submit;
-public $inlineclass;
-
-public function __construct($args = null) {
-$this->args = $args;
-$this->title = '';
-$this->items = '';
-$this->action = '';
-$this->method = 'post';
-$this->enctype = '';
-$this->id = '';
-$this->class = '';
-$this->target = '';
-$this->submit = 'update';
-$this->inlineclass = 'form-inline';
-}
-
-public function line($s) {
-return "<div class=\"$this->inlineclass\">$s</div>";
-}
+  public $args;
+  public$title;
+  public $items;
+  public $action;
+  public $method;
+  public $enctype;
+  public $id;
+  public $class;
+  public $target;
+  public $submit;
+  public $inlineclass;
   
-
-public function __set($k, $v) {
-switch ($k) {
-case 'upload':
-if ($v) {
-$this->enctype = 'multipart/form-data';
-$this->submit = 'upload';
-} else {
-$this->enctype = '';
-$this->submit = 'update';
-}
-break;
-
-case 'inline':
-$this->class = $v ? $this->inlineclass : '';
-break;
-}
-}
-
-  public function __tostring() {
-  return $this->get();
+  public function __construct($args = null) {
+    $this->args = $args;
+    $this->title = '';
+    $this->items = '';
+    $this->action = '';
+    $this->method = 'post';
+    $this->enctype = '';
+    $this->id = '';
+    $this->class = '';
+    $this->target = '';
+    $this->submit = 'update';
+    $this->inlineclass = 'form-inline';
   }
   
-    public function get() {
-    $result = '';
-    if ($this->title) $result .= "<h4>$this->title</h4>\n";
-    $f = "action=\"$this->action\"";
-    foreach (array('method', 'enctype', 'target', 'id', 'class') as $k) {
-    if ($v = $this->$k) $f .= sprintf(' %s="%s"', $k, $v);
+  public function line($s) {
+    return "<div class=\"$this->inlineclass\">$s</div>";
+  }
+  
+  
+  public function __set($k, $v) {
+    switch ($k) {
+      case 'upload':
+      if ($v) {
+        $this->enctype = 'multipart/form-data';
+        $this->submit = 'upload';
+      } else {
+        $this->enctype = '';
+        $this->submit = 'update';
+      }
+      break;
+      
+      case 'inline':
+      $this->class = $v ? $this->inlineclass : '';
+      break;
     }
-
-    $result .= "<form $f role=\"form\">";
+  }
+  
+  public function __tostring() {
+    return $this->get();
+  }
+  
+  public function gettml() {
+    $result = '<div class="form-holder">';
+    if ($this->title) $result .= "<h4>$this->title</h4>\n";
+    $attr = "action=\"$this->action\"";
+    foreach (array('method', 'enctype', 'target', 'id', 'class') as $k) {
+      if ($v = $this->$k) $attr .= sprintf(' %s="%s"', $k, $v);
+    }
+    
+    $result .= "<form $attr role=\"form\">";
     $result .= $this->items;
-if ($this->submit) $result .= $this->class == $this->inlineclass ? "[button=$this->submit]" : "[submit=$this->submit]";
-    $result .= "\n</form>\n";
-    return tadminhtml::i()->parsearg($result, $this->args);
-        }
-
+    if ($this->submit) $result .= $this->class == $this->inlineclass ? "[button=$this->submit]" : "[submit=$this->submit]";
+    $result .= "\n</form>\n</div>\n";
+    return $result;
+  }
+  
+  public function get() {
+    return tadminhtml::i()->parsearg($this->gettml(), $this->args);
+  }
+  
 }//class

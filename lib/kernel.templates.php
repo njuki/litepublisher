@@ -61,8 +61,12 @@ class tlocal {
   }
   
   public function addsearch() {
-    $a = func_get_args();
+    $this->joinsearch(func_get_args());
+  }
+  
+  public function joinsearch(array $a) {
     foreach ($a as $sect) {
+      $sect = trim(trim($sect), "\"',;:.");
       if (!in_array($sect, $this->searchsect)) $this->searchsect[] = $sect;
     }
   }
@@ -100,6 +104,7 @@ class tlocal {
     $filename = self::getcachedir() . $name;
     if (tfilestorage::loadvar($filename, $v) && is_array($v)) {
       $this->ini = $v + $this->ini ;
+      if (isset($v['searchsect'])) $this->joinsearch($v['searchsect']);
     } else {
       $merger = tlocalmerger::i();
       $merger->parse($name);
@@ -120,6 +125,7 @@ class tlocal {
       $ini = ttheme::cacheini($filename);
       if (is_array($ini)) {
         $self->ini = $ini + $self->ini ;
+        if (isset($ini['searchsect'])) $self->joinsearch($ini['searchsect']);
         $keys = array_keys($ini);
         $self->section = array_shift($keys);
         $self->addsearch($self->section);
@@ -475,7 +481,12 @@ class ttemplate extends tevents_storage {
     litepublisher::$classes->instances[get_class($theme)] = $theme;
     $this->path = litepublisher::$paths->themes . $theme->name . DIRECTORY_SEPARATOR ;
     $this->url = litepublisher::$site->files . '/themes/' . $theme->name;
-    $this->hover = $this->view->hovermenu && ($theme->templates['menu.hover'] == 'true');
+    if ($this->view->hovermenu) {
+      $this->hover = $theme->templates['menu.hover'];
+      if ($this->hover != 'bootstrap')     $this->hover  =     ($this->hover  == 'true');
+    } else {
+      $this->hover = false;
+    }
     
     $result = $this->httpheader();
     $result  .= $theme->gethtml($context);
@@ -647,6 +658,7 @@ class ttheme extends tevents {
   public $name;
   public $parsing;
   public $templates;
+  public $extratml;
   private $themeprops;
   
   public static function exists($name) {
@@ -689,6 +701,7 @@ class ttheme extends tevents {
     );
     $this->themeprops = new tthemeprops($this);
     if (!isset(self::$defaultargs)) self::set_defaultargs();
+    $this->extratml = '';
   }
   
   public static function set_defaultargs() {
@@ -865,6 +878,7 @@ class ttheme extends tevents {
   
   public function parse($s) {
     $s = strtr((string) $s, self::$defaultargs);
+    if (isset($this->templates['content.admin.tableclass'])) $s = str_replace('$tableclass', $this->templates['content.admin.tableclass'], $s);
     array_push($this->parsing, $s);
     try {
       $s = preg_replace('/%%([a-zA-Z0-9]*+)_(\w\w*+)%%/', '\$$1.$2', $s);
@@ -904,13 +918,8 @@ class ttheme extends tevents {
   
   public function gethtml($context) {
     self::$vars['context'] = $context;
-    switch ($this->type) {
-      case 'litepublisher':
-      return $this->parse($this->templates['index']);
-      
-      case 'wordpress':
-      return wordpress::getcontent();
-    }
+    if (isset($context->index_tml) && ($tml = $context->index_tml)) return $this->parse($tml);
+    return $this->parse($this->templates['index']);
   }
   
   public function getnotfount() {
@@ -1024,6 +1033,16 @@ class ttheme extends tevents {
     $args = new targs();
     $args->title = $title;
     $args->items = $content;
+    $args->sidebar = $sidebar;
+    return $this->parsearg($this->getwidgettml($sidebar, $template, ''), $args);
+  }
+  
+  public function getidwidget($id, $title, $content, $template, $sidebar) {
+    $args = new targs();
+    $args->id = $id;
+    $args->title = $title;
+    $args->items = $content;
+    $args->sidebar = $sidebar;
     return $this->parsearg($this->getwidgettml($sidebar, $template, ''), $args);
   }
   
@@ -1053,9 +1072,24 @@ class ttheme extends tevents {
     return $this->parsearg($this->templates[$tml], $args);
   }
   
-  
   public function simple($content) {
     return str_replace('$content', $content, $this->templates['content.simple']);
+  }
+  
+  public function getbutton($title) {
+    return strtr($this->templates['content.admin.button'], array(
+    '$lang.$name', '$title',
+    'name="$name"' => '',
+    'id="submitbutton-$name"' => ''
+    ));
+  }
+  
+  public function getsubmit($title) {
+    return strtr($this->templates['content.admin.button'], array(
+    '$lang.$name', '$title',
+    'name="$name"' => '',
+    'id="submitbutton-$name"' => ''
+    ));
   }
   
   public static function clearcache() {
@@ -1281,6 +1315,7 @@ class twidget extends tevents {
   }
   
   public function getwidget($id, $sidebar) {
+    ttheme::$vars['widget'] = $this;
     try {
       $title = $this->gettitle($id);
       $content = $this->getcontent($id, $sidebar);
@@ -1290,7 +1325,9 @@ class twidget extends tevents {
     }
     
     $theme = ttheme::i();
-    return $theme->getwidget($title, $content, $this->template, $sidebar);
+    $result = $theme->getidwidget($id, $title, $content, $this->template, $sidebar);
+    unset(ttheme::$vars['widget']);
+    return $result;
   }
   
   public function getdeftitle() {
@@ -1675,18 +1712,15 @@ class twidgets extends titems_storage {
     return $result;
   }
   
-  
   public function getajax($id, $sidebar) {
     $theme = ttheme::i();
-    //$title = sprintf('<a onclick="widget_load(this, %d, %d)">%s</a>', $id, $sidebar, $this->items[$id]['title']);
     $title = $theme->getajaxtitle($id, $this->items[$id]['title'], $sidebar, 'ajaxwidget');
     $content = "<!--widgetcontent-$id-->";
-    return $theme->getwidget($title, $content, $this->items[$id]['template'], $sidebar);
+    return $theme->getidwidget($id, $title, $content, $this->items[$id]['template'], $sidebar);
   }
   
   public function getinline($id, $sidebar) {
     $theme = ttheme::i();
-    //$title = sprintf('<a rel="inlinewidget" href="">%s</a>', $this->items[$id]['title']);
     $title = $theme->getajaxtitle($id, $this->items[$id]['title'], $sidebar, 'inlinewidget');
     if ('cache' == $this->items[$id]['cache']) {
       $cache = twidgetscache::i();
@@ -1696,7 +1730,7 @@ class twidgets extends titems_storage {
       $content = $widget->getcontent($id, $sidebar);
     }
     $content = sprintf('<!--%s-->', $content);
-    return $theme->getwidget($title, $content, $this->items[$id]['template'], $sidebar);
+    return $theme->getidwidget($id, $title, $content, $this->items[$id]['template'], $sidebar);
   }
   
   public function getwidgetcache($id, $sidebar) {
@@ -1704,7 +1738,7 @@ class twidgets extends titems_storage {
     $cache = twidgetscache::i();
     $content = $cache->getcontent($id, $sidebar);
     $theme = ttheme::i();
-    return $theme->getwidget($title, $content, $this->items[$id]['template'], $sidebar);
+    return $theme->getidwidget($id, $title, $content, $this->items[$id]['template'], $sidebar);
   }
   
   private function includewidget($id, $sidebar) {
@@ -1716,7 +1750,7 @@ class twidgets extends titems_storage {
     }
     
     $theme = ttheme::i();
-    return $theme->getwidget($this->items[$id]['title'], "\n<?php echo litepublisher::\$urlmap->cache->get('$filename'); ?>\n", $this->items[$id]['template'], $sidebar);
+    return $theme->getidwidget($id, $this->items[$id]['title'], "\n<?php echo litepublisher::\$urlmap->cache->get('$filename'); ?>\n", $this->items[$id]['template'], $sidebar);
   }
   
   private function getcode($id, $sidebar) {

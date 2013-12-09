@@ -495,6 +495,11 @@ class tpost extends titem implements  itemplate {
     return $theme->parse($theme->templates[$path]);
   }
   
+  public function getextra() {
+    $theme = $this->theme;
+    return $theme->parse($theme->extratml);
+  }
+  
   public function getbookmark() {
     return $this->theme->parse('<a href="$post.link" rel="bookmark" title="$lang.permalink $post.title">$post.iconlink$post.title</a>');
   }
@@ -515,21 +520,37 @@ class tpost extends titem implements  itemplate {
     return sqldate($this->posted);
   }
   
-  public function getimage() {
+  public function getidimage() {
     if (count($this->files) == 0) return false;
     $files = $this->factory->files;
     foreach ($this->files as $id) {
       $item = $files->getitem($id);
-      if ('image' == $item['media']) return $files->geturl($id);
+      if ('image' == $item['media']) return $id;
+    }
+    return false;
+  }
+  
+  public function getimage() {
+    if ($id = $this->getidimage()) {
+      return $this->factory->files->geturl($id);
+    }
+    return false;
+  }
+  
+  public function getthumb() {
+    if (count($this->files) == 0) return false;
+    $files = $this->factory->files;
+    foreach ($this->files as $id) {
+      $item = $files->getitem($id);
+      if (intval($item['preview'])) return $files->geturl($item['preview']);
     }
     return false;
   }
   
   //template
-  
-  private function get_taglinks($name, $excerpt) {
+  protected function get_taglinks($name, $excerpt) {
     $items = $this->$name;
-    if (count($items) == 0) return '';
+    if (!count($items)) return '';
     
     $theme = $this->theme;
     $tmlpath= $excerpt ? 'content.excerpts.excerpt' : 'content.post';
@@ -558,7 +579,10 @@ class tpost extends titem implements  itemplate {
       $list[] = $theme->parsearg($tmlitem,  $args);
     }
     
-    return str_replace('$items', ' ' . implode($theme->templates[$tmlpath . '.divider'] , $list), $theme->parse($theme->templates[$tmlpath]));
+    $args->items =     ' ' . implode($theme->templates[$tmlpath . '.divider'] , $list);
+    $result = $theme->parsearg($theme->templates[$tmlpath], $args);
+    $this->factory->posts->callevent('ontags', array($tags, $excerpt, &$result));
+    return $result;
   }
   
   public function getdate() {
@@ -717,10 +741,7 @@ class tpost extends titem implements  itemplate {
   }
   
   public function setfiles(array $list) {
-    $list = array_unique($list);
-    array_delete_value($list, '');
-    array_delete_value($list, false);
-    array_delete_value($list, null);
+    array_clean($list);
     $this->data['files'] = $list;
   }
   
@@ -734,6 +755,12 @@ class tpost extends titem implements  itemplate {
     if (count($this->files) == 0) return '';
     $files = $this->factory->files;
     return $files->getfilelist($this->files, true);
+  }
+  
+  public function getindex_tml() {
+    $theme = $this->theme;
+    if (!empty($theme->templates['index.post'])) return $theme->templates['index.post'];
+    return false;
   }
   
   public function getcont() {
@@ -1110,7 +1137,8 @@ class tposts extends titems {
     $this->childtable = '';
     $this->rawtable = 'rawposts';
     $this->basename = 'posts/index';
-    $this->addevents('edited', 'changed', 'singlecron', 'beforecontent', 'aftercontent', 'beforeexcerpt', 'afterexcerpt', 'onselect', 'onhead', 'onanhead');
+    $this->addevents('edited', 'changed', 'singlecron', 'beforecontent', 'aftercontent', 'beforeexcerpt', 'afterexcerpt',
+    'onselect', 'onhead', 'onanhead', 'ontags');
     $this->data['archivescount'] = 0;
     $this->data['revision'] = 0;
     $this->data['syncmeta'] = false;
@@ -1174,15 +1202,15 @@ class tposts extends titems {
       where $where and  $db->posts.id = $childtable.id and $db->urlmap.id  = $db->posts.idurl $limit")));
     }
     
-    /*
     $items = $db->res2items($db->query("select $db->posts.*, $db->urlmap.url as url  from $db->posts, $db->urlmap
     where $where and  $db->urlmap.id  = $db->posts.idurl $limit"));
-    */
     
+    /*
     $items = $db->res2items($db->query(
     "select $db->posts.*, $db->urlmap.url as url  from $db->posts
     left join  $db->urlmap on $db->urlmap.id  = $db->posts.idurl
     where $where $limit"));
+    */
     
     if (count($items) == 0) return array();
     $subclasses = array();
@@ -1229,10 +1257,10 @@ class tposts extends titems {
   
   public function getlinks($where, $tml) {
     $db = $this->db;
+    $t = $this->thistable;
     $items = $db->res2assoc($db->query(
-    "select $this->thistable.id, $this->thistable.title, $db->urlmap.url as url  from $db->posts
-    left join  $db->urlmap on $db->urlmap.id  = $db->posts.idurl
-    where $db->posts.status = 'published' and $where"));
+    "select $t.id, $t.title, $db->urlmap.url as url  from $t, $db->urlmap
+    where $t.status = 'published' and $where and $db->urlmap.id  = $t.idurl"));
     
     if (count($items) == 0) return '';
     
@@ -1379,16 +1407,18 @@ class tposts extends titems {
   public function getpage($author, $page, $perpage, $invertorder) {
     $author = (int) $author;
     $from = ($page - 1) * $perpage;
-    $where = "status = 'published'";
-    if ($author > 1) $where .= " and author = $author";
+    $t = $this->thistable;
+    $where = "$t.status = 'published'";
+    if ($author > 1) $where .= " and $t.author = $author";
     $order = $invertorder ? 'asc' : 'desc';
-    return $this->finditems($where,  " order by posted $order limit $from, $perpage");
+    return $this->finditems($where,  " order by $t.posted $order limit $from, $perpage");
   }
   
   public function stripdrafts(array $items) {
     if (count($items) == 0) return array();
     $list = implode(', ', $items);
-    return $this->db->idselect("status = 'published' and id in ($list)");
+    $t = $this->thistable;
+    return $this->db->idselect("$t.status = 'published' and $t.id in ($list)");
   }
   
   //coclasses
@@ -1720,7 +1750,7 @@ class tcommontags extends titems implements  itemplate {
     $result = '';
     $iconenabled = ! litepublisher::$options->icondisabled;
     $theme = ttheme::i();
-    $args = targs::i();
+    $args = new targs();
     $args->rel = $this->PermalinkIndex;
     $args->parent = $parent;
     foreach($sorted as $id) {
@@ -1728,7 +1758,7 @@ class tcommontags extends titems implements  itemplate {
       $args->add($item);
       $args->icon = $iconenabled ? $this->geticonlink($id) : '';
       $args->subcount =$showcount ? $theme->parsearg($tml['subcount'],$args) : '';
-      $args->subitems = $tml['subitems'] != '' ? $this->getsortedcontent($tml, $id, $sortname, $count, $showcount) : '';
+      $args->subitems = $tml['subitems'] ? $this->getsortedcontent($tml, $id, $sortname, $count, $showcount) : '';
       $result .= $theme->parsearg($tml['item'],$args);
     }
     if ($parent == 0) return $result;
@@ -2008,8 +2038,21 @@ class tcommontags extends titems implements  itemplate {
     return isset($item['idperm']) ? (int) $item['idperm'] : 0;
   }
   
+  public function getindex_tml() {
+    $theme = ttheme::i();
+    if (!empty($theme->templates['index.tag'])) return $theme->templates['index.tag'];
+    return false;
+  }
+  
   public function getcontent() {
-    return $this->contents->getcontent($this->id);
+    if ($s = $this->contents->getcontent($this->id)) {
+      $pages = explode('<!--nextpage-->', $s);
+      $page = litepublisher::$urlmap->page - 1;
+      if (isset($pages[$page])) return $pages[$page];
+      return array_shift($pages);
+    }
+    
+    return '';
   }
   
   public function getcont() {
@@ -2041,13 +2084,16 @@ class tcommontags extends titems implements  itemplate {
   }
   
   public function get_sorted_posts($id, $count, $invert) {
-    $itemstable  = $this->itemsposts->thistable;
+    $ti = $this->itemsposts->thistable;
     $posts = $this->factory->posts;
-    $poststable = $posts->thistable;
+    $p = $posts->thistable;
     $order = $invert ? 'asc' : 'desc';
-    return $posts->select("$poststable.status = 'published' and $poststable.id in
-    (select DISTINCT post from $itemstable  where $itemstable .item = $id)",
-    "order by $poststable.posted $order limit 0, $count");
+    $result = $this->db->res2id($this->db->query("select $p.id as id, $ti.post as post from $p, $ti
+    where    $ti.item = $id and $p.id = $ti.post and $p.status = 'published'
+    order by $p.posted $order limit 0, $count"));
+    
+    $posts->loaditems($result);
+    return $result;
   }
   
   public function getidposts($id) {
@@ -2058,6 +2104,9 @@ class tcommontags extends titems implements  itemplate {
     $includechilds = (int) $item['includechilds'];
     $perpage = (int) $item['lite'] ? $item['liteperpage'] : litepublisher::$options->perpage;
     $posts = $this->factory->posts;
+    $p = $posts->thistable;
+    $t = $this->thistable;
+    $ti = $this->itemsposts->thistable;
     
     if ($includeparents || $includechilds) {
       $this->loadall();
@@ -2070,17 +2119,25 @@ class tcommontags extends titems implements  itemplate {
     }
     
     $from = (litepublisher::$urlmap->page - 1) * $perpage;
-    $itemstable  = $this->itemsposts->thistable;
-    $poststable = $posts->thistable;
     $order = (int) $item['invertorder'] ? 'asc' : 'desc';
-    $this->_idposts[$id] = $posts->select("$poststable.status = 'published' and $poststable.id in
-    (select DISTINCT post from $itemstable  where $itemstable .item $tags)",
-    "order by $poststable.posted $order limit $from, $perpage");
+    /*
+    $this->_idposts[$id] = $posts->select("$p.status = 'published' and $p.id in
+    (select DISTINCT post from $ti where $ti.item $tags)",
+    "order by $p.posted $order limit $from, $perpage");
+    */
     
-    return $this->_idposts[$id];
+    $result = $this->db->res2id($this->db->query("select $p.id as id, $ti.post as post from $p, $ti
+    where    $ti.item $tags and $p.id = $ti.post and $p.status = 'published'
+    order by $p.posted $order limit $from, $perpage"));
+    
+    $result = array_unique($result);
+    $posts->loaditems($result);
+    $this->_idposts[$id] = $result;
+    return $result;
   }
   
-  public function getparents($id) {$result = array();
+  public function getparents($id) {
+    $result = array();
     while ($id = (int) $this->items[$id]['parent']) $result[] = $id;
     return $result;
   }
@@ -2182,7 +2239,7 @@ class ttagcontent extends tdata {
     $item = $this->getitem($id);
     $filter = tcontentfilter::i();
     $item['rawcontent'] = $content;
-    $item['content'] = $filter->filter($content);
+    $item['content'] = $filter->filterpages($content);
     $item['description'] = tcontentfilter::getexcerpt($content, 80);
     $this->setitem($id, $item);
   }
@@ -2532,6 +2589,8 @@ class tfiles extends titems {
     
     $theme = ttheme::i();
     $args = new targs();
+    $args->count = count($list);
+    
     $url = litepublisher::$site->files . '/files/';
     $preview = new tarray2prop();
     ttheme::$vars['preview'] = $preview;
@@ -2539,6 +2598,7 @@ class tfiles extends titems {
     // json options supported in php 5.3
     $jsattr =defined('JSON_NUMERIC_CHECK') ? (JSON_NUMERIC_CHECK | (defined('JSON_UNESCAPED_UNICODE') ? JSON_UNESCAPED_UNICODE : 0)) : false;
     foreach ($items as $type => $subitems) {
+      $args->subcount = count($subitems);
       $sublist = '';
       foreach ($subitems as $typeindex => $id) {
         $item = $this->items[$id];
@@ -2577,11 +2637,13 @@ class tfiles extends titems {
         $sublist .= $theme->parsearg($tml[$type], $args);
       }
       
-      $result .=  str_replace('$' . $type, $sublist, $tml[$type . 's']);
+      $args->__set($type, $sublist);
+      $result .=  $theme->parsearg($tml[$type . 's'], $args);
     }
     
     unset(ttheme::$vars['preview'], $preview);
-    return str_replace('$files', $result, $theme->parse($tml['all']));
+    $args->files =  $result;
+    return $theme->parsearg($tml['all'], $args);
   }
   
   public function postedited($idpost) {

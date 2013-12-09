@@ -61,7 +61,7 @@
     
     '<div class="form-group"><label for="text-fileprop-description">%%lang.description%%</label>' +
     '<input type="text" class="form-control" name="fileprop-description" id="text-fileprop-description" value="" /></div>' +
-
+    
     '<div class="form-group"><label for="text-fileprop-keywords">%%lang.keywords%%</label>' +
     '<input type="text" class="form-control" name="fileprop-keywords" id="text-fileprop-keywords" value="" />'
   };
