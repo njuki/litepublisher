@@ -35,7 +35,7 @@ class tmenus extends titems {
   public function add(tmenu $item) {
     if ($item instanceof tfakemenu) return $this->addfakemenu($item);
     //fix null fields
-    foreach (tmenu::$ownerprops as $prop) {
+    foreach ($item->get_owner_props() as $prop) {
       if (!isset($item->data[$prop])) $item->data[$prop] = '';
     }
     
@@ -57,7 +57,7 @@ class tmenus extends titems {
     'class' => get_class($item)
     );
     //move props
-    foreach (tmenu::$ownerprops as $prop) {
+    foreach ($item->get_owner_props() as $prop) {
       if (array_key_exists($prop, $item->data)) {
         $this->items[$id][$prop] = $item->data[$prop];
         unset($item->data[$prop]);
@@ -89,7 +89,7 @@ class tmenus extends titems {
   
   public function addfakemenu(tmenu $item) {
     //fix null fields
-    foreach (tmenu::$ownerprops as $prop) {
+    foreach ($item->get_owner_props() as $prop) {
       if (!isset($item->data[$prop])) $item->data[$prop] = '';
     }
     
@@ -99,7 +99,7 @@ class tmenus extends titems {
     'class' => get_class($item)
     );
     //move props
-    foreach (tmenu::$ownerprops as $prop) {
+    foreach ($item->get_owner_props() as $prop) {
       $this->items[$id][$prop] = $item->$prop;
       if (array_key_exists($prop, $item->data)) unset($item->data[$prop]);
     }
@@ -416,9 +416,17 @@ class tmenu extends titem implements  itemplate {
     if ($name == 'id') return $this->data['id'];
     if (method_exists($this, $get = 'get' . $name))  return $this->$get();
     
-    if (in_array($name, self::$ownerprops)) return $this->getownerprop($name);
+    if ($this->is_owner_prop($name)) return $this->getownerprop($name);
     return parent::__get($name);
   }
+
+public function get_owner_props() {
+return self::$ownerprops;
+}
+
+public function is_owner_prop($name) {
+return in_array($name, $this->get_owner_props());
+}
   
   public function getownerprop($name) {
     $id = $this->data['id'];
@@ -430,7 +438,7 @@ class tmenu extends titem implements  itemplate {
   }
   
   public function __set($name, $value) {
-    if (in_array($name, self::$ownerprops)) {
+    if ($this->is_owner_prop($name)) {
       if ($this->id == 0) {
         $this->data[$name] = $value;
       } else {
@@ -442,7 +450,7 @@ class tmenu extends titem implements  itemplate {
   }
   
   public function __isset($name) {
-    if (in_array($name, self::$ownerprops)) return true;
+    if ($this->is_owner_prop($name)) return true;
     return parent::__isset($name);
   }
   
