@@ -19,7 +19,7 @@
     
     on: function(holders) {
       var self = this;
-      holders.each(function() {
+      $(holders).each(function() {
         var inputs = $("input", this);
         var date = inputs.eq(0).addClass("date-edit");
         var time = inputs.eq(1).addClass("time-edit");
@@ -29,7 +29,7 @@
     
     onrange: function(holders) {
       var self = this;
-      holders.each(function() {
+      $(holders).each(function() {
         var inputs = $("input", this);
         var buttons = $("button", this);
         self.add(buttons.eq(0), inputs.eq(0).addClass("date-edit"));

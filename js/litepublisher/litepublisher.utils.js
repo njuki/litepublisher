@@ -17,6 +17,10 @@
   //litepublisher namespace
   window.litepubl = {
   tml: {}, //namespace for templates
+    adminpanel: false,
+  is_adminpanel: function() { return litepubl.adminpanel; },
+    //forward declaration for future plugins as yandex metrika or google analitik
+  stat: function(name, param) {},
     getjson: function(data, callback) {
       return $.ajax({
         type: "get",

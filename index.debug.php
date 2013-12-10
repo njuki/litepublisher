@@ -107,7 +107,7 @@ ttheme::clearcache();
 //litepublisher::$urlmap->clearcache();
 //tfiler::log(var_export($_POST, true));
 //tthemegenerator::i()->parseselectors();
-//tupdater::i()->run(5.73);
+//tupdater::i()->run(5.74);
 //shopupdater::i()->run(1.20);
 //shoptheme::i()->install();
 //tfiler::log($_SERVER['REQUEST_URI']);

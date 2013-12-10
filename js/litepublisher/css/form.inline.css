@@ -2,6 +2,7 @@
     .form-inline p,
     .form-inline button {
     display: inline-block;
+margin-left: 14px;
   }
 
 .date-edit,
