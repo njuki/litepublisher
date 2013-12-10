@@ -14,10 +14,10 @@
 registered: false,
 script: false,
 dialogopened: false,
-    html: '<div><p>%%lang.subtitle%%</p>\
-<div style="display:block;overflow:hidden;width:300px;height:50px;">\
-<div id="ulogin-holder" data-ulogin="display=small;fields=first_name,last_name;optional=email,phone,nickname;providers=vkontakte,odnoklassniki,mailru,yandex,facebook,google,twitter;hidden=other;redirect_uri=%%redirurl%%;%%callback%%"></div></div>\
-<div><a href="%%url%%">%%lang.emaillogin%%</a></div></div>',
+    html: '<div><p>%%lang.subtitle%%</p>' +
+'<div id="ulogin-dialog">' +
+'<div id="ulogin-holder" data-ulogin="display=small;fields=first_name,last_name;optional=email,phone,nickname;providers=vkontakte,odnoklassniki,mailru,yandex,facebook,google,twitter;hidden=other;redirect_uri=%%redirurl%%;%%callback%%"></div></div>' +
+'<div><a href="%%url%%">%%lang.emaillogin%%</a></div></div>',
 
     init: function() {
 this.registered = $.cookie('litepubl_user');
