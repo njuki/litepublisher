@@ -25,7 +25,7 @@
       this.options = {
         title: "",
         html: "",
-        width: 300,
+        width: false,
         open: $.noop,
         close: $.noop,
         buttons: [
@@ -70,13 +70,17 @@
         buttons: buttons
       });
       
-      var dialog = $(html).appendTo("body");
-      this.dialog = dialog;
-      
-      //assign events to buttons
+      var dialog = this.dialog = $(html).appendTo("body");
+            //assign events to buttons
       for (var i =0, l= options.buttons.length;  i < l; i++) {
         $("#" + idbutton +i, dialog).data("index", i).on("click.dialog", options.buttons[i].click);
       }
+
+if (options.width) {
+dialog.on("show.bs.modal", function() {
+dialog.find(".modal-content:first").css("width", options.width);
+});
+}
       
       if ($.isFunction(options.open)) {
         dialog.on("shown.bs.modal", function() {
