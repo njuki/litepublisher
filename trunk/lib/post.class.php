@@ -113,13 +113,6 @@ class tpost extends titem implements  itemplate {
   }
   
   public function __get($name) {
-    /*
-    $result = false;
-    foreach ($this->props as $props) {
-      if ($props->set($this, $name, $result)) return $result;
-    }
-    */
-    
     if ($this->childtable) {
       if ($name == 'id') return $this->data['id'];
       if (method_exists($this, $get = 'get' . $name))   return $this->$get();
