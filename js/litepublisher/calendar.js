@@ -72,7 +72,7 @@
       this.load(function() {
         $.litedialog({
           title: lang.admin.calendar,
-          html: '<div  style="width:290px;height:200px;display:block;overflow:hidden;"><div id="popup-calendar"></div></div>',
+          html: '<div  class="datepicker-container"><div id="popup-calendar"></div></div>',
           width: 300,
           close: function() {
             self.dialogopened = false;

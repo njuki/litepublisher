@@ -14,9 +14,6 @@
       height: 30
     }, options);
     
-    // prevent double opened popovers
-    var showing = false;
-    
     //create circle for preload
     var prevlink = false;
     // regexp test image extension in url
@@ -43,6 +40,11 @@
           url = self.data("image");
         }
         
+//after load image check  is focused or inhover
+self.data("focused", e.type).on((e.type == "mouseenter" ? "mouseleave" : "blur") + ".popinit", function() {
+$(this).data("focused", false).off(".popinit");
+});
+
         var img = new Image();
         img.onload = function(){
           self.removeClass(options.cursorclass);
@@ -83,15 +85,9 @@
             '<div class="popover-content"></div></div>',
             title: title,
             trigger: 'hover focus' + clicktrigger
-          })
-          .on("show.bs.popover", function() {
-            showing = true;
-          })
-          .on("hide.bs.popover", function() {
-            showing = false;
           });
           
-          if (!showing) self.popover('show');
+          if (self.data("focused")) self.trigger(self.data("focused"));
           
           //preload
           var preload = self.data("nextlink");
