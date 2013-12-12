@@ -285,7 +285,7 @@ class tmenus extends titems {
       $theme = ttheme::i();
       $args = new targs();
       if ($hover) {
-        $items = $this->getsubmenu($this->tree, $current, $hover == 'bootstrap');
+        $items = $this->getsubmenu($this->tree, $current, $hover === 'bootstrap');
       } else {
         $items = '';
         $tml = $theme->templates['menu.item'];
@@ -319,7 +319,10 @@ class tmenus extends titems {
       $args->add($this->items[$id]);
       $submenu = '';
       if (count($items)) {
-        if ($bootstrap) $submenu= $theme->parsearg($tml_single, $args);
+        if ($bootstrap) {
+          $args->submenu = '';
+          $submenu= $theme->parsearg($tml_single, $args);
+        }
         $submenu .=  $this->getsubmenu($items, $current, $bootstrap);
         $submenu = str_replace('$items', $submenu, $tml_submenu);
       }

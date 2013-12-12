@@ -17,6 +17,7 @@ $("li", menu).hover(function(){$(this).addClass("jshover");}, function(){$(this)
 </script>
 <ul id="nav">
 $item = [<li><a href="$link" title="$title">$title</a>$submenu = [<ul>$items</ul>]</li>]
+				$single = [<li><a href="$link" title="$title">$title</a></li>]
 $current = [<li class="current_page_item"><a rel="nofollow" href="$link" title="$title">$title</a>$submenu</li>]
 </ul>
 ]

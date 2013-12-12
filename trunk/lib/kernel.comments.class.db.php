@@ -868,6 +868,7 @@ class tsubscribers extends titemsposts {
     tlocal::usefile('mail');
     $lang = tlocal::i('mailcomments');
     $theme = ttheme::i();
+    $args = new targs();
     
     $subject = $theme->parsearg($lang->subscribesubj, $args);
     $body = $theme->parsearg($lang->subscribebody, $args);
