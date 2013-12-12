@@ -111,10 +111,10 @@ class tadminmenu  extends tmenu {
     $this->cache = false;
   }
   
-public function get_owner_props() {
-return self::$adminownerprops;
-}
-
+  public function get_owner_props() {
+    return self::$adminownerprops;
+  }
+  
 public function load() { return true; }
 public function save() { return true; }
   

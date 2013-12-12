@@ -164,7 +164,7 @@ class ulogin extends tplugin {
   }
   
   public function ulogin_auth(array $args) {
-    if (!($token = $args['token'])) return 403;
+    if (!isset($args['token']) || (!($token = $args['token']))) return 403;
     if (!($result = $this->auth($token))) return 403;
     
     /*

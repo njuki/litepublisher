@@ -40,11 +40,11 @@
           url = self.data("image");
         }
         
-//after load image check  is focused or inhover
-self.data("focused", e.type).on((e.type == "mouseenter" ? "mouseleave" : "blur") + ".popinit", function() {
-$(this).data("focused", false).off(".popinit");
-});
-
+        //after load image check  is focused or inhover
+        self.data("focused", e.type).on((e.type == "mouseenter" ? "mouseleave" : "blur") + ".popinit", function() {
+          $(this).data("focused", false).off(".popinit");
+        });
+        
         var img = new Image();
         img.onload = function(){
           self.removeClass(options.cursorclass);

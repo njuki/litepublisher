@@ -272,13 +272,6 @@ class tpost extends titem implements  itemplate {
   }
   
   public function __get($name) {
-    /*
-    $result = false;
-    foreach ($this->props as $props) {
-      if ($props->set($this, $name, $result)) return $result;
-    }
-    */
-    
     if ($this->childtable) {
       if ($name == 'id') return $this->data['id'];
       if (method_exists($this, $get = 'get' . $name))   return $this->$get();
@@ -1167,7 +1160,7 @@ class tposts extends titems {
     $newitems = array_diff($items, $loaded);
     if (!count($newitems)) return $items;
     $newitems = $this->select(sprintf('%s.id in (%s)', $this->thistable, implode(',', $newitems)), '');
-    return array_merge($newitems, array_diff($loaded, $items));
+    return array_merge($newitems, array_intersect($loaded, $items));
   }
   
   public function setassoc(array $items) {
