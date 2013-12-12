@@ -17,7 +17,6 @@ class tadminmenus extends tmenus {
     $this->basename = 'adminmenu';
     $this->addevents('onexclude');
     $this->data['heads'] = '';
-    tadminmenu::$ownerprops = array_merge(tadminmenu::$ownerprops, array('name', 'group'));
   }
   
   public function settitle($id, $title) {
@@ -96,6 +95,7 @@ class tadminmenus extends tmenus {
 }//class
 
 class tadminmenu  extends tmenu {
+  public static $adminownerprops = array('title', 'url', 'idurl', 'parent', 'order', 'status', 'name', 'group');
   public $arg;
   
   public static function getinstancename() {
@@ -109,6 +109,10 @@ class tadminmenu  extends tmenu {
   protected function create() {
     parent::create();
     $this->cache = false;
+  }
+  
+  public function get_owner_props() {
+    return self::$adminownerprops;
   }
   
 public function load() { return true; }

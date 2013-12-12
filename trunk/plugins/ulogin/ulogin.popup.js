@@ -87,7 +87,7 @@ return this.script = $.load_script('http://ulogin.ru/js/ulogin.js', callback);
 auth: function(token, remote_callback, callback) {
 var self =this;
 return $.litejson({method: "ulogin_auth", token: token, callback: remote_callback ? remote_callback : false}, function(r) {
-set_cookie("litepubl_user_id", r.iduser);
+set_cookie("litepubl_user_id", r.id);
 set_cookie("litepubl_user", r.pass);
 set_cookie("litepubl_regservice", r.regservice);
 self.registered = true;

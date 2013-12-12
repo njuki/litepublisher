@@ -419,14 +419,14 @@ class tmenu extends titem implements  itemplate {
     if ($this->is_owner_prop($name)) return $this->getownerprop($name);
     return parent::__get($name);
   }
-
-public function get_owner_props() {
-return self::$ownerprops;
-}
-
-public function is_owner_prop($name) {
-return in_array($name, $this->get_owner_props());
-}
+  
+  public function get_owner_props() {
+    return self::$ownerprops;
+  }
+  
+  public function is_owner_prop($name) {
+    return in_array($name, $this->get_owner_props());
+  }
   
   public function getownerprop($name) {
     $id = $this->data['id'];
