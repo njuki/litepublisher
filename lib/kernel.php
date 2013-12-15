@@ -755,6 +755,11 @@ function strend($s, $end) {
   return $end == substr($s, 0 - strlen($end));
 }
 
+function strip_utf($s) {
+  $utf = "\xEF\xBB\xBF";
+  return strbegin($s, $utf) ? substr($s, strlen($utf)) : $s;
+}
+
 function array_delete(array &$a, $i) {
   array_splice($a, $i, 1);
 }

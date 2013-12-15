@@ -32,17 +32,16 @@ class tadminthemefiles extends tadminmenu {
     
     $html = $this->gethtml('themefiles');
     $lang = tlocal::i('themefiles');
-    $args = targs::i();
-    $result = sprintf($html->h2->filelist, $themename);
+    $args = new targs();
+    $result = sprintf($html->h4->filelist, $themename);
     $list = tfiler::getfiles(litepublisher::$paths->themes . $themename . DIRECTORY_SEPARATOR  );
     sort($list);
     $editurl = tadminhtml::getadminlink('/admin/views/themefiles/', sprintf('theme=%s&file', $themename));
-    $fileitem = $html->fileitem;
     $filelist = '';
     foreach ($list as $file) {
-      $filelist .= sprintf($fileitem, $editurl, $file);
+      $filelist .= $html->li("<a href='$editurl=$file'>$file</a>");
     }
-    $result .= sprintf($html->filelist, $filelist);
+    $result .= $html->ul($filelist);
     
     if (!empty($_GET['file'])) {
       $file = $_GET['file'];
