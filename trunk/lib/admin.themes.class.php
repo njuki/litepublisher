@@ -15,7 +15,7 @@ class tadminthemes extends tadminmenu {
   public static function getthemes() {
     $html = tadminhtml::i();
     $html->section = 'themes';
-    return sprintf('<ul>%s</ul>', self::getlist($html->item, ''));
+    return $html->ul(self::getlist($html->item, ''));
   }
   
   public static function getlist($tml, $selected) {
@@ -26,7 +26,6 @@ class tadminthemes extends tadminmenu {
     $args = targs::i();
     $list =    tfiler::getdir(litepublisher::$paths->themes);
     sort($list);
-    $args->editurl = tadminhtml::getadminlink('/admin/views/edittheme/', 'theme');
     $args->filesurl = tadminhtml::getadminlink('/admin/views/themefiles/', 'theme');
     $parser = tthemeparser::i();
     foreach ($list as $name) {

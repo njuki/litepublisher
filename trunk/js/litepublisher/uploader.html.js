@@ -33,7 +33,6 @@
           },
           
           beforestart: function(file) {
-            //litepubl.dump(file);
             if (owner.maxsize && (file.size > (owner.maxsize * 1024 * 1024))) return false;
           }
         }
@@ -92,7 +91,6 @@
                   owner.setprogress(event.loaded, event.total);
                 }
               }, false);
-              
               
               //Download progress
               /*
