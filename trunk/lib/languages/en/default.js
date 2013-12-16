@@ -12,7 +12,8 @@ window.lang.dialog = {
 
 window.lang.widgetlang = {
   'expand': 'Expand',
-  'colapse': 'Colapse'
+  'colapse': 'Collapse',
+  'clickme': 'Click to expand or collapse widget'
 };
 
 })( window);

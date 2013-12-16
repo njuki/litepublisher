@@ -12,7 +12,8 @@ window.lang.dialog = {
 
 window.lang.widgetlang = {
   'expand': 'Раскрыть',
-  'colapse': 'Свернуть'
+  'colapse': 'Свернуть',
+  'clickme': 'Кликайте, чтобы развернуть или свернуть виджет'
 };
 
 })( window);
