@@ -81,10 +81,11 @@ class tadminlogin extends tadminform {
   }
   
   public function getcontent() {
-    $args = new targs();
     $html = $this->html;
     $lang = tlocal::admin('login');
-    $args->formtitle = $lang->formhead;
+    $args = new targs();
+    $form = new adminform($args);
+    $form->title = $lang->emailpass;
     $args->email = !empty($_POST['email']) ? strip_tags($_POST['email']) : '';
     $args->password = !empty($_POST['password']) ? strip_tags($_POST['password']) : '';
     $args->remember = isset($_POST['remember']);
@@ -96,11 +97,13 @@ class tadminlogin extends tadminform {
       $result = str_replace('backurl%3D', 'backurl%3D' . urlencode(urlencode($_GET['backurl'])), $result);
     }
     
-    $result .= $html->adminform('[text=email]
+$form->items = '[text=email]
     [password=password]
-    [checkbox=remember]',
-    $args);
-    
+    [checkbox=remember]';
+
+$form->submit = 'login';
+    $result .= $form->get();
+
     $form = new adminform($args);
     $form->title = $lang->lostpass;
     $form->action = '$site.url/admin/password/';
@@ -114,12 +117,18 @@ class tadminlogin extends tadminform {
     
     if (litepublisher::$options->usersenabled && litepublisher::$options->reguser) {
       $lang = tlocal::admin('users');
-      $args->formtitle = $lang->regform;
+$form = new  adminform($args);
+$form->action = litepublisher::$site->url . '/admin/reguser/';
+if (!empty($_GET['backurl'])) {
+$form->action .= '?backurl=' . urlencode($_GET['backurl']);
+}
+      $form->title = $lang->regform;
       $args->email = '';
       $args->name = '';
-      $form = $html->adminform('[text=email] [text=name]', $args);
-      $backurl = isset($_GET['backurl']) ? $_GET['backurl'] : '';
-      $result .= str_replace('action=""', sprintf('action="%s/admin/reguser/%s"', litepublisher::$site->url, $backurl ? '?backurl=' . urlencode($backurl) : ''), $form);
+$form->items = '[text=email] [text=name]';
+$form->submit = 'signup';
+//fix id text-email
+      $result .= str_replace('text-email', 'reg-email', $form->get());
     }
     $this->callevent('oncontent', array(&$result));
     return $result;
