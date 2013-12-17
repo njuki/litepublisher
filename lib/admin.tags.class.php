@@ -42,8 +42,6 @@ class tadmintags extends tadminmenu {
     
     if (!$id ||$tags->itemexists($id)) {
       if ($id ==  0) {
-        $result .= $html->togglehead();
-        $result .= $html->addscript;
         $args->title = '';
         $args->parent = tadminhtml::array2combo($parents, 0);
         $args->order = tadminhtml::array2combo(range(0,9), 1);
@@ -66,7 +64,13 @@ class tadmintags extends tadminmenu {
       $tabs->ajax($lang->view, "$ajax=view");
       $tabs->ajax('SEO', "$ajax=seo");
       $args->formtitle = $lang->edit;
-      $result .= $html->adminform($tabs->get(), $args);
+
+$form = new adminform($args);
+$form->id = 'editform';
+$form->class ='hidden';
+$form->title = $html->toggle($lang->add, '#editform');
+$form->items = $tabs->get();
+      $result .= $form->get();
       $result .= tuitabs::gethead();
     }
     
