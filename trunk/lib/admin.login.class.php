@@ -81,14 +81,6 @@ class tadminlogin extends tadminform {
   }
   
   public function getcontent() {
-    $html = $this->html;
-    $lang = tlocal::admin('login');
-    $args = new targs();
-    $form = new adminform($args);
-    $form->title = $lang->emailpass;
-    $args->email = !empty($_POST['email']) ? strip_tags($_POST['email']) : '';
-    $args->password = !empty($_POST['password']) ? strip_tags($_POST['password']) : '';
-    $args->remember = isset($_POST['remember']);
     $result = $this->widget;
     if (isset($_GET['backurl'])) {
       $result = str_replace('&amp;backurl=', '&backurl=', $result);
@@ -97,6 +89,30 @@ class tadminlogin extends tadminform {
       $result = str_replace('backurl%3D', 'backurl%3D' . urlencode(urlencode($_GET['backurl'])), $result);
     }
     
+    $html = $this->html;
+    $args = new targs();
+    if (litepublisher::$options->usersenabled && litepublisher::$options->reguser) {
+      $lang = tlocal::admin('users');
+$form = new  adminform($args);
+$form->action = litepublisher::$site->url . '/admin/reguser/';
+if (!empty($_GET['backurl'])) {
+$form->action .= '?backurl=' . urlencode($_GET['backurl']);
+}
+      $form->title = $lang->regform;
+      $args->email = '';
+      $args->name = '';
+$form->items = '[text=email] [text=name]';
+$form->submit = 'signup';
+//fix id text-email
+      $result .= str_replace('text-email', 'reg-email', $form->get());
+    }
+
+    $lang = tlocal::admin('login');
+    $form = new adminform($args);
+    $form->title = $lang->emailpass;
+    $args->email = !empty($_POST['email']) ? strip_tags($_POST['email']) : '';
+    $args->password = !empty($_POST['password']) ? strip_tags($_POST['password']) : '';
+    $args->remember = isset($_POST['remember']);
 $form->items = '[text=email]
     [password=password]
     [checkbox=remember]';
@@ -114,22 +130,6 @@ $form->submit = 'login';
     $html->getinput('text', 'email', '', 'E-Mail'));
     $form->submit = 'sendpass';
     $result .= $form->get();
-    
-    if (litepublisher::$options->usersenabled && litepublisher::$options->reguser) {
-      $lang = tlocal::admin('users');
-$form = new  adminform($args);
-$form->action = litepublisher::$site->url . '/admin/reguser/';
-if (!empty($_GET['backurl'])) {
-$form->action .= '?backurl=' . urlencode($_GET['backurl']);
-}
-      $form->title = $lang->regform;
-      $args->email = '';
-      $args->name = '';
-$form->items = '[text=email] [text=name]';
-$form->submit = 'signup';
-//fix id text-email
-      $result .= str_replace('text-email', 'reg-email', $form->get());
-    }
     $this->callevent('oncontent', array(&$result));
     return $result;
   }
