@@ -108,7 +108,7 @@ ttheme::clearcache();
 tfiler::log(var_export($_POST, true));
 //tthemegenerator::i()->parseselectors();
 //tupdater::i()->run(5.75);
-//shopupdater::i()->run(1.20);
+//shopupdater::i()->run(1.23);
 //shoptheme::i()->install();
 //tfiler::log($_SERVER['REQUEST_URI']);
 

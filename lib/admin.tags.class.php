@@ -64,12 +64,12 @@ class tadmintags extends tadminmenu {
       $tabs->ajax($lang->view, "$ajax=view");
       $tabs->ajax('SEO', "$ajax=seo");
       $args->formtitle = $lang->edit;
-
-$form = new adminform($args);
-$form->id = 'editform';
-$form->class ='hidden';
-$form->title = $html->toggle($lang->add, '#editform');
-$form->items = $tabs->get();
+      
+      $form = new adminform($args);
+      $form->id = 'editform';
+      $form->class ='hidden';
+      $form->title = $html->toggle($lang->add, '#editform');
+      $form->items = $tabs->get();
       $result .= $form->get();
       $result .= tuitabs::gethead();
     }

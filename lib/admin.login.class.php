@@ -93,33 +93,33 @@ class tadminlogin extends tadminform {
     $args = new targs();
     if (litepublisher::$options->usersenabled && litepublisher::$options->reguser) {
       $lang = tlocal::admin('users');
-$form = new  adminform($args);
-$form->action = litepublisher::$site->url . '/admin/reguser/';
-if (!empty($_GET['backurl'])) {
-$form->action .= '?backurl=' . urlencode($_GET['backurl']);
-}
+      $form = new  adminform($args);
+      $form->action = litepublisher::$site->url . '/admin/reguser/';
+      if (!empty($_GET['backurl'])) {
+        $form->action .= '?backurl=' . urlencode($_GET['backurl']);
+      }
       $form->title = $lang->regform;
       $args->email = '';
       $args->name = '';
-$form->items = '[text=email] [text=name]';
-$form->submit = 'signup';
-//fix id text-email
+      $form->items = '[text=email] [text=name]';
+      $form->submit = 'signup';
+      //fix id text-email
       $result .= str_replace('text-email', 'reg-email', $form->get());
     }
-
+    
     $lang = tlocal::admin('login');
     $form = new adminform($args);
     $form->title = $lang->emailpass;
     $args->email = !empty($_POST['email']) ? strip_tags($_POST['email']) : '';
     $args->password = !empty($_POST['password']) ? strip_tags($_POST['password']) : '';
     $args->remember = isset($_POST['remember']);
-$form->items = '[text=email]
+    $form->items = '[text=email]
     [password=password]
     [checkbox=remember]';
-
-$form->submit = 'login';
+    
+    $form->submit = 'log_in';
     $result .= $form->get();
-
+    
     $form = new adminform($args);
     $form->title = $lang->lostpass;
     $form->action = '$site.url/admin/password/';

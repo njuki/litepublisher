@@ -478,15 +478,15 @@ class tadminhtml {
     }
     return $result;
   }
-
-public function toggle($title, $target, $second = '') {
-return strtr($this->ini['common']['toggle'], array(
-'$title' => $title,
-'$target' => $target,
-'$second' => $second,
-"'" => '"',
-));
-}
+  
+  public function toggle($title, $target, $second = '') {
+    return strtr($this->ini['common']['toggle'], array(
+    '$title' => $title,
+    '$target' => $target,
+    '$second' => $second,
+    "'" => '"',
+    ));
+  }
   
   public function inidir($dir) {
     $filename = $dir . 'html.ini';

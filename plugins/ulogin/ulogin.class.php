@@ -76,7 +76,7 @@ class ulogin extends tplugin {
       $backurl =  tusergroups::i()->gethome($user['idgroups'][0]);
     }
     
-    if (!tusers::i()->db->getvalue($cookies['id'], 'phone')) {
+    if (!intval(tusers::i()->db->getvalue($cookies['id'], 'phone'))) {
       if ($url = $this->onphone($backurl))     return litepublisher::$urlmap->redir($url);
     }
     

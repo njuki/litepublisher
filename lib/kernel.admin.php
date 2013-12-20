@@ -57,6 +57,26 @@ class tadminmenus extends tmenus {
     ));
   }
   
+  public function additem(array $item) {
+    if (empty($item['group'])) {
+      $groups = tusergroups::i();
+      $item['group'] = $groups->items[$groups->defaults[0]]['name'];
+    }
+    return parent::additem($item);
+  }
+  
+  public function addfakemenu(tmenu $menu) {
+    $this->lock();
+    $id = parent::addfakemenu($menu);
+    if (empty($this->items[$id]['group'])) {
+      $groups = tusergroups::i();
+      $this->items[$id]['group'] = $groups->items[$groups->defaults[0]]['name'];
+    }
+    
+    $this->unlock();
+    return $id;
+  }
+  
   public function getchilds($id) {
     if ($id == 0) {
       $result = array();
@@ -722,6 +742,15 @@ class tadminhtml {
       }
     }
     return $result;
+  }
+  
+  public function toggle($title, $target, $second = '') {
+    return strtr($this->ini['common']['toggle'], array(
+    '$title' => $title,
+    '$target' => $target,
+    '$second' => $second,
+    "'" => '"',
+    ));
   }
   
   public function inidir($dir) {
