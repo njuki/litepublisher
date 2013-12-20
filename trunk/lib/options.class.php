@@ -264,7 +264,7 @@ class toptions extends tevents_storage {
     //admin has all rights
     if ($this->user == 1) return true;
     if (in_array($this->groupnames['admin'], $this->idgroups)) return true;
-if (!$groupname) return true;
+    if (!$groupname) return true;
     $groupname = trim($groupname);
     if ($groupname == 'admin') return false;
     if (!isset($this->groupnames[$groupname])) $this->error(sprintf('The "%s" group not found', $groupname));

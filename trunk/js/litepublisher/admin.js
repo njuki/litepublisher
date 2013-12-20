@@ -19,17 +19,17 @@
       $(this).prop("checked", false);
       return false;
     });
-
-//like collapse.js 
-$(".togglelink").on("click.toggle", function() {
-var link = $(this);
-var target = link.attr("data-target");
-if (target) $(target).slideToggle().removeClass("hidden");
-// second target
-target = link.attr("data-second");
-if (target) $(target).slideToggle().removeClass("hidden");
-return false;
-});
+    
+    //like collapse.js
+    $(".togglelink").on("click.toggle", function() {
+      var link = $(this);
+      var target = link.attr("data-target");
+      if (target) $(target).slideToggle().removeClass("hidden");
+      // second target
+      target = link.attr("data-second");
+      if (target) $(target).slideToggle().removeClass("hidden");
+      return false;
+    });
     
     // switcher template see in lib/admin.files.class.php
     var switcher = $('#files-source');

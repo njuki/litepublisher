@@ -84,30 +84,30 @@ class tmenus extends titems {
     $fake = new tfakemenu();
     $fake->title = $title;
     $fake->url = $url;
-$fake->order = $this->autoid;
+    $fake->order = $this->autoid;
     return $this->addfakemenu($fake);
   }
   
   public function addfakemenu(tmenu $menu) {
-$item = array(
-'id' => ++$this->autoid,
-'idurl' => 0,
+    $item = array(
+    'id' => ++$this->autoid,
+    'idurl' => 0,
     'class' => get_class($menu)
     );
-
+    
     //fix null fields
     foreach ($menu->get_owner_props() as $prop) {
       if (!isset($menu->data[$prop])) $menu->data[$prop] = '';
-$item[$prop] = $menu->$prop;
+      $item[$prop] = $menu->$prop;
       if (array_key_exists($prop, $menu->data)) unset($menu->data[$prop]);
     }
-
+    
     $menu->id = $this->autoid;
     $this->items[$this->autoid] = $item;
-$this->lock();
+    $this->lock();
     $this->sort();
     $this->added($this->autoid);
-$this->unlock();
+    $this->unlock();
     litepublisher::$urlmap->clearcache();
     return $this->autoid;
   }
@@ -435,7 +435,7 @@ class tmenu extends titem implements  itemplate {
     if ($id == 0) {
       return $this->data[$name];
     } else {
-if (!isset($this->getowner()->items[$id])) $this->error($id . $name);
+      if (!isset($this->getowner()->items[$id])) $this->error($id . $name);
       return $this->getowner()->items[$id][$name];
     }
   }

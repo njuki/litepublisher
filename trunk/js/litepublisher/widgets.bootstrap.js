@@ -19,21 +19,21 @@
       
       var self = this;
       self.toggleclass = options.toggle;
-var widget_class = options.inline + ',' + options.ajax;
+      var widget_class = options.inline + ',' + options.ajax;
       $(options.button).each(function() {
         var button = $(this);
         var span = button.find(widget_class);
         if (span.length) return self.init_button(button, span);
-
+        
         //no ajax or inline, init necessary plugins
         switch (button.data("model")) {
           case "dropdown":
           button.dropdown();
           break;
-
-case 'collapse':
+          
+          case 'collapse':
           button.collapse();
-break;
+          break;
           
           case "slide":
           button.on("click.widget", function() {
@@ -47,34 +47,34 @@ break;
         }
       });
     },
-
-init_button: function(button, span) {
-          button.data("span", span);
-if (button.data("model") == "wrap-collapse") {
-var content = "#widget-content-" + span.data("widget").id;
-$(content).addClass("panel-collapse collapse");
-span.wrap('<a href="' + content + '" title="' + lang.widgetlang.clickme + '"></a>');
-span.parent().tooltip({
-container: 'body'
-});
-}
-
-var self = this;
-          button.one('click.widget', function() {
-var btn = $(this);
-switch (btn.data("span").data("widget").type) {
-case  'inline':
-            self.addinline(btn);
-break;
-
-case 'ajax':
-                        self.load(btn);
-break;
-}
-            return false;
-          });
-},
-
+    
+    init_button: function(button, span) {
+      button.data("span", span);
+      if (button.data("model") == "wrap-collapse") {
+        var content = "#widget-content-" + span.data("widget").id;
+        $(content).addClass("panel-collapse collapse");
+        span.wrap('<a href="' + content + '" title="' + lang.widgetlang.clickme + '"></a>');
+        span.parent().tooltip({
+          container: 'body'
+        });
+      }
+      
+      var self = this;
+      button.one('click.widget', function() {
+        var btn = $(this);
+        switch (btn.data("span").data("widget").type) {
+          case  'inline':
+          self.addinline(btn);
+          break;
+          
+          case 'ajax':
+          self.load(btn);
+          break;
+        }
+        return false;
+      });
+    },
+    
     
     load: function(button) {
       var widget = button.data("span").data("widget");
@@ -100,7 +100,7 @@ break;
     },
     
     add: function(button) {
-var span = button.data("span")
+      var span = button.data("span")
       var widget = span.data("widget");
       switch (button.data("model")) {
         case "dropdown":
@@ -108,16 +108,16 @@ var span = button.data("span")
         widget.comment = false;
         button.dropdown().dropdown("toggle");
         break;
-
-case 'wrap-collapse':
+        
+        case 'wrap-collapse':
         widget.body = $(widget.comment).replaceComment( widget.html);
         widget.comment = false;
-$("#widget-content-" + widget.id).addClass("in");
-button.find("a")
-.attr("data-toggle", "collapse")
-.attr("data-parent", '#' + button.closest(".panel-group").attr("id"))
-.attr("data-target", "#widget-content-" + widget.id);
-break;
+        $("#widget-content-" + widget.id).addClass("in");
+        button.find("a")
+        .attr("data-toggle", "collapse")
+        .attr("data-parent", '#' + button.closest(".panel-group").attr("id"))
+        .attr("data-target", "#widget-content-" + widget.id);
+        break;
         
         case "slide":
         widget.body = $(widget.comment).replaceComment( widget.html);
@@ -161,8 +161,8 @@ break;
     toggleicon: function(span) {
       span.find("i").toggleClass(this.toggleclass);
     }
-
-      });
+    
+  });
   
   ready2(function() {
     if ("dropdown" in $.fn) litepubl.widgets = new litepubl.BootstrapWidgets();
