@@ -20,6 +20,11 @@
     var re = /\.(jpg|jpeg|png|bmp)$/;
     return this.each(function(){
       var link = $(this);
+var url = link.attr("href");
+if (!url) url = link.data("image");
+if (!url || !re.test(url)) return;
+link.data("image", url);
+
       if (prevlink) {
         link.data("prevlink", prevlink);
         prevlink.data("nextlink", link);
@@ -30,14 +35,12 @@
         var self = $(this);
         self.off(".popinit");
         self.addClass(options.cursorclass);
-        var url = self.attr("href");
-        if (re.test(url)) {
+        if (re.test(self.attr("href"))) {
           var clicktrigger = " click";
         } else {
           // follow by link if it clicked
           if (e.type == "click") return;
           var clicktrigger = "";
-          url = self.data("image");
         }
         
         //after load image check  is focused or inhover
@@ -50,8 +53,12 @@
           self.removeClass(options.cursorclass);
           //calc size
           if (options.width < 100) {
-            var w = Math.floor($(window).width() * options.width / 100);
+            var w = Math.floor(window.innerWidth * options.width / 100) - 20;
             var h = Math.floor(w * options.height / options.width);
+if (h > window.innerHeight / 2) {
+h = Math.floor(window.innerHeight * options.width / 100) - 20;
+w = Math.floor(h / options.height * options.width);
+}
           } else {
             var w = options.width;
             var h = options.height;
@@ -93,13 +100,13 @@
           var preload = self.data("nextlink");
           if (preload) {
             var imgnext = new Image();
-            imgnext.src = preload.attr("href");
+            imgnext.src = preload.data("image");
           }
           
           var preload = link.data("prevlink");
           if (preload) {
             var imgprev = new Image();
-            imgprev.src = preload.attr("href");
+            imgprev.src = preload.data("image");
           }
         };
         
@@ -107,7 +114,7 @@
           alert("Error load image");
         };
         
-        img.src = url;
+        img.src =           self.data("image");
         return false;
       });
     });
