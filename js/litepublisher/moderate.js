@@ -19,7 +19,8 @@
         button: '<button type="button" class="button"><span>%%title%%</span></button>',
         form: "#commentform"
       }, ltoptions.theme.comments, opt);
-      
+
+      this.onbuttons = $.Callbacks();
       this.create_buttons(this.options.comments +", " + this.options.hold);
       $(".loadhold").click(this.loadhold);
     },
@@ -173,10 +174,10 @@
     
     create_buttons: function(where) {
       var options = this.options;
-      var approved = options.button.replace('%%title%%', lang.comments.approve);
-      var hold = options.button.replace('%%title%%', lang.comments.hold);
-      var del = options.button.replace('%%title%%', lang.comments.del);
-      var edit = options.button.replace('%%title%%', lang.comments.edit);
+      var approved = options.button.replace('%%title%%', lang.comments.approve).replace('%%name%%', 'approve');
+      var hold = options.button.replace('%%title%%', lang.comments.hold).replace('%%name%%', 'hold');
+      var del = options.button.replace('%%title%%', lang.comments.del).replace('%%name%%', 'delete');
+      var edit = options.button.replace('%%title%%', lang.comments.edit).replace('%%name%%', 'edit');
       var show = '<button type="button">E</button>';
       var self = this;
       var click = function() {
@@ -216,6 +217,8 @@
             }
           }
         }
+
+self.onbuttons.fire(container);
       });
     }
     

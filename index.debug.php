@@ -110,6 +110,7 @@ tfiler::log(var_export($_POST, true));
 //tupdater::i()->run(5.75);
 //shopupdater::i()->run(1.23);
 //shoptheme::i()->install();
+//hcardwidget::i()->install();
 //tfiler::log($_SERVER['REQUEST_URI']);
 
   if (!defined('litepublisher_mode')) {
