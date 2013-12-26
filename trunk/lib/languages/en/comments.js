@@ -1,6 +1,7 @@
 (function(window){
 window.lang= window.lang || {};
 window.lang.comment= {
+'to': 'To',
 says: "Says",
 emptycontent: "Error. Please type a comment.",
 emptyname: "Error! please fill the required fields (name, email).",

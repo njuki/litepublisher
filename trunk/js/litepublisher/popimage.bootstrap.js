@@ -17,7 +17,10 @@
     //create circle for preload
     var prevlink = false;
     // regexp test image extension in url
-    var re = /\.(jpg|jpeg|png|bmp)$/;
+    var re = /\.(jpg|jpeg|png|bmp)$/i;
+// preload cache holder
+            var imgnext, imgprev;
+
     return this.each(function(){
       var link = $(this);
 var url = link.attr("href");
@@ -99,13 +102,13 @@ w = Math.floor(h / options.height * options.width);
           //preload
           var preload = self.data("nextlink");
           if (preload) {
-            var imgnext = new Image();
+            imgnext = new Image();
             imgnext.src = preload.data("image");
           }
           
           var preload = link.data("prevlink");
           if (preload) {
-            var imgprev = new Image();
+            imgprev = new Image();
             imgprev.src = preload.data("image");
           }
         };

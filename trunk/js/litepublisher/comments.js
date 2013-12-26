@@ -43,7 +43,7 @@
     
     getquoted: function( authorname, content) {
       if (content == '') {
-        return "2 [b]" + authorname + "[/b]: ";
+        return lang.comment.to + " [b]" + authorname + "[/b]: ";
       } else {
         return "[b]" + authorname + "[/b] " + lang.comment.says + ":\n[quote]" + content + "[/quote]\n";
       }
