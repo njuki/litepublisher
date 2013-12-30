@@ -16,6 +16,14 @@ public function __construct($tag) { $this->tag = $tag; }
   
 }//class
 
+class redtag extends thtmltag {
+
+  public function __get($name) {
+    return sprintf('<%1$s class="red">%2$s</%1$s>', $this->tag, tlocal::i()->$name);
+  }
+
+}//class
+
 class tadminhtml {
   public static $tags = array('h1', 'h2', 'h3', 'h4', 'p', 'li', 'ul', 'strong', 'div', 'span');
   public $section;
@@ -50,13 +58,16 @@ class tadminhtml {
     }
     
     if (in_array($name, self::$tags)) return new thtmltag($name);
-    
-    throw new Exception("the requested $name item not found in $this->section section");
+    if (strend($name, 'red') && in_array(substr($name, 0, -3), self::$tags)) return new redtag($name);
+
+        throw new Exception("the requested $name item not found in $this->section section");
   }
   
   public function __call($name, $params) {
     $s = $this->__get($name);
     if (is_object($s) && ($s instanceof thtmltag))  return sprintf('<%1$s>%2$s</%1$s>', $name, $params[0]);
+
+if ($name == 'h4error') return sprintf('<h4 class="red">%s</h4>', $params[0]);
     
     $args = isset($params[0]) && $params[0] instanceof targs ? $params[0] : new targs();
     return $this->parsearg($s, $args);

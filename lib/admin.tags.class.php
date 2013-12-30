@@ -44,12 +44,12 @@ class tadmintags extends tadminmenu {
       if ($id ==  0) {
         $args->title = '';
         $args->parent = tadminhtml::array2combo($parents, 0);
-        $args->order = tadminhtml::array2combo(range(0,9), 1);
+        $args->order = tadminhtml::array2combo(array_combine(range(0, 9), range(1,10)), 0);
       } else {
         $item = $tags->getitem($id);
         $args->add($item);
         $args->parent = tadminhtml::array2combo($parents, $item['parent']);
-        $args->order = tadminhtml::array2combo(range(0,9), $item['customorder']);
+        $args->order = tadminhtml::array2combo(array_combine(range(0, 9), range(1,10)), $item['customorder']);
       }
       
       $ajax = tadminhtml::getadminlink('/admin/ajaxtageditor.htm', sprintf('id=%d&type=%s&get', $id, $istags  ? 'tags' : 'categories'));
@@ -58,7 +58,8 @@ class tadmintags extends tadminmenu {
       [text=title]
       [combo=parent]
       [combo=order]
-      [hidden=id]');
+      [hidden=id]' .
+$html->p->ordernote);
       
       $tabs->ajax($lang->text, "$ajax=text");
       $tabs->ajax($lang->view, "$ajax=view");
@@ -119,7 +120,7 @@ class tadmintags extends tadminmenu {
     $id = $this->idget();
     if ($id == 0) {
       $id = $tags->add((int) $parent, $title);
-      if (isset($order)) $tags->setvalue($id, 'customorder', (int) $order);
+      if (isset($order)) $tags->setvalue($id, 'customorder', intval($order));
       if (isset($url)) $tags->edit($id, $title, $url);
       if (isset($idview)) {
         $item =$tags->getitem($id);
@@ -133,7 +134,7 @@ class tadmintags extends tadminmenu {
       $item = $tags->getitem($id);
       $item['title'] = $title;
       if (isset($parent)) $item['parent'] = (int) $parent;
-      if (isset($order)) $item['customorder'] = (int) $order;
+      if (isset($order)) $item['customorder'] = intval($order);
       if (isset($idview)) $item = $this->set_view($item);
       $tags->items[$id] = $item;
       if (!empty($url) && ($url != $item['url'])) $tags->edit($id, $title, $url);
