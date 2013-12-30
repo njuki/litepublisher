@@ -118,7 +118,7 @@ class tcontentfilter extends tevents {
   
   public function filterpages($content) {
     $result = array();
-    $pages = explode('<!--nextpage-->', $s);
+    $pages = explode('<!--nextpage-->', $content);
     foreach ($pages as $page) {
       if ($page = trim($page)) {
         $result[] = $this->filter($page);
