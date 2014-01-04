@@ -17,7 +17,9 @@ function tadminmenusInstall($self) {
   {
     $id = $self->createitem($posts, 'editor', 'author', 'tposteditor');
     $self->items[$id]['title'] = tlocal::get('names', 'newpost');
+    $self->createitem($posts, 'addcat', 'editor', 'tadmintags');
     $self->createitem($posts, 'categories', 'editor', 'tadmintags');
+    $self->createitem($posts, 'addtag', 'editor', 'tadmintags');
     $self->createitem($posts, 'tags', 'editor', 'tadmintags');
     $self->createitem($posts, 'staticpages', 'editor', 'tadminstaticpages');
   }

@@ -10,4 +10,14 @@ $g->defaults[] = $id;
 $g->save();
 }
 
+$m = tadminmenus::i();
+$m->lock();
+$pid = $m->url2id('/admin/posts/');
+    $id = $m->createitem($pid, 'addcat', 'editor', 'tadmintags');
+$m->items[$id]['order'] = $m->url2id('/admin/posts/categories/');
+    $id = $m->createitem($posts, 'addtag', 'editor', 'tadmintags');
+$m->items[$id]['order'] = $m->url2id('/admin/posts/tags/');
+
+$m->sort();
+$m->unlock();
 }
