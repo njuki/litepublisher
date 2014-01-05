@@ -97,7 +97,7 @@ class tadminmoderator extends tadmincommoncomments {
     $lang->cando:
     <a href='$adminurl=reply'>$lang->reply</a>,
     <a href='$adminurl=approve'>$lang->approve</a>,
-    <a href='$adminurl=delete'>$lang->delete</a>,
+    <a class'confirm-delete-link' href='$adminurl=delete'>$lang->delete</a>,
     <a href='$adminurl=hold'>$lang->hold</a>.
     </p>";
     

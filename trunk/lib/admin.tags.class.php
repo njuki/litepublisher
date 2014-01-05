@@ -14,7 +14,7 @@ class tadmintags extends tadminmenu {
   
   public function getcontent() {
     $result = '';
-    $istags = $this->name == 'tags';
+    $istags = ($this->name == 'tags' ) || ($this->name == 'addtag');
     $tags = $istags  ? litepublisher::$classes->tags : litepublisher::$classes->categories;
     if (dbversion) $tags->loadall();
     $parents = array(0 => '-----');
@@ -26,10 +26,11 @@ class tadmintags extends tadminmenu {
     $html = $this->html;
     $lang = tlocal::i('tags');
     $id = $this->idget();
-    $args = targs::i();
+    $args = new targs();
     $args->id = $id;
     $args->adminurl = $this->adminurl;
-    $args->ajax = tadminhtml::getadminlink('/admin/ajaxtageditor.htm', sprintf('id=%d&type=%s&get', $id, $istags  ? 'tags' : 'categories'));
+      $ajax = tadminhtml::getadminlink('/admin/ajaxtageditor.htm', sprintf('id=%d&type=%s&get', $id, $istags  ? 'tags' : 'categories'));
+    $args->ajax = $ajax;
     
     if (isset($_GET['action']) && ($_GET['action'] == 'delete') && $tags->itemexists($id)) {
       if  ($this->confirmed) {
@@ -40,19 +41,27 @@ class tadmintags extends tadminmenu {
       }
     }
     
-    if (!$id ||$tags->itemexists($id)) {
-      if ($id ==  0) {
-        $args->title = '';
-        $args->parent = tadminhtml::array2combo($parents, 0);
-        $args->order = tadminhtml::array2combo(array_combine(range(0, 9), range(1,10)), 0);
-      } else {
+$result .= $html->h4(tadminhtml::getlink('/admin/posts/' . ($istags ? 'addtag' : 'addcat') . '/',  $lang->add));
+$item = false;
+if ($id && ($tags->itemexists($id)) {
         $item = $tags->getitem($id);
+$args->formtitle = $lang-edit;
+    } elseif (($this->name == 'addcat') || ($this->name == 'addtag')) {
+$id = 0;
+$item = array(
+'id' => 0,
+'title' => '',
+'parent' => 0,
+'order' => 0,
+);
+$args->formtitle = $lang-add;
+}
+
+if ($item) {
         $args->add($item);
         $args->parent = tadminhtml::array2combo($parents, $item['parent']);
         $args->order = tadminhtml::array2combo(array_combine(range(0, 9), range(1,10)), $item['customorder']);
-      }
-      
-      $ajax = tadminhtml::getadminlink('/admin/ajaxtageditor.htm', sprintf('id=%d&type=%s&get', $id, $istags  ? 'tags' : 'categories'));
+
       $tabs = new tuitabs();
       $tabs->add($lang->title, '
       [text=title]
@@ -64,15 +73,10 @@ $html->p->ordernote);
       $tabs->ajax($lang->text, "$ajax=text");
       $tabs->ajax($lang->view, "$ajax=view");
       $tabs->ajax('SEO', "$ajax=seo");
-      $args->formtitle = $lang->edit;
-      
+
       $form = new adminform($args);
-      $form->id = 'editform';
-      $form->class ='hidden';
-      $form->title = $html->toggle($lang->add, '#editform');
-      $form->items = $tabs->get();
-      $result .= $form->get();
-      $result .= tuitabs::gethead();
+      $result .= $html->adminform($tabs->get(), $args) .
+tuitabs::gethead();
     }
     
     //table
@@ -90,7 +94,7 @@ $html->p->ordernote);
     array('right', $lang->order, '$customorder'),
     array('left', $lang->title,'<a href="$link" title="$title">$title</a>'),
     array('center', $lang->edit, "<a href=\"$this->adminurl=\$id\">$lang->edit</a>"),
-    array('center', $lang->delete, "<a href=\"$this->adminurl=\$id&action=delete\">$lang->delete</a>")
+    array('center', $lang->delete, "<a class=\"confirm-delete-link\" href=\"$this->adminurl=\$id&action=delete\">$lang->delete</a>")
     ));
     $result = $html->fixquote($result);
     $theme = ttheme::i();
@@ -114,7 +118,7 @@ $html->p->ordernote);
   public function processform() {
     if (empty($_POST['title'])) return '';
     extract($_POST, EXTR_SKIP);
-    $istags = $this->name == 'tags';
+    $istags = ($this->name == 'tags' ) || ($this->name == 'addtag');
     $tags = $istags  ? litepublisher::$classes->tags : litepublisher::$classes->categories;
     $tags->lock();
     $id = $this->idget();
@@ -161,6 +165,7 @@ $html->p->ordernote);
     }
     
     $tags->unlock();
+$_GET['id'] = $_POST['id'] = $id;
     return sprintf($this->html->h2->success, $title);
   }
   

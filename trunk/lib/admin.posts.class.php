@@ -85,7 +85,7 @@ class tadminposts extends tadminmenu {
     array('left', $lang->category, '$post.category'),
     array('left', $lang->status, '$poststatus.status'),
     array('center', $lang->edit, '<a href="' . tadminhtml::getadminlink('/admin/posts/editor/', 'id') . '=$post.id">' . $lang->edit . '</a>'),
-    array('center', $lang->delete, '<a href="' . $this->adminurl . '=$post.id&action=delete">' . $lang->delete . '</a>'),
+    array('center', $lang->delete, "<a class=\"confirm-delete-link\" href=\"$this->adminurl=\$post.id&action=delete\">$lang->delete</a>"),
     ));
     
     $form->items .= $html->div(

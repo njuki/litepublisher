@@ -117,7 +117,7 @@ class tadmincommoncomments extends tadminmenu {
     $this->showcolumn($table->index + 1, false));
     
     $table->add(
-    '<a href="$adminurl=$comment.id&action=delete">$lang.delete</a>',
+    '<a class="confirm-delete-link" href="$adminurl=$comment.id&action=delete">$lang.delete</a>',
     $lang->delete,
     'left',
     $this->showcolumn($table->index + 1, false));

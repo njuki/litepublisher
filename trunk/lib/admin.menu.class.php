@@ -154,7 +154,7 @@ class tadminmenumanager extends tadminmenu {
     array('center', $lang->order, '$order'),
     array('center', $lang->parent, '$menuitem.parent'),
     array('center', $lang->edit, "<a href='$editurl=\$id'>$lang->edit</a>"),
-    array('center', $lang->delete, "<a href='$this->adminurl=\$id&action=delete'>$lang->delete</a>"),
+    array('center', $lang->delete, "<a class=\"confirm-delete-link\" href=\"$this->adminurl=\$id&action=delete\">$lang->delete</a>"),
     ));
     
     unset(ttheme::$vars['menuitem']);
