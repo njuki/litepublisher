@@ -147,8 +147,34 @@
         }
       });
     }
-    
+
   });
+
+$.links = {
+isready: false,
+links: false,
+list: false,
+on: function(filter, fn) {
+var self = $.links;
+if (self.isready) {
+self.links.filter(filter).on("click", fn);
+} else {
+if (!self.list) self.list = [];
+self.list.push({filter: filter, fn: fn});
+$(document).ready(function() {
+var links = $("a");
+self.links = links;
+self.isready = true;
+var list = self.list;
+for (var i =0, l = list.length; i < l; i++) {
+var item = list[i];
+links.filter(item.filter).on("click", item.fn);
+}
+self.list = false;
+});
+}
+}
+};
   
   $.fn.replaceComment= function(html) {
     var result = html == undefined ? $(this.get(0).nodeValue) : $(html);

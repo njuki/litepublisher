@@ -41,7 +41,7 @@ public function save() { return true; }
   }
   
   public function gettitle() {
-    return tlocal::get('names', 'board');
+    return tlocal::get('common', 'board');
   }
   
   public function getkeywords() {

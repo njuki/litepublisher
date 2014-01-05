@@ -35,7 +35,6 @@ class tlocal {
   }
   
   public static function get($section, $key) {
-    //if (!isset(self::$self->ini[$section][$key])) throw new Exception($section);
     return self::i()->ini[$section][$key];
   }
   

@@ -21,7 +21,7 @@
     return $.litedialog({
       title: title,
       html: "<p>" + mesg + "</p>",
-      //width: 200,
+      width: 300,
       buttons: [
       {
         title: button_title1,

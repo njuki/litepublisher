@@ -48,6 +48,15 @@
         return false;
       });
     }
+
+$("a.confirm-delete-link").on("click.confirm", function() {
+var url = $(this).attr("href");
+$.confirmdelete(function() {
+$('<form action="' + url + '&confirm=1" method="post"><input type="submit" name="submitconfirm" /></form>')
+.appendTo("body").submit();
+});
+return false;
+});
     
   });
   
@@ -68,6 +77,6 @@
     var url = location.href.toLowerCase().substring(10);
     var path = url.split('/');
     if ((path.length <= 2) || (path[1] != 'admin') || (path[2] == '')) return false;
-    return litepubl.adminpanel = (/^(cabinet|login|logout|password)$/.test(path[2]) ? 0 : 1);
+    return litepubl.adminpanel = (/^(cabinet|login|logout|password|reguser)$/.test(path[2]) ? 0 : 1);
   };
 }(jQuery, document, window, litepubl));
