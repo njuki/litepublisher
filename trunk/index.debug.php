@@ -107,7 +107,7 @@ ttheme::clearcache();
 //litepublisher::$urlmap->clearcache();
 tfiler::log(var_export($_POST, true));
 //tthemegenerator::i()->parseselectors();
-//tupdater::i()->run(5.75);
+//tupdater::i()->run(5.79);
 //shopupdater::i()->run(1.23);
 //shoptheme::i()->install();
 //hcardwidget::i()->install();

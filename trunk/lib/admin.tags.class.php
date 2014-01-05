@@ -43,18 +43,18 @@ class tadmintags extends tadminmenu {
     
 $result .= $html->h4(tadminhtml::getlink('/admin/posts/' . ($istags ? 'addtag' : 'addcat') . '/',  $lang->add));
 $item = false;
-if ($id && ($tags->itemexists($id)) {
+if ($id && $tags->itemexists($id)) {
         $item = $tags->getitem($id);
-$args->formtitle = $lang-edit;
+$args->formtitle = $lang->edit;
     } elseif (($this->name == 'addcat') || ($this->name == 'addtag')) {
 $id = 0;
 $item = array(
 'id' => 0,
 'title' => '',
 'parent' => 0,
-'order' => 0,
+'customorder' => 0,
 );
-$args->formtitle = $lang-add;
+$args->formtitle = $lang->add;
 }
 
 if ($item) {
@@ -83,16 +83,23 @@ tuitabs::gethead();
     $perpage = 20;
     $count = $tags->count;
     $from = $this->getfrom($perpage, $count);
-    
-    $items = array_slice($tags->items, $from, $perpage);
-    foreach ($items as &$item) {
+    if ($tags->dbversion) {
+    $iditems = $tags->db->idselect("id > 0 order by parent asc, title asc limit $from, $perpage");
+} else {
+    $iditems = array_slice(array_keys($tags->items), $from, $perpage);
+}
+
+$items = array();
+    foreach ($iditems as $id) {
+$item = $tags->items[$id];
       $item['parentname'] = $parents[$item['parent']];
+$items[] = $item;
     }
+
     $result .= $html->buildtable($items, array(
     array('right', $lang->count2, '$itemscount'),
-    array('left', $lang->parent, '$parentname'),
-    array('right', $lang->order, '$customorder'),
     array('left', $lang->title,'<a href="$link" title="$title">$title</a>'),
+    array('left', $lang->parent, '$parentname'),
     array('center', $lang->edit, "<a href=\"$this->adminurl=\$id\">$lang->edit</a>"),
     array('center', $lang->delete, "<a class=\"confirm-delete-link\" href=\"$this->adminurl=\$id&action=delete\">$lang->delete</a>")
     ));

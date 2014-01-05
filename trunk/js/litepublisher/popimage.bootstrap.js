@@ -10,8 +10,8 @@
     options = $.extend({
       title: "",
       cursorclass: "cursor-loading",
-      width: 40,
-      height: 30
+      width: false,
+      height: false
     }, options);
     
     //create circle for preload
@@ -55,23 +55,26 @@ link.data("image", url);
         img.onload = function(){
           self.removeClass(options.cursorclass);
           //calc size
-          if (options.width < 100) {
-            var w = Math.floor(window.innerWidth * options.width / 100) - 20;
-            var h = Math.floor(w * options.height / options.width);
-if (h > window.innerHeight / 2) {
-h = Math.floor(window.innerHeight * options.width / 100) - 20;
-w = Math.floor(h / options.height * options.width);
-}
-          } else {
+            var ratio = img.width / img.height;
+          if (options.width) {
             var w = options.width;
             var h = options.height;
+          } else {
+if (ratio >= 1) {
+//horizontal image, midle height and maximum width
+            var h = Math.floor(window.innerHeight / 2) - 20;
+            var w = Math.floor(h * 4 /3);
+} else {
+//vertical image, midle width and maximum height
+            var w = Math.floor(window.innerWidth / 2) - 20;
+            var h = Math.floor(w / 4 *3);
+}
           }
           
           if ((img.width <= w) && (img.height <= h)) {
             w = img.width;
             h = img.height;
           } else {
-            var ratio = img.width / img.height;
             if (w /h > ratio) {
               w = Math.floor(h *ratio);
             } else {
@@ -81,15 +84,13 @@ w = Math.floor(h / options.height * options.width);
           
           var title = self.attr("title");
           if (re.test(title)) title = options.title;
-          // cut long title
-          //if (title.length * 14 > w) title = title.substring(0, Math.floor(w / 14 - 5))  + '...';
           
           self.popover({
             container: 'body',
             content: '<img src="' + url + '" width="' + w + '" height="' + h + '" />',
           //delay: { show: 100, hide: 100 },
             html:true,
-            placement: 'auto bottom',
+            placement: 'auto ' + (ratio >= 1 ? 'bottom' : 'right'),
             template: '<div class="popover popover-image"><div class="arrow"></div>' +
             '<h3 class="popover-title" style="max-width:' + w + 'px;"></h3>' +
             '<div class="popover-content"></div></div>',
