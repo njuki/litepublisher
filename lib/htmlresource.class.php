@@ -190,6 +190,10 @@ if ($name == 'h4error') return sprintf('<h4 class="red">%s</h4>', $params[0]);
   public static function getadminlink($path, $params) {
     return litepublisher::$site->url . $path . litepublisher::$site->q . $params;
   }
+
+  public static function getlink($url, $title) {
+    return sprintf('<a href="%s%s">%s</a>', litepublisher::$site->url, $url, $title);
+  }
   
   public static function array2combo(array $items, $selected) {
     $result = '';
