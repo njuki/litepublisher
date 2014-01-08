@@ -11,21 +11,30 @@
     '<div class="modal-dialog"><div class="modal-content">' +
     '<div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>' +
     '<h4 class="modal-title">%%title%%</h4></div>' +
-    '<div class="modal-body">%%body%%</div>' +
+    '<div class="modal-body%%sizeclass%%">%%body%%</div>' +
     '<div class="modal-footer">%%buttons%%</div>' +
     '</div></div></div>',
     
     button: '<button type="button" class="btn btn-default" id="%%id%%">%%title%%</button>',
     //singlebutton: '<button type="button" class="btn btn-primary" data-dismiss="modal" id="%%id%%">%%title%%</button>',
     dialog: false,
-    
-    init: function() {
+styles: false,
+tmlstyle:'<style type="text/css">' + 
+'.%%classname%%{' +
+    'display:block;' +
+    'overflow:hidden;' +
+'%%prop:%%value%%px;' +
+'}</style>',
+
+        init: function() {
       this.id = 	$.now();
+this.styles = [];
       var self = this;
       this.options = {
         title: "",
         html: "",
         width: false,
+height: false,
         open: $.noop,
         close: $.noop,
         buttons: [
@@ -62,10 +71,27 @@
       
       //single button change class to "btn-primary"
       if (l == 1) buttons = buttons.replace(/%%btn-default%%/g, "btn-primary");
-      
-      var html = $.simpletml(this.tml, {
+
+var sizeclass = '';
+for (var prop in {width: 0, height: 0}) {
+if (options[prop]) {
+var classname = 'dialog-' + prop + '-' + options[prop];
+sizeclass = sizeclass + ' ' + classname;
+if ($.inArray(classname, this.styles) == -1) {
+this.styles.push(classname);
+$('head:first').append($.simpletml(this.tmlstyle, {
+classname: classname,
+prop: prop,
+value: options[prop]
+}));
+}
+}
+}
+
+            var html = $.simpletml(this.tml, {
         id: id,
         title: options.title,
+sizeclass: sizeclass,
         body: options.html,
         buttons: buttons
       });
