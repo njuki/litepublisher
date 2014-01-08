@@ -62,11 +62,13 @@ link.data("image", url);
           } else {
 if (ratio >= 1) {
 //horizontal image, midle height and maximum width
-            var h = Math.floor(window.innerHeight / 2) - 20;
+var h = window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight;
+            h = Math.floor(h / 2) - 20;
             var w = Math.floor(h * 4 /3);
 } else {
 //vertical image, midle width and maximum height
-            var w = Math.floor(window.innerWidth / 2) - 20;
+var w = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth;
+w = Math.floor(w / 2) - 20;
             var h = Math.floor(w / 4 *3);
 }
           }
