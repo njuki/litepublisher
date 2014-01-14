@@ -209,7 +209,7 @@ class tposteditor extends tadminmenu {
       $files = trim($files, ', ');
       $post->files = tdatabase::str2array($files);
     }
-    if (isset($date) && (!$date)) {
+    if (isset($date) && $date) {
       $post->posted = tadminhtml::getdatetime('date');
     }
     
