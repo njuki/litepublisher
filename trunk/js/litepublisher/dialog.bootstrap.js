@@ -8,10 +8,10 @@
 (function( $, window, document){
   $.BootstrapDialog = Class.extend({
     tml: '<div class="modal fade" id="dialog-%%id%%" tabindex="-1" role="dialog" aria-hidden="true">' +
-    '<div class="modal-dialog"><div class="modal-content">' +
+    '<div class="modal-dialog center-block%%sizeclass%%"><div class="modal-content">' +
     '<div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>' +
     '<h4 class="modal-title">%%title%%</h4></div>' +
-    '<div class="modal-body%%sizeclass%%">%%body%%</div>' +
+    '<div class="modal-body">%%body%%</div>' +
     '<div class="modal-footer">%%buttons%%</div>' +
     '</div></div></div>',
     
@@ -21,9 +21,7 @@
 styles: false,
 tmlstyle:'<style type="text/css">' + 
 '.%%classname%%{' +
-    'display:block;' +
-    'overflow:hidden;' +
-'%%prop:%%value%%px;' +
+'%%prop%%:%%value%%px;' +
 '}</style>',
 
         init: function() {
@@ -82,7 +80,8 @@ this.styles.push(classname);
 $('head:first').append($.simpletml(this.tmlstyle, {
 classname: classname,
 prop: prop,
-value: options[prop]
+//add 50 px to width for padding and margin by default
+value: options[prop] + (prop == "width" ? 50 : 0)
 }));
 }
 }
@@ -100,12 +99,6 @@ sizeclass: sizeclass,
       //assign events to buttons
       for (var i =0, l= options.buttons.length;  i < l; i++) {
         $("#" + idbutton +i, dialog).data("index", i).on("click.dialog", options.buttons[i].click);
-      }
-      
-      if (options.width) {
-        dialog.on("show.bs.modal", function() {
-          dialog.find(".modal-content:first").css("width", options.width);
-        });
       }
       
       if ($.isFunction(options.open)) {

@@ -127,6 +127,6 @@ w = Math.floor(w / 2) - 20;
   };
   
   ready2(function(){
-    $("a.photo").popimage();
+if ("popover" in $.fn) $("a.photo").popimage();
   });
 })( jQuery, window, document);

@@ -27,9 +27,9 @@
         if (!vid) {
           vid = url.split('youtu.be/').pop();
           var i = vid.indexOf('?');
-          if(i> 0) vid = vid.substr(0, i);
+          if(i> 0) vid = vid.substring(0, i);
           i = vid.indexOf('&');
-          if(i> 0) vid = vid.substr(0, i);
+          if(i> 0) vid = vid.substring(0, i);
         }
         
         self.vid = vid;

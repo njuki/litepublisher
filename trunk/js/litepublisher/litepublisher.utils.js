@@ -18,7 +18,31 @@
   window.litepubl = {
   tml: {}, //namespace for templates
     adminpanel: false,
-  is_adminpanel: function() { return litepubl.adminpanel; },
+  is_adminpanel:  function() {
+    if (litepubl.adminpanel !== false) return litepubl.adminpanel;
+    return litepubl.adminpanel = litepubl.is_admin_url(location.href);
+},
+
+is_admin_url: function(url) {
+url = url.toLowerCase();
+if ('http' == url.substring(0, 4)) url = url.substring(10);
+    var path = url.split('/');
+    if ((path.length <= 2) || (path[1] != 'admin') || (path[2] == '')) return 0;
+    return /^(login|logout|password|reguser)$/.test(path[2]) ? 0 : 1;
+  },
+
+user: 0,
+getuser: function() {
+if (!litepubl.user) {
+litepubl.user = {
+id: parseInt($.getcookie('litepubl_user_id')),
+pass: $.getcookie('litepubl_user'),
+regservice: $.getcookie('litepubl_regservice')
+};
+}
+return litepubl.user;
+},
+
     //forward declaration for future plugins as yandex metrika or google analitik
   stat: function(name, param) {},
     getjson: function(data, callback) {

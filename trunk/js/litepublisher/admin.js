@@ -71,12 +71,4 @@ return false;
     });
   };
   
-  litepubl.is_adminpanel = function() {
-    if (litepubl.adminpanel !== false) return litepubl.adminpanel;
-    litepubl.adminpanel = 0;
-    var url = location.href.toLowerCase().substring(10);
-    var path = url.split('/');
-    if ((path.length <= 2) || (path[1] != 'admin') || (path[2] == '')) return false;
-    return litepubl.adminpanel = (/^(cabinet|login|logout|password|reguser)$/.test(path[2]) ? 0 : 1);
-  };
 }(jQuery, document, window, litepubl));
