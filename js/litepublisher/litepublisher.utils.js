@@ -35,9 +35,9 @@ user: 0,
 getuser: function() {
 if (!litepubl.user) {
 litepubl.user = {
-id: parseInt($.getcookie('litepubl_user_id')),
-pass: $.getcookie('litepubl_user'),
-regservice: $.getcookie('litepubl_regservice')
+id: parseInt($.cookie('litepubl_user_id')),
+pass: $.cookie('litepubl_user'),
+regservice: $.cookie('litepubl_regservice')
 };
 }
 return litepubl.user;
@@ -54,7 +54,42 @@ return litepubl.user;
         dataType: "json",
         cache: ("cache" in data ? data.cache : true)
       });
-    }
+    },
+
+_onnew: {},
+_oninit: {},
+newinstance: function(varname, fn) {
+var self = litepubl;
+if (varname in self._onnew) {
+var opt = {varname: varname, fn: fn};
+self._onnew[varname].fire(opt);
+delete self._onnew[varname];
+fn = opt.fn;
+}
+
+var obj = new fn();
+self[varname] = obj;
+if (varname in self._oninit) {
+self._oninit[varname].fire(obj);
+delete self._oninit[varname];
+}
+return obj;
+},
+
+oninit: function(varname, fn) {
+var self = llitepubl;
+if (varname in self) return fn(self[varname]);
+if (!(varname in self._oninit)) self._oninit[varname] = $.Callbacks();
+self._oninit[varname].add(fn);
+},
+
+onnew: function(varname, fn) {
+var self = llitepubl;
+if (varname in self) return false;
+if (!(varname in self._onnew)) self._onnew[varname] = $.Callbacks();
+self._onnew[varname].add(fn);
+}
+
   };
   
   window.dump = function(obj) {
