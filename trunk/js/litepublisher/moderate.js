@@ -187,7 +187,7 @@
         return false;
       };
       
-      var iduser = get_cookie("litepubl_user_id");
+      var iduser = litepubl.getuser().id;
       $(options.buttons, where).each(function() {
         var container = $(this);
         var id = container.data("idcomment");
@@ -204,7 +204,7 @@
             });
           }
         } else {
-          var idauthor = container.data("idauthor");
+          var idauthor = parseInt(container.data("idauthor"));
           if (idauthor == iduser) {
             if (options.canedit) $(edit).appendTo(container).data("idcomment", id).data("moder", "edit").click(click);
             if (options.candelete) $(del).appendTo(container).data("idcomment", id).data("moder", "delete").click(click);
@@ -226,7 +226,7 @@ self.onbuttons.fire(container);
   
   $(document).ready(function() {
     //only logged users
-    if (get_cookie("litepubl_user_id")) litepubl.moderate = new litepubl.Moderate();
+if (litepubl.getuser().id) litepubl.newinstance('moderate', litepubl.Moderate);
   });
   
 }(jQuery, document, window));
