@@ -18,21 +18,21 @@
     button: '<button type="button" class="btn btn-default" id="%%id%%">%%title%%</button>',
     //singlebutton: '<button type="button" class="btn btn-primary" data-dismiss="modal" id="%%id%%">%%title%%</button>',
     dialog: false,
-styles: false,
-tmlstyle:'<style type="text/css">' + 
-'.%%classname%%{' +
-'%%prop%%:%%value%%px;' +
-'}</style>',
-
-        init: function() {
+    styles: false,
+    tmlstyle:'<style type="text/css">' +
+    '.%%classname%%{' +
+      '%%prop%%:%%value%%px;' +
+    '}</style>',
+    
+    init: function() {
       this.id = 	$.now();
-this.styles = [];
+      this.styles = [];
       var self = this;
       this.options = {
         title: "",
         html: "",
         width: false,
-height: false,
+        height: false,
         open: $.noop,
         close: $.noop,
         buttons: [
@@ -69,28 +69,28 @@ height: false,
       
       //single button change class to "btn-primary"
       if (l == 1) buttons = buttons.replace(/%%btn-default%%/g, "btn-primary");
-
-var sizeclass = '';
-for (var prop in {width: 0, height: 0}) {
-if (options[prop]) {
-var classname = 'dialog-' + prop + '-' + options[prop];
-sizeclass = sizeclass + ' ' + classname;
-if ($.inArray(classname, this.styles) == -1) {
-this.styles.push(classname);
-$('head:first').append($.simpletml(this.tmlstyle, {
-classname: classname,
-prop: prop,
-//add 50 px to width for padding and margin by default
-value: options[prop] + (prop == "width" ? 50 : 0)
-}));
-}
-}
-}
-
-            var html = $.simpletml(this.tml, {
+      
+      var sizeclass = '';
+    for (var prop in {width: 0, height: 0}) {
+        if (options[prop]) {
+          var classname = 'dialog-' + prop + '-' + options[prop];
+          sizeclass = sizeclass + ' ' + classname;
+          if ($.inArray(classname, this.styles) == -1) {
+            this.styles.push(classname);
+            $('head:first').append($.simpletml(this.tmlstyle, {
+              classname: classname,
+              prop: prop,
+              //add 50 px to width for padding and margin by default
+              value: options[prop] + (prop == "width" ? 50 : 0)
+            }));
+          }
+        }
+      }
+      
+      var html = $.simpletml(this.tml, {
         id: id,
         title: options.title,
-sizeclass: sizeclass,
+        sizeclass: sizeclass,
         body: options.html,
         buttons: buttons
       });

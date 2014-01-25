@@ -29,7 +29,7 @@ class tadmintags extends tadminmenu {
     $args = new targs();
     $args->id = $id;
     $args->adminurl = $this->adminurl;
-      $ajax = tadminhtml::getadminlink('/admin/ajaxtageditor.htm', sprintf('id=%d&type=%s&get', $id, $istags  ? 'tags' : 'categories'));
+    $ajax = tadminhtml::getadminlink('/admin/ajaxtageditor.htm', sprintf('id=%d&type=%s&get', $id, $istags  ? 'tags' : 'categories'));
     $args->ajax = $ajax;
     
     if (isset($_GET['action']) && ($_GET['action'] == 'delete') && $tags->itemexists($id)) {
@@ -41,42 +41,42 @@ class tadmintags extends tadminmenu {
       }
     }
     
-$result .= $html->h4(tadminhtml::getlink('/admin/posts/' . ($istags ? 'addtag' : 'addcat') . '/',  $lang->add));
-$item = false;
-if ($id && $tags->itemexists($id)) {
-        $item = $tags->getitem($id);
-$args->formtitle = $lang->edit;
+    $result .= $html->h4(tadminhtml::getlink('/admin/posts/' . ($istags ? 'addtag' : 'addcat') . '/',  $lang->add));
+    $item = false;
+    if ($id && $tags->itemexists($id)) {
+      $item = $tags->getitem($id);
+      $args->formtitle = $lang->edit;
     } elseif (($this->name == 'addcat') || ($this->name == 'addtag')) {
-$id = 0;
-$item = array(
-'id' => 0,
-'title' => '',
-'parent' => 0,
-'customorder' => 0,
-);
-$args->formtitle = $lang->add;
-}
-
-if ($item) {
-        $args->add($item);
-        $args->parent = tadminhtml::array2combo($parents, $item['parent']);
-        $args->order = tadminhtml::array2combo(array_combine(range(0, 9), range(1,10)), $item['customorder']);
-
+      $id = 0;
+      $item = array(
+      'id' => 0,
+      'title' => '',
+      'parent' => 0,
+      'customorder' => 0,
+      );
+      $args->formtitle = $lang->add;
+    }
+    
+    if ($item) {
+      $args->add($item);
+      $args->parent = tadminhtml::array2combo($parents, $item['parent']);
+      $args->order = tadminhtml::array2combo(array_combine(range(0, 9), range(1,10)), $item['customorder']);
+      
       $tabs = new tuitabs();
       $tabs->add($lang->title, '
       [text=title]
       [combo=parent]
       [combo=order]
       [hidden=id]' .
-$html->p->ordernote);
+      $html->p->ordernote);
       
       $tabs->ajax($lang->text, "$ajax=text");
       $tabs->ajax($lang->view, "$ajax=view");
       $tabs->ajax('SEO', "$ajax=seo");
-
+      
       $form = new adminform($args);
       $result .= $html->adminform($tabs->get(), $args) .
-tuitabs::gethead();
+      tuitabs::gethead();
     }
     
     //table
@@ -84,18 +84,18 @@ tuitabs::gethead();
     $count = $tags->count;
     $from = $this->getfrom($perpage, $count);
     if ($tags->dbversion) {
-    $iditems = $tags->db->idselect("id > 0 order by parent asc, title asc limit $from, $perpage");
-} else {
-    $iditems = array_slice(array_keys($tags->items), $from, $perpage);
-}
-
-$items = array();
-    foreach ($iditems as $id) {
-$item = $tags->items[$id];
-      $item['parentname'] = $parents[$item['parent']];
-$items[] = $item;
+      $iditems = $tags->db->idselect("id > 0 order by parent asc, title asc limit $from, $perpage");
+    } else {
+      $iditems = array_slice(array_keys($tags->items), $from, $perpage);
     }
-
+    
+    $items = array();
+    foreach ($iditems as $id) {
+      $item = $tags->items[$id];
+      $item['parentname'] = $parents[$item['parent']];
+      $items[] = $item;
+    }
+    
     $result .= $html->buildtable($items, array(
     array('right', $lang->count2, '$itemscount'),
     array('left', $lang->title,'<a href="$link" title="$title">$title</a>'),
@@ -172,7 +172,7 @@ $items[] = $item;
     }
     
     $tags->unlock();
-$_GET['id'] = $_POST['id'] = $id;
+    $_GET['id'] = $_POST['id'] = $id;
     return sprintf($this->html->h2->success, $title);
   }
   

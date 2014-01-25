@@ -1,5 +1,7 @@
 <?php
 function update579() {
+  litepublisher::$site->jquery_version = '1.11.0';
+
 $g = tusergroups::i();
 if ($id = $g->getidgroup('commentator')) {
 $g->items[$id]['home'] = '/admin/comments/';

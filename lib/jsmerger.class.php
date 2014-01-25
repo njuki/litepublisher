@@ -120,6 +120,18 @@ class tfilemerger extends titems {
     return $result;
   }
   
+  public function deletesection($section) {
+    $home = rtrim(litepublisher::$paths->home, DIRECTORY_SEPARATOR);
+    @unlink($home . str_replace('/',DIRECTORY_SEPARATOR, $this->getfilename($section, $this->revision)));
+    
+    $template = ttemplate::i();
+    unset($template->data[$this->basename . '_' . $section]);
+    $template->save();
+    
+    unset($this->items[$section]);
+    $this->save();
+  }
+  
   public function merge() {
     $home = rtrim(litepublisher::$paths->home, DIRECTORY_SEPARATOR);
     $theme = ttheme::i();
