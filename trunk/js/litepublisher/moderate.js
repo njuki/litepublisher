@@ -19,7 +19,7 @@
         button: '<button type="button" class="button"><span>%%title%%</span></button>',
         form: "#commentform"
       }, ltoptions.theme.comments, opt);
-
+      
       this.onbuttons = $.Callbacks();
       this.create_buttons(this.options.comments +", " + this.options.hold);
       $(".loadhold").click(this.loadhold);
@@ -217,8 +217,8 @@
             }
           }
         }
-
-self.onbuttons.fire(container);
+        
+        self.onbuttons.fire(container);
       });
     }
     
@@ -226,7 +226,7 @@ self.onbuttons.fire(container);
   
   $(document).ready(function() {
     //only logged users
-if (litepubl.getuser().id) litepubl.newinstance('moderate', litepubl.Moderate);
+    if (litepubl.getuser().id) litepubl.newinstance('moderate', litepubl.Moderate);
   });
   
 }(jQuery, document, window));

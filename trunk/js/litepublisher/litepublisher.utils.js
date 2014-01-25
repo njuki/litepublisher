@@ -18,31 +18,31 @@
   window.litepubl = {
   tml: {}, //namespace for templates
     adminpanel: false,
-  is_adminpanel:  function() {
-    if (litepubl.adminpanel !== false) return litepubl.adminpanel;
-    return litepubl.adminpanel = litepubl.is_admin_url(location.href);
-},
-
-is_admin_url: function(url) {
-url = url.toLowerCase();
-if ('http' == url.substring(0, 4)) url = url.substring(10);
-    var path = url.split('/');
-    if ((path.length <= 2) || (path[1] != 'admin') || (path[2] == '')) return 0;
-    return /^(login|logout|password|reguser)$/.test(path[2]) ? 0 : 1;
-  },
-
-user: 0,
-getuser: function() {
-if (!litepubl.user) {
-litepubl.user = {
-id: parseInt($.cookie('litepubl_user_id')),
-pass: $.cookie('litepubl_user'),
-regservice: $.cookie('litepubl_regservice')
-};
-}
-return litepubl.user;
-},
-
+    is_adminpanel:  function() {
+      if (litepubl.adminpanel !== false) return litepubl.adminpanel;
+      return litepubl.adminpanel = litepubl.is_admin_url(location.href);
+    },
+    
+    is_admin_url: function(url) {
+      url = url.toLowerCase();
+      if ('http' == url.substring(0, 4)) url = url.substring(10);
+      var path = url.split('/');
+      if ((path.length <= 2) || (path[1] != 'admin') || (path[2] == '')) return 0;
+      return /^(login|logout|password|reguser)$/.test(path[2]) ? 0 : 1;
+    },
+    
+    user: 0,
+    getuser: function() {
+      if (!litepubl.user) {
+        litepubl.user = {
+          id: parseInt($.cookie('litepubl_user_id')),
+          pass: $.cookie('litepubl_user'),
+          regservice: $.cookie('litepubl_regservice')
+        };
+      }
+      return litepubl.user;
+    },
+    
     //forward declaration for future plugins as yandex metrika or google analitik
   stat: function(name, param) {},
     getjson: function(data, callback) {
@@ -55,41 +55,41 @@ return litepubl.user;
         cache: ("cache" in data ? data.cache : true)
       });
     },
-
-_onnew: {},
-_oninit: {},
-newinstance: function(varname, fn) {
-var self = litepubl;
-if (varname in self._onnew) {
-var opt = {varname: varname, fn: fn};
-self._onnew[varname].fire(opt);
-delete self._onnew[varname];
-fn = opt.fn;
-}
-
-var obj = new fn();
-self[varname] = obj;
-if (varname in self._oninit) {
-self._oninit[varname].fire(obj);
-delete self._oninit[varname];
-}
-return obj;
-},
-
-oninit: function(varname, fn) {
-var self = llitepubl;
-if (varname in self) return fn(self[varname]);
-if (!(varname in self._oninit)) self._oninit[varname] = $.Callbacks();
-self._oninit[varname].add(fn);
-},
-
-onnew: function(varname, fn) {
-var self = llitepubl;
-if (varname in self) return false;
-if (!(varname in self._onnew)) self._onnew[varname] = $.Callbacks();
-self._onnew[varname].add(fn);
-}
-
+    
+  _onnew: {},
+  _oninit: {},
+    newinstance: function(varname, fn) {
+      var self = litepubl;
+      if (varname in self._onnew) {
+      var opt = {varname: varname, fn: fn};
+        self._onnew[varname].fire(opt);
+        delete self._onnew[varname];
+        fn = opt.fn;
+      }
+      
+      var obj = new fn();
+      self[varname] = obj;
+      if (varname in self._oninit) {
+        self._oninit[varname].fire(obj);
+        delete self._oninit[varname];
+      }
+      return obj;
+    },
+    
+    oninit: function(varname, fn) {
+      var self = llitepubl;
+      if (varname in self) return fn(self[varname]);
+      if (!(varname in self._oninit)) self._oninit[varname] = $.Callbacks();
+      self._oninit[varname].add(fn);
+    },
+    
+    onnew: function(varname, fn) {
+      var self = llitepubl;
+      if (varname in self) return false;
+      if (!(varname in self._onnew)) self._onnew[varname] = $.Callbacks();
+      self._onnew[varname].add(fn);
+    }
+    
   };
   
   window.dump = function(obj) {
@@ -206,34 +206,34 @@ self._onnew[varname].add(fn);
         }
       });
     }
-
+    
   });
-
-$.links = {
-isready: false,
-links: false,
-list: false,
-on: function(filter, fn) {
-var self = $.links;
-if (self.isready) {
-self.links.filter(filter).on("click", fn);
-} else {
-if (!self.list) self.list = [];
-self.list.push({filter: filter, fn: fn});
-$(document).ready(function() {
-var links = $("a");
-self.links = links;
-self.isready = true;
-var list = self.list;
-for (var i =0, l = list.length; i < l; i++) {
-var item = list[i];
-links.filter(item.filter).on("click", item.fn);
-}
-self.list = false;
-});
-}
-}
-};
+  
+  $.links = {
+    isready: false,
+    links: false,
+    list: false,
+    on: function(filter, fn) {
+      var self = $.links;
+      if (self.isready) {
+        self.links.filter(filter).on("click", fn);
+      } else {
+        if (!self.list) self.list = [];
+      self.list.push({filter: filter, fn: fn});
+        $(document).ready(function() {
+          var links = $("a");
+          self.links = links;
+          self.isready = true;
+          var list = self.list;
+          for (var i =0, l = list.length; i < l; i++) {
+            var item = list[i];
+            links.filter(item.filter).on("click", item.fn);
+          }
+          self.list = false;
+        });
+      }
+    }
+  };
   
   $.fn.replaceComment= function(html) {
     var result = html == undefined ? $(this.get(0).nodeValue) : $(html);

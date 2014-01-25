@@ -35,7 +35,8 @@ class tadminmenus extends tmenus {
     $lang = tlocal::i();
     $ini = &$lang->ini;
     if (isset($ini[$name]['title'])) return $ini[$name]['title'];
-    if (!in_array('names', $lang->searchsect)) array_unshift($lang->searchsect, 'names');
+    tlocal::usefile('install');
+    if (!in_array('adminmenus', $lang->searchsect)) array_unshift($lang->searchsect, 'adminmenus');
     if ($result = $lang->__get($name)) return $result;
     return $name;
   }
@@ -281,6 +282,14 @@ public function __construct($tag) { $this->tag = $tag; }
   
 }//class
 
+class redtag extends thtmltag {
+  
+  public function __get($name) {
+    return sprintf('<%1$s class="red">%2$s</%1$s>', $this->tag, tlocal::i()->$name);
+  }
+  
+}//class
+
 class tadminhtml {
   public static $tags = array('h1', 'h2', 'h3', 'h4', 'p', 'li', 'ul', 'strong', 'div', 'span');
   public $section;
@@ -315,6 +324,7 @@ class tadminhtml {
     }
     
     if (in_array($name, self::$tags)) return new thtmltag($name);
+    if (strend($name, 'red') && in_array(substr($name, 0, -3), self::$tags)) return new redtag($name);
     
     throw new Exception("the requested $name item not found in $this->section section");
   }
@@ -322,6 +332,8 @@ class tadminhtml {
   public function __call($name, $params) {
     $s = $this->__get($name);
     if (is_object($s) && ($s instanceof thtmltag))  return sprintf('<%1$s>%2$s</%1$s>', $name, $params[0]);
+    
+    if ($name == 'h4error') return sprintf('<h4 class="red">%s</h4>', $params[0]);
     
     $args = isset($params[0]) && $params[0] instanceof targs ? $params[0] : new targs();
     return $this->parsearg($s, $args);
@@ -443,6 +455,10 @@ class tadminhtml {
   
   public static function getadminlink($path, $params) {
     return litepublisher::$site->url . $path . litepublisher::$site->q . $params;
+  }
+  
+  public static function getlink($url, $title) {
+    return sprintf('<a href="%s%s">%s</a>', litepublisher::$site->url, $url, $title);
   }
   
   public static function array2combo(array $items, $selected) {
@@ -1508,7 +1524,7 @@ class tposteditor extends tadminmenu {
       $files = trim($files, ', ');
       $post->files = tdatabase::str2array($files);
     }
-    if (isset($date) && (!$date)) {
+    if (isset($date) && $date) {
       $post->posted = tadminhtml::getdatetime('date');
     }
     

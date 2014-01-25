@@ -48,15 +48,15 @@
         return false;
       });
     }
-
-$("a.confirm-delete-link").on("click.confirm", function() {
-var url = $(this).attr("href");
-$.confirmdelete(function() {
-$('<form action="' + url + '&confirm=1" method="post"><input type="submit" name="submitconfirm" /></form>')
-.appendTo("body").submit();
-});
-return false;
-});
+    
+    $("a.confirm-delete-link").on("click.confirm", function() {
+      var url = $(this).attr("href");
+      $.confirmdelete(function() {
+        $('<form action="' + url + '&confirm=1" method="post"><input type="submit" name="submitconfirm" /></form>')
+        .appendTo("body").submit();
+      });
+      return false;
+    });
     
   });
   

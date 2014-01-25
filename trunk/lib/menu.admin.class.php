@@ -35,7 +35,7 @@ class tadminmenus extends tmenus {
     $lang = tlocal::i();
     $ini = &$lang->ini;
     if (isset($ini[$name]['title'])) return $ini[$name]['title'];
-tlocal::usefile('install');
+    tlocal::usefile('install');
     if (!in_array('adminmenus', $lang->searchsect)) array_unshift($lang->searchsect, 'adminmenus');
     if ($result = $lang->__get($name)) return $result;
     return $name;

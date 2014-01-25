@@ -18,16 +18,16 @@
     var prevlink = false;
     // regexp test image extension in url
     var re = /\.(jpg|jpeg|png|bmp)$/i;
-// preload cache holder
-            var imgnext, imgprev;
-
+    // preload cache holder
+    var imgnext, imgprev;
+    
     return this.each(function(){
       var link = $(this);
-var url = link.attr("href");
-if (!url) url = link.data("image");
-if (!url || !re.test(url)) return;
-link.data("image", url);
-
+      var url = link.attr("href");
+      if (!url) url = link.data("image");
+      if (!url || !re.test(url)) return;
+      link.data("image", url);
+      
       if (prevlink) {
         link.data("prevlink", prevlink);
         prevlink.data("nextlink", link);
@@ -55,22 +55,22 @@ link.data("image", url);
         img.onload = function(){
           self.removeClass(options.cursorclass);
           //calc size
-            var ratio = img.width / img.height;
+          var ratio = img.width / img.height;
           if (options.width) {
             var w = options.width;
             var h = options.height;
           } else {
-if (ratio >= 1) {
-//horizontal image, midle height and maximum width
-var h = window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight;
-            h = Math.floor(h / 2) - 20;
-            var w = Math.floor(h * 4 /3);
-} else {
-//vertical image, midle width and maximum height
-var w = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth;
-w = Math.floor(w / 2) - 20;
-            var h = Math.floor(w / 4 *3);
-}
+            if (ratio >= 1) {
+              //horizontal image, midle height and maximum width
+              var h = window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight;
+              h = Math.floor(h / 2) - 20;
+              var w = Math.floor(h * 4 /3);
+            } else {
+              //vertical image, midle width and maximum height
+              var w = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth;
+              w = Math.floor(w / 2) - 20;
+              var h = Math.floor(w / 4 *3);
+            }
           }
           
           if ((img.width <= w) && (img.height <= h)) {
@@ -127,6 +127,6 @@ w = Math.floor(w / 2) - 20;
   };
   
   ready2(function(){
-if ("popover" in $.fn) $("a.photo").popimage();
+    if ("popover" in $.fn) $("a.photo").popimage();
   });
 })( jQuery, window, document);
