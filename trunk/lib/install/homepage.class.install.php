@@ -13,7 +13,7 @@ function thomepageInstall($self) {
   $self->lock();
   $self->url = '/';
   $self->title = tlocal::i()->home;
-  $self->idview = tviews::i()->add(tlocal::get('names', 'home'));
+  $self->idview = tviews::i()->add(tlocal::get('adminmenus', 'home'));
   $homeview = tview::i($self->idview);
   $homeview->disableajax = true;
   $homeview->save();

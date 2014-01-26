@@ -77,7 +77,7 @@
     },
     
     oninit: function(varname, fn) {
-      var self = llitepubl;
+      var self = litepubl;
       if (varname in self) return fn(self[varname]);
       if (!(varname in self._oninit)) self._oninit[varname] = $.Callbacks();
       self._oninit[varname].add(fn);

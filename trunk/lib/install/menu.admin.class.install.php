@@ -16,7 +16,7 @@ function tadminmenusInstall($self) {
   $posts = $self->createitem(0, 'posts', 'author', 'tadminposts');
   {
     $id = $self->createitem($posts, 'editor', 'author', 'tposteditor');
-    $self->items[$id]['title'] = tlocal::get('names', 'newpost');
+    $self->items[$id]['title'] = tlocal::i()->newpost;
     $self->createitem($posts, 'addcat', 'editor', 'tadmintags');
     $self->createitem($posts, 'categories', 'editor', 'tadmintags');
     $self->createitem($posts, 'addtag', 'editor', 'tadmintags');
@@ -96,7 +96,7 @@ function tadminmenusInstall($self) {
   $board = $self->additem(array(
   'parent' => 0,
   'url' => '/admin/',
-  'title' => tlocal::get('names', 'board'),
+  'title' => tlocal::get('adminmenus', 'board'),
   'name' => 'board',
   'class' => 'tadminboard',
   'group' => 'author'

@@ -148,6 +148,7 @@ class catbread extends  tplugin {
       $args->add($item);
       if ($tml_sub && ($subitems = $this->getchildcats($id))) {
         $args->subitems = $subitems;
+        $args->item = $subitems;
         $args->subitems = $theme->parsearg($this->tml['childsubitems'], $args);
       } else {
         $args->subitems = '';

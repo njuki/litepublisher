@@ -2042,7 +2042,6 @@ class tcommontags extends titems implements  itemplate {
       $pages = explode('<!--nextpage-->', $s);
       $page = litepublisher::$urlmap->page - 1;
       if (isset($pages[$page])) return $pages[$page];
-      return array_shift($pages);
     }
     
     return '';
