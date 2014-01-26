@@ -112,6 +112,7 @@ class tlocal {
   
   public static function usefile($name) {
     self::i()->check($name);
+    return self::$self;
   }
   
   public static function inifile($class, $filename) {

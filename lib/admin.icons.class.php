@@ -21,7 +21,7 @@ class tadminicons extends tadminmenu {
     $args->id = 0;
     $args->checked = 0 == $idicon;
     $args->filename = '';
-    $args->title = tlocal::get('common', 'empty');
+    $args->title = tlocal::i()->empty;
     $result = $html->radioicon($args);
     $files = tfiles::i();
     $url = litepublisher::$site->files . '/files/';
@@ -74,7 +74,7 @@ class tadminicons extends tadminmenu {
     foreach ($icons->items as $name => $id) {
       $args->name = $name;
       $title = $lang->$name;
-      if ($title == '') $title = tlocal::get('names', $name);
+      if ($title == '') $title = tlocal::usefile('install')->$name;
       $args->title = $title;
       $args->combo = $html->array2combo($a, $id);
       $result .= $html->iconitem($args);
