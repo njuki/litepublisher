@@ -101,12 +101,16 @@
         $("#" + idbutton +i, dialog).data("index", i).on("click.dialog", options.buttons[i].click);
       }
       
-      if ($.isFunction(options.open)) {
         dialog.on("shown.bs.modal", function() {
-          options.open(dialog);
+      if ($.isFunction(options.open)) options.open(dialog);
+if ("tooltip" in $.fn) {
+   $(".tooltip-toggle", dialog).tooltip({
+container: 'body',
+placement: 'auto top'
+});
+}
         });
-      }
-      
+
       dialog.modal();
       var self = this;
       dialog.on("hidden.bs.modal", function() {
