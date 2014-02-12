@@ -9,7 +9,7 @@
 class http {
   public static $timeout = 10;
   
-  public static function get($url) {
+  public static function get($url, $headers = false) {
     $parsed = @parse_url($url);
     if ( !$parsed || !is_array($parsed) ) return false;
     if ( !isset($parsed['scheme']) || !in_array($parsed['scheme'], array('http','https')) ) {
@@ -17,9 +17,10 @@ class http {
       $parsed['scheme'] = 'http';
     }
     
-    if (($parsed['scheme'] == 'http') && ini_get('allow_url_fopen') ) {
+    if (($parsed['scheme'] == 'http') && ini_get('allow_url_fopen') && !is_array($headers) && !count($headers)) {
       if($fp = @fopen( $url, 'r' )) {
         @stream_set_timeout($fp, self::$timeout);
+
         $result = '';
         while( $remote_read = fread($fp, 4096) )  $result .= $remote_read;
         fclose($fp);
@@ -34,6 +35,7 @@ class http {
       curl_setopt ($ch, CURLOPT_TIMEOUT, self::$timeout);
       curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);
       curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, FALSE);
+    if (is_array($headers) && count($headers)) curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
       
       //curl_setopt($ch, CURLOPT_VERBOSE , true);
       //curl_setopt($ch, CURLOPT_STDERR, fopen('zerr.txt', 'w+'));
@@ -51,7 +53,7 @@ class http {
     return false;
   }
   
-  public static function post($url, array $post, $headers = false) {
+  public static function createcurl($url, $post, $headers = false) {
     $ch = curl_init();
     curl_setopt($ch, CURLOPT_URL, $url);
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
@@ -61,13 +63,17 @@ class http {
     curl_setopt($ch, CURLOPT_TIMEOUT, self::$timeout);
     if (is_array($headers) && count($headers)) curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
     curl_setopt($ch, CURLOPT_POST, TRUE);
-    curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($post));
+    curl_setopt($ch, CURLOPT_POSTFIELDS, is_array($post) ? http_build_query($post) : $post);
+return $ch;
+}
     
+  public static function post($url, $post, $headers = false) {
+$ch = self::createcurl($url, $post, $headers);
     $response = curl_exec($ch);
     $respheaders = curl_getinfo($ch);
     curl_close($ch);
-    if ($respheaders['http_code'] != '200') return false;
-    return $response;
+    if (in_array($respheaders['http_code'], array('200', '201'))) return $response;
+return false;
   }
   
   public static function curl_follow($ch, $maxredirect = 10) {
