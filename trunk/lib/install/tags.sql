@@ -1,6 +1,6 @@
   id int unsigned NOT NULL auto_increment,
-  idurl int unsigned NOT NULL default '0',
   parent int unsigned NOT NULL default '0',
+  idurl int unsigned NOT NULL default '0',
   customorder int unsigned NOT NULL default '0',
   itemscount int unsigned NOT NULL default '0',
   icon int unsigned NOT NULL default '0',

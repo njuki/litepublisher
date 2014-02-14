@@ -1,4 +1,4 @@
-/* 
+/**
 * MediaElement.js
 * HTML5 <video> and <audio> shim and player
 * http://mediaelementjs.com/
@@ -1671,7 +1671,7 @@ function onYouTubePlayerReady(id) {
 window.mejs = mejs;
 window.MediaElement = mejs.MediaElement;
 
-/* 
+/**
  * Adds Internationalization and localization to mediaelement.
  *
  * This file does not contain translations, you have to add the manually.
@@ -1825,7 +1825,7 @@ window.MediaElement = mejs.MediaElement;
 
 }(mejs.i18n.locale.strings));
 
-/* 
+/**
  * This is a i18n.locale language object.
  *
  * German translation by Tim Latz, latz.tim@gmail.com
@@ -1855,7 +1855,7 @@ window.MediaElement = mejs.MediaElement;
 
 }(mejs.i18n.locale.strings));
 */
-/* 
+/**
  * This is a i18n.locale language object.
  *
  * Traditional chinese translation by Tim Latz, latz.tim@gmail.com
@@ -1869,7 +1869,7 @@ window.MediaElement = mejs.MediaElement;
  * @params
  *  - exports - CommonJS, window ..
  */
-/*
+/**
 ;(function(exports, undefined) {
 
     "use strict";
@@ -1887,7 +1887,7 @@ window.MediaElement = mejs.MediaElement;
 */
 
 
-/* 
+/**
  * MediaElementPlayer
  * http://mediaelementjs.com/
  *
