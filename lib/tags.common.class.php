@@ -132,6 +132,10 @@ class tcommontags extends titems implements  itemplate {
       $db->setvalue($item['id'], 'itemscount', $item['itemscount']);
     }
   }
+
+public function geturltype() {
+return 'normal';
+}
   
   public function add($parent, $title) {
     $title = trim($title);
@@ -140,11 +144,8 @@ class tcommontags extends titems implements  itemplate {
     $parent = (int) $parent;
     if (($parent != 0) && !$this->itemexists($parent)) $parent = 0;
     
-    $urlmap =turlmap::i();
-    $linkgen = tlinkgenerator::i();
-    $url = $linkgen->createurl($title, $this->PermalinkIndex, true);
-    
-    $views = tviews::i();
+    $url = tlinkgenerator::i()->createurl($title, $this->PermalinkIndex, true);
+        $views = tviews::i();
     $idview = isset($views->defaults[$this->PermalinkIndex]) ? $views->defaults[$this->PermalinkIndex] : 1;
     
     $item = array(
@@ -165,12 +166,12 @@ class tcommontags extends titems implements  itemplate {
     
     $id = $this->db->add($item);
     $this->items[$id] = $item;
-    $idurl =         $urlmap->add($url, get_class($this),  $id);
+    $idurl =         litepublisher::$urlmap->add($url, get_class($this),  $id, $this->urltype);
     $this->setvalue($id, 'idurl', $idurl);
     $this->items[$id]['url'] = $url;
     $this->added($id);
     $this->changed();
-    $urlmap->clearcache();
+    litepublisher::$urlmap->clearcache();
     return $id;
   }
   
@@ -185,7 +186,6 @@ class tcommontags extends titems implements  itemplate {
       ));
     }
     
-    $urlmap = turlmap::i();
     $linkgen = tlinkgenerator::i();
     $url = trim($url);
     // try rebuild url
@@ -194,18 +194,18 @@ class tcommontags extends titems implements  itemplate {
     }
     
     if ($item['url'] != $url) {
-      if (($urlitem = $urlmap->finditem($url)) && ($urlitem['id'] != $item['idurl'])) {
+      if (($urlitem = litepublisher::$urlmap->finditem($url)) && ($urlitem['id'] != $item['idurl'])) {
         $url = $linkgen->MakeUnique($url);
       }
-      $urlmap->setidurl($item['idurl'], $url);
-      $urlmap->addredir($item['url'], $url);
+      litepublisher::$urlmap->setidurl($item['idurl'], $url);
+      litepublisher::$urlmap->addredir($item['url'], $url);
       $item['url'] = $url;
     }
     
     $this->items[$id] = $item;
     $this->save();
     $this->changed();
-    $urlmap->clearcache();
+    litepublisher::$urlmap->clearcache();
   }
   
   public function delete($id) {

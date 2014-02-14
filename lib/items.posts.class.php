@@ -8,6 +8,8 @@
 
 class titemsposts extends titems {
   public $tablepost;
+public $postprop;
+public $itemprop;
   
   public static function i() {
     return getinstance(__class__);
@@ -18,48 +20,24 @@ class titemsposts extends titems {
     $this->basename = 'itemsposts';
     $this->table = 'itemsposts';
     $this->tablepost = 'posts';
+$this->postprop = 'post';
+$this->itemprop = 'item';
   }
   
   public function add($idpost, $iditem) {
-    if (dbversion) {
       $this->db->add(array(
-      'post' => $idpost,
-      'item' => $iditem
+      $this->postprop => $idpost,
+      $this->itemprop => $iditem
       ));
       $this->added();
-    } else {
-      if (!isset($this->items[$idpost]))  $this->items[$idpost] = array();
-      if (!in_array($iditem, $this->items[$idpost])) {
-        $this->items[$idpost][] =$iditem;
-        $this->save();
-        $this->added();
-        return true;
-      }
-      return false;
-    }
   }
   
   public function exists($idpost, $iditem) {
-    if ($this->dbversion) {
-      return $this->db->exists("post = $idpost and item = $iditem");
-    } else {
-      return isset($this->items[$idpost]) && is_int(array_search($iditem, $this->items[$idpost]));
-    }
+      return $this->db->exists("$this->postprop = $idpost and $this->itemprop = $iditem");
   }
   
   public function remove($idpost, $iditem) {
-    if (dbversion) {
-      return $this->db->delete("post = $idpost and item = $iditem");
-    } elseif (isset($this->items[$idpost])) {
-      $i = array_search($iditem, $this->items[$idpost]);
-      if (is_int($i))  {
-        array_splice($this->items[$idpost], $i, 1);
-        $this->save();
-        $this->deleted();
-        return true;
-      }
-      return false;
-    }
+      return $this->db->delete("$this->postprop = $idpost and $this->itemprop = $iditem");
   }
   
   public function delete($idpost) {
@@ -67,32 +45,14 @@ class titemsposts extends titems {
   }
   
   public function deletepost($idpost) {
-    if (dbversion) {
-      $result = litepublisher::$db->res2id(litepublisher::$db->query("select item from $this->thistable where post = $idpost"));
-      $this->db->delete("post = $idpost");
-      return $result;
-    } else {
-      if (isset($this->items[$idpost])) {
-        $result = $this->items[$idpost];
-        unset($this->items[$idpost]);
-        $this->save();
-        return $result;
-      } else {
-        return array();
-      }
-    }
+$db = $this->db;
+      $result = $db->res2id($db->query("select $this->itemprop from $this->thistable where $this->postprop = $idpost"));
+      $db->delete("$this->post = $idpost");
+return $result;
   }
   
   public function deleteitem($iditem) {
-    if (dbversion) {
-      $this->db->delete("item = $iditem");
-    } else {
-      foreach ($this->items as $idpost => $item) {
-        $i = array_search($iditem, $item);
-        if (is_int($i))  array_splice($this->items[$idpost], $i, 1);
-      }
-      $this->save();
-    }
+      $this->db->delete("$this->itemprop = $iditem");
     $this->deleted();
   }
   
@@ -103,32 +63,29 @@ class titemsposts extends titems {
     $add = array_diff($items, $old);
     $delete = array_diff($old, $items);
     
-    if (count($delete) > 0) {
-      $db->delete("post = $idpost and item in (" . implode(', ', $delete) . ')');
-    }
-    
-    if (count($add) > 0) {
+    if (count($delete)) $db->delete("$this->postprop = $idpost and $this->itemprop in (" . implode(', ', $delete) . ')');
+    if (count($add)) {
       $vals = array();
       foreach ($add as $iditem) {
         $vals[]= "($idpost, $iditem)";
       }
-      $db->exec("INSERT INTO $this->thistable (post, item) values " . implode(',', $vals) );
+      $db->exec("INSERT INTO $this->thistable ($this->postprop, $this->itemprop) values " . implode(',', $vals) );
     }
     
     return array_merge($old, $add);
   }
   
   public function getitems($idpost) {
-    return litepublisher::$db->res2id(litepublisher::$db->query("select item from $this->thistable where post = $idpost"));
+    return litepublisher::$db->res2id(litepublisher::$db->query("select $this->itemprop from $this->thistable where $this->postprop = $idpost"));
   }
   
   public function getposts($iditem) {
-    return litepublisher::$db->res2id(litepublisher::$db->query("select post from $this->thistable where item = $iditem"));
+    return litepublisher::$db->res2id(litepublisher::$db->query("select $this->postprop from $this->thistable where $this->itemprop = $iditem"));
   }
   
   public function getpostscount($ititem) {
     $db = $this->getdb($this->tablepost);
-    return $db->getcount("$db->prefix$this->tablepost.status = 'published' and id in (select post from $this->thistable where item = $ititem)");
+    return $db->getcount("$db->prefix$this->tablepost.status = 'published' and id in (select $this->postprop from $this->thistable where $this->itemprop = $ititem)");
   }
   
   public function updateposts(array $list, $propname) {
@@ -148,13 +105,7 @@ class titemspostsowner extends titemsposts {
     if (!isset($owner)) return;
     parent::__construct();
     $this->owner = $owner;
-    if ($owner->dbversion) {
       $this->table = $owner->table . 'items';
-    } else {
-      $this->items = &$owner->data['itemsposts'];
-    }
-    
-    $this->dbversion = $owner->dbversion;
   }
   
 public function load() { }
