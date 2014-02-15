@@ -65,7 +65,7 @@ class TXMLRPCLivejournal extends TXMLRPCAbstract {
     'challenge' => $this->_challenge,
     'expire_time' => $this-> expired,
     'server_time' => $this->expired - 3600
-    );;
+    );
   }
   
   public function postevent($struct) {
@@ -137,7 +137,7 @@ class TXMLRPCLivejournal extends TXMLRPCAbstract {
     'itemid' => $id,
     'anum' => $post->url,
     'url' => $post->url
-    );;
+    );
   }
   
   public function editevent ($struct) {
@@ -153,7 +153,7 @@ class TXMLRPCLivejournal extends TXMLRPCAbstract {
       'itemid' => $id,
       'anum' => $url,
       'url' => $url
-      );;
+      );
     }
     
     return $this->EditPost($id, $struct);

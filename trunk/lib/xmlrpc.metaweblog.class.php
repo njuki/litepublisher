@@ -296,7 +296,7 @@ class TXMLRPCMetaWeblog extends TXMLRPCAbstract {
     if (!$posts->itemexists($id))  return $this->xerror(404, "Invalid post id.");
     
     $post = tpost::i($id);
-    return $this->GetStruct($post);;
+    return $this->GetStruct($post);
   }
   
   private function GetStruct(tpost $post) {

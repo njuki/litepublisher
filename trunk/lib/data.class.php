@@ -151,7 +151,7 @@ class tdata {
   }
   
   public function save() {
-    if ($this->lockcount > 0) return;
+    if ($this->lockcount) return;
     if ($this->dbversion) {
       $this->SaveToDB();
     } else {

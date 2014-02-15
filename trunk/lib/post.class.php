@@ -199,7 +199,7 @@ class tpost extends titem implements  itemplate {
   }
   
   public function setassoc(array $a) {
-    $trans = $this->factory->gettransform($this);;
+    $trans = $this->factory->gettransform($this);
     $trans->setassoc($a);
     if ($this->childtable) {
       if ($a = $this->getdb($this->childtable)->getitem($this->id)) {

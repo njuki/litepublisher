@@ -94,7 +94,7 @@ class tlocalfiler extends tremotefiler {
       }
     }
     if ( file_exists($file) && ! @rmdir($file) ) return  false;
-    return $result;;
+    return $result;
   }
   
   public function exists($file) {
