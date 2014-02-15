@@ -23,7 +23,7 @@ class thomepage extends tsinglemenu  {
     $this->data['showposts'] = true;
     $this->data['invertorder'] = false;
     $this->data['includecats'] = array();
-    $this->data['excludecats'] = array();;
+    $this->data['excludecats'] = array();
     $this->data['showpagenator'] = true;
     $this->data['archcount'] = 0;
     $this->data['parsetags'] = false;

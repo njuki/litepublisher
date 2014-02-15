@@ -52,7 +52,7 @@ class tdatabase {
   /*
   public function __destruct() {
     if (is_object($this)) {
-      if (is_object($this->mysqli)) $this->mysqli->close();;
+      if (is_object($this->mysqli)) $this->mysqli->close();
       $this->mysqli = false;
     }
   }

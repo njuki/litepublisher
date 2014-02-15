@@ -159,7 +159,7 @@ class tadmincustomwidget extends tadminwidget {
     if (isset($widget->items[$id])) {
       $item = $widget->items[$id];
       $args->mode = 'edit';
-      $viewcombo = '';;
+      $viewcombo = '';
     } else {
       $id = 0;
       $viewcombo = tadminviews::getcomboview(1);

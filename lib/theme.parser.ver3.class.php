@@ -394,7 +394,7 @@ class tthemeparserver3 extends tevents {
   private function parsetemplatecomments(&$str) {
     $s = $this->parsetag($str, 'templatecomments', '$post.templatecomments');
     if ($s == '') return $this->copy('content.post.templatecomments');
-    $default = $this->default->templates;;
+    $default = $this->default->templates;
     $result = &$this->theme->templates;
     $path = 'content.post.templatecomments.';
     $src = $this->parsetag($s, 'comments', '');
