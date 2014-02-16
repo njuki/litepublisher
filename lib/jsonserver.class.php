@@ -96,13 +96,7 @@ class tjsonserver extends tevents {
     }
     
     $this->callevent('aftercall', array(&$result, $args));
-    // json options supported in php 5.3
-    if (defined('JSON_NUMERIC_CHECK')) {
-      $jsattr = JSON_NUMERIC_CHECK | (defined('JSON_UNESCAPED_UNICODE') ? JSON_UNESCAPED_UNICODE : 0);
-      $js = json_encode($result, $jsattr);
-    } else {
-      $js = json_encode($result);
-    }
+      $js = tojson($result);
     //if (litepublisher::$debug) tfiler::log("response:\n".$js, 'json.txt');
     
     return "<?php
