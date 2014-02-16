@@ -6,33 +6,6 @@
 * and GPL (gpl.txt) licenses.
 **/
 
-function set_comments_lang($self) {
-  $lang = tlocal::admin('comments');
-  $jsattr =defined('JSON_UNESCAPED_UNICODE') ? JSON_UNESCAPED_UNICODE : null;
-  $comments = array(
-  'del' => $lang->delete,
-  'edit' => $lang->edit,
-  'approve' => $lang->approve,
-  'hold' => $lang->hold,
-  'confirmdelete' => $lang->confirmdelete,
-  'yesdelete' => $lang->yesdelete,
-  'nodelete' => $lang->nodelete,
-  'notdeleted' => $lang->notdeleted,
-  'notmoderated' => $lang->notmoderated,
-  'errorrecieved' => $lang->errorrecieved,
-  'notedited' => $lang->notedited,
-  );
-  
-  $self->addtext('comments', 'lang',
-  sprintf('window.lang = $.extend(true, window.lang, {
-    comment: %s,
-    comments: %s
-  });',
-  $jsattr ? json_encode($lang->ini['comment'], $jsattr) : json_encode($lang->ini['comment']),
-  $jsattr ? json_encode($comments, $jsattr) : json_encode($comments)
-  ));
-}
-
 function tjsmergerInstall($self) {
   $dir = litepublisher::$paths->files . 'js';
   @mkdir($dir, 0777);
@@ -41,7 +14,6 @@ function tjsmergerInstall($self) {
   file_put_contents($file, ' ');
   @chmod($file, 0666);
   
-  $jsattr =defined('JSON_UNESCAPED_UNICODE') ? JSON_UNESCAPED_UNICODE : false;
   $language = litepublisher::$options->language;
   $self->lock();
   $self->items = array();
@@ -69,30 +41,6 @@ function tjsmergerInstall($self) {
   $self->add($section, '/js/litepublisher/confirmcomment.min.js');
   $self->add($section, '/js/litepublisher/moderate.min.js');
   $self->add($section, "/lib/languages/$language/comments.min.js");
-  
-  /*
-  set_comments_lang($self);
-  
-  tlocal::usefile('admin');
-$js = 'window.lang = window.lang || {};';
-  $widgetlang = array(
-  'expand' => tlocal::get('default', 'expand'),
-  'colapse' => tlocal::get('default', 'colapse')
-  );
-  $lang = tlocal::admin('common');
-  $self->addtext('default', 'widgetlang', $js . sprintf('lang.widgetlang= %s;',  $jsattr ? json_encode($widgetlang, $jsattr) : json_encode($widgetlang)));
-  
-  $dialog =   array(
-  'error' => $lang->error,
-  'confirm' => $lang->confirm,
-  'confirmdelete' => $lang->confirmdelete,
-  'cancel' => $lang->cancel,
-  'yes' => $lang->yesword,
-  'no' => $lang->noword,
-  );
-  
-  $self->addtext('default', 'dialog', $js . sprintf('lang.dialog = %s;', $jsattr ? json_encode($dialog, $jsattr) : json_encode($dialog)));
-  */
   
   $section = 'admin';
 $self->add($section, '/js/jquery/ui-$site.jqueryui_version/jquery.ui.core.min.js');
