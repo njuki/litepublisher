@@ -56,7 +56,7 @@ class tticketeditor extends tposteditor {
     $ajaxeditor = tajaxposteditor ::i();
     $args->raw = $ajaxeditor->geteditor('raw', $ticket->rawcontent, true);
     
-    $html = $this->inihtml('tickets');;
+    $html = $this->inihtml('tickets');
     $lang = tlocal::admin('tickets');
     $lang->ini['tickets'] = $lang->ini['ticket'] + $lang->ini['tickets'];
     

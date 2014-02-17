@@ -130,6 +130,7 @@ class tadminviews extends tadminmenu {
 
     $sidebars = '';
     $woptions = '';
+$all = array_keys($widgets->items);
     if (($idview > 1) && !$view->customsidebar) $view = tview::i(1);
     foreach ($view->sidebars as $index => $sidebar) {
       $args->index = $index;
@@ -138,16 +139,18 @@ class tadminviews extends tadminmenu {
       foreach ($sidebar as $_item) {
         $id = $_item['id'];
         $idwidgets[] = $id;
+array_delete_value($all, $id);
         $widget = $widgets->getitem($id);
         $args->id = $id;
-        $args->disabled = ($widget['cache'] == 'cache') || ($widget['cache'] == 'nocache') ? '' : 'disabled="disabled"';
+        $enabled = ($widget['cache'] == 'cache') || ($widget['cache'] == 'nocache');
+$args->enabled = $enabled ? 'enabled' : 'disabled';
         $args->add($widget);
         $widgetlist .= $html->widgetitem($args);
       $args->controls =         
-$html->getinput('checkbox', "ajax-$id", $_item['ajax'] ? 'checked="checked"' : '', $lang->ajax) .
-      $html->getinput('checkbox', "inline-$id", $_item['ajax'] === 'inline' ? 'checked="checked"' : '', $lang->inline) .
-      $html->getinput('submit', "widget_delete-$id", '', $lang->widget_delete);
-        
+$html->getinput('checkbox', "ajax$id", $_item['ajax'] ? 'checked="checked"' : '', $lang->ajax) .
+      $html->getinput('checkbox', "inline$id", ($enabled ? '' : 'disabled="disabled" ') . ($_item['ajax'] === 'inline' ? 'checked="checked"' : ''), $lang->inline) .
+      $html->getinput('submit', "delete$id", '', $lang->widget_delete);
+
         $woptions  .= $html->woptions ($args);
       }
 
@@ -159,6 +162,14 @@ $html->getinput('checkbox', "ajax-$id", $_item['ajax'] ? 'checked="checked"' : '
     
     $args->sidebars = $sidebars;
     $args->woptions = $woptions;
+$allwidgets = '';
+foreach ($all as $id) {
+        $args->add($widgets->items[$id]);
+$args->id = $id;
+        $allwidgets .= $html->widgetitem($args);
+}
+
+$args->allwidgets = $allwidgets;
     return $html->sidebars($args);
   }
   
@@ -208,21 +219,12 @@ $args->menu = tadminhtml  ::array2combo($menuitems, $itemview['menuclass']);
         $tabs->add($lang->theme, $this->get_view_theme($id));
         $tabs->add($lang->custom, $this->get_custom($id));
 
-      $widgetlist = '';
-      $widgets = twidgets::i();
-      foreach ($widgets->items as $id => $item) {
-        $args->id = $id;
-        $args->add($item);
-        $widgetlist .= $html->addwidget($args);
-      }
-
 $result .= $html->p->help;      
     $form = new adminform($args);
 $form->id = 'admin-view-form';
 $form->title = $lang->edit;
 $form->items = $tabs->get();
       $result .= $form->get();
-      $result .= sprintf($html->appendwidgets, $widgetlist);
 $result .=       ttemplate::i()->getjavascript(ttemplate::i()->jsmerger_adminviews);
       break;
       
