@@ -15,9 +15,10 @@ class tmarkdownplugin extends tplugin {
   
   protected function create() {
     parent::create();
-    $this->data['deletep'] = true;
-    litepublisher::$classes->include_file(litepublisher::$paths->plugins . 'markdown' . DIRECTORY_SEPARATOR . 'markdown.parser.class.php');
-    $this->parser = new Markdown_Parser();
+    $this->data['deletep'] = false;
+    litepublisher::$classes->include_file(litepublisher::$paths->plugins . 'markdown' . DIRECTORY_SEPARATOR . 'MarkdownInterface.php');
+    litepublisher::$classes->include_file(litepublisher::$paths->plugins . 'markdown' . DIRECTORY_SEPARATOR . 'Markdown.php');
+    $this->parser = new Markdown();
   }
   
   public function filter(&$content) {

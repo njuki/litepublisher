@@ -212,7 +212,7 @@ class tcodedocfilter extends titems {
     } else {
       $docitem['post'] = $post;
       $this->fix[] = $docitem;
-      $post->onid = array($this, 'fixpost');;
+      $post->onid = array($this, 'fixpost');
     }
     
     //generate content

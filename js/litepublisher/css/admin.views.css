@@ -1,49 +1,23 @@
-.div_view_sidebars {
+.adminview-sidebars{
 	width: 100%;
-	float: left;
 	overflow: hidden;
+display: block;
 }
 
-.view_sidebars {
-	width:100%;
-list-style:none;
-position:relative;
-/* padding:15px 0 0 25px; */
+.adminview-sidebars:after {
+  content: " ";
+  display: table;
 }
 
-.view_sidebars li {
-list-style:none;
+.adminview-sidebar {
 float:left;
-position:relative;
-width:150px;
+	overflow: hidden;
+display: block;
+width:33.33%;
 height:100%;
-display:inline;
-}
-
-.view_sidebar{
-width:100%;
-list-style:none;
-float:left;
-position:relative;
 min-height: 30px;
-/*
-width:140px;
- margin-right:0px; 
- padding-right:10px; 
- position:relative;
- left:10px; 
-*/
 }
-
-.view_sidebar li {
-/* width:100%; */
-/*width:130px;*/
-/* margin-bottom:5px; */
-}
-
-.widgetoptions { display: none; }
 
 .sidebar_title {
 font:bold 16px Trebuchet MS, Tahoma, Verdana, sans-serif;
-/*margin:0 0 10px 0;*/
 }
