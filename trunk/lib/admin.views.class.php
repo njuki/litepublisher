@@ -54,9 +54,7 @@ class tadminviews extends tadminmenu {
     $views->save();
   }
   
-  private function get_custom($idview) {
-    $view = tview::i($idview);
-    if (count($view->custom) == 0) return '';
+  private function get_custom(tview $view) {
     $result = '';
     $html = $this->html;
     $customadmin = $view->theme->templates['customadmin'];
@@ -82,7 +80,7 @@ class tadminviews extends tadminmenu {
       
       $result .= $html->getinput(
       $customadmin[$name]['type'],
-    "custom_{$idview}_$name",
+    "custom-$name",
       $value,
       tadminhtml::specchars($customadmin[$name]['title'])
       );
@@ -97,15 +95,15 @@ class tadminviews extends tadminmenu {
     foreach ($view->data['custom'] as $name => $value) {
       switch ($customadmin[$name]['type']) {
         case 'checkbox':
-      $view->data['custom'][$name] = isset($_POST["custom_{$idview}_$name"]);
+      $view->data['custom'][$name] = isset($_POST["custom-$name"]);
         break;
         
         case 'radio':
-      $view->data['custom'][$name] = $customadmin[$name]['values'][(int) $_POST["custom_{$idview}_$name"]];
+      $view->data['custom'][$name] = $customadmin[$name]['values'][(int) $_POST["custom-$name"]];
         break;
         
         default:
-      $view->data['custom'][$name] = $_POST["custom_{$idview}_$name"];
+      $view->data['custom'][$name] = $_POST["custom-$name"];
         break;
       }
     }
@@ -126,7 +124,6 @@ class tadminviews extends tadminmenu {
     foreach ($sidebarnames as $k => $v) {
       if (isset($about["sidebar$k"])) $sidebarnames[$k] = $about["sidebar$k"];
     }
-
 
     $sidebars = '';
     $woptions = '';
@@ -173,13 +170,6 @@ $args->allwidgets = $allwidgets;
     return $html->sidebars($args);
   }
   
-  private function get_view_theme($idview) {
-    $view = tview::i($idview);
-    $lang = tlocal::i('themes');
-    return str_replace('theme_idview', 'theme_' . $idview,
-    tadminthemes::getlist($this->html->radiotheme, $view->theme->name));
-  }
-  
   public function getcontent() {
     $result = '';
     $views = tviews::i();
@@ -216,8 +206,10 @@ $args->menu = tadminhtml  ::array2combo($menuitems, $itemview['menuclass']);
         ($id == 1 ? '' : ('[checkbox=customsidebar] [checkbox=disableajax]')) .
 '[checkbox=hovermenu] [combo=menu]');
 
-        $tabs->add($lang->theme, $this->get_view_theme($id));
-        $tabs->add($lang->custom, $this->get_custom($id));
+    $view = tview::i($id);
+$lang->firstsearch('themes');
+        $tabs->add($lang->theme, tadminthemes::getlist($html->radiotheme, $view->theme->name));
+    if (count($view->custom)) $tabs->add($lang->custom, $this->get_custom($view));
 
 $result .= $html->p->help;      
     $form = new adminform($args);
@@ -334,7 +326,7 @@ return '';
           }
 
           $view->name = trim($_POST['name']);
-          $view->themename = trim($_POST['theme']);
+          $view->themename = trim($_POST['theme_idview']);
           $view->menuclass = $_POST['menu'];
           $view->hovermenu = isset($_POST['hovermenu']);
 
