@@ -11,10 +11,11 @@
   init: function() {
 var form = $("#admin-view-form");
 var tabs = $(".admintabs:first", form);
-var appendwidgets = $("#appendwidgets", form);
 var woptions = $("#woptions-holder", tabs);
 var sidebars = $("#adminview-sidebars", tabs);
       var ul = $(".adminview-sidebar ul", sidebars);
+    var allwidgets = $("#all-widgets", form);
+    var widgets = $().add(ul).add(allwidgets);
         var disabled = [];
 var custom = $("#checkbox-customsidebar", form);
 
@@ -43,37 +44,21 @@ $("#woptions-" + id, woptions).removeClass("hidden");
 return false;
 });
     
-ul.sortable({
-        connectWith: ul,
-                receive: function(event, ui) {
-          if ($(ui.sender).attr("id") == "append_widgets") {
-            var id = $(ui.item).data("idwidget");
-            if ($("li[data-idwidget='" + id + "']", this).length) {
-              $(ui.sender).sortable('cancel');
-            }
-          }
-        }
-      });
-
-    $("#append_widgets", form).sortable({
-      //helper: "clone",
-      connectWith: ul
-    });
-    
     form.submit(function() {
 ul.each(function() {
         var idwidgets = [];
 $("li", this).each(function() {
 idwidgets.push($(this).data("idwidget"));
         });
-        $("#hidden-sidebar" + $(this).data("index")).val(widgets.join(","));
+        $("#hidden-sidebar" + $(this).data("index")).val(idwidgets.join(","));
 });
     });
-    
+
+widgets.sortable({connectWith: widgets});    
     woptions.on("click.delete", "[name^='delete']", function() {
-      var holder = $(this).closest(".woptions");
-ul.find("[data-idwidget=" + holder.data("idwidget") + "]:first").remove();
-holder.remove();
+      var holder = $(this).closest(".woptions").hide();
+allwidgets.append(ul.find("[data-idwidget=" + holder.data("idwidget") + "]:first"));
+//widgets.sortable( "refresh" );
 return false;
     });
     

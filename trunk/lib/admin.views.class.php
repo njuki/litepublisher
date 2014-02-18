@@ -20,6 +20,7 @@ class tadminviews extends tadminmenu {
     $form = new adminform($args);
     $form->action = litepublisher::$site->url . $url;
     $form->inline = true;
+$form->method = 'get';
     $form->items = '[combo=idview]';
     $form->submit = 'select';
     return $form->get();
@@ -126,9 +127,8 @@ class tadminviews extends tadminmenu {
     }
 
     $sidebars = '';
-    $woptions = '';
-$all = array_keys($widgets->items);
     if (($idview > 1) && !$view->customsidebar) $view = tview::i(1);
+$sitems = array();
     foreach ($view->sidebars as $index => $sidebar) {
       $args->index = $index;
       $widgetlist = '';
@@ -136,36 +136,46 @@ $all = array_keys($widgets->items);
       foreach ($sidebar as $_item) {
         $id = $_item['id'];
         $idwidgets[] = $id;
-array_delete_value($all, $id);
-        $widget = $widgets->getitem($id);
+$sitems[$id] = $_item;
         $args->id = $id;
-        $enabled = ($widget['cache'] == 'cache') || ($widget['cache'] == 'nocache');
-$args->enabled = $enabled ? 'enabled' : 'disabled';
-        $args->add($widget);
+        $args->add($widgets->items[$id]);
         $widgetlist .= $html->widgetitem($args);
-      $args->controls =         
-$html->getinput('checkbox', "ajax$id", $_item['ajax'] ? 'checked="checked"' : '', $lang->ajax) .
-      $html->getinput('checkbox', "inline$id", ($enabled ? '' : 'disabled="disabled" ') . ($_item['ajax'] === 'inline' ? 'checked="checked"' : ''), $lang->inline) .
-      $html->getinput('submit', "delete$id", '', $lang->widget_delete);
-
-        $woptions  .= $html->woptions ($args);
       }
 
       $args->sidebarname = $sidebarnames[$index];
       $args->widgetlist = $widgetlist;
       $args->idwidgets = implode(',', $idwidgets);
       $sidebars .= $html->sidebar($args);
+}
+
+    $woptions = '';
+$allwidgets = '';
+foreach ($widgets->items as $id => $item) {
+        $args->id = $id;
+        $args->add($item);
+        $enabled = ($item['cache'] == 'cache') || ($item['cache'] == 'nocache');
+$args->enabled = $enabled ? 'enabled' : 'disabled';
+
+if (isset($sitems[$id])) {
+$sitem = $sitems[$id];
+} else {
+        $allwidgets .= $html->widgetitem($args);
+$sitem = array(
+'ajax' => $enabled ? 'inline' : false
+);
+}
+
+$args->add($sitem);
+      $args->controls =         
+$html->getinput('checkbox', "ajax$id", $sitem['ajax'] ? 'checked="checked"' : '', $lang->ajax) .
+      $html->getinput('checkbox', "inline$id", ($enabled ? '' : 'disabled="disabled" ') . ($sitem['ajax'] === 'inline' ? 'checked="checked"' : ''), $lang->inline) .
+      $html->getinput('submit', "delete$id", '', $lang->widget_delete);
+
+        $woptions  .= $html->woptions ($args);
     }
     
     $args->sidebars = $sidebars;
     $args->woptions = $woptions;
-$allwidgets = '';
-foreach ($all as $id) {
-        $args->add($widgets->items[$id]);
-$args->id = $id;
-        $allwidgets .= $html->widgetitem($args);
-}
-
 $args->allwidgets = $allwidgets;
     return $html->sidebars($args);
   }
@@ -193,11 +203,11 @@ array('center', $lang->delete, "<a href=\"$adminurl=\$id&action=delete\" class=\
         $result = self::getviewform($this->url);
       $tabs = new tuitabs();
       $menuitems = array();
-      foreach ($views->items as $id => $itemview) {
+      foreach ($views->items as $itemview) {
         $class = $itemview['menuclass'];
         $menuitems[$class] = $class == 'tmenus' ? $lang->stdmenu : ($class == 'tadminmenus' ? $lang->adminmenu : $class);
       }
-      
+
 $itemview = $views->items[$id];
         $args->add($itemview);
         $tabs->add($lang->widgets, $this->get_view_sidebars($id, $html, $lang, $args));
@@ -330,7 +340,7 @@ return '';
           $view->menuclass = $_POST['menu'];
           $view->hovermenu = isset($_POST['hovermenu']);
 
-          $this->set_custom($id);
+          $this->set_custom($idview);
 
           if (($idview == 1) || $view->customsidebar) {
         $widgets = twidgets::i();
