@@ -132,10 +132,10 @@ class tcommontags extends titems implements  itemplate {
       $db->setvalue($item['id'], 'itemscount', $item['itemscount']);
     }
   }
-
-public function geturltype() {
-return 'normal';
-}
+  
+  public function geturltype() {
+    return 'normal';
+  }
   
   public function add($parent, $title) {
     $title = trim($title);
@@ -145,7 +145,7 @@ return 'normal';
     if (($parent != 0) && !$this->itemexists($parent)) $parent = 0;
     
     $url = tlinkgenerator::i()->createurl($title, $this->PermalinkIndex, true);
-        $views = tviews::i();
+    $views = tviews::i();
     $idview = isset($views->defaults[$this->PermalinkIndex]) ? $views->defaults[$this->PermalinkIndex] : 1;
     
     $item = array(

@@ -43,11 +43,11 @@ function tjsmergerInstall($self) {
   $self->add($section, "/lib/languages/$language/comments.min.js");
   
   $section = 'admin';
-$self->add($section, '/js/jquery/ui-$site.jqueryui_version/jquery.ui.core.min.js');
-$self->add($section, '/js/jquery/ui-$site.jqueryui_version/jquery.ui.widget.min.js');
-$self->add($section, '/js/jquery/ui-$site.jqueryui_version/jquery.ui.mouse.min.js');
-$self->add($section, '/js/jquery/ui-$site.jqueryui_version/jquery.ui.position.min.js');
-$self->add($section, '/js/jquery/ui-$site.jqueryui_version/jquery.ui.tabs.min.js');
+  $self->add($section, '/js/jquery/ui-$site.jqueryui_version/jquery.ui.core.min.js');
+  $self->add($section, '/js/jquery/ui-$site.jqueryui_version/jquery.ui.widget.min.js');
+  $self->add($section, '/js/jquery/ui-$site.jqueryui_version/jquery.ui.mouse.min.js');
+  $self->add($section, '/js/jquery/ui-$site.jqueryui_version/jquery.ui.position.min.js');
+  $self->add($section, '/js/jquery/ui-$site.jqueryui_version/jquery.ui.tabs.min.js');
   $self->add($section, '/js/litepublisher/admin.min.js');
   $self->add($section, '/js/litepublisher/calendar.min.js');
   $self->add($section, "/lib/languages/$language/admin.min.js");

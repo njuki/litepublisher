@@ -479,7 +479,7 @@ class tcommentmanager extends tevents_storage {
   public function request($arg) {
     $id = isset($_GET['id']) ? (int) $_GET['id'] : 1;
     $users = tusers::i();
-    if (!$users->itemexists($id)) return "<?php litepublisher::$urlmap->redir('/');";;
+    if (!$users->itemexists($id)) return "<?php litepublisher::$urlmap->redir('/');";
     $item = $users->getitem($id);
     $url = $item['website'];
     if (!strpos($url, '.')) $url = litepublisher::$site->url . '/';

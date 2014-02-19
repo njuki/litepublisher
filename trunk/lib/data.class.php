@@ -466,15 +466,15 @@ function strtoarray($s) {
 }
 
 function tojson($a) {
-    if (defined('JSON_NUMERIC_CHECK')) {
-return json_encode($a, JSON_NUMERIC_CHECK | (defined('JSON_UNESCAPED_UNICODE') ? JSON_UNESCAPED_UNICODE : 0));
-}
-
-      return json_encode($a);
+  if (defined('JSON_NUMERIC_CHECK')) {
+    return json_encode($a, JSON_NUMERIC_CHECK | (defined('JSON_UNESCAPED_UNICODE') ? JSON_UNESCAPED_UNICODE : 0));
+  }
+  
+  return json_encode($a);
 }
 
 function jsonattr($a) {
-return str_replace('"', '&quot;', tojson($a));
+  return str_replace('"', '&quot;', tojson($a));
 }
 
 function dumpstr($s) {

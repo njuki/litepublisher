@@ -481,7 +481,7 @@ class tdata {
   }
   
   public function save() {
-    if ($this->lockcount > 0) return;
+    if ($this->lockcount) return;
     if ($this->dbversion) {
       $this->SaveToDB();
     } else {
@@ -793,6 +793,18 @@ function strtoarray($s) {
   $a = explode("\n", trim($s));
   foreach ($a as $k => $v) $a[$k] = trim($v);
   return $a;
+}
+
+function tojson($a) {
+  if (defined('JSON_NUMERIC_CHECK')) {
+    return json_encode($a, JSON_NUMERIC_CHECK | (defined('JSON_UNESCAPED_UNICODE') ? JSON_UNESCAPED_UNICODE : 0));
+  }
+  
+  return json_encode($a);
+}
+
+function jsonattr($a) {
+  return str_replace('"', '&quot;', tojson($a));
 }
 
 function dumpstr($s) {
