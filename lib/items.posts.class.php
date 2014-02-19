@@ -8,8 +8,8 @@
 
 class titemsposts extends titems {
   public $tablepost;
-public $postprop;
-public $itemprop;
+  public $postprop;
+  public $itemprop;
   
   public static function i() {
     return getinstance(__class__);
@@ -20,24 +20,24 @@ public $itemprop;
     $this->basename = 'itemsposts';
     $this->table = 'itemsposts';
     $this->tablepost = 'posts';
-$this->postprop = 'post';
-$this->itemprop = 'item';
+    $this->postprop = 'post';
+    $this->itemprop = 'item';
   }
   
   public function add($idpost, $iditem) {
-      $this->db->add(array(
-      $this->postprop => $idpost,
-      $this->itemprop => $iditem
-      ));
-      $this->added();
+    $this->db->add(array(
+    $this->postprop => $idpost,
+    $this->itemprop => $iditem
+    ));
+    $this->added();
   }
   
   public function exists($idpost, $iditem) {
-      return $this->db->exists("$this->postprop = $idpost and $this->itemprop = $iditem");
+    return $this->db->exists("$this->postprop = $idpost and $this->itemprop = $iditem");
   }
   
   public function remove($idpost, $iditem) {
-      return $this->db->delete("$this->postprop = $idpost and $this->itemprop = $iditem");
+    return $this->db->delete("$this->postprop = $idpost and $this->itemprop = $iditem");
   }
   
   public function delete($idpost) {
@@ -45,14 +45,14 @@ $this->itemprop = 'item';
   }
   
   public function deletepost($idpost) {
-$db = $this->db;
-      $result = $db->res2id($db->query("select $this->itemprop from $this->thistable where $this->postprop = $idpost"));
-      $db->delete("$this->post = $idpost");
-return $result;
+    $db = $this->db;
+    $result = $db->res2id($db->query("select $this->itemprop from $this->thistable where $this->postprop = $idpost"));
+    $db->delete("$this->post = $idpost");
+    return $result;
   }
   
   public function deleteitem($iditem) {
-      $this->db->delete("$this->itemprop = $iditem");
+    $this->db->delete("$this->itemprop = $iditem");
     $this->deleted();
   }
   
@@ -105,7 +105,7 @@ class titemspostsowner extends titemsposts {
     if (!isset($owner)) return;
     parent::__construct();
     $this->owner = $owner;
-      $this->table = $owner->table . 'items';
+    $this->table = $owner->table . 'items';
   }
   
 public function load() { }

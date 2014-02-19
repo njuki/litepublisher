@@ -96,7 +96,7 @@ class tjsonserver extends tevents {
     }
     
     $this->callevent('aftercall', array(&$result, $args));
-      $js = tojson($result);
+    $js = tojson($result);
     //if (litepublisher::$debug) tfiler::log("response:\n".$js, 'json.txt');
     
     return "<?php

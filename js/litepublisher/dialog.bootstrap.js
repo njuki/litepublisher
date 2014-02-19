@@ -101,16 +101,16 @@
         $("#" + idbutton +i, dialog).data("index", i).on("click.dialog", options.buttons[i].click);
       }
       
-        dialog.on("shown.bs.modal", function() {
-      if ($.isFunction(options.open)) options.open(dialog);
-if ("tooltip" in $.fn) {
-   $(".tooltip-toggle", dialog).tooltip({
-container: 'body',
-placement: 'auto top'
-});
-}
-        });
-
+      dialog.on("shown.bs.modal", function() {
+        if ($.isFunction(options.open)) options.open(dialog);
+        if ("tooltip" in $.fn) {
+          $(".tooltip-toggle", dialog).tooltip({
+            container: 'body',
+            placement: 'auto top'
+          });
+        }
+      });
+      
       dialog.modal();
       var self = this;
       dialog.on("hidden.bs.modal", function() {

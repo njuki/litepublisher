@@ -20,7 +20,7 @@ class tadminviews extends tadminmenu {
     $form = new adminform($args);
     $form->action = litepublisher::$site->url . $url;
     $form->inline = true;
-$form->method = 'get';
+    $form->method = 'get';
     $form->items = '[combo=idview]';
     $form->submit = 'select';
     return $form->get();
@@ -81,7 +81,7 @@ $form->method = 'get';
       
       $result .= $html->getinput(
       $customadmin[$name]['type'],
-    "custom-$name",
+      "custom-$name",
       $value,
       tadminhtml::specchars($customadmin[$name]['title'])
       );
@@ -96,15 +96,15 @@ $form->method = 'get';
     foreach ($view->data['custom'] as $name => $value) {
       switch ($customadmin[$name]['type']) {
         case 'checkbox':
-      $view->data['custom'][$name] = isset($_POST["custom-$name"]);
+        $view->data['custom'][$name] = isset($_POST["custom-$name"]);
         break;
         
         case 'radio':
-      $view->data['custom'][$name] = $customadmin[$name]['values'][(int) $_POST["custom-$name"]];
+        $view->data['custom'][$name] = $customadmin[$name]['values'][(int) $_POST["custom-$name"]];
         break;
         
         default:
-      $view->data['custom'][$name] = $_POST["custom-$name"];
+        $view->data['custom'][$name] = $_POST["custom-$name"];
         break;
       }
     }
@@ -125,10 +125,10 @@ $form->method = 'get';
     foreach ($sidebarnames as $k => $v) {
       if (isset($about["sidebar$k"])) $sidebarnames[$k] = $about["sidebar$k"];
     }
-
+    
     $sidebars = '';
     if (($idview > 1) && !$view->customsidebar) $view = tview::i(1);
-$sitems = array();
+    $sitems = array();
     foreach ($view->sidebars as $index => $sidebar) {
       $args->index = $index;
       $widgetlist = '';
@@ -136,47 +136,47 @@ $sitems = array();
       foreach ($sidebar as $_item) {
         $id = $_item['id'];
         $idwidgets[] = $id;
-$sitems[$id] = $_item;
+        $sitems[$id] = $_item;
         $args->id = $id;
         $args->add($widgets->items[$id]);
         $widgetlist .= $html->widgetitem($args);
       }
-
+      
       $args->sidebarname = $sidebarnames[$index];
       $args->widgetlist = $widgetlist;
       $args->idwidgets = implode(',', $idwidgets);
       $sidebars .= $html->sidebar($args);
-}
-
+    }
+    
     $woptions = '';
-$allwidgets = '';
-foreach ($widgets->items as $id => $item) {
-        $args->id = $id;
-        $args->add($item);
-        $enabled = ($item['cache'] == 'cache') || ($item['cache'] == 'nocache');
-$args->enabled = $enabled ? 'enabled' : 'disabled';
-
-if (isset($sitems[$id])) {
-$sitem = $sitems[$id];
-} else {
+    $allwidgets = '';
+    foreach ($widgets->items as $id => $item) {
+      $args->id = $id;
+      $args->add($item);
+      $enabled = ($item['cache'] == 'cache') || ($item['cache'] == 'nocache');
+      $args->enabled = $enabled ? 'enabled' : 'disabled';
+      
+      if (isset($sitems[$id])) {
+        $sitem = $sitems[$id];
+      } else {
         $allwidgets .= $html->widgetitem($args);
-$sitem = array(
-'ajax' => $enabled ? 'inline' : false
-);
-}
-
-$args->add($sitem);
-      $args->controls =         
-$html->getinput('checkbox', "ajax$id", $sitem['ajax'] ? 'checked="checked"' : '', $lang->ajax) .
+        $sitem = array(
+        'ajax' => $enabled ? 'inline' : false
+        );
+      }
+      
+      $args->add($sitem);
+      $args->controls =
+      $html->getinput('checkbox', "ajax$id", $sitem['ajax'] ? 'checked="checked"' : '', $lang->ajax) .
       $html->getinput('checkbox', "inline$id", ($enabled ? '' : 'disabled="disabled" ') . ($sitem['ajax'] === 'inline' ? 'checked="checked"' : ''), $lang->inline) .
       $html->getinput('submit', "delete$id", '', $lang->widget_delete);
-
-        $woptions  .= $html->woptions ($args);
+      
+      $woptions  .= $html->woptions ($args);
     }
     
     $args->sidebars = $sidebars;
     $args->woptions = $woptions;
-$args->allwidgets = $allwidgets;
+    $args->allwidgets = $allwidgets;
     return $html->sidebars($args);
   }
   
@@ -190,44 +190,44 @@ $args->allwidgets = $allwidgets;
       case 'views':
       $html->addsearch('views');
       $lang->addsearch('views');
-$id = tadminhtml::getparam('idview', 0);
-if (!$id || !$views->itemexists($id)) {
-$adminurl = $this->adminurl . 'view';
-return $html->h4($html->getlink($this->url . '/addview/', $lang->add)) .
-$html->buildtable($views->items, array(
-array('left', $lang->name, "<a href=\"$adminurl=\$id\">\$name</a>"),
-array('center', $lang->delete, "<a href=\"$adminurl=\$id&action=delete\" class=\"confirm-delete-link\">$lang->delete</a>"),
-));
-}
-
-        $result = self::getviewform($this->url);
+      $id = tadminhtml::getparam('idview', 0);
+      if (!$id || !$views->itemexists($id)) {
+        $adminurl = $this->adminurl . 'view';
+        return $html->h4($html->getlink($this->url . '/addview/', $lang->add)) .
+        $html->buildtable($views->items, array(
+        array('left', $lang->name, "<a href=\"$adminurl=\$id\">\$name</a>"),
+        array('center', $lang->delete, "<a href=\"$adminurl=\$id&action=delete\" class=\"confirm-delete-link\">$lang->delete</a>"),
+        ));
+      }
+      
+      $result = self::getviewform($this->url);
       $tabs = new tuitabs();
       $menuitems = array();
       foreach ($views->items as $itemview) {
         $class = $itemview['menuclass'];
         $menuitems[$class] = $class == 'tmenus' ? $lang->stdmenu : ($class == 'tadminmenus' ? $lang->adminmenu : $class);
       }
-
-$itemview = $views->items[$id];
-        $args->add($itemview);
-        $tabs->add($lang->widgets, $this->get_view_sidebars($id, $html, $lang, $args));
-$args->menu = tadminhtml  ::array2combo($menuitems, $itemview['menuclass']);
-        $tabs->add($lang->name,'[text=name]' . 
-        ($id == 1 ? '' : ('[checkbox=customsidebar] [checkbox=disableajax]')) .
-'[checkbox=hovermenu] [combo=menu]');
-
-    $view = tview::i($id);
-$lang->firstsearch('themes');
-        $tabs->add($lang->theme, tadminthemes::getlist($html->radiotheme, $view->theme->name));
-    if (count($view->custom)) $tabs->add($lang->custom, $this->get_custom($view));
-
-$result .= $html->p->help;      
-    $form = new adminform($args);
-$form->id = 'admin-view-form';
-$form->title = $lang->edit;
-$form->items = $tabs->get();
+      
+      $itemview = $views->items[$id];
+      $args->add($itemview);
+      $tabs->add($lang->widgets, $this->get_view_sidebars($id, $html, $lang, $args));
+      $args->menu = tadminhtml  ::array2combo($menuitems, $itemview['menuclass']);
+      $tabs->add($lang->name,'[text=name]' .
+      ($id == 1 ? '' : ('[checkbox=customsidebar] [checkbox=disableajax]')) .
+      '[checkbox=hovermenu] [combo=menu]');
+      
+      $view = tview::i($id);
+      $lang->firstsearch('themes');
+      $tabs->add($lang->theme, tadminthemes::getlist($html->radiotheme, $view->theme->name));
+      if (count($view->custom)) $tabs->add($lang->custom, $this->get_custom($view));
+      
+      $result .= $html->h4->help;
+      $form = new adminform($args);
+      $form->id = 'admin-view-form';
+      $form->title = $lang->edit;
+      $form->items = $tabs->get();
       $result .= $form->get();
-$result .=       ttemplate::i()->getjavascript(ttemplate::i()->jsmerger_adminviews);
+      $result .=       ttemplate::i()->getjavascript(ttemplate::i()->jsmerger_adminviews);
       break;
       
       case 'addview':
@@ -322,43 +322,43 @@ $result .=       ttemplate::i()->getjavascript(ttemplate::i()->jsmerger_adminvie
     switch ($this->name) {
       case 'views':
       $views = tviews::i();
-        $idview = (int) tadminhtml::getparam('idview', 0);
-        if (!$idview || !$views->itemexists($idview)) return '';
-if ($this->action == 'delete') {
+      $idview = (int) tadminhtml::getparam('idview', 0);
+      if (!$idview || !$views->itemexists($idview)) return '';
+      if ($this->action == 'delete') {
         if ($idview > 1) $views->delete($idview);
-return '';
-}
-
-          $view = tview::i($idview);
-          if ($idview > 1) {
-            $view->customsidebar = isset($_POST['customsidebar']);
-            $view->disableajax = isset($_POST['disableajax']);
-          }
-
-          $view->name = trim($_POST['name']);
-          $view->themename = trim($_POST['theme_idview']);
-          $view->menuclass = $_POST['menu'];
-          $view->hovermenu = isset($_POST['hovermenu']);
-
-          $this->set_custom($idview);
-
-          if (($idview == 1) || $view->customsidebar) {
+        return '';
+      }
+      
+      $view = tview::i($idview);
+      if ($idview > 1) {
+        $view->customsidebar = isset($_POST['customsidebar']);
+        $view->disableajax = isset($_POST['disableajax']);
+      }
+      
+      $view->name = trim($_POST['name']);
+      $view->themename = trim($_POST['theme_idview']);
+      $view->menuclass = $_POST['menu'];
+      $view->hovermenu = isset($_POST['hovermenu']);
+      
+      $this->set_custom($idview);
+      
+      if (($idview == 1) || $view->customsidebar) {
         $widgets = twidgets::i();
-            foreach (range(0, 2) as $index) {
-              $view->sidebars[$index] = array();
-            $idwidgets = explode(',', trim($_POST["$sidebar$index"]));
-              foreach($idwidgets as $idwidget) {
-                $idwidget = (int) trim($idwidget);
-                if (!$widgets->itemexists($idwidget)) continue;
-                  $view->sidebars[$index][] = array(
-                  'id' => $idwidget,
-              'ajax' =>isset($_POST["inline$idwidget"]) ? 'inline' : isset($_POST["ajax$idwidget"])
-                  );
-                }
-              }
-            }
-
-        $view->save();
+        foreach (range(0, 2) as $index) {
+          $view->sidebars[$index] = array();
+          $idwidgets = explode(',', trim($_POST["$sidebar$index"]));
+          foreach($idwidgets as $idwidget) {
+            $idwidget = (int) trim($idwidget);
+            if (!$widgets->itemexists($idwidget)) continue;
+            $view->sidebars[$index][] = array(
+            'id' => $idwidget,
+            'ajax' =>isset($_POST["inline$idwidget"]) ? 'inline' : isset($_POST["ajax$idwidget"])
+            );
+          }
+        }
+      }
+      
+      $view->save();
       break;
       
       case 'addview':
@@ -368,7 +368,7 @@ return '';
         $id = $views->add($name);
       }
       break;
-
+      
       case 'spec':
       foreach (self::getspecclasses() as $classname) {
         $obj = getinstance($classname);

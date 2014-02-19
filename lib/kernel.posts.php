@@ -8,6 +8,8 @@
 //items.posts.class.php
 class titemsposts extends titems {
   public $tablepost;
+  public $postprop;
+  public $itemprop;
   
   public static function i() {
     return getinstance(__class__);
@@ -18,48 +20,24 @@ class titemsposts extends titems {
     $this->basename = 'itemsposts';
     $this->table = 'itemsposts';
     $this->tablepost = 'posts';
+    $this->postprop = 'post';
+    $this->itemprop = 'item';
   }
   
   public function add($idpost, $iditem) {
-    if (dbversion) {
-      $this->db->add(array(
-      'post' => $idpost,
-      'item' => $iditem
-      ));
-      $this->added();
-    } else {
-      if (!isset($this->items[$idpost]))  $this->items[$idpost] = array();
-      if (!in_array($iditem, $this->items[$idpost])) {
-        $this->items[$idpost][] =$iditem;
-        $this->save();
-        $this->added();
-        return true;
-      }
-      return false;
-    }
+    $this->db->add(array(
+    $this->postprop => $idpost,
+    $this->itemprop => $iditem
+    ));
+    $this->added();
   }
   
   public function exists($idpost, $iditem) {
-    if ($this->dbversion) {
-      return $this->db->exists("post = $idpost and item = $iditem");
-    } else {
-      return isset($this->items[$idpost]) && is_int(array_search($iditem, $this->items[$idpost]));
-    }
+    return $this->db->exists("$this->postprop = $idpost and $this->itemprop = $iditem");
   }
   
   public function remove($idpost, $iditem) {
-    if (dbversion) {
-      return $this->db->delete("post = $idpost and item = $iditem");
-    } elseif (isset($this->items[$idpost])) {
-      $i = array_search($iditem, $this->items[$idpost]);
-      if (is_int($i))  {
-        array_splice($this->items[$idpost], $i, 1);
-        $this->save();
-        $this->deleted();
-        return true;
-      }
-      return false;
-    }
+    return $this->db->delete("$this->postprop = $idpost and $this->itemprop = $iditem");
   }
   
   public function delete($idpost) {
@@ -67,32 +45,14 @@ class titemsposts extends titems {
   }
   
   public function deletepost($idpost) {
-    if (dbversion) {
-      $result = litepublisher::$db->res2id(litepublisher::$db->query("select item from $this->thistable where post = $idpost"));
-      $this->db->delete("post = $idpost");
-      return $result;
-    } else {
-      if (isset($this->items[$idpost])) {
-        $result = $this->items[$idpost];
-        unset($this->items[$idpost]);
-        $this->save();
-        return $result;
-      } else {
-        return array();
-      }
-    }
+    $db = $this->db;
+    $result = $db->res2id($db->query("select $this->itemprop from $this->thistable where $this->postprop = $idpost"));
+    $db->delete("$this->post = $idpost");
+    return $result;
   }
   
   public function deleteitem($iditem) {
-    if (dbversion) {
-      $this->db->delete("item = $iditem");
-    } else {
-      foreach ($this->items as $idpost => $item) {
-        $i = array_search($iditem, $item);
-        if (is_int($i))  array_splice($this->items[$idpost], $i, 1);
-      }
-      $this->save();
-    }
+    $this->db->delete("$this->itemprop = $iditem");
     $this->deleted();
   }
   
@@ -103,32 +63,29 @@ class titemsposts extends titems {
     $add = array_diff($items, $old);
     $delete = array_diff($old, $items);
     
-    if (count($delete) > 0) {
-      $db->delete("post = $idpost and item in (" . implode(', ', $delete) . ')');
-    }
-    
-    if (count($add) > 0) {
+    if (count($delete)) $db->delete("$this->postprop = $idpost and $this->itemprop in (" . implode(', ', $delete) . ')');
+    if (count($add)) {
       $vals = array();
       foreach ($add as $iditem) {
         $vals[]= "($idpost, $iditem)";
       }
-      $db->exec("INSERT INTO $this->thistable (post, item) values " . implode(',', $vals) );
+      $db->exec("INSERT INTO $this->thistable ($this->postprop, $this->itemprop) values " . implode(',', $vals) );
     }
     
     return array_merge($old, $add);
   }
   
   public function getitems($idpost) {
-    return litepublisher::$db->res2id(litepublisher::$db->query("select item from $this->thistable where post = $idpost"));
+    return litepublisher::$db->res2id(litepublisher::$db->query("select $this->itemprop from $this->thistable where $this->postprop = $idpost"));
   }
   
   public function getposts($iditem) {
-    return litepublisher::$db->res2id(litepublisher::$db->query("select post from $this->thistable where item = $iditem"));
+    return litepublisher::$db->res2id(litepublisher::$db->query("select $this->postprop from $this->thistable where $this->itemprop = $iditem"));
   }
   
   public function getpostscount($ititem) {
     $db = $this->getdb($this->tablepost);
-    return $db->getcount("$db->prefix$this->tablepost.status = 'published' and id in (select post from $this->thistable where item = $ititem)");
+    return $db->getcount("$db->prefix$this->tablepost.status = 'published' and id in (select $this->postprop from $this->thistable where $this->itemprop = $ititem)");
   }
   
   public function updateposts(array $list, $propname) {
@@ -148,13 +105,7 @@ class titemspostsowner extends titemsposts {
     if (!isset($owner)) return;
     parent::__construct();
     $this->owner = $owner;
-    if ($owner->dbversion) {
-      $this->table = $owner->table . 'items';
-    } else {
-      $this->items = &$owner->data['itemsposts'];
-    }
-    
-    $this->dbversion = $owner->dbversion;
+    $this->table = $owner->table . 'items';
   }
   
 public function load() { }
@@ -358,7 +309,7 @@ class tpost extends titem implements  itemplate {
   }
   
   public function setassoc(array $a) {
-    $trans = $this->factory->gettransform($this);;
+    $trans = $this->factory->gettransform($this);
     $trans->setassoc($a);
     if ($this->childtable) {
       if ($a = $this->getdb($this->childtable)->getitem($this->id)) {
@@ -1119,8 +1070,7 @@ class tposts extends titems {
   }
   
   public static function unsub($obj) {
-    $self = self::i();
-    $self->unbind($obj);
+    self::i()->unbind($obj);
   }
   
   protected function create() {
@@ -1814,6 +1764,10 @@ class tcommontags extends titems implements  itemplate {
     }
   }
   
+  public function geturltype() {
+    return 'normal';
+  }
+  
   public function add($parent, $title) {
     $title = trim($title);
     if (empty($title)) return false;
@@ -1821,10 +1775,7 @@ class tcommontags extends titems implements  itemplate {
     $parent = (int) $parent;
     if (($parent != 0) && !$this->itemexists($parent)) $parent = 0;
     
-    $urlmap =turlmap::i();
-    $linkgen = tlinkgenerator::i();
-    $url = $linkgen->createurl($title, $this->PermalinkIndex, true);
-    
+    $url = tlinkgenerator::i()->createurl($title, $this->PermalinkIndex, true);
     $views = tviews::i();
     $idview = isset($views->defaults[$this->PermalinkIndex]) ? $views->defaults[$this->PermalinkIndex] : 1;
     
@@ -1846,12 +1797,12 @@ class tcommontags extends titems implements  itemplate {
     
     $id = $this->db->add($item);
     $this->items[$id] = $item;
-    $idurl =         $urlmap->add($url, get_class($this),  $id);
+    $idurl =         litepublisher::$urlmap->add($url, get_class($this),  $id, $this->urltype);
     $this->setvalue($id, 'idurl', $idurl);
     $this->items[$id]['url'] = $url;
     $this->added($id);
     $this->changed();
-    $urlmap->clearcache();
+    litepublisher::$urlmap->clearcache();
     return $id;
   }
   
@@ -1866,7 +1817,6 @@ class tcommontags extends titems implements  itemplate {
       ));
     }
     
-    $urlmap = turlmap::i();
     $linkgen = tlinkgenerator::i();
     $url = trim($url);
     // try rebuild url
@@ -1875,18 +1825,18 @@ class tcommontags extends titems implements  itemplate {
     }
     
     if ($item['url'] != $url) {
-      if (($urlitem = $urlmap->finditem($url)) && ($urlitem['id'] != $item['idurl'])) {
+      if (($urlitem = litepublisher::$urlmap->finditem($url)) && ($urlitem['id'] != $item['idurl'])) {
         $url = $linkgen->MakeUnique($url);
       }
-      $urlmap->setidurl($item['idurl'], $url);
-      $urlmap->addredir($item['url'], $url);
+      litepublisher::$urlmap->setidurl($item['idurl'], $url);
+      litepublisher::$urlmap->addredir($item['url'], $url);
       $item['url'] = $url;
     }
     
     $this->items[$id] = $item;
     $this->save();
     $this->changed();
-    $urlmap->clearcache();
+    litepublisher::$urlmap->clearcache();
   }
   
   public function delete($id) {
@@ -2587,8 +2537,6 @@ class tfiles extends titems {
     $preview = new tarray2prop();
     ttheme::$vars['preview'] = $preview;
     $index = 0;
-    // json options supported in php 5.3
-    $jsattr =defined('JSON_NUMERIC_CHECK') ? (JSON_NUMERIC_CHECK | (defined('JSON_UNESCAPED_UNICODE') ? JSON_UNESCAPED_UNICODE : 0)) : false;
     foreach ($items as $type => $subitems) {
       $args->subcount = count($subitems);
       $sublist = '';
@@ -2619,12 +2567,7 @@ class tfiles extends titems {
         }
         
         unset($item['title'], $item['keywords'], $item['description']);
-        if ($jsattr) {
-          $js = json_encode($item, $jsattr);
-        } else {
-          $js = json_encode($item);
-        }
-        $args->json = str_replace('"', '&quot;', $js);
+        $args->json = jsonattr($item);
         
         $sublist .= $theme->parsearg($tml[$type], $args);
       }
