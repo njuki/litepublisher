@@ -96,7 +96,7 @@ class tfiler {
   }
   
   public static function log($s, $filename = '') {
-if (!is_string($s)) $s = var_export($s, true);
+    if (!is_string($s)) $s = var_export($s, true);
     if ($filename == '') $filename = 'log.txt';
     self::append(date('r') . "\n$s\n\n", litepublisher::$paths->data . 'logs' . DIRECTORY_SEPARATOR . $filename);
   }
