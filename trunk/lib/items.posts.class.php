@@ -25,7 +25,7 @@ class titemsposts extends titems {
   }
   
   public function add($idpost, $iditem) {
-    $this->db->add(array(
+    $this->db->insert(array(
     $this->postprop => $idpost,
     $this->itemprop => $iditem
     ));

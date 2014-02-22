@@ -807,6 +807,11 @@ function jsonattr($a) {
   return str_replace('"', '&quot;', tojson($a));
 }
 
+function toenum($v, array $a) {
+  $v = trim($v);
+  return in_array($v, $a) ? $v : $a[0];
+}
+
 function dumpstr($s) {
   echo "<pre>\n", htmlspecialchars($s), "</pre>\n";
 }

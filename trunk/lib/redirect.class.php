@@ -28,11 +28,11 @@ class tredirector extends titems {
   public function get($url) {
     if (isset($this->items[$url])) return $this->items[$url];
     if (strbegin($url, litepublisher::$site->url)) return substr($url, strlen(litepublisher::$site->url));
-
-//redir jquery scripts
+    
+    //redir jquery scripts
     if (strbegin($url, '/js/jquery/ui-')) return '/js/jquery/ui-' . litepublisher::$site->jqueryui_version . substr($url, strpos($url, '/', 15));
     if (strbegin($url, '/js/jquery/jquery')) return '/js/jquery/jquery-' . litepublisher::$site->jquery_version . '.min.js';
-
+    
     //fix for 2.xx versions
     if (preg_match('/^\/comments\/(\d*?)\/?$/', $url, $m)) return sprintf('/comments/%d.xml', $m[1]);
     if (preg_match('/^\/authors\/(\d*?)\/?$/', $url, $m)) return '/comusers.htm?id=' . $m[1];
