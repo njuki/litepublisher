@@ -47,7 +47,7 @@ class titemsposts extends titems {
   public function deletepost($idpost) {
     $db = $this->db;
     $result = $db->res2id($db->query("select $this->itemprop from $this->thistable where $this->postprop = $idpost"));
-    $db->delete("$this->post = $idpost");
+    $db->delete("$this->postprop = $idpost");
     return $result;
   }
   

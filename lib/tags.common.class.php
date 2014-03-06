@@ -21,18 +21,22 @@ class tcommontags extends titems implements  itemplate {
     $this->dbversion = dbversion;
     parent::create();
     $this->addevents('changed', 'onbeforecontent', 'oncontent');
-    $this->factory = litepublisher::$classes->getfactory($this);
     $this->data['lite'] = false;
     $this->data['includechilds'] = false;
     $this->data['includeparents'] = false;
     $this->PermalinkIndex = 'category';
     $this->postpropname = 'categories';
+    $this->all_loaded = false;
+    $this->_idposts = array();
+$this->createfactory();
+  }
+
+protected function createfactory() {
+    $this->factory = litepublisher::$classes->getfactory($this);
     $this->contents = new ttagcontent($this);
     if (!$this->dbversion)  $this->data['itemsposts'] = array();
     $this->itemsposts = new titemspostsowner ($this);
-    $this->all_loaded = false;
-    $this->_idposts = array();
-  }
+}
   
   public function loadall() {
     //prevent double request
@@ -109,23 +113,23 @@ class tcommontags extends titems implements  itemplate {
   }
   
   public function postdeleted($idpost) {
-    $this->lock();
     $changed = $this->itemsposts->deletepost($idpost);
     $this->updatecount($changed);
-    $this->unlock();
   }
   
-  private function updatecount(array $items) {
+  protected function updatecount(array $items) {
     if (count($items) == 0) return;
     $db = litepublisher::$db;
     //next queries update values
     $items = implode(',', $items);
     $thistable = $this->thistable;
     $itemstable = $this->itemsposts->thistable;
+$itemprop = $this->itemsposts->itemprop;
+$postprop = $this->itemsposts->postprop;
     $poststable = $db->posts;
-    $list = $db->res2assoc($db->query("select $itemstable.item as id, count($itemstable.item)as itemscount from $itemstable, $poststable
-    where $itemstable.item in ($items)  and $itemstable.post = $poststable.id and $poststable.status = 'published'
-    group by $itemstable.item"));
+    $list = $db->res2assoc($db->query("select $itemstable.$itemprop as id, count($itemstable.$itemprop)as itemscount from $itemstable, $poststable
+    where $itemstable.$itemprop in ($items)  and $itemstable.$postprop = $poststable.id and $poststable.status = 'published'
+    group by $itemstable.$itemprop"));
     
     $db->table = $this->table;
     foreach ($list as $item) {
