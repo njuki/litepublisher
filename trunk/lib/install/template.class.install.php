@@ -12,7 +12,8 @@ function ttemplateInstall($self) {
   <link rel="pingback" href="$site.url/rpc.xml" />
   <link rel="EditURI" type="application/rsd+xml" title="RSD" href="$site.url/rsd.xml" />
   <link rel="wlwmanifest" type="application/wlwmanifest+xml" href="$site.url/wlwmanifest.xml" />
-  <link rel="shortcut icon" type="image/x-icon" href="$template.icon" />
+<link rel="shortcut icon" type="image/x-icon" href="$site.files/favicon.ico" />
+<link rel="apple-touch-icon" href="$site.files/apple-touch-icon.png" />
   <meta name="generator" content="Lite Publisher $site.version" /> <!-- leave this for stats -->
   <meta name="keywords" content="$template.keywords" />
   <meta name="description" content="$template.description" />
