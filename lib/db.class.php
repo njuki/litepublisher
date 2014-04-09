@@ -231,8 +231,7 @@ class tdatabase {
   }
   
   public function  exists($where) {
-    if ($this->query("select *  from $this->prefix$this->table where $where limit 1")->num_rows) return true;
-    return false;
+return $this->query("select *  from $this->prefix$this->table where $where limit 1")->num_rows;
   }
   
   public function getlist(array $list) {
