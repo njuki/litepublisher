@@ -48,9 +48,10 @@ protected function createfactory() {
   public function select($where, $limit) {
     if ($where != '') $where .= ' and ';
     $db = litepublisher::$db;
-    $table = $this->thistable;
-    $res = $db->query("select $table.*, $db->urlmap.url from $table, $db->urlmap
-    where $where $table.idurl = $db->urlmap.id $limit");
+    $t = $this->thistable;
+$u = $db->urlmap;
+    $res = $db->query("select $t.*, $u.url from $t, $u
+    where $where $u.id = $t.idurl $limit");
     return $this->res2items($res);
   }
   
@@ -219,7 +220,7 @@ $postprop = $this->itemsposts->postprop;
     $list = $this->itemsposts->getposts($id);
     $this->itemsposts->deleteitem($id);
     parent::delete($id);
-    $this->itemsposts->updateposts($list, $this->postpropname);
+    if ($this->postpropname) $this->itemsposts->updateposts($list, $this->postpropname);
     $this->changed();
     litepublisher::$urlmap->clearcache();
   }
@@ -422,6 +423,8 @@ $postprop = $this->itemsposts->postprop;
     $p = $posts->thistable;
     $t = $this->thistable;
     $ti = $this->itemsposts->thistable;
+$postprop = $this->itemsposts->postprop;
+$itemprop = $this->itemsposts->itemprop;
     
     if ($includeparents || $includechilds) {
       $this->loadall();
@@ -441,8 +444,8 @@ $postprop = $this->itemsposts->postprop;
     "order by $p.posted $order limit $from, $perpage");
     */
     
-    $result = $this->db->res2id($this->db->query("select $p.id as id, $ti.post as post from $p, $ti
-    where    $ti.item $tags and $p.id = $ti.post and $p.status = 'published'
+    $result = $this->db->res2id($this->db->query("select $ti.$postprop as $postprop, $p.id as id from $ti, $p
+    where    $ti.$itemprop $tags and $p.id = $ti.$postprop and $p.status = 'published'
     order by $p.posted $order limit $from, $perpage"));
     
     $result = array_unique($result);

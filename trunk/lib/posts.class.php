@@ -70,15 +70,12 @@ class tposts extends titems {
       $t->setassoc($a);
       $result[] = $t->post->id;
       $f = $t->post->files;
-      if (count($f) > 0) $fileitems = array_merge($fileitems, array_diff($f, $fileitems));
+      if (count($f)) $fileitems = array_merge($fileitems, array_diff($f, $fileitems));
     }
+
     unset($t);
     if ($this->syncmeta)  tmetapost::loaditems($result);
-    if (count($fileitems) > 0) {
-      $files = tfiles::i();
-      $files->preload($fileitems);
-    }
-    
+    if (count($fileitems)) tfiles::i()->preload($fileitems);
     $this->onselect($result);
     return $result;
   }

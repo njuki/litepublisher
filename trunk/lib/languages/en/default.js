@@ -3,6 +3,7 @@ window.lang= window.lang || {};
 window.lang.dialog = {
   'error': 'Error',
   'confirm' : 'Confirm',
+'remove': 'Delete',
   'confirmdelete': "Do you realy want to delete?",
   'cancel' : 'Cancel',
   'close': 'Close',

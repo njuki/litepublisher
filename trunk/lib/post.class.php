@@ -10,8 +10,6 @@ class tpost extends titem implements  itemplate {
   public $childdata;
   public $childtable;
   public $factory;
-  public $props;
-  public $propdata;
   public $syncdata;
   private $aprev;
   private $anext;
@@ -60,8 +58,6 @@ class tpost extends titem implements  itemplate {
   
   protected function create() {
     $this->table = 'posts';
-    $this->props = array();
-    $this->propdata = array();
     $this->syncdata = array();
     //last binding, like cache
     $this->childtable = call_user_func_array(array(get_class($this), 'getchildtable'), array());
@@ -138,12 +134,6 @@ class tpost extends titem implements  itemplate {
   }
   
   public function __set($name, $value) {
-    /*
-    foreach ($this->props as $props) {
-      if ($props->set($this, $name, $value)) return true;
-    }
-    */
-    
     if ($this->childtable) {
       if ($name == 'id') return $this->setid($value);
       if (method_exists($this, $set = 'set'. $name)) return $this->$set($value);
@@ -340,6 +330,10 @@ class tpost extends titem implements  itemplate {
   
   public function getrsscomments() {
     return litepublisher::$site->url . "/comments/$this->id.xml";
+  }
+
+  public function Getisodate() {
+    return date('c', $this->posted);
   }
   
   public function Getpubdate() {

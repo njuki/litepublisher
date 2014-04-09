@@ -440,7 +440,13 @@ class tadminhtml {
   public function tablevalues(array $a) {
     $body = '';
     foreach ($a as $k => $v) {
+if (is_array($v)) {
+foreach ($v as $vk => $vv) {
+      $body .= sprintf('<tr><td>%s</td><td>%s</td></tr>', $kv, $vv);
+}
+} else {
       $body .= sprintf('<tr><td>%s</td><td>%s</td></tr>', $k, $v);
+}
     }
     
     $lang = tlocal::i();
@@ -822,7 +828,6 @@ class adminform {
   public function line($s) {
     return "<div class=\"$this->inlineclass\">$s</div>";
   }
-  
   
   public function __set($k, $v) {
     switch ($k) {
