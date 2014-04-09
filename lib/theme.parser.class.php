@@ -349,7 +349,7 @@ class tthemeparser extends tevents {
       
       while (($s != '') && preg_match('/(\$\w*+(\.\w\w*+)?)\s*=\s*(\[|\{|\()?/i', $s, $m)) {
           if (!isset($m[3])) {
-            $this->error('The bracket not found');
+            $this->error('The bracket not found in ' . $s);
           }
           $tag = $m[1];
           $j = strpos($s, $m[0]);

@@ -206,7 +206,7 @@ class tdatabase {
   
   public function getcount($where = '') {
     $sql = "SELECT COUNT(*) as count FROM $this->prefix$this->table";
-    if ($where != '') $sql .= ' where '. $where;
+    if ($where) $sql .= ' where '. $where;
     if (($res = $this->query($sql)) && ($r = $res->fetch_assoc())) {
       return (int) $r['count'];
     }
@@ -269,6 +269,17 @@ class tdatabase {
   
   public function setvalue($id, $name, $value) {
     return $this->update("$name = " . $this->quote($value), "id = $id");
+  }
+
+  public function getvalues($name, $where) {
+    $result = array();
+    $res = $this->query("select $name from $this->prefix$this->table where $where");
+    if (is_object($res)) {
+      while ($r = $res->fetch_row()) {
+        $result[$r[0]] = $r[1];
+      }
+}
+      return $result;
   }
   
   public function res2array($res) {

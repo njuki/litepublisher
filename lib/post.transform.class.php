@@ -77,9 +77,7 @@ class tposttransform  {
   }
   
   public function setassoc(array $a) {
-    foreach ($a as $name => $value) {
-      $this->__set($name, $value);
-    }
+    foreach ($a as $k => $v) $this->__set($k, $v);
   }
   
   public function __get($name) {
