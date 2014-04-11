@@ -14,6 +14,7 @@ set: false,
 remove: false,
 
 init: function() {
+if ("storage" in litepubl) return;
 var works = false;
 
         if("localStorage" in window){
