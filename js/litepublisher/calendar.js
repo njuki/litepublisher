@@ -6,6 +6,7 @@
 **/
 
 (function ($, document, window) {
+  'use strict';
   litepubl.Calendar = Class.extend({
     holderclass: ".calendar",
     rangeclass: ".date-range",

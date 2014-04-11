@@ -6,6 +6,7 @@
 **/
 
 ;(function ($, document, window) {
+  'use strict';
   $.YoutubeBootstrap = Class.extend({
     id: 0,
     vid: '',

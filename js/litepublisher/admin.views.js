@@ -6,6 +6,8 @@
 **/
 
 (function ($, document, window) {
+  'use strict';
+
   litepubl.Adminview = Class.extend({
     
     init: function() {

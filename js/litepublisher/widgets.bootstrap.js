@@ -6,6 +6,7 @@
 **/
 
 (function( $, window, document, litepubl){
+  'use strict';
   litepubl.BootstrapWidgets = Class.extend({
     toggleclass: "",
     

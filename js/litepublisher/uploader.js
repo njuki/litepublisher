@@ -6,6 +6,7 @@
 **/
 
 (function ($, litepubl, window) {
+  'use strict';
   litepubl.Uploader = Class.extend({
     handler: false,
     postdata: false,
