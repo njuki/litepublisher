@@ -6,6 +6,7 @@
 **/
 
 (function( $, window, document){
+  'use strict';
   $.fn.popimage = function(options) {
     options = $.extend({
       title: "",

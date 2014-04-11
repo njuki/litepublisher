@@ -6,6 +6,8 @@
 **/
 
 (function( $, window, document){
+  'use strict';
+
   $.BootstrapDialog = Class.extend({
     tml: '<div class="modal fade" id="dialog-%%id%%" tabindex="-1" role="dialog" aria-hidden="true">' +
     '<div class="modal-dialog center-block%%sizeclass%%"><div class="modal-content">' +
@@ -16,7 +18,6 @@
     '</div></div></div>',
     
     button: '<button type="button" class="btn btn-default" id="%%id%%">%%title%%</button>',
-    //singlebutton: '<button type="button" class="btn btn-primary" data-dismiss="modal" id="%%id%%">%%title%%</button>',
     dialog: false,
     styles: false,
     tmlstyle:'<style type="text/css">' +

@@ -6,6 +6,7 @@
 **/
 
 (function ($, document, window) {
+  'use strict';
   $.fn.litetabs = function(params) {
     if (params == "select") return setselected(arguments[1]);
     if (params == "setindex") return setindex(this, arguments[1]);

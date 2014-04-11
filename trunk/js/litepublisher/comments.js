@@ -6,6 +6,7 @@
 **/
 
 (function ($, document, window) {
+  'use strict';
   window.litepubl.Commentquote = Class.extend({
     
     init: function(opt) {

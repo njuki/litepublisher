@@ -6,6 +6,7 @@
 **/
 
 (function ($, document, window) {
+  'use strict';
   window.litepubl.class_confirmcomment = Class.extend({
     
     init: function(opt) {

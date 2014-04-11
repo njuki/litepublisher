@@ -6,6 +6,7 @@
 **/
 
 (function ($, litepubl, window) {
+  'use strict';
   //method to override
   litepubl.init_fileman = function(options) {
     return new litepubl.Fileman(options);

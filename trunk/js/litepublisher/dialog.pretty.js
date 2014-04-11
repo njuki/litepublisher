@@ -6,6 +6,7 @@
 **/
 
 (function( $ ){
+  'use strict';
   $.closedialog = function() {
     $.prettyPhoto.close();
   };

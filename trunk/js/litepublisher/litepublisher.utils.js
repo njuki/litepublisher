@@ -6,6 +6,7 @@
 **/
 
 (function ($, document, window) {
+  'use strict';
   var rurl = /^([\w.+-]+:)(?:\/\/([^\/?#:]*)(?::(\d+)|)|)/;
   var dom = rurl.exec(ltoptions.url);
   var href = rurl.exec(location.href.toLowerCase()) || [];

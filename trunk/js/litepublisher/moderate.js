@@ -6,6 +6,7 @@
 **/
 
 (function ($, document, window) {
+  'use strict';
   litepubl.Moderate = Class.extend({
     enabled : true,
     
@@ -21,8 +22,12 @@
       }, ltoptions.theme.comments, opt);
       
       this.onbuttons = $.Callbacks();
-      this.create_buttons(this.options.comments +", " + this.options.hold);
       $(".loadhold").click(this.loadhold);
+
+var self = this;
+      window.setTimeout(function() {
+      self.create_buttons(self.options.comments +", " + self.options.hold);
+}, 20);
     },
     
     setenabled: function(value) {

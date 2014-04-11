@@ -6,6 +6,7 @@
 **/
 
 (function ($, document, window, litepubl) {
+  'use strict';
   $(document).ready(function() {
     $(".checkall").click(function() {
       $(this).closest("form").find("input[type='checkbox']").prop("checked", true);
