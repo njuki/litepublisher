@@ -24,11 +24,12 @@
         json-serializble:
             The *thing* to be converted.
      **/
-    $.toJSON = function(o)
-    {
-        if (typeof(JSON) == 'object' && JSON.stringify)
-            return JSON.stringify(o);
-        
+    $.toJSON = Object.toJSON ||
+                window.JSON && (window.JSON.stringify || window.JSON.encode) ||
+function(o) {
+//old only 1 check
+        //if (typeof(JSON) == 'object' && JSON.stringify) return JSON.stringify(o);
+
         var type = typeof(o);
     
         if (o === null)
