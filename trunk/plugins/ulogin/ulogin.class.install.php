@@ -10,7 +10,8 @@ function uloginInstall($self) {
   $self->data['nets'] = array('vkontakte', 'odnoklassniki', 'mailru', 'facebook', 'twitter', 'google', 'yandex', 'livejournal', 'openid', 'flickr', 'lastfm', 'linkedin', 'liveid', 'soundcloud', 'steam', 'vimeo', 'webmoney', 'youtube', 'foursquare', 'tumblr', 'googleplus');
   
   $man = tdbmanager::i();
-  $man->createtable($self->table, str_replace('$names', implode("', '", $self->data['nets']), file_get_contents(dirname(__file__) . '/ulogin.sql')));
+  $man->createtable($self->table, str_replace('$names', implode("', '", $self->data['nets']), file_get_contents(dirname(__file__) . '/resource/ulogin.sql')));
+  if (!$man->column_exists('users', 'phone')) $man->alter('users', "add phone bigint not null default '0' after status");
   tusers::i()->deleted = $self->userdeleted;
   
   $lang = tplugins::getnamelang(basename(dirname(__file__)));
@@ -40,16 +41,14 @@ function uloginInstall($self) {
   
   $js = tjsmerger::i();
   $js->lock();
-  $js->add('default', '/plugins/ulogin/ulogin.popup.min.js');
-  $js->add('default', '/plugins/ulogin/' . litepublisher::$options->language . '.ulogin.popup.min.js');
+  $js->add('default', '/plugins/ulogin/resource/ulogin.popup.min.js');
+  $js->add('default', '/plugins/ulogin/resource/' . litepublisher::$options->language . '.ulogin.popup.min.js');
   $js->unlock();
   
-  tcssmerger::i()->add('default', '/plugins/ulogin/ulogin.popup.css');
+  tcssmerger::i()->add('default', '/plugins/ulogin/resource/ulogin.popup.css');
   
   $json = tjsonserver::i();
   $json->addevent('ulogin_auth', get_class($self), 'ulogin_auth');
-  
-  $man->alter('users', "add phone bigint not null default '0' after status");
 }
 
 function uloginUninstall($self) {
@@ -57,6 +56,7 @@ function uloginUninstall($self) {
   turlmap::unsub($self);
   $man = tdbmanager::i();
   $man->deletetable($self->table);
+if ($man->column_exists('users', 'phone')) $man->alter('users', "drop phone");
   
   $alogin = tadminlogin::i();
   $alogin ->widget = $self->deletepanel($alogin ->widget);
@@ -72,13 +72,11 @@ function uloginUninstall($self) {
   
   $js = tjsmerger::i();
   $js->lock();
-  $js->deletefile('default', '/plugins/ulogin/ulogin.popup.min.js');
-  $js->deletefile('default', '/plugins/ulogin/' . litepublisher::$options->language . '.ulogin.popup.min.js');
+  $js->deletefile('default', '/plugins/ulogin/resource/ulogin.popup.min.js');
+  $js->deletefile('default', '/plugins/ulogin/resource/' . litepublisher::$options->language . '.ulogin.popup.min.js');
   $js->unlock();
   
-  tcssmerger::i()->deletefile('default', '/plugins/ulogin/ulogin.popup.css');
+  tcssmerger::i()->deletefile('default', '/plugins/ulogin/resource/ulogin.popup.css');
   
   tjsonserver::i()->unbind($self);
-  
-  $man->alter('users', "drop phone");
 }
