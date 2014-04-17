@@ -156,7 +156,7 @@ class tregservice extends tplugin {
       }
     }
     
-    $expired = time() + 1210000;
+    $expired = time() + 31536000;
     $cookie = md5uniq();
     litepublisher::$options->user = $id;
     litepublisher::$options->updategroup();

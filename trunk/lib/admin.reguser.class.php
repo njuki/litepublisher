@@ -62,7 +62,7 @@ class tadminreguser extends tadminform {
       session_destroy();
       if ($id) {
         $this->regstatus = 'ok';
-        $expired = time() + 1210000;
+        $expired = time() + 31536000;
         $cookie = md5uniq();
         litepublisher::$options->user = $id;
         litepublisher::$options->updategroup();
@@ -121,15 +121,22 @@ class tadminreguser extends tadminform {
   
   public function processform() {
     $this->regstatus = 'error';
-    extract($_POST, EXTR_SKIP);
+try {
+if ($this->reguser($_POST['email'], $_POST['name']))    $this->regstatus = 'mail';
+    } catch (Exception $e) {
+return sprintf('<h4 class="red">%s</h4>', $e->getMessage());
+}
+}
+
+  public function reguser($email, $name) {
     $email = strtolower(trim($email));
-    if (!tcontentfilter::ValidateEmail($email)) return sprintf('<p><strong>%s</strong></p>', tlocal::get('comment', 'invalidemail'));
-    
-    if (substr_count($email, '.', 0, strpos($email, '@')) > 2) return sprintf('<p><strong>%s</strong></p>', tlocal::get('comment', 'invalidemail'));
+    if (!tcontentfilter::ValidateEmail($email)) return $this->error(tlocal::get('comment', 'invalidemail'));
+
+    if (substr_count($email, '.', 0, strpos($email, '@')) > 2) return $this->error(tlocal::get('comment', 'invalidemail'));
     
     $users = tusers::i();
     if ($id = $users->emailexists($email)) {
-      if ('comuser' != $users->getvalue($id, 'status')) return $this->html->h4->invalidregdata;
+      if ('comuser' != $users->getvalue($id, 'status')) return $this->error(tlocal::i()->invalidregdata);
     }
     
     tsession::start('reguser-' . md5($email));
@@ -159,7 +166,7 @@ class tadminreguser extends tadminform {
     tmailer::sendmail(litepublisher::$site->name, litepublisher::$options->fromemail,
     $name, $email, $subject, $body);
     
-    $this->regstatus = 'mail';
+return true;
   }
   
 }//class

@@ -36,7 +36,7 @@ class tsinglepassword extends tperm {
     $login = md5(mt_rand() . litepublisher::$secret. microtime());
     $password = md5($login . litepublisher::$secret . $this->password);
     $cookie = $login . '.' . $password;
-    $expired = isset($_POST['remember']) ? time() + 1210000 : time() + 8*3600;
+    $expired = isset($_POST['remember']) ? time() + 31536000 : time() + 8*3600;
     
     setcookie(self::getcookiename(), $cookie, $expired, litepublisher::$site->subdir . '/', false);
     $this->checked = true;

@@ -150,23 +150,24 @@ success: function(r) {
 litepubl.user = r;
 set_cookie("litepubl_user_id", r.id);
 set_cookie("litepubl_user", r.pass);
-set_cookie("litepubl_regservice", '');
+set_cookie("litepubl_regservice", 'email');
+set_cookie("litepubl_user_flag", r.adminflag);
 litepubl.ulogin.registered = true;
 
 this.dialog = false;
-$.closedialog();
-if ($.isFunction(this.callback)) this.callback();
+$.closedialog(this.callback);
 },
 
 login: function(email, password) {
 this.disable(true);
 var self = this;
 return $.litejson({method: "email_login", email: email, password: password}, $.proxy(this.success, this))
-          .fail( function(jq, textStatus, errorThrown) {
-self.disable(false);
-            self.error(lang.comments.notdeleted);
-            //alert(jq.responseText);
-          });
+          .fail($.proxy(this.fail, this));
+},
+
+fail: function(jq, textStatus, errorThrown) {
+this.disable(false);
+$("#info-status", this.dialog).text(jq.responseText);
 },
 
 setstatus: function(status) {
@@ -182,27 +183,17 @@ var self = this;
 return $.litejson({method: "email_reg", email: email, name: name}, function(r) {
 self.setstatus('registered');
 })
-self.disable(false);
-          .fail( function(jq, textStatus, errorThrown) {
-self.disable(false);
-            self.error(lang.comments.notdeleted);
-            //alert(jq.responseText);
-          });
+          .fail($.proxy(this.fail, this));
 },
 
 lostpass: function(email, name) {
 this.disable(true);
 var self = this;
-return $.litejson({method: "email_reg", email: email, name: name}, function(r) {
+return $.litejson({method: "email_lostpass", email: email, name: name}, function(r) {
 self.setstatus('restored');
 })
-          .fail( function(jq, textStatus, errorThrown) {
-self.disable(false);
-            self.error(lang.comments.notdeleted);
-            //alert(jq.responseText);
-          });
-},
-
+          .fail($.proxy(this.fail, this));
+}
 
   });//class
   

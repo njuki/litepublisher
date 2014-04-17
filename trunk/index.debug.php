@@ -105,11 +105,11 @@ litepublisher::$db->query('SET read_rnd_buffer_size = ' . 1024*1024*32);
 ttheme::clearcache();
 //tsidebars::fix();
 //litepublisher::$urlmap->clearcache();
-tfiler::log(var_export($_POST, true));
+//tfiler::log(var_export($_POST, true));
 //tthemegenerator::i()->parseselectors();
 //tupdater::i()->run(5.81);
-//shopupdater::i()->run(1.25);
-//shoptheme::i()->install();
+//shopupdater::i()->run(1.27);
+//shoptheme::i()->setpaths();
 //hcardwidget::i()->install();
 //tfiler::log($_SERVER['REQUEST_URI']);
 

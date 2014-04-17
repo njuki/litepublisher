@@ -74,10 +74,10 @@ uLogin.customInit('ulogin-holder');
 
 if ($.isFunction(self.emailcallback)) {
 $("#email-login").click(function() {
-$.closedialog();
-setTimeout(function() {
+$.closedialog(function() {
 litepubl.emailauth.open(self.emailcallback);
-}, 40);
+});
+
 return false;
 });
 }

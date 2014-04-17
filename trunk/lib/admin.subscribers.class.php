@@ -37,7 +37,7 @@ class tadminsubscribers extends tadminform {
             $item['idgroups'] =  'commentator';
             
             $cookie = md5uniq();
-            $expired = time() + 1210000;
+            $expired = time() + 31536000;
             
             $item['cookie'] = basemd5($cookie . litepublisher::$secret);
             $item['expired'] = sqldate($expired);

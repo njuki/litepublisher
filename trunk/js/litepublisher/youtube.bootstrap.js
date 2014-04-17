@@ -36,7 +36,7 @@
         self.vid = vid;
         var html = $.simpletml(self.tml, {
           vid: vid,
-          id: self.id ? self.id++ : (self.id = 	$.now()),
+          id: litepubl.guid++,
           width: self.width,
           height: self.height
         });
