@@ -14,10 +14,14 @@ class emailauth extends tplugin {
   
   public function email_login(array $args) {
     if (!isset($args['email']) || !isset($args['password'])) return $this->error('Invalid data', 403);
-    $email = trim($args['email']);
+    $email = strtolower(trim($args['email']));
     $password = trim($args['password']);
     if (empty($email) || empty($password)) return $this->error('Invalid data', 403);
-    if (!litepublisher::$options->auth($email, $password)) return $this->error('Invalid password', 403);
+    if (!litepublisher::$options->auth($email, $password)) {
+if (!$this->confirm_reg($email, $password) && !$this->confirm_restore($email, $password)) {
+return $this->error('Invalid password', 403);
+}
+}
 
     $expired = time() + 31536000;
     $cookie = md5uniq();
@@ -36,6 +40,49 @@ return tadminreguser ::i()->reguser($args['email'], $args['name']);
 }
 
   public function email_lostpass(array $args) {
+return tadminpassword::i()->restore($args['email']);
+}
+
+public function confirm_reg($email, $password) {
+      tsession::start('reguser-' . md5($email));
+      if (!isset($_SESSION['email']) || ($email != $_SESSION['email']) || ($password != $_SESSION['password'])) {
+        if (!isset($_SESSION['email'])) session_destroy();
+return false;
+      }
+
+      $users = tusers::i();
+      $id = $users->add(array(
+      'password' => $password,
+      'name' => $_SESSION['name'],
+      'email' => $email
+      ));
+      
+      session_destroy();
+
+      if ($id) {
+        litepublisher::$options->user = $id;
+        litepublisher::$options->updategroup();
+}
+
+return $id;
+}
+
+public function confirm_restore($email, $password) {
+      tsession::start('password-restore-' .md5($email));
+      if (!isset($_SESSION['email']) || ($email != $_SESSION['email']) || ($password != $_SESSION['password'])) {
+        if (!isset($_SESSION['email'])) session_destroy();
+return false;
+}
+
+      session_destroy();
+    if ($email == strtolower(trim(litepublisher::$options->email))) {
+          litepublisher::$options->changepassword($password);
+return 1;
+        } else {
+   $users = tusers::i();
+if ($id = $users->emailexists($email)) $users->changepassword($id, $password);
+return $id;
+        }
 }
 
 }//class
