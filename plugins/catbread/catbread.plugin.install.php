@@ -28,7 +28,7 @@ function catbreadinstall($self) {
   'childitem' =>'<li><a href="$link" title="$title">$title</a>$subitems</li>',
   'childsubitems' =>       '<ul>$item</ul>',
   
-  'similaritem' => '<a href="$link">$title</a> ',
+  'similaritem' => '<a itemprop="sameAs" href="$link">$title</a> ',
   'similaritems' => '<div id="breadcrumbs-similar">' . $about['seealso'] . ' $item</div>',
   );
   

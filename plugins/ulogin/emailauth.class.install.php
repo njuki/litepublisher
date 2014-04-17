@@ -9,19 +9,23 @@
 function emailauthInstall($self) {
   $js = tjsmerger::i();
   $js->lock();
-  $js->add('default', '/plugins/emailauth/resource/emailauth.popup.min.js');
-  $js->add('default', '/plugins/emailauth/resource/' . litepublisher::$options->language . '.emailauth.popup.min.js');
+  $js->add('default', '/plugins/ulogin/resource/email.auth.min.js');
+  $js->add('default', '/plugins/ulogin/resource/' . litepublisher::$options->language . '.email.auth.min.js');
   $js->unlock();
   
   $json = tjsonserver::i();
-  $json->addevent('emailauth_auth', get_class($self), 'emailauth_auth');
+$json->lock();
+  $json->addevent('email_login', get_class($self), 'email_login');
+  $json->addevent('email_reg', get_class($self), 'email_reg');
+  $json->addevent('email_lostpass', get_class($self), 'email_lostpass');
+$json->unlock();
 }
 
 function emailauthUninstall($self) {
   $js = tjsmerger::i();
   $js->lock();
-  $js->deletefile('default', '/plugins/emailauth/resource/emailauth.popup.min.js');
-  $js->deletefile('default', '/plugins/emailauth/resource/' . litepublisher::$options->language . '.emailauth.popup.min.js');
+  $js->deletefile('default', '/plugins/ulogin/resource/email.auth.min.js');
+  $js->deletefile('default', '/plugins/ulogin/resource/' . litepublisher::$options->language . '.email.auth.min.js');
   $js->unlock();
   
   tjsonserver::i()->unbind($self);

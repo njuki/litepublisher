@@ -43,6 +43,7 @@ function uloginInstall($self) {
   $js->lock();
   $js->add('default', '/plugins/ulogin/resource/ulogin.popup.min.js');
   $js->add('default', '/plugins/ulogin/resource/' . litepublisher::$options->language . '.ulogin.popup.min.js');
+litepublisher::$classes->add('emailauth', emailauth.class.php', 'ulogin');
   $js->unlock();
   
   tcssmerger::i()->add('default', '/plugins/ulogin/resource/ulogin.popup.css');
@@ -79,4 +80,6 @@ if ($man->column_exists('users', 'phone')) $man->alter('users', "drop phone");
   tcssmerger::i()->deletefile('default', '/plugins/ulogin/resource/ulogin.popup.css');
   
   tjsonserver::i()->unbind($self);
+
+litepublisher::$classes->delete('emailauth');
 }

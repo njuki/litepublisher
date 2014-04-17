@@ -10,7 +10,6 @@
   litepubl.Uploader = Class.extend({
     handler: false,
     postdata: false,
-    random: 0,
     url: "",
     maxsize: 100,
     mime: false, // regexp for html as 'image/*' to only accept images
@@ -31,8 +30,7 @@
       
       $.extend(this, options);
       this.holder = $(options.holder);
-      this.random = 	$.now();
-      
+
       this.onbefore = $.Callbacks();
       this.oncomplete = $.Callbacks();
       this.onupload = $.Callbacks();
@@ -58,7 +56,7 @@
     },
     
     geturl: function() {
-      return this.url + '?_=' + this.random++;
+      return this.url + '?_=' + litepubl.guid++;
     },
     
     setpercent: function(percent) {

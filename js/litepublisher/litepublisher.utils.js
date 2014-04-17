@@ -18,6 +18,7 @@
   //litepublisher namespace
   window.litepubl = {
   tml: {}, //namespace for templates
+guid: $.now(),
     adminpanel: false,
     is_adminpanel:  function() {
       if (litepubl.adminpanel !== false) return litepubl.adminpanel;
@@ -184,8 +185,7 @@
       var         cache =  "cache" in data ? data.cache : false;
       var nocache = '';
       if (!cache && (type == "post")) {
-        if (!("random" in litepubl)) litepubl.random = $.now();
-        nocache = '?_=' + litepubl.random++;
+        nocache = '?_=' + litepubl.guid++;
       }
       
       return $.ajax({

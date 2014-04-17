@@ -7,8 +7,14 @@
 
 (function( $ ){
   'use strict';
-  $.closedialog = function() {
+  $.closedialog = function(callback) {
     $.prettyPhoto.close();
+
+if ($.isFunction(callback)) {
+setTimeout(function() {
+callback();
+}, 220);
+}
   };
   
   $.litedialog = $.prettyPhotoDialog = function(o) {
@@ -28,14 +34,16 @@
       ]
     }, o);
     
-    var button = '<button type="button" class="button pp_dialog_btn_%%index%%"><span>%%title%%</span></button>';
+    var button = '<button type="button" class="button pp_dialog_btn_%%index%%" data-index="%%index%%"><span>%%title%%</span></button>';
     var buttons = '';
     for (var i =0, l= options.buttons.length;  i < l; i++) {
-      buttons += button.replace(/%%index%%/g, i).replace(/%%title%%/g, options.buttons[i].title);
+      buttons += $.simpletml(button, {
+index: i,
+title: options.buttons[i].title
+});
     }
     
-    if (!("pp_dialog_id" in $)) $.pp_dialog_id = 	$.now();
-    var id = "pp_dialog_id_" + $.pp_dialog_id++;
+    var id = "pp_dialog_id_" + litepubl.guid++;
     var div = $('<div CLASS="HIDDEN" id="' + id + '"></div>').appendTo("body");
     div.html('<div class="pp_dialog_title">' +
     '<h3>' + options.title + '</h3></div>' +
