@@ -32,9 +32,9 @@ class tadminpassword extends tadminform {
         if (!isset($_SESSION['email'])) session_destroy();
         return $html->h4->notfound;
       }
+        $password = $_SESSION['password'];
       session_destroy();
       if ($id = $this->getiduser($email)) {
-        $password = md5uniq();
         if ($id == 1) {
           litepublisher::$options->changepassword($password);
         } else {
@@ -50,27 +50,40 @@ class tadminpassword extends tadminform {
   }
   
   public function getiduser($email) {
-    if (empty($email)) returnfalse;
-    if (($email == strtolower(trim(litepublisher::$options->email)))) return 1;
+    if (empty($email)) return false;
+    if ($email == strtolower(trim(litepublisher::$options->email))) return 1;
     return tusers::i()->emailexists($email);
   }
   
   public function processform() {
-    $html = $this->html;
-    $email = strtolower(trim($_POST['email']));
-    if (empty($email)) return $html->h4->error;
+try {
+$this->restore($_POST['email']);
+    } catch (Exception $e) {
+return sprintf('<h4 class="red">%s</h4>', $e->getMessage());
+}
+
+    return $this->html->h4->success;
+}
+
+  public function restore($email) {
+$lang = tlocal::i();
+    $email = strtolower(trim($email));
+    if (empty($email)) return $this->error($lang->error);
     $id = $this->getiduser($email);
-    if (!$id) return $html->h4->error;
-    $args = targs::i();
+    if (!$id) return $$this->error($lang->error);
+
+    $args = new targs();
     
     tsession::start('password-restore-' .md5($email));
     if (!isset($_SESSION['count'])) {
       $_SESSION['count'] =1;
     } else {
-      if ($_SESSION['count']++ > 3) return $this->html->h4->outofcount;
+      if ($_SESSION['count']++ > 3) return $this->error($lang->outofcount);
     }
     
     $_SESSION['email'] = $email;
+$password = md5uniq();
+        $_SESSION['password'] = $password;
     $_SESSION['confirm'] = md5(mt_rand() . litepublisher::$secret. microtime());
     $args->confirm = $_SESSION['confirm'];
     session_write_close();
@@ -83,7 +96,8 @@ class tadminpassword extends tadminform {
       $args->add($item);
       $name = $item['name'];
     }
-    
+
+$args->password = $password;    
     tlocal::usefile('mail');
     $lang = tlocal::i('mailpassword');
     $theme = ttheme::i();
@@ -93,7 +107,7 @@ class tadminpassword extends tadminform {
     
     tmailer::sendmail(litepublisher::$site->name, litepublisher::$options->fromemail,
     $name, $email, $subject, $body);
-    return $html->h4->success;
+    return true;
   }
   
 }//class
