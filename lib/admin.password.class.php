@@ -66,11 +66,11 @@ return sprintf('<h4 class="red">%s</h4>', $e->getMessage());
 }
 
   public function restore($email) {
-$lang = tlocal::i();
+$lang = tlocal::admin('password');
     $email = strtolower(trim($email));
     if (empty($email)) return $this->error($lang->error);
     $id = $this->getiduser($email);
-    if (!$id) return $$this->error($lang->error);
+    if (!$id) return $this->error($lang->error);
 
     $args = new targs();
     

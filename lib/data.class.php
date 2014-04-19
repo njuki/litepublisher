@@ -217,6 +217,7 @@ class tdata {
   }
   
   protected function getthistable() {
+if (!litepublisher::$db) $this->error('db');
     return litepublisher::$db->prefix . $this->table;
   }
   

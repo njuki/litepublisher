@@ -7,16 +7,13 @@
 
 (function ($, document, window) {
   $(document).ready(function() {
-    litepubl.emailauth = new litepubl.Emailauth();
+if (!litepubl.getuser().pass) {
+litepubl.emailauth = new litepubl.Emailauth();
+}
   });
   
   litepubl.Emailauth = Class.extend({
 callback: false,
-
-    init: function() {
-this.registered = litepubl.getuser().pass ? 1 : 0;
-if (this.registered) return;
-},
 
 getradio: function(value) {
 return $.simpletml(litepubl.tml.radio, {
@@ -28,33 +25,34 @@ title: lang.emailauth[value]
 
     open: function(callback) {
 this.callback = callback;
-var lang = lang.emailauth;
+var lng = lang.emailauth;
 var html = '';
 html += this.getradio('reg');
 html += this.getradio('login');
 html += this.getradio('lostpass');
 html += litepubl.tml.getedit('E-Mail', 'email', '');
-html += litepubl.tml.getedit(lang.name, 'name', '');
-html += litepubl.tml.getedit(lang.password, 'password', '').replace(/text/gm, 'password');
+html += litepubl.tml.getedit(lng.name, 'name', '');
+html += litepubl.tml.getedit(lng.password, 'password', '').replace(/text/gm, 'password');
 html += '<p id="info-status"></p>';
 
 var self = this;
       var dialog = $.litedialog({
-        title: lang.title,
+        title: lng.title,
         html: html,
         width: 300,
 open: function(dialog) {
 $("input[name=authtype]", dialog).on("click", function() {
 var type = $(this).val();
-var name = $("#text-name", dialog);
-var pass = $("#password-password", dialog);
+$("#info-status", dialog).text('');
+var name = $("#text-name", dialog).parent();
+var pass = $("#password-password", dialog).parent();
 var regbutton = $("button[data-index=0]", dialog);
 var loginbutton = $("button[data-index=1]", dialog);
 var lostpassbutton = $("button[data-index=2]", dialog);
 
 switch (type) {
 case 'reg':
-reg.show();
+name.show();
 regbutton.show();
 pass.hide();
 loginbutton.hide();
@@ -78,11 +76,11 @@ lostpassbutton.show();
 break;
 }
 })
-.filter('[value=reg]').prop('checked', "checked");
+.filter('[value=reg]').click();
 },
 
         buttons: [{
-          title: lang.regbutton,
+          title: lng.regbutton,
           click: function() {
 var email = self.getemail();
 if (!email) return false;
@@ -98,7 +96,7 @@ return false;
 }
 
 }, {
-          title: lang.loginbutton,
+          title: lng.loginbutton,
           click: function() {
 var email = self.getemail();
 if (!email) return false;
@@ -114,7 +112,7 @@ return false;
 }
 
 }, {
-          title: lang.lostpassbutton,
+          title: lng.lostpassbutton,
           click: function() {
 var email = self.getemail();
 if (!email) return false;
@@ -159,40 +157,45 @@ $.closedialog(this.callback);
 },
 
 login: function(email, password) {
-this.disable(true);
-var self = this;
-return $.litejson({method: "email_login", email: email, password: password}, $.proxy(this.success, this))
-          .fail($.proxy(this.fail, this));
+return this.ajax({method: "email_login", email: email, password: password}, $.proxy(this.success, this));
 },
 
-fail: function(jq, textStatus, errorThrown) {
-this.disable(false);
-$("#info-status", this.dialog).text(jq.responseText);
+ajax: function(params, callback) {
+this.disable(true);
+var self = this;
+return $.litejson(params, function(r) {
+if ((typeof r === "object") && ("error" in r)) {
+self.disable(false);
+$("#info-status", self.dialog).text(r.error);
+} else {
+callback(r);
+}
+})
+          .fail(function(jq, textStatus, errorThrown) {
+self.disable(false);
+$("#info-status", self.dialog).text(jq.responseText);
+});
 },
 
 setstatus: function(status) {
 this.disable(false);
-$("input[value=login]", this.dialog).prop("checked", "checked");
+$("input[value=login]", this.dialog).click();
 $("#password-password", this.dialog).focus();
 $("#info-status", this.dialog).text(lang.emailauth[status]);
 },
 
 reg: function(email, name) {
-this.disable(true);
 var self = this;
-return $.litejson({method: "email_reg", email: email, name: name}, function(r) {
+return this.ajax({method: "email_reg", email: email, name: name}, function(r) {
 self.setstatus('registered');
-})
-          .fail($.proxy(this.fail, this));
+});
 },
 
 lostpass: function(email, name) {
-this.disable(true);
 var self = this;
-return $.litejson({method: "email_lostpass", email: email, name: name}, function(r) {
+return this.ajax({method: "email_lostpass", email: email, name: name}, function(r) {
 self.setstatus('restored');
-})
-          .fail($.proxy(this.fail, this));
+});
 }
 
   });//class

@@ -14,7 +14,6 @@
 registered: false,
 script: false,
 dialogopened: false,
-emailcallback: false,
     html: '<div><p>%%lang.subtitle%%</p>' +
 '<div id="ulogin-dialog">' +
 '<div id="ulogin-holder" data-ulogin="display=small;fields=first_name,last_name;optional=email,phone,nickname;providers=vkontakte,odnoklassniki,mailru,yandex,facebook,google,twitter;hidden=other;redirect_uri=%%redirurl%%;%%callback%%"></div></div>' +
@@ -36,13 +35,13 @@ return false;
 });
     },
     
-    open: function(url, callback) {
+    open: function(openurl, callback, emailcallback) {
 if (this.dialogopened) return false;
-set_cookie('backurl', url);
+set_cookie('backurl', openurl);
 var self = this;
 self.ready(function() {
 self.dialogopened = true;
-if (!url) url = ltoptions.url + "/admin/login/?backurl=" + encodeURIComponent(location.href);
+var url= openurl ? openurl : ltoptions.url + "/admin/login/?backurl=" + encodeURIComponent(location.href);
 var html = self.html.replace(/%%lang.emaillogin%%/gim, lang.ulogin.emaillogin)
 .replace(/%%lang.subtitle%%/gim, lang.ulogin.subtitle)
 .replace(/%%url%%/gim, url);
@@ -72,15 +71,18 @@ self.dialogopened = false;
 open: function() {
 uLogin.customInit('ulogin-holder');
 
-if ($.isFunction(self.emailcallback)) {
+if (!$.isFunction(emailcallback)) {
+emailcallback = function() {
+window.location = openurl;
+};
+}
+
 $("#email-login").click(function() {
 $.closedialog(function() {
-litepubl.emailauth.open(self.emailcallback);
+litepubl.emailauth.open(emailcallback);
 });
-
 return false;
 });
-}
 },
 
         buttons: [{
@@ -115,11 +117,10 @@ callback();
 },
 
 login: function(backurl, remote_callback, callback) {
-this.emailcallback = callback;
 var self = this;
 self.open(backurl, function(token) {
 self.auth(token, remote_callback, callback);
-});
+}, callback);
 }
 
   });//class
