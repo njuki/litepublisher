@@ -228,7 +228,7 @@ class tadminhtml {
   public function getradioitems($name, array $items, $selected) {
     $result = '';
     $theme = ttheme::i();
-    $tml = $theme->templates['content.admin.radioitems'];
+    $tml = $theme->templates['content.admin.radioitem'];
     foreach ($items as $index => $value) {
       $result .= strtr($tml, array(
       '$index' => $index,
