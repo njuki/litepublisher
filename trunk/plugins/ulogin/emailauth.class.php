@@ -19,7 +19,9 @@ class emailauth extends tplugin {
     if (empty($email) || empty($password)) return $this->error('Invalid data', 403);
     if (!litepublisher::$options->auth($email, $password)) {
 if (!$this->confirm_reg($email, $password) && !$this->confirm_restore($email, $password)) {
-return $this->error('Invalid password', 403);
+return array(
+'error' => tlocal::i()->errpassword
+);
 }
 }
 
@@ -28,7 +30,7 @@ return $this->error('Invalid password', 403);
     litepublisher::$options->setcookies($cookie, $expired);
 
     return array(
-    'id' => litepublisher:$options->user,
+    'id' => litepublisher::$options->user,
     'pass' => $cookie,
     'regservice' => 'email',
 'adminflag' => litepublisher::$options->ingroup('admin') ? 'true' : false,
@@ -36,17 +38,37 @@ return $this->error('Invalid password', 403);
 }
 
   public function email_reg(array $args) {
+    if (!litepublisher::$options->usersenabled || !litepublisher::$options->reguser) return array(
+'error' => tlocal::admin('users')->regdisabled
+);
+
+try {
 return tadminreguser ::i()->reguser($args['email'], $args['name']);
+    } catch (Exception $e) {
+return array(
+'error' => $e->getMessage()
+);
+}
 }
 
   public function email_lostpass(array $args) {
+try {
 return tadminpassword::i()->restore($args['email']);
+    } catch (Exception $e) {
+return array(
+'error' => $e->getMessage()
+);
+}
 }
 
 public function confirm_reg($email, $password) {
       tsession::start('reguser-' . md5($email));
       if (!isset($_SESSION['email']) || ($email != $_SESSION['email']) || ($password != $_SESSION['password'])) {
-        if (!isset($_SESSION['email'])) session_destroy();
+        if (isset($_SESSION['email'])) {
+session_write_close();
+} else {
+session_destroy();
+}
 return false;
       }
 
@@ -70,7 +92,11 @@ return $id;
 public function confirm_restore($email, $password) {
       tsession::start('password-restore-' .md5($email));
       if (!isset($_SESSION['email']) || ($email != $_SESSION['email']) || ($password != $_SESSION['password'])) {
-        if (!isset($_SESSION['email'])) session_destroy();
+        if (isset($_SESSION['email'])) {
+session_write_close();
+} else {
+session_destroy();
+}
 return false;
 }
 

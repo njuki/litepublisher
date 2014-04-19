@@ -7,10 +7,11 @@
 **/
 
 class tsession {
+public static $initialized = false;
   public $prefix;
   public $lifetime;
-  
-  public function __construct () {
+
+    public function __construct () {
     $this->prefix = 'ses-' . litepublisher::$domain . '-';
     $this->lifetime = 3600;
     $truefunc = array($this, 'truefunc');
@@ -34,10 +35,13 @@ class tsession {
   }
   
   public static function init($usecookie = false) {
+if (!self::$initialized) {
+self::$initialized = true;
     ini_set('session.use_cookies', $usecookie);
     ini_set('session.use_only_cookies', $usecookie);
     ini_set('session.use_trans_sid', 0);
     session_cache_limiter(false);
+}
     
     if (tfilestorage::$memcache) {
       return getinstance(__class__);

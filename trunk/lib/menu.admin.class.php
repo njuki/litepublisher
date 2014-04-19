@@ -151,6 +151,7 @@ public function save() { return true; }
     if (litepublisher::$options->cookieenabled) {
       if ($s = tguard::checkattack()) return $s;
       if (!litepublisher::$options->user) {
+turlmap::nocache();
         return litepublisher::$urlmap->redir('/admin/login/' . litepublisher::$site->q . 'backurl=' . urlencode(litepublisher::$urlmap->url));
       }
     }else {
@@ -160,8 +161,8 @@ public function save() { return true; }
     
     if (!litepublisher::$options->hasgroup($group)) {
       $url = tusergroups::i()->gethome(litepublisher::$options->group);
+turlmap::nocache();
       return litepublisher::$urlmap->redir($url);
-      //return 403;
     }
   }
   
