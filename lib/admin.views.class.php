@@ -60,6 +60,7 @@ class tadminviews extends tadminmenu {
     $html = $this->html;
     $customadmin = $view->theme->templates['customadmin'];
     foreach ($view->data['custom'] as $name => $value) {
+if (!isset($customadmin[$name])) continue;
       switch ($customadmin[$name]['type']) {
         case 'text':
         case 'editor':
@@ -75,7 +76,7 @@ class tadminviews extends tadminmenu {
         break;
         
         case 'radio':
-      $value = tadminhtml  ::getradioitems(    "custom_{$idview}_$name", $customadmin[$name]['values'], $value);
+      $value = $html->getradioitems(    "custom-$name", $customadmin[$name]['values'], $value);
         break;
       }
       
@@ -94,6 +95,7 @@ class tadminviews extends tadminmenu {
     if (count($view->custom) == 0) return;
     $customadmin = $view->theme->templates['customadmin'];
     foreach ($view->data['custom'] as $name => $value) {
+if (!isset($customadmin[$name])) continue;
       switch ($customadmin[$name]['type']) {
         case 'checkbox':
         $view->data['custom'][$name] = isset($_POST["custom-$name"]);
@@ -318,6 +320,7 @@ class tadminviews extends tadminmenu {
   }
   
   public function processform() {
+//dumpvar($_POST);
     $result = '';
     switch ($this->name) {
       case 'views':
@@ -346,7 +349,7 @@ class tadminviews extends tadminmenu {
         $widgets = twidgets::i();
         foreach (range(0, 2) as $index) {
           $view->sidebars[$index] = array();
-          $idwidgets = explode(',', trim($_POST["$sidebar$index"]));
+          $idwidgets = explode(',', trim($_POST["sidebar$index"]));
           foreach($idwidgets as $idwidget) {
             $idwidget = (int) trim($idwidget);
             if (!$widgets->itemexists($idwidget)) continue;
