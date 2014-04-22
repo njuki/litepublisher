@@ -89,10 +89,13 @@ class tview extends titem_storage {
     if (isset($this->themeinstance)) return $this->themeinstance;
     if (ttheme::exists($this->themename)) {
       $this->themeinstance = $this->get_theme_instance($this->themename);
-      if (count($this->data['custom']) == count($this->themeinstance->templates['custom'])) {
-        $this->themeinstance->templates['custom'] = $this->data['custom'];
+$viewcustom = &$this->data['custom'];
+$themecustom = &$this->themeinstance->templates['custom'];
+//aray_equal
+      if ((count($viewcustom) == count($themecustom)) && !count(array_diff(array_keys($viewcustom), array_keys($themecustom)))) {
+        $this->themeinstance->templates['custom'] = $viewcustom;
       } else {
-        $this->data['custom'] = $this->themeinstance->templates['custom'];
+        $this->data['custom'] = $themecustom;
         $this->save();
       }
     } else {
