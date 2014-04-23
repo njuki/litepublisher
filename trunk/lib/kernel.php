@@ -206,7 +206,7 @@ class tdatabase {
   
   public function getcount($where = '') {
     $sql = "SELECT COUNT(*) as count FROM $this->prefix$this->table";
-    if ($where != '') $sql .= ' where '. $where;
+    if ($where) $sql .= ' where '. $where;
     if (($res = $this->query($sql)) && ($r = $res->fetch_assoc())) {
       return (int) $r['count'];
     }
@@ -231,8 +231,7 @@ class tdatabase {
   }
   
   public function  exists($where) {
-    if ($this->query("select *  from $this->prefix$this->table where $where limit 1")->num_rows) return true;
-    return false;
+    return $this->query("select *  from $this->prefix$this->table where $where limit 1")->num_rows;
   }
   
   public function getlist(array $list) {
@@ -269,6 +268,17 @@ class tdatabase {
   
   public function setvalue($id, $name, $value) {
     return $this->update("$name = " . $this->quote($value), "id = $id");
+  }
+  
+  public function getvalues($name, $where) {
+    $result = array();
+    $res = $this->query("select $name from $this->prefix$this->table where $where");
+    if (is_object($res)) {
+      while ($r = $res->fetch_row()) {
+        $result[$r[0]] = $r[1];
+      }
+    }
+    return $result;
   }
   
   public function res2array($res) {
@@ -344,6 +354,7 @@ class tdata {
   public $data;
   public $lockcount;
   public $table;
+  public static $guid = 0;
   
   public static function i() {
     return getinstance(get_called_class());
@@ -547,6 +558,7 @@ class tdata {
   }
   
   protected function getthistable() {
+    if (!litepublisher::$db) $this->error('db');
     return litepublisher::$db->prefix . $this->table;
   }
   
@@ -1675,7 +1687,8 @@ class toptions extends tevents_storage {
   
   public function getadmincookie() {
     if (is_null($this->_admincookie)) {
-      $this->_admincookie = $this->cookieenabled && isset($_COOKIE['litepubl_user_flag']) ? $this->user && in_array(1, $this->idgroups) : false;
+      return $this->_admincookie = $this->cookieenabled && isset($_COOKIE['litepubl_user_flag']) && ($_COOKIE['litepubl_user_flag'] == 'true');
+      // ? $this->user && in_array(1, $this->idgroups) : false;
     }
     return $this->_admincookie;
   }
@@ -1810,17 +1823,15 @@ class toptions extends tevents_storage {
   }
   
   public function setcookies($cookie, $expired) {
-    setcookie('litepubl_user_id', $this->_user, $expired, litepublisher::$site->subdir . '/', false);
-    setcookie('litepubl_user', $cookie, $expired, litepublisher::$site->subdir . '/', false);
-    if ('admin' == $this->group) {
-      setcookie('litepubl_user_flag', $cookie ? 'true' : '', $expired, litepublisher::$site->subdir . '/', false);
-    } else {
-      setcookie('litepubl_user_flag', '', time(), litepublisher::$site->subdir . '/', false);
-    }
+    $subdir = litepublisher::$site->subdir . '/';
+    setcookie('litepubl_user_id', $cookie ? $this->_user : '', $expired,  $subdir, false);
+    setcookie('litepubl_user', $cookie, $expired, $subdir , false);
+    setcookie('litepubl_user_flag', $cookie && ('admin' == $this->group) ? 'true' : '', $expired, $subdir, false);
+    
     if ($this->_user == 1) {
       $this->set_cookie($cookie);
       $this->cookieexpired = $expired;
-    } else {
+    } else if ($this->_user) {
       tusers::i()->setcookie($this->_user, $cookie, $expired);
     }
   }

@@ -28,15 +28,15 @@ class tcommontags extends titems implements  itemplate {
     $this->postpropname = 'categories';
     $this->all_loaded = false;
     $this->_idposts = array();
-$this->createfactory();
+    $this->createfactory();
   }
-
-protected function createfactory() {
+  
+  protected function createfactory() {
     $this->factory = litepublisher::$classes->getfactory($this);
     $this->contents = new ttagcontent($this);
     if (!$this->dbversion)  $this->data['itemsposts'] = array();
     $this->itemsposts = new titemspostsowner ($this);
-}
+  }
   
   public function loadall() {
     //prevent double request
@@ -49,7 +49,7 @@ protected function createfactory() {
     if ($where != '') $where .= ' and ';
     $db = litepublisher::$db;
     $t = $this->thistable;
-$u = $db->urlmap;
+    $u = $db->urlmap;
     $res = $db->query("select $t.*, $u.url from $t, $u
     where $where $u.id = $t.idurl $limit");
     return $this->res2items($res);
@@ -125,8 +125,8 @@ $u = $db->urlmap;
     $items = implode(',', $items);
     $thistable = $this->thistable;
     $itemstable = $this->itemsposts->thistable;
-$itemprop = $this->itemsposts->itemprop;
-$postprop = $this->itemsposts->postprop;
+    $itemprop = $this->itemsposts->itemprop;
+    $postprop = $this->itemsposts->postprop;
     $poststable = $db->posts;
     $list = $db->res2assoc($db->query("select $itemstable.$itemprop as id, count($itemstable.$itemprop)as itemscount from $itemstable, $poststable
     where $itemstable.$itemprop in ($items)  and $itemstable.$postprop = $poststable.id and $poststable.status = 'published'
@@ -423,8 +423,8 @@ $postprop = $this->itemsposts->postprop;
     $p = $posts->thistable;
     $t = $this->thistable;
     $ti = $this->itemsposts->thistable;
-$postprop = $this->itemsposts->postprop;
-$itemprop = $this->itemsposts->itemprop;
+    $postprop = $this->itemsposts->postprop;
+    $itemprop = $this->itemsposts->itemprop;
     
     if ($includeparents || $includechilds) {
       $this->loadall();

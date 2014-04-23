@@ -440,13 +440,13 @@ class tadminhtml {
   public function tablevalues(array $a) {
     $body = '';
     foreach ($a as $k => $v) {
-if (is_array($v)) {
-foreach ($v as $vk => $vv) {
-      $body .= sprintf('<tr><td>%s</td><td>%s</td></tr>', $kv, $vv);
-}
-} else {
-      $body .= sprintf('<tr><td>%s</td><td>%s</td></tr>', $k, $v);
-}
+      if (is_array($v)) {
+        foreach ($v as $vk => $vv) {
+          $body .= sprintf('<tr><td>%s</td><td>%s</td></tr>', $kv, $vv);
+        }
+      } else {
+        $body .= sprintf('<tr><td>%s</td><td>%s</td></tr>', $k, $v);
+      }
     }
     
     $lang = tlocal::i();

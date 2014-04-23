@@ -92,7 +92,7 @@ class toptions extends tevents_storage {
   public function getadmincookie() {
     if (is_null($this->_admincookie)) {
       return $this->_admincookie = $this->cookieenabled && isset($_COOKIE['litepubl_user_flag']) && ($_COOKIE['litepubl_user_flag'] == 'true');
-// ? $this->user && in_array(1, $this->idgroups) : false;
+      // ? $this->user && in_array(1, $this->idgroups) : false;
     }
     return $this->_admincookie;
   }
@@ -115,7 +115,7 @@ class toptions extends tevents_storage {
   public function authcookie() {
     $iduser = isset($_COOKIE['litepubl_user_id']) ? (int) $_COOKIE['litepubl_user_id'] : 0;
     $cookie = isset($_COOKIE['litepubl_user']) ? (string) $_COOKIE['litepubl_user'] : (isset($_COOKIE['admin']) ? (string) $_COOKIE['admin'] : '');
-
+    
     if ($cookie == '') return false;
     $cookie = basemd5($cookie . litepublisher::$secret);
     if (    $cookie == basemd5( litepublisher::$secret)) return false;
@@ -150,7 +150,7 @@ class toptions extends tevents_storage {
     } catch (Exception $e) {
       return false;
     }
-
+    
     if ('hold' == $item['status']) return false;
     return ($cookie == $item['cookie']) && (strtotime($item['expired']) > time());
   }
@@ -227,11 +227,11 @@ class toptions extends tevents_storage {
   }
   
   public function setcookies($cookie, $expired) {
-$subdir = litepublisher::$site->subdir . '/';
+    $subdir = litepublisher::$site->subdir . '/';
     setcookie('litepubl_user_id', $cookie ? $this->_user : '', $expired,  $subdir, false);
     setcookie('litepubl_user', $cookie, $expired, $subdir , false);
-      setcookie('litepubl_user_flag', $cookie && ('admin' == $this->group) ? 'true' : '', $expired, $subdir, false);
-
+    setcookie('litepubl_user_flag', $cookie && ('admin' == $this->group) ? 'true' : '', $expired, $subdir, false);
+    
     if ($this->_user == 1) {
       $this->set_cookie($cookie);
       $this->cookieexpired = $expired;

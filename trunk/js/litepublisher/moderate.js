@@ -23,11 +23,11 @@
       
       this.onbuttons = $.Callbacks();
       $(".loadhold").click(this.loadhold);
-
-var self = this;
+      
+      var self = this;
       window.setTimeout(function() {
-      self.create_buttons(self.options.comments +", " + self.options.hold);
-}, 20);
+        self.create_buttons(self.options.comments +", " + self.options.hold);
+      }, 20);
     },
     
     setenabled: function(value) {

@@ -14,11 +14,11 @@ function emailauthInstall($self) {
   $js->unlock();
   
   $json = tjsonserver::i();
-$json->lock();
+  $json->lock();
   $json->addevent('email_login', get_class($self), 'email_login');
   $json->addevent('email_reg', get_class($self), 'email_reg');
   $json->addevent('email_lostpass', get_class($self), 'email_lostpass');
-$json->unlock();
+  $json->unlock();
 }
 
 function emailauthUninstall($self) {

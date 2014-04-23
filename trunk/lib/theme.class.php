@@ -233,7 +233,7 @@ class ttheme extends tevents {
   }
   
   public function parse($s) {
-if (!$s) return '';
+    if (!$s) return '';
     $s = strtr((string) $s, self::$defaultargs);
     if (isset($this->templates['content.admin.tableclass'])) $s = str_replace('$tableclass', $this->templates['content.admin.tableclass'], $s);
     array_push($this->parsing, $s);
@@ -326,8 +326,8 @@ if (!$s) return '';
     $tml =$this->templates['content.navi.link'];
     if (!strbegin($url, 'http')) $url = litepublisher::$site->url . $url;
     $pageurl = rtrim($url, '/') . '/page/';
-          if ($params) $params = litepublisher::$site->q . $params;
-
+    if ($params) $params = litepublisher::$site->q . $params;
+    
     $a = array();
     foreach ($items as $i) {
       $args->page = $i;

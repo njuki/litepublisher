@@ -151,6 +151,7 @@ public function save() { return true; }
     if (litepublisher::$options->cookieenabled) {
       if ($s = tguard::checkattack()) return $s;
       if (!litepublisher::$options->user) {
+        turlmap::nocache();
         return litepublisher::$urlmap->redir('/admin/login/' . litepublisher::$site->q . 'backurl=' . urlencode(litepublisher::$urlmap->url));
       }
     }else {
@@ -160,8 +161,8 @@ public function save() { return true; }
     
     if (!litepublisher::$options->hasgroup($group)) {
       $url = tusergroups::i()->gethome(litepublisher::$options->group);
+      turlmap::nocache();
       return litepublisher::$urlmap->redir($url);
-      //return 403;
     }
   }
   
@@ -494,7 +495,7 @@ class tadminhtml {
   public function getradioitems($name, array $items, $selected) {
     $result = '';
     $theme = ttheme::i();
-    $tml = $theme->templates['content.admin.radioitems'];
+    $tml = $theme->templates['content.admin.radioitem'];
     foreach ($items as $index => $value) {
       $result .= strtr($tml, array(
       '$index' => $index,
@@ -706,7 +707,13 @@ class tadminhtml {
   public function tablevalues(array $a) {
     $body = '';
     foreach ($a as $k => $v) {
-      $body .= sprintf('<tr><td>%s</td><td>%s</td></tr>', $k, $v);
+      if (is_array($v)) {
+        foreach ($v as $vk => $vv) {
+          $body .= sprintf('<tr><td>%s</td><td>%s</td></tr>', $kv, $vv);
+        }
+      } else {
+        $body .= sprintf('<tr><td>%s</td><td>%s</td></tr>', $k, $v);
+      }
     }
     
     $lang = tlocal::i();
@@ -1088,7 +1095,6 @@ class adminform {
   public function line($s) {
     return "<div class=\"$this->inlineclass\">$s</div>";
   }
-  
   
   public function __set($k, $v) {
     switch ($k) {

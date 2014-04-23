@@ -331,7 +331,7 @@ class tpost extends titem implements  itemplate {
   public function getrsscomments() {
     return litepublisher::$site->url . "/comments/$this->id.xml";
   }
-
+  
   public function Getisodate() {
     return date('c', $this->posted);
   }

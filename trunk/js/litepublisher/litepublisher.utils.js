@@ -18,7 +18,7 @@
   //litepublisher namespace
   window.litepubl = {
   tml: {}, //namespace for templates
-guid: $.now(),
+    guid: $.now(),
     adminpanel: false,
     is_adminpanel:  function() {
       if (litepubl.adminpanel !== false) return litepubl.adminpanel;

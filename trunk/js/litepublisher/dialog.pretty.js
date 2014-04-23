@@ -9,12 +9,12 @@
   'use strict';
   $.closedialog = function(callback) {
     $.prettyPhoto.close();
-
-if ($.isFunction(callback)) {
-setTimeout(function() {
-callback();
-}, 220);
-}
+    
+    if ($.isFunction(callback)) {
+      setTimeout(function() {
+        callback();
+      }, 220);
+    }
   };
   
   $.litedialog = $.prettyPhotoDialog = function(o) {
@@ -38,9 +38,9 @@ callback();
     var buttons = '';
     for (var i =0, l= options.buttons.length;  i < l; i++) {
       buttons += $.simpletml(button, {
-index: i,
-title: options.buttons[i].title
-});
+        index: i,
+        title: options.buttons[i].title
+      });
     }
     
     var id = "pp_dialog_id_" + litepubl.guid++;

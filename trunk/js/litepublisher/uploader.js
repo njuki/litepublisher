@@ -30,7 +30,7 @@
       
       $.extend(this, options);
       this.holder = $(options.holder);
-
+      
       this.onbefore = $.Callbacks();
       this.oncomplete = $.Callbacks();
       this.onupload = $.Callbacks();

@@ -116,10 +116,10 @@ class tdbmanager  {
       $this->exec("alter table $this->prefix$table change $tmp $column enum($items)");
     }
   }
-
-public function column_exists($table, $column) {
-return $this->query("SHOW COLUMNS FROM $this->prefix$table LIKE '$column'")->num_rows;
-}
+  
+  public function column_exists($table, $column) {
+    return $this->query("SHOW COLUMNS FROM $this->prefix$table LIKE '$column'")->num_rows;
+  }
   
   public function getdatabases() {
     if ($res = $this->query("show databases")) {

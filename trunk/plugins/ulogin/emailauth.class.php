@@ -18,48 +18,48 @@ class emailauth extends tplugin {
     $password = trim($args['password']);
     if (empty($email) || empty($password)) return $this->error('Invalid data', 403);
     if (!litepublisher::$options->auth($email, $password)) {
-$admin = tadminlogin::i();
-if (!$admin->confirm_reg($email, $password) && !$admin->confirm_restore($email, $password)) {
-return array(
-'error' => tlocal::i()->errpassword
-);
-}
-}
-
+      $admin = tadminlogin::i();
+      if (!$admin->confirm_reg($email, $password) && !$admin->confirm_restore($email, $password)) {
+        return array(
+        'error' => tlocal::i()->errpassword
+        );
+      }
+    }
+    
     $expired = time() + 31536000;
     $cookie = md5uniq();
     litepublisher::$options->setcookies($cookie, $expired);
-
+    
     return array(
     'id' => litepublisher::$options->user,
     'pass' => $cookie,
     'regservice' => 'email',
-'adminflag' => litepublisher::$options->ingroup('admin') ? 'true' : '',
+    'adminflag' => litepublisher::$options->ingroup('admin') ? 'true' : '',
     );
-}
-
+  }
+  
   public function email_reg(array $args) {
     if (!litepublisher::$options->usersenabled || !litepublisher::$options->reguser) return array(
-'error' => tlocal::admin('users')->regdisabled
-);
-
-try {
-return tadminreguser ::i()->reguser($args['email'], $args['name']);
+    'error' => tlocal::admin('users')->regdisabled
+    );
+    
+    try {
+      return tadminreguser ::i()->reguser($args['email'], $args['name']);
     } catch (Exception $e) {
-return array(
-'error' => $e->getMessage()
-);
-}
-}
-
+      return array(
+      'error' => $e->getMessage()
+      );
+    }
+  }
+  
   public function email_lostpass(array $args) {
-try {
-return tadminpassword::i()->restore($args['email']);
+    try {
+      return tadminpassword::i()->restore($args['email']);
     } catch (Exception $e) {
-return array(
-'error' => $e->getMessage()
-);
-}
-}
-
+      return array(
+      'error' => $e->getMessage()
+      );
+    }
+  }
+  
 }//class

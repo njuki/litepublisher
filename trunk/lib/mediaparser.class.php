@@ -40,10 +40,10 @@ class tmediaparser extends tevents {
     $filename = tlinkgenerator::i()->filterfilename($filename);
     return self::fixfilename($filename);
   }
-
+  
   public function addlocal($filename) {
-return $this->upload(basename($filename), file_get_contents($filename), '', '', '', false);
-}
+    return $this->upload(basename($filename), file_get_contents($filename), '', '', '', false);
+  }
   
   public function upload($filename, $content, $title, $description, $keywords, $overwrite ) {
     if ($title == '') $title = $filename;

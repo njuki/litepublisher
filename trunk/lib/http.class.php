@@ -36,7 +36,7 @@ class http {
       curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);
       curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, FALSE);
       if (is_array($headers) && count($headers)) curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
-     
+      
       //curl_setopt($ch, CURLOPT_VERBOSE , true);
       //curl_setopt($ch, CURLOPT_STDERR, fopen('zerr.txt', 'w+'));
       
@@ -79,32 +79,32 @@ class http {
   public static function curl_follow($ch, $maxredirect = 10) {
     //manual redirect
     curl_setopt($ch, CURLOPT_FOLLOWLOCATION, false);
-      curl_setopt($ch, CURLOPT_FORBID_REUSE, false);
-      curl_setopt($ch, CURLOPT_HEADER, true);
-
+    curl_setopt($ch, CURLOPT_FORBID_REUSE, false);
+    curl_setopt($ch, CURLOPT_HEADER, true);
+    
     do {
       $result = curl_exec($ch);
       $headers = curl_getinfo($ch);
       //$code = $headers['http_code'];
-          $code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+      $code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
       if ($code == 301 || $code == 302 || $code == 307) {
-if (isset($headers['redirect_url'])) {
-        curl_setopt($ch, CURLOPT_URL, $headers['redirect_url']);
-} else {
-if(preg_match('/^Location:\s+(.*)$/mi', $result, $m)) {
-        curl_setopt($ch, CURLOPT_URL, trim($m[1]));
-} else {
-//redirect without url
-return false;
-}
-}
+        if (isset($headers['redirect_url'])) {
+          curl_setopt($ch, CURLOPT_URL, $headers['redirect_url']);
+        } else {
+          if(preg_match('/^Location:\s+(.*)$/mi', $result, $m)) {
+            curl_setopt($ch, CURLOPT_URL, trim($m[1]));
+          } else {
+            //redirect without url
+            return false;
+          }
+        }
       } else {
         break;
       }
     } while ($maxredirect --);
     
     curl_close($ch);
-return substr($result, strpos($result, "\r\n\r\n") + 4);
+    return substr($result, strpos($result, "\r\n\r\n") + 4);
   }
   
 }//class

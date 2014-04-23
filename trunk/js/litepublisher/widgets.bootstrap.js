@@ -7,7 +7,7 @@
 
 (function( $, window, document, litepubl){
   'use strict';
-
+  
   litepubl.BootstrapWidgets = Class.extend({
     toggleclass: "",
     
@@ -58,7 +58,7 @@
         span.wrap('<a href="' + content + '" title="' + lang.widgetlang.clickme + '"></a>');
         span.parent().tooltip({
           container: 'body',
-placement: 'auto top'
+          placement: 'auto top'
         });
       }
       
