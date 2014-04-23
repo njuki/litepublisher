@@ -8,7 +8,6 @@ $t->heads = str_replace(
 $t->heads);
 $t->save();
 
-
 if (litepublisher::$classes->exists('ulogin')) {
 $js = tjsmerger::i();
 $js->lock();
