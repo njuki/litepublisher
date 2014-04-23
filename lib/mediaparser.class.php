@@ -40,6 +40,10 @@ class tmediaparser extends tevents {
     $filename = tlinkgenerator::i()->filterfilename($filename);
     return self::fixfilename($filename);
   }
+
+  public function addlocal($filename) {
+return $this->upload(basename($filename), file_get_contents($filename), '', '', '', false);
+}
   
   public function upload($filename, $content, $title, $description, $keywords, $overwrite ) {
     if ($title == '') $title = $filename;
@@ -59,7 +63,7 @@ class tmediaparser extends tevents {
     $filename = self::linkgen($filename);
     $parts = pathinfo($filename);
     $newtemp = $this->gettempname($parts);
-    if (!move_uploaded_file($tempfilename, litepublisher::$paths->files . $newtemp)) return $this->error("Error access to uploaded file");
+    if (!move_uploaded_file($tempfilename, litepublisher::$paths->files . $newtemp)) return $this->error('Error access to uploaded file');
     //return $this->addfile($filename, $newtemp, $title, $description, $keywords, $overwrite);
     return $this->add(array(
     'filename' => $filename,

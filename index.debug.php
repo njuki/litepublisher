@@ -95,16 +95,19 @@ require_once(litepublisher::$paths->lib .'install' . DIRECTORY_SEPARATOR . 'inst
 
   litepublisher::$classes = tclasses::i();
   litepublisher::$options = toptions::i();
+litepublisher::$db = new tdatabase();
   litepublisher::$site = tsite::i();
   litepublisher::$urlmap = turlmap::i();
-litepublisher::$db = new tdatabase();
+
+/*
 litepublisher::$db->query('SET sort_buffer_size = ' . 1024*1024*32);
 litepublisher::$db->query('SET read_rnd_buffer_size = ' . 1024*1024*32);
-
+*/
  tlocal::clearcache();
 ttheme::clearcache();
 //tsidebars::fix();
 //litepublisher::$urlmap->clearcache();
+//litepublisher::$options->logout();
 //tfiler::log(var_export($_POST, true));
 //tthemegenerator::i()->parseselectors();
 //tupdater::i()->run(5.82);

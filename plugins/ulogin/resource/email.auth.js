@@ -30,9 +30,9 @@ var html = '';
 html += this.getradio('reg');
 html += this.getradio('login');
 html += this.getradio('lostpass');
-html += litepubl.tml.getedit('E-Mail', 'email', '');
-html += litepubl.tml.getedit(lng.name, 'name', '');
-html += litepubl.tml.getedit(lng.password, 'password', '').replace(/text/gm, 'password');
+html += litepubl.tml.getedit('E-Mail', 'email-emailauth', '');
+html += litepubl.tml.getedit(lng.name, 'name-emailauth', '');
+html += litepubl.tml.getedit(lng.password, 'password-emailauth', '').replace(/text/gm, 'password');
 html += '<p id="info-status"></p>';
 
 var self = this;
@@ -44,8 +44,8 @@ open: function(dialog) {
 $("input[name=authtype]", dialog).on("click", function() {
 var type = $(this).val();
 $("#info-status", dialog).text('');
-var name = $("#text-name", dialog).parent();
-var pass = $("#password-password", dialog).parent();
+var name = $("#text-name-emailauth", dialog).parent();
+var pass = $("#password-password-emailauth", dialog).parent();
 var regbutton = $("button[data-index=0]", dialog);
 var loginbutton = $("button[data-index=1]", dialog);
 var lostpassbutton = $("button[data-index=2]", dialog);
@@ -84,7 +84,7 @@ break;
           click: function() {
 var email = self.getemail();
 if (!email) return false;
-var edit = $("#text-name", dialog);
+var edit = $("#text-name-emailauth", dialog);
 var name = $.trim(edit.val());
 if (name) {
 self.reg(email, name);
@@ -100,7 +100,7 @@ return false;
           click: function() {
 var email = self.getemail();
 if (!email) return false;
-var edit = $("#password-password", dialog);
+var edit = $("#password-password-emailauth", dialog);
 var password = $.trim(edit.val());
 if (password) {
 self.login(email, password);
@@ -115,8 +115,7 @@ return false;
           title: lng.lostpassbutton,
           click: function() {
 var email = self.getemail();
-if (!email) return false;
-self.lostpass(email);
+if (email) self.lostpass(email);
 return false;
 }
 
@@ -128,7 +127,7 @@ return false;
     },
 
 getemail: function() {
-var email = $("#text-email", this.dialog);
+var email = $("#text-email-emailauth", this.dialog);
 var result = $.trim(email.val());
 if (result) {
 if (/^([a-zA-Z0-9_\.\-])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$/.test(result)) {
@@ -180,7 +179,7 @@ $("#info-status", self.dialog).text(jq.responseText);
 setstatus: function(status) {
 this.disable(false);
 $("input[value=login]", this.dialog).click();
-$("#password-password", this.dialog).focus();
+$("#password-password-emailauth", this.dialog).focus();
 $("#info-status", this.dialog).text(lang.emailauth[status]);
 },
 
