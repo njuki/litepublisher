@@ -31,14 +31,7 @@ class tadminlogin extends tadminform {
   
   private function logout() {
     if (litepublisher::$options->cookieenabled) {
-      if (litepublisher::$options->user) {
         litepublisher::$options->logout();
-      }
-      
-      $subdir = litepublisher::$site->subdir . '/';
-      setcookie('litepubl_user_id', '', 0, $subdir, false);
-      setcookie('litepubl_user', '', 0, $subdir, false);
-      setcookie('litepubl_user_flag', '', 0, $subdir, false);
       setcookie('backurl', '', 0, $subdir, false);
       return litepublisher::$urlmap->redir('/admin/login/');
     } else {
@@ -49,6 +42,7 @@ class tadminlogin extends tadminform {
   }
   
   public function request($arg) {
+turlmap::nocache();
     if ($arg == 'out')   return $this->logout($arg);
     parent::request($arg);
     $this->section = 'login';
@@ -56,13 +50,16 @@ class tadminlogin extends tadminform {
       $this->formresult = $this->html->h4red->cookiedisabled;
       return;
     }
+
     if (!isset($_POST['email']) || !isset($_POST['password'])) return;
     $email = trim($_POST['email']);
     $password = trim($_POST['password']);
     if (empty($email) || empty($password)) return;
     if (!litepublisher::$options->auth($email, $password)) {
+if (!$this->confirm_reg($email, $password) && !$this->confirm_restore($email, $password)) {
       $this->formresult = $this->html->h4red->error;
       return;
+}
     }
     
     $expired = isset($_POST['remember']) ? time() + 31536000 : time() + 8*3600;
@@ -133,5 +130,57 @@ class tadminlogin extends tadminform {
     $this->callevent('oncontent', array(&$result));
     return $result;
   }
-  
+
+  public function confirm_reg($email, $password) {
+    if (!litepublisher::$options->usersenabled || !litepublisher::$options->reguser) return false;
+
+      tsession::start('reguser-' . md5($email));
+      if (!isset($_SESSION['email']) || ($email != $_SESSION['email']) || ($password != $_SESSION['password'])) {
+        if (isset($_SESSION['email'])) {
+session_write_close();
+} else {
+session_destroy();
+}
+return false;
+      }
+
+      $users = tusers::i();
+      $id = $users->add(array(
+      'password' => $password,
+      'name' => $_SESSION['name'],
+      'email' => $email
+      ));
+      
+      session_destroy();
+
+      if ($id) {
+        litepublisher::$options->user = $id;
+        litepublisher::$options->updategroup();
+}
+
+return $id;
+}
+
+public function confirm_restore($email, $password) {
+      tsession::start('password-restore-' .md5($email));
+      if (!isset($_SESSION['email']) || ($email != $_SESSION['email']) || ($password != $_SESSION['password'])) {
+        if (isset($_SESSION['email'])) {
+session_write_close();
+} else {
+session_destroy();
+}
+return false;
+}
+
+      session_destroy();
+    if ($email == strtolower(trim(litepublisher::$options->email))) {
+          litepublisher::$options->changepassword($password);
+return 1;
+        } else {
+   $users = tusers::i();
+if ($id = $users->emailexists($email)) $users->changepassword($id, $password);
+return $id;
+        }
+}
+
 }//class

@@ -7,6 +7,7 @@
 
 (function( $, window, document, litepubl){
   'use strict';
+
   litepubl.BootstrapWidgets = Class.extend({
     toggleclass: "",
     
@@ -56,7 +57,8 @@
         $(content).addClass("panel-collapse collapse");
         span.wrap('<a href="' + content + '" title="' + lang.widgetlang.clickme + '"></a>');
         span.parent().tooltip({
-          container: 'body'
+          container: 'body',
+placement: 'auto top'
         });
       }
       
@@ -75,7 +77,6 @@
         return false;
       });
     },
-    
     
     load: function(button) {
       var widget = button.data("span").data("widget");
@@ -107,7 +108,7 @@
         case "dropdown":
         widget.body = $(widget.comment).replaceComment( widget.html);
         widget.comment = false;
-        button.dropdown().dropdown("toggle");
+        button.dropdown("toggle");
         break;
         
         case 'wrap-collapse':

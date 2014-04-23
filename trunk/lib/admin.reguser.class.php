@@ -77,17 +77,17 @@ class tadminreguser extends tadminform {
     $result = '';
     $html = $this->html;
     $lang = tlocal::admin('users');
-    if ($this->logged) return $html->logged();
+    if ($this->logged) return $html->h4red($lang->logged . ' ' . $html->getlink('/admin/', $lang->adminpanel)));
     
     $args = new targs();
     
     if ($this->regstatus) {
       switch ($this->regstatus) {
         case 'ok':
-        if (!$this->backurl) $this->backurl =  tusergroups::i()->gethome(litepublisher::$options->group);
-        if (!strbegin($this->backurl, 'http://')) $this->backurl = litepublisher::$site->url . $this->backurl;
-        $args->backurl = $this->backurl;
-        return $html->successreg($args);
+$backurl = $this->backurl;
+        if (!$backurl) $backurl =  tusergroups::i()->gethome(litepublisher::$options->group);
+        if (!strbegin($backurl, 'http://')) $backurl = litepublisher::$site->url . $backurl;
+        return $html->h4($lang->successreg . ' ' . $html->getlink($backurl, $lang->continue));
         
         case 'mail':
         return $html->h4->waitconfirm;
