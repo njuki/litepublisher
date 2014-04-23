@@ -77,14 +77,14 @@ class tadminreguser extends tadminform {
     $result = '';
     $html = $this->html;
     $lang = tlocal::admin('users');
-    if ($this->logged) return $html->h4red($lang->logged . ' ' . $html->getlink('/admin/', $lang->adminpanel)));
+    if ($this->logged) return $html->h4red($lang->logged . ' ' . $html->getlink('/admin/', $lang->adminpanel));
     
     $args = new targs();
     
     if ($this->regstatus) {
       switch ($this->regstatus) {
         case 'ok':
-$backurl = $this->backurl;
+        $backurl = $this->backurl;
         if (!$backurl) $backurl =  tusergroups::i()->gethome(litepublisher::$options->group);
         if (!strbegin($backurl, 'http://')) $backurl = litepublisher::$site->url . $backurl;
         return $html->h4($lang->successreg . ' ' . $html->getlink($backurl, $lang->continue));
@@ -121,17 +121,17 @@ $backurl = $this->backurl;
   
   public function processform() {
     $this->regstatus = 'error';
-try {
-if ($this->reguser($_POST['email'], $_POST['name']))    $this->regstatus = 'mail';
+    try {
+      if ($this->reguser($_POST['email'], $_POST['name']))    $this->regstatus = 'mail';
     } catch (Exception $e) {
-return sprintf('<h4 class="red">%s</h4>', $e->getMessage());
-}
-}
-
+      return sprintf('<h4 class="red">%s</h4>', $e->getMessage());
+    }
+  }
+  
   public function reguser($email, $name) {
     $email = strtolower(trim($email));
     if (!tcontentfilter::ValidateEmail($email)) return $this->error(tlocal::get('comment', 'invalidemail'));
-
+    
     if (substr_count($email, '.', 0, strpos($email, '@')) > 2) return $this->error(tlocal::get('comment', 'invalidemail'));
     
     $users = tusers::i();
@@ -166,7 +166,7 @@ return sprintf('<h4 class="red">%s</h4>', $e->getMessage());
     tmailer::sendmail(litepublisher::$site->name, litepublisher::$options->fromemail,
     $name, $email, $subject, $body);
     
-return true;
+    return true;
   }
   
 }//class

@@ -240,10 +240,13 @@ class tview extends titem_storage {
     if (isset($this->themeinstance)) return $this->themeinstance;
     if (ttheme::exists($this->themename)) {
       $this->themeinstance = $this->get_theme_instance($this->themename);
-      if (count($this->data['custom']) == count($this->themeinstance->templates['custom'])) {
-        $this->themeinstance->templates['custom'] = $this->data['custom'];
+      $viewcustom = &$this->data['custom'];
+      $themecustom = &$this->themeinstance->templates['custom'];
+      //aray_equal
+      if ((count($viewcustom) == count($themecustom)) && !count(array_diff(array_keys($viewcustom), array_keys($themecustom)))) {
+        $this->themeinstance->templates['custom'] = $viewcustom;
       } else {
-        $this->data['custom'] = $this->themeinstance->templates['custom'];
+        $this->data['custom'] = $themecustom;
         $this->save();
       }
     } else {
@@ -877,6 +880,7 @@ class ttheme extends tevents {
   }
   
   public function parse($s) {
+    if (!$s) return '';
     $s = strtr((string) $s, self::$defaultargs);
     if (isset($this->templates['content.admin.tableclass'])) $s = str_replace('$tableclass', $this->templates['content.admin.tableclass'], $s);
     array_push($this->parsing, $s);
@@ -969,12 +973,13 @@ class ttheme extends tevents {
     $tml =$this->templates['content.navi.link'];
     if (!strbegin($url, 'http')) $url = litepublisher::$site->url . $url;
     $pageurl = rtrim($url, '/') . '/page/';
+    if ($params) $params = litepublisher::$site->q . $params;
     
     $a = array();
     foreach ($items as $i) {
       $args->page = $i;
       $link = $i == 1 ? $url : $pageurl .$i . '/';
-      if ($params) $link .= litepublisher::$site->q . $params;
+      if ($params) $link .= $params;
       $args->link = $link;
       $a[] = $this->parsearg(($i == $page ? $currenttml : $tml), $args);
     }

@@ -231,7 +231,7 @@ class tdatabase {
   }
   
   public function  exists($where) {
-return $this->query("select *  from $this->prefix$this->table where $where limit 1")->num_rows;
+    return $this->query("select *  from $this->prefix$this->table where $where limit 1")->num_rows;
   }
   
   public function getlist(array $list) {
@@ -269,7 +269,7 @@ return $this->query("select *  from $this->prefix$this->table where $where limit
   public function setvalue($id, $name, $value) {
     return $this->update("$name = " . $this->quote($value), "id = $id");
   }
-
+  
   public function getvalues($name, $where) {
     $result = array();
     $res = $this->query("select $name from $this->prefix$this->table where $where");
@@ -277,8 +277,8 @@ return $this->query("select *  from $this->prefix$this->table where $where limit
       while ($r = $res->fetch_row()) {
         $result[$r[0]] = $r[1];
       }
-}
-      return $result;
+    }
+    return $result;
   }
   
   public function res2array($res) {

@@ -72,7 +72,7 @@ class tposts extends titems {
       $f = $t->post->files;
       if (count($f)) $fileitems = array_merge($fileitems, array_diff($f, $fileitems));
     }
-
+    
     unset($t);
     if ($this->syncmeta)  tmetapost::loaditems($result);
     if (count($fileitems)) tfiles::i()->preload($fileitems);

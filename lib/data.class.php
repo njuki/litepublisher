@@ -14,6 +14,7 @@ class tdata {
   public $data;
   public $lockcount;
   public $table;
+  public static $guid = 0;
   
   public static function i() {
     return getinstance(get_called_class());
@@ -217,7 +218,7 @@ class tdata {
   }
   
   protected function getthistable() {
-if (!litepublisher::$db) $this->error('db');
+    if (!litepublisher::$db) $this->error('db');
     return litepublisher::$db->prefix . $this->table;
   }
   

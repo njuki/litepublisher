@@ -60,7 +60,7 @@ class tadminviews extends tadminmenu {
     $html = $this->html;
     $customadmin = $view->theme->templates['customadmin'];
     foreach ($view->data['custom'] as $name => $value) {
-if (!isset($customadmin[$name])) continue;
+      if (!isset($customadmin[$name])) continue;
       switch ($customadmin[$name]['type']) {
         case 'text':
         case 'editor':
@@ -76,7 +76,7 @@ if (!isset($customadmin[$name])) continue;
         break;
         
         case 'radio':
-      $value = $html->getradioitems(    "custom-$name", $customadmin[$name]['values'], $value);
+        $value = $html->getradioitems(    "custom-$name", $customadmin[$name]['values'], $value);
         break;
       }
       
@@ -95,7 +95,7 @@ if (!isset($customadmin[$name])) continue;
     if (count($view->custom) == 0) return;
     $customadmin = $view->theme->templates['customadmin'];
     foreach ($view->data['custom'] as $name => $value) {
-if (!isset($customadmin[$name])) continue;
+      if (!isset($customadmin[$name])) continue;
       switch ($customadmin[$name]['type']) {
         case 'checkbox':
         $view->data['custom'][$name] = isset($_POST["custom-$name"]);
@@ -320,7 +320,7 @@ if (!isset($customadmin[$name])) continue;
   }
   
   public function processform() {
-//dumpvar($_POST);
+    //dumpvar($_POST);
     $result = '';
     switch ($this->name) {
       case 'views':

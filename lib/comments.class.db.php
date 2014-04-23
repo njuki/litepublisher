@@ -263,7 +263,7 @@ class tcomment extends tdata {
     $name = $this->data['name'];
     $website = $this->data['website'];
     if ($website == '')  return $name;
-
+    
     $manager = tcommentmanager::i();
     if ($manager->hidelink || ($this->trust <= $manager->trustlevel)) return $name;
     $rel = $manager->nofollow ? 'rel="nofollow"' : '';
@@ -272,7 +272,7 @@ class tcomment extends tdata {
       litepublisher::$site->url, litepublisher::$site->q, $this->author, $name);
     } else {
       if (!strbegin($website, 'http://')) $website = 'http://' . $website;
-            return sprintf('<a class="url fn" %s href="%s" itemprop="url">%s</a>',
+      return sprintf('<a class="url fn" %s href="%s" itemprop="url">%s</a>',
       $rel,$website, $name);
     }
   }

@@ -32,7 +32,7 @@ class tadminpassword extends tadminform {
         if (!isset($_SESSION['email'])) session_destroy();
         return $html->h4->notfound;
       }
-        $password = $_SESSION['password'];
+      $password = $_SESSION['password'];
       session_destroy();
       if ($id = $this->getiduser($email)) {
         if ($id == 1) {
@@ -56,22 +56,22 @@ class tadminpassword extends tadminform {
   }
   
   public function processform() {
-try {
-$this->restore($_POST['email']);
+    try {
+      $this->restore($_POST['email']);
     } catch (Exception $e) {
-return sprintf('<h4 class="red">%s</h4>', $e->getMessage());
-}
-
+      return sprintf('<h4 class="red">%s</h4>', $e->getMessage());
+    }
+    
     return $this->html->h4->success;
-}
-
+  }
+  
   public function restore($email) {
-$lang = tlocal::admin('password');
+    $lang = tlocal::admin('password');
     $email = strtolower(trim($email));
     if (empty($email)) return $this->error($lang->error);
     $id = $this->getiduser($email);
     if (!$id) return $this->error($lang->error);
-
+    
     $args = new targs();
     
     tsession::start('password-restore-' .md5($email));
@@ -82,8 +82,8 @@ $lang = tlocal::admin('password');
     }
     
     $_SESSION['email'] = $email;
-$password = md5uniq();
-        $_SESSION['password'] = $password;
+    $password = md5uniq();
+    $_SESSION['password'] = $password;
     $_SESSION['confirm'] = md5(mt_rand() . litepublisher::$secret. microtime());
     $args->confirm = $_SESSION['confirm'];
     session_write_close();
@@ -96,8 +96,8 @@ $password = md5uniq();
       $args->add($item);
       $name = $item['name'];
     }
-
-$args->password = $password;    
+    
+    $args->password = $password;
     tlocal::usefile('mail');
     $lang = tlocal::i('mailpassword');
     $theme = ttheme::i();

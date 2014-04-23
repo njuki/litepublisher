@@ -47,7 +47,7 @@ class titemsposts extends titems {
   public function deletepost($idpost) {
     $db = $this->db;
     $result = $db->res2id($db->query("select $this->itemprop from $this->thistable where $this->postprop = $idpost"));
-    $db->delete("$this->post = $idpost");
+    $db->delete("$this->postprop = $idpost");
     return $result;
   }
   
@@ -120,8 +120,6 @@ class tpost extends titem implements  itemplate {
   public $childdata;
   public $childtable;
   public $factory;
-  public $props;
-  public $propdata;
   public $syncdata;
   private $aprev;
   private $anext;
@@ -170,8 +168,6 @@ class tpost extends titem implements  itemplate {
   
   protected function create() {
     $this->table = 'posts';
-    $this->props = array();
-    $this->propdata = array();
     $this->syncdata = array();
     //last binding, like cache
     $this->childtable = call_user_func_array(array(get_class($this), 'getchildtable'), array());
@@ -248,12 +244,6 @@ class tpost extends titem implements  itemplate {
   }
   
   public function __set($name, $value) {
-    /*
-    foreach ($this->props as $props) {
-      if ($props->set($this, $name, $value)) return true;
-    }
-    */
-    
     if ($this->childtable) {
       if ($name == 'id') return $this->setid($value);
       if (method_exists($this, $set = 'set'. $name)) return $this->$set($value);
@@ -450,6 +440,10 @@ class tpost extends titem implements  itemplate {
   
   public function getrsscomments() {
     return litepublisher::$site->url . "/comments/$this->id.xml";
+  }
+  
+  public function Getisodate() {
+    return date('c', $this->posted);
   }
   
   public function Getpubdate() {
@@ -1123,15 +1117,12 @@ class tposts extends titems {
       $t->setassoc($a);
       $result[] = $t->post->id;
       $f = $t->post->files;
-      if (count($f) > 0) $fileitems = array_merge($fileitems, array_diff($f, $fileitems));
-    }
-    unset($t);
-    if ($this->syncmeta)  tmetapost::loaditems($result);
-    if (count($fileitems) > 0) {
-      $files = tfiles::i();
-      $files->preload($fileitems);
+      if (count($f)) $fileitems = array_merge($fileitems, array_diff($f, $fileitems));
     }
     
+    unset($t);
+    if ($this->syncmeta)  tmetapost::loaditems($result);
+    if (count($fileitems)) tfiles::i()->preload($fileitems);
     $this->onselect($result);
     return $result;
   }
@@ -1511,9 +1502,7 @@ class tposttransform  {
   }
   
   public function setassoc(array $a) {
-    foreach ($a as $name => $value) {
-      $this->__set($name, $value);
-    }
+    foreach ($a as $k => $v) $this->__set($k, $v);
   }
   
   public function __get($name) {
@@ -1652,17 +1641,21 @@ class tcommontags extends titems implements  itemplate {
     $this->dbversion = dbversion;
     parent::create();
     $this->addevents('changed', 'onbeforecontent', 'oncontent');
-    $this->factory = litepublisher::$classes->getfactory($this);
     $this->data['lite'] = false;
     $this->data['includechilds'] = false;
     $this->data['includeparents'] = false;
     $this->PermalinkIndex = 'category';
     $this->postpropname = 'categories';
+    $this->all_loaded = false;
+    $this->_idposts = array();
+    $this->createfactory();
+  }
+  
+  protected function createfactory() {
+    $this->factory = litepublisher::$classes->getfactory($this);
     $this->contents = new ttagcontent($this);
     if (!$this->dbversion)  $this->data['itemsposts'] = array();
     $this->itemsposts = new titemspostsowner ($this);
-    $this->all_loaded = false;
-    $this->_idposts = array();
   }
   
   public function loadall() {
@@ -1675,9 +1668,10 @@ class tcommontags extends titems implements  itemplate {
   public function select($where, $limit) {
     if ($where != '') $where .= ' and ';
     $db = litepublisher::$db;
-    $table = $this->thistable;
-    $res = $db->query("select $table.*, $db->urlmap.url from $table, $db->urlmap
-    where $where $table.idurl = $db->urlmap.id $limit");
+    $t = $this->thistable;
+    $u = $db->urlmap;
+    $res = $db->query("select $t.*, $u.url from $t, $u
+    where $where $u.id = $t.idurl $limit");
     return $this->res2items($res);
   }
   
@@ -1740,23 +1734,23 @@ class tcommontags extends titems implements  itemplate {
   }
   
   public function postdeleted($idpost) {
-    $this->lock();
     $changed = $this->itemsposts->deletepost($idpost);
     $this->updatecount($changed);
-    $this->unlock();
   }
   
-  private function updatecount(array $items) {
+  protected function updatecount(array $items) {
     if (count($items) == 0) return;
     $db = litepublisher::$db;
     //next queries update values
     $items = implode(',', $items);
     $thistable = $this->thistable;
     $itemstable = $this->itemsposts->thistable;
+    $itemprop = $this->itemsposts->itemprop;
+    $postprop = $this->itemsposts->postprop;
     $poststable = $db->posts;
-    $list = $db->res2assoc($db->query("select $itemstable.item as id, count($itemstable.item)as itemscount from $itemstable, $poststable
-    where $itemstable.item in ($items)  and $itemstable.post = $poststable.id and $poststable.status = 'published'
-    group by $itemstable.item"));
+    $list = $db->res2assoc($db->query("select $itemstable.$itemprop as id, count($itemstable.$itemprop)as itemscount from $itemstable, $poststable
+    where $itemstable.$itemprop in ($items)  and $itemstable.$postprop = $poststable.id and $poststable.status = 'published'
+    group by $itemstable.$itemprop"));
     
     $db->table = $this->table;
     foreach ($list as $item) {
@@ -1846,7 +1840,7 @@ class tcommontags extends titems implements  itemplate {
     $list = $this->itemsposts->getposts($id);
     $this->itemsposts->deleteitem($id);
     parent::delete($id);
-    $this->itemsposts->updateposts($list, $this->postpropname);
+    if ($this->postpropname) $this->itemsposts->updateposts($list, $this->postpropname);
     $this->changed();
     litepublisher::$urlmap->clearcache();
   }
@@ -2049,6 +2043,8 @@ class tcommontags extends titems implements  itemplate {
     $p = $posts->thistable;
     $t = $this->thistable;
     $ti = $this->itemsposts->thistable;
+    $postprop = $this->itemsposts->postprop;
+    $itemprop = $this->itemsposts->itemprop;
     
     if ($includeparents || $includechilds) {
       $this->loadall();
@@ -2068,8 +2064,8 @@ class tcommontags extends titems implements  itemplate {
     "order by $p.posted $order limit $from, $perpage");
     */
     
-    $result = $this->db->res2id($this->db->query("select $p.id as id, $ti.post as post from $p, $ti
-    where    $ti.item $tags and $p.id = $ti.post and $p.status = 'published'
+    $result = $this->db->res2id($this->db->query("select $ti.$postprop as $postprop, $p.id as id from $ti, $p
+    where    $ti.$itemprop $tags and $p.id = $ti.$postprop and $p.status = 'published'
     order by $p.posted $order limit $from, $perpage"));
     
     $result = array_unique($result);

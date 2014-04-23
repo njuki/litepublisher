@@ -7,7 +7,7 @@
 
 (function( $, window, document){
   'use strict';
-
+  
   $.BootstrapDialog = Class.extend({
     tml: '<div class="modal fade" id="dialog-%%id%%" tabindex="-1" role="dialog" aria-hidden="true">' +
     '<div class="modal-dialog center-block%%sizeclass%%"><div class="modal-content">' +
@@ -51,16 +51,16 @@
     
     close: function(callback) {
       if (this.dialog) {
-if ($.isFunction(callback)) {
-      this.dialog.on("hidden.bs.modal", function() {
-setTimeout(function() {
-callback();
-}, 20);
-});
-}
-
+        if ($.isFunction(callback)) {
+          this.dialog.on("hidden.bs.modal", function() {
+            setTimeout(function() {
+              callback();
+            }, 20);
+          });
+        }
+        
         this.dialog.modal("hide");
-
+        
         this.dialog = false;
       }
     },
@@ -73,10 +73,10 @@ callback();
       var buttons = '';
       for (var i =0, l= options.buttons.length;  i < l; i++) {
         buttons += $.simpletml(this.button, {
-index: i,
-id: id,
-title:  options.buttons[i].title
-});
+          index: i,
+          id: id,
+          title:  options.buttons[i].title
+        });
       }
       
       //single button change class to "btn-primary"
@@ -110,7 +110,7 @@ title:  options.buttons[i].title
       var dialog = this.dialog = $(html).appendTo("body");
       //assign events to buttons
       for (var i =0, l= options.buttons.length;  i < l; i++) {
-this.getbutton(i).on("click.dialog", options.buttons[i].click);
+        this.getbutton(i).on("click.dialog", options.buttons[i].click);
       }
       
       dialog.on("shown.bs.modal", function() {
@@ -133,12 +133,12 @@ this.getbutton(i).on("click.dialog", options.buttons[i].click);
       
       return dialog;
     },
-
-getbutton: function(index) {
-if (!this.dialog) return false;
-var footer = $(".modal-footer:first", this.dialog);
-return $("button[data-index=" + index + "]", footer);
-}
+    
+    getbutton: function(index) {
+      if (!this.dialog) return false;
+      var footer = $(".modal-footer:first", this.dialog);
+      return $("button[data-index=" + index + "]", footer);
+    }
     
   });
   
