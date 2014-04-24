@@ -1,5 +1,5 @@
 <?php
-function update582() {
+function update583() {
 $t = ttemplate::i();
 $t->heads = str_replace(
 '<link rel="shortcut icon" type="image/x-icon" href="$template.icon" />',

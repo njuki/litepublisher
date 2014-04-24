@@ -161,8 +161,9 @@ class tupdater extends tevents {
     }
     
     if (!(
-    ($s = http::get("http://litepublisher.googlecode.com/files/litepublisher.$version.tar.gz")) ||
-    ($s = http::get("http://litepublisher.com/download/litepublisher.$version.tar.gz"))
+    ($s = http::get("http://litepublisher.com/download/litepublisher.$version.tar.gz")) ||
+    ($s = http::get("http://litepublisher.googlecode.com/files/litepublisher.$version.tar.gz"))
+    
     )) {
       $this->result = $lang->errordownload;
       return  false;
