@@ -459,6 +459,7 @@ class tbackuper extends tevents {
       $this->hasdata = false;
       $this->existingfolders = array();
       $this->createarchive();
+      
       switch ($archtype) {
         case 'tar':
         $this->tar->loadfromstring($content);
