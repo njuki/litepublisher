@@ -1,9 +1,10 @@
   id int unsigned NOT NULL auto_increment,
-  media enum('bin','image','icon','audio','video','document','executable','text','archive') default 'bin',
+  media enum('bin','image', 'audio','video', 'flash', 'document', 'executable','text','archive') default 'bin',
       mime enum ('application/octet-stream', 'image/jpeg', 'image/png', 'image/gif', 'image/bmp',
        'image/x-icon', 'image/tiff', 'image/vnd.wap.wbm', 'image/x-xbitmap', 'image/pict',
       'audio/mpeg', 'audio/mp44', 'audio/x-wav', 'audio/ogg',
       'video/mp4', 'video/mpeg', 'video/ogg', 'video/webm', 'video/x-flv',
+'application/x-shockwave-flash',
       'text/plain'
       ) default 'application/octet-stream',
 

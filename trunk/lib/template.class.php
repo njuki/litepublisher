@@ -23,7 +23,7 @@ class ttemplate extends tevents_storage {
   
   protected function create() {
     //prevent recursion
-    litepublisher::$classes->instances[__class__] = $this;
+    litepublisher::$classes->instances[get_class($this)] = $this;
     parent::create();
     $this->basename = 'template' ;
     $this->addevents('beforecontent', 'aftercontent', 'onhead', 'onbody', 'onrequest', 'ontitle', 'ongetmenu');
