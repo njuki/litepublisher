@@ -349,7 +349,8 @@ class tmediaparser extends tevents {
   public function getinfo($filename) {
     $realfile = litepublisher::$paths->files. str_replace('/', DIRECTORY_SEPARATOR, $filename);
     $result = $this->getdefaultvalues($filename);
-    if (preg_match("/\\.($this->videoext)\$/", $filename)) {
+    if (preg_match("/\\.($this->videoext)\$/", $filename, $m)) {
+$ext = $m[1];
       $mime = array(
       'mp4' => 'video/mp4',
       'mpe' => 'video/mpeg',
@@ -364,14 +365,14 @@ class tmediaparser extends tevents {
       'f4p' => 'video/mp4',
       );
       
-      $result['mime'] = $mime[strtolower(substr($filename, -3))];
+if (isset($mime[$ext])) $result['mime'] = $mime[$ext];
       $result['media'] = 'video';
       return $result;
     }
     
     if ($info = @getimagesize($realfile)) {
-      $result['media'] = 'image';
       $result['mime'] = $info['mime'];
+      $result['media'] = $'application/x-shockwave-flash' == $info['mime'] ? 'flash' : 'image';
       $result['width'] = $info[0];
       $result['height'] = $info[1];
       return $result;
@@ -394,9 +395,23 @@ class tmediaparser extends tevents {
     if (strend($filename, '.txt')) {
       $result['mime'] = 'text/plain';
       $result['media'] = 'text';
+return $result;
     }
+
+if (strend($filename, '.swf')) {
+$result['media'] = 'flash';
+$result['mime'] = 'application/x-shockwave-flash';
+$result['width'] =0;
+$result['height'] =0;
+
+include_once(litepublisher::$paths->libinclude . 'getid3.php');
+include_once(litepublisher::$paths->libinclude . getid3.lib.php'');
+include_once(litepublisher::$paths->libinclude . 'module.audio-video.swf.php');
+
+}
     
     return $result;
+
   }
   
   public static function readimage($srcfilename) {
