@@ -382,6 +382,19 @@ $video = [<span class="image"><a title="$title" rel="video" class="videofile" id
 $audios = [<div class="files-block filelist-audio">
   $audio = [<audio id="postfile-$post.id-$id" src="$link" type="$mime" controls="controls"></audio>]
 </div>]
+$flashs = [<div class="files-block filelist-flash">
+$flash = [<div class="flash-holder">
+<object type="application/x-shockwave-flash" data="$link" width="$width" height="$height" id="flashplayer-$id" name="flashplayer-$id">
+<param name="movie" value="$link" />
+<param name="allowfullscreen" value="true" />
+<param name="allowscriptaccess" value="always" />
+<param name="menu" value="false" />
+<param name="wmode" value="transparent" />
+<param name="FlashVars" value="autostart=true" />
+</object>
+</div>]
+</div>]
+
 </div>]
 
 Мы видим объявление в списке файлов шаблоны для разных типов. Несложно догадатся, какой шаблон отвечает за какой тип файлов

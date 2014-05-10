@@ -39,7 +39,7 @@ class tthemeparser extends tevents {
     $result = array();
     $post = 'content.post.filelist.';
     $excerpt = 'content.excerpts.excerpt.filelist.';
-    foreach(array('file', 'image',  'audio', 'video') as $name) {
+    foreach(array('file', 'image',  'audio', 'video', 'flash') as $name) {
       $key = $post . $name;
       $result[$key . "s.$name"] = $key;
       $keyexcerpt = $excerpt . $name;
@@ -516,7 +516,7 @@ class tthemeparser extends tevents {
         $post = 'content.post.';
         $excerpt = 'content.excerpts.excerpt.';
         //normalize filelist
-        foreach(array('file', 'image',  'audio', 'video') as $name) {
+        foreach(array('file', 'image',  'audio', 'video', 'flash') as $name) {
           $key = $post . 'filelist.' . $name;
           $itemkey = $key . "s.$name";
           if (!isset($templates[$key . 's'])) $templates[$key . 's'] = '$' . $name;
@@ -533,8 +533,8 @@ class tthemeparser extends tevents {
         if ( !isset($templates[$keyexcerpt])) $templates[$keyexcerpt] = $templates[$key];
         
         foreach (array('date',
-        'filelist', 'filelist.file', 'filelist.image', 'filelist.preview', 'filelist.audio', 'filelist.video',
-        'filelist.files', 'filelist.images', 'filelist.audios', 'filelist.videos',
+        'filelist', 'filelist.file', 'filelist.image', 'filelist.preview', 'filelist.audio', 'filelist.video', 'filelist.flash',
+        'filelist.files', 'filelist.images', 'filelist.audios', 'filelist.videos', 'filelist.flashs',
         'catlinks',         'catlinks.item', 'catlinks.divider',
         'taglinks',         'taglinks.item', 'taglinks.divider') as $name) {
           if (empty($templates[$excerpt . $name])) {
@@ -921,6 +921,21 @@ class tthemeparser extends tevents {
         'tag' => '$video',
         'replace' => '$video'
         ),
+
+        'content.post.filelist.flash' => array(
+        'tag' => '$flash',
+        'replace' => ''
+        ),
+        
+        'content.post.filelist.flashs' => array(
+        'tag' => '$flashs',
+        'replace' => ''
+        ),
+        
+        'content.post.filelist.flashs.flash' => array(
+        'tag' => '$flash',
+        'replace' => '$flash'
+        ),
         
         'content.post.catlinks' => array(
         'tag' => '$post.catlinks',
@@ -1155,6 +1170,21 @@ class tthemeparser extends tevents {
         'content.excerpts.excerpt.filelist.videos.video' => array(
         'tag' => '$video',
         'replace' => '$video'
+        ),
+
+        'content.excerpts.excerpt.filelist.flash' => array(
+        'tag' => '$flash',
+        'replace' => ''
+        ),
+        
+        'content.excerpts.excerpt.filelist.flashs' => array(
+        'tag' => '$flashs',
+        'replace' => ''
+        ),
+        
+        'content.excerpts.excerpt.filelist.flashs.flash' => array(
+        'tag' => '$flash',
+        'replace' => '$flash'
         ),
         
         'content.excerpts.excerpt.catlinks' => array(
