@@ -110,7 +110,7 @@ ttheme::clearcache();
 //litepublisher::$options->logout();
 //tfiler::log(var_export($_POST, true));
 //tthemegenerator::i()->parseselectors();
-//tupdater::i()->run(5.82);
+//tupdater::i()->run(5.84);
 //shopupdater::i()->run(1.27);
 //shoptheme::i()->setpaths();
 //hcardwidget::i()->install();
