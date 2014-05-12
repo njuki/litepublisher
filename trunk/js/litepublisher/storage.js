@@ -102,10 +102,10 @@
     }
     
   });//storage
-
-litepubl.getstorage = function() {
-if ("storage" in litepubl) return litepubl.storage;
-return litepubl.storage = new litepubl.Storage();
-};
+  
+  litepubl.getstorage = function() {
+    if ("storage" in litepubl) return litepubl.storage;
+    return litepubl.storage = new litepubl.Storage();
+  };
   
 }(jQuery, document, window));

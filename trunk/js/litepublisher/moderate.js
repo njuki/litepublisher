@@ -55,6 +55,7 @@
       var idcomment = options.comment + id;
       switch (status) {
         case "delete":
+        case "del":
         this.setenabled(false);
         $.confirmbox(lang.dialog.confirm, lang.comments.confirmdelete, lang.comments.yesdelete, lang.comments.nodelete, function(index) {
           if (index !=0) return self.setenabled(true);
@@ -72,8 +73,9 @@
         
         case "hold":
         case "approved":
+        case "approve":
         this.setenabled(false);
-      $.litejson({method: "comment_setstatus", id: id, status: status}, function(r) {
+      $.litejson({method: "comment_setstatus", id: id, status: status == 'hold' ? 'hold' : 'approved'}, function(r) {
           try {
             if (r == false) return self.error(lang.comments.notmoderated);
             $(status == "hold" ? options.hold : options.comments).append($(options.comment  + id));
@@ -179,11 +181,25 @@
     
     create_buttons: function(where) {
       var options = this.options;
-      var approved = options.button.replace('%%title%%', lang.comments.approve).replace('%%name%%', 'approve');
-      var hold = options.button.replace('%%title%%', lang.comments.hold).replace('%%name%%', 'hold');
-      var del = options.button.replace('%%title%%', lang.comments.del).replace('%%name%%', 'delete');
-      var edit = options.button.replace('%%title%%', lang.comments.edit).replace('%%name%%', 'edit');
-      var show = '<button type="button">E</button>';
+      var buttons = {
+        approve: '',
+        hold: '',
+        del: '',
+        edit: ''
+      };
+      
+      for (var name in buttons) {
+        buttons[name] = $.simpletml(options.button, {
+          title: lang.comments[name],
+          name: name
+        });
+      }
+      
+      var showbutton  = $.simpletml(options.button, {
+        title: 'E',
+        name: 'show'
+      });
+      
       var self = this;
       var click = function() {
         if (!self.enabled) return false;
@@ -197,33 +213,29 @@
         var container = $(this);
         var id = container.data("idcomment");
         if (options.ismoder) {
-          $(approved).appendTo(container).data("idcomment", id).data("moder", "approved").click(click);
-          $(hold).appendTo(container).data("idcomment", id).data("moder", "hold").click(click);
-          $(del).appendTo(container).data("idcomment", id).data("moder", "delete").click(click);
-          $(edit).appendTo(container).data("idcomment", id).data("moder", "edit").click(click);
-          if (container.is(":hidden")) {
-            $(show).insertBefore(container).one("click",  function() {
-              $(this).next().show();
-              $(this).remove();
-              return false;
-            });
+          for (var name in buttons) {
+            $(buttons[name]).appendTo(container).data("idcomment", id).data("moder", name).click(click);
           }
+          
+          if (container.is(":hidden")) self.addswitcher(container, showbutton);
         } else {
           var idauthor = parseInt(container.data("idauthor"));
           if (idauthor == iduser) {
-            if (options.canedit) $(edit).appendTo(container).data("idcomment", id).data("moder", "edit").click(click);
-            if (options.candelete) $(del).appendTo(container).data("idcomment", id).data("moder", "delete").click(click);
-            if ((options.canedit ||options.candelete) && container.is(":hidden")) {
-              $(show).insertBefore(container).one("click",  function() {
-                $(this).next().show();
-                $(this).remove();
-                return false;
-              });
-            }
+            if (options.canedit) $(buttons.edit).appendTo(container).data("idcomment", id).data("moder", "edit").click(click);
+            if (options.candelete) $(buttons.del).appendTo(container).data("idcomment", id).data("moder", "delete").click(click);
+            if ((options.canedit ||options.candelete) && container.is(":hidden")) self.addswitcher(container, showbutton);
           }
         }
         
         self.onbuttons.fire(container);
+      });
+    },
+    
+    addswitcher: function(container, button) {
+      $(button).insertBefore(container).one("click mouseenter",  function() {
+        $(this).next().show();
+        $(this).remove();
+        return false;
       });
     }
     

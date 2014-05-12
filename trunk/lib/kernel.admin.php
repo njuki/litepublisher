@@ -331,6 +331,7 @@ class tadminhtml {
   }
   
   public function __call($name, $params) {
+    if ($name == 'getinput') return call_user_func_array(array(ttheme::i(), 'getinput'), $params);
     $s = $this->__get($name);
     if (is_object($s) && ($s instanceof thtmltag))  return sprintf('<%1$s>%2$s</%1$s>', $name, $params[0]);
     
@@ -505,15 +506,6 @@ class tadminhtml {
       ));
     }
     return $result;
-  }
-  
-  public function getinput($type, $name, $value, $title) {
-    $theme = ttheme::i();
-    return strtr($theme->templates['content.admin.' . $type], array(
-    '$lang.$name' => $title,
-    '$name' => $name,
-    '$value' => $value
-    ));
   }
   
   public function getsubmit() {

@@ -921,7 +921,7 @@ class tthemeparser extends tevents {
         'tag' => '$video',
         'replace' => '$video'
         ),
-
+        
         'content.post.filelist.flash' => array(
         'tag' => '$flash',
         'replace' => ''
@@ -1171,7 +1171,7 @@ class tthemeparser extends tevents {
         'tag' => '$video',
         'replace' => '$video'
         ),
-
+        
         'content.excerpts.excerpt.filelist.flash' => array(
         'tag' => '$flash',
         'replace' => ''
