@@ -350,7 +350,7 @@ class tmediaparser extends tevents {
     $realfile = litepublisher::$paths->files. str_replace('/', DIRECTORY_SEPARATOR, $filename);
     $result = $this->getdefaultvalues($filename);
     if (preg_match("/\\.($this->videoext)\$/", $filename, $m)) {
-$ext = $m[1];
+      $ext = $m[1];
       $mime = array(
       'mp4' => 'video/mp4',
       'mpe' => 'video/mpeg',
@@ -365,7 +365,7 @@ $ext = $m[1];
       'f4p' => 'video/mp4',
       );
       
-if (isset($mime[$ext])) $result['mime'] = $mime[$ext];
+      if (isset($mime[$ext])) $result['mime'] = $mime[$ext];
       $result['media'] = 'video';
       return $result;
     }
@@ -375,7 +375,7 @@ if (isset($mime[$ext])) $result['mime'] = $mime[$ext];
       $result['media'] = 'application/x-shockwave-flash' == $info['mime'] ? 'flash' : 'image';
       $result['width'] = $info[0];
       $result['height'] = $info[1];
-     return $result;
+      return $result;
     }
     
     if (preg_match("/\\.($this->audioext)\$/", $filename)) {
@@ -395,37 +395,37 @@ if (isset($mime[$ext])) $result['mime'] = $mime[$ext];
     if (strend($filename, '.txt')) {
       $result['mime'] = 'text/plain';
       $result['media'] = 'text';
-return $result;
+      return $result;
     }
-
-if (strend($filename, '.swf')) {
-$result['media'] = 'flash';
-$result['mime'] = 'application/x-shockwave-flash';
-
-require_once(litepublisher::$paths->libinclude . 'getid3.php');
-require_once(litepublisher::$paths->libinclude . 'getid3.lib.php');
-require_once(litepublisher::$paths->libinclude . 'module.audio-video.swf.php');
-
-	$getID3 = new getID3;
-		$getID3->option_md5_data        = true;
-		$getID3->option_md5_data_source = true;
-		$getID3->encoding               = 'UTF-8';
-		//$info = $getID3->analyze($realfile);
-$getID3->openfile($realfile);
-$swf = new getid3_swf($getID3);
-$swf->analyze();
-fclose($getID3->fp);
-$info = $getID3->info;
-
-		if (!isset($info['error'])) {
-$result['width'] =intval(round($info['swf']['header']['frame_width']  / 20));
-$result['height'] =intval(round($info['swf']['header']['frame_height']  / 20));
-return $result;
-}
-}
+    
+    if (strend($filename, '.swf')) {
+      $result['media'] = 'flash';
+      $result['mime'] = 'application/x-shockwave-flash';
+      
+      require_once(litepublisher::$paths->libinclude . 'getid3.php');
+      require_once(litepublisher::$paths->libinclude . 'getid3.lib.php');
+      require_once(litepublisher::$paths->libinclude . 'module.audio-video.swf.php');
+      
+      $getID3 = new getID3;
+      $getID3->option_md5_data        = true;
+      $getID3->option_md5_data_source = true;
+      $getID3->encoding               = 'UTF-8';
+      //$info = $getID3->analyze($realfile);
+      $getID3->openfile($realfile);
+      $swf = new getid3_swf($getID3);
+      $swf->analyze();
+      fclose($getID3->fp);
+      $info = $getID3->info;
+      
+      if (!isset($info['error'])) {
+        $result['width'] =intval(round($info['swf']['header']['frame_width']  / 20));
+        $result['height'] =intval(round($info['swf']['header']['frame_height']  / 20));
+        return $result;
+      }
+    }
     
     return $result;
-
+    
   }
   
   public static function readimage($srcfilename) {

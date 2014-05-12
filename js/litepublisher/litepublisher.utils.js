@@ -255,6 +255,7 @@
   };
   
   $.nextcomment = function(node, text) {
+    var result = false;
     do {
       if (node.nodeType  == 8) {
         if (!text || (text == node.nodeValue)) return node;

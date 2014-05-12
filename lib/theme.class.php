@@ -449,7 +449,7 @@ class ttheme extends tevents {
     'id="submitbutton-$name"' => ''
     ));
   }
-
+  
   public function getinput($type, $name, $value, $title) {
     return strtr($this->templates['content.admin.' . $type], array(
     '$lang.$name' => $title,
@@ -639,10 +639,10 @@ class targs {
     if (isset($a['title']) && !isset($a['text'])) $this->__set('text', $a['title']);
     if (isset($a['text']) && !isset($a['title']))  $this->__set('title', $a['text']);
   }
-
-public function parse($s) {
-return ttheme::i()->parsearg($s, $this);
-}
+  
+  public function parse($s) {
+    return ttheme::i()->parsearg($s, $this);
+  }
   
 }//class
 

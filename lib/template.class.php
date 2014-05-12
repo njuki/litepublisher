@@ -47,8 +47,8 @@ class ttemplate extends tevents_storage {
     $this->data['jsload'] = '<script type="text/javascript">$.load_script(%s);</script>';
     $this->data['footer']=   '<a href="http://litepublisher.com/">Powered by Lite Publisher</a>';
     $this->data['tags'] = array();
-$this->extrahead = '';
-$this->extrabody = '';
+    $this->extrahead = '';
+    $this->extrabody = '';
   }
   
   public function __get($name) {
@@ -91,8 +91,8 @@ $this->extrabody = '';
     
     $result = $this->httpheader();
     $result  .= $theme->gethtml($context);
-     $this->callevent('onbody', array(&$this->extrabody));
-if ($this->extrabody) $result = str_replace('</body>', $this->extrabody . '</body>', $result);
+    $this->callevent('onbody', array(&$this->extrabody));
+    if ($this->extrabody) $result = str_replace('</body>', $this->extrabody . '</body>', $result);
     $this->callevent('onrequest', array(&$result));
     unset(ttheme::$vars['context'], ttheme::$vars['template']);
     return $result;
@@ -215,7 +215,7 @@ if ($this->extrabody) $result = str_replace('</body>', $this->extrabody . '</bod
     $result = $this->heads;
     if ($this->itemplate) $result .= $this->context->gethead();
     $result = $this->getltoptions() . $result;
-$result .= $this->extrahead;
+    $result .= $this->extrahead;
     $result = $this->view->theme->parse($result);
     $this->callevent('onhead', array(&$result));
     return $result;

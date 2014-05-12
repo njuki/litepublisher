@@ -419,7 +419,8 @@ class ttemplate extends tevents_storage {
   public $view;
   public $ltoptions;
   public $hover;
-  //public $footer;
+  public $extrahead;
+  public $extrabody;
   
   public static function i() {
     return getinstance(__class__);
@@ -427,10 +428,10 @@ class ttemplate extends tevents_storage {
   
   protected function create() {
     //prevent recursion
-    litepublisher::$classes->instances[__class__] = $this;
+    litepublisher::$classes->instances[get_class($this)] = $this;
     parent::create();
     $this->basename = 'template' ;
-    $this->addevents('beforecontent', 'aftercontent', 'onhead', 'onrequest', 'ontitle', 'ongetmenu');
+    $this->addevents('beforecontent', 'aftercontent', 'onhead', 'onbody', 'onrequest', 'ontitle', 'ongetmenu');
     $this->path = litepublisher::$paths->themes . 'default' . DIRECTORY_SEPARATOR ;
     $this->url = litepublisher::$site->files . '/themes/default';
     $this->itemplate = false;
@@ -451,6 +452,8 @@ class ttemplate extends tevents_storage {
     $this->data['jsload'] = '<script type="text/javascript">$.load_script(%s);</script>';
     $this->data['footer']=   '<a href="http://litepublisher.com/">Powered by Lite Publisher</a>';
     $this->data['tags'] = array();
+    $this->extrahead = '';
+    $this->extrabody = '';
   }
   
   public function __get($name) {
@@ -493,6 +496,8 @@ class ttemplate extends tevents_storage {
     
     $result = $this->httpheader();
     $result  .= $theme->gethtml($context);
+    $this->callevent('onbody', array(&$this->extrabody));
+    if ($this->extrabody) $result = str_replace('</body>', $this->extrabody . '</body>', $result);
     $this->callevent('onrequest', array(&$result));
     unset(ttheme::$vars['context'], ttheme::$vars['template']);
     return $result;
@@ -615,6 +620,7 @@ class ttemplate extends tevents_storage {
     $result = $this->heads;
     if ($this->itemplate) $result .= $this->context->gethead();
     $result = $this->getltoptions() . $result;
+    $result .= $this->extrahead;
     $result = $this->view->theme->parse($result);
     $this->callevent('onhead', array(&$result));
     return $result;
@@ -1097,6 +1103,14 @@ class ttheme extends tevents {
     ));
   }
   
+  public function getinput($type, $name, $value, $title) {
+    return strtr($this->templates['content.admin.' . $type], array(
+    '$lang.$name' => $title,
+    '$name' => $name,
+    '$value' => $value
+    ));
+  }
+  
   public static function clearcache() {
     tfiler::delete(litepublisher::$paths->data . 'themes', false, false);
     litepublisher::$urlmap->clearcache();
@@ -1277,6 +1291,10 @@ class targs {
     
     if (isset($a['title']) && !isset($a['text'])) $this->__set('text', $a['title']);
     if (isset($a['text']) && !isset($a['title']))  $this->__set('title', $a['text']);
+  }
+  
+  public function parse($s) {
+    return ttheme::i()->parsearg($s, $this);
   }
   
 }//class
