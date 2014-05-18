@@ -47,7 +47,7 @@ function tcommontagsGetsitemap($self, $from, $count) {
     $result[] = array(
     'url' => $item['url'],
     'title' => $item['title'],
-    'pages' => $self->lite ? 1 : ceil($item['itemscount']/ litepublisher::$options->perpage)
+    'pages' => intval($item['lite']) ? 1 : ceil($item['itemscount']/ litepublisher::$options->perpage)
     );
   }
   return $result;

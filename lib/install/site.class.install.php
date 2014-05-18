@@ -22,6 +22,11 @@ function tsiteInstall($self) {
   $site->author = 'Admin';
   $site->video_width =450;
   $site->video_height = 300;
+
+$site->mapoptions = array(
+'version' => 'version',
+'language' => 'language',
+);
   $site->unlock();
 }
 

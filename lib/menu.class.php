@@ -434,9 +434,10 @@ class tmenu extends titem implements  itemplate {
     $id = $this->data['id'];
     if ($id == 0) {
       return $this->data[$name];
-    } else {
-      if (!isset($this->getowner()->items[$id])) $this->error($id . $name);
+    } else if (isset($this->getowner()->items[$id])) {
       return $this->getowner()->items[$id][$name];
+} else {
+$this->error(sprintf('%s property not found in %d items', $id, $name));
     }
   }
   

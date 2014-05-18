@@ -7,6 +7,7 @@
 **/
 
 class tsite extends tevents_storage {
+public $mapoptions;
   private $users;
   
   public static function i() {
@@ -20,12 +21,24 @@ class tsite extends tevents_storage {
   protected function create() {
     parent::create();
     $this->basename = 'site';
+$this->addmap('mapoptions', array(
+'version' => 'version',
+'language' => 'language',
+));
   }
+
+  public function __get($name) {
+if (isset($this->mapoptions[$name])) return litepublisher::$options->data[$this->mapoptions[$name]];
+return parent::__get($name);
+}
   
   public function __set($name, $value) {
     if ($name == 'url') return $this->seturl($value);
     if (in_array($name, $this->eventnames)) {
       $this->addevent($name, $value['class'], $value['func']);
+} elseif (isset($this->mapoptions[$name])) {
+$prop = $this->mapoptions[$name];
+litepublisher::$options->{$prop} = $value;
     } elseif (!array_key_exists($name, $this->data)  || ($this->data[$name] != $value)) {
       $this->data[$name] = $value;
       $this->save();
@@ -52,14 +65,6 @@ class tsite extends tevents_storage {
       $this->subdir = substr($url, $i);
     }
     $this->save();
-  }
-  
-  public function getversion() {
-    return litepublisher::$options->data['version'];
-  }
-  
-  public function getlanguage() {
-    return litepublisher::$options->data['language'];
   }
   
   public function getdomain() {

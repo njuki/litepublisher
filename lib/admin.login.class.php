@@ -32,7 +32,7 @@ class tadminlogin extends tadminform {
   private function logout() {
     if (litepublisher::$options->cookieenabled) {
       litepublisher::$options->logout();
-      setcookie('backurl', '', 0, $subdir, false);
+      setcookie('backurl', '', 0, litepublisher::$site->subdir, false);
       return litepublisher::$urlmap->redir('/admin/login/');
     } else {
       $auth = tauthdigest::i();
