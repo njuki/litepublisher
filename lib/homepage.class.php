@@ -37,11 +37,11 @@ class thomepage extends tsinglemenu  {
     if (!empty($theme->templates['index.home'])) return $theme->templates['index.home'];
     return false;
   }
-
-public function request($id) {
-if (!$this->showpagenator && (litepublisher::$urlmap->page > 1)) return 404;
-return parent::request($id);
-}
+  
+  public function request($id) {
+    if (!$this->showpagenator && (litepublisher::$urlmap->page > 1)) return 404;
+    return parent::request($id);
+  }
   
   public function gethead() {
     $result = parent::gethead();

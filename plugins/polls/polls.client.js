@@ -5,7 +5,9 @@
 * and GPL (gpl.txt) licenses.
 **/
 
-(function( $ ){
+(function ($, document, window) {
+  'use strict';
+  
   $.pollclient = {
     enabled: true,
     voted : [],
@@ -47,33 +49,32 @@
           var index = $(this).data("index");
           if (index in r.votes) $(this).text(r.votes[index]);
         });
-    //} catch(e) { alert('error ' + e.message); }
-    })
-    .fail( function(jq, textStatus, errorThrown) {
-      $.pollclient.error(jq.responseText);
-    });
-  },
-  
-  error: function(mesg) {
-    $.pollclient.setenabled(true);
-    $.messagebox(lang.dialog.error, mesg);
-  },
-  
-  setenabled: function(value) {
-    if (value== this.enabled) return;
-    this.enabled = value;
-    if(value) {
-      $(":input", ".activepoll").removeAttr("disabled");
-    } else {
-      $(":input", ".activepoll").attr("disabled", "disabled");
+      })
+      .fail( function(jq, textStatus, errorThrown) {
+        $.pollclient.error(jq.responseText);
+      });
+    },
+    
+    error: function(mesg) {
+      $.pollclient.setenabled(true);
+      $.messagebox(lang.dialog.error, mesg);
+    },
+    
+    setenabled: function(value) {
+      if (value== this.enabled) return;
+      this.enabled = value;
+      if(value) {
+        $(":input", ".activepoll").removeAttr("disabled");
+      } else {
+        $(":input", ".activepoll").attr("disabled", "disabled");
+      }
     }
-  }
+    
+  };
   
-};
-
-$(document).ready(function() {
-  //only logged users
-  if ($.cookie("litepubl_user_id")) $.pollclient.init();
-});
-
-})(jQuery );
+  $(document).ready(function() {
+    //only logged users
+    if (litepubl.getuser().id) $.pollclient.init();
+  });
+  
+}(jQuery, document, window));
