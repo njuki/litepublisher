@@ -28,7 +28,16 @@ $this->addmap('mapoptions', array(
   }
 
   public function __get($name) {
-if (isset($this->mapoptions[$name])) return litepublisher::$options->data[$this->mapoptions[$name]];
+if (isset($this->mapoptions[$name])) {
+$prop = $this->mapoptions[$name];
+if (is_array($prop)) {
+list($classname, $method) = $prop;
+return call_user_func_array(array(getinstance($classname), $method), array($name));
+}
+
+return litepublisher::$options->data[$prop];
+}
+
 return parent::__get($name);
 }
   
@@ -38,7 +47,7 @@ return parent::__get($name);
       $this->addevent($name, $value['class'], $value['func']);
 } elseif (isset($this->mapoptions[$name])) {
 $prop = $this->mapoptions[$name];
-litepublisher::$options->{$prop} = $value;
+if (is_string($prop)) litepublisher::$options->{$prop} = $value;
     } elseif (!array_key_exists($name, $this->data)  || ($this->data[$name] != $value)) {
       $this->data[$name] = $value;
       $this->save();
