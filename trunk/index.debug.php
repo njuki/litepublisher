@@ -103,6 +103,7 @@ litepublisher::$db = new tdatabase();
 litepublisher::$db->query('SET sort_buffer_size = ' . 1024*1024*32);
 litepublisher::$db->query('SET read_rnd_buffer_size = ' . 1024*1024*32);
 */
+
  tlocal::clearcache();
 ttheme::clearcache();
 //tsidebars::fix();
