@@ -20,24 +20,15 @@ class tadminlogin extends tadminform {
   }
   
   public function auth() {
-    if (litepublisher::$options->cookieenabled) {
       if ($s = tguard::checkattack()) return $s;
       if (!litepublisher::$options->authcookie()) return litepublisher::$urlmap->redir('/admin/login/');
-    }else {
-      $auth = tauthdigest::i();
-      if (!$auth->Auth())  return $auth->headers();
-    }
   }
   
   private function logout() {
-    if (litepublisher::$options->cookieenabled) {
       litepublisher::$options->logout();
       setcookie('backurl', '', 0, litepublisher::$site->subdir, false);
+litepublisher::$urlmap->nocache();
       return litepublisher::$urlmap->redir('/admin/login/');
-    } else {
-      $auth = tauthdigest::i();
-      if ($auth->auth()) $auth->logout();
-    }
     return litepublisher::$urlmap->redir('/admin/login/');
   }
   
