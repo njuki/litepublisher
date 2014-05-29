@@ -37,10 +37,6 @@ litepublisher::$urlmap->nocache();
     if ($arg == 'out')   return $this->logout($arg);
     parent::request($arg);
     $this->section = 'login';
-    if (!litepublisher::$options->cookieenabled) {
-      $this->formresult = $this->html->h4red->cookiedisabled;
-      return;
-    }
     
     if (!isset($_POST['email']) || !isset($_POST['password'])) return;
     $email = trim($_POST['email']);

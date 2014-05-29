@@ -91,7 +91,7 @@ class toptions extends tevents_storage {
   
   public function getadmincookie() {
     if (is_null($this->_admincookie)) {
-      return $this->_admincookie = $this->cookieenabled && isset($_COOKIE['litepubl_user_flag']) && ($_COOKIE['litepubl_user_flag'] == 'true');
+      return $this->_admincookie = $this->authenabled && isset($_COOKIE['litepubl_user_flag']) && ($_COOKIE['litepubl_user_flag'] == 'true');
       // ? $this->user && in_array(1, $this->idgroups) : false;
     }
     return $this->_admincookie;
@@ -103,7 +103,7 @@ class toptions extends tevents_storage {
   
   public function getuser() {
     if (is_null($this->_user)) {
-      $this->_user = $this->cookieenabled ? $this->authcookie() : false;
+      $this->_user = $this->authenabled ? $this->authcookie() : false;
     }
     return $this->_user;
   }

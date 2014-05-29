@@ -45,7 +45,7 @@ function installoptions($email, $language) {
   $options->solt = md5uniq();
   $password = md5uniq();
   $options->changepassword($password);
-  $options->cookieenabled = true;
+  $options->authenabled = true;
   $options->cookie = '';
   $options->cookieexpired = 0;
   
