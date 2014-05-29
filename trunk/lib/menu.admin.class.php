@@ -148,16 +148,11 @@ public function save() { return true; }
   }
   
   public static function auth($group) {
-    if (litepublisher::$options->cookieenabled) {
       if ($s = tguard::checkattack()) return $s;
       if (!litepublisher::$options->user) {
         turlmap::nocache();
         return litepublisher::$urlmap->redir('/admin/login/' . litepublisher::$site->q . 'backurl=' . urlencode(litepublisher::$urlmap->url));
       }
-    }else {
-      $auth = tauthdigest::i();
-      if (!$auth->Auth())  return $auth->headers();
-    }
     
     if (!litepublisher::$options->hasgroup($group)) {
       $url = tusergroups::i()->gethome(litepublisher::$options->group);

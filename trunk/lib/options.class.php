@@ -173,9 +173,9 @@ class toptions extends tevents_storage {
   }
   
   public function auth($email, $password) {
-    if ($email == '' && $password == '' && $this->cookieenabled) return $this->authcookie();
+    if (!$email && !$password && $this->cookieenabled) return $this->authcookie();
     if ($email == $this->email) {
-      if ($this->data['password'] != basemd5("$email:$this->realm:$password"))  return false;
+      if ($this->data['password'] != $this->hash($password))  return false;
       $this->_user = 1;
     } elseif(!$this->usersenabled) {
       return false;
@@ -209,7 +209,7 @@ class toptions extends tevents_storage {
   }
   
   public function changepassword($newpassword) {
-    $this->data['password'] = basemd5("$this->email:$this->realm:$newpassword");
+    $this->data['password'] = $this->hash($newpassword);
     $this->save();
   }
   
@@ -219,11 +219,7 @@ class toptions extends tevents_storage {
   }
   
   public function logout() {
-    if ($this->cookieenabled) {
       $this->setcookies('', 0);
-    } else {
-      tauthdigest::i()->logout();
-    }
   }
   
   public function setcookies($cookie, $expired) {
