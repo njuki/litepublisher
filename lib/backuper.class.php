@@ -268,7 +268,7 @@ class tbackuper extends tevents {
     }
     
     public function check_ftp_root() {
-      $temp = litepublisher::$paths->data . md5(mt_rand() . litepublisher::$secret. microtime()) . '.tmp';
+      $temp = litepublisher::$paths->data . md5rand();
       file_put_contents($temp,' ');
       @chmod($temp, 0666);
       $filename = str_replace('\\\\', '/', $temp);

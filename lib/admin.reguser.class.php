@@ -142,7 +142,7 @@ class tadminreguser extends tadminform {
     tsession::start('reguser-' . md5($email));
     $_SESSION['email'] = $email;
     $_SESSION['name'] = $name;
-    $confirm = md5(mt_rand() . litepublisher::$secret. microtime());
+    $confirm = md5rand();
     $_SESSION['confirm'] = $confirm;
     $password = md5uniq();
     $_SESSION['password'] = $password;

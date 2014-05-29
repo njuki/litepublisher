@@ -402,6 +402,10 @@ function dbquote($s) {
   return litepublisher::$db->quote($s);
 }
 
+function md5rand() {
+  return md5(mt_rand() . litepublisher::$secret. microtime());
+}
+
 function md5uniq() {
   return basemd5(mt_rand() . litepublisher::$secret. microtime());
 }

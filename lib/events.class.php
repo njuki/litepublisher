@@ -77,7 +77,7 @@ class tevents extends tdata {
       $this->addevent($name, $value['class'], $value['func']);
       return true;
     }
-    $this->error("Unknown property $name in class ". get_class($this));
+    $this->error(sprintf('Unknown property %s in class %s', $name, get_class($this)));
   }
   
   public function method_exists($name) {

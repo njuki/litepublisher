@@ -24,7 +24,7 @@ class tsinglepassword extends tperm {
   }
   
   public static function encryptpassword($p) {
-    return md5(litepublisher::$urlmap->itemrequested['id'] . litepublisher::$secret . $p);
+    return md5(litepublisher::$urlmap->itemrequested['id'] . litepublisher::$secret . $p . litepublisher::$options->solt);
   }
   
   public static function getcookiename() {
@@ -33,8 +33,8 @@ class tsinglepassword extends tperm {
   
   public function checkpassword($p) {
     if ($this->password != self::encryptpassword($p)) return false;
-    $login = md5(mt_rand() . litepublisher::$secret. microtime());
-    $password = md5($login . litepublisher::$secret . $this->password);
+    $login = md5rand();
+    $password = md5($login . litepublisher::$secret . $this->password. litepublisher::$options->solt);
     $cookie = $login . '.' . $password;
     $expired = isset($_POST['remember']) ? time() + 31536000 : time() + 8*3600;
     
@@ -49,7 +49,7 @@ class tsinglepassword extends tperm {
     $cookie = isset($_COOKIE[$cookiename]) ? $_COOKIE[$cookiename] : '';
     if (($cookie != '') && strpos($cookie, '.')) {
       list($login, $password) = explode('.', $cookie);
-      if ($password == md5($login . litepublisher::$secret . $p)) return true;
+      if ($password == md5($login . litepublisher::$secret . $p. litepublisher::$options->solt)) return true;
     }
     return false;
   }

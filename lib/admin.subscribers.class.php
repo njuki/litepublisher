@@ -39,7 +39,7 @@ class tadminsubscribers extends tadminform {
             $cookie = md5uniq();
             $expired = time() + 31536000;
             
-            $item['cookie'] = basemd5($cookie . litepublisher::$secret);
+            $item['cookie'] = litepublisher::$options->hash($cookie);
             $item['expired'] = sqldate($expired);
             $users->edit($this->iduser, $item);
             

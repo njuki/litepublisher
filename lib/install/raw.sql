@@ -1,6 +1,6 @@
   `id` int(10) unsigned NOT NULL,
-  `created` datetime NOT NULL default '2010-01-01 10:01:01',
-  `modified` datetime NOT NULL default '2010-01-01 10:01:01',
+  `created` datetime NOT NULL default '00-00-00 00:00:00',
+  `modified` datetime NOT NULL default '00-00-00 00:00:00',
   `rawcontent` longtext NOT NULL,
   `hash` varchar(22) default NULL,
 

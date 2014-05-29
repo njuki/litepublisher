@@ -117,8 +117,8 @@ class toptions extends tevents_storage {
     $cookie = isset($_COOKIE['litepubl_user']) ? (string) $_COOKIE['litepubl_user'] : (isset($_COOKIE['admin']) ? (string) $_COOKIE['admin'] : '');
     
     if ($cookie == '') return false;
-    $cookie = basemd5($cookie . litepublisher::$secret);
-    if (    $cookie == basemd5( litepublisher::$secret)) return false;
+    $cookie = $this->hash($cookie);
+    if (    $cookie == $this->hash('')) return false;
     
     if ($iduser) {
       if (!$this->finduser($iduser, $cookie)) return false;
@@ -254,10 +254,14 @@ class toptions extends tevents_storage {
   }
   
   public function set_cookie($cookie) {
-    if ($cookie != '') $cookie = basemd5((string) $cookie . litepublisher::$secret);
+    if ($cookie) $cookie = $this->hash($cookie);
     $this->data['cookie'] = $cookie;
     $this->save();
   }
+
+public function hash($s) {
+return basemd5((string) $s . litepublisher::$secret . $this->solt);
+}
   
   public function ingroup($groupname) {
     //admin has all rights

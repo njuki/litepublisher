@@ -89,7 +89,7 @@ class tcommentmanager extends tevents_storage {
     ttheme::$vars['comment'] = $comment;
     $args = new targs();
     $adminurl = litepublisher::$site->url . '/admin/comments/'. litepublisher::$site->q . "id=$id";
-    $ref = md5(litepublisher::$secret . $adminurl);
+    $ref = md5(litepublisher::$secret . $adminurl . litepublisher::$options->solt);
     $adminurl .= "&ref=$ref&action";
     $args->adminurl = $adminurl;
     
