@@ -1,6 +1,7 @@
 <?php
 function update586() {
   litepublisher::$options->solt = md5uniq();
+litepublisher::$options->authenabled = true;
 
     $expired = time() + 31536000;
     $cookie = md5uniq();
