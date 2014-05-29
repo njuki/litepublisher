@@ -84,7 +84,7 @@ class tadminpassword extends tadminform {
     $_SESSION['email'] = $email;
     $password = md5uniq();
     $_SESSION['password'] = $password;
-    $_SESSION['confirm'] = md5(mt_rand() . litepublisher::$secret. microtime());
+    $_SESSION['confirm'] = md5rand();
     $args->confirm = $_SESSION['confirm'];
     session_write_close();
     

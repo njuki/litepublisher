@@ -32,14 +32,14 @@ class tpermpassword extends tperm {
     $p = trim($p);
     if ($p == '') return false;
     $this->data['login'] = md5uniq();
-    $this->data['password'] = md5($this->login . litepublisher::$secret . $p);
+    $this->data['password'] = md5($this->login . litepublisher::$secret . $p . litepublisher::$options->solt);
     $this->save();
   }
   
   public function checkpassword($p) {
-    if ($this->password != md5($this->login . litepublisher::$secret . $p)) return false;
-    $login = md5(mt_rand() . litepublisher::$secret. microtime());
-    $password = md5($login . litepublisher::$secret . $this->password);
+    if ($this->password != md5($this->login . litepublisher::$secret . $p . litepublisher::$options->solt)) return false;
+    $login = md5rand();
+    $password = md5($login . litepublisher::$secret . $this->password . litepublisher::$options->solt);
     $cookie = $login . '.' . $password;
     $expired = isset($_POST['remember']) ? time() + 31536000 : time() + 8*3600;
     
@@ -53,7 +53,7 @@ class tpermpassword extends tperm {
     $cookie = isset($_COOKIE[$cookiename]) ? $_COOKIE[$cookiename] : '';
     if (($cookie == '') || !strpos($cookie, '.')) return $this->redir();
     list($login, $password) = explode('.', $cookie);
-    if ($password == md5($login . litepublisher::$secret . $this->password)) return true;
+    if ($password == md5($login . litepublisher::$secret . $this->password . litepublisher::$options->solt)) return true;
     return false;
   }
   

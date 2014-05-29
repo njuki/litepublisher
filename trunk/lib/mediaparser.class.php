@@ -53,7 +53,7 @@ class tmediaparser extends tevents {
   }
   
   public function gettempname($parts) {
-    return 'tmp.' . md5(mt_rand() . litepublisher::$secret. microtime()) . '.' . $parts['filename'] .
+    return 'tmp.' . md5rand() . '.' . $parts['filename'] .
     (empty($parts['extension']) ? '' : '.' . $parts['extension']);
   }
   

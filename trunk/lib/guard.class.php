@@ -28,7 +28,7 @@ class tguard {
       $ref = $_GET['ref'];
       $url = $_SERVER['REQUEST_URI'];
       $url = substr($url, 0, strpos($url, '&ref='));
-      if ($ref == md5(litepublisher::$secret . litepublisher::$site->url . $url)) return false;
+      if ($ref == md5(litepublisher::$secret . litepublisher::$site->url . $url . litepublisher::$options->solt)) return false;
     }
     
     $host = '';

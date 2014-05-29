@@ -320,15 +320,23 @@ class tadminhtml {
   
   public function tablestruct(array $tablestruct) {
     $head = '';
-    $tml = '<tr>';
-    foreach ($tablestruct as $elem) {
-      if (!$elem || !count($elem)) continue;
-      $head .= sprintf('<th align="%s">%s</th>', $elem[0], $elem[1]);
-      $tml .= sprintf('<td align="%s">%s</td>', $elem[0], $elem[2]);
+    $body = '<tr>';
+    foreach ($tablestruct as $item) {
+      if (!$item || !count($item)) continue;
+$align = $item[0] ? $item[0] : 'left';
+      $head .= sprintf('<th align="%s">%s</th>', $align, $item[1]);
+if (is_string($item[2])) {
+      $body .= sprintf('<td align="%s">%s</td>', $align, $item[2]);
+} else {
+//special case for callback
+ttheme::$vars['tableprop'] = new tableprop($item[2]);
+      $body .= sprintf('<td align="%s">%s</td>', $item[0], '$tableprop
+);
+}
     }
-    $tml .= '</tr>';
-    
-    return array($head, $tml);
+
+    $body .= '</tr>';
+    return array($head, $body);
   }
   
   public function buildtable(array $items, array $tablestruct) {

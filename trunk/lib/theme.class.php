@@ -443,7 +443,7 @@ class ttheme extends tevents {
   }
   
   public function getsubmit($title) {
-    return strtr($this->templates['content.admin.button'], array(
+    return strtr($this->templates['content.admin.submit'], array(
     '$lang.$name', '$title',
     'name="$name"' => '',
     'id="submitbutton-$name"' => ''
@@ -457,8 +457,18 @@ class ttheme extends tevents {
     '$value' => $value
     ));
   }
-  
-  public static function clearcache() {
+
+  public function getradio($name, $value, $title, $checked) {
+    return strtr($this->templates['content.admin.radioitem'], array(
+    '$lang.$name' => $title,
+    '$name' => $name,
+    '$value' => $title,
+'$index' => $value,
+'$checked' => $checked ? 'checked="checked"' : '',
+    ));
+  }
+
+    public static function clearcache() {
     tfiler::delete(litepublisher::$paths->data . 'themes', false, false);
     litepublisher::$urlmap->clearcache();
   }

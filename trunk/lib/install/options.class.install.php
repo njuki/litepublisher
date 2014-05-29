@@ -42,6 +42,7 @@ function installoptions($email, $language) {
   $options->dateformat = '';
   $options->password = '';
   $options->realm = 'Admin panel';
+  $options->solt = md5uniq();
   $password = md5uniq();
   $options->changepassword($password);
   $options->cookieenabled = true;
