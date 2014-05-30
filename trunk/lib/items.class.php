@@ -8,12 +8,14 @@
 
 class titems extends tevents {
   public $items;
-  protected $autoid;
   public $dbversion;
-  
-  protected function create() {
+protected $idprop;
+  protected $autoid;
+
+    protected function create() {
     parent::create();
     $this->addevents('added', 'deleted');
+$this->idprop = 'id';
     if ($this->dbversion) {
       $this->items = array();
     } else {
@@ -50,7 +52,7 @@ class titems extends tevents {
     $items = array_diff($items, array_keys($this->items));
     if (count($items) == 0) return;
     $list = implode(',', $items);
-    $this->select("$this->thistable.id in ($list)", '');
+    $this->select("$this->thistable.$this->idprop in ($list)", '');
   }
   
   public function select($where, $limit) {
@@ -64,7 +66,7 @@ class titems extends tevents {
     $result = array();
     $db = litepublisher::$db;
     while ($item = $db->fetchassoc($res)) {
-      $id = $item['id'];
+      $id = $item[$this->idprop];
       $result[] = $id;
       $this->items[$id] = $item;
     }
@@ -82,20 +84,21 @@ class titems extends tevents {
   public function getitem($id) {
     if (isset($this->items[$id])) return $this->items[$id];
     if ($this->dbversion) {
-      if ($this->select("$this->thistable.id = $id", 'limit 1')) return $this->items[$id];
+      if ($this->select("$this->thistable.$this->idprop = $id", 'limit 1')) return $this->items[$id];
     }
     return $this->error(sprintf('Item %d not found in class %s', $id, get_class($this)));
   }
   
   public function getvalue($id, $name) {
-    if ($this->dbversion && !isset($this->items[$id])) $this->items[$id] = $this->db->getitem($id);
+    if ($this->dbversion && !isset($this->items[$id])) $this->items[$id] = $this->db->getitem($id, $this->idprop);
     return $this->items[$id][$name];
   }
   
   public function setvalue($id, $name, $value) {
     $this->items[$id][$name] = $value;
     if ($this->dbversion) {
-      $this->db->setvalue($id, $name, $value);
+      //$this->db->setvalue($id, $name, $value);
+$this->db->update("$name = " . dbquote($value), "$this->idprop = $id");
     }
   }
   
@@ -113,7 +116,7 @@ class titems extends tevents {
   
   public function indexof($name, $value) {
     if ($this->dbversion){
-      return $this->db->findid("$name = ". dbquote($value));
+      return $this->db->findprop($this->idprop, "$name = ". dbquote($value));
     }
     
     foreach ($this->items as $id => $item) {
@@ -126,7 +129,7 @@ class titems extends tevents {
   
   public function additem(array $item) {
     $id = $this->dbversion ? $this->db->add($item) : ++$this->autoid;
-    $item['id'] = $id;
+    $item[$this->idprop] = $id;
     $this->items[$id] = $item;
     if (!$this->dbversion) $this->save();
     $this->added($id);
@@ -134,7 +137,7 @@ class titems extends tevents {
   }
   
   public function delete($id) {
-    if ($this->dbversion) $this->db->delete("id = $id");
+    if ($this->dbversion) $this->db->delete("$this->idprop = $id");
     if (isset($this->items[$id])) {
       unset($this->items[$id]);
       if (!$this->dbversion) $this->save();

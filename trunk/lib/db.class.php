@@ -242,17 +242,21 @@ class tdatabase {
     return $this->res2assoc($this->select($where));
   }
   
-  public function getitem($id) {
-    if ($r = $this->query("select * from $this->prefix$this->table where id = $id limit 1")) return $r->fetch_assoc();
+  public function getitem($id, $propname = 'id') {
+    if ($r = $this->query("select * from $this->prefix$this->table where $propname = $id limit 1")) return $r->fetch_assoc();
     return false;
   }
   
   public function finditem($where) {
     return $this->query("select * from $this->prefix$this->table where $where limit 1")->fetch_assoc();
   }
-  
+
   public function findid($where) {
-    if($r = $this->query("select id from $this->prefix$this->table where $where limit 1")->fetch_assoc()) return $r['id'];
+return $this->findprop('id', $where);
+}
+
+    public function findprop($propname, $where) {
+    if($r = $this->query("select $propname from $this->prefix$this->table where $where limit 1")->fetch_assoc()) return $r[$propname];
     return false;
   }
   
