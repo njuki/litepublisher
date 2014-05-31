@@ -118,7 +118,7 @@
         };
         
         img.onerror = function() {
-          alert("Error load image");
+          //alert("Error load image");
         };
         
         img.src =           self.data("image");
