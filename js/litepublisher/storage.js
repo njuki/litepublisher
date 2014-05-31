@@ -89,10 +89,7 @@
       };
       
       this.set= function( key, value ) {
-        $.cookie(key, value, {
-          path: '/',
-          expires: 3650
-        });
+set_cookie(key, Value);
       };
       
       this.remove = function( key ) {

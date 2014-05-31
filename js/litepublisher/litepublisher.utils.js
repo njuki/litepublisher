@@ -7,6 +7,7 @@
 
 (function ($, document, window) {
   'use strict';
+
   var rurl = /^([\w.+-]+:)(?:\/\/([^\/?#:]*)(?::(\d+)|)|)/;
   var dom = rurl.exec(ltoptions.url);
   var href = rurl.exec(location.href.toLowerCase()) || [];
@@ -14,6 +15,9 @@
     ltoptions.url = ltoptions.url.replace(dom[2], href[2]);
     ltoptions.files = ltoptions.files.replace(dom[2], href[2]);
   }
+
+//without protocol for ajax calls
+ltoptions.ajaxurl = ltoptions.url.substring(ltoptions.url.indexOf(':') +1);
   
   //litepublisher namespace
   window.litepubl = {
@@ -27,7 +31,8 @@
     
     is_admin_url: function(url) {
       url = url.toLowerCase();
-      if ('http' == url.substring(0, 4)) url = url.substring(10);
+var i = url.indexOf('://');
+if (i >= 0) url = url.substring(i + 4);
       var path = url.split('/');
       if ((path.length <= 2) || (path[1] != 'admin') || (path[2] == '')) return 0;
       return /^(login|logout|password|reguser)$/.test(path[2]) ? 0 : 1;
@@ -35,14 +40,13 @@
     
     user: 0,
     getuser: function() {
-      if (!litepubl.user) {
-        litepubl.user = {
+var self = litepubl;
+      if (self.user) return self.user;
+        return self.user = {
           id: parseInt($.cookie('litepubl_user_id')),
           pass: $.cookie('litepubl_user'),
           regservice: $.cookie('litepubl_regservice')
         };
-      }
-      return litepubl.user;
     },
     
     //forward declaration for future plugins as yandex metrika or google analitik
@@ -50,7 +54,7 @@
     getjson: function(data, callback) {
       return $.ajax({
         type: "get",
-        url: ltoptions.url + "/admin/jsonserver.php",
+        url: ltoptions.ajaxurl + "/admin/jsonserver.php",
         data: data,
         success: callback,
         dataType: "json",
@@ -121,7 +125,8 @@
   window.set_cookie = function(name, value, expires){
     $.cookie(name, value, {
       path: '/',
-      expires: expires ? expires : 3650
+      expires: expires ? expires : 3650,
+secure: "secure" in ltoptions ? ltoptions.secure : false
     });
   };
   
@@ -190,7 +195,7 @@
       
       return $.ajax({
         type: type,
-        url: ltoptions.url + "/admin/jsonserver.php" + nocache,
+        url: ltoptions.ajaxurl + "/admin/jsonserver.php" + nocache,
         data: data,
         success: callback,
         dataType: "json",
