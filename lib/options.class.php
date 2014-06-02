@@ -63,6 +63,7 @@ class toptions extends tevents_storage {
     
     if (!array_key_exists($name, $this->data)  || ($this->data[$name] != $value)) {
       $this->data[$name] = $value;
+if ($name == 'solt') $this->data['emptyhash'] = $this->hash('');
       $this->save();
       $this->dochanged($name, $value);
     }
@@ -92,7 +93,6 @@ class toptions extends tevents_storage {
   public function getadmincookie() {
     if (is_null($this->_admincookie)) {
       return $this->_admincookie = $this->authenabled && isset($_COOKIE['litepubl_user_flag']) && ($_COOKIE['litepubl_user_flag'] == 'true');
-      // ? $this->user && in_array(1, $this->idgroups) : false;
     }
     return $this->_admincookie;
   }
@@ -114,28 +114,14 @@ class toptions extends tevents_storage {
   
   public function authcookie() {
     $iduser = isset($_COOKIE['litepubl_user_id']) ? (int) $_COOKIE['litepubl_user_id'] : 0;
-    $cookie = isset($_COOKIE['litepubl_user']) ? (string) $_COOKIE['litepubl_user'] : (isset($_COOKIE['admin']) ? (string) $_COOKIE['admin'] : '');
-    
-    if ($cookie == '') return false;
-    $cookie = $this->hash($cookie);
-    if (    $cookie == $this->hash('')) return false;
-    
-    if ($iduser) {
-      if (!$this->finduser($iduser, $cookie)) return false;
-    } elseif ($iduser = $this->findcookie($cookie)) {
-      //fix prev versions
-      if ($iduser == 1) {
-        $expired = $this->cookieexpired;
-      } else {
-        $item = tusers::i()->getitem($iduser);
-        $expired = strtotime($item['expired']);
-      }
-      setcookie('litepubl_user_id', $iduser, $expired, litepublisher::$site->subdir . '/', false);
-    } else {
-      return false;
-    }
-    
-    $this->_user = $iduser;
+if (!$iduser) return false;
+    $password = isset($_COOKIE['litepubl_user']) ? (string) $_COOKIE['litepubl_user'] : (isset($_COOKIE['admin']) ? (string) $_COOKIE['admin'] : '');
+        if (!$password) return false;
+    $password = $this->hash($password);
+    if (    $password == $this->emptyhash) return false;
+      if (!$this->finduser($iduser, $password)) return false;
+
+        $this->_user = $iduser;
     $this->updategroup();
     return $iduser;
   }
@@ -155,25 +141,13 @@ class toptions extends tevents_storage {
     return ($cookie == $item['cookie']) && (strtotime($item['expired']) > time());
   }
   
-  public function findcookie($cookie) {
-    if ($this->compare_cookie($cookie)) return 1;
-    if (!$this->usersenabled)  return false;
-    
-    $users = tusers::i();
-    if ($iduser = $users->findcookie($cookie)){
-      $item = $users->getitem($iduser);
-      if (strtotime($item['expired']) <= time()) return false;
-      return (int) $iduser;
-    }
-    return false;
-  }
-  
   private function compare_cookie($cookie) {
-    return !empty($this->cookie ) && ($this->cookie == $cookie) && ($this->cookieexpired > time());
+    return !empty($this->cookiehash) && ($this->cookiehash == $cookie) && ($this->cookieexpired > time());
   }
   
   public function auth($email, $password) {
-    if (!$email && !$password && $this->cookieenabled) return $this->authcookie();
+if (!$this->authenabled) return false;
+    if (!$email && !$password) return $this->authcookie();
     if ($email == $this->email) {
       if ($this->data['password'] != $this->hash($password))  return false;
       $this->_user = 1;
@@ -212,25 +186,40 @@ class toptions extends tevents_storage {
     $this->data['password'] = $this->hash($newpassword);
     $this->save();
   }
+
+  public function getdbpassword() {
+if (function_exists('mcrypt_encrypt')) {
+return self::decrypt(    $this->data['dbconfig']['password'], litepublisher::$secret . $this->solt);
+} else {
+return str_rot13(base64_decode($this->data['dbconfig']['password']));
+}
+}
   
   public function setdbpassword($password) {
-    $this->data['dbconfig']['password'] = base64_encode(str_rot13 ($password));
+if (function_exists('mcrypt_encrypt')) {
+    $this->data['dbconfig']['password'] = self::encrypt($password, litepublisher::$secret . $this->solt);
+} else {
+$this->data['dbconfig']['password'] = base64_encode(str_rot13 ($password));
+}
+
     $this->save();
   }
   
   public function logout() {
       $this->setcookies('', 0);
   }
+
+  public function setcookie($name, $value, $expired) {
+    setcookie($name, $value, $expired,  litepublisher::$site->subdir . '/', false, '', $this->securecookie);
+}
   
   public function setcookies($cookie, $expired) {
-    $subdir = litepublisher::$site->subdir . '/';
-    setcookie('litepubl_user_id', $cookie ? $this->_user : '', $expired,  $subdir, false);
-    setcookie('litepubl_user', $cookie, $expired, $subdir , false);
-    setcookie('litepubl_user_flag', $cookie && ('admin' == $this->group) ? 'true' : '', $expired, $subdir, false);
+    $this->setcookie('litepubl_user_id', $cookie ? $this->_user : '', $expired);
+    $this->setcookie('litepubl_user', $cookie, $expired);
+    $this->setcookie('litepubl_user_flag', $cookie && ('admin' == $this->group) ? 'true' : '', $expired);
     
     if ($this->_user == 1) {
-      $this->set_cookie($cookie);
-      $this->cookieexpired = $expired;
+      $this->save_cookie($cookie, $expired);
     } else if ($this->_user) {
       tusers::i()->setcookie($this->_user, $cookie, $expired);
     }
@@ -249,9 +238,9 @@ class toptions extends tevents_storage {
     }
   }
   
-  public function set_cookie($cookie) {
-    if ($cookie) $cookie = $this->hash($cookie);
-    $this->data['cookie'] = $cookie;
+  public function save_cookie($cookie, $expired) {
+    $this->data['cookiehash'] = $cookie ? $this->hash($cookie) : '';
+      $this->cookieexpired = $expired;
     $this->save();
   }
 
@@ -285,16 +274,58 @@ return basemd5((string) $s . litepublisher::$secret . $this->solt);
   }
   
   public function handexception($e) {
-    /*
-    echo "<pre>\n";
-    $debug = debug_backtrace();
-    foreach ($debug as $error) {
-      echo $error['function'] ;
-      echo "\n";
+$trace = $e->getTrace();
+$log = '';
+    foreach ($trace as $i => $item) {
+$log .= sprintf('#%d %d %s ', $i, $item['line'], $item['file']);
+if (isset($item['class'])) {
+$log .= $item['class'] . $item['type'] . $item['function'];
+} else {
+$log .= $item['function'];
+}
+
+$log .= "\r\n";
+$args = array();
+foreach ($item['args'] as $arg) {
+$type = gettype($arg);
+switch($type) {
+case 'string':
+$v = "'$arg'";
+break;
+
+case 'array':
+$v = var_export($arg, true);
+break;
+
+case 'object':
+$v = get_class($arg);
+break;
+
+case 'boolean':
+$v = $arg ? 'true' : 'false';
+break;
+
+case 'integer':
+case 'double':
+case 'float':
+$v= $arg;
+break;
+
+default:
+$v = $type;
+break;
+}
+
+$args[] = $v;
+}
+
+$log .= implode(', ', $args);
+$log .= "\r\n";
     }
-    //array_shift($debug);
-    echo "</pre>\n";
-    */
+
+$log = str_replace(litepublisher::$paths->home, '', $log);
+file_put_contents('log.txt', $log);
+
     $trace =str_replace(litepublisher::$paths->home, '', $e->getTraceAsString());
     
     $message = "Caught exception:\n" . $e->getMessage();

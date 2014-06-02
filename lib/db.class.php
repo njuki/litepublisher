@@ -32,8 +32,7 @@ class tdatabase {
     $this->sql = '';
     $this->history = array();
     
-    $this->mysqli = new mysqli($dbconfig['host'], $dbconfig['login'], str_rot13(base64_decode($dbconfig['password'])),
-    $dbconfig['dbname'], $dbconfig['port'] > 0 ?  $dbconfig['port'] : null);
+    $this->mysqli = new mysqli($dbconfig['host'], $dbconfig['login'], litepublisher::$options->dbpassword, $dbconfig['dbname'], $dbconfig['port'] > 0 ?  $dbconfig['port'] : null);
     
     if (mysqli_connect_error()) {
       throw new Exception('Error connect to database');

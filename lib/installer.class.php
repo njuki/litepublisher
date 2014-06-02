@@ -234,6 +234,11 @@ class tinstaller extends tdata {
       echo 'LitePublisher requires "domDocument" class and domxml extension';
       exit;
     }
+
+if (!function_exists('mcrypt_encrypt')) {
+      echo 'LitePublisher requires "mcrypt_encrypt" functions';
+      exit;
+}
   }
   
   public function CheckApache($rewrite) {

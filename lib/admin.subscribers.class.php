@@ -46,8 +46,8 @@ class tadminsubscribers extends tadminform {
             litepublisher::$options->user = $this->iduser;
             litepublisher::$options->updategroup();
             
-            setcookie('litepubl_user_id', $this->iduser, $expired, litepublisher::$site->subdir . '/', false);
-            setcookie('litepubl_user', $cookie, $expired, litepublisher::$site->subdir . '/', false);
+            litepublisher::$options->setcookie('litepubl_user_id', $this->iduser, $expired);
+            litepublisher::$options->setcookie('litepubl_user', $cookie, $expired);
           } else {
             $this->iduser = false;
           }
