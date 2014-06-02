@@ -10,6 +10,7 @@
 function installoptions($email, $language) {
   $options = toptions::i();
   $options->lock();
+  $options->solt = md5uniq();
   $usehost = isset($_REQUEST['usehost']) ? ($_REQUEST['usehost'] == '1') : false;
   $options->data['dbconfig'] = array(
   'driver' => 'mysqli',
@@ -17,9 +18,11 @@ function installoptions($email, $language) {
   'port' => $usehost ? (int) $_REQUEST['dbport'] : 0,
   'dbname' => $_REQUEST['dbname'],
   'login' => $_REQUEST['dblogin'],
-  'password' => base64_encode(str_rot13 ($_REQUEST['dbpassword'])),
+  'password' => '',
   'prefix' => $_REQUEST['dbprefix']
   );
+
+$options->setdbpassword($_REQUEST['dbpassword']);
   try {
     litepublisher::$db= new tdatabase();
   } catch (Exception $e) {
@@ -42,12 +45,13 @@ function installoptions($email, $language) {
   $options->dateformat = '';
   $options->password = '';
   $options->realm = 'Admin panel';
-  $options->solt = md5uniq();
+
   $password = md5uniq();
   $options->changepassword($password);
   $options->authenabled = true;
-  $options->cookie = '';
+  $options->cookiehash = '';
   $options->cookieexpired = 0;
+$options->securecookie = false;
   
   $options->mailer = '';
   $options->data['cache'] = true;

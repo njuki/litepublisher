@@ -225,6 +225,20 @@ class tdata {
   public static function get_class_name($c) {
     return is_object($c) ? get_class($c) : trim($c);
   }
+
+  public static function encrypt($s, $key) {
+    $block = mcrypt_get_block_size(MCRYPT_Blowfish, MCRYPT_MODE_ECB);
+    $pad = $block - (strlen($s) % $block);
+    $s .= str_repeat(chr($pad), $pad);
+    return mcrypt_encrypt(MCRYPT_Blowfish, $key, $s, MCRYPT_MODE_ECB);
+  }
+  
+  public static function decrypt($s, $key) {
+    $s = mcrypt_decrypt(MCRYPT_Blowfish, $key, $s, MCRYPT_MODE_ECB);
+    $block = mcrypt_get_block_size(MCRYPT_Blowfish, MCRYPT_MODE_ECB);
+    $pad = ord($s[($len = strlen($s)) - 1]);
+    return substr($s, 0, strlen($s) - $pad);
+  }
   
 }//class
 
