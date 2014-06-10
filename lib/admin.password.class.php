@@ -27,7 +27,7 @@ class tadminpassword extends tadminform {
     } else {
       $email = $_GET['email'];
       $confirm = $_GET['confirm'];
-      tsession::start('password-restore-' .md5($email));
+      tsession::start('password-restore-' . md5(litepublisher::$options->hash($email)));
       if (!isset($_SESSION['email']) || ($email != $_SESSION['email']) || ($confirm != $_SESSION['confirm'])) {
         if (!isset($_SESSION['email'])) session_destroy();
         return $html->h4->notfound;
@@ -74,7 +74,7 @@ class tadminpassword extends tadminform {
     
     $args = new targs();
     
-    tsession::start('password-restore-' .md5($email));
+    tsession::start('password-restore-' .md5(litepublisher::$options->hash($email)));
     if (!isset($_SESSION['count'])) {
       $_SESSION['count'] =1;
     } else {
