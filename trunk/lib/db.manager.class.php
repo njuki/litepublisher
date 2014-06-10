@@ -7,6 +7,7 @@
 **/
 
 class tdbmanager  {
+public $engine;
   private $max_allowed_packet;
   
   public static function i() {
@@ -19,14 +20,16 @@ class tdbmanager  {
   }
   
   public function __call($name, $arg) {
-    return call_user_func_array(array(&litepublisher::$db, $name), $arg);
+    return call_user_func_array(array(litepublisher::$db, $name), $arg);
   }
   
   public function createtable($name, $struct) {
     //    if (litepublisher::$debug)
+if (!$this->engine) $this->engine = 'MyISAM'; //InnoDB 
     $this->deletetable($name);
     return $this->exec("create table $this->prefix$name
     ($struct)
+ENGINE=$this->engine
     DEFAULT CHARSET=utf8
     COLLATE = utf8_general_ci");
   }
@@ -119,6 +122,10 @@ class tdbmanager  {
   
   public function column_exists($table, $column) {
     return $this->query("SHOW COLUMNS FROM $this->prefix$table LIKE '$column'")->num_rows;
+  }
+
+  public function key_exists($table, $key) {
+    return $this->query("SHOW keys FROM $this->prefix$table where Key_name = '$key'")->num_rows;
   }
   
   public function getdatabases() {

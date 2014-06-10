@@ -189,7 +189,7 @@ if (!$this->authenabled) return false;
 
   public function getdbpassword() {
 if (function_exists('mcrypt_encrypt')) {
-return self::decrypt(    $this->data['dbconfig']['password'], litepublisher::$secret . $this->solt);
+return self::decrypt(    $this->data['dbconfig']['password'], $this->solt . litepublisher::$secret);
 } else {
 return str_rot13(base64_decode($this->data['dbconfig']['password']));
 }
@@ -197,7 +197,7 @@ return str_rot13(base64_decode($this->data['dbconfig']['password']));
   
   public function setdbpassword($password) {
 if (function_exists('mcrypt_encrypt')) {
-    $this->data['dbconfig']['password'] = self::encrypt($password, litepublisher::$secret . $this->solt);
+    $this->data['dbconfig']['password'] = self::encrypt($password, $this->solt . litepublisher::$secret);
 } else {
 $this->data['dbconfig']['password'] = base64_encode(str_rot13 ($password));
 }
@@ -274,8 +274,8 @@ return basemd5((string) $s . litepublisher::$secret . $this->solt);
   }
   
   public function handexception($e) {
+    $log = "Caught exception:\r\n" . $e->getMessage();
 $trace = $e->getTrace();
-$log = '';
     foreach ($trace as $i => $item) {
 $log .= sprintf('#%d %d %s ', $i, $item['line'], $item['file']);
 if (isset($item['class'])) {
@@ -284,7 +284,7 @@ $log .= $item['class'] . $item['type'] . $item['function'];
 $log .= $item['function'];
 }
 
-$log .= "\r\n";
+if (count($item['args'])) {
 $args = array();
 foreach ($item['args'] as $arg) {
 $type = gettype($arg);
@@ -319,19 +319,17 @@ break;
 $args[] = $v;
 }
 
+$log .= "\n";
 $log .= implode(', ', $args);
-$log .= "\r\n";
+}
+
+$log .= "\n";
     }
 
 $log = str_replace(litepublisher::$paths->home, '', $log);
-file_put_contents('log.txt', $log);
-
-    $trace =str_replace(litepublisher::$paths->home, '', $e->getTraceAsString());
-    
-    $message = "Caught exception:\n" . $e->getMessage();
-    $log = $message . "\n" . $trace;
     $this->errorlog .= str_replace("\n", "<br />\n", htmlspecialchars($log));
     tfiler::log($log, 'exceptions.log');
+
     if (!(litepublisher::$debug || $this->echoexception || $this->admincookie || litepublisher::$urlmap->adminpanel)) {
       tfiler::log($log, 'exceptionsmail.log');
     }
