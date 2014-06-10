@@ -245,7 +245,7 @@ $this->data['dbconfig']['password'] = base64_encode(str_rot13 ($password));
   }
 
 public function hash($s) {
-return basemd5((string) $s . litepublisher::$secret . $this->solt);
+return basemd5((string) $s . $this->solt . litepublisher::$secret);
 }
   
   public function ingroup($groupname) {

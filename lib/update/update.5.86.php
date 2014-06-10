@@ -39,12 +39,31 @@ litepublisher::$options->data['dbconfig']['password'] = _encrypt(str_rot13(base6
     setcookie('litepubl_user', $cookie, $expired, $subdir , false);
     setcookie('litepubl_user_flag', 'true', $expired, $subdir, false);
     
-$cookie = basemd5((string) $cookie . litepublisher::$secret . litepublisher::$options->solt);
+$cookie = basemd5((string) $cookie . litepublisher::$options->solt .litepublisher::$secret);
     litepublisher::$options->data['cookiehash'] = $cookie;
-    litepublisher::$options->data['password'] = '';
       litepublisher::$options->cookieexpired = $expired;
 unset(litepublisher::$options->data['cookie'], litepublisher::$options->data['authcookie']);
 
+  $password = md5uniq();
+    litepublisher::$options->data['password'] = basemd5($password . litepublisher::$options->solt . litepublisher::$secret);
+
 unset(litepublisher::$classes->items['tauthdigest']);
 litepublisher::$classes->save();
+
+$theme = ttheme::i();
+$args = new targs();
+$args->password = $password;
+$subj = $theme->parsearg('[$site.name] Смена пароля', $args);
+$body = $theme->parse('Внимание! Обновление LitePublisher 5.86 включает в себя новые алгоритмы безопасности и поэтому старые пароли больше не будут работать. Скрипт сгенерировал для вас новый пароль:
+$password
+
+Пожалуйста, используйте его или получите другой на странице восстановления пароля:
+$site.url/admin/password/
+
+Сохранение старых паролей невозможно потому, что в системе никогда не хранились пароли, а только их хеши. Приносим извенения за доставленные неудобства. Новые алгоритмы защиты значительно усиливают безопасность вашего сайта, также не забывайте регулярно менять пароли для лучшей безопасности.
+
+На сайтах, у которых псетители могли залогиниватся также сброшены все пароли, но им не была сделана рассылка уведомлений о смене паролей. При попытки залогинится таким посетителям будет предложено восстановить пароль. Для залогинивающихся через соцсети будет просто предложено еще раз авторизоваться (ранее они даже и не имели паролей)
+', $args);
+
+tmailer::sendtoadmin($subj, $body);
 }
