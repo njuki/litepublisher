@@ -38,7 +38,7 @@ class tadminreguser extends tadminform {
     if (!empty($_GET['confirm'])) {
       $confirm = $_GET['confirm'];
       $email = $_GET['email'];
-      tsession::start('reguser-' . md5($email));
+      tsession::start('reguser-' . md5(litepublisher::$options->hash($email)));
       if (!isset($_SESSION['email']) || ($email != $_SESSION['email']) || ($confirm != $_SESSION['confirm'])) {
         if (!isset($_SESSION['email'])) session_destroy();
         $this->regstatus = 'error';
@@ -134,7 +134,7 @@ class tadminreguser extends tadminform {
       if ('comuser' != $users->getvalue($id, 'status')) return $this->error(tlocal::i()->invalidregdata);
     }
     
-    tsession::start('reguser-' . md5($email));
+    tsession::start('reguser-' . md5(litepublisher::$options->hash($email)));
     $_SESSION['email'] = $email;
     $_SESSION['name'] = $name;
     $confirm = md5rand();

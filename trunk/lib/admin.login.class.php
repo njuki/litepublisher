@@ -43,7 +43,22 @@ litepublisher::$urlmap->nocache();
     $password = trim($_POST['password']);
     if (empty($email) || empty($password)) return;
     if (!litepublisher::$options->auth($email, $password)) {
-      if (!$this->confirm_reg($email, $password) && !$this->confirm_restore($email, $password)) {
+      if (!self::confirm_reg($email, $password) && !self::confirm_restore($email, $password)) {
+//check if password is empty and neet to restore password
+if ($email == litepublisher::$options->email) {
+if (!litepublisher::$options->password) {
+        $this->formresult = $this->html->h4red->torestorepass;
+return;
+}
+} else {
+$users = tusers::i();
+$id = $users->emailexists($email);
+if ($id && !$users->getpassword($id)) {
+        $this->formresult = $this->html->h4red->torestorepass;
+return;
+}
+}
+
         $this->formresult = $this->html->h4red->error;
         return;
       }
@@ -118,10 +133,10 @@ litepublisher::$urlmap->nocache();
     return $result;
   }
   
-  public function confirm_reg($email, $password) {
+  public static function confirm_reg($email, $password) {
     if (!litepublisher::$options->usersenabled || !litepublisher::$options->reguser) return false;
     
-    tsession::start('reguser-' . md5($email));
+    tsession::start('reguser-' . md5(litepublisher::$options->hash($email)));
     if (!isset($_SESSION['email']) || ($email != $_SESSION['email']) || ($password != $_SESSION['password'])) {
       if (isset($_SESSION['email'])) {
         session_write_close();
@@ -148,8 +163,8 @@ litepublisher::$urlmap->nocache();
     return $id;
   }
   
-  public function confirm_restore($email, $password) {
-    tsession::start('password-restore-' .md5($email));
+  public static function confirm_restore($email, $password) {
+    tsession::start('password-restore-' .md5(litepublisher::$options->hash($email)));
     if (!isset($_SESSION['email']) || ($email != $_SESSION['email']) || ($password != $_SESSION['password'])) {
       if (isset($_SESSION['email'])) {
         session_write_close();

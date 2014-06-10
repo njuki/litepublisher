@@ -50,6 +50,7 @@ unset(litepublisher::$options->data['cookie'], litepublisher::$options->data['au
 unset(litepublisher::$classes->items['tauthdigest']);
 litepublisher::$classes->save();
 
+tusers::i()->db->update("password = ''", 'id > 0');
 $theme = ttheme::i();
 $args = new targs();
 $args->password = $password;
