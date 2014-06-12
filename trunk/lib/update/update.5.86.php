@@ -48,6 +48,7 @@ unset(litepublisher::$options->data['cookie'], litepublisher::$options->data['au
     litepublisher::$options->data['password'] = basemd5($password . litepublisher::$options->solt . litepublisher::$secret);
 
 unset(litepublisher::$classes->items['tauthdigest']);
+litepublisher::$classes->items['tableprop'] = array('kernel.admin.php', '', 'htmlresource.class.php');
 litepublisher::$classes->save();
 
 tusers::i()->db->update("password = ''", 'id > 0');

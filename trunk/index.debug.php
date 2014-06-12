@@ -111,11 +111,9 @@ ttheme::clearcache();
 //litepublisher::$options->logout();
 //tfiler::log(var_export($_POST, true));
 //tthemegenerator::i()->parseselectors();
-//tupdater::i()->run(5.85);
-
+//tupdater::i()->run(5.86);
 //shopupdater::i()->run(1.27);
 //shoptheme::i()->setpaths();
-//hcardwidget::i()->install();
 //tfiler::log($_SERVER['REQUEST_URI']);
 
   if (!defined('litepublisher_mode')) {
@@ -136,6 +134,3 @@ echo round(microtime(true) - litepublisher::$microtime, 2), "\n";
 
 //tdebugproxy::showperformance();
 
-return;
-echo "<pre>\n";
-var_export($_COOKIE);

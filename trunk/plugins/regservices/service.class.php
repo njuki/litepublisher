@@ -69,7 +69,7 @@ class tregservice extends tplugin {
   
   public function newstate() {
     $this->start_session();
-    $state = md5(mt_rand() . litepublisher::$secret. microtime());
+    $state = md5rand();
     $_SESSION['state'] = $state;
     $_SESSION['sessdata'] = $this->sessdata;
     session_write_close();

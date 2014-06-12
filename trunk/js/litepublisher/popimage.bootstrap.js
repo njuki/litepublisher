@@ -91,7 +91,7 @@
           self.popover({
             container: 'body',
             content: '<img src="' + url + '" width="' + w + '" height="' + h + '" />',
-          //delay: { show: 100, hide: 100 },
+          delay: 120,
             html:true,
             placement: 'auto ' + (ratio >= 1 ? 'bottom' : 'right'),
             template: '<div class="popover popover-image"><div class="arrow"></div>' +

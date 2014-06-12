@@ -35,23 +35,6 @@ class tusers extends titems {
     return $result;
   }
   
-  /*
-  public function getitem($id) {
-    if ($id == 1) return array(
-    'email' =>litepublisher::$options->email,
-    'name' => litepublisher::$site->author,
-    'website' => litepublisher::$site->url . '/',
-    'password' => litepublisher::$options->password,
-    'cookie' => litepublisher::$options->cookie,
-    'expired' => sqldate(litepublisher::$options->cookieexpired ),
-    'status' => 'approved',
-    'idgroups' => array(1)
-    );
-    
-    return parent::getitem($id);
-  }
-  */
-  
   public function add(array $values) {
     return tusersman::i()->add($values);
   }
@@ -89,7 +72,18 @@ class tusers extends titems {
   public function emailexists($email) {
     if ($email == '') return false;
     if ($email == litepublisher::$options->email) return 1;
-    return $this->db->findid('email = '. dbquote($email));
+
+foreach ($this->items as $id => $item) {
+if ($email == $item['email']) return $id;
+}
+
+    if ($item = $this->db->finditem('email = '. dbquote($email))) {
+$id = intval($item['id']);
+$this->items[$id] = $item;
+return $id;
+}
+
+return false;
   }
   
   public function getpassword($id) {
@@ -98,7 +92,7 @@ class tusers extends titems {
   
   public function changepassword($id, $password) {
     $item = $this->getitem($id);
-    $this->setvalue($id, 'password', basemd5(sprintf('%s:%s:%s', $item['email'],  litepublisher::$options->realm, $password)));
+    $this->setvalue($id, 'password', litepublisher::$options->hash($item['email'] . $password));
   }
   
   public function approve($id) {
@@ -108,9 +102,8 @@ class tusers extends titems {
   }
   
   public function auth($email,$password) {
-    $password = basemd5(sprintf('%s:%s:%s', $email,  litepublisher::$options->realm, $password));
-    
-    $email = dbquote($email);
+    $password = litepublisher::$options->hash($email. $password);
+        $email = dbquote($email);
     if (($a = $this->select("email = $email and password = '$password'", 'limit 1')) && (count($a) > 0)) {
       $item = $this->getitem($a[0]);
       if ($item['status'] == 'wait') $this->approve($item['id']);
