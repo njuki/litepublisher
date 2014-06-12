@@ -16,16 +16,13 @@ class emailauth extends tplugin {
     if (!isset($args['email']) || !isset($args['password'])) return $this->error('Invalid data', 403);
     $email = strtolower(trim($args['email']));
     $password = trim($args['password']);
-    if (empty($email) || empty($password)) return $this->error('Invalid data', 403);
-    if (!litepublisher::$options->auth($email, $password)) {
-      $admin = tadminlogin::i();
-      if (!$admin->confirm_reg($email, $password) && !$admin->confirm_restore($email, $password)) {
+
+if ($mesg = tadminlogin::autherror($email, $password)) {
         return array(
-        'error' => tlocal::i()->errpassword
+        'error' => $mesg
         );
       }
-    }
-    
+
     $expired = time() + 31536000;
     $cookie = md5uniq();
     litepublisher::$options->setcookies($cookie, $expired);

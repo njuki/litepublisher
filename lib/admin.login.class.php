@@ -31,6 +31,30 @@ litepublisher::$urlmap->nocache();
       return litepublisher::$urlmap->redir('/admin/login/');
     return litepublisher::$urlmap->redir('/admin/login/');
   }
+
+//return error string message if not logged
+  public static function autherror($email, $password) {
+tlocal::admin();
+    if (empty($email) || empty($password)) return tlocal::get('login', 'empty');
+
+$iduser = litepublisher::$options->emailexists($email);
+if (!$iduser) {
+      if (self::confirm_reg($email, $password)) return;
+return tlocal::get('login', 'unknownemail');
+}
+
+    if (litepublisher::$options->authpassword($iduser, $password)) return;
+if (self::confirm_restore($email, $password)) return;
+
+//check if password is empty and neet to restore password
+if ($iduser == 1) {
+if (!litepublisher::$options->password)  return tlocal::get('login', 'torestorepass');
+} else {
+if (!tusers::i()->getpassword($iduser)) return tlocal::get('login', 'torestorepass');
+}
+
+return tlocal::get('login', 'error');
+}
   
   public function request($arg) {
     turlmap::nocache();
@@ -41,28 +65,11 @@ litepublisher::$urlmap->nocache();
     if (!isset($_POST['email']) || !isset($_POST['password'])) return;
     $email = trim($_POST['email']);
     $password = trim($_POST['password']);
-    if (empty($email) || empty($password)) return;
-    if (!litepublisher::$options->auth($email, $password)) {
-      if (!self::confirm_reg($email, $password) && !self::confirm_restore($email, $password)) {
-//check if password is empty and neet to restore password
-if ($email == litepublisher::$options->email) {
-if (!litepublisher::$options->password) {
-        $this->formresult = $this->html->h4red->torestorepass;
-return;
-}
-} else {
-$users = tusers::i();
-$id = $users->emailexists($email);
-if ($id && !$users->getpassword($id)) {
-        $this->formresult = $this->html->h4red->torestorepass;
-return;
-}
-}
 
-        $this->formresult = $this->html->h4red->error;
+if ($mesg = self::autherror($email, $password)) {
+        $this->formresult = $this->html->h4red($mesg);
         return;
-      }
-    }
+}
     
     $expired = isset($_POST['remember']) ? time() + 31536000 : time() + 8*3600;
     $cookie = md5uniq();

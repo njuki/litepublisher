@@ -144,21 +144,32 @@ if (!$iduser) return false;
   private function compare_cookie($cookie) {
     return !empty($this->cookiehash) && ($this->cookiehash == $cookie) && ($this->cookieexpired > time());
   }
+
+  public function emailexists($email) {
+    if (!$email) return false;
+if (!$this->authenabled) return false;
+    if ($email == $this->email) return 1;
+if(!$this->usersenabled) return false;
+return tusers::i()->emailexists($email);
+  }
   
   public function auth($email, $password) {
 if (!$this->authenabled) return false;
     if (!$email && !$password) return $this->authcookie();
-    if ($email == $this->email) {
+return $this->authpassword($this->emailexists($email), $password);
+}
+
+ public function authpassword($iduser, $password) {
+if (!$iduser) return false;
+    if ($iduser == 1) {
       if ($this->data['password'] != $this->hash($password))  return false;
-      $this->_user = 1;
-    } elseif(!$this->usersenabled) {
-      return false;
     } else {
-      $users = tusers::i();
-      if (!($this->_user = $users->auth($email, $password))) return false;
+      if (!tusers::i()->authpassword($iduser, $password)) return false;
     }
+
+      $this->_user = $iduser;
     $this->updategroup();
-    return true;
+    return $iduser;
   }
   
   public function updategroup() {

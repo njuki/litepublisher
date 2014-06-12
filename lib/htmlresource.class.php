@@ -328,10 +328,11 @@ $align = $item[0] ? $item[0] : 'left';
 if (is_string($item[2])) {
       $body .= sprintf('<td align="%s">%s</td>', $align, $item[2]);
 } else {
-//special case for callback
-ttheme::$vars['tableprop'] = new tableprop($item[2]);
-      $body .= sprintf('<td align="%s">%s</td>', $item[0], '$tableprop
-);
+// special case for callback. Add new prop to template vars
+$tableprop = tableprop::i();
+$propname = $tableprop->addprop($item[2]);
+ttheme::$vars['tableprop'] = $tableprop;
+      $body .= sprintf('<td align="%s">$tableprop.%s</td>', $item[0], $propname);
 }
     }
 
@@ -871,3 +872,29 @@ class adminform {
   }
   
 }//class
+
+class tableprop {
+public $callbacks;
+
+  public static function i() {
+return getinstance(__class__);
+}
+
+public function __construct() {
+$this->callbacks = array();
+}
+
+public function addprop($callback) {
+$this->callbacks[] = $callback;
+$c = count($this->callbacks);
+return 'prop' . $c;
+}
+
+public function __get($name) {
+$id = intval(substr($name, strlen('prop')));
+$callback = $this->callbacks[$id];
+$item = ttheme::$vars['item'];
+return call_user_func_array($callback, array($item));
+}
+
+}

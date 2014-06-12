@@ -100,7 +100,7 @@ return this.script = $.load_script('http://ulogin.ru/js/ulogin.js', callback);
 
 auth: function(token, remote_callback, callback) {
 var self =this;
-return $.litejson({method: "ulogin_auth", token: token, callback: remote_callback ? remote_callback : false}, function(r) {
+return $.litejsonpost({method: "ulogin_auth", token: token, callback: remote_callback ? remote_callback : false}, function(r) {
 litepubl.user = r;
 set_cookie("litepubl_user_id", r.id);
 set_cookie("litepubl_user", r.pass);
@@ -121,6 +121,15 @@ var self = this;
 self.open(backurl, function(token) {
 self.auth(token, remote_callback, callback);
 }, callback);
+},
+
+onlogin: function(remote_args, callback) {
+var self = this;
+self.open('', function(token) {
+self.auth(token, remote_args, callback);
+}, function() {
+$.litejsonpost(remote_args, callback);
+});
 }
 
   });//class
