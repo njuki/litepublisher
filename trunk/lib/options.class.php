@@ -288,7 +288,10 @@ return basemd5((string) $s . $this->solt . litepublisher::$secret);
     $log = "Caught exception:\r\n" . $e->getMessage();
 $trace = $e->getTrace();
     foreach ($trace as $i => $item) {
+if (isset($item['line'])) {
 $log .= sprintf('#%d %d %s ', $i, $item['line'], $item['file']);
+}
+
 if (isset($item['class'])) {
 $log .= $item['class'] . $item['type'] . $item['function'];
 } else {
@@ -298,36 +301,7 @@ $log .= $item['function'];
 if (count($item['args'])) {
 $args = array();
 foreach ($item['args'] as $arg) {
-$type = gettype($arg);
-switch($type) {
-case 'string':
-$v = "'$arg'";
-break;
-
-case 'array':
-$v = var_export($arg, true);
-break;
-
-case 'object':
-$v = get_class($arg);
-break;
-
-case 'boolean':
-$v = $arg ? 'true' : 'false';
-break;
-
-case 'integer':
-case 'double':
-case 'float':
-$v= $arg;
-break;
-
-default:
-$v = $type;
-break;
-}
-
-$args[] = $v;
+$args[] = self::var_export($arg);
 }
 
 $log .= "\n";
@@ -359,5 +333,37 @@ $log = str_replace(litepublisher::$paths->home, '', $log);
       echo $this->errorlog;
     }
   }
+
+public static function var_export(&$v) {
+switch(gettype($v)) {
+case 'string':
+return "'$v'";
+
+case 'object':
+return get_class($v);
+
+case 'boolean':
+return $v ? 'true' : 'false';
+
+case 'integer':
+case 'double':
+case 'float':
+return $v;
+
+case 'array':
+$result = "array (\n";
+foreach ($v as $k => $item) {
+$s = self::var_export($item);
+$result .= "$k = $s;\n";
+}
+$result .= ")\n";
+return $result;
+
+default:
+return gettype($v);
+}
+
+
+}
   
 }//class

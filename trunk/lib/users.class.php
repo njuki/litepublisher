@@ -102,12 +102,15 @@ return false;
   }
   
   public function auth($email,$password) {
-    $password = litepublisher::$options->hash($email. $password);
-        $email = dbquote($email);
-    if (($a = $this->select("email = $email and password = '$password'", 'limit 1')) && (count($a) > 0)) {
-      $item = $this->getitem($a[0]);
-      if ($item['status'] == 'wait') $this->approve($item['id']);
-      return (int) $item['id'];
+return $this->authpassword($this->emailexists($email), $password);
+}
+
+  public function authpassword($id,$password) {
+if (!$id || !$password) return false;
+      $item = $this->getitem($id);
+if ($item['password'] == litepublisher::$options->hash($item['email']. $password)) {
+      if ($item['status'] == 'wait') $this->approve($id);
+      return $id;
     }
     return false;
   }
