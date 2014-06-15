@@ -10,6 +10,12 @@ if (strlen($key) > $maxkey) $key = substr($key, $maxkey);
   }
 
 function update586() {
+$menus = tadminmenus::i();
+$id = $menus->url2id('/admin/logout/'));
+if (!$id) $id = $menus->addfake('/admin/logout/', tlocal::i()->logout);  
+$menus->items[$id]['order'] = 9999999;
+$menus->save();
+
 $man = tdbmanager::i();
     $prefix = strtolower(litepublisher::$options->dbconfig['prefix']);
     $tables = $man->gettables();
