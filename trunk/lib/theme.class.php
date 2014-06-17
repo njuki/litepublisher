@@ -450,7 +450,12 @@ class ttheme extends tevents {
     ));
   }
   
+  public static function quote($s) {
+    return strtr ($s, array('"'=> '&quot;', "'" => '&#039;', '\\'=> '&#092;', '$' => '&#36;', '%' =>  '&#37;', '_' => '&#95;'));
+  }
+
   public function getinput($type, $name, $value, $title) {
+//if (($type == 'text') || ($type == 'editor')) $value =  self::quote(htmlspecialchars($value));
     return strtr($this->templates['content.admin.' . $type], array(
     '$lang.$name' => $title,
     '$name' => $name,

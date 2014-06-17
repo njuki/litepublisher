@@ -19,6 +19,12 @@ class tcssmerger extends tfilemerger {
   
   public function replaceurl($m) {
     $url = $m[1];
+$args = '';
+if ($i = strpos($url, '?')) {
+$args = substr($url, $i);
+$url = substr($url, 0, $i);
+}
+
     if($realfile = realpath($url)) {
       $url = substr($realfile, strlen(litepublisher::$paths->home));
     } // else must be absolute url
@@ -26,7 +32,7 @@ class tcssmerger extends tfilemerger {
     $url = str_replace(DIRECTORY_SEPARATOR, '/', $url);
     $url = litepublisher::$site->files. '/' .  ltrim($url, '/');
     $url = substr($url, strpos($url, '/', 9));
-    return sprintf(' url(%s)', $url);
+    return " url('$url$args')";
   }
   
   public function readfile($filename) {

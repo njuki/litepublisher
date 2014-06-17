@@ -39,12 +39,8 @@ class tticketeditor extends tposteditor {
     }
   }
   
-  protected function getlogoutlink() {
-    return $this->gethtml('login')->logout();
-  }
-  
   public function getcontent() {
-    $result = $this->logoutlink;
+    $result = '';
     $this->basename = 'tickets';
     $ticket = tticket::i($this->idpost);
     ttheme::$vars['ticket'] = $ticket;

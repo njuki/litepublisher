@@ -20,12 +20,8 @@ class tforumeditor extends tposteditor {
     }
   }
   
-  protected function getlogoutlink() {
-    return $this->gethtml('login')->logout();
-  }
-  
   public function getcontent() {
-    $result = $this->logoutlink;
+    $result = '';
     $this->basename = 'forum';
     $posts = tposts::i();
     $html = $this->html;
