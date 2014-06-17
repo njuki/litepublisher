@@ -12,10 +12,6 @@ class tadmindownloaditems extends tadminmenu {
     return parent::iteminstance(__class__, $id);
   }
   
-  protected function getlogoutlink() {
-    return $this->gethtml('login')->logout();
-  }
-  
   public function getcontent() {
     $result = '';
     $html = $this->inihtml();
