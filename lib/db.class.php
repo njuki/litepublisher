@@ -140,17 +140,16 @@ class tdatabase {
   }
   
   public function update($values, $where) {
-    return $this->query("update $this->prefix$this->table set " . $values  ." where $where");
+    return $this->query("update $this->prefix$this->table set $values   where $where");
   }
   
   public function idupdate($id, $values) {
     return $this->update($values, "id = $id");
   }
   
-  public function updateassoc(array $a) {
+  public function assoc2update(array $a) {
     $list = array();
     foreach ($a As $name => $value) {
-      if ($name == 'id') continue;
       if (is_bool($value)) {
         $value =$value ? '1' : '0';
         $list[] = sprintf('%s = %s ', $name, $value);
@@ -160,8 +159,14 @@ class tdatabase {
       $list[] = sprintf('%s = %s', $name,  $this->quote($value));
     }
     
-    return $this->update(implode(', ', $list), 'id = '. $a['id'] . ' limit 1');
+return implode(', ', $list);
   }
+
+  public function updateassoc(array $a, $index = 'id') {
+$id = $a[$index];
+unset($a[$index]);
+    return $this->update($this->assoc2update($a), "$index = '$id' limit 1");
+}
   
   public function insertrow($row) {
     return $this->query(sprintf('INSERT INTO %s%s %s', $this->prefix, $this->table, $row));

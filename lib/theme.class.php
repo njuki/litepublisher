@@ -607,7 +607,7 @@ class tthemeprops {
 
 class targs {
   public $data;
-  
+
   public static function i() {
     return litepublisher::$classes->newinstance(__class__);
   }
@@ -615,8 +615,7 @@ class targs {
   public function __construct($thisthis = null) {
     if (!isset(ttheme::$defaultargs)) ttheme::set_defaultargs();
     $this->data = ttheme::$defaultargs;
-    
-    if (isset($thisthis)) $this->data['$this'] = $thisthis;
+        if (isset($thisthis)) $this->data['$this'] = $thisthis;
   }
   
   public function __get($name) {
@@ -627,12 +626,12 @@ class targs {
   }
   
   public function __set($name, $value) {
-    if (!is_string($name)) return;
-    if ($name == '') return;
+    if (!$name || !is_string($name)) return;
+
     if (is_bool($value)) {
       $value = $value ? 'checked="checked"' : '';
-    }
-    
+}
+
     $this->data['$'.$name] = $value;
     $this->data["%%$name%%"] = $value;
     
@@ -658,7 +657,7 @@ class targs {
   public function parse($s) {
     return ttheme::i()->parsearg($s, $this);
   }
-  
+
 }//class
 
 class emptyclass{
