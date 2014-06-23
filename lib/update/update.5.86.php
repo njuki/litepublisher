@@ -16,6 +16,8 @@ if (!$id) $id = $menus->addfake('/admin/logout/', tlocal::i()->logout);
 $menus->items[$id]['order'] = 9999999;
 $menus->save();
 
+tjsonserver::i()->addevent('comments_get_logged', 'tjsoncomments', 'comments_get_logged');
+
 $man = tdbmanager::i();
     $prefix = strtolower(litepublisher::$options->dbconfig['prefix']);
     $tables = $man->gettables();

@@ -109,10 +109,11 @@ ttheme::clearcache();
 //tsidebars::fix();
 //litepublisher::$urlmap->clearcache();
 //litepublisher::$options->logout();
-//tfiler::log(var_export($_POST, true));
+tfiler::log(var_export($_POST, true) . var_export($_COOKIE, true));
 //tthemegenerator::i()->parseselectors();
 //tupdater::i()->run(5.86);
 //shopupdater::i()->run(1.27);
+//tjsmerger::i()->save();
 //shoptheme::i()->setpaths();
 //tfiler::log($_SERVER['REQUEST_URI']);
 
