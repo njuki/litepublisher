@@ -30,7 +30,16 @@ if (litepubl.is_admin_url(url)) self.open(url);
       });
 
 $("#ulogin-comment-button").click(function() {
-self.open(location.href);
+self.onlogin({method: "comments_get_logged", idpost: ltoptions.idpost}, function(r) {
+        if (typeof r === "object") {
+if ("error" in r) {
+$.messagebox(lang.dialog.error, r.error);
+} else if ("mesg" in r) {
+$("#before-commentform").html(r.mesg);
+}
+}
+});
+
 return false;
 });
     },

@@ -444,7 +444,7 @@ class ttheme extends tevents {
   
   public function getsubmit($title) {
     return strtr($this->templates['content.admin.submit'], array(
-    '$lang.$name', '$title',
+    '$lang.$name' => $title,
     'name="$name"' => '',
     'id="submitbutton-$name"' => ''
     ));

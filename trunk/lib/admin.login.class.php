@@ -83,16 +83,22 @@ if ($mesg = self::autherror($email, $password)) {
       }
     }
     
+      setcookie('backurl', '', 0, litepublisher::$site->subdir, false);
     return litepublisher::$urlmap->redir($url);
   }
   
   public function getcontent() {
     $result = $this->widget;
-    if (isset($_GET['backurl'])) {
       $result = str_replace('&amp;backurl=', '&backurl=', $result);
+    if (!empty($_GET['backurl'])) {
       $result = str_replace('backurl=', 'backurl=' . urlencode($_GET['backurl']), $result);
       //support ulogin
       $result = str_replace('backurl%3D', 'backurl%3D' . urlencode(urlencode($_GET['backurl'])), $result);
+} else {
+      $result = str_replace('&backurl=', '', $result);
+      $result = str_replace('backurl=', '', $result);
+      //support ulogin
+      $result = str_replace('%3Fbackurl%3D', '', $result);
     }
     
     $html = $this->html;

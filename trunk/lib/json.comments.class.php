@@ -126,4 +126,18 @@ class tjsoncomments extends tevents {
     );
   }
   
+  public function comments_get_logged(array $args) {
+    if (!litepublisher::$options->user) return $this->forbidden();
+    $mesg = ttemplatecomments::i()->logged;
+//unsafe, dangerous trick
+$mesg = str_replace('<?php echo litepublisher::$site->getuserlink(); ?>', litepublisher::$site->getuserlink(), $mesg);
+
+$a = new targs();
+$mesg = $a->parse($mesg);
+
+    return array(
+    'mesg' => $mesg
+    );
+  }
+
 }//class

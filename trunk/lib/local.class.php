@@ -35,6 +35,7 @@ class tlocal {
   }
   
   public static function get($section, $key) {
+//if (!isset(self::i()->ini[$section][$key])) litepublisher::$options->error("$section:$key");
     return self::i()->ini[$section][$key];
   }
   
