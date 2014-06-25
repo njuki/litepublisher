@@ -430,9 +430,16 @@ ttheme::$vars['tableprop'] = $tableprop;
     $lang = tlocal::i();
     foreach ($item as $k => $v) {
       if (($k === false) || ($v === false)) continue;
-      $k2 = $lang->__get($k);
-      if (!$k2) $k2 = $k;
-      $body .= sprintf('<tr><td>%s</td><td>%s</td></tr>', $k2, $v);
+
+      if (is_array($v)) {
+        foreach ($v as $kv => $vv) {
+      if ($k2 = $lang->__get($kv)) $kv = $k2;
+          $body .= sprintf('<tr><td>%s</td><td>%s</td></tr>', $kv, $vv);
+        }
+      } else {
+      if ($k2 = $lang->__get($k)) $k = $k2;
+      $body .= sprintf('<tr><td>%s</td><td>%s</td></tr>', $k, $v);
+}
     }
     
     return $this->gettable("<th>$lang->name</th> <th>$lang->property</th>", $body);
@@ -442,7 +449,7 @@ ttheme::$vars['tableprop'] = $tableprop;
     $body = '';
     foreach ($a as $k => $v) {
       if (is_array($v)) {
-        foreach ($v as $vk => $vv) {
+        foreach ($v as $kv => $vv) {
           $body .= sprintf('<tr><td>%s</td><td>%s</td></tr>', $kv, $vv);
         }
       } else {
