@@ -225,10 +225,10 @@ class tdata {
   public static function get_class_name($c) {
     return is_object($c) ? get_class($c) : trim($c);
   }
-
+  
   public static function encrypt($s, $key) {
-$maxkey = mcrypt_get_key_size(MCRYPT_Blowfish, MCRYPT_MODE_ECB);
-if (strlen($key) > $maxkey) $key = substr($key, $maxkey);
+    $maxkey = mcrypt_get_key_size(MCRYPT_Blowfish, MCRYPT_MODE_ECB);
+    if (strlen($key) > $maxkey) $key = substr($key, $maxkey);
     $block = mcrypt_get_block_size(MCRYPT_Blowfish, MCRYPT_MODE_ECB);
     $pad = $block - (strlen($s) % $block);
     $s .= str_repeat(chr($pad), $pad);
@@ -236,9 +236,9 @@ if (strlen($key) > $maxkey) $key = substr($key, $maxkey);
   }
   
   public static function decrypt($s, $key) {
-$maxkey = mcrypt_get_key_size(MCRYPT_Blowfish, MCRYPT_MODE_ECB);
-if (strlen($key) > $maxkey) $key = substr($key, $maxkey);
-
+    $maxkey = mcrypt_get_key_size(MCRYPT_Blowfish, MCRYPT_MODE_ECB);
+    if (strlen($key) > $maxkey) $key = substr($key, $maxkey);
+    
     $s = mcrypt_decrypt(MCRYPT_Blowfish, $key, $s, MCRYPT_MODE_ECB);
     $block = mcrypt_get_block_size(MCRYPT_Blowfish, MCRYPT_MODE_ECB);
     $pad = ord($s[($len = strlen($s)) - 1]);

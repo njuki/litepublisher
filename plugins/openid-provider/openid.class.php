@@ -137,11 +137,11 @@ class topenid extends tevents {
   }
   
   private function id_res() {
-if (!litepublisher::$options->user) {
-litepublisher::$urlmap->nocache();
-return litepublisher::$urlmap->redir('/admin/login/?backurl=' . urlencode(litepublisher::$urlmap->url));
-}
-
+    if (!litepublisher::$options->user) {
+      litepublisher::$urlmap->nocache();
+      return litepublisher::$urlmap->redir('/admin/login/?backurl=' . urlencode(litepublisher::$urlmap->url));
+    }
+    
     return tsimplecontent::html(tlocal::get('openidserver', 'logged'));
   }
   

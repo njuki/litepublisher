@@ -441,7 +441,7 @@ class tcommentmanager extends tevents_storage {
     ttheme::$vars['comment'] = $comment;
     $args = new targs();
     $adminurl = litepublisher::$site->url . '/admin/comments/'. litepublisher::$site->q . "id=$id";
-    $ref = md5(litepublisher::$secret . $adminurl);
+    $ref = md5(litepublisher::$secret . $adminurl . litepublisher::$options->solt);
     $adminurl .= "&ref=$ref&action";
     $args->adminurl = $adminurl;
     
@@ -927,23 +927,19 @@ class ttemplatecomments extends tevents {
   
   public function getcomments($idpost) {
     $result = '';
-    $urlmap = turlmap::i();
     $idpost = (int) $idpost;
     $post = tpost::i($idpost);
-    
-    //if ($post->haspages && ($post->commentpages < $urlmap->page)) return $post->getcommentslink();
-    
-    $lang = tlocal::i('comment');
     $comments = tcomments::i($idpost);
+    $lang = tlocal::i('comment');
     $list = $comments->getcontent();
     
     $theme = $post->theme;
-    $args = targs::i();
+    $args = new targs();
     $args->count = $post->cmtcount;
     $result .= $theme->parsearg($theme->templates['content.post.templatecomments.comments.count'], $args);
     $result .= $list;
     
-    if (($urlmap->page == 1) && ($post->pingbackscount > 0))  {
+    if ((litepublisher::$urlmap->page == 1) && ($post->pingbackscount > 0))  {
       $pingbacks = tpingbacks::i($post->id);
       $result .= $pingbacks->getcontent();
     }

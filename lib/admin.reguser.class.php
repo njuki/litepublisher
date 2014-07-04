@@ -28,7 +28,7 @@ class tadminreguser extends tadminform {
   }
   
   public function getlogged() {
-      return litepublisher::$options->authcookie();
+    return litepublisher::$options->authcookie();
   }
   
   public function request($arg) {

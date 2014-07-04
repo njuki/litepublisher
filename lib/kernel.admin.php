@@ -71,7 +71,8 @@ class tadminmenus extends tmenus {
     $id = parent::addfakemenu($menu);
     if (empty($this->items[$id]['group'])) {
       $groups = tusergroups::i();
-      $this->items[$id]['group'] = $groups->items[$groups->defaults[0]]['name'];
+      $group = count($groups->defaults)  ? $groups->items[$groups->defaults[0]]['name'] : 'commentator';
+      $this->items[$id]['group'] = $group;
     }
     
     $this->unlock();
@@ -148,15 +149,10 @@ public function save() { return true; }
   }
   
   public static function auth($group) {
-    if (litepublisher::$options->cookieenabled) {
-      if ($s = tguard::checkattack()) return $s;
-      if (!litepublisher::$options->user) {
-        turlmap::nocache();
-        return litepublisher::$urlmap->redir('/admin/login/' . litepublisher::$site->q . 'backurl=' . urlencode(litepublisher::$urlmap->url));
-      }
-    }else {
-      $auth = tauthdigest::i();
-      if (!$auth->Auth())  return $auth->headers();
+    if ($s = tguard::checkattack()) return $s;
+    if (!litepublisher::$options->user) {
+      turlmap::nocache();
+      return litepublisher::$urlmap->redir('/admin/login/' . litepublisher::$site->q . 'backurl=' . urlencode(litepublisher::$urlmap->url));
     }
     
     if (!litepublisher::$options->hasgroup($group)) {
@@ -587,15 +583,24 @@ class tadminhtml {
   
   public function tablestruct(array $tablestruct) {
     $head = '';
-    $tml = '<tr>';
-    foreach ($tablestruct as $elem) {
-      if (!$elem || !count($elem)) continue;
-      $head .= sprintf('<th align="%s">%s</th>', $elem[0], $elem[1]);
-      $tml .= sprintf('<td align="%s">%s</td>', $elem[0], $elem[2]);
+    $body = '<tr>';
+    foreach ($tablestruct as $item) {
+      if (!$item || !count($item)) continue;
+      $align = $item[0] ? $item[0] : 'left';
+      $head .= sprintf('<th align="%s">%s</th>', $align, $item[1]);
+      if (is_string($item[2])) {
+        $body .= sprintf('<td align="%s">%s</td>', $align, $item[2]);
+      } else {
+        // special case for callback. Add new prop to template vars
+        $tableprop = tableprop::i();
+        $propname = $tableprop->addprop($item[2]);
+        ttheme::$vars['tableprop'] = $tableprop;
+        $body .= sprintf('<td align="%s">$tableprop.%s</td>', $item[0], $propname);
+      }
     }
-    $tml .= '</tr>';
     
-    return array($head, $tml);
+    $body .= '</tr>';
+    return array($head, $body);
   }
   
   public function buildtable(array $items, array $tablestruct) {
@@ -688,9 +693,16 @@ class tadminhtml {
     $lang = tlocal::i();
     foreach ($item as $k => $v) {
       if (($k === false) || ($v === false)) continue;
-      $k2 = $lang->__get($k);
-      if (!$k2) $k2 = $k;
-      $body .= sprintf('<tr><td>%s</td><td>%s</td></tr>', $k2, $v);
+      
+      if (is_array($v)) {
+        foreach ($v as $kv => $vv) {
+          if ($k2 = $lang->__get($kv)) $kv = $k2;
+          $body .= sprintf('<tr><td>%s</td><td>%s</td></tr>', $kv, $vv);
+        }
+      } else {
+        if ($k2 = $lang->__get($k)) $k = $k2;
+        $body .= sprintf('<tr><td>%s</td><td>%s</td></tr>', $k, $v);
+      }
     }
     
     return $this->gettable("<th>$lang->name</th> <th>$lang->property</th>", $body);
@@ -700,7 +712,7 @@ class tadminhtml {
     $body = '';
     foreach ($a as $k => $v) {
       if (is_array($v)) {
-        foreach ($v as $vk => $vv) {
+        foreach ($v as $kv => $vv) {
           $body .= sprintf('<tr><td>%s</td><td>%s</td></tr>', $kv, $vv);
         }
       } else {
@@ -1130,6 +1142,32 @@ class adminform {
   }
   
 }//class
+
+class tableprop {
+  public $callbacks;
+  
+  public static function i() {
+    return getinstance(__class__);
+  }
+  
+  public function __construct() {
+    $this->callbacks = array();
+  }
+  
+  public function addprop($callback) {
+    $this->callbacks[] = $callback;
+    $c = count($this->callbacks);
+    return 'prop' . $c;
+  }
+  
+  public function __get($name) {
+    $id = intval(substr($name, strlen('prop')));
+    $callback = $this->callbacks[$id];
+    $item = ttheme::$vars['item'];
+    return call_user_func_array($callback, array($item));
+  }
+  
+}
 
 //admin.posteditor.ajax.class.php
 class tajaxposteditor  extends tevents {

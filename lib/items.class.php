@@ -9,13 +9,13 @@
 class titems extends tevents {
   public $items;
   public $dbversion;
-protected $idprop;
+  protected $idprop;
   protected $autoid;
-
-    protected function create() {
+  
+  protected function create() {
     parent::create();
     $this->addevents('added', 'deleted');
-$this->idprop = 'id';
+    $this->idprop = 'id';
     if ($this->dbversion) {
       $this->items = array();
     } else {
@@ -98,7 +98,7 @@ $this->idprop = 'id';
     $this->items[$id][$name] = $value;
     if ($this->dbversion) {
       //$this->db->setvalue($id, $name, $value);
-$this->db->update("$name = " . dbquote($value), "$this->idprop = $id");
+      $this->db->update("$name = " . dbquote($value), "$this->idprop = $id");
     }
   }
   
