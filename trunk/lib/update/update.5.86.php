@@ -11,7 +11,7 @@ if (strlen($key) > $maxkey) $key = substr($key, $maxkey);
 
 function update586() {
 $menus = tadminmenus::i();
-$id = $menus->url2id('/admin/logout/'));
+$id = $menus->url2id('/admin/logout/');
 if (!$id) $id = $menus->addfake('/admin/logout/', tlocal::i()->logout);  
 $menus->items[$id]['order'] = 9999999;
 $menus->save();
@@ -64,7 +64,7 @@ $theme = ttheme::i();
 $args = new targs();
 $args->password = $password;
 $subj = $theme->parsearg('[$site.name] Смена пароля', $args);
-$body = $theme->parse('Внимание! Обновление LitePublisher 5.86 включает в себя новые алгоритмы безопасности и поэтому старые пароли больше не будут работать. Скрипт сгенерировал для вас новый пароль:
+$body = $theme->parsearg('Внимание! Обновление LitePublisher 5.86 включает в себя новые алгоритмы безопасности и поэтому старые пароли больше не будут работать. Скрипт сгенерировал для вас новый пароль:
 $password
 
 Пожалуйста, используйте его или получите другой на странице восстановления пароля:

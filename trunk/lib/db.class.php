@@ -159,14 +159,14 @@ class tdatabase {
       $list[] = sprintf('%s = %s', $name,  $this->quote($value));
     }
     
-return implode(', ', $list);
+    return implode(', ', $list);
   }
-
+  
   public function updateassoc(array $a, $index = 'id') {
-$id = $a[$index];
-unset($a[$index]);
+    $id = $a[$index];
+    unset($a[$index]);
     return $this->update($this->assoc2update($a), "$index = '$id' limit 1");
-}
+  }
   
   public function insertrow($row) {
     return $this->query(sprintf('INSERT INTO %s%s %s', $this->prefix, $this->table, $row));
@@ -254,12 +254,12 @@ unset($a[$index]);
   public function finditem($where) {
     return $this->query("select * from $this->prefix$this->table where $where limit 1")->fetch_assoc();
   }
-
+  
   public function findid($where) {
-return $this->findprop('id', $where);
-}
-
-    public function findprop($propname, $where) {
+    return $this->findprop('id', $where);
+  }
+  
+  public function findprop($propname, $where) {
     if($r = $this->query("select $propname from $this->prefix$this->table where $where limit 1")->fetch_assoc()) return $r[$propname];
     return false;
   }

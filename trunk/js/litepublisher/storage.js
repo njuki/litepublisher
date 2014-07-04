@@ -89,7 +89,7 @@
       };
       
       this.set= function( key, value ) {
-set_cookie(key, Value);
+        set_cookie(key, Value);
       };
       
       this.remove = function( key ) {

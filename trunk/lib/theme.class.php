@@ -453,27 +453,27 @@ class ttheme extends tevents {
   public static function quote($s) {
     return strtr ($s, array('"'=> '&quot;', "'" => '&#039;', '\\'=> '&#092;', '$' => '&#36;', '%' =>  '&#37;', '_' => '&#95;'));
   }
-
+  
   public function getinput($type, $name, $value, $title) {
-//if (($type == 'text') || ($type == 'editor')) $value =  self::quote(htmlspecialchars($value));
+    //if (($type == 'text') || ($type == 'editor')) $value =  self::quote(htmlspecialchars($value));
     return strtr($this->templates['content.admin.' . $type], array(
     '$lang.$name' => $title,
     '$name' => $name,
     '$value' => $value
     ));
   }
-
+  
   public function getradio($name, $value, $title, $checked) {
     return strtr($this->templates['content.admin.radioitem'], array(
     '$lang.$name' => $title,
     '$name' => $name,
     '$value' => $title,
-'$index' => $value,
-'$checked' => $checked ? 'checked="checked"' : '',
+    '$index' => $value,
+    '$checked' => $checked ? 'checked="checked"' : '',
     ));
   }
-
-    public static function clearcache() {
+  
+  public static function clearcache() {
     tfiler::delete(litepublisher::$paths->data . 'themes', false, false);
     litepublisher::$urlmap->clearcache();
   }
@@ -607,7 +607,7 @@ class tthemeprops {
 
 class targs {
   public $data;
-
+  
   public static function i() {
     return litepublisher::$classes->newinstance(__class__);
   }
@@ -615,7 +615,7 @@ class targs {
   public function __construct($thisthis = null) {
     if (!isset(ttheme::$defaultargs)) ttheme::set_defaultargs();
     $this->data = ttheme::$defaultargs;
-        if (isset($thisthis)) $this->data['$this'] = $thisthis;
+    if (isset($thisthis)) $this->data['$this'] = $thisthis;
   }
   
   public function __get($name) {
@@ -627,11 +627,11 @@ class targs {
   
   public function __set($name, $value) {
     if (!$name || !is_string($name)) return;
-
+    
     if (is_bool($value)) {
       $value = $value ? 'checked="checked"' : '';
-}
-
+    }
+    
     $this->data['$'.$name] = $value;
     $this->data["%%$name%%"] = $value;
     
@@ -657,7 +657,7 @@ class targs {
   public function parse($s) {
     return ttheme::i()->parsearg($s, $this);
   }
-
+  
 }//class
 
 class emptyclass{

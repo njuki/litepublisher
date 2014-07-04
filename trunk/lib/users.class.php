@@ -72,18 +72,18 @@ class tusers extends titems {
   public function emailexists($email) {
     if ($email == '') return false;
     if ($email == litepublisher::$options->email) return 1;
-
-foreach ($this->items as $id => $item) {
-if ($email == $item['email']) return $id;
-}
-
+    
+    foreach ($this->items as $id => $item) {
+      if ($email == $item['email']) return $id;
+    }
+    
     if ($item = $this->db->finditem('email = '. dbquote($email))) {
-$id = intval($item['id']);
-$this->items[$id] = $item;
-return $id;
-}
-
-return false;
+      $id = intval($item['id']);
+      $this->items[$id] = $item;
+      return $id;
+    }
+    
+    return false;
   }
   
   public function getpassword($id) {
@@ -102,13 +102,13 @@ return false;
   }
   
   public function auth($email,$password) {
-return $this->authpassword($this->emailexists($email), $password);
-}
-
+    return $this->authpassword($this->emailexists($email), $password);
+  }
+  
   public function authpassword($id,$password) {
-if (!$id || !$password) return false;
-      $item = $this->getitem($id);
-if ($item['password'] == litepublisher::$options->hash($item['email']. $password)) {
+    if (!$id || !$password) return false;
+    $item = $this->getitem($id);
+    if ($item['password'] == litepublisher::$options->hash($item['email']. $password)) {
       if ($item['status'] == 'wait') $this->approve($id);
       return $id;
     }

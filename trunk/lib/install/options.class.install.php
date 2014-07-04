@@ -21,8 +21,8 @@ function installoptions($email, $language) {
   'password' => '',
   'prefix' => $_REQUEST['dbprefix']
   );
-
-$options->setdbpassword($_REQUEST['dbpassword']);
+  
+  $options->setdbpassword($_REQUEST['dbpassword']);
   try {
     litepublisher::$db= new tdatabase();
   } catch (Exception $e) {
@@ -45,13 +45,13 @@ $options->setdbpassword($_REQUEST['dbpassword']);
   $options->dateformat = '';
   $options->password = '';
   $options->realm = 'Admin panel';
-
+  
   $password = md5uniq();
   $options->changepassword($password);
   $options->authenabled = true;
   $options->cookiehash = '';
   $options->cookieexpired = 0;
-$options->securecookie = false;
+  $options->securecookie = false;
   
   $options->mailer = '';
   $options->data['cache'] = true;

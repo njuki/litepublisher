@@ -92,9 +92,9 @@ function tadminmenusInstall($self) {
     $self->createitem($service, 'run', 'admin', 'tadminservice');
   }
   
-  $id = $self->addfake('/admin/logout/', $lang->logout);  
-$self->items[$id]['order'] = 9999999;
-
+  $id = $self->addfake('/admin/logout/', tlocal::i()->logout);
+  $self->items[$id]['order'] = 9999999;
+  
   /*
   $board = $self->additem(array(
   'parent' => 0,

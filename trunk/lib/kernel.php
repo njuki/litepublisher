@@ -32,8 +32,7 @@ class tdatabase {
     $this->sql = '';
     $this->history = array();
     
-    $this->mysqli = new mysqli($dbconfig['host'], $dbconfig['login'], str_rot13(base64_decode($dbconfig['password'])),
-    $dbconfig['dbname'], $dbconfig['port'] > 0 ?  $dbconfig['port'] : null);
+    $this->mysqli = new mysqli($dbconfig['host'], $dbconfig['login'], litepublisher::$options->dbpassword, $dbconfig['dbname'], $dbconfig['port'] > 0 ?  $dbconfig['port'] : null);
     
     if (mysqli_connect_error()) {
       throw new Exception('Error connect to database');
@@ -141,17 +140,16 @@ class tdatabase {
   }
   
   public function update($values, $where) {
-    return $this->query("update $this->prefix$this->table set " . $values  ." where $where");
+    return $this->query("update $this->prefix$this->table set $values   where $where");
   }
   
   public function idupdate($id, $values) {
     return $this->update($values, "id = $id");
   }
   
-  public function updateassoc(array $a) {
+  public function assoc2update(array $a) {
     $list = array();
     foreach ($a As $name => $value) {
-      if ($name == 'id') continue;
       if (is_bool($value)) {
         $value =$value ? '1' : '0';
         $list[] = sprintf('%s = %s ', $name, $value);
@@ -161,7 +159,13 @@ class tdatabase {
       $list[] = sprintf('%s = %s', $name,  $this->quote($value));
     }
     
-    return $this->update(implode(', ', $list), 'id = '. $a['id'] . ' limit 1');
+    return implode(', ', $list);
+  }
+  
+  public function updateassoc(array $a, $index = 'id') {
+    $id = $a[$index];
+    unset($a[$index]);
+    return $this->update($this->assoc2update($a), "$index = '$id' limit 1");
   }
   
   public function insertrow($row) {
@@ -242,8 +246,8 @@ class tdatabase {
     return $this->res2assoc($this->select($where));
   }
   
-  public function getitem($id) {
-    if ($r = $this->query("select * from $this->prefix$this->table where id = $id limit 1")) return $r->fetch_assoc();
+  public function getitem($id, $propname = 'id') {
+    if ($r = $this->query("select * from $this->prefix$this->table where $propname = $id limit 1")) return $r->fetch_assoc();
     return false;
   }
   
@@ -252,7 +256,11 @@ class tdatabase {
   }
   
   public function findid($where) {
-    if($r = $this->query("select id from $this->prefix$this->table where $where limit 1")->fetch_assoc()) return $r['id'];
+    return $this->findprop('id', $where);
+  }
+  
+  public function findprop($propname, $where) {
+    if($r = $this->query("select $propname from $this->prefix$this->table where $where limit 1")->fetch_assoc()) return $r[$propname];
     return false;
   }
   
@@ -566,6 +574,25 @@ class tdata {
     return is_object($c) ? get_class($c) : trim($c);
   }
   
+  public static function encrypt($s, $key) {
+    $maxkey = mcrypt_get_key_size(MCRYPT_Blowfish, MCRYPT_MODE_ECB);
+    if (strlen($key) > $maxkey) $key = substr($key, $maxkey);
+    $block = mcrypt_get_block_size(MCRYPT_Blowfish, MCRYPT_MODE_ECB);
+    $pad = $block - (strlen($s) % $block);
+    $s .= str_repeat(chr($pad), $pad);
+    return mcrypt_encrypt(MCRYPT_Blowfish, $key, $s, MCRYPT_MODE_ECB);
+  }
+  
+  public static function decrypt($s, $key) {
+    $maxkey = mcrypt_get_key_size(MCRYPT_Blowfish, MCRYPT_MODE_ECB);
+    if (strlen($key) > $maxkey) $key = substr($key, $maxkey);
+    
+    $s = mcrypt_decrypt(MCRYPT_Blowfish, $key, $s, MCRYPT_MODE_ECB);
+    $block = mcrypt_get_block_size(MCRYPT_Blowfish, MCRYPT_MODE_ECB);
+    $pad = ord($s[($len = strlen($s)) - 1]);
+    return substr($s, 0, strlen($s) - $pad);
+  }
+  
 }//class
 
 class tfilestorage {
@@ -742,6 +769,10 @@ function dbquote($s) {
   return litepublisher::$db->quote($s);
 }
 
+function md5rand() {
+  return md5(mt_rand() . litepublisher::$secret. microtime());
+}
+
 function md5uniq() {
   return basemd5(mt_rand() . litepublisher::$secret. microtime());
 }
@@ -906,7 +937,7 @@ class tevents extends tdata {
       $this->addevent($name, $value['class'], $value['func']);
       return true;
     }
-    $this->error("Unknown property $name in class ". get_class($this));
+    $this->error(sprintf('Unknown property %s in class %s', $name, get_class($this)));
   }
   
   public function method_exists($name) {
@@ -1119,12 +1150,14 @@ public function load() {}
 //items.class.php
 class titems extends tevents {
   public $items;
-  protected $autoid;
   public $dbversion;
+  protected $idprop;
+  protected $autoid;
   
   protected function create() {
     parent::create();
     $this->addevents('added', 'deleted');
+    $this->idprop = 'id';
     if ($this->dbversion) {
       $this->items = array();
     } else {
@@ -1161,7 +1194,7 @@ class titems extends tevents {
     $items = array_diff($items, array_keys($this->items));
     if (count($items) == 0) return;
     $list = implode(',', $items);
-    $this->select("$this->thistable.id in ($list)", '');
+    $this->select("$this->thistable.$this->idprop in ($list)", '');
   }
   
   public function select($where, $limit) {
@@ -1175,7 +1208,7 @@ class titems extends tevents {
     $result = array();
     $db = litepublisher::$db;
     while ($item = $db->fetchassoc($res)) {
-      $id = $item['id'];
+      $id = $item[$this->idprop];
       $result[] = $id;
       $this->items[$id] = $item;
     }
@@ -1193,20 +1226,21 @@ class titems extends tevents {
   public function getitem($id) {
     if (isset($this->items[$id])) return $this->items[$id];
     if ($this->dbversion) {
-      if ($this->select("$this->thistable.id = $id", 'limit 1')) return $this->items[$id];
+      if ($this->select("$this->thistable.$this->idprop = $id", 'limit 1')) return $this->items[$id];
     }
     return $this->error(sprintf('Item %d not found in class %s', $id, get_class($this)));
   }
   
   public function getvalue($id, $name) {
-    if ($this->dbversion && !isset($this->items[$id])) $this->items[$id] = $this->db->getitem($id);
+    if ($this->dbversion && !isset($this->items[$id])) $this->items[$id] = $this->db->getitem($id, $this->idprop);
     return $this->items[$id][$name];
   }
   
   public function setvalue($id, $name, $value) {
     $this->items[$id][$name] = $value;
     if ($this->dbversion) {
-      $this->db->setvalue($id, $name, $value);
+      //$this->db->setvalue($id, $name, $value);
+      $this->db->update("$name = " . dbquote($value), "$this->idprop = $id");
     }
   }
   
@@ -1224,7 +1258,7 @@ class titems extends tevents {
   
   public function indexof($name, $value) {
     if ($this->dbversion){
-      return $this->db->findid("$name = ". dbquote($value));
+      return $this->db->findprop($this->idprop, "$name = ". dbquote($value));
     }
     
     foreach ($this->items as $id => $item) {
@@ -1237,7 +1271,7 @@ class titems extends tevents {
   
   public function additem(array $item) {
     $id = $this->dbversion ? $this->db->add($item) : ++$this->autoid;
-    $item['id'] = $id;
+    $item[$this->idprop] = $id;
     $this->items[$id] = $item;
     if (!$this->dbversion) $this->save();
     $this->added($id);
@@ -1245,7 +1279,7 @@ class titems extends tevents {
   }
   
   public function delete($id) {
-    if ($this->dbversion) $this->db->delete("id = $id");
+    if ($this->dbversion) $this->db->delete("$this->idprop = $id");
     if (isset($this->items[$id])) {
       unset($this->items[$id]);
       if (!$this->dbversion) $this->save();
@@ -1659,6 +1693,7 @@ class toptions extends tevents_storage {
     
     if (!array_key_exists($name, $this->data)  || ($this->data[$name] != $value)) {
       $this->data[$name] = $value;
+      if ($name == 'solt') $this->data['emptyhash'] = $this->hash('');
       $this->save();
       $this->dochanged($name, $value);
     }
@@ -1687,8 +1722,7 @@ class toptions extends tevents_storage {
   
   public function getadmincookie() {
     if (is_null($this->_admincookie)) {
-      return $this->_admincookie = $this->cookieenabled && isset($_COOKIE['litepubl_user_flag']) && ($_COOKIE['litepubl_user_flag'] == 'true');
-      // ? $this->user && in_array(1, $this->idgroups) : false;
+      return $this->_admincookie = $this->authenabled && isset($_COOKIE['litepubl_user_flag']) && ($_COOKIE['litepubl_user_flag'] == 'true');
     }
     return $this->_admincookie;
   }
@@ -1699,7 +1733,7 @@ class toptions extends tevents_storage {
   
   public function getuser() {
     if (is_null($this->_user)) {
-      $this->_user = $this->cookieenabled ? $this->authcookie() : false;
+      $this->_user = $this->authenabled ? $this->authcookie() : false;
     }
     return $this->_user;
   }
@@ -1710,26 +1744,12 @@ class toptions extends tevents_storage {
   
   public function authcookie() {
     $iduser = isset($_COOKIE['litepubl_user_id']) ? (int) $_COOKIE['litepubl_user_id'] : 0;
-    $cookie = isset($_COOKIE['litepubl_user']) ? (string) $_COOKIE['litepubl_user'] : (isset($_COOKIE['admin']) ? (string) $_COOKIE['admin'] : '');
-    
-    if ($cookie == '') return false;
-    $cookie = basemd5($cookie . litepublisher::$secret);
-    if (    $cookie == basemd5( litepublisher::$secret)) return false;
-    
-    if ($iduser) {
-      if (!$this->finduser($iduser, $cookie)) return false;
-    } elseif ($iduser = $this->findcookie($cookie)) {
-      //fix prev versions
-      if ($iduser == 1) {
-        $expired = $this->cookieexpired;
-      } else {
-        $item = tusers::i()->getitem($iduser);
-        $expired = strtotime($item['expired']);
-      }
-      setcookie('litepubl_user_id', $iduser, $expired, litepublisher::$site->subdir . '/', false);
-    } else {
-      return false;
-    }
+    if (!$iduser) return false;
+    $password = isset($_COOKIE['litepubl_user']) ? (string) $_COOKIE['litepubl_user'] : (isset($_COOKIE['admin']) ? (string) $_COOKIE['admin'] : '');
+    if (!$password) return false;
+    $password = $this->hash($password);
+    if (    $password == $this->emptyhash) return false;
+    if (!$this->finduser($iduser, $password)) return false;
     
     $this->_user = $iduser;
     $this->updategroup();
@@ -1751,36 +1771,35 @@ class toptions extends tevents_storage {
     return ($cookie == $item['cookie']) && (strtotime($item['expired']) > time());
   }
   
-  public function findcookie($cookie) {
-    if ($this->compare_cookie($cookie)) return 1;
-    if (!$this->usersenabled)  return false;
-    
-    $users = tusers::i();
-    if ($iduser = $users->findcookie($cookie)){
-      $item = $users->getitem($iduser);
-      if (strtotime($item['expired']) <= time()) return false;
-      return (int) $iduser;
-    }
-    return false;
+  private function compare_cookie($cookie) {
+    return !empty($this->cookiehash) && ($this->cookiehash == $cookie) && ($this->cookieexpired > time());
   }
   
-  private function compare_cookie($cookie) {
-    return !empty($this->cookie ) && ($this->cookie == $cookie) && ($this->cookieexpired > time());
+  public function emailexists($email) {
+    if (!$email) return false;
+    if (!$this->authenabled) return false;
+    if ($email == $this->email) return 1;
+    if(!$this->usersenabled) return false;
+    return tusers::i()->emailexists($email);
   }
   
   public function auth($email, $password) {
-    if ($email == '' && $password == '' && $this->cookieenabled) return $this->authcookie();
-    if ($email == $this->email) {
-      if ($this->data['password'] != basemd5("$email:$this->realm:$password"))  return false;
-      $this->_user = 1;
-    } elseif(!$this->usersenabled) {
-      return false;
+    if (!$this->authenabled) return false;
+    if (!$email && !$password) return $this->authcookie();
+    return $this->authpassword($this->emailexists($email), $password);
+  }
+  
+  public function authpassword($iduser, $password) {
+    if (!$iduser) return false;
+    if ($iduser == 1) {
+      if ($this->data['password'] != $this->hash($password))  return false;
     } else {
-      $users = tusers::i();
-      if (!($this->_user = $users->auth($email, $password))) return false;
+      if (!tusers::i()->authpassword($iduser, $password)) return false;
     }
+    
+    $this->_user = $iduser;
     $this->updategroup();
-    return true;
+    return $iduser;
   }
   
   public function updategroup() {
@@ -1805,32 +1824,43 @@ class toptions extends tevents_storage {
   }
   
   public function changepassword($newpassword) {
-    $this->data['password'] = basemd5("$this->email:$this->realm:$newpassword");
+    $this->data['password'] = $this->hash($newpassword);
     $this->save();
   }
   
+  public function getdbpassword() {
+    if (function_exists('mcrypt_encrypt')) {
+      return self::decrypt(    $this->data['dbconfig']['password'], $this->solt . litepublisher::$secret);
+    } else {
+      return str_rot13(base64_decode($this->data['dbconfig']['password']));
+    }
+  }
+  
   public function setdbpassword($password) {
-    $this->data['dbconfig']['password'] = base64_encode(str_rot13 ($password));
+    if (function_exists('mcrypt_encrypt')) {
+      $this->data['dbconfig']['password'] = self::encrypt($password, $this->solt . litepublisher::$secret);
+    } else {
+      $this->data['dbconfig']['password'] = base64_encode(str_rot13 ($password));
+    }
+    
     $this->save();
   }
   
   public function logout() {
-    if ($this->cookieenabled) {
-      $this->setcookies('', 0);
-    } else {
-      tauthdigest::i()->logout();
-    }
+    $this->setcookies('', 0);
+  }
+  
+  public function setcookie($name, $value, $expired) {
+    setcookie($name, $value, $expired,  litepublisher::$site->subdir . '/', false, '', $this->securecookie);
   }
   
   public function setcookies($cookie, $expired) {
-    $subdir = litepublisher::$site->subdir . '/';
-    setcookie('litepubl_user_id', $cookie ? $this->_user : '', $expired,  $subdir, false);
-    setcookie('litepubl_user', $cookie, $expired, $subdir , false);
-    setcookie('litepubl_user_flag', $cookie && ('admin' == $this->group) ? 'true' : '', $expired, $subdir, false);
+    $this->setcookie('litepubl_user_id', $cookie ? $this->_user : '', $expired);
+    $this->setcookie('litepubl_user', $cookie, $expired);
+    $this->setcookie('litepubl_user_flag', $cookie && ('admin' == $this->group) ? 'true' : '', $expired);
     
     if ($this->_user == 1) {
-      $this->set_cookie($cookie);
-      $this->cookieexpired = $expired;
+      $this->save_cookie($cookie, $expired);
     } else if ($this->_user) {
       tusers::i()->setcookie($this->_user, $cookie, $expired);
     }
@@ -1849,10 +1879,14 @@ class toptions extends tevents_storage {
     }
   }
   
-  public function set_cookie($cookie) {
-    if ($cookie != '') $cookie = basemd5((string) $cookie . litepublisher::$secret);
-    $this->data['cookie'] = $cookie;
+  public function save_cookie($cookie, $expired) {
+    $this->data['cookiehash'] = $cookie ? $this->hash($cookie) : '';
+    $this->cookieexpired = $expired;
     $this->save();
+  }
+  
+  public function hash($s) {
+    return basemd5((string) $s . $this->solt . litepublisher::$secret);
   }
   
   public function ingroup($groupname) {
@@ -1881,22 +1915,36 @@ class toptions extends tevents_storage {
   }
   
   public function handexception($e) {
-    /*
-    echo "<pre>\n";
-    $debug = debug_backtrace();
-    foreach ($debug as $error) {
-      echo $error['function'] ;
-      echo "\n";
+    $log = "Caught exception:\r\n" . $e->getMessage();
+    $trace = $e->getTrace();
+    foreach ($trace as $i => $item) {
+      if (isset($item['line'])) {
+        $log .= sprintf('#%d %d %s ', $i, $item['line'], $item['file']);
+      }
+      
+      if (isset($item['class'])) {
+        $log .= $item['class'] . $item['type'] . $item['function'];
+      } else {
+        $log .= $item['function'];
+      }
+      
+      if (count($item['args'])) {
+        $args = array();
+        foreach ($item['args'] as $arg) {
+          $args[] = self::var_export($arg);
+        }
+        
+        $log .= "\n";
+        $log .= implode(', ', $args);
+      }
+      
+      $log .= "\n";
     }
-    //array_shift($debug);
-    echo "</pre>\n";
-    */
-    $trace =str_replace(litepublisher::$paths->home, '', $e->getTraceAsString());
     
-    $message = "Caught exception:\n" . $e->getMessage();
-    $log = $message . "\n" . $trace;
+    $log = str_replace(litepublisher::$paths->home, '', $log);
     $this->errorlog .= str_replace("\n", "<br />\n", htmlspecialchars($log));
     tfiler::log($log, 'exceptions.log');
+    
     if (!(litepublisher::$debug || $this->echoexception || $this->admincookie || litepublisher::$urlmap->adminpanel)) {
       tfiler::log($log, 'exceptionsmail.log');
     }
@@ -1914,6 +1962,38 @@ class toptions extends tevents_storage {
     if (!empty($this->errorlog) && (litepublisher::$debug || $this->echoexception || $this->admincookie || litepublisher::$urlmap->adminpanel)) {
       echo $this->errorlog;
     }
+  }
+  
+  public static function var_export(&$v) {
+    switch(gettype($v)) {
+      case 'string':
+      return "'$v'";
+      
+      case 'object':
+      return get_class($v);
+      
+      case 'boolean':
+      return $v ? 'true' : 'false';
+      
+      case 'integer':
+      case 'double':
+      case 'float':
+      return $v;
+      
+      case 'array':
+      $result = "array (\n";
+      foreach ($v as $k => $item) {
+        $s = self::var_export($item);
+        $result .= "$k = $s;\n";
+      }
+      $result .= ")\n";
+      return $result;
+      
+      default:
+      return gettype($v);
+    }
+    
+    
   }
   
 }//class
@@ -2692,23 +2772,6 @@ class tusers extends titems {
     return $result;
   }
   
-  /*
-  public function getitem($id) {
-    if ($id == 1) return array(
-    'email' =>litepublisher::$options->email,
-    'name' => litepublisher::$site->author,
-    'website' => litepublisher::$site->url . '/',
-    'password' => litepublisher::$options->password,
-    'cookie' => litepublisher::$options->cookie,
-    'expired' => sqldate(litepublisher::$options->cookieexpired ),
-    'status' => 'approved',
-    'idgroups' => array(1)
-    );
-    
-    return parent::getitem($id);
-  }
-  */
-  
   public function add(array $values) {
     return tusersman::i()->add($values);
   }
@@ -2746,7 +2809,18 @@ class tusers extends titems {
   public function emailexists($email) {
     if ($email == '') return false;
     if ($email == litepublisher::$options->email) return 1;
-    return $this->db->findid('email = '. dbquote($email));
+    
+    foreach ($this->items as $id => $item) {
+      if ($email == $item['email']) return $id;
+    }
+    
+    if ($item = $this->db->finditem('email = '. dbquote($email))) {
+      $id = intval($item['id']);
+      $this->items[$id] = $item;
+      return $id;
+    }
+    
+    return false;
   }
   
   public function getpassword($id) {
@@ -2755,7 +2829,7 @@ class tusers extends titems {
   
   public function changepassword($id, $password) {
     $item = $this->getitem($id);
-    $this->setvalue($id, 'password', basemd5(sprintf('%s:%s:%s', $item['email'],  litepublisher::$options->realm, $password)));
+    $this->setvalue($id, 'password', litepublisher::$options->hash($item['email'] . $password));
   }
   
   public function approve($id) {
@@ -2765,13 +2839,15 @@ class tusers extends titems {
   }
   
   public function auth($email,$password) {
-    $password = basemd5(sprintf('%s:%s:%s', $email,  litepublisher::$options->realm, $password));
-    
-    $email = dbquote($email);
-    if (($a = $this->select("email = $email and password = '$password'", 'limit 1')) && (count($a) > 0)) {
-      $item = $this->getitem($a[0]);
-      if ($item['status'] == 'wait') $this->approve($item['id']);
-      return (int) $item['id'];
+    return $this->authpassword($this->emailexists($email), $password);
+  }
+  
+  public function authpassword($id,$password) {
+    if (!$id || !$password) return false;
+    $item = $this->getitem($id);
+    if ($item['password'] == litepublisher::$options->hash($item['email']. $password)) {
+      if ($item['status'] == 'wait') $this->approve($id);
+      return $id;
     }
     return false;
   }
@@ -2779,8 +2855,8 @@ class tusers extends titems {
   public function authcookie($cookie) {
     $cookie = (string) $cookie;
     if (empty($cookie)) return false;
-    $cookie = basemd5( $cookie . litepublisher::$secret);
-    if ($cookie == basemd5(litepublisher::$secret)) return false;
+    $cookie = litepublisher::$options->hash( $cookie);
+    if ($cookie == litepublisher::$options->hash('')) return false;
     if ($id = $this->findcookie($cookie)) {
       $item = $this->getitem($id);
       if (strtotime($item['expired']) > time()) return  $id;
@@ -2807,7 +2883,7 @@ class tusers extends titems {
   }
   
   public function setcookie($id, $cookie, $expired) {
-    if ($cookie != '') $cookie = basemd5($cookie . litepublisher::$secret);
+    if ($cookie) $cookie = litepublisher::$options->hash($cookie);
     $expired = sqldate($expired);
     if (isset($this->items[$id])) {
       $this->items[$id]['cookie'] = $cookie;

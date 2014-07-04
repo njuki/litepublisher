@@ -7,6 +7,7 @@
 
 (function( $, window, document){
   'use strict';
+  
   $.fn.popimage = function(options) {
     options = $.extend({
       title: "",
@@ -91,7 +92,7 @@
           self.popover({
             container: 'body',
             content: '<img src="' + url + '" width="' + w + '" height="' + h + '" />',
-          delay: 120,
+            delay: 120,
             html:true,
             placement: 'auto ' + (ratio >= 1 ? 'bottom' : 'right'),
             template: '<div class="popover popover-image"><div class="arrow"></div>' +

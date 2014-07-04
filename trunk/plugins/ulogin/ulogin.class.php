@@ -79,8 +79,8 @@ class ulogin extends tplugin {
     if (!intval(tusers::i()->db->getvalue($cookies['id'], 'phone'))) {
       if ($url = $this->onphone($backurl))     return litepublisher::$urlmap->redir($url);
     }
-
-      setcookie('backurl', '', 0, litepublisher::$site->subdir, false);    
+    
+    setcookie('backurl', '', 0, litepublisher::$site->subdir, false);
     return litepublisher::$urlmap->redir($backurl);
   }
   

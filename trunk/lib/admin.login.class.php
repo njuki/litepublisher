@@ -20,41 +20,41 @@ class tadminlogin extends tadminform {
   }
   
   public function auth() {
-      if ($s = tguard::checkattack()) return $s;
-      if (!litepublisher::$options->authcookie()) return litepublisher::$urlmap->redir('/admin/login/');
+    if ($s = tguard::checkattack()) return $s;
+    if (!litepublisher::$options->authcookie()) return litepublisher::$urlmap->redir('/admin/login/');
   }
   
   private function logout() {
-      litepublisher::$options->logout();
-      setcookie('backurl', '', 0, litepublisher::$site->subdir, false);
-litepublisher::$urlmap->nocache();
-      return litepublisher::$urlmap->redir('/admin/login/');
+    litepublisher::$options->logout();
+    setcookie('backurl', '', 0, litepublisher::$site->subdir, false);
+    litepublisher::$urlmap->nocache();
+    return litepublisher::$urlmap->redir('/admin/login/');
     return litepublisher::$urlmap->redir('/admin/login/');
   }
-
-//return error string message if not logged
+  
+  //return error string message if not logged
   public static function autherror($email, $password) {
-tlocal::admin();
+    tlocal::admin();
     if (empty($email) || empty($password)) return tlocal::get('login', 'empty');
-
-$iduser = litepublisher::$options->emailexists($email);
-if (!$iduser) {
+    
+    $iduser = litepublisher::$options->emailexists($email);
+    if (!$iduser) {
       if (self::confirm_reg($email, $password)) return;
-return tlocal::get('login', 'unknownemail');
-}
-
+      return tlocal::get('login', 'unknownemail');
+    }
+    
     if (litepublisher::$options->authpassword($iduser, $password)) return;
-if (self::confirm_restore($email, $password)) return;
-
-//check if password is empty and neet to restore password
-if ($iduser == 1) {
-if (!litepublisher::$options->password)  return tlocal::get('login', 'torestorepass');
-} else {
-if (!tusers::i()->getpassword($iduser)) return tlocal::get('login', 'torestorepass');
-}
-
-return tlocal::get('login', 'error');
-}
+    if (self::confirm_restore($email, $password)) return;
+    
+    //check if password is empty and neet to restore password
+    if ($iduser == 1) {
+      if (!litepublisher::$options->password)  return tlocal::get('login', 'torestorepass');
+    } else {
+      if (!tusers::i()->getpassword($iduser)) return tlocal::get('login', 'torestorepass');
+    }
+    
+    return tlocal::get('login', 'error');
+  }
   
   public function request($arg) {
     turlmap::nocache();
@@ -65,11 +65,11 @@ return tlocal::get('login', 'error');
     if (!isset($_POST['email']) || !isset($_POST['password'])) return;
     $email = trim($_POST['email']);
     $password = trim($_POST['password']);
-
-if ($mesg = self::autherror($email, $password)) {
-        $this->formresult = $this->html->h4red($mesg);
-        return;
-}
+    
+    if ($mesg = self::autherror($email, $password)) {
+      $this->formresult = $this->html->h4red($mesg);
+      return;
+    }
     
     $expired = isset($_POST['remember']) ? time() + 31536000 : time() + 8*3600;
     $cookie = md5uniq();
@@ -83,18 +83,18 @@ if ($mesg = self::autherror($email, $password)) {
       }
     }
     
-      setcookie('backurl', '', 0, litepublisher::$site->subdir, false);
+    setcookie('backurl', '', 0, litepublisher::$site->subdir, false);
     return litepublisher::$urlmap->redir($url);
   }
   
   public function getcontent() {
     $result = $this->widget;
-      $result = str_replace('&amp;backurl=', '&backurl=', $result);
+    $result = str_replace('&amp;backurl=', '&backurl=', $result);
     if (!empty($_GET['backurl'])) {
       $result = str_replace('backurl=', 'backurl=' . urlencode($_GET['backurl']), $result);
       //support ulogin
       $result = str_replace('backurl%3D', 'backurl%3D' . urlencode(urlencode($_GET['backurl'])), $result);
-} else {
+    } else {
       $result = str_replace('&backurl=', '', $result);
       $result = str_replace('backurl=', '', $result);
       //support ulogin

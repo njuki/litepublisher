@@ -35,6 +35,7 @@ class tlocal {
   }
   
   public static function get($section, $key) {
+    //if (!isset(self::i()->ini[$section][$key])) litepublisher::$options->error("$section:$key");
     return self::i()->ini[$section][$key];
   }
   
@@ -1096,18 +1097,33 @@ class ttheme extends tevents {
   }
   
   public function getsubmit($title) {
-    return strtr($this->templates['content.admin.button'], array(
-    '$lang.$name', '$title',
+    return strtr($this->templates['content.admin.submit'], array(
+    '$lang.$name' => $title,
     'name="$name"' => '',
     'id="submitbutton-$name"' => ''
     ));
   }
   
+  public static function quote($s) {
+    return strtr ($s, array('"'=> '&quot;', "'" => '&#039;', '\\'=> '&#092;', '$' => '&#36;', '%' =>  '&#37;', '_' => '&#95;'));
+  }
+  
   public function getinput($type, $name, $value, $title) {
+    //if (($type == 'text') || ($type == 'editor')) $value =  self::quote(htmlspecialchars($value));
     return strtr($this->templates['content.admin.' . $type], array(
     '$lang.$name' => $title,
     '$name' => $name,
     '$value' => $value
+    ));
+  }
+  
+  public function getradio($name, $value, $title, $checked) {
+    return strtr($this->templates['content.admin.radioitem'], array(
+    '$lang.$name' => $title,
+    '$name' => $name,
+    '$value' => $title,
+    '$index' => $value,
+    '$checked' => $checked ? 'checked="checked"' : '',
     ));
   }
   
@@ -1253,7 +1269,6 @@ class targs {
   public function __construct($thisthis = null) {
     if (!isset(ttheme::$defaultargs)) ttheme::set_defaultargs();
     $this->data = ttheme::$defaultargs;
-    
     if (isset($thisthis)) $this->data['$this'] = $thisthis;
   }
   
@@ -1265,8 +1280,8 @@ class targs {
   }
   
   public function __set($name, $value) {
-    if (!is_string($name)) return;
-    if ($name == '') return;
+    if (!$name || !is_string($name)) return;
+    
     if (is_bool($value)) {
       $value = $value ? 'checked="checked"' : '';
     }
@@ -1962,7 +1977,7 @@ class tguard {
       $ref = $_GET['ref'];
       $url = $_SERVER['REQUEST_URI'];
       $url = substr($url, 0, strpos($url, '&ref='));
-      if ($ref == md5(litepublisher::$secret . litepublisher::$site->url . $url)) return false;
+      if ($ref == md5(litepublisher::$secret . litepublisher::$site->url . $url . litepublisher::$options->solt)) return false;
     }
     
     $host = '';

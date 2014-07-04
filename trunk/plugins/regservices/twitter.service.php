@@ -42,8 +42,8 @@ class ttwitterregservice extends tregservice {
   //handle callback
   public function request($arg) {
     $this->cache = false;
-turlmap::nocache();
-
+    turlmap::nocache();
+    
     if (empty($_GET['oauth_token'])) return 403;
     tsession::start(md5($_GET['oauth_token']));
     if (!isset($_SESSION['tokens'])) {

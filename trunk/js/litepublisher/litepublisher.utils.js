@@ -7,7 +7,7 @@
 
 (function ($, document, window) {
   'use strict';
-
+  
   var rurl = /^([\w.+-]+:)(?:\/\/([^\/?#:]*)(?::(\d+)|)|)/;
   var dom = rurl.exec(ltoptions.url);
   var href = rurl.exec(location.href.toLowerCase()) || [];
@@ -15,9 +15,9 @@
     ltoptions.url = ltoptions.url.replace(dom[2], href[2]);
     ltoptions.files = ltoptions.files.replace(dom[2], href[2]);
   }
-
-//without protocol for ajax calls
-ltoptions.ajaxurl = ltoptions.url.substring(ltoptions.url.indexOf(':') +1);
+  
+  //without protocol for ajax calls
+  ltoptions.ajaxurl = ltoptions.url.substring(ltoptions.url.indexOf(':') +1);
   
   //litepublisher namespace
   window.litepubl = {
@@ -31,8 +31,8 @@ ltoptions.ajaxurl = ltoptions.url.substring(ltoptions.url.indexOf(':') +1);
     
     is_admin_url: function(url) {
       url = url.toLowerCase();
-var i = url.indexOf('://');
-if (i >= 0) url = url.substring(i + 4);
+      var i = url.indexOf('://');
+      if (i >= 0) url = url.substring(i + 4);
       var path = url.split('/');
       if ((path.length <= 2) || (path[1] != 'admin') || (path[2] == '')) return 0;
       return /^(login|logout|password|reguser)$/.test(path[2]) ? 0 : 1;
@@ -40,13 +40,13 @@ if (i >= 0) url = url.substring(i + 4);
     
     user: 0,
     getuser: function() {
-var self = litepubl;
+      var self = litepubl;
       if (self.user) return self.user;
-        return self.user = {
-          id: parseInt($.cookie('litepubl_user_id')),
-          pass: $.cookie('litepubl_user'),
-          regservice: $.cookie('litepubl_regservice')
-        };
+      return self.user = {
+        id: parseInt($.cookie('litepubl_user_id')),
+        pass: $.cookie('litepubl_user'),
+        regservice: $.cookie('litepubl_regservice')
+      };
     },
     
     //forward declaration for future plugins as yandex metrika or google analitik
@@ -126,7 +126,7 @@ var self = litepubl;
     $.cookie(name, value, {
       path: '/',
       expires: expires ? expires : 3650,
-secure: "secure" in ltoptions ? ltoptions.secure : false
+      secure: "secure" in ltoptions ? ltoptions.secure : false
     });
   };
   

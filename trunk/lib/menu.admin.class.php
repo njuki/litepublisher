@@ -71,7 +71,8 @@ class tadminmenus extends tmenus {
     $id = parent::addfakemenu($menu);
     if (empty($this->items[$id]['group'])) {
       $groups = tusergroups::i();
-      $this->items[$id]['group'] = $groups->items[$groups->defaults[0]]['name'];
+      $group = count($groups->defaults)  ? $groups->items[$groups->defaults[0]]['name'] : 'commentator';
+      $this->items[$id]['group'] = $group;
     }
     
     $this->unlock();
@@ -148,11 +149,11 @@ public function save() { return true; }
   }
   
   public static function auth($group) {
-      if ($s = tguard::checkattack()) return $s;
-      if (!litepublisher::$options->user) {
-        turlmap::nocache();
-        return litepublisher::$urlmap->redir('/admin/login/' . litepublisher::$site->q . 'backurl=' . urlencode(litepublisher::$urlmap->url));
-      }
+    if ($s = tguard::checkattack()) return $s;
+    if (!litepublisher::$options->user) {
+      turlmap::nocache();
+      return litepublisher::$urlmap->redir('/admin/login/' . litepublisher::$site->q . 'backurl=' . urlencode(litepublisher::$urlmap->url));
+    }
     
     if (!litepublisher::$options->hasgroup($group)) {
       $url = tusergroups::i()->gethome(litepublisher::$options->group);

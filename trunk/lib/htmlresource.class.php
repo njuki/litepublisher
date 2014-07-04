@@ -323,19 +323,19 @@ class tadminhtml {
     $body = '<tr>';
     foreach ($tablestruct as $item) {
       if (!$item || !count($item)) continue;
-$align = $item[0] ? $item[0] : 'left';
+      $align = $item[0] ? $item[0] : 'left';
       $head .= sprintf('<th align="%s">%s</th>', $align, $item[1]);
-if (is_string($item[2])) {
-      $body .= sprintf('<td align="%s">%s</td>', $align, $item[2]);
-} else {
-// special case for callback. Add new prop to template vars
-$tableprop = tableprop::i();
-$propname = $tableprop->addprop($item[2]);
-ttheme::$vars['tableprop'] = $tableprop;
-      $body .= sprintf('<td align="%s">$tableprop.%s</td>', $item[0], $propname);
-}
+      if (is_string($item[2])) {
+        $body .= sprintf('<td align="%s">%s</td>', $align, $item[2]);
+      } else {
+        // special case for callback. Add new prop to template vars
+        $tableprop = tableprop::i();
+        $propname = $tableprop->addprop($item[2]);
+        ttheme::$vars['tableprop'] = $tableprop;
+        $body .= sprintf('<td align="%s">$tableprop.%s</td>', $item[0], $propname);
+      }
     }
-
+    
     $body .= '</tr>';
     return array($head, $body);
   }
@@ -430,16 +430,16 @@ ttheme::$vars['tableprop'] = $tableprop;
     $lang = tlocal::i();
     foreach ($item as $k => $v) {
       if (($k === false) || ($v === false)) continue;
-
+      
       if (is_array($v)) {
         foreach ($v as $kv => $vv) {
-      if ($k2 = $lang->__get($kv)) $kv = $k2;
+          if ($k2 = $lang->__get($kv)) $kv = $k2;
           $body .= sprintf('<tr><td>%s</td><td>%s</td></tr>', $kv, $vv);
         }
       } else {
-      if ($k2 = $lang->__get($k)) $k = $k2;
-      $body .= sprintf('<tr><td>%s</td><td>%s</td></tr>', $k, $v);
-}
+        if ($k2 = $lang->__get($k)) $k = $k2;
+        $body .= sprintf('<tr><td>%s</td><td>%s</td></tr>', $k, $v);
+      }
     }
     
     return $this->gettable("<th>$lang->name</th> <th>$lang->property</th>", $body);
@@ -881,27 +881,27 @@ class adminform {
 }//class
 
 class tableprop {
-public $callbacks;
-
+  public $callbacks;
+  
   public static function i() {
-return getinstance(__class__);
-}
-
-public function __construct() {
-$this->callbacks = array();
-}
-
-public function addprop($callback) {
-$this->callbacks[] = $callback;
-$c = count($this->callbacks);
-return 'prop' . $c;
-}
-
-public function __get($name) {
-$id = intval(substr($name, strlen('prop')));
-$callback = $this->callbacks[$id];
-$item = ttheme::$vars['item'];
-return call_user_func_array($callback, array($item));
-}
-
+    return getinstance(__class__);
+  }
+  
+  public function __construct() {
+    $this->callbacks = array();
+  }
+  
+  public function addprop($callback) {
+    $this->callbacks[] = $callback;
+    $c = count($this->callbacks);
+    return 'prop' . $c;
+  }
+  
+  public function __get($name) {
+    $id = intval(substr($name, strlen('prop')));
+    $callback = $this->callbacks[$id];
+    $item = ttheme::$vars['item'];
+    return call_user_func_array($callback, array($item));
+  }
+  
 }

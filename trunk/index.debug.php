@@ -115,6 +115,7 @@ tfiler::log(var_export($_POST, true) . var_export($_COOKIE, true));
 //shopupdater::i()->run(1.27);
 //tjsmerger::i()->save();
 //shoptheme::i()->setpaths();
+  //tthemeparser::i()->parsed = shoptheme::i()->themeparsed;
 //tfiler::log($_SERVER['REQUEST_URI']);
 
   if (!defined('litepublisher_mode')) {

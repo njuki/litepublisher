@@ -21,7 +21,6 @@ public function load() { return true; }
 public function save() { return true; }
   
   public function request($id) {
-    if (!litepublisher::$options->cookieenabled) return 403;
     if ($s = tguard::checkattack()) return $s;
     if (!litepublisher::$options->user) {
       return litepublisher::$urlmap->redir('/admin/login/' . litepublisher::$site->q . 'backurl=' . urlencode(litepublisher::$urlmap->url));
