@@ -383,8 +383,8 @@ class tadminhtml {
   
   public function tableposts(array $items, array $struct) {
     $body = '';
-    $head = sprintf('<th align="center">%s</th>', $this->invertcheckbox );
-    $tml = '<tr><td align="center"><label><input type="checkbox" name="checkbox-$post.id" id="id-checkbox-$post.id" value="$post.id"/>$post.id</label><td>';
+    $head = sprintf('<th align="center">%s </th>', $this->invertcheckbox );
+    $tml = '<tr><td align="center"><input type="checkbox" name="checkbox-$post.id" id="id-checkbox-$post.id" value="$post.id"/> </td>';
     foreach ($struct as $elem) {
       $head .= sprintf('<th align="%s">%s</th>', $elem[0], $elem[1]);
       $tml .= sprintf('<td align="%s">%s</td>', $elem[0], $elem[2]);
