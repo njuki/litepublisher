@@ -106,18 +106,7 @@ litepublisher::$db->query('SET read_rnd_buffer_size = ' . 1024*1024*32);
 
  tlocal::clearcache();
 ttheme::clearcache();
-//tsidebars::fix();
-//litepublisher::$urlmap->clearcache();
-//litepublisher::$options->logout();
-tfiler::log(var_export($_POST, true) . var_export($_COOKIE, true));
-//tthemegenerator::i()->parseselectors();
-//tupdater::i()->run(5.86);
-//shopupdater::i()->run(1.27);
-//tjsmerger::i()->save();
-//shoptheme::i()->setpaths();
-  //tthemeparser::i()->parsed = shoptheme::i()->themeparsed;
-//tfiler::log($_SERVER['REQUEST_URI']);
-
+include(dirname(__file__) . '/zdebug.php');
   if (!defined('litepublisher_mode')) {
     litepublisher::$urlmap->request(strtolower($_SERVER['HTTP_HOST']), $_SERVER['REQUEST_URI']);
   }

@@ -893,8 +893,8 @@ class tableprop {
   
   public function addprop($callback) {
     $this->callbacks[] = $callback;
-    $c = count($this->callbacks);
-    return 'prop' . $c;
+    $id = count($this->callbacks) -  1;
+    return 'prop' . $id;
   }
   
   public function __get($name) {
