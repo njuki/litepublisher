@@ -3,6 +3,8 @@ window.lang= window.lang || {};
 window.lang.dialog = {
   'error': 'Ошибка',
   'confirm' : 'Потдверждение',
+  'warning' : 'Предупреждение',
+  'info': 'Информация',
   'remove': 'Удалить',
   'confirmdelete': "Вы действительно хотите удалить?",
   'cancel' : 'Отмена',
