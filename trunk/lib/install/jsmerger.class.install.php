@@ -43,21 +43,21 @@ function tjsmergerInstall($self) {
   $self->add($section, "/lib/languages/$language/comments.min.js");
   
   $section = 'admin';
-  $self->add($section, '/js/jquery/ui-$site.jqueryui_version/jquery.ui.core.min.js');
-  $self->add($section, '/js/jquery/ui-$site.jqueryui_version/jquery.ui.widget.min.js');
-  $self->add($section, '/js/jquery/ui-$site.jqueryui_version/jquery.ui.mouse.min.js');
-  $self->add($section, '/js/jquery/ui-$site.jqueryui_version/jquery.ui.position.min.js');
-  $self->add($section, '/js/jquery/ui-$site.jqueryui_version/jquery.ui.tabs.min.js');
+  $self->add($section, '/js/jquery/ui/core.min.js');
+  $self->add($section, '/js/jquery/ui/widget.min.js');
+  $self->add($section, '/js/jquery/ui/mouse.min.js');
+  $self->add($section, '/js/jquery/ui/position.min.js');
+  $self->add($section, '/js/jquery/ui/tabs.min.js');
   $self->add($section, '/js/litepublisher/admin.min.js');
   $self->add($section, '/js/litepublisher/calendar.min.js');
   $self->add($section, "/lib/languages/$language/admin.min.js");
   
   $section = 'adminviews';
-  $self->add($section, '/js/jquery/ui-$site.jqueryui_version/jquery.ui.draggable.min.js');
-  $self->add($section, '/js/jquery/ui-$site.jqueryui_version/jquery.ui.droppable.min.js');
-  $self->add($section, '/js/jquery/ui-$site.jqueryui_version/jquery.ui.resizable.min.js');
-  $self->add($section, '/js/jquery/ui-$site.jqueryui_version/jquery.ui.selectable.min.js');
-  $self->add($section, '/js/jquery/ui-$site.jqueryui_version/jquery.ui.sortable.min.js');
+  $self->add($section, '/js/jquery/ui/draggable.min.js');
+  $self->add($section, '/js/jquery/ui/droppable.min.js');
+  $self->add($section, '/js/jquery/ui/resizable.min.js');
+  $self->add($section, '/js/jquery/ui/selectable.min.js');
+  $self->add($section, '/js/jquery/ui/sortable.min.js');
   $self->add($section, '/js/litepublisher/admin.views.min.js');
   
   $section = 'posteditor';
@@ -66,7 +66,7 @@ function tjsmergerInstall($self) {
   $self->add($section, '/js/litepublisher/uploader.min.js');
   $self->add($section, '/js/litepublisher/uploader.html.min.js');
   $self->add($section, '/js/litepublisher/uploader.flash.min.js');
-  $self->add($section, '/js/jquery/ui-$site.jqueryui_version/jquery.ui.progressbar.min.js');
+  $self->add($section, '/js/jquery/ui/progressbar.min.js');
   $self->add($section, '/js/litepublisher/posteditor.min.js');
   $self->add($section, '/js/litepublisher/fileman.min.js');
   $self->add($section, '/js/litepublisher/fileman.templates.min.js');

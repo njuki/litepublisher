@@ -19,7 +19,7 @@ function tcssmergerInstall($self) {
 $self->addtext($section, 'hidden', '.hidden{display:none}');
   
   $section = 'admin';
-  $self->add($section, '/js/jquery/ui-$site.jqueryui_version/redmond/jquery-ui-$site.jqueryui_version.custom.min.css');
+  $self->add($section, '/js/jquery/ui/redmond/jquery-ui.min.css');
   $self->add($section, '/js/litepublisher/css/fileman.min.css');
   $self->add($section, '/js/litepublisher/css/calendar.css');
   $self->add($section, '/js/litepublisher/css/admin.views.min.css');

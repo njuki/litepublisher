@@ -50,9 +50,9 @@
       if (this.ui_datepicker) return this.ui_datepicker.done(callback);
       
       var self = this;
-      this.ui_datepicker= $.load_script(ltoptions.files + '/js/jquery/ui-' + $.ui.version + '/jquery.ui.datepicker.min.js', function() {
+      this.ui_datepicker= $.load_script(ltoptions.files + '/js/jquery/ui/datepicker.min.js', function() {
         if (ltoptions.lang == 'en') return callback();
-        self.ui_datepicker= $.load_script(ltoptions.files + '/js/jquery/ui-' + $.ui.version + '/jquery.ui.datepicker-' + ltoptions.lang + '.min.js', callback);
+        self.ui_datepicker= $.load_script(ltoptions.files + '/js/jquery/ui/datepicker-' + ltoptions.lang + '.min.js', callback);
       });
     },
     

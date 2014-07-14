@@ -374,6 +374,29 @@ class tpost extends titem implements  itemplate {
     }
     return false;
   }
+
+  public function getfirstimage() {
+    if (count($this->files) == 0) return '';
+    $files = $this->factory->files;
+    foreach ($this->files as $id) {
+      $item = $files->getitem($id);
+      if ('image' == $item['media']) {
+$args = new targs();
+$args->add($item);
+        $args->link = litepublisher::$site->files . '/files/' . $item['filename'];
+    $preview = new tarray2prop();
+$preview->array = $files->getitem($item['preview']);
+          $preview->link = litepublisher::$site->files . '/files/' . $preview->filename;
+    ttheme::$vars['preview'] = $preview;
+    $theme = $this->theme;
+    $result = $theme->parsearg($theme->templates['content.excerpts.excerpt.firstimage'], $args);
+    unset(ttheme::$vars['preview']);
+return $result;
+}
+    }
+    return '';
+  }
+  
   
   //template
   protected function get_taglinks($name, $excerpt) {
