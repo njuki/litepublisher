@@ -1086,13 +1086,13 @@ class tthemeparser extends tevents {
         'tag' => '$excerpt',
         'replace' => '$excerpt'
         ),
-
+        
         'content.excerpts.excerpt.firstimage' => array(
         'tag' => '$post.firstimage',
         'replace' => '$post.firstimage'
         ),
-
-                'content.excerpts.excerpt.date' => array(
+        
+        'content.excerpts.excerpt.date' => array(
         'tag' => '$post.excerptdate',
         'replace' => '$post.excerptdate'
         ),
