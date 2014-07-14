@@ -17,11 +17,15 @@ function uloginInstall($self) {
   $lang = tplugins::getnamelang(basename(dirname(__file__)));
   
   $self->panel = '<h4>' . $lang->panel_title . '</h4>
-  <script src="//ulogin.ru/js/ulogin.js"></script>
   <div id="uLogin" data-ulogin="display=small;fields=first_name,last_name;optional=email,phone,nickname;providers=vkontakte,odnoklassniki,mailru,yandex,facebook,google,twitter;hidden=other;redirect_uri=' .
-  urlencode(litepublisher::$site->url . $self->url . '?backurl=') . ';"></div>';
+  urlencode(litepublisher::$site->url . $self->url . '?backurl=') . ';"></div>
+<script type="text/javascript">
+ready2(function() {
+litepubl.ulogin.ready();
+});
+</script>';
   
-  $self->button = '<div><button type="button" id="ulogin-comment-button"><span>' . $lang->button_title . '</span></button></div>';
+  $self->button = '<div class="center-block"><button type="button" class="btn btn-default" id="ulogin-comment-button">' . $lang->button_title . '</button></div>';
   
   $self->save();
   

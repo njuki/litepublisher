@@ -104,7 +104,7 @@ return false;
 
 ready: function(callback) {
 if (this.script) return this.script.done(callback);
-return this.script = $.load_script('http://ulogin.ru/js/ulogin.js', callback);
+return this.script = $.load_script('//ulogin.ru/js/ulogin.js', callback);
 },
 
 auth: function(token, remote_callback, callback) {
