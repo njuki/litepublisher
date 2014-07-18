@@ -15,7 +15,7 @@ class tmenus extends titems {
   
   protected function create() {
     parent::create();
-    $this->addevents('edited', 'onprocessform', 'onbeforemenu', 'onmenu', 'onitems', 'onsubitems');
+    $this->addevents('edited', 'onprocessform', 'onbeforemenu', 'onmenu', 'onitems', 'onsubitems', 'oncontent');
     
     $this->dbversion = false;
     $this->basename = 'menus' . DIRECTORY_SEPARATOR   . 'index';
@@ -511,7 +511,9 @@ class tmenu extends titem implements  itemplate {
   }
   
   public function getcontent() {
-    return $this->data['content'];
+    $result = $this->data['content'];
+    $this->owner->callevent('oncontent', array($this, &$result));
+    return $result;
   }
   
   public function setcontent($s) {

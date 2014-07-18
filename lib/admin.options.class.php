@@ -288,7 +288,6 @@ class Tadminoptions extends tadminmenu {
       
       case 'secure':
       $args->echoexception = $options->echoexception;
-      $args->cookieenabled = $options->cookieenabled;
       $args->usersenabled = $options->usersenabled;
       $args->reguser = $options->reguser;
       $args->parsepost = $options->parsepost;
@@ -310,7 +309,6 @@ class Tadminoptions extends tadminmenu {
       $args->formtitle = $lang->securehead;
       $result = $html->adminform('
       [checkbox=echoexception]
-      [checkbox=cookieenabled]
       [checkbox=xxxcheck]
       [checkbox=usersenabled]
       [checkbox=reguser]
@@ -520,7 +518,6 @@ class Tadminoptions extends tadminmenu {
         return $h2->passwordchanged;
       } else {
         $options->echoexception = isset($echoexception);
-        $options->cookieenabled = isset($cookieenabled);
         $options->reguser = isset($reguser);
         $this->usersenabled = isset($usersenabled);
         $options->parsepost = isset($parsepost);

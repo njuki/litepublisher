@@ -1250,7 +1250,6 @@ class tajaxposteditor  extends tevents {
   
   public static function auth() {
     $options = litepublisher::$options;
-    if (!$options->cookieenabled) return self::error403();
     if (!$options->user) return self::error403();
     if (!$options->hasgroup('editor')) {
       if (!$options->hasgroup('author')) return self::error403();

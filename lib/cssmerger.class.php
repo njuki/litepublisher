@@ -19,6 +19,7 @@ class tcssmerger extends tfilemerger {
   
   public function replaceurl($m) {
     $url = $m[1];
+    if (strbegin($url, 'data:')) return " url(\"$url\")";
     $args = '';
     if ($i = strpos($url, '?')) {
       $args = substr($url, $i);
