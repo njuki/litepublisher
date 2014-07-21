@@ -27,12 +27,12 @@
       var link = $(this);
       var url = link.attr("href");
       if (!url || !re.test(url)) {
-url = link.data("image");
-      if (!url || !re.test(url)) return;
-}
-
+        url = link.data("image");
+        if (!url || !re.test(url)) return;
+      }
+      
       link.data("image", url);
-
+      
       if (prevlink) {
         link.data("prevlink", prevlink);
         prevlink.data("nextlink", link);
