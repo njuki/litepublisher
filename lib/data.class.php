@@ -7,6 +7,7 @@
 **/
 
 class tdata {
+const zerodate = '0000-00-00 00:00:00';
   public $basename;
   public $cache;
   public $coclasses;

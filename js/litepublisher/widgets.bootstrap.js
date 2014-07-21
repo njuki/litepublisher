@@ -55,7 +55,7 @@
       if (button.data("model") == "wrap-collapse") {
         var content = "#widget-content-" + span.data("widget").id;
         $(content).addClass("panel-collapse collapse");
-        span.wrap('<a href="' + content + '" title="' + lang.widgetlang.clickme + '"></a>');
+        span.wrap('<a class="dashed" href="' + content + '" title="' + lang.widgetlang.clickme + '"></a>');
         span.parent().tooltip({
           container: 'body',
           placement: 'auto top'

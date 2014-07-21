@@ -177,7 +177,7 @@ class tcontentfilter extends tevents {
   }
   
   public function replacecode($s) {
-    $s =preg_replace_callback('/<code>(.*?)<\/code>/ims', array(&$this, 'callback_replace_code'), $s);
+    $s =preg_replace_callback('/<code>(.*?)<\/code>/ims', array($this, 'callback_replace_code'), $s);
     if ($this->phpcode) {
       $s = preg_replace_callback('/\<\?(.*?)\?\>/ims', array(&$this, 'callback_replace_php'), $s);
     } else {

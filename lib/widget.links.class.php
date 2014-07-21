@@ -42,7 +42,7 @@ class tlinkswidget extends twidget {
     $args->subcount = '';
     $args->subitems = '';
     $args->icon = '';
-    $args->rel = 'link blogroll';
+    $args->rel = 'link';
     foreach ($this->items as $id => $item) {
       $args->add($item);
       $args->id = $id;
