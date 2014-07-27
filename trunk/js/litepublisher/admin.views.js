@@ -34,6 +34,8 @@
       }
       
       tabs.tabs({
+        hide: true,
+        show: true,
         disabled: disabled,
         active: disabled.length ? 1 : 0,
         beforeLoad: litepubl.uibefore

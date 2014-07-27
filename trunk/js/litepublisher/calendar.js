@@ -7,6 +7,7 @@
 
 (function ($, document, window) {
   'use strict';
+
   litepubl.Calendar = Class.extend({
     holderclass: ".calendar",
     rangeclass: ".date-range",
@@ -23,7 +24,7 @@
       $(holders).each(function() {
         var inputs = $("input", this);
         var date = inputs.eq(0).addClass("date-edit");
-        var time = inputs.eq(1).addClass("time-edit");
+        //var time = inputs.eq(1).addClass("time-edit");
         self.add($("button:first", this), date);
       });
     },

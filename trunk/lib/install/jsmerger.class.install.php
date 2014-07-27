@@ -47,6 +47,7 @@ function tjsmergerInstall($self) {
   $self->add($section, '/js/jquery/ui/widget.min.js');
   $self->add($section, '/js/jquery/ui/mouse.min.js');
   $self->add($section, '/js/jquery/ui/position.min.js');
+  $self->add($section, '/js/jquery/ui/effect.min.js');
   $self->add($section, '/js/jquery/ui/tabs.min.js');
   $self->add($section, '/js/litepublisher/admin.min.js');
   $self->add($section, '/js/litepublisher/calendar.min.js');

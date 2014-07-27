@@ -627,6 +627,7 @@ class targs {
   
   public function __set($name, $value) {
     if (!$name || !is_string($name)) return;
+    if (is_array($value)) return;
     
     if (is_bool($value)) {
       $value = $value ? 'checked="checked"' : '';
@@ -642,11 +643,11 @@ class targs {
   }
   
   public function add(array $a) {
-    foreach ($a as $key => $value) {
-      $this->__set($key, $value);
-      if ($key == 'url') {
-        $this->data['$link'] = litepublisher::$site->url . $value;
-        $this->data['%%link%%'] = litepublisher::$site->url . $value;
+    foreach ($a as $k => $v) {
+      $this->__set($k, $v);
+      if ($k == 'url') {
+        $this->data['$link'] = litepublisher::$site->url . $v;
+        $this->data['%%link%%'] = litepublisher::$site->url . $v;
       }
     }
     
