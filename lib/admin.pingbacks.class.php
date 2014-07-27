@@ -63,6 +63,7 @@ class tadminpingbacks extends tadminmenu {
     
     $html = $this->html;
     $lang = tlocal::i();
+$args = new targs();
     $form = new adminform($args);
     $form->items =$html->getitemscount($from, $from + count($items), $total);
     ttheme::$vars['pingitem'] = new pingitem();

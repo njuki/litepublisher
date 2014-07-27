@@ -801,7 +801,11 @@ class tuitabs {
   }
   
   public static function gethead() {
-  return ttemplate::i()->getready('$($("div.admintabs").get().reverse()).tabs({ beforeLoad: litepubl.uibefore})');
+  return ttemplate::i()->getready('$($("div.admintabs").get().reverse()).tabs({
+        hide: true,
+        show: true,
+ beforeLoad: litepubl.uibefore
+})');
   }
   
 }//class

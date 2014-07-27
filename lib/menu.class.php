@@ -197,9 +197,9 @@ class tmenus extends titems {
     return true;
   }
   
-  public function haschilds($id) {
+  public function haschilds($idparent) {
     foreach ($this->items as $id => $item) {
-      if ($item['parent'] == $id) return true;
+      if ($item['parent'] == $idparent) return $id;
     }
     return false;
   }

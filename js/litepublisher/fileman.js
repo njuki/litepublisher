@@ -34,6 +34,8 @@
         //$(holder).html(this.tml.tabs);
         var tabs = $("#posteditor-files-tabs", this.holder);
         tabs.tabs({
+        hide: true,
+        show: true,
           beforeLoad: litepubl.uibefore,
           beforeActivate: function(event, ui) {
             if ("empty" == $(ui.newPanel).data("files")) {

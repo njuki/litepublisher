@@ -298,7 +298,7 @@ class toptions extends tevents_storage {
         $log .= $item['function'];
       }
       
-      if (count($item['args'])) {
+      if (isset($item['args']) && count($item['args'])) {
         $args = array();
         foreach ($item['args'] as $arg) {
           $args[] = self::var_export($arg);
