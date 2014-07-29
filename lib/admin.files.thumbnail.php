@@ -70,7 +70,7 @@ class tadminfilethumbnails extends tadminmenu {
       return "<h3>$error</h3>\n";
     }
     
-    if (!is_uploaded_file($_FILES['filename']['tmp_name'])) return sprintf($this->html->h4->attack, $_FILES["filename"]["name"]);
+    if (!is_uploaded_file($_FILES['filename']['tmp_name'])) return sprintf($this->html->h4red->attack, $_FILES["filename"]["name"]);
     if ($isauthor && ($r = tauthor_rights::i()->canupload())) return $r;
     
     $filename = $_FILES['filename']['name'];

@@ -182,7 +182,7 @@ class tadminservice extends tadminmenu {
       $backuper = tbackuper::i();
       if (isset($restore)) {
         if (!is_uploaded_file($_FILES['filename']['tmp_name'])) {
-          return sprintf($html->attack(), $_FILES["filename"]["name"]);
+          return sprintf($html->h4red->attack, $_FILES["filename"]["name"]);
         }
         
         if (strpos($_FILES['filename']['name'], '.sql')) {
@@ -247,7 +247,7 @@ class tadminservice extends tadminmenu {
       
       case 'run':
       $result = eval($_POST['content']);
-      return $result;
+      return sprintf('<pre>%s</pre>', $result);
       
       case 'upload':
       $backuper = tbackuper::i();

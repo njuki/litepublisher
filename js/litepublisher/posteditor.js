@@ -20,11 +20,7 @@
         beforeLoad: litepubl.uibefore,
         
         beforeActivate: function(event, ui) {
-          if ($("#datetime-holder", ui.newPanel).length) {
-            self.init_datetime_tab(ui.newPanel);
-          } else  if ($("#seo-holder", ui.newPanel).length) {
-            self.init_seo_tab(ui.newPanel);
-          }
+          self.init_tab(ui.newPanel);
         },
         
         load: function(event, ui) {
@@ -56,6 +52,14 @@
         }
       });
       
+    },
+    
+    init_tab: function(tab) {
+      if ($("#datetime-holder", tab).length) {
+        this.init_datetime_tab(tab);
+      } else  if ($("#seo-holder", tab).length) {
+        this.init_seo_tab(tab);
+      }
     },
     
     addtag: function(newtag) {
@@ -99,6 +103,8 @@
       $("#posteditor-raw").before(html.substring(0, i)).after(html.substring(i));
       
       holder.tabs({
+        hide: true,
+        show: true,
         beforeLoad: litepubl.uibefore,
         beforeActivate: function(event, ui) {
           var inner = $(".tab-holder", ui.newPanel);
