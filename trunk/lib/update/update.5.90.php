@@ -9,4 +9,6 @@ array_insert($js->items['admin']['files'], '/js/jquery/ui/effect.min.js', $i);
 }
 
 $js->unlock();
+
+  tcssmerger::i()->add('admin', '/js/litepublisher/css/form.inline.min.css');
 }

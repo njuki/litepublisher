@@ -110,7 +110,7 @@ class tadminfiles extends tadminmenu {
         if (isset($_FILES['filename']['error']) && $_FILES['filename']['error'] > 0) {
           return $html->h4(tlocal::get('uploaderrors', $_FILES['filename']['error']));
         }
-        if (!is_uploaded_file($_FILES['filename']['tmp_name'])) return sprintf($this->html->h2->attack, $_FILES["filename"]["name"]);
+        if (!is_uploaded_file($_FILES['filename']['tmp_name'])) return sprintf($this->html->h4red->attack, $_FILES["filename"]["name"]);
         if ($isauthor && ($r = tauthor_rights::i()->canupload())) return $r;
         $overwrite  = isset($_POST['overwrite']);
         $parser = tmediaparser::i();

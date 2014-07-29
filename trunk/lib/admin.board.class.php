@@ -58,14 +58,8 @@ public function save() { return true; }
 public function setidview($id) {}
   
   public function getcont() {
-    $result = $this->logoutlink;
     $editor = tposteditor::i();
-    $result .= $editor->getexternal();
-    return $result;
-  }
-  
-  protected function getlogoutlink() {
-    return $this->gethtml('login')->logout();
+    return $editor->getexternal();
   }
   
   public function gethtml($name = '') {

@@ -515,7 +515,7 @@ class Tadminoptions extends tadminmenu {
         if (!$options->auth($options->email, $oldpassword)) return $h2->badpassword;
         $options->changepassword($newpassword);
         $options->logout();
-        return $h2->passwordchanged;
+        return $h4->passwordchanged;
       } else {
         $options->echoexception = isset($echoexception);
         $options->reguser = isset($reguser);

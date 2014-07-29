@@ -40,9 +40,9 @@ class tadminperms extends tadminmenu {
   public function getcontent() {
     $result = '';
     $perms = tperms::i();
-    $html = $this->gethtml('perms');
+    $html = $this->html;
     $lang = tlocal::i('perms');
-    $args = targs::i();
+    $args = new targs();
     if (!($action = $this->action)) $action = 'perms';
     switch ($action) {
       case 'perms':
@@ -56,17 +56,15 @@ class tadminperms extends tadminmenu {
       ));
       $result .= $html->deletetable($args);
       
-      $items = '';
-      $args->addurl = tadminhtml::getadminlink($this->url, 'action=add&class');
+      $result .= $html->h4->newperms;
+      $result .= '<ul>';
+      $addurl = tadminhtml::getadminlink($this->url, 'action=add&class');
       foreach ($perms->classes as $class => $name) {
         if ($class == 'tsinglepassword') continue;
-        $args->class = $class;
-        $args->name = $name;
-        $items .= $html->newitem($args);
+        $result .= $html->li("<a href='$addurl=$class'>$name</a>");
       }
       
-      $args->items = $items;
-      $result .= $html->newitems($args);
+      $result .= '</ul>';
       return $html->fixquote($result);
       
       case 'add':
