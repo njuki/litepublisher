@@ -488,9 +488,11 @@ class tpost extends titem implements  itemplate {
   }
   
   public function getcategory() {
-    if (count($this->categories) == 0) return '';
-    $cats = $this->factory->categories;
-    return $cats->getname($this->categories[0]);
+if ($idcat = $this->getidcat()) {
+return $this->factory->categories->getname($idcat);
+}
+
+return '';
   }
   
   public function getidcat() {
