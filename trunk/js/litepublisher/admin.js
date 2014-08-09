@@ -7,6 +7,7 @@
 
 (function ($, document, window, litepubl) {
   'use strict';
+
   $(document).ready(function() {
     $(".checkall").click(function() {
       $(this).closest("form").find("input[type='checkbox']").prop("checked", true);
@@ -21,10 +22,10 @@
       return false;
     });
     
-    //like collapse.js
+    //similar collapse.js
     $(".togglelink").on("click.toggle", function() {
       var link = $(this);
-      var target = link.attr("data-target");
+      var target = link.attr("data-target") || link.attr("href");
       if (target) $(target).slideToggle().removeClass("hidden");
       // second target
       target = link.attr("data-second");

@@ -310,6 +310,11 @@ class tadminhtml {
     
     return 0;
   }
+
+public static function datestr($date) {
+      if ($date == '0000-00-00 00:00:00') return tlocal::i()->noword;
+      return tlocal::date(strtotime($date),'d F Y');
+}
   
   public function gettable($head, $body) {
     return strtr($this->ini['common']['table'], array(
@@ -383,8 +388,8 @@ class tadminhtml {
   
   public function tableposts(array $items, array $struct) {
     $body = '';
-    $head = sprintf('<th align="center">%s </th>', $this->invertcheckbox );
-    $tml = '<tr><td align="center"><input type="checkbox" name="checkbox-$post.id" id="id-checkbox-$post.id" value="$post.id"/> </td>';
+    $head = $this->tableposts_head;
+    $tml = $this->tableposts_item;
     foreach ($struct as $elem) {
       $head .= sprintf('<th align="%s">%s</th>', $elem[0], $elem[1]);
       $tml .= sprintf('<td align="%s">%s</td>', $elem[0], $elem[2]);
@@ -903,9 +908,7 @@ class tableprop {
   
   public function __get($name) {
     $id = intval(substr($name, strlen('prop')));
-    $callback = $this->callbacks[$id];
-    $item = ttheme::$vars['item'];
-    return call_user_func_array($callback, array($item));
+    return call_user_func_array($this->callbacks[$id], array(ttheme::$vars['item']));
   }
   
 }

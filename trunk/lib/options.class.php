@@ -285,7 +285,7 @@ class toptions extends tevents_storage {
   }
   
   public function handexception($e) {
-    $log = "Caught exception:\r\n" . $e->getMessage();
+    $log = "Caught exception:\r\n" . $e->getMessage() . "\r\n";
     $trace = $e->getTrace();
     foreach ($trace as $i => $item) {
       if (isset($item['line'])) {

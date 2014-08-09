@@ -7,6 +7,7 @@
 
 (function ($, litepubl, window) {
   'use strict';
+
   litepubl.HTMLUploader = Class.extend({
     owner: false,
     jq: false,

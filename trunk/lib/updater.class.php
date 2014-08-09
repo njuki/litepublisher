@@ -70,7 +70,7 @@ class tupdater extends tevents {
     $nextver = $this->nextversion;
     if ($log) tfiler::log("update started from litepublisher::$options->version to $this->version", 'update');
     $v = litepublisher::$options->version + 0.01;
-    while ( $v<= $nextver) {
+    while (version_compare($v, $nextver) <= 0) {
       $ver = (string) $v;
       if (strlen($ver) == 3) $ver .= '0';
       if (strlen($ver) == 1) $ver .= '.00';
