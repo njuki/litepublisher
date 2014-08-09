@@ -33,7 +33,6 @@ class tadminthemes extends tadminmenu {
         $about['name'] = $name;
         if (!isset($about['screenshot'])) $about['screenshot'] = 'screenshot.png';
         $args->add($about);
-        //$args->checked = $name == $selected;
         $args->checked = in_array($name,  $selected);
         $result .= $html->parsearg($tml, $args);
       }
@@ -83,4 +82,3 @@ class tadminthemes extends tadminmenu {
   }
   
 }//class
-?>

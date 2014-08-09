@@ -88,12 +88,13 @@ class tjsonfiles extends tevents {
   
   public function files_upload(array $args) {
     if ( 'POST' != $_SERVER['REQUEST_METHOD']) return $this->forbidden();
+    if (!isset($_FILES['Filedata']) || !is_uploaded_file($_FILES['Filedata']['tmp_name']) ||
+    $_FILES['Filedata']['error'] != 0) return $this->forbidden();
+
     //psevdo logout
     litepublisher::$options->user = null;
     if (!litepublisher::$options->hasgroup('author')) return $this->forbidden();
-    if (!isset($_FILES['Filedata']) || !is_uploaded_file($_FILES['Filedata']['tmp_name']) ||
-    $_FILES['Filedata']['error'] != 0) return $this->forbidden();
-    
+   
     if (in_array(litepublisher::$options->groupnames['author'], litepublisher::$options->idgroups)
     && ($r = tauthor_rights::i()->canupload())) return $r;
     
