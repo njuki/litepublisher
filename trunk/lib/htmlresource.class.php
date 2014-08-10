@@ -310,11 +310,11 @@ class tadminhtml {
     
     return 0;
   }
-
-public static function datestr($date) {
-      if ($date == '0000-00-00 00:00:00') return tlocal::i()->noword;
-      return tlocal::date(strtotime($date),'d F Y');
-}
+  
+  public static function datestr($date) {
+    if ($date == '0000-00-00 00:00:00') return tlocal::i()->noword;
+    return tlocal::date(strtotime($date),'d F Y');
+  }
   
   public function gettable($head, $body) {
     return strtr($this->ini['common']['table'], array(
@@ -672,11 +672,12 @@ class tautoform {
   }
   
   public function getform() {
-    $args = targs::i();
+    $args = new targs();
     $args->formtitle = $this->_title;
     $args->items = $this->getcontent();
     $theme = ttheme::i();
-    return $theme->parsearg($theme->templates['content.admin.form'], $args);
+    $tml = str_replace('[submit=update]', str_replace('$name', 'update', $theme->templates['content.admin.submit']), $theme->templates['content.admin.form']);
+    return $theme->parsearg($tml, $args);
   }
   
   public function processform() {

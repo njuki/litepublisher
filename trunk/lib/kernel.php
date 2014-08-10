@@ -721,6 +721,15 @@ class tstorage extends tfilestorage {
     }
   }
   
+  public static function remove(tdata $obj) {
+    $base = $obj->getbasename();
+    if (isset(self::$data[$base])) {
+      unset(self::$data[$base]);
+      self::$modified = true;
+      return true;
+    }
+  }
+  
   public static function savemodified() {
     if (self::$modified) {
       if (self::$disabled) return false;
@@ -1916,7 +1925,7 @@ class toptions extends tevents_storage {
   }
   
   public function handexception($e) {
-    $log = "Caught exception:\r\n" . $e->getMessage();
+    $log = "Caught exception:\r\n" . $e->getMessage() . "\r\n";
     $trace = $e->getTrace();
     foreach ($trace as $i => $item) {
       if (isset($item['line'])) {

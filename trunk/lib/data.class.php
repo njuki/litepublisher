@@ -372,14 +372,14 @@ class tstorage extends tfilestorage {
       return false;
     }
   }
-
+  
   public static function remove(tdata $obj) {
     $base = $obj->getbasename();
     if (isset(self::$data[$base])) {
-unset(self::$data[$base]);
-    self::$modified = true;
-    return true;
-}
+      unset(self::$data[$base]);
+      self::$modified = true;
+      return true;
+    }
   }
   
   public static function savemodified() {
