@@ -488,11 +488,11 @@ class tpost extends titem implements  itemplate {
   }
   
   public function getcategory() {
-if ($idcat = $this->getidcat()) {
-return $this->factory->categories->getname($idcat);
-}
-
-return '';
+    if ($idcat = $this->getidcat()) {
+      return $this->factory->categories->getname($idcat);
+    }
+    
+    return '';
   }
   
   public function getidcat() {

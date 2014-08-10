@@ -353,7 +353,7 @@ class Tadminoptions extends tadminmenu {
       $site->description = $description;
       $site->keywords = $keywords;
       $site->author = $author;
-$this->getdb('users')->setvalue(1, 'name', $author);
+      $this->getdb('users')->setvalue(1, 'name', $author);
       ttemplate::i()->footer = $footer;
       break;
       
@@ -379,10 +379,10 @@ $this->getdb('users')->setvalue(1, 'name', $author);
       
       case 'mail':
       if(!empty($adminemail)) {
-$options->email = $adminemail;
-$this->getdb('users')->setvalue(1, 'email', $adminemail);
-}
-
+        $options->email = $adminemail;
+        $this->getdb('users')->setvalue(1, 'email', $adminemail);
+      }
+      
       if(!empty($fromemail)) $options->fromemail = $fromemail;
       $options->mailer = empty($mailer) ? '': 'smtp';
       
