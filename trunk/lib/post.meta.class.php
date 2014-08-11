@@ -45,10 +45,13 @@ class tmetapost extends titem {
   }
   
   protected function LoadFromDB() {
-    $res = $this->db->select("id = $this->id");
-    while ($row = litepublisher::$db->fetchassoc($res)) {
-      $this->data[$row['name']] = $row['value'];
+$db = $this->db;
+    $res = $db->select("id = $this->id");
+    if (is_object($res)) {
+      while ($r = $res->fetch_assoc()) {
+      $this->data[$r['name']] = $r['value'];
     }
+}
     return true;
   }
   

@@ -53,22 +53,17 @@ class tpinger extends tevents {
     $posturl = $post->link;
     $meta = $post->meta;
     if (!isset($meta->lastpinged) || ($meta->lastpinged + 3600*24 < time())) {
-      $this->pingservices($posturl);
       $meta->lastpinged = time();
+      $this->pingservices($posturl);
     }
     
-    $pinged = isset($meta->pinged) ? unserialize($meta->pinged) : array();
     $links = $this->getlinks($post);
     $m = microtime(true);
     foreach ($links as $link) {
-      if (!in_array($link, $pinged)) {
-        //if ($this->ping($link, $posturl)) $pinged[] = $link;
         $this->ping($link, $posturl);
-        $pinged[] = $link;
         if ((microtime(true) - $m) > 120) break;
       }
     }
-    $meta->pinged = serialize($pinged);
   }
   
   private function getlinks(tpost $post) {
