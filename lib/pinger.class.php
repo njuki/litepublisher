@@ -53,17 +53,23 @@ class tpinger extends tevents {
     $posturl = $post->link;
     $meta = $post->meta;
     if (!isset($meta->lastpinged) || ($meta->lastpinged + 3600*24 < time())) {
-      $meta->lastpinged = time();
       $this->pingservices($posturl);
+      $meta->lastpinged = time();
     }
     
+    $pinged = isset($meta->pinged) ? unserialize($meta->pinged) : array();
     $links = $this->getlinks($post);
     $m = microtime(true);
     foreach ($links as $link) {
+      if (in_array($link, $pinged)) continue;
+if (preg_match('/\.(zip|gz|js|css|mp3|mp4|wav|mov|flv|avi|mpg|mpeg|jpg|jpeg|png|bmp|gif|ogv|webm|flac)$/i', $link)) continue;
+if (preg_match('/(youtu\.be|youtube\.com|facebook\.com|twitter\.com|vk\.com|mail\.ru|odnoklassniki\.ru)/i', $link)) continue;
         $this->ping($link, $posturl);
+        $pinged[] = $link;
         if ((microtime(true) - $m) > 120) break;
-      }
     }
+
+if (count($pinged)) $meta->pinged = serialize($pinged);
   }
   
   private function getlinks(tpost $post) {
@@ -192,8 +198,9 @@ class tpinger extends tevents {
       $client->path = isset($bits['path']) ? $bits['path'] : '/';
       if (!$client->path) $client->path = '/';
       
-      if ( !$client->query('weblogUpdates.extendedPing', litepublisher::$site->name, $home, $url, litepublisher::$site->url . '/rss.xml') )
+      if ( !$client->query('weblogUpdates.extendedPing', litepublisher::$site->name, $home, $url, litepublisher::$site->url . '/rss.xml') ) {
       $client->query('weblogUpdates.ping', litepublisher::$site->name, $url);
+}
       
       if ((microtime(true) - $m) > 180) break;
     }
