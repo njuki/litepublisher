@@ -92,7 +92,7 @@ class tadminusers extends tadminmenu {
       '_' => '\_'
       ));
       
-      $where = "name like '%$search%' or email like '%$search%' ";
+      $where = "email like '%$search%' or name like '%$search%' ";
       $count = $users->db->getcount($where);
       $from = $this->getfrom($perpage, $count);
     }
