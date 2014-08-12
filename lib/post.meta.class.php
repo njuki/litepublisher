@@ -37,6 +37,10 @@ class tmetapost extends titem {
       $this->db->insertrow("(id, name, value) values ($this->id, $name, $value)");
     }
   }
+
+  public function __unset($name) {
+$this->remove($name);
+}
   
   //db
   public function load() {
@@ -65,6 +69,12 @@ $db = $this->db;
       $this->db->insertrow("(id, name, value) values ($this->id, $name, $value)");
     }
   }
+
+public function remove($name) {
+if ($name == 'id') return;
+    unset($this->data[$name]);
+$this->db->delete("id = $this->id and name = '$name'");
+}
   
   public static function loaditems(array $items) {
     if (!dbversion || count($items) == 0) return;
