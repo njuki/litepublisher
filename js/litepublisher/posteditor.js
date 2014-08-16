@@ -41,8 +41,8 @@
         return false;
       });
       
-      $('form:first').submit(function(event) {
-        var title = $("input[name='title']");
+      $('form:first').on('submit.posttitle', function(event) {
+        var title = $("input[name='title']", this);
         if (!$.trim(title.val())) {
           event.stopImmediatePropagation();
           $.messagebox(lang.dialog.error, lang.posteditor.emptytitle, function() {

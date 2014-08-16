@@ -23,6 +23,7 @@
   window.litepubl = {
   tml: {}, //namespace for templates
     guid: $.now(),
+ready2: $.Deferred(),
     adminpanel: false,
     is_adminpanel:  function() {
       if (litepubl.adminpanel !== false) return litepubl.adminpanel;
@@ -135,11 +136,15 @@
   };
   
   window.ready2 = function(fn) {
+litepubl.ready2.done(fn);
+};
+
     $(document).ready(function() {
-      window.setTimeout(fn, 20);
+      window.setTimeout(function() {
+litepubl.ready2.resolve();
+}, 20);
     });
-  };
-  
+
   window.erralert = function(e) {
     alert('error ' + e.message);
   };
