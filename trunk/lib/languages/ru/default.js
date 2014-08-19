@@ -5,6 +5,7 @@ window.lang.dialog = {
   'confirm' : 'Потдверждение',
   'warning' : 'Предупреждение',
   'info': 'Информация',
+'help': 'Справка',
   'remove': 'Удалить',
   'confirmdelete': "Вы действительно хотите удалить?",
   'cancel' : 'Отмена',

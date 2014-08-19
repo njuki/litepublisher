@@ -77,14 +77,15 @@ $this->db->delete("id = $this->id and name = '$name'");
 }
   
   public static function loaditems(array $items) {
-    if (!dbversion || count($items) == 0) return;
+    if (!count($items)) return;
     //exclude already loaded items
     if (isset(self::$instances['postmeta'])) {
       $items = array_diff($items, array_keys(self::$instances['postmeta']));
+    if (!count($items)) return;
     } else {
       self::$instances['postmeta'] = array();
     }
-    if (count($items) == 0) return;
+
     $instances = &self::$instances['postmeta'];
     $db = litepublisher::$db;
     $db->table = 'postsmeta';
@@ -95,10 +96,11 @@ $this->db->delete("id = $this->id and name = '$name'");
         $instances[$id] = new self();
         $instances[$id]->data['id'] = $id;
       }
+
       $instances[$id]->data[$row['name']] = $row['value'];
     }
-    return true;
-    
+
+    return $items;
   }
   
 }//class
