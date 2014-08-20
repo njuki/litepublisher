@@ -254,7 +254,7 @@ class tpost extends titem implements  itemplate {
   
   public function free() {
     foreach ($this->coinstances as $coinstance) $coinstance->free();
-if (isset($this->_meta)) $this->_meta->free();
+    if (isset($this->_meta)) $this->_meta->free();
     unset($this->aprev, $this->anext, $this->_meta, $this->_theme, $this->_onid);
     parent::free();
   }

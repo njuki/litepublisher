@@ -546,7 +546,8 @@ class tadminhtml {
     $lang = tlocal::i();
     $controls = $this->getinput('text', $name, $date? date('d.m.Y', $date) : '', $lang->date);
     $controls .= $this->getinput('text', "$name-time", $date ?date('H:i', $date) : '', $lang->time);
-    $controls .= $this->getinput('button', "calendar-$name", '', $lang->calendar);
+    $controls .= str_replace('type="submit"', 'type="button"',
+    $this->getinput('button', "calendar-$name", '', $lang->calendar));
     
     return sprintf($this->ini['common']['calendar'], $lang->__get($name), $this->inline($controls));
   }
@@ -556,9 +557,12 @@ class tadminhtml {
     $to = $this->cleandate($to);
     $lang = tlocal::i();
     $controls = $this->getinput('text', 'from', $from ? date('d.m.Y', $from) : '', $lang->from);
-    $controls .= $this->getinput('button', "calendar-from", '', $lang->calendar);
+    $controls .= str_replace('type="submit"', 'type="button"',
+    $this->getinput('button', "calendar-from", '', $lang->calendar));
+    
     $controls .= $this->getinput('text', 'to', $to ? date('d.m.Y', $to) : '', $lang->to);
-    $controls .= $this->getinput('button', "calendar-to", '', $lang->calendar);
+    $controls .= str_replace('type="submit"', 'type="button"',
+    $this->getinput('button', "calendar-to", '', $lang->calendar));
     
     return sprintf($this->ini['common']['daterange'], $controls);
   }
