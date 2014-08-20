@@ -70,7 +70,7 @@ class tadminicons extends tadminmenu {
       $a[$id] = $html->comboitem($args);
     }
     
-$list = '';
+    $list = '';
     foreach ($icons->items as $name => $id) {
       $args->name = $name;
       $title = $lang->$name;
@@ -79,8 +79,8 @@ $list = '';
       $args->combo = $html->array2combo($a, $id);
       $list .= $html->iconitem($args);
     }
-
-$args->formtitle = $lang->iconheader;
+    
+    $args->formtitle = $lang->iconheader;
     $result .= $html->adminform($list, $args);
     return $html->fixquote($result);
   }

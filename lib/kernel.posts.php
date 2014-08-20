@@ -364,6 +364,7 @@ class tpost extends titem implements  itemplate {
   
   public function free() {
     foreach ($this->coinstances as $coinstance) $coinstance->free();
+    if (isset($this->_meta)) $this->_meta->free();
     unset($this->aprev, $this->anext, $this->_meta, $this->_theme, $this->_onid);
     parent::free();
   }
@@ -1598,6 +1599,10 @@ class tmetapost extends titem {
     }
   }
   
+  public function __unset($name) {
+    $this->remove($name);
+  }
+  
   //db
   public function load() {
     $this->LoadFromDB();
@@ -1605,9 +1610,12 @@ class tmetapost extends titem {
   }
   
   protected function LoadFromDB() {
-    $res = $this->db->select("id = $this->id");
-    while ($row = litepublisher::$db->fetchassoc($res)) {
-      $this->data[$row['name']] = $row['value'];
+    $db = $this->db;
+    $res = $db->select("id = $this->id");
+    if (is_object($res)) {
+      while ($r = $res->fetch_assoc()) {
+        $this->data[$r['name']] = $r['value'];
+      }
     }
     return true;
   }
@@ -1623,15 +1631,22 @@ class tmetapost extends titem {
     }
   }
   
+  public function remove($name) {
+    if ($name == 'id') return;
+    unset($this->data[$name]);
+    $this->db->delete("id = $this->id and name = '$name'");
+  }
+  
   public static function loaditems(array $items) {
-    if (!dbversion || count($items) == 0) return;
+    if (!count($items)) return;
     //exclude already loaded items
     if (isset(self::$instances['postmeta'])) {
       $items = array_diff($items, array_keys(self::$instances['postmeta']));
+      if (!count($items)) return;
     } else {
       self::$instances['postmeta'] = array();
     }
-    if (count($items) == 0) return;
+    
     $instances = &self::$instances['postmeta'];
     $db = litepublisher::$db;
     $db->table = 'postsmeta';
@@ -1642,10 +1657,11 @@ class tmetapost extends titem {
         $instances[$id] = new self();
         $instances[$id]->data['id'] = $id;
       }
+      
       $instances[$id]->data[$row['name']] = $row['value'];
     }
-    return true;
     
+    return $items;
   }
   
 }//class

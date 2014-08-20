@@ -37,10 +37,10 @@ class tmetapost extends titem {
       $this->db->insertrow("(id, name, value) values ($this->id, $name, $value)");
     }
   }
-
+  
   public function __unset($name) {
-$this->remove($name);
-}
+    $this->remove($name);
+  }
   
   //db
   public function load() {
@@ -49,13 +49,13 @@ $this->remove($name);
   }
   
   protected function LoadFromDB() {
-$db = $this->db;
+    $db = $this->db;
     $res = $db->select("id = $this->id");
     if (is_object($res)) {
       while ($r = $res->fetch_assoc()) {
-      $this->data[$r['name']] = $r['value'];
+        $this->data[$r['name']] = $r['value'];
+      }
     }
-}
     return true;
   }
   
@@ -69,23 +69,23 @@ $db = $this->db;
       $this->db->insertrow("(id, name, value) values ($this->id, $name, $value)");
     }
   }
-
-public function remove($name) {
-if ($name == 'id') return;
+  
+  public function remove($name) {
+    if ($name == 'id') return;
     unset($this->data[$name]);
-$this->db->delete("id = $this->id and name = '$name'");
-}
+    $this->db->delete("id = $this->id and name = '$name'");
+  }
   
   public static function loaditems(array $items) {
     if (!count($items)) return;
     //exclude already loaded items
     if (isset(self::$instances['postmeta'])) {
       $items = array_diff($items, array_keys(self::$instances['postmeta']));
-    if (!count($items)) return;
+      if (!count($items)) return;
     } else {
       self::$instances['postmeta'] = array();
     }
-
+    
     $instances = &self::$instances['postmeta'];
     $db = litepublisher::$db;
     $db->table = 'postsmeta';
@@ -96,10 +96,10 @@ $this->db->delete("id = $this->id and name = '$name'");
         $instances[$id] = new self();
         $instances[$id]->data['id'] = $id;
       }
-
+      
       $instances[$id]->data[$row['name']] = $row['value'];
     }
-
+    
     return $items;
   }
   
