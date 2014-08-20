@@ -70,16 +70,18 @@ class tadminicons extends tadminmenu {
       $a[$id] = $html->comboitem($args);
     }
     
-    $result .= $html->iconheader();
+$list = '';
     foreach ($icons->items as $name => $id) {
       $args->name = $name;
       $title = $lang->$name;
       if ($title == '') $title = tlocal::usefile('install')->$name;
       $args->title = $title;
       $args->combo = $html->array2combo($a, $id);
-      $result .= $html->iconitem($args);
+      $list .= $html->iconitem($args);
     }
-    $result .= $html->iconfooter();
+
+$args->formtitle = $lang->iconheader;
+    $result .= $html->adminform($list, $args);
     return $html->fixquote($result);
   }
   
