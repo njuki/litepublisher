@@ -139,6 +139,12 @@ self.auth(token, remote_args, callback);
 }, function() {
 $.litejsonpost(remote_args, callback);
 });
+},
+
+check_logged: function(callback) {
+$.litejson({method: "check_logged"}, function(r) {
+if (r.result == "true") callback();
+});
 }
 
   });//class

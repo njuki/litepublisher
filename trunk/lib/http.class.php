@@ -64,6 +64,9 @@ class http {
     curl_setopt ($ch, CURLOPT_CONNECTTIMEOUT, self::$timeout);
     curl_setopt($ch, CURLOPT_TIMEOUT, self::$timeout);
     if (is_array($headers) && count($headers)) curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+//curl_setopt($ch, CURLOPT_HTTPHEADER, array('X-HTTP-Method-Override: PUT') );
+//curl_setopt($ch, CURLOPT_PUT, true); 
+//curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'DELETE');
     curl_setopt($ch, CURLOPT_POST, TRUE);
     curl_setopt($ch, CURLOPT_POSTFIELDS, is_array($post) ? http_build_query($post) : $post);
     return $ch;

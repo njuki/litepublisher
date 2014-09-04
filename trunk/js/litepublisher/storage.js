@@ -9,6 +9,7 @@
   'use strict';
   
   litepubl.Storage = Class.extend({
+type: false,
     get: false,
     set: false,
     remove: false,
@@ -26,6 +27,7 @@
           window.localStorage.removeItem(k);
       } catch(e) {}
         if (works) {
+this.type = "local";
           this.get = $.proxy(window.localStorage.getItem, window.localStorage);
           this.set = $.proxy(window.localStorage.setItem, window.localStorage);
           this.remove = $.proxy(window.localStorage.removeItem, window.localStorage);
@@ -46,6 +48,7 @@
       } catch(e) {}
         
         if (works) {
+this.type = "global";
           this.get = $.proxy(storage.getItem, storage);
           this.set = $.proxy(storage.setItem, storage);
           this.remove = $.proxy(storage.removeItem, storage);
@@ -65,6 +68,7 @@
     } catch( e ) {}
       
       if (works) {
+this.type = "link";
         this.get =  function( key ) {
           link.load();
           return link.getAttribute( key );
@@ -83,7 +87,7 @@
         return;
       }
       
-      //via cookie
+this.type = "cookie";
       this.get =  function( key ) {
         return $.cookie(key);
       };

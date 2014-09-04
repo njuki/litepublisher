@@ -210,6 +210,14 @@ class ulogin extends tplugin {
     }
     return $s;
   }
+
+public function check_logged(array $args) {
+$logged = litepublisher::$options->authcookies($args['litepubl_user_id'], $args['litepubl_user']);
+
+return array(
+'result' => $logged ? 'true' : 'false'
+);
+}
   
   public static function filterphone($phone) {
     $phone = trim(str_replace(array(' ', '+', '=', '-', '_', '(', ')', '.'), '', trim($phone)));
