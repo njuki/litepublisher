@@ -174,14 +174,14 @@
     },
     
     litejsontype: function(type, data, callback) {
-      var c = $.cookie("litepubl_user");
-      if (c != '') {
-        data.litepubl_user = c;
-        c = $.cookie("litepubl_user_id");
-        if (c != '') data.litepubl_user_id = c;
-      }
       if (type != "post") type = "get";
-      
+var user = litepubl.getuser();
+      if (user.id) {
+        data.litepubl_user_id = user.id;
+        data.litepubl_user = user.pass;
+data.litepubl_user_regservice = user.regservice;
+      }
+
       var         cache =  "cache" in data ? data.cache : false;
       var nocache = '';
       if (!cache && (type == "post")) {
