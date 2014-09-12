@@ -24,15 +24,30 @@ class tdatabase {
   }
   
   public function __construct() {
-    if (!isset(litepublisher::$options->dbconfig)) return false;
-    $dbconfig = litepublisher::$options->dbconfig;
     $this->table = '';
-    $this->dbname =  $dbconfig['dbname'];
-    $this->prefix =  $dbconfig['prefix'];
     $this->sql = '';
     $this->history = array();
-    
-    $this->mysqli = new mysqli($dbconfig['host'], $dbconfig['login'], litepublisher::$options->dbpassword, $dbconfig['dbname'], $dbconfig['port'] > 0 ?  $dbconfig['port'] : null);
+
+$this->setconfig($this->getconfig());
+}
+
+public function getconfig() {
+    if (isset(litepublisher::$options->dbconfig)) {
+$result = litepublisher::$options->dbconfig;
+//decrypt db password
+$result['password'] = litepublisher::$options->dbpassword;
+return $result;
+}
+
+return false;
+}
+
+public function setconfig($dbconfig) {
+if (!$dbconfig) return false;
+    $this->dbname =  $dbconfig['dbname'];
+    $this->prefix =  $dbconfig['prefix'];
+   
+    $this->mysqli = new mysqli($dbconfig['host'], $dbconfig['login'], $dbconfig['password'], $dbconfig['dbname'], $dbconfig['port'] > 0 ?  $dbconfig['port'] : null);
     
     if (mysqli_connect_error()) {
       throw new Exception('Error connect to database');
