@@ -240,7 +240,7 @@ public function canrequest() { }
   }
   
   public function getnotfound() {
-    return $this->html->h4->notfound;
+    return $this->html->h4red->notfound;
   }
   
   public function getadminurl() {

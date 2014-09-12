@@ -483,7 +483,7 @@ class tadminhtml {
   }
   
   public function confirmdelete($id, $adminurl, $mesg) {
-    $args = targs::i();
+    $args = new targs();
     $args->id = $id;
     $args->action = 'delete';
     $args->adminurl = $adminurl;
@@ -493,7 +493,7 @@ class tadminhtml {
   
   public function confirm_delete($owner, $adminurl) {
     $id = (int) self::getparam('id', 0);
-    if (!$owner->itemexists($id)) return $this->h4->notfound;
+    if (!$owner->itemexists($id)) return $this->h4red->notfound;
     if  (isset($_REQUEST['confirm']) && ($_REQUEST['confirm'] == 1)) {
       $owner->delete($id);
       return $this->h4->successdeleted;
@@ -506,7 +506,7 @@ class tadminhtml {
       return $this->confirmform($args);
     }
   }
-  
+
   public static function check2array($prefix) {
     $result = array();
     foreach ($_POST as $key => $value) {
