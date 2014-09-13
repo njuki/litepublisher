@@ -27,26 +27,26 @@ class tdatabase {
     $this->table = '';
     $this->sql = '';
     $this->history = array();
-
-$this->setconfig($this->getconfig());
-}
-
-public function getconfig() {
+    
+    $this->setconfig($this->getconfig());
+  }
+  
+  public function getconfig() {
     if (isset(litepublisher::$options->dbconfig)) {
-$result = litepublisher::$options->dbconfig;
-//decrypt db password
-$result['password'] = litepublisher::$options->dbpassword;
-return $result;
-}
-
-return false;
-}
-
-public function setconfig($dbconfig) {
-if (!$dbconfig) return false;
+      $result = litepublisher::$options->dbconfig;
+      //decrypt db password
+      $result['password'] = litepublisher::$options->dbpassword;
+      return $result;
+    }
+    
+    return false;
+  }
+  
+  public function setconfig($dbconfig) {
+    if (!$dbconfig) return false;
     $this->dbname =  $dbconfig['dbname'];
     $this->prefix =  $dbconfig['prefix'];
-   
+    
     $this->mysqli = new mysqli($dbconfig['host'], $dbconfig['login'], $dbconfig['password'], $dbconfig['dbname'], $dbconfig['port'] > 0 ?  $dbconfig['port'] : null);
     
     if (mysqli_connect_error()) {

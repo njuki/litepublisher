@@ -175,13 +175,13 @@
     
     litejsontype: function(type, data, callback) {
       if (type != "post") type = "get";
-var user = litepubl.getuser();
+      var user = litepubl.getuser();
       if (user.id) {
         data.litepubl_user_id = user.id;
         data.litepubl_user = user.pass;
-data.litepubl_user_regservice = user.regservice;
+        data.litepubl_user_regservice = user.regservice;
       }
-
+      
       var         cache =  "cache" in data ? data.cache : false;
       var nocache = '';
       if (!cache && (type == "post")) {
