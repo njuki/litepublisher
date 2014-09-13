@@ -53,10 +53,10 @@ function uloginInstall($self) {
   tcssmerger::i()->add('default', '/plugins/ulogin/resource/ulogin.popup.css');
   
   $json = tjsonserver::i();
-$json->lock();
+  $json->lock();
   $json->addevent('ulogin_auth', get_class($self), 'ulogin_auth');
   $json->addevent('check_logged', get_class($self), 'check_logged');
-$json->unlock();
+  $json->unlock();
 }
 
 function uloginUninstall($self) {

@@ -113,11 +113,11 @@ class toptions extends tevents_storage {
   }
   
   public function authcookie() {
-return $this->authcookies(isset($_COOKIE['litepubl_user_id']) ? (int) $_COOKIE['litepubl_user_id'] : 0, isset($_COOKIE['litepubl_user']) ? (string) $_COOKIE['litepubl_user'] : '');
-}
-
+    return $this->authcookies(isset($_COOKIE['litepubl_user_id']) ? (int) $_COOKIE['litepubl_user_id'] : 0, isset($_COOKIE['litepubl_user']) ? (string) $_COOKIE['litepubl_user'] : '');
+  }
+  
   public function authcookies($iduser, $password) {
-if (!$iduser || !$password) return false;
+    if (!$iduser || !$password) return false;
     $password = $this->hash($password);
     if (    $password == $this->emptyhash) return false;
     if (!$this->finduser($iduser, $password)) return false;
