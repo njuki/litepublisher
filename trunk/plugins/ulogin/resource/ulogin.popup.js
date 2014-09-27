@@ -121,11 +121,7 @@
         self.registered = true;
         self.logged = true;
         if ($.isFunction(callback)) {
-          if (r.callback) {
-            callback(r.callback);
-          } else {
-            callback();
-          }
+callback("callback" in r ? r.callback : undefined);
         }
       });
     },
@@ -137,43 +133,44 @@
       }, callback);
     },
     
-    onlogin: function(remote_args, callback) {
+    logon: function(remote_callback , callback) {
       var self = this;
       self.open('', function(token) {
-        self.auth(token, remote_args, callback);
+        self.auth(token, remote_callback , callback);
       }, function() {
-        $.litejsonpost(remote_args, callback);
+if (remote_callback) {
+        $.litejsonpost(remote_callback, callback);
+} else {
+callback();
+}
       });
     },
 
-    trylogin: function(callback) {
+    onlogin: function(remote_callback , callback) {
+if (!this.registered) return        this.logon(remote_callback, callback);
+
       var self = this;
-if (this.registered) {
-if (this.logged) return callback();
-this.check_logged(callback, function() {
-      self.open('', function(token) {
-        self.auth(token, false, callback);
-      }, callback);
+if (this.logged) {
+if (remote_callback) {
+        $.litejsonpost(remote_callback, callback);
+} else {
+callback('logged');
+return true;
+}
+} else {
+    $.litejson({method: "check_logged", callback: remote_callback ? remote_callback : false}, function(r) {
+        if (r.result == "true") {
+          self.logged = true;
+callback("callback" in r ? r.callback : undefined);
+} else {
+       self.logon(remote_callback, callback);
+}
 });
 }
 
-      this.open('', function(token) {
-        self.auth(token, false, callback);
-      }, callback);
-    },
-
-    check_logged: function(callback, logout_callback) {
-      var self = this;
-    $.litejson({method: "check_logged"}, function(r) {
-        if (r.result == "true") {
-          self.logged = true;
-          callback();
-} else {
-if ($.isFunction(logout_callback)) logout_callback();
+return false;
 }
-      });
-    }
-    
+
   });//class
   
 }(jQuery, document, window));
