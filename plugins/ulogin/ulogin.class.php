@@ -178,7 +178,7 @@ class ulogin extends tplugin {
     
     if (isset($args['callback']) && $args['callback']) {
       $callback = $args['callback'];
-      if ($callback != 'false') {
+      if (is_array($callback)) {
         try {
           $result['callback'] = tjsonserver::i()->callevent($callback['method'], array($callback));
         } catch (Exception $e) {
@@ -213,10 +213,22 @@ class ulogin extends tplugin {
   
   public function check_logged(array $args) {
     $logged = litepublisher::$options->authcookies($args['litepubl_user_id'], $args['litepubl_user']);
-    
-    return array(
+        $result = array(
     'result' => $logged ? 'true' : 'false'
     );
+
+    if ($logged && isset($args['callback']) && $args['callback']) {
+      $callback = $args['callback'];
+      if (is_array($callback)) {
+        try {
+          $result['callback'] = tjsonserver::i()->callevent($callback['method'], array($callback));
+        } catch (Exception $e) {
+          $result['error_callback'] = $e->getMessage();
+        }
+      }
+    }
+
+return $result;
   }
   
   public static function filterphone($phone) {

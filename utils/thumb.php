@@ -15,8 +15,12 @@ $items = $files->db->getitems("media = 'image' and parent = 0");
 echo count($items), ' count<br>';
 foreach ($items as $item) {
 $srcfilename = litepublisher::$paths->files . $item['filename'];
+echo "$srcfilename <br>\n";
     if ($source = tmediaparser::readimage($srcfilename)) {
 $p->getsnapshot($srcfilename, $source);
+echo "rescale<br>\n";
+} else {
+echo "error<br>\n";
 }
 }
 

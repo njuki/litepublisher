@@ -5,7 +5,7 @@ http://litepublisher.ru/
 
 Установка. Если у вас есть шелл доступ к серверу, то рекомендую устанавливать из шел следующим образом:
 
-wget http://litepublisher.googlecode.com/files/litepublisher.x.xx.tar.gz
+wget http://litepublisher.com/download/litepublisher.x.xx.tar.gz
 tar -xf litepublisher.x.xx.tar.gz -p
 
 где вместо x.xx поставить номер актуальной версии. Таким образом будет скачен и распакован дистрибутив со всеми необходимыми правами. 
@@ -35,14 +35,6 @@ http://yourdomain/admin/
 http://yourdomain/admin/passwordrecover/
 
 где надо ввести ваш E-Mail администратора, на который будет выслан новый пароль к блогу, то есть старый пароль будет заменен новым случайно сгенерированным.
-
-Если вы не можете нормально зайти в админку, то вероятно вам придется отредактировать .htaccess файл следующим образом: замените строку
-RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization},L]
-
-на три других строки:
-RewriteCond %{HTTP:Authorization} .*
-  RewriteCond %{QUERY_STRING} !HTTP_AUTHORIZATION
-  RewriteRule ^(.*)$ $1?HTTP_AUTHORIZATION=%{HTTP:Authorization} [L,QSA]
 
 Для тех, кто хочет сделать редирект с адресами www можно добавить в .htaccess следующие строки:
 RewriteCond %{HTTP_HOST} ^www.site.ru$ [NC]
