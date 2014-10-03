@@ -39,7 +39,6 @@ class http {
       
       //curl_setopt($ch, CURLOPT_VERBOSE , true);
       //curl_setopt($ch, CURLOPT_STDERR, fopen('zerr.txt', 'w+'));
-      
       if (!ini_get('open_basedir')  && !ini_get('safe_mode') ) {
         curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
         $result= curl_exec($ch);
@@ -76,7 +75,7 @@ class http {
     $ch = self::createcurl($url, $post, $headers);
     $response = curl_exec($ch);
     //$respheaders = curl_getinfo($ch);
-    $code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+   $code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
     curl_close($ch);
     if (in_array($code, array('200', '201'))) return $response;
     return false;
