@@ -74,7 +74,11 @@ class tadminlogin extends tadminform {
     $expired = isset($_POST['remember']) ? time() + 31536000 : time() + 8*3600;
     $cookie = md5uniq();
     litepublisher::$options->setcookies($cookie, $expired);
+
     $url = !empty($_GET['backurl']) ? $_GET['backurl'] : (!empty($_GET['amp;backurl']) ? $_GET['amp;backurl'] :  (isset($_COOKIE['backurl']) ? $_COOKIE['backurl'] : ''));
+
+if ($url && strbegin($url, '/admin/login/')) $url = false;
+
     if (!$url) {
       $url = '/admin/';
       if (litepublisher::$options->group != 'admin') {
