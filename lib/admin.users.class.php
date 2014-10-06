@@ -146,7 +146,7 @@ class tadminusers extends tadminmenu {
       if ($id = $users->add($_POST)) {
         litepublisher::$urlmap->redir("$this->adminurl=$id&action=edit");
       } else {
-        return $this->html->h2->invalidregdata;
+        return $this->html->h4red->invalidregdata;
       }
       break;
       

@@ -25,13 +25,12 @@ class tusersman extends tdata {
     }
     
     $password = empty($values['password']) ? md5uniq() : $values['password'];
-    $password = basemd5(sprintf('%s:%s:%s', $email,  litepublisher::$options->realm, $password));
-    
+
     $item = array(
     'email' => $email,
     'name' =>isset($values['name']) ? trim($values['name']) : '',
     'website' => isset($values['website']) ? trim($values['website']) : '',
-    'password' => $password,
+    'password' => litepublisher::$options->hash($email . $password),
     'cookie' =>  md5uniq(),
     'expired' => sqldate(),
     'idgroups' => implode(',', $idgroups),
@@ -57,7 +56,7 @@ class tusersman extends tdata {
       switch ($k) {
         case 'password':
         if ($values['password'] != '') {
-          $item['password'] = basemd5(sprintf('%s:%s:%s', $values['email'],  litepublisher::$options->realm, $values['password']));
+          $item['password'] = litepublisher::$options->hash($values['email'] . $values['password']);
         }
         break;
         
