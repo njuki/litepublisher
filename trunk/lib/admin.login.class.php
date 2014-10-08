@@ -29,7 +29,6 @@ class tadminlogin extends tadminform {
     setcookie('backurl', '', 0, litepublisher::$site->subdir, false);
     litepublisher::$urlmap->nocache();
     return litepublisher::$urlmap->redir('/admin/login/');
-    return litepublisher::$urlmap->redir('/admin/login/');
   }
   
   //return error string message if not logged
@@ -57,18 +56,17 @@ class tadminlogin extends tadminform {
   }
   
   public function request($arg) {
-    turlmap::nocache();
     if ($arg == 'out')   return $this->logout($arg);
     parent::request($arg);
     $this->section = 'login';
     
-    if (!isset($_POST['email']) || !isset($_POST['password'])) return;
+    if (!isset($_POST['email']) || !isset($_POST['password'])) return     turlmap::nocache();
     $email = trim($_POST['email']);
     $password = trim($_POST['password']);
     
     if ($mesg = self::autherror($email, $password)) {
       $this->formresult = $this->html->h4red($mesg);
-      return;
+      return     turlmap::nocache();;
     }
     
     $expired = isset($_POST['remember']) ? time() + 31536000 : time() + 8*3600;
@@ -77,7 +75,7 @@ class tadminlogin extends tadminform {
 
     $url = !empty($_GET['backurl']) ? $_GET['backurl'] : (!empty($_GET['amp;backurl']) ? $_GET['amp;backurl'] :  (isset($_COOKIE['backurl']) ? $_COOKIE['backurl'] : ''));
 
-if ($url && strbegin($url, '/admin/login/')) $url = false;
+if ($url && (strbegin($url, '/admin/login/') || strbegin($url, '/admin/password/'))) $url = false;
 
     if (!$url) {
       $url = '/admin/';
@@ -88,6 +86,7 @@ if ($url && strbegin($url, '/admin/login/')) $url = false;
     }
     
     setcookie('backurl', '', 0, litepublisher::$site->subdir, false);
+    turlmap::nocache();
     return litepublisher::$urlmap->redir($url);
   }
   
