@@ -462,7 +462,6 @@ class tcommentmanager extends tevents_storage {
     if (!$this->filterstatus) return $this->defstatus;
     if ($this->defstatus == 'approved') return 'approved';
     
-    if ($this->trusted($idauthor)) return  'approved';
     return 'hold';
   }
   

@@ -125,9 +125,9 @@ class tdbmanager  {
   }
   
   public function key_exists($table, $key) {
-return $this->query("SHOW COLUMNS FROM $this->prefix$table LIKE '$column'")->num_rows;
+    return $this->query("SHOW COLUMNS FROM $this->prefix$table LIKE '$column'")->num_rows;
   }
-
+  
   public function getdatabases() {
     if ($res = $this->query("show databases")) {
       return $this->res2id($res);

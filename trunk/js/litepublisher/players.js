@@ -7,6 +7,7 @@
 
 ;(function( $, document, window){
   'use strict';
+  
   litepubl.Mediaplayer= Class.extend({
     tml: {
       video: '<video src="%%siteurl%%/files/%%file.filename%%" type="%%file.mime%%" controls="controls" autoplay="autoplay"></video>',

@@ -213,10 +213,10 @@ class ulogin extends tplugin {
   
   public function check_logged(array $args) {
     $logged = litepublisher::$options->authcookies($args['litepubl_user_id'], $args['litepubl_user']);
-        $result = array(
+    $result = array(
     'result' => $logged ? 'true' : 'false'
     );
-
+    
     if ($logged && isset($args['callback']) && $args['callback']) {
       $callback = $args['callback'];
       if (is_array($callback)) {
@@ -227,8 +227,8 @@ class ulogin extends tplugin {
         }
       }
     }
-
-return $result;
+    
+    return $result;
   }
   
   public static function filterphone($phone) {

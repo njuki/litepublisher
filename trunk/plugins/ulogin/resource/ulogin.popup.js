@@ -65,6 +65,7 @@
             $.closedialog();
             try {
               callback(token);
+              litepubl.stat('ulogin_token');
           } catch(e) {erralert(e);}
           };
         } else {
@@ -78,6 +79,7 @@
           width: 300,
           close: function() {
             self.dialogopened = false;
+            litepubl.stat('ulogin_close');
           },
           
           open: function() {
@@ -96,6 +98,8 @@
               });
               return false;
             });
+            
+            litepubl.stat('ulogin_open');
           },
           
           buttons: [{
@@ -121,7 +125,7 @@
         self.registered = true;
         self.logged = true;
         if ($.isFunction(callback)) {
-callback("callback" in r ? r.callback : undefined);
+          callback("callback" in r ? r.callback : undefined);
         }
       });
     },
@@ -138,39 +142,40 @@ callback("callback" in r ? r.callback : undefined);
       self.open('', function(token) {
         self.auth(token, remote_callback , callback);
       }, function() {
-if (remote_callback) {
-        $.litejsonpost(remote_callback, callback);
-} else {
-callback();
-}
+        if (remote_callback) {
+          $.litejsonpost(remote_callback, callback);
+        } else {
+          callback();
+        }
       });
     },
-
+    
     onlogin: function(remote_callback , callback) {
-if (!this.registered) return        this.logon(remote_callback, callback);
-
+      if (!this.registered) return        this.logon(remote_callback, callback);
+      
       var self = this;
-if (this.logged) {
-if (remote_callback) {
-        $.litejsonpost(remote_callback, callback);
-} else {
-callback('logged');
-return true;
-}
-} else {
-    $.litejson({method: "check_logged", callback: remote_callback ? remote_callback : false}, function(r) {
-        if (r.result == "true") {
-          self.logged = true;
-callback("callback" in r ? r.callback : undefined);
-} else {
-       self.logon(remote_callback, callback);
-}
-});
-}
-
-return false;
-}
-
+      if (this.logged) {
+        if (remote_callback) {
+          $.litejsonpost(remote_callback, callback);
+        } else {
+          callback('logged');
+          return true;
+        }
+      } else {
+      $.litejson({method: "check_logged", callback: remote_callback ? remote_callback : false}, function(r) {
+          if (r.result == "true") {
+            self.logged = true;
+            callback("callback" in r ? r.callback : undefined);
+          } else {
+            self.logon(remote_callback, callback);
+          }
+        });
+        litepubl.stat('ulogin_checklogged');
+      }
+      
+      return false;
+    }
+    
   });//class
   
 }(jQuery, document, window));

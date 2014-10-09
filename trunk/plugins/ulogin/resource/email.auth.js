@@ -73,6 +73,8 @@
             }
           })
           .filter('[value=reg]').click();
+          
+          litepubl.stat('emailauth_open');
         },
         
         buttons: [{
@@ -88,6 +90,7 @@
               edit.focus();
             }
             
+            litepubl.stat('emailauth_reg');
             return false;
           }
           
@@ -104,6 +107,7 @@
               edit.focus();
             }
             
+            litepubl.stat('emailauth_login');
             return false;
           }
           
@@ -112,6 +116,8 @@
           click: function() {
             var email = self.getemail();
             if (email) self.lostpass(email);
+            
+            litepubl.stat('emailauth_lostpass');
             return false;
           }
           

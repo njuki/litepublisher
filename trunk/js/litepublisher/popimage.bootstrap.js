@@ -119,6 +119,8 @@
             imgprev = new Image();
             imgprev.src = preload.data("image");
           }
+          
+        litepubl.stat('popimage', {src: self.data("image")});
         };
         
         img.onerror = function() {
