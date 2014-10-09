@@ -25,7 +25,7 @@ class tusersman extends tdata {
     }
     
     $password = empty($values['password']) ? md5uniq() : $values['password'];
-
+    
     $item = array(
     'email' => $email,
     'name' =>isset($values['name']) ? trim($values['name']) : '',

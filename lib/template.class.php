@@ -13,7 +13,7 @@ class ttemplate extends tevents_storage {
   public $itemplate;
   public $view;
   public $ltoptions;
-public $custom;
+  public $custom;
   public $hover;
   public $extrahead;
   public $extrabody;
@@ -39,7 +39,7 @@ public $custom;
     'video_width' => litepublisher::$site->video_width,
     'video_height' => litepublisher::$site->video_height,
     'theme' => array(),
-'custom' => array(),
+    'custom' => array(),
     );
     $this->hover = true;
     $this->data['heads'] = '';
@@ -48,15 +48,15 @@ public $custom;
     $this->data['jsload'] = '<script type="text/javascript">$.load_script(%s);</script>';
     $this->data['footer']=   '<a href="http://litepublisher.com/">Powered by Lite Publisher</a>';
     $this->data['tags'] = array();
-$this->addmap('custom', array());
+    $this->addmap('custom', array());
     $this->extrahead = '';
     $this->extrabody = '';
   }
-
+  
   public function assignmap() {
-parent::assignmap();
-$this->ltoptions['custom'] = &$this->custom;
-}
+    parent::assignmap();
+    $this->ltoptions['custom'] = &$this->custom;
+  }
   
   public function __get($name) {
     if (method_exists($this, $get = 'get' . $name)) return $this->$get();

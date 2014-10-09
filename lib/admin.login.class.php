@@ -72,11 +72,13 @@ class tadminlogin extends tadminform {
     $expired = isset($_POST['remember']) ? time() + 31536000 : time() + 8*3600;
     $cookie = md5uniq();
     litepublisher::$options->setcookies($cookie, $expired);
-
+    litepublisher::$options->setcookie('litepubl_regservice', 'email', $expired);
+    
     $url = !empty($_GET['backurl']) ? $_GET['backurl'] : (!empty($_GET['amp;backurl']) ? $_GET['amp;backurl'] :  (isset($_COOKIE['backurl']) ? $_COOKIE['backurl'] : ''));
-
-if ($url && (strbegin($url, '/admin/login/') || strbegin($url, '/admin/password/'))) $url = false;
-
+    
+    if ($url && strbegin($url, litepublisher::$site->url)) $url = substr($url, strlen(litepublisher::$site->url));
+    if ($url && (strbegin($url, '/admin/login/') || strbegin($url, '/admin/password/'))) $url = false;
+    
     if (!$url) {
       $url = '/admin/';
       if (litepublisher::$options->group != 'admin') {
@@ -85,7 +87,7 @@ if ($url && (strbegin($url, '/admin/login/') || strbegin($url, '/admin/password/
       }
     }
     
-    setcookie('backurl', '', 0, litepublisher::$site->subdir, false);
+    litepublisher::$options->setcookie('backurl', '', 0);
     turlmap::nocache();
     return litepublisher::$urlmap->redir($url);
   }

@@ -419,6 +419,7 @@ class ttemplate extends tevents_storage {
   public $itemplate;
   public $view;
   public $ltoptions;
+  public $custom;
   public $hover;
   public $extrahead;
   public $extrabody;
@@ -440,11 +441,11 @@ class ttemplate extends tevents_storage {
     'url' =>    litepublisher::$site->url,
     'files' =>litepublisher::$site->files,
     'idurl' => litepublisher::$urlmap->itemrequested['id'],
-    'jqueryui_version' => litepublisher::$site->jqueryui_version,
     'lang' => litepublisher::$site->language,
     'video_width' => litepublisher::$site->video_width,
     'video_height' => litepublisher::$site->video_height,
     'theme' => array(),
+    'custom' => array(),
     );
     $this->hover = true;
     $this->data['heads'] = '';
@@ -453,8 +454,14 @@ class ttemplate extends tevents_storage {
     $this->data['jsload'] = '<script type="text/javascript">$.load_script(%s);</script>';
     $this->data['footer']=   '<a href="http://litepublisher.com/">Powered by Lite Publisher</a>';
     $this->data['tags'] = array();
+    $this->addmap('custom', array());
     $this->extrahead = '';
     $this->extrabody = '';
+  }
+  
+  public function assignmap() {
+    parent::assignmap();
+    $this->ltoptions['custom'] = &$this->custom;
   }
   
   public function __get($name) {
@@ -584,7 +591,7 @@ class ttemplate extends tevents_storage {
   }
   
   private function getltoptions() {
-    return sprintf('<script type="text/javascript">window.ltoptions = %s;</script>', json_encode($this->ltoptions));
+    return sprintf('<script type="text/javascript">window.ltoptions = %s;</script>', tojson($this->ltoptions));
   }
   
   public function getjavascript($filename) {
