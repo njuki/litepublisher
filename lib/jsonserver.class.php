@@ -51,33 +51,41 @@ class tjsonserver extends tevents {
     return false;
   }
   
-  public function request($param) {
-    $this->beforerequest();
-    if (isset($_GET['method'])) {
-      $method = $_GET['method'];
-      $args = $_GET;
-    } elseif (isset($_POST['method'])) {
+  public function getargs() {
+    if (isset($_GET['method'])) return $_GET;
+
+if (isset($_POST['method'])) {
       tguard::post();
-      $method = $_POST['method'];
-      $args = $_POST;
-    } elseif ($args = $this->get_json_args()) {
-      if (isset($args['method'])) {
-        $method = $args['method'];
-      } else {
-        return 403;
+return $_POST;
+}
+
+if (isset($_POST['json'])) {
+      tguard::post();
+    if (($s = trim($_POST['json'])) && ($args = json_decode($s, true))) {
+if (isset($args['method'])) return $args;
+}
+}
+
+if ($args = $this->get_json_args()) {
+      if (isset($args['method'])) return $args;
       }
-    } else {
-      return 403;
+
+      return false;
     }
     
-    if (!isset($this->events[$method])) return 403;
+  public function request($param) {
+    $this->beforerequest();
+$args = $this->getargs();    
+if (!$args || !isset($args['method'])) return 403;
+    if (!isset($this->events[$args['method']])) return 403;
+
     if (isset($args['litepubl_user'])) $_COOKIE['litepubl_user'] = $args['litepubl_user'];
     if (isset($args['litepubl_user_id'])) $_COOKIE['litepubl_user_id'] = $args['litepubl_user_id'];
-    
-    $a = array($args);
+
+    $a = array(&$args);
     $this->callevent('beforecall', $a);
     try {
-      $result = $this->callevent($method, $a);
+      $result = $this->callevent($args['method'], $a);
     } catch (Exception $e) {
       if (litepublisher::$debug || $this->debug) {
         litepublisher::$options->handexception($e);

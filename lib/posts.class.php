@@ -192,20 +192,14 @@ class tposts extends titems {
       if (isset($views->defaults['post'])) $post->id_view = $views->defaults['post'];
     }
     
-    $linkgen = tlinkgenerator::i();
-    $post->url = $linkgen->addurl($post, $post->schemalink);
-    $urlmap = turlmap::i();
-    $id = $post->addtodb();
-    $post->idurl = $urlmap->add($post->url, get_class($post), (int) $post->id);
-    $post->db->setvalue($post->id, 'idurl', $post->idurl);
-    $post->onid();
-    $this->lock();
+    $post->url = tlinkgenerator::i()->addurl($post, $post->schemalink);
+    $id = $post->create_id();
+
     $this->updated($post);
     $this->cointerface('add', $post);
-    $this->unlock();
     $this->added($post->id);
     $this->changed();
-    $urlmap->clearcache();
+    litepublisher::$urlmap->clearcache();
     return $post->id;
   }
   

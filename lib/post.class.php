@@ -214,7 +214,7 @@ class tpost extends titem implements  itemplate {
     }
   }
   
-  public function addtodb() {
+  public function create_id() {
     $id = $this->factory->add($this);
     $this->setid($id);
     if ($this->childtable) {
@@ -222,8 +222,17 @@ class tpost extends titem implements  itemplate {
       $this->childdata['id'] = $id;
       $this->getdb($this->childtable)->insert($this->childdata);
     }
+
+    $this->idurl = $this->create_url();
+    $this->db->setvalue($id, 'idurl', $this->idurl);
+$this->onid();
+
     return $id;
   }
+
+public function create_url() {
+return litepublisher::$urlmap->add($this->url, get_class($this), (int) $this->id);
+}
   
   public function onid() {
     if (isset($this->_onid) && count($this->_onid) > 0) {
@@ -241,7 +250,7 @@ class tpost extends titem implements  itemplate {
       $this->_meta->id = $this->id;
       $this->_meta->save();
     }
-  }
+ }
   
   public function setonid($call) {
     if (!is_callable($call)) $this->error('Event onid not callable');
