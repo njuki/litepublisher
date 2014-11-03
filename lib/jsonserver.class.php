@@ -75,16 +75,33 @@ if ($args = $this->get_json_args()) {
       return false;
     }
     
-  public function request($param) {
+  public function request($idurl) {
     $this->beforerequest();
 $args = $this->getargs();    
 if (!$args || !isset($args['method'])) return 403;
-    if (!isset($this->events[$args['method']])) return 403;
 
-    if (isset($args['litepubl_user'])) $_COOKIE['litepubl_user'] = $args['litepubl_user'];
-    if (isset($args['litepubl_user_id'])) $_COOKIE['litepubl_user_id'] = $args['litepubl_user_id'];
+$rpc = isset($args['jsonrpc']) ? ($args['jsonrpc'] == '2.0') : false;
+$id =$rpc && isset($args['id']) ? $args['id'] : false;
 
-    $a = array(&$args);
+    if (!isset($this->events[$args['method']])) {
+if (!$rpc) return 403;
+
+$result = array(
+'jsonrpc' => '2.0',
+'error' => array(
+'code' =>       404,
+'message' => sprintf('Method "%s" not found', $args['method']),
+));
+
+if ($id) $result['id'] = $id;
+return $this->json($result);
+}
+
+$params = $rpc && isset($args['params']) ? $args['params'] : $args;
+    if (isset($params['litepubl_user'])) $_COOKIE['litepubl_user'] = $params['litepubl_user'];
+    if (isset($params['litepubl_user_id'])) $_COOKIE['litepubl_user_id'] = $params['litepubl_user_id'];
+
+    $a = array(&$params);
     $this->callevent('beforecall', $a);
     try {
       $result = $this->callevent($args['method'], $a);
@@ -93,19 +110,32 @@ if (!$args || !isset($args['method'])) return 403;
         litepublisher::$options->handexception($e);
         throw new Exception(litepublisher::$options->errorlog);
       }
-      
-      if (403 == $e->getCode()) {
-        $result = '<?php Header(\'HTTP/1.0 403 Forbidden\', true, 403); ?>';
-      } else {
-        //500 error
-        $result = '<?php header(\'HTTP/1.1 500 Internal Server Error\', true, 500); ?>';
-      }
-      
-      $result .= $e->getMessage();
-      return $result;
+
+$result = array(
+'jsonrpc' => '2.0',
+'error' => array(
+'code' =>       $e->getCode(),
+'message' => $e->getMessage()
+),
+);
+
+if ($id) $result['id'] = $args['id'];
+return $this->json(array($result);
     }
-    
+
     $this->callevent('aftercall', array(&$result, $args));
+if ($rpc) {
+$result = array(
+'jsonrpc' => '2.0',
+'result' => $result
+);
+
+if ($id) $result['id'] = $id;
+}
+return $this->json($result);
+}
+
+public function json($result) {
     $js = tojson($result);
     //if (litepublisher::$debug) tfiler::log("response:\n".$js, 'json.txt');
     
@@ -116,7 +146,8 @@ if (!$args || !isset($args['method'])) return 403;
     header('Date: ".date('r') . "');
     Header( 'Cache-Control: no-cache, must-revalidate');
     Header( 'Pragma: no-cache');
-    ?>" . $js;
+    ?>" .
+ $js;
     
     //header('Content-Type: application/json');
   }
