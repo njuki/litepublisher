@@ -173,29 +173,50 @@
       return $.litejsontype("post", data, callback);
     },
     
-    litejsontype: function(type, data, callback) {
+    litejsontype: function(type, params, callback, error) {
       if (type != "post") type = "get";
+var method = params.method;
+delete params.method;
+
       var user = litepubl.getuser();
       if (user.id) {
-        data.litepubl_user_id = user.id;
-        data.litepubl_user = user.pass;
-        data.litepubl_user_regservice = user.regservice;
+        params.litepubl_user_id = user.id;
+        params.litepubl_user = user.pass;
+        params.litepubl_user_regservice = user.regservice;
       }
       
-      var         cache =  "cache" in data ? data.cache : false;
+      var         cache =  "cache" in params ? params.cache : false;
       var nocache = '';
-      if (!cache && (type == "post")) {
-        nocache = '?_=' + litepubl.guid++;
-      }
+      if (!cache && (type == "post")) nocache = '?_=' + litepubl.guid++;
       
       return $.ajax({
         type: type,
         url: ltoptions.ajaxurl + "/admin/jsonserver.php" + nocache,
-        data: data,
-        success: callback,
+        data: {
+jsonrpc: "2.0",
+method: method,
+params: params,
+id: litepubl.uid++
+},
+
+        success: function(r) {
+          if (typeof r === "object") {
+if ("result" in r) {
+if ($.isFunction(callback)) callback(r.result);
+} else if ("error" in r) {
+if ($.isFunction(error)) error(r.error);
+}
+}
+},
         dataType: "json",
         cache: cache
-      });
+      })
+          .fail( function(jq, textStatus, errorThrown) {
+if ($.isFunction(error)) error({
+code: jq.status,
+message: jq.responseText
+});
+});
     },
     
     onEscape: function (callback) {
