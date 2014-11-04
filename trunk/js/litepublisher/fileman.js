@@ -72,14 +72,12 @@
     
     load_current_files: function() {
       var self = this;
-    $.litejson({method: "files_getpost", idpost: ltoptions.idpost}, function (r) {
+    $.minjson("files_getpost", {idpost: ltoptions.idpost}, function (r) {
         try {
           self.set_uploaded(r.count, r.files);
       } catch(e) {erralert(e);}
-      })
-      .fail( function(jq, textStatus, errorThrown) {
-        $.messagebox(lang.dialog.error, jq.responseText);
-        //alert(jq.responseText);
+        }, function(message, code) {
+        $.messagebox(lang.dialog.error, message);
       });
     },
     
@@ -171,12 +169,11 @@
     loadpage: function(uipanel, page) {
       var self = this;
       $(uipanel).data("files", "loading");
-    $.litejson({method: "files_getpage", page: page - 1}, function(r) {
+    $.minjson("files_getpage", {page: page - 1}, function(r) {
         self.joinitems(r.files);
         self.setpage(uipanel, r.files);
-      })
-      .fail( function(jq, textStatus, errorThrown) {
-        $.messagebox(lang.dialog.error, jq.responseText);
+        }, function(message, code) {
+        $.messagebox(lang.dialog.error, message);
       });
     },
     
@@ -282,18 +279,16 @@
     
     setprops: function(idfile, values, holder) {
       $.extend(this.items[idfile], values);
-      values.method = "files_setprops";
       values.idfile = idfile;
       var self = this;
-      return $.litejsonpost(values, function(r) {
+      return $.jsonrpc("files_setprops", values, function(r) {
         self.items[r.item["id"]] = r.item;
         //need to update infos but we cant find all files
         if (!!holder) holder.replaceWith(self.get_fileitem(idfile));
         self.indialog = false;
-      })
-      .fail( function(jq, textStatus, errorThrown) {
+        }, function(message, code) {
         self.indialog = false;
-        $.messagebox(lang.dialog.error, jq.responseText);
+        $.messagebox(lang.dialog.error, message);
       });
     }
     

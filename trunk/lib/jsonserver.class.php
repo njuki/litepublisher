@@ -97,7 +97,12 @@ if ($id) $result['id'] = $id;
 return $this->json($result);
 }
 
-$params = $rpc && isset($args['params']) ? $args['params'] : $args;
+if ($rpc) {
+$params = isset($args['params']) ? $args['params'] : array();
+} else {
+$params = $args;
+}
+
     if (isset($params['litepubl_user'])) $_COOKIE['litepubl_user'] = $params['litepubl_user'];
     if (isset($params['litepubl_user_id'])) $_COOKIE['litepubl_user_id'] = $params['litepubl_user_id'];
 

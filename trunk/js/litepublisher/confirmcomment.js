@@ -78,16 +78,16 @@
     },
     
     send: function() {
-    var values = {method: "comment_add"};
+    var params = {};
       var inputs = $(":input", this.options.form);
       inputs.each(function() {
         var self = $(this);
-        values[self.attr("name")] = self.val();
+        params[self.attr("name")] = self.val();
         self.attr("disabled", "disabled");
       });
       
       var self = this;
-      $.litejsonpost(values, function (resp) {
+      $.jsonrpc("comment_add", params, function (resp) {
         try {
           switch (resp.code) {
             case 'confirm':
@@ -103,10 +103,7 @@
             break;
           }
       } catch(e) { form.error(e.message); }
-      })
-      .fail( function(jq, textStatus, errorThrown) {
-        self.error(jq.responseText);
-      })
+      }, self.error)
       .always(function() {
         inputs.removeAttr("disabled");
       });
@@ -116,10 +113,7 @@
       var self = this;
       $.confirmbox(lang.dialog.confirm, lang.comment.checkspam , lang.comment.robot, lang.comment.human, function(index) {
         if (index !=1) return;
-      $.litejsonpost({method: "comment_confirm", confirmid: confirmid}, self.success)
-        .fail( function(jq, textStatus, errorThrown) {
-          self.error(jq.responseText);
-        });
+      $.minjson("comment_confirm", {confirmid: confirmid}, self.success, self.error);
       });
     },
     
