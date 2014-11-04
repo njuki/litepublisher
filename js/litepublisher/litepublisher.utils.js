@@ -165,19 +165,9 @@
       $('<link rel="stylesheet" type="text/css" href="' + url + '" />').appendTo("head:first");
     }  ,
     
-    litejson: function(data, callback) {
-      return $.litejsontype("get", data, callback);
-    },
-    
-    litejsonpost: function(data, callback) {
-      return $.litejsontype("post", data, callback);
-    },
-    
-    litejsontype: function(type, params, callback, error) {
-      if (type != "post") type = "get";
-var method = params.method;
-delete params.method;
-
+    jsonrpc: function(method, params, callback, error) {
+if (!params) params = {};
+      var         cache =  "cache" in params ? params.cache : false;
       var user = litepubl.getuser();
       if (user.id) {
         params.litepubl_user_id = user.id;
@@ -185,37 +175,61 @@ delete params.method;
         params.litepubl_user_regservice = user.regservice;
       }
       
-      var         cache =  "cache" in params ? params.cache : false;
-      var nocache = '';
-      if (!cache && (type == "post")) nocache = '?_=' + litepubl.guid++;
-      
       return $.ajax({
-        type: type,
-        url: ltoptions.ajaxurl + "/admin/jsonserver.php" + nocache,
-        data: {
+        type: 'post',
+        url: ltoptions.ajaxurl + "/admin/jsonserver.php" + (cache ? '' : '?_=' + litepubl.guid++),
+        cache: cache,
+        dataType: "json",
+        data: $.toJSON({
 jsonrpc: "2.0",
 method: method,
 params: params,
 id: litepubl.uid++
-},
+}),
 
         success: function(r) {
           if (typeof r === "object") {
 if ("result" in r) {
 if ($.isFunction(callback)) callback(r.result);
 } else if ("error" in r) {
-if ($.isFunction(error)) error(r.error);
+if ($.isFunction(error)) error(r.error.message, r.error.code);
 }
 }
-},
-        dataType: "json",
-        cache: cache
+}
       })
           .fail( function(jq, textStatus, errorThrown) {
-if ($.isFunction(error)) error({
-code: jq.status,
-message: jq.responseText
+if ($.isFunction(error)) error(jq.responseText, jq.status);
 });
+    },
+    
+    minjson: function(method, params, callback, error) {
+if (!params) params = {};
+params.method = method;
+      var user = litepubl.getuser();
+      if (user.id) {
+        params.litepubl_user_id = user.id;
+        params.litepubl_user = user.pass;
+        params.litepubl_user_regservice = user.regservice;
+      }
+      
+      return $.ajax({
+        type: 'get',
+        url: ltoptions.ajaxurl + "/admin/jsonserver.php",
+        cache: ("cache" in params ? params.cache : false),
+        dataType: "json",
+        data: params,
+        success: function(r) {
+          if (typeof r === "object") {
+if ("result" in r) {
+if ($.isFunction(callback)) callback(r.result);
+} else if ("error" in r) {
+if ($.isFunction(error)) error(r.error.message, r.error.code);
+}
+}
+}
+      })
+          .fail( function(jq, textStatus, errorThrown) {
+if ($.isFunction(error)) error(jq.responseText, jq.status);
 });
     },
     

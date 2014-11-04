@@ -22,6 +22,7 @@ function tjsmergerInstall($self) {
   $self->add($section, '/js/prettyphoto/js/jquery.prettyPhoto.js');
   $self->add($section, '/js/plugins/class-extend.min.js');
   $self->add($section, '/js/plugins/jquery.cookie.min.js');
+  $self->add($section, '/js/plugins/tojson.min.js');
   $self->add($section, '/js/litepublisher/litepublisher.utils.min.js');
   $self->add($section, '/js/litepublisher/widgets.min.js');
   $self->add($section, '/js/litepublisher/widgets.bootstrap.min.js');

@@ -7,6 +7,7 @@
 
 (function ($, document, window) {
   'use strict';
+
   litepubl.Moderate = Class.extend({
     enabled : true,
     
@@ -59,14 +60,12 @@
         this.setenabled(false);
         $.confirmbox(lang.dialog.confirm, lang.comments.confirmdelete, lang.comments.yesdelete, lang.comments.nodelete, function(index) {
           if (index !=0) return self.setenabled(true);
-        $.litejson({method: "comment_delete", id: id}, function(r){
+        $.minjson("comment_delete", {id: id}, function(r){
             if (r == false) return self.error(lang.comments.notdeleted);
             $(idcomment).remove();
             self.setenabled(true);
-          })
-          .fail( function(jq, textStatus, errorThrown) {
+          }, function(message, code) {
             self.error(lang.comments.notdeleted);
-            //alert(jq.responseText);
           });
         });
         break;
@@ -75,27 +74,24 @@
         case "approved":
         case "approve":
         this.setenabled(false);
-      $.litejson({method: "comment_setstatus", id: id, status: status == 'hold' ? 'hold' : 'approved'}, function(r) {
+      $.minjson("comment_setstatus", {id: id, status: status == 'hold' ? 'hold' : 'approved'}, function(r) {
           try {
             if (r == false) return self.error(lang.comments.notmoderated);
             $(status == "hold" ? options.hold : options.comments).append($(options.comment  + id));
             self.setenabled(true);
         } catch(e) {erralert(e);}
-        })
-        .fail( function(jq, textStatus, errorThrown) {
+        }, function(message, code) {
           self.error(lang.comments.notmoderated);
-          //alert(jq.responseText);
         });
         break;
         
         case "edit":
         this.setenabled(false);
-      $.litejson({method: "comment_getraw", id: id}, function(resp){
+      $.minjson("comment_getraw", {id: id}, function(resp){
           try {
             self.edit(id, resp.rawcontent);
         } catch(e) {erralert(e);}
-        })
-        .fail( function(jq, textStatus, errorThrown) {
+        }, function(message, code) {
           self.error(lang.comments.errorrecieved);
         });
         break;
@@ -128,7 +124,7 @@
           }
           
           $(":input", form).attr("disabled", "disabled");
-        $.litejsonpost({method: "comment_edit", id: area.data("idcomment"), content: content}, function(r){
+        $.jsonrpc("comment_edit", {id: area.data("idcomment"), content: content}, function(r){
             try {
               $(":input", form).removeAttr("disabled");
               var cc = self.options.content + r.id;
@@ -136,8 +132,7 @@
               self.restore_submit();
               location.hash = cc.substring(1);
           } catch(e) {erralert(e);}
-          })
-          .fail( function(jq, textStatus, errorThrown) {
+        }, function(message, code) {
             $(":input", form).removeAttr("disabled");
             self.error(lang.comments.notedited);
             self.restore_submit();
@@ -161,7 +156,7 @@
       var self = this;
       var options = this.options;
       $(".loadhold").parent().remove();
-    $.litejson({method: "comments_get_hold", idpost: ltoptions.idpost}, function(r) {
+    $.minjson("comments_get_hold", {idpost: ltoptions.idpost}, function(r) {
         try {
           if (options.ismoder) {
             var approved = $(options.comments);
@@ -172,8 +167,7 @@
           $(options.comments).after(r.items);
           self.create_buttons(options.hold);
       } catch(e) {erralert(e);}
-      })
-      .fail( function(jq, textStatus, errorThrown) {
+        }, function(message, code) {
         self.error(lang.comments.errorrecieved);
       });
       return false;

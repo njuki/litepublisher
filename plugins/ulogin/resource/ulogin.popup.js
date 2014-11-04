@@ -117,7 +117,7 @@
     
     auth: function(token, remote_callback, callback) {
       var self =this;
-    return $.litejsonpost({method: "ulogin_auth", token: token, callback: remote_callback ? remote_callback : false}, function(r) {
+    return $.jsonrpc("ulogin_auth", {token: token, callback: remote_callback ? remote_callback : false}, function(r) {
         litepubl.user = r;
         set_cookie("litepubl_user_id", r.id);
         set_cookie("litepubl_user", r.pass);
@@ -143,7 +143,7 @@
         self.auth(token, remote_callback , callback);
       }, function() {
         if (remote_callback) {
-          $.litejsonpost(remote_callback, callback);
+          $.jsonrpc(remote_callback, callback);
         } else {
           callback();
         }
