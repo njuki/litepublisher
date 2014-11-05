@@ -60,12 +60,19 @@
         this.setenabled(false);
         $.confirmbox(lang.dialog.confirm, lang.comments.confirmdelete, lang.comments.yesdelete, lang.comments.nodelete, function(index) {
           if (index !=0) return self.setenabled(true);
-        $.minjson("comment_delete", {id: id}, function(r){
+        $.jsonrpc({
+type: 'get',
+method: "comment_delete", 
+params: {id: id}, 
+callback: function(r){
             if (r == false) return self.error(lang.comments.notdeleted);
             $(idcomment).remove();
             self.setenabled(true);
-          }, function(message, code) {
+          }, 
+
+error: function(message, code) {
             self.error(lang.comments.notdeleted);
+}
           });
         });
         break;
@@ -74,25 +81,39 @@
         case "approved":
         case "approve":
         this.setenabled(false);
-      $.minjson("comment_setstatus", {id: id, status: status == 'hold' ? 'hold' : 'approved'}, function(r) {
+        $.jsonrpc({
+type: 'get',
+method: "comment_setstatus",
+params:  {id: id, status: status == 'hold' ? 'hold' : 'approved'},
+callback:  function(r) {
           try {
             if (r == false) return self.error(lang.comments.notmoderated);
             $(status == "hold" ? options.hold : options.comments).append($(options.comment  + id));
             self.setenabled(true);
         } catch(e) {erralert(e);}
-        }, function(message, code) {
+        }, 
+
+error: function(message, code) {
           self.error(lang.comments.notmoderated);
+}
         });
         break;
         
         case "edit":
         this.setenabled(false);
-      $.minjson("comment_getraw", {id: id}, function(resp){
+        $.jsonrpc({
+type: 'get',
+method: "comment_getraw",
+params: {id: id},
+callback: function(resp){
           try {
             self.edit(id, resp.rawcontent);
         } catch(e) {erralert(e);}
-        }, function(message, code) {
+        }, 
+
+error: function(message, code) {
           self.error(lang.comments.errorrecieved);
+}
         });
         break;
         
@@ -124,7 +145,10 @@
           }
           
           $(":input", form).attr("disabled", "disabled");
-        $.jsonrpc("comment_edit", {id: area.data("idcomment"), content: content}, function(r){
+        $.jsonrpc({
+method: "comment_edit", 
+params: {id: area.data("idcomment"), content: content}, 
+callback: function(r){
             try {
               $(":input", form).removeAttr("disabled");
               var cc = self.options.content + r.id;
@@ -132,11 +156,14 @@
               self.restore_submit();
               location.hash = cc.substring(1);
           } catch(e) {erralert(e);}
-        }, function(message, code) {
+        }, 
+
+error: function(message, code) {
             $(":input", form).removeAttr("disabled");
             self.error(lang.comments.notedited);
             self.restore_submit();
-          });
+          }
+});
           
       } catch(e) {erralert(e);}
         return false;
@@ -156,7 +183,11 @@
       var self = this;
       var options = this.options;
       $(".loadhold").parent().remove();
-    $.minjson("comments_get_hold", {idpost: ltoptions.idpost}, function(r) {
+        $.jsonrpc({
+type: 'get',
+method: "comments_get_hold",
+params: {idpost: ltoptions.idpost},
+callback: function(r) {
         try {
           if (options.ismoder) {
             var approved = $(options.comments);
@@ -167,8 +198,11 @@
           $(options.comments).after(r.items);
           self.create_buttons(options.hold);
       } catch(e) {erralert(e);}
-        }, function(message, code) {
+        },
+
+error:  function(message, code) {
         self.error(lang.comments.errorrecieved);
+}
       });
       return false;
     },

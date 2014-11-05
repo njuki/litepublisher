@@ -159,24 +159,22 @@
     },
     
     login: function(email, password) {
-    return this.ajax({method: "email_login", email: email, password: password}, $.proxy(this.success, this));
+    return this.ajax({
+method: "email_login",
+params:  {email: email, password: password},
+callback:  $.proxy(this.success, this)
+});
     },
     
-    ajax: function(params, callback) {
+    ajax: function(args) {
       this.disable(true);
       var self = this;
-      return $.litejson(params, function(r) {
-        if ((typeof r === "object") && ("error" in r)) {
+args.error = function(message, code) {
           self.disable(false);
-          $("#info-status", self.dialog).text(r.error);
-        } else {
-          callback(r);
-        }
-      })
-      .fail(function(jq, textStatus, errorThrown) {
-        self.disable(false);
-        $("#info-status", self.dialog).text(jq.responseText);
-      });
+          $("#info-status", self.dialog).text(message);
+      };
+
+      return $.jsonrpc(args);
     },
     
     setstatus: function(status) {
@@ -188,15 +186,23 @@
     
     reg: function(email, name) {
       var self = this;
-    return this.ajax({method: "email_reg", email: email, name: name}, function(r) {
+    return this.ajax({
+method: "email_reg",
+params:  {email: email, name: name},
+callback: function(r) {
         self.setstatus('registered');
+}
       });
     },
     
     lostpass: function(email, name) {
       var self = this;
-    return this.ajax({method: "email_lostpass", email: email, name: name}, function(r) {
+    return this.ajax({
+method: "email_lostpass",
+params:  {email: email, name: name},
+callback:  function(r) {
         self.setstatus('restored');
+}
       });
     }
     

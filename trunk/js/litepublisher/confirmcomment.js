@@ -87,7 +87,10 @@
       });
       
       var self = this;
-      $.jsonrpc("comment_add", params, function (resp) {
+      $.jsonrpc({
+method: "comment_add",
+params: params,
+callback:  function (resp) {
         try {
           switch (resp.code) {
             case 'confirm':
@@ -103,7 +106,10 @@
             break;
           }
       } catch(e) { form.error(e.message); }
-      }, self.error)
+      }, 
+
+error: self.error
+})
       .always(function() {
         inputs.removeAttr("disabled");
       });
@@ -113,7 +119,13 @@
       var self = this;
       $.confirmbox(lang.dialog.confirm, lang.comment.checkspam , lang.comment.robot, lang.comment.human, function(index) {
         if (index !=1) return;
-      $.minjson("comment_confirm", {confirmid: confirmid}, self.success, self.error);
+        $.jsonrpc({
+type: 'get',
+method: "comment_confirm",
+params: {confirmid: confirmid},
+callback:  self.success,
+error:  self.error
+});
       });
     },
     
