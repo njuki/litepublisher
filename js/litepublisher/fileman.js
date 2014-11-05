@@ -72,12 +72,19 @@
     
     load_current_files: function() {
       var self = this;
-    $.minjson("files_getpost", {idpost: ltoptions.idpost}, function (r) {
+        $.jsonrpc({
+type: 'get',
+method: "files_getpost",
+params: {idpost: ltoptions.idpost},
+callback: function (r) {
         try {
           self.set_uploaded(r.count, r.files);
       } catch(e) {erralert(e);}
-        }, function(message, code) {
+        },
+
+error: function(message, code) {
         $.messagebox(lang.dialog.error, message);
+}
       });
     },
     
@@ -169,11 +176,18 @@
     loadpage: function(uipanel, page) {
       var self = this;
       $(uipanel).data("files", "loading");
-    $.minjson("files_getpage", {page: page - 1}, function(r) {
+        $.jsonrpc({
+type: 'get',
+method: "files_getpage",
+params: {page: page - 1},
+callback: function(r) {
         self.joinitems(r.files);
         self.setpage(uipanel, r.files);
-        }, function(message, code) {
+        },
+
+error:  function(message, code) {
         $.messagebox(lang.dialog.error, message);
+}
       });
     },
     
@@ -281,15 +295,21 @@
       $.extend(this.items[idfile], values);
       values.idfile = idfile;
       var self = this;
-      return $.jsonrpc("files_setprops", values, function(r) {
+      return $.jsonrpc({
+method: "files_setprops",
+params: values, 
+callback: function(r) {
         self.items[r.item["id"]] = r.item;
         //need to update infos but we cant find all files
         if (!!holder) holder.replaceWith(self.get_fileitem(idfile));
         self.indialog = false;
-        }, function(message, code) {
+        }, 
+
+error: function(message, code) {
         self.indialog = false;
         $.messagebox(lang.dialog.error, message);
-      });
+      }
+});
     }
     
   });//fileman

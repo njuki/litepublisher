@@ -117,16 +117,18 @@
     
     auth: function(token, remote_callback, callback) {
       var self =this;
-    return $.jsonrpc("ulogin_auth", {token: token, callback: remote_callback ? remote_callback : false}, function(r) {
+    return $.jsonrpc({
+method: "ulogin_auth",
+params:  {token: token, callback: remote_callback ? remote_callback : false},
+callback:  function(r) {
         litepubl.user = r;
         set_cookie("litepubl_user_id", r.id);
         set_cookie("litepubl_user", r.pass);
         set_cookie("litepubl_regservice", r.regservice);
         self.registered = true;
         self.logged = true;
-        if ($.isFunction(callback)) {
-          callback("callback" in r ? r.callback : undefined);
-        }
+        if ($.isFunction(callback)) callback("callback" in r ? r.callback : undefined);
+}
       });
     },
     
@@ -143,7 +145,8 @@
         self.auth(token, remote_callback , callback);
       }, function() {
         if (remote_callback) {
-          $.jsonrpc(remote_callback, callback);
+remote_callback.callback = callback;
+          $.jsonrpc(remote_callback);
         } else {
           callback();
         }
@@ -156,19 +159,24 @@
       var self = this;
       if (this.logged) {
         if (remote_callback) {
-          $.litejsonpost(remote_callback, callback);
+remote_callback.callback = callback;
+          $.jsonrpc(remote_callback);
         } else {
           callback('logged');
           return true;
         }
       } else {
-      $.litejson({method: "check_logged", callback: remote_callback ? remote_callback : false}, function(r) {
+      $.jsonrpc({
+method: "check_logged",
+params:  {callback: remote_callback ? remote_callback : false},
+callback:  function(r) {
           if (r.result == "true") {
             self.logged = true;
             callback("callback" in r ? r.callback : undefined);
           } else {
             self.logon(remote_callback, callback);
           }
+}
         });
         litepubl.stat('ulogin_checklogged');
       }

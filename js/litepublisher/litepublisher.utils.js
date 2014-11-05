@@ -165,71 +165,56 @@
       $('<link rel="stylesheet" type="text/css" href="' + url + '" />').appendTo("head:first");
     }  ,
     
-    jsonrpc: function(method, params, callback, error) {
-if (!params) params = {};
-      var         cache =  "cache" in params ? params.cache : false;
-      var user = litepubl.getuser();
-      if (user.id) {
-        params.litepubl_user_id = user.id;
-        params.litepubl_user = user.pass;
-        params.litepubl_user_regservice = user.regservice;
-      }
-      
-      return $.ajax({
-        type: 'post',
-        url: ltoptions.ajaxurl + "/admin/jsonserver.php" + (cache ? '' : '?_=' + litepubl.guid++),
-        cache: cache,
-        dataType: "json",
-        data: $.toJSON({
-jsonrpc: "2.0",
-method: method,
-params: params,
-id: litepubl.uid++
-}),
+    jsonrpc: function(args) {
+args = $.extend({
+type: 'post',
+method: '',
+params: {},
+callback: false,
+error: false,
+cache: false
+}, args);
 
-        success: function(r) {
-          if (typeof r === "object") {
-if ("result" in r) {
-if ($.isFunction(callback)) callback(r.result);
-} else if ("error" in r) {
-if ($.isFunction(error)) error(r.error.message, r.error.code);
-}
-}
-}
-      })
-          .fail( function(jq, textStatus, errorThrown) {
-if ($.isFunction(error)) error(jq.responseText, jq.status);
-});
-    },
-    
-    minjson: function(method, params, callback, error) {
-if (!params) params = {};
-params.method = method;
+var params = args.params;
       var user = litepubl.getuser();
       if (user.id) {
         params.litepubl_user_id = user.id;
         params.litepubl_user = user.pass;
         params.litepubl_user_regservice = user.regservice;
       }
-      
-      return $.ajax({
-        type: 'get',
+
+var ajax = {
+        type: args.type,
         url: ltoptions.ajaxurl + "/admin/jsonserver.php",
-        cache: ("cache" in params ? params.cache : false),
+        cache: args.cache,
         dataType: "json",
-        data: params,
         success: function(r) {
           if (typeof r === "object") {
 if ("result" in r) {
-if ($.isFunction(callback)) callback(r.result);
+if ($.isFunction(args.callback)) args.callback(r.result);
 } else if ("error" in r) {
-if ($.isFunction(error)) error(r.error.message, r.error.code);
+if ($.isFunction(args.error)) args.error(r.error.message, r.error.code);
 }
 }
 }
-      })
-          .fail( function(jq, textStatus, errorThrown) {
-if ($.isFunction(error)) error(jq.responseText, jq.status);
+      };
+
+if (args.type == 'post') {
+if (!args.cache) ajax.url = ajax.url + '?_=' + litepubl.guid++;
+        ajax.data = $.toJSON({
+jsonrpc: "2.0",
+method: args.method,
+params: params,
+id: litepubl.guid++
+});
+} else {
+ajax.type = 'get';
+params.method = args.method;
+ajax.data = params;
+}
+
+      return $.ajax(ajax).fail( function(jq, textStatus, errorThrown) {
+if ($.isFunction(args.error)) args.error(jq.responseText, jq.status);
 });
     },
     

@@ -34,11 +34,11 @@
       if (!this.enabled) return false;
       this.setenabled(false);
       this.voted.push(idpoll);
-      $.litejson({
+      $.jsonrpc({
+type: 'get',
         method: "polls_sendvote",
-        idpoll: idpoll,
-        vote: vote
-      },function(r) {
+params: {idpoll: idpoll, vote: vote},
+callback: function(r) {
         if (r.code == "error") return $.pollclient.error(r.message);
         $.pollclient.setenabled(true);
         //update results
@@ -49,9 +49,9 @@
           var index = $(this).data("index");
           if (index in r.votes) $(this).text(r.votes[index]);
         });
-      })
-      .fail( function(jq, textStatus, errorThrown) {
-        $.pollclient.error(jq.responseText);
+      },
+
+      error: $.proxy($.pollclient.error, $.pollclient)
       });
     },
     
