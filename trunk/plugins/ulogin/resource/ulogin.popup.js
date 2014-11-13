@@ -16,7 +16,7 @@
     registered: false,
     logged: false,
     script: false,
-    dialogopened: false,
+    dialog: false,
     html: '<div><p>%%lang.subtitle%%</p>' +
     '<div id="ulogin-dialog">' +
     '<div id="ulogin-holder" data-ulogin="display=small;fields=first_name,last_name;optional=email,phone,nickname;providers=vkontakte,odnoklassniki,mailru,yandex,facebook,google,twitter;hidden=other;redirect_uri=%%redirurl%%;%%callback%%"></div></div>' +
@@ -33,68 +33,72 @@
       });
       
       $("#ulogin-comment-button").click(function() {
-      self.onlogin({method: "comments_get_logged", idpost: ltoptions.idpost}, function(r) {
-          if (typeof r === "object") {
-            if ("error" in r) {
-              $.messagebox(lang.dialog.error, r.error);
-            } else if ("mesg" in r) {
-              $("#before-commentform").html(r.mesg);
-            }
-          }
+      self.onlogged({
+type: 'get',
+method: "comments_get_logged",
+params: {idpost: ltoptions.idpost},
+callback:  function(r) {
+              $("#before-commentform").html(r);
+            },
+
+error: function(message, code) {
+              $.messagebox(lang.dialog.error, message);
+}
         });
         
         return false;
       });
     },
     
-    open: function(openurl, callback, emailcallback) {
-      if (this.dialogopened) return false;
-      set_cookie('backurl', openurl);
+    open: function(args) {
+      if (this.dialog) return false;
+args = $.extend({
+url: ltoptions.url + "/admin/login/?backurl=" + encodeURIComponent(location.href),
+calback: false,
+email: function() {
+                window.location = args.url;
+              }
+}, args);
+
       var self = this;
       self.ready(function() {
-        self.dialogopened = true;
-        var url= openurl ? openurl : ltoptions.url + "/admin/login/?backurl=" + encodeURIComponent(location.href);
-        var html = self.html.replace(/%%lang.emaillogin%%/gim, lang.ulogin.emaillogin)
-        .replace(/%%lang.subtitle%%/gim, lang.ulogin.subtitle)
-        .replace(/%%url%%/gim, url);
+        self.dialog = true;
+var lng = lang.ulogin;
+        var html = self.html.replace(/%%lang.emaillogin%%/gim, lng.emaillogin)
+        .replace(/%%lang.subtitle%%/gim, lng.subtitle)
+        .replace(/%%url%%/gim, args.url);
         
-        if ($.isFunction(callback)) {
+        if ($.isFunction(args.callback)) {
           html = html.replace(/%%callback%%/gim, "callback=ulogincallback")
           .replace(/%%redirurl%%/gim, '');
           window.ulogincallback = function(token) {
             $.closedialog();
             try {
-              callback(token);
+              args.callback(token);
               litepubl.stat('ulogin_token');
           } catch(e) {erralert(e);}
           };
         } else {
           html = html.replace(/%%callback%%/gim, "")
-          .replace(/%%redirurl%%/gim, encodeURIComponent(ltoptions.url + "/admin/ulogin.php?backurl=" + encodeURIComponent(url)));
+          .replace(/%%redirurl%%/gim, encodeURIComponent(ltoptions.url + "/admin/ulogin.php?backurl=" + encodeURIComponent(args.url)));
         }
         
         $.litedialog({
-          title: lang.ulogin.title,
+          title: lng.title,
           html: html,
           width: 300,
           close: function() {
-            self.dialogopened = false;
+            self.dialog = false;
             litepubl.stat('ulogin_close');
           },
           
           open: function() {
             uLogin.customInit('ulogin-holder');
             
-            if (!$.isFunction(emailcallback)) {
-              emailcallback = function() {
-                window.location = openurl;
-              };
-            }
-            
             $("#email-login").click(function() {
               $.closedialog(function() {
                 if (!("emailauth" in litepubl)) litepubl.emailauth = new litepubl.Emailauth();
-                litepubl.emailauth.open(emailcallback);
+                litepubl.emailauth.open(args.email);
               });
               return false;
             });
@@ -115,11 +119,12 @@
       return this.script = $.load_script('//ulogin.ru/js/ulogin.js', callback);
     },
     
-    auth: function(token, remote_callback, callback) {
+    auth: function(token, slave, callback) {
       var self =this;
     return $.jsonrpc({
 method: "ulogin_auth",
-params:  {token: token, callback: remote_callback ? remote_callback : false},
+params:  {token: token},
+ slave: slave,
 callback:  function(r) {
         litepubl.user = r;
         set_cookie("litepubl_user_id", r.id);
@@ -127,60 +132,71 @@ callback:  function(r) {
         set_cookie("litepubl_regservice", r.regservice);
         self.registered = true;
         self.logged = true;
-        if ($.isFunction(callback)) callback("callback" in r ? r.callback : undefined);
+        if ($.isFunction(callback)) callback();
 }
       });
     },
     
-    login: function(backurl, remote_callback, callback) {
+    login: function(url, slave, callback) {
       var self = this;
-      self.open(backurl, function(token) {
-        self.auth(token, remote_callback, callback);
-      }, callback);
+      self.open({
+url: url,
+callback: function(token) {
+        self.auth(token, slave, callback);
+      }, 
+
+email: callback
+});
     },
     
-    logon: function(remote_callback , callback) {
+    logon: function(slave, callback) {
       var self = this;
-      self.open('', function(token) {
-        self.auth(token, remote_callback , callback);
-      }, function() {
-        if (remote_callback) {
-remote_callback.callback = callback;
-          $.jsonrpc(remote_callback);
-        } else {
+      self.open({
+url: '',
+callback: function(token) {
+        self.auth(token, slave, callback);
+      }, 
+
+email: function() {
+        if (slave) {
+          $.jsonrpc(slave);
+        } else if ($.isFunction(callback)) {
           callback();
         }
+}
       });
     },
     
-    onlogin: function(remote_callback , callback) {
-      if (!this.registered) return        this.logon(remote_callback, callback);
+    onlogged: function(slave, callback) {
+      if (!this.registered) return        this.logon(slave, callback);
       
-      var self = this;
       if (this.logged) {
-        if (remote_callback) {
-remote_callback.callback = callback;
-          $.jsonrpc(remote_callback);
+        if (slave) {
+          $.jsonrpc(slave);
+        litepubl.stat('ulogin_checklogged');
+return false;
         } else {
-          callback('logged');
+if ($.isFunction(callback)) callback('logged');
           return true;
         }
-      } else {
+}
+
+      var self = this;
       $.jsonrpc({
 method: "check_logged",
-params:  {callback: remote_callback ? remote_callback : false},
+params:  {},
+slave: slave,
 callback:  function(r) {
-          if (r.result == "true") {
             self.logged = true;
-            callback("callback" in r ? r.callback : undefined);
-          } else {
-            self.logon(remote_callback, callback);
+if ($.isFunction(calback)) callback();
+},
+
+error: function(message, code) {
+            self.logon(slave, callback);
           }
-}
         });
+
         litepubl.stat('ulogin_checklogged');
-      }
-      
       return false;
     }
     
