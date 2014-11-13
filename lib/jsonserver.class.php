@@ -78,23 +78,13 @@ if ($args = $this->get_json_args()) {
   public function request($idurl) {
     $this->beforerequest();
 $args = $this->getargs();    
-if (!$args || !isset($args['method'])) return 403;
+if (!$args || !isset($args['method'])) return $this->json_error(false, 403, 'Method not found in arguments');
 
 $rpc = isset($args['jsonrpc']) ? ($args['jsonrpc'] == '2.0') : false;
 $id =$rpc && isset($args['id']) ? $args['id'] : false;
 
     if (!isset($this->events[$args['method']])) {
-if (!$rpc) return 403;
-
-$result = array(
-'jsonrpc' => '2.0',
-'error' => array(
-'code' =>       404,
-'message' => sprintf('Method "%s" not found', $args['method']),
-));
-
-if ($id) $result['id'] = $id;
-return $this->json($result);
+return $this->json_error($id, 404, sprintf('Method "%s" not found', $args['method']));
 }
 
 if ($rpc) {
@@ -116,28 +106,32 @@ $params = $args;
         throw new Exception(litepublisher::$options->errorlog);
       }
 
-$result = array(
-'jsonrpc' => '2.0',
-'error' => array(
-'code' =>       $e->getCode(),
-'message' => $e->getMessage()
-),
-);
-
-if ($id) $result['id'] = $args['id'];
-return $this->json(array($result);
+return $this->json_error($id, $e->getCode(), $e->getMessage());
     }
 
     $this->callevent('aftercall', array(&$result, $args));
-if ($rpc) {
-$result = array(
-'jsonrpc' => '2.0',
-'result' => $result
-);
 
-if ($id) $result['id'] = $id;
+$resp= array('jsonrpc' => '2.0');
+if (is_array($result) && isset($result['error'])) {
+$resp['error'] = $result['error'];
+} else {
+$resp['result'] = $result;
+if (isset($params['slave']) && is_array($params['slave'])) {
+        try {
+$slave_result= $this->callevent($params['slave']['method'], array($params['slave']['params']));
+        } catch (Exception $e) {
+          $slave_result = array('error' => array(
+'message' => $e->getMessage(),
+'code' => $e->getCode()
+));
+        }
+
+          $resp['result']['slave'] = $slave_result;
 }
-return $this->json($result);
+}
+
+if ($id) $resp['id'] = $id;
+return $this->json($resp);
 }
 
 public function json($result) {
@@ -156,6 +150,18 @@ public function json($result) {
     
     //header('Content-Type: application/json');
   }
+
+public function json_error($id, $code, $message) {
+$result = array(
+'jsonrpc' => '2.0',
+'error' => array(
+'code' =>       $code,
+'message' => $message,
+));
+
+if ($id) $result['id'] = $id;
+return $this->json($result);
+}
   
   public function addevent($name, $class, $func) {
     if (!in_array($name, $this->eventnames)) $this->eventnames[] = $name;

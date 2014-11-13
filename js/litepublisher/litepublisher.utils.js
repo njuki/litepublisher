@@ -164,12 +164,17 @@
     load_css: function(url) {
       $('<link rel="stylesheet" type="text/css" href="' + url + '" />').appendTo("head:first");
     }  ,
+
+hasprop: function(obj, prop) {
+return (typeof obj === "object") && (prop in obj);
+},
     
     jsonrpc: function(args) {
 args = $.extend({
 type: 'post',
 method: '',
 params: {},
+slave: false,
 callback: false,
 error: false,
 cache: false
@@ -183,6 +188,13 @@ var params = args.params;
         params.litepubl_user_regservice = user.regservice;
       }
 
+if (args.slave) {
+params.slave = {
+method: args.slave.method,
+params: args.slave.params
+};
+}
+
 var ajax = {
         type: args.type,
         url: ltoptions.ajaxurl + "/admin/jsonserver.php",
@@ -192,6 +204,15 @@ var ajax = {
           if (typeof r === "object") {
 if ("result" in r) {
 if ($.isFunction(args.callback)) args.callback(r.result);
+if (args.slave && $.hasprop(r.result, 'slave')) {
+var slave = args.slave;
+var slaveresult = r.result.slave;
+if ($.hasprop(slaveresult, 'error')) {
+if ($.hasprop(slave, 'error') && $.isFunction(slave.error)) slave.error(slaveresult.error.message, slaveresult.error.code);
+} else {
+if ($.hasprop(slave, 'callback') && $.isFunction(slave.callback)) slave.callback(slaveresult);
+}
+}
 } else if ("error" in r) {
 if ($.isFunction(args.error)) args.error(r.error.message, r.error.code);
 }

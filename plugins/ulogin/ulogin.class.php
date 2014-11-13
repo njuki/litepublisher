@@ -165,28 +165,9 @@ class ulogin extends tplugin {
   }
   
   public function ulogin_auth(array $args) {
-    if (!isset($args['token']) || (!($token = $args['token']))) return 403;
-    if (!($result = $this->auth($token))) return 403;
-    
-    /*
-    $result = array(
-    'id' => litepublisher::$options->user,
-    'pass' => $_COOKIE['litepubl_user'],
-    'regservice' => $_COOKIE['litepubl_regservice'],
-    );
-    */
-    
-    if (isset($args['callback']) && $args['callback']) {
-      $callback = $args['callback'];
-      if (is_array($callback)) {
-        try {
-          $result['callback'] = tjsonserver::i()->callevent($callback['method'], array($callback));
-        } catch (Exception $e) {
-          $result['error'] = $e->getMessage();
-        }
-      }
-    }
-    
+    if (!isset($args['token']) || (!($token = $args['token']))) return $this->error('Invalide token', 403);
+$result = $this->auth($token);
+    if (!$result) $this->error('Not authorized', 403);
     return $result;
   }
   
@@ -212,23 +193,16 @@ class ulogin extends tplugin {
   }
   
   public function check_logged(array $args) {
-    $logged = litepublisher::$options->authcookies($args['litepubl_user_id'], $args['litepubl_user']);
-    $result = array(
-    'result' => $logged ? 'true' : 'false'
-    );
-    
-    if ($logged && isset($args['callback']) && $args['callback']) {
-      $callback = $args['callback'];
-      if (is_array($callback)) {
-        try {
-          $result['callback'] = tjsonserver::i()->callevent($callback['method'], array($callback));
-        } catch (Exception $e) {
-          $result['error_callback'] = $e->getMessage();
-        }
-      }
-    }
-    
-    return $result;
+if (litepublisher::$options->authcookies($args['litepubl_user_id'], $args['litepubl_user'])) {
+return array(
+'logged' => true
+);
+} else {
+return array('error' => array(
+'message' => 'Not logged',
+'code' => 403
+));
+}    
   }
   
   public static function filterphone($phone) {

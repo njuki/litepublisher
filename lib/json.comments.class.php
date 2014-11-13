@@ -133,11 +133,7 @@ class tjsoncomments extends tevents {
     $mesg = str_replace('<?php echo litepublisher::$site->getuserlink(); ?>', litepublisher::$site->getuserlink(), $mesg);
     
     $a = new targs();
-    $mesg = $a->parse($mesg);
-    
-    return array(
-    'mesg' => $mesg
-    );
+    return $a->parse($mesg);
   }
   
 }//class
