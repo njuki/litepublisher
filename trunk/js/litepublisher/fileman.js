@@ -162,8 +162,9 @@ error: function(message, code) {
     get_fileitem: function(id) {
       var item =this.items[id];
       item.link = ltoptions.files + "/files/" + item.filename;
-      type = (item["media"] in this.tml) ? item["media"] : "file";
       item.previewlink = '';
+      var type = (item["media"] in this.tml) ? item["media"] : "file";
+
       if ((parseInt(item["preview"]) != 0) &&(item.preview in this.items)) item.previewlink = ltoptions.files + "/files/" + this.items[item["preview"]]["filename"];
       var html = $.simpletml(this.tml.item, {
         id: item["id"],

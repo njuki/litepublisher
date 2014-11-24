@@ -166,7 +166,7 @@
     
   });
   
-  ready2(function() {
+  $.ready2(function() {
     if ("dropdown" in $.fn) litepubl.widgets = new litepubl.BootstrapWidgets();
   });
 })( jQuery , window, document, litepubl);

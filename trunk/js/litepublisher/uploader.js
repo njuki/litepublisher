@@ -78,8 +78,12 @@
     uploaded: function(resp) {
       try {
         if (typeof resp == "string") resp = $.parseJSON(resp);
-        this.items.push(resp);
-        this.onupload.fire(resp);
+if ("result" in resp) {
+        this.items.push(resp.result);
+        this.onupload.fire(resp.result);
+} else if ("error" in resp) {
+this.error(resp.error.message);
+}
     } catch(e) {erralert(e);}
     },
     

@@ -102,13 +102,13 @@ callback:  function (resp) {
             break;
             
             default: //error
-            self.error(resp.msg);
+            self.error(resp.message);
             break;
           }
       } catch(e) { form.error(e.message); }
       }, 
 
-error: self.error
+error: $.proxy(self.error, self)
 })
       .always(function() {
         inputs.removeAttr("disabled");
@@ -123,8 +123,8 @@ error: self.error
 type: 'get',
 method: "comment_confirm",
 params: {confirmid: confirmid},
-callback:  self.success,
-error:  self.error
+callback:  $.proxy(self.success, self),
+error:  $.proxy(self.error, self)
 });
       });
     },
