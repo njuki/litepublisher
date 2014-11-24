@@ -39,6 +39,7 @@ class tjsoncomments extends tevents {
   public function comment_delete(array $args) {
     $id = (int) $args['id'];
     if (!$this->auth($id, 'delete')) return $this->forbidden();
+
     return tcomments::i()->delete($id);
   }
   
@@ -77,6 +78,7 @@ class tjsoncomments extends tevents {
   
   public function comments_get_hold(array $args) {
     if (!litepublisher::$options->user) return $this->forbidden();
+
     $idpost = (int) $args['idpost'];
     $comments = tcomments::i($idpost);
     
@@ -92,15 +94,18 @@ class tjsoncomments extends tevents {
   }
   
   public function comment_add(array $args) {
+    if (litepublisher::$options->commentsdisabled) return array('error' => array(
+'message' => 'Comments disabled',
+'code' => 403
+));
+
     $commentform = tcommentform::i();
     $commentform->helper = $this;
-    return $commentform->request(null);
+    return $commentform->dorequest($args);
   }
   
   public function comment_confirm(array $args) {
-    $commentform = tcommentform::i();
-    $commentform->helper = $this;
-    return $commentform->request(null);
+return $this->comment_add($args);
   }
   
   //commentform helper
@@ -112,10 +117,10 @@ class tjsoncomments extends tevents {
   }
   
   public function geterrorcontent($s) {
-    return array(
-    'msg' => $s,
+    return array('error' => array(
+    'message' => $s,
     'code' => 'error'
-    );
+    ));
   }
   
   public function sendresult($url, $cookies) {
@@ -128,6 +133,7 @@ class tjsoncomments extends tevents {
   
   public function comments_get_logged(array $args) {
     if (!litepublisher::$options->user) return $this->forbidden();
+
     $mesg = ttemplatecomments::i()->logged;
     //unsafe, dangerous trick
     $mesg = str_replace('<?php echo litepublisher::$site->getuserlink(); ?>', litepublisher::$site->getuserlink(), $mesg);

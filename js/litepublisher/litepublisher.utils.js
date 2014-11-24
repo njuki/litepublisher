@@ -23,7 +23,6 @@
   window.litepubl = {
   tml: {}, //namespace for templates
     guid: $.now(),
-    ready2: $.Deferred(),
     adminpanel: false,
     is_adminpanel:  function() {
       if (litepubl.adminpanel !== false) return litepubl.adminpanel;
@@ -135,21 +134,32 @@
     $(document).ready(fn);
   };
   
-  window.ready2 = function(fn) {
-    litepubl.ready2.done(fn);
-  };
-  
-  $(document).ready(function() {
-    window.setTimeout(function() {
-      litepubl.ready2.resolve();
-    }, 20);
-  });
-  
   window.erralert = function(e) {
     alert('error ' + e.message);
   };
   
   $.extend({
+    r2callback: false,
+  ready2: function(fn) {
+if (!$.r2callback) {
+    $.r2callback =  $.Deferred();
+var ready2resolve = function() {
+    window.setTimeout(function() {
+      $.r2callback.resolve();
+    }, 0);
+  };
+
+if ($.isReady) {
+  $(document).ready(ready2resolve);
+} else {
+//.on('ready') call after $(document).ready
+$(document).on('ready', ready2resolve);
+}
+}
+
+    $.r2callback.done(fn);
+  },
+
     load_script: function( url, callback ) {
       return $.ajax({
         type: 'get',

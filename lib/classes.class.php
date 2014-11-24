@@ -109,7 +109,6 @@ class tclasses extends titems {
   
   public function delete($class) {
     if (!isset($this->items[$class])) return false;
-    
     $this->lock();
     $m = $this->memcache;
     $this->memcache = false;

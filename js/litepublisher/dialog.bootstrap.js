@@ -142,7 +142,7 @@
     
   });
   
-  ready2(function() {
+  $.ready2(function() {
     if ("modal" in $.fn) $.bootstrapDialog = new $.BootstrapDialog();
   });
   

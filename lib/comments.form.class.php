@@ -31,8 +31,12 @@ class tcommentform extends tevents {
     }
     
     tguard::post();
-    if (isset($_POST['confirmid'])) return $this->confirm_recevied();
-    return $this->processform($_POST, false);
+return $this->dorequest($_POST);
+}
+
+public function dorequest(array $args) {
+    if (isset($args['confirmid'])) return $this->confirm_recevied($args['confirmid']);
+    return $this->processform($args, false);
   }
   
   public function getshortpost($id) {
@@ -166,14 +170,14 @@ class tcommentform extends tevents {
     return $this->sendresult(litepublisher::$site->url . $url, isset($cookies) ? $cookies : array());
   }
   
-  public function confirm_recevied() {
+  public function confirm_recevied($confirmid) {
     $lang = tlocal::i('comment');
-    $confirmid = $_POST['confirmid'];
     tsession::start(md5($confirmid));
     if (!isset($_SESSION['confirmid']) || ($confirmid != $_SESSION['confirmid'])) {
       session_destroy();
       return $this->geterrorcontent($lang->notfound);
     }
+
     $values = $_SESSION['values'];
     session_destroy();
     return $this->processform($values, true);
@@ -187,7 +191,6 @@ class tcommentform extends tevents {
     $values['date'] = time();
     $values['ip'] = preg_replace( '/[^0-9., ]/', '',$_SERVER['REMOTE_ADDR']);
     
-    //$confirmid  = $kept->add($values);
     $confirmid = md5uniq();
     if ($sess = tsession::start(md5($confirmid))) $sess->lifetime = 900;
     $_SESSION['confirmid'] = $confirmid;

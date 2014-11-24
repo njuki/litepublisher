@@ -57,7 +57,7 @@
     
   });
   
-  ready2(function() {
+  $.ready2(function() {
     if ("modal" in $.fn) $.youtubeBootstrap = new $.YoutubeBootstrap();
   });
 }(jQuery, document, window));

@@ -133,7 +133,7 @@
     });
   };
   
-  ready2(function(){
+  $.ready2(function(){
     if ("popover" in $.fn) $("a.photo").popimage();
   });
 })( jQuery, window, document);
