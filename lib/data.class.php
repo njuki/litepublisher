@@ -8,11 +8,11 @@
 
 class tdata {
   const zerodate = '0000-00-00 00:00:00';
+  public $data;
   public $basename;
   public $cache;
   public $coclasses;
   public $coinstances;
-  public $data;
   public $lockcount;
   public $table;
   public static $guid = 0;

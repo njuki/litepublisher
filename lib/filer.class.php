@@ -109,7 +109,7 @@ class tfiler {
       @chmod($dir, 0777);
     }
     
-    if ($fp = fopen($filename,"a+")) {
+    if ($fp = fopen($filename,'a+')) {
       fwrite($fp, $s);
       fclose($fp);
       @chmod($filename, 0666);

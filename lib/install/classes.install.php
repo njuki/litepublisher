@@ -6,21 +6,36 @@
 * and GPL (gpl.txt) licenses.
 **/
 
-function installclasses($email, $language) {
-  ParseClassesIni();
+function install_engine($email, $language) {
+  //forward create folders
+  @mkdir(litepublisher::$paths->data . 'themes', 0777);
+  @chmod(litepublisher::$paths->data . 'themes', 0777);
+
   $options = toptions::i();
   $options->lock();
   require_once(dirname(__file__) . DIRECTORY_SEPARATOR. 'options.class.install.php');
-  $password = installoptions($email, $language);
+  $password = installoptions($email, $language); 
   //require_once(dirname(__file__) . DIRECTORY_SEPARATOR. 'local.class.install.php');
   //tlocalInstall(getinstance('tlocal'));
-  doinstallclasses();
+  installClasses();
   $options->unlock();
   return $password;
 }
 
-function ParseClassesIni() {
-  $ini = parse_ini_file(litepublisher::$paths->lib.'install' . DIRECTORY_SEPARATOR . 'classes.ini', true);
+function parse_classes_ini($inifile) {
+$install_dir = litepublisher::$paths->lib.'install' . DIRECTORY_SEPARATOR;
+if (!$inifile) {
+$inifile = $install_dir . 'classes.ini';
+} elseif(file_exists($install_dir . $inifile)) {
+$inifile = $install_dir . $inifile;
+} elseif(file_exists(litepublisher::$paths->home . $inifile)) {
+$inifile = litepublisher::$paths->home . $inifile;
+} elseif(!file_exists($inifile)) {
+$inifile = $install_dir . 'classes.ini';
+}
+
+  $ini = parse_ini_file($inifile, true);
+
   $classes = litepublisher::$classes;
   $replace = dbversion ? '.class.db.' : '.class.files.';
   $exclude = !dbversion ? '.class.db.' : '.class.files.';
@@ -53,16 +68,9 @@ function ParseClassesIni() {
   $classes->interfaces = $ini['interfaces'];
   $classes->factories = $ini['factories'];
   $classes->Save();
-  
-  //forward create folders
-  @mkdir(litepublisher::$paths->data . 'themes', 0777);
-  @chmod(litepublisher::$paths->data . 'themes', 0777);
-  
-  //@mkdir(litepublisher::$paths->data . 'languages', 0777);
-  //@chmod(litepublisher::$paths->data . 'languages', 0777);
 }
 
-function doinstallclasses() {
+function installClasses() {
   litepublisher::$urlmap = turlmap::i();
   litepublisher::$urlmap->lock();
   $posts = tposts::i();
