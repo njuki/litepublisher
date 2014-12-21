@@ -250,23 +250,5 @@ class tdbmanager  {
     }
     return false;
   }
-  
-  public function performance() {
-    $result = '';
-    $total = 0.0;
-    $max = 0.0;
-    foreach (litepublisher::$db->history as $i => $item) {
-  $result .= "$i: {$item['time']}\n{$item['sql']}\n\n";
-      $total += $item['time'];
-      if ($max < $item['time']) {
-        $maxsql = $item['sql'];
-        $max = $item['time'];
-      }
-    }
-    $result .= "maximum $max\n$maxsql\n";
-    $result .= sprintf("%s total time\n%d querries\n\n", $total, count(litepublisher::$db->history));
-    return $result;
-  }
-  
+
 }//class
-?>

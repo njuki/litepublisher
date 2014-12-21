@@ -61,7 +61,9 @@ class tinstaller extends tdata {
   }
   
   public function OutputResult($password) {
-    if ($this->mode == 'remote') {
+    if ($this->mode != 'remote') return;
+      litepublisher::$options->savemodified();
+
       $result = array(
       'url' => litepublisher::$site->url,
       'email' => litepublisher::$options->email,
@@ -69,52 +71,40 @@ class tinstaller extends tdata {
       'name' => litepublisher::$site->name,
       'description' => litepublisher::$site->description
       );
-      litepublisher::$options->savemodified();
-      
+
       switch ($this->resulttype) {
+        case 'json' :
+        $s = json_encode($result);
+    header('Content-Type: text/javascript; charset=utf-8');
+BREAK;
+
         case 'serialized' :
         $s = serialize($result);
-        $length = strlen($s);
-        header('Connection: close');
-        header('Content-Length: '.$length);
-        header('Content-Type: text/plain');
-        header('Date: '.date('r'));
-        echo $s;
-        exit();
+        header('Content-Type: text/plain; charset=utf-8');
+BREAK;
         
         case 'xmlrpc':
         $r = new IXR_Value($result);
-        $resultxml = $r->getXml();
-        // Create the XML
-        $html = tadminhtml::i();
-        $html->section = 'installation';
-        eval('$xml = "'. $html->xmlrpc . '\n";');
-        // Send it
-        $xml = '<?xml version="1.0"?>'."\n".$xml;
-        $length = strlen($xml);
-        header('Connection: close');
-        header('Content-Length: '.$length);
-        header('Content-Type: text/xml');
-        header('Date: '.date('r'));
-        echo $xml;
-        exit();
+        $s = '<?xml version="1.0" encoding="utf-8" ?>
+   <methodResponse><params><param><value>' .
+$r->getXml() .
+    '</value></param></params></methodResponse>';
+
+       header('Content-Type: text/xml; charset=utf-8');
+break;
         
-        case 'ini' :
-        $ini = '';
-        foreach($result as $key => $value) {
-          $ini .= "$key = \"$value\"\n";
-        }
-        
-        $length = strlen($ini);
-        header('Connection: close');
-        header('Content-Length: '.$length);
-        header('Content-Type: text/plain');
-        header('Date: '.date('r'));
-        echo $ini;
-        exit();
+default:
+die('Unknown remote method');
       }
-    }
-  }
+
+        header('Connection: close');
+    header('Last-Modified: ' . date('r'));
+    Header( 'Cache-Control: no-cache, must-revalidate');
+    Header( 'Pragma: no-cache');
+    header('Content-Length: ' . strlen($s));
+        echo $s;
+        exit();
+ }
   
   public function CreateDefaultItems($password) {
     if ($this->mode != 'remote') {
@@ -143,7 +133,8 @@ class tinstaller extends tdata {
     }
     
     require_once(litepublisher::$paths->lib . 'install' . DIRECTORY_SEPARATOR . 'classes.install.php');
-    return installclasses($_REQUEST['email'], $this->language);
+  parse_classes_ini(isset($_REQUEST['classes']) ? $_REQUEST['classes'] : false);
+    return install_engine($_REQUEST['email'], $this->language);
   }
   
   public function install() {

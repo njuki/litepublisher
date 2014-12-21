@@ -363,8 +363,6 @@ class toptions extends tevents_storage {
       default:
       return gettype($v);
     }
-    
-    
-  }
+          }
   
 }//class

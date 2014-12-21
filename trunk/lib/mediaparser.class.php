@@ -522,7 +522,7 @@ class tmediaparser extends tevents {
   public function resize($filename, $image, $x, $y) {
     $sourcex = imagesx($image);
     $sourcey = imagesy($image);
-    if (($y == 0) || ($x == 0) || ($sourcex == 0) || ($sourcey == 0)) return false;
+    if (!$y || !$x || !$sourcex || !$sourcey) return false;
     $ratio = $sourcex / $sourcey;
     if ($x/$y > $ratio) {
       $x = $y *$ratio;
