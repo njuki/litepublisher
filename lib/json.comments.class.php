@@ -1,7 +1,7 @@
 <?php
 /**
 * Lite Publisher
-* Copyright (C) 2010 - 2013 Vladimir Yushko http://litepublisher.ru/ http://litepublisher.com/
+* Copyright (C) 2010 - 2014 Vladimir Yushko http://litepublisher.ru/ http://litepublisher.com/
 * Dual licensed under the MIT (mit.txt)
 * and GPL (gpl.txt) licenses.
 **/
@@ -39,7 +39,7 @@ class tjsoncomments extends tevents {
   public function comment_delete(array $args) {
     $id = (int) $args['id'];
     if (!$this->auth($id, 'delete')) return $this->forbidden();
-
+    
     return tcomments::i()->delete($id);
   }
   
@@ -78,7 +78,7 @@ class tjsoncomments extends tevents {
   
   public function comments_get_hold(array $args) {
     if (!litepublisher::$options->user) return $this->forbidden();
-
+    
     $idpost = (int) $args['idpost'];
     $comments = tcomments::i($idpost);
     
@@ -95,17 +95,17 @@ class tjsoncomments extends tevents {
   
   public function comment_add(array $args) {
     if (litepublisher::$options->commentsdisabled) return array('error' => array(
-'message' => 'Comments disabled',
-'code' => 403
-));
-
+    'message' => 'Comments disabled',
+    'code' => 403
+    ));
+    
     $commentform = tcommentform::i();
     $commentform->helper = $this;
     return $commentform->dorequest($args);
   }
   
   public function comment_confirm(array $args) {
-return $this->comment_add($args);
+    return $this->comment_add($args);
   }
   
   //commentform helper
@@ -133,7 +133,7 @@ return $this->comment_add($args);
   
   public function comments_get_logged(array $args) {
     if (!litepublisher::$options->user) return $this->forbidden();
-
+    
     $mesg = ttemplatecomments::i()->logged;
     //unsafe, dangerous trick
     $mesg = str_replace('<?php echo litepublisher::$site->getuserlink(); ?>', litepublisher::$site->getuserlink(), $mesg);

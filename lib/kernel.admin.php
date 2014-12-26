@@ -1,10 +1,4 @@
 <?php
-/**
-* Lite Publisher
-* Copyright (C) 2010, 2011, 2012, 2013 Vladimir Yushko http://litepublisher.com/
-* Dual licensed under the MIT (mit.txt)
-* and GPL (gpl.txt) licenses.
-**/
 //menu.admin.class.php
 class tadminmenus extends tmenus {
   
@@ -653,14 +647,25 @@ class tadminhtml {
     return $theme->parsearg($this->ini['common']['table'], $args);
   }
   
-  public function tableposts(array $items, array $struct) {
+  public function tableposts(array $items, array $tablestruct) {
     $body = '';
     $head = $this->tableposts_head;
     $tml = $this->tableposts_item;
-    foreach ($struct as $elem) {
-      $head .= sprintf('<th align="%s">%s</th>', $elem[0], $elem[1]);
-      $tml .= sprintf('<td align="%s">%s</td>', $elem[0], $elem[2]);
+    foreach ($tablestruct as $item) {
+      if (!$item || !count($item)) continue;
+      $align = $item[0] ? $item[0] : 'left';
+      $head .= sprintf('<th align="%s">%s</th>', $align, $item[1]);
+      if (is_string($item[2])) {
+        $tml .= sprintf('<td align="%s">%s</td>', $align, $item[2]);
+      } else {
+        // special case for callback. Add new prop to template vars
+        $tableprop = tableprop::i();
+        $propname = $tableprop->addprop($item[2]);
+        ttheme::$vars['tableprop'] = $tableprop;
+        $tml .= sprintf('<td align="%s">$tableprop.%s</td>', $item[0], $propname);
+      }
     }
+    
     $tml .= '</tr>';
     
     $theme = ttheme::i();
@@ -1639,4 +1644,3 @@ class poststatus {
   }
 }
 
-?>

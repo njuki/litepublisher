@@ -1,6 +1,6 @@
 /**
 * Lite Publisher
-* Copyright (C) 2010 - 2013 Vladimir Yushko http://litepublisher.ru/ http://litepublisher.com/
+* Copyright (C) 2010 - 2014 Vladimir Yushko http://litepublisher.ru/ http://litepublisher.com/
 * Dual licensed under the MIT (mit.txt)
 * and GPL (gpl.txt) licenses.
 **/
@@ -35,23 +35,23 @@
       this.setenabled(false);
       this.voted.push(idpoll);
       $.jsonrpc({
-type: 'get',
+        type: 'get',
         method: "polls_sendvote",
-params: {idpoll: idpoll, vote: vote},
-callback: function(r) {
-        if (r.code == "error") return $.pollclient.error(r.message);
-        $.pollclient.setenabled(true);
-        //update results
-        var pollresult = holder.next(".poll-result");
-        $(".votes", pollresult).text(r.total);
-        $(".average", pollresult).text(r.rate);
-        $(".poll-votes", pollresult).each(function() {
-          var index = $(this).data("index");
-          if (index in r.votes) $(this).text(r.votes[index]);
-        });
-      },
-
-      error: $.proxy($.pollclient.error, $.pollclient)
+      params: {idpoll: idpoll, vote: vote},
+        callback: function(r) {
+          if (r.code == "error") return $.pollclient.error(r.message);
+          $.pollclient.setenabled(true);
+          //update results
+          var pollresult = holder.next(".poll-result");
+          $(".votes", pollresult).text(r.total);
+          $(".average", pollresult).text(r.rate);
+          $(".poll-votes", pollresult).each(function() {
+            var index = $(this).data("index");
+            if (index in r.votes) $(this).text(r.votes[index]);
+          });
+        },
+        
+        error: $.proxy($.pollclient.error, $.pollclient)
       });
     },
     

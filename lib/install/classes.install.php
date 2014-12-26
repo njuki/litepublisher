@@ -1,7 +1,7 @@
 <?php
 /**
 * Lite Publisher
-* Copyright (C) 2010 - 2013 Vladimir Yushko http://litepublisher.ru/ http://litepublisher.com/
+* Copyright (C) 2010 - 2014 Vladimir Yushko http://litepublisher.ru/ http://litepublisher.com/
 * Dual licensed under the MIT (mit.txt)
 * and GPL (gpl.txt) licenses.
 **/
@@ -10,11 +10,11 @@ function install_engine($email, $language) {
   //forward create folders
   @mkdir(litepublisher::$paths->data . 'themes', 0777);
   @chmod(litepublisher::$paths->data . 'themes', 0777);
-
+  
   $options = toptions::i();
   $options->lock();
   require_once(dirname(__file__) . DIRECTORY_SEPARATOR. 'options.class.install.php');
-  $password = installoptions($email, $language); 
+  $password = installoptions($email, $language);
   //require_once(dirname(__file__) . DIRECTORY_SEPARATOR. 'local.class.install.php');
   //tlocalInstall(getinstance('tlocal'));
   installClasses();
@@ -23,19 +23,19 @@ function install_engine($email, $language) {
 }
 
 function parse_classes_ini($inifile) {
-$install_dir = litepublisher::$paths->lib.'install' . DIRECTORY_SEPARATOR;
-if (!$inifile) {
-$inifile = $install_dir . 'classes.ini';
-} elseif(file_exists($install_dir . $inifile)) {
-$inifile = $install_dir . $inifile;
-} elseif(file_exists(litepublisher::$paths->home . $inifile)) {
-$inifile = litepublisher::$paths->home . $inifile;
-} elseif(!file_exists($inifile)) {
-$inifile = $install_dir . 'classes.ini';
-}
-
+  $install_dir = litepublisher::$paths->lib.'install' . DIRECTORY_SEPARATOR;
+  if (!$inifile) {
+    $inifile = $install_dir . 'classes.ini';
+  } elseif(file_exists($install_dir . $inifile)) {
+    $inifile = $install_dir . $inifile;
+  } elseif(file_exists(litepublisher::$paths->home . $inifile)) {
+    $inifile = litepublisher::$paths->home . $inifile;
+  } elseif(!file_exists($inifile)) {
+    $inifile = $install_dir . 'classes.ini';
+  }
+  
   $ini = parse_ini_file($inifile, true);
-
+  
   $classes = litepublisher::$classes;
   $replace = dbversion ? '.class.db.' : '.class.files.';
   $exclude = !dbversion ? '.class.db.' : '.class.files.';

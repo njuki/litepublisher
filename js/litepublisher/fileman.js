@@ -1,6 +1,6 @@
 /**
 * Lite Publisher
-* Copyright (C) 2010 - 2013 Vladimir Yushko http://litepublisher.ru/ http://litepublisher.com/
+* Copyright (C) 2010 - 2014 Vladimir Yushko http://litepublisher.ru/ http://litepublisher.com/
 * Dual licensed under the MIT (mit.txt)
 * and GPL (gpl.txt) licenses.
 **/
@@ -72,19 +72,19 @@
     
     load_current_files: function() {
       var self = this;
-        $.jsonrpc({
-type: 'get',
-method: "files_getpost",
-params: {idpost: ltoptions.idpost},
-callback: function (r) {
-        try {
-          self.set_uploaded(r.count, r.files);
-      } catch(e) {erralert(e);}
+      $.jsonrpc({
+        type: 'get',
+        method: "files_getpost",
+      params: {idpost: ltoptions.idpost},
+        callback: function (r) {
+          try {
+            self.set_uploaded(r.count, r.files);
+        } catch(e) {erralert(e);}
         },
-
-error: function(message, code) {
-        $.messagebox(lang.dialog.error, message);
-}
+        
+        error: function(message, code) {
+          $.messagebox(lang.dialog.error, message);
+        }
       });
     },
     
@@ -164,7 +164,7 @@ error: function(message, code) {
       item.link = ltoptions.files + "/files/" + item.filename;
       item.previewlink = '';
       var type = (item["media"] in this.tml) ? item["media"] : "file";
-
+      
       if ((parseInt(item["preview"]) != 0) &&(item.preview in this.items)) item.previewlink = ltoptions.files + "/files/" + this.items[item["preview"]]["filename"];
       var html = $.simpletml(this.tml.item, {
         id: item["id"],
@@ -177,18 +177,18 @@ error: function(message, code) {
     loadpage: function(uipanel, page) {
       var self = this;
       $(uipanel).data("files", "loading");
-        $.jsonrpc({
-type: 'get',
-method: "files_getpage",
-params: {page: page - 1},
-callback: function(r) {
-        self.joinitems(r.files);
-        self.setpage(uipanel, r.files);
+      $.jsonrpc({
+        type: 'get',
+        method: "files_getpage",
+      params: {page: page - 1},
+        callback: function(r) {
+          self.joinitems(r.files);
+          self.setpage(uipanel, r.files);
         },
-
-error:  function(message, code) {
-        $.messagebox(lang.dialog.error, message);
-}
+        
+        error:  function(message, code) {
+          $.messagebox(lang.dialog.error, message);
+        }
       });
     },
     
@@ -297,20 +297,20 @@ error:  function(message, code) {
       values.idfile = idfile;
       var self = this;
       return $.jsonrpc({
-method: "files_setprops",
-params: values, 
-callback: function(r) {
-        self.items[r.item["id"]] = r.item;
-        //need to update infos but we cant find all files
-        if (!!holder) holder.replaceWith(self.get_fileitem(idfile));
-        self.indialog = false;
-        }, 
-
-error: function(message, code) {
-        self.indialog = false;
-        $.messagebox(lang.dialog.error, message);
-      }
-});
+        method: "files_setprops",
+        params: values,
+        callback: function(r) {
+          self.items[r.item["id"]] = r.item;
+          //need to update infos but we cant find all files
+          if (!!holder) holder.replaceWith(self.get_fileitem(idfile));
+          self.indialog = false;
+        },
+        
+        error: function(message, code) {
+          self.indialog = false;
+          $.messagebox(lang.dialog.error, message);
+        }
+      });
     }
     
   });//fileman

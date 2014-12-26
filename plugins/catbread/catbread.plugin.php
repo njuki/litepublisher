@@ -1,7 +1,7 @@
 <?php
 /**
 * lite publisher
-* copyright (c) 2010 - 2013 vladimir yushko http://litepublisher.ru/ http://litepublisher.com/
+* copyright (c) 2010 - 2014 vladimir yushko http://litepublisher.ru/ http://litepublisher.com/
 * dual licensed under the mit (mit.txt)
 * and gpl (gpl.txt) licenses.
 **/

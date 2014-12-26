@@ -1,7 +1,7 @@
 <?php
 /**
 * Lite Publisher
-* Copyright (C) 2010 - 2013 Vladimir Yushko http://litepublisher.ru/ http://litepublisher.com/
+* Copyright (C) 2010 - 2014 Vladimir Yushko http://litepublisher.ru/ http://litepublisher.com/
 * Dual licensed under the MIT (mit.txt)
 * and GPL (gpl.txt) licenses.
 **/
@@ -36,12 +36,12 @@ class http {
       curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);
       curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, FALSE);
       if (is_array($headers) && count($headers)) curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
-
-/*      
+      
+      /*
       curl_setopt($ch, CURLOPT_VERBOSE , true);
       curl_setopt($ch, CURLOPT_STDERR, fopen(litepublisher::$paths->data . 'logs/curl.txt', 'w+'));
-*/
-
+      */
+      
       if (!ini_get('open_basedir')  && !ini_get('safe_mode') ) {
         curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
         $result= curl_exec($ch);
@@ -68,10 +68,10 @@ class http {
     if (is_array($headers) && count($headers)) curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
     curl_setopt($ch, CURLOPT_POST, TRUE);
     curl_setopt($ch, CURLOPT_POSTFIELDS, is_array($post) ? http_build_query($post) : $post);
-
-      curl_setopt($ch, CURLOPT_VERBOSE , true);
-      curl_setopt($ch, CURLOPT_STDERR, fopen(litepublisher::$paths->data . 'logs/curl.txt', 'w+'));
-
+    
+    curl_setopt($ch, CURLOPT_VERBOSE , true);
+    curl_setopt($ch, CURLOPT_STDERR, fopen(litepublisher::$paths->data . 'logs/curl.txt', 'w+'));
+    
     return $ch;
   }
   
