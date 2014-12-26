@@ -1,7 +1,7 @@
 <?php
 /**
 * Lite Publisher
-* Copyright (C) 2010 - 2013 Vladimir Yushko http://litepublisher.ru/ http://litepublisher.com/
+* Copyright (C) 2010 - 2014 Vladimir Yushko http://litepublisher.ru/ http://litepublisher.com/
 * Dual licensed under the MIT (mit.txt)
 * and GPL (gpl.txt) licenses.
 **/
@@ -31,10 +31,10 @@ class tcommentform extends tevents {
     }
     
     tguard::post();
-return $this->dorequest($_POST);
-}
-
-public function dorequest(array $args) {
+    return $this->dorequest($_POST);
+  }
+  
+  public function dorequest(array $args) {
     if (isset($args['confirmid'])) return $this->confirm_recevied($args['confirmid']);
     return $this->processform($args, false);
   }
@@ -177,7 +177,7 @@ public function dorequest(array $args) {
       session_destroy();
       return $this->geterrorcontent($lang->notfound);
     }
-
+    
     $values = $_SESSION['values'];
     session_destroy();
     return $this->processform($values, true);

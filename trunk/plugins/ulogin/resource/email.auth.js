@@ -1,6 +1,6 @@
 /**
 * Lite Publisher
-* Copyright (C) 2010 - 2013 Vladimir Yushko http://litepublisher.ru/ http://litepublisher.com/
+* Copyright (C) 2010 - 2014 Vladimir Yushko http://litepublisher.ru/ http://litepublisher.com/
 * Dual licensed under the MIT (mit.txt)
 * and GPL (gpl.txt) licenses.
 **/
@@ -159,21 +159,21 @@
     },
     
     login: function(email, password) {
-    return this.ajax({
-method: "email_login",
-params:  {email: email, password: password},
-callback:  $.proxy(this.success, this)
-});
+      return this.ajax({
+        method: "email_login",
+      params:  {email: email, password: password},
+        callback:  $.proxy(this.success, this)
+      });
     },
     
     ajax: function(args) {
       this.disable(true);
       var self = this;
-args.error = function(message, code) {
-          self.disable(false);
-          $("#info-status", self.dialog).text(message);
+      args.error = function(message, code) {
+        self.disable(false);
+        $("#info-status", self.dialog).text(message);
       };
-
+      
       return $.jsonrpc(args);
     },
     
@@ -186,23 +186,23 @@ args.error = function(message, code) {
     
     reg: function(email, name) {
       var self = this;
-    return this.ajax({
-method: "email_reg",
-params:  {email: email, name: name},
-callback: function(r) {
-        self.setstatus('registered');
-}
+      return this.ajax({
+        method: "email_reg",
+      params:  {email: email, name: name},
+        callback: function(r) {
+          self.setstatus('registered');
+        }
       });
     },
     
     lostpass: function(email, name) {
       var self = this;
-    return this.ajax({
-method: "email_lostpass",
-params:  {email: email, name: name},
-callback:  function(r) {
-        self.setstatus('restored');
-}
+      return this.ajax({
+        method: "email_lostpass",
+      params:  {email: email, name: name},
+        callback:  function(r) {
+          self.setstatus('restored');
+        }
       });
     }
     

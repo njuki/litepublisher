@@ -1,6 +1,6 @@
 /**
 * Lite Publisher
-* Copyright (C) 2010 - 2013 Vladimir Yushko http://litepublisher.ru/ http://litepublisher.com/
+* Copyright (C) 2010 - 2014 Vladimir Yushko http://litepublisher.ru/ http://litepublisher.com/
 * Dual licensed under the MIT (mit.txt)
 * and GPL (gpl.txt) licenses.
 **/
@@ -88,28 +88,28 @@
       
       var self = this;
       $.jsonrpc({
-method: "comment_add",
-params: params,
-callback:  function (resp) {
-        try {
-          switch (resp.code) {
-            case 'confirm':
-            self.confirm(resp.confirmid);
-            break;
-            
-            case 'success':
-            self.success(resp);
-            break;
-            
-            default: //error
-            self.error(resp.message);
-            break;
-          }
-      } catch(e) { form.error(e.message); }
-      }, 
-
-error: $.proxy(self.error, self)
-})
+        method: "comment_add",
+        params: params,
+        callback:  function (resp) {
+          try {
+            switch (resp.code) {
+              case 'confirm':
+              self.confirm(resp.confirmid);
+              break;
+              
+              case 'success':
+              self.success(resp);
+              break;
+              
+              default: //error
+              self.error(resp.message);
+              break;
+            }
+        } catch(e) { form.error(e.message); }
+        },
+        
+        error: $.proxy(self.error, self)
+      })
       .always(function() {
         inputs.removeAttr("disabled");
       });
@@ -120,12 +120,12 @@ error: $.proxy(self.error, self)
       $.confirmbox(lang.dialog.confirm, lang.comment.checkspam , lang.comment.robot, lang.comment.human, function(index) {
         if (index !=1) return;
         $.jsonrpc({
-type: 'get',
-method: "comment_confirm",
-params: {confirmid: confirmid},
-callback:  $.proxy(self.success, self),
-error:  $.proxy(self.error, self)
-});
+          type: 'get',
+          method: "comment_confirm",
+        params: {confirmid: confirmid},
+          callback:  $.proxy(self.success, self),
+          error:  $.proxy(self.error, self)
+        });
       });
     },
     

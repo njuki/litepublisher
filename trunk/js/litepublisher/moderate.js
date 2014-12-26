@@ -1,13 +1,13 @@
 /**
 * Lite Publisher
-* Copyright (C) 2010 - 2013 Vladimir Yushko http://litepublisher.ru/ http://litepublisher.com/
+* Copyright (C) 2010 - 2014 Vladimir Yushko http://litepublisher.ru/ http://litepublisher.com/
 * Dual licensed under the MIT (mit.txt)
 * and GPL (gpl.txt) licenses.
 **/
 
 (function ($, document, window) {
   'use strict';
-
+  
   litepubl.Moderate = Class.extend({
     enabled : true,
     
@@ -60,19 +60,19 @@
         this.setenabled(false);
         $.confirmbox(lang.dialog.confirm, lang.comments.confirmdelete, lang.comments.yesdelete, lang.comments.nodelete, function(index) {
           if (index !=0) return self.setenabled(true);
-        $.jsonrpc({
-type: 'get',
-method: "comment_delete", 
-params: {id: id}, 
-callback: function(r){
-            if (r == false) return self.error(lang.comments.notdeleted);
-            $(idcomment).remove();
-            self.setenabled(true);
-          }, 
-
-error: function(message, code) {
-            self.error(lang.comments.notdeleted);
-}
+          $.jsonrpc({
+            type: 'get',
+            method: "comment_delete",
+          params: {id: id},
+            callback: function(r){
+              if (r == false) return self.error(lang.comments.notdeleted);
+              $(idcomment).remove();
+              self.setenabled(true);
+            },
+            
+            error: function(message, code) {
+              self.error(lang.comments.notdeleted);
+            }
           });
         });
         break;
@@ -82,38 +82,38 @@ error: function(message, code) {
         case "approve":
         this.setenabled(false);
         $.jsonrpc({
-type: 'get',
-method: "comment_setstatus",
-params:  {id: id, status: status == 'hold' ? 'hold' : 'approved'},
-callback:  function(r) {
-          try {
-            if (r == false) return self.error(lang.comments.notmoderated);
-            $(status == "hold" ? options.hold : options.comments).append($(options.comment  + id));
-            self.setenabled(true);
-        } catch(e) {erralert(e);}
-        }, 
-
-error: function(message, code) {
-          self.error(lang.comments.notmoderated);
-}
+          type: 'get',
+          method: "comment_setstatus",
+        params:  {id: id, status: status == 'hold' ? 'hold' : 'approved'},
+          callback:  function(r) {
+            try {
+              if (r == false) return self.error(lang.comments.notmoderated);
+              $(status == "hold" ? options.hold : options.comments).append($(options.comment  + id));
+              self.setenabled(true);
+          } catch(e) {erralert(e);}
+          },
+          
+          error: function(message, code) {
+            self.error(lang.comments.notmoderated);
+          }
         });
         break;
         
         case "edit":
         this.setenabled(false);
         $.jsonrpc({
-type: 'get',
-method: "comment_getraw",
-params: {id: id},
-callback: function(resp){
-          try {
-            self.edit(id, resp.rawcontent);
-        } catch(e) {erralert(e);}
-        }, 
-
-error: function(message, code) {
-          self.error(lang.comments.errorrecieved);
-}
+          type: 'get',
+          method: "comment_getraw",
+        params: {id: id},
+          callback: function(resp){
+            try {
+              self.edit(id, resp.rawcontent);
+          } catch(e) {erralert(e);}
+          },
+          
+          error: function(message, code) {
+            self.error(lang.comments.errorrecieved);
+          }
         });
         break;
         
@@ -145,25 +145,25 @@ error: function(message, code) {
           }
           
           $(":input", form).attr("disabled", "disabled");
-        $.jsonrpc({
-method: "comment_edit", 
-params: {id: area.data("idcomment"), content: content}, 
-callback: function(r){
-            try {
+          $.jsonrpc({
+            method: "comment_edit",
+          params: {id: area.data("idcomment"), content: content},
+            callback: function(r){
+              try {
+                $(":input", form).removeAttr("disabled");
+                var cc = self.options.content + r.id;
+                $(cc).html(r.content);
+                self.restore_submit();
+                location.hash = cc.substring(1);
+            } catch(e) {erralert(e);}
+            },
+            
+            error: function(message, code) {
               $(":input", form).removeAttr("disabled");
-              var cc = self.options.content + r.id;
-              $(cc).html(r.content);
+              self.error(lang.comments.notedited);
               self.restore_submit();
-              location.hash = cc.substring(1);
-          } catch(e) {erralert(e);}
-        }, 
-
-error: function(message, code) {
-            $(":input", form).removeAttr("disabled");
-            self.error(lang.comments.notedited);
-            self.restore_submit();
-          }
-});
+            }
+          });
           
       } catch(e) {erralert(e);}
         return false;
@@ -183,26 +183,26 @@ error: function(message, code) {
       var self = this;
       var options = this.options;
       $(".loadhold").parent().remove();
-        $.jsonrpc({
-type: 'get',
-method: "comments_get_hold",
-params: {idpost: ltoptions.idpost},
-callback: function(r) {
-        try {
-          if (options.ismoder) {
-            var approved = $(options.comments);
-            var hold = $(options.hold);
-            while (approved.next()[0] != hold[0]) approved.next().remove();
-            hold.remove();
-          }
-          $(options.comments).after(r.items);
-          self.create_buttons(options.hold);
-      } catch(e) {erralert(e);}
+      $.jsonrpc({
+        type: 'get',
+        method: "comments_get_hold",
+      params: {idpost: ltoptions.idpost},
+        callback: function(r) {
+          try {
+            if (options.ismoder) {
+              var approved = $(options.comments);
+              var hold = $(options.hold);
+              while (approved.next()[0] != hold[0]) approved.next().remove();
+              hold.remove();
+            }
+            $(options.comments).after(r.items);
+            self.create_buttons(options.hold);
+        } catch(e) {erralert(e);}
         },
-
-error:  function(message, code) {
-        self.error(lang.comments.errorrecieved);
-}
+        
+        error:  function(message, code) {
+          self.error(lang.comments.errorrecieved);
+        }
       });
       return false;
     },

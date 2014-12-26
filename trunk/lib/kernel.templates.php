@@ -1,10 +1,4 @@
 <?php
-/**
-* Lite Publisher
-* Copyright (C) 2010, 2011, 2012, 2013 Vladimir Yushko http://litepublisher.com/
-* Dual licensed under the MIT (mit.txt)
-* and GPL (gpl.txt) licenses.
-**/
 //local.class.php
 class tlocal {
   public static $self;
@@ -1970,7 +1964,7 @@ class tguard {
   public static function post() {
     if (is_bool(self::$posted)) return self::$posted;
     self::$posted = false;
-    if (!isset($_POST) || (count($_POST) == 0)) return false;
+    if (!isset($_POST) || !count($_POST)) return false;
     if (get_magic_quotes_gpc()) {
       foreach ($_POST as $name => $value) {
         $_POST[$name] = stripslashes($_POST[$name]);
@@ -2012,4 +2006,3 @@ class tguard {
   
 }//class
 
-?>

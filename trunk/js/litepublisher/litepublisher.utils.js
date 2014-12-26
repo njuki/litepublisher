@@ -1,6 +1,6 @@
 /**
 * Lite Publisher
-* Copyright (C) 2010 - 2013 Vladimir Yushko http://litepublisher.ru/ http://litepublisher.com/
+* Copyright (C) 2010 - 2014 Vladimir Yushko http://litepublisher.ru/ http://litepublisher.com/
 * Dual licensed under the MIT (mit.txt)
 * and GPL (gpl.txt) licenses.
 **/
@@ -140,26 +140,26 @@
   
   $.extend({
     r2callback: false,
-  ready2: function(fn) {
-if (!$.r2callback) {
-    $.r2callback =  $.Deferred();
-var ready2resolve = function() {
-    window.setTimeout(function() {
-      $.r2callback.resolve();
-    }, 0);
-  };
-
-if ($.isReady) {
-  $(document).ready(ready2resolve);
-} else {
-//.on('ready') call after $(document).ready
-$(document).on('ready', ready2resolve);
-}
-}
-
-    $.r2callback.done(fn);
-  },
-
+    ready2: function(fn) {
+      if (!$.r2callback) {
+        $.r2callback =  $.Deferred();
+        var ready2resolve = function() {
+          window.setTimeout(function() {
+            $.r2callback.resolve();
+          }, 0);
+        };
+        
+        if ($.isReady) {
+          $(document).ready(ready2resolve);
+        } else {
+          //.on('ready') call after $(document).ready
+          $(document).on('ready', ready2resolve);
+        }
+      }
+      
+      $.r2callback.done(fn);
+    },
+    
     load_script: function( url, callback ) {
       return $.ajax({
         type: 'get',
@@ -174,79 +174,79 @@ $(document).on('ready', ready2resolve);
     load_css: function(url) {
       $('<link rel="stylesheet" type="text/css" href="' + url + '" />').appendTo("head:first");
     }  ,
-
-hasprop: function(obj, prop) {
-return (typeof obj === "object") && (prop in obj);
-},
+    
+    hasprop: function(obj, prop) {
+      return (typeof obj === "object") && (prop in obj);
+    },
     
     jsonrpc: function(args) {
-args = $.extend({
-type: 'post',
-method: '',
-params: {},
-slave: false,
-callback: false,
-error: false,
-cache: false
-}, args);
-
-var params = args.params;
+      args = $.extend({
+        type: 'post',
+        method: '',
+      params: {},
+        slave: false,
+        callback: false,
+        error: false,
+        cache: false
+      }, args);
+      
+      var params = args.params;
       var user = litepubl.getuser();
       if (user.id) {
         params.litepubl_user_id = user.id;
         params.litepubl_user = user.pass;
         params.litepubl_user_regservice = user.regservice;
       }
-
-if (args.slave) {
-params.slave = {
-method: args.slave.method,
-params: args.slave.params
-};
-}
-
-var ajax = {
+      
+      if (args.slave) {
+        params.slave = {
+          method: args.slave.method,
+          params: args.slave.params
+        };
+      }
+      
+      var ajax = {
         type: args.type,
         url: ltoptions.ajaxurl + "/admin/jsonserver.php",
         cache: args.cache,
         dataType: "json",
         success: function(r) {
           if (typeof r === "object") {
-if ("result" in r) {
-if ($.isFunction(args.callback)) args.callback(r.result);
-if (args.slave && $.hasprop(r.result, 'slave')) {
-var slave = args.slave;
-var slaveresult = r.result.slave;
-if ($.hasprop(slaveresult, 'error')) {
-if ($.hasprop(slave, 'error') && $.isFunction(slave.error)) slave.error(slaveresult.error.message, slaveresult.error.code);
-} else {
-if ($.hasprop(slave, 'callback') && $.isFunction(slave.callback)) slave.callback(slaveresult);
-}
-}
-} else if ("error" in r) {
-if ($.isFunction(args.error)) args.error(r.error.message, r.error.code);
-}
-}
-}
+            if ("result" in r) {
+              if ($.isFunction(args.callback)) args.callback(r.result);
+              if (args.slave && $.hasprop(r.result, 'slave')) {
+                var slave = args.slave;
+                var slaveresult = r.result.slave;
+                if ($.hasprop(slaveresult, 'error')) {
+                  if ($.hasprop(slave, 'error') && $.isFunction(slave.error)) slave.error(slaveresult.error.message, slaveresult.error.code);
+                } else {
+                  if ($.hasprop(slave, 'callback') && $.isFunction(slave.callback)) slave.callback(slaveresult);
+                }
+              }
+            } else if ("error" in r) {
+              if ($.isFunction(args.error)) args.error(r.error.message, r.error.code);
+            }
+          }
+        }
       };
-
-if (args.type == 'post') {
-if (!args.cache) ajax.url = ajax.url + '?_=' + litepubl.guid++;
+      
+      if (args.type == 'post') {
+        if (!args.cache) ajax.url = ajax.url + '?_=' + litepubl.guid++;
         ajax.data = $.toJSON({
-jsonrpc: "2.0",
-method: args.method,
-params: params,
-id: litepubl.guid++
-});
-} else {
-ajax.type = 'get';
-params.method = args.method;
-ajax.data = params;
-}
-
+          jsonrpc: "2.0",
+          method: args.method,
+          params: params,
+          id: litepubl.guid++
+        });
+      } else {
+        ajax.type = 'get';
+        params.method = args.method;
+        ajax.data = params;
+      }
+      
       return $.ajax(ajax).fail( function(jq, textStatus, errorThrown) {
-if ($.isFunction(args.error)) args.error(jq.responseText, jq.status);
-});
+        if ($.isFunction(args.error)) args.error(jq.responseText, jq.status);
+      });
     },
     
     onEscape: function (callback) {

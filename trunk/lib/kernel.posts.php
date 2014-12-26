@@ -1,10 +1,4 @@
 <?php
-/**
-* Lite Publisher
-* Copyright (C) 2010, 2011, 2012, 2013 Vladimir Yushko http://litepublisher.com/
-* Dual licensed under the MIT (mit.txt)
-* and GPL (gpl.txt) licenses.
-**/
 //items.posts.class.php
 class titemsposts extends titems {
   public $tablepost;
@@ -324,7 +318,7 @@ class tpost extends titem implements  itemplate {
     }
   }
   
-  public function addtodb() {
+  public function create_id() {
     $id = $this->factory->add($this);
     $this->setid($id);
     if ($this->childtable) {
@@ -332,7 +326,16 @@ class tpost extends titem implements  itemplate {
       $this->childdata['id'] = $id;
       $this->getdb($this->childtable)->insert($this->childdata);
     }
+    
+    $this->idurl = $this->create_url();
+    $this->db->setvalue($id, 'idurl', $this->idurl);
+    $this->onid();
+    
     return $id;
+  }
+  
+  public function create_url() {
+    return litepublisher::$urlmap->add($this->url, get_class($this), (int) $this->id);
   }
   
   public function onid() {
@@ -1265,20 +1268,14 @@ class tposts extends titems {
       if (isset($views->defaults['post'])) $post->id_view = $views->defaults['post'];
     }
     
-    $linkgen = tlinkgenerator::i();
-    $post->url = $linkgen->addurl($post, $post->schemalink);
-    $urlmap = turlmap::i();
-    $id = $post->addtodb();
-    $post->idurl = $urlmap->add($post->url, get_class($post), (int) $post->id);
-    $post->db->setvalue($post->id, 'idurl', $post->idurl);
-    $post->onid();
-    $this->lock();
+    $post->url = tlinkgenerator::i()->addurl($post, $post->schemalink);
+    $id = $post->create_id();
+    
     $this->updated($post);
     $this->cointerface('add', $post);
-    $this->unlock();
     $this->added($post->id);
     $this->changed();
-    $urlmap->clearcache();
+    litepublisher::$urlmap->clearcache();
     return $post->id;
   }
   
@@ -2640,4 +2637,3 @@ class tfileitems extends titemsposts {
   
 }
 
-?>

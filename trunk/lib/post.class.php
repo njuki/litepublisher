@@ -1,7 +1,7 @@
 <?php
 /**
 * Lite Publisher
-* Copyright (C) 2010 - 2013 Vladimir Yushko http://litepublisher.ru/ http://litepublisher.com/
+* Copyright (C) 2010 - 2014 Vladimir Yushko http://litepublisher.ru/ http://litepublisher.com/
 * Dual licensed under the MIT (mit.txt)
 * and GPL (gpl.txt) licenses.
 **/
@@ -222,17 +222,17 @@ class tpost extends titem implements  itemplate {
       $this->childdata['id'] = $id;
       $this->getdb($this->childtable)->insert($this->childdata);
     }
-
+    
     $this->idurl = $this->create_url();
     $this->db->setvalue($id, 'idurl', $this->idurl);
-$this->onid();
-
+    $this->onid();
+    
     return $id;
   }
-
-public function create_url() {
-return litepublisher::$urlmap->add($this->url, get_class($this), (int) $this->id);
-}
+  
+  public function create_url() {
+    return litepublisher::$urlmap->add($this->url, get_class($this), (int) $this->id);
+  }
   
   public function onid() {
     if (isset($this->_onid) && count($this->_onid) > 0) {
@@ -250,7 +250,7 @@ return litepublisher::$urlmap->add($this->url, get_class($this), (int) $this->id
       $this->_meta->id = $this->id;
       $this->_meta->save();
     }
- }
+  }
   
   public function setonid($call) {
     if (!is_callable($call)) $this->error('Event onid not callable');

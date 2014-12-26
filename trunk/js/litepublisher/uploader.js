@@ -1,6 +1,6 @@
 /**
 * Lite Publisher
-* Copyright (C) 2010 - 2013 Vladimir Yushko http://litepublisher.ru/ http://litepublisher.com/
+* Copyright (C) 2010 - 2014 Vladimir Yushko http://litepublisher.ru/ http://litepublisher.com/
 * Dual licensed under the MIT (mit.txt)
 * and GPL (gpl.txt) licenses.
 **/
@@ -78,12 +78,12 @@
     uploaded: function(resp) {
       try {
         if (typeof resp == "string") resp = $.parseJSON(resp);
-if ("result" in resp) {
-        this.items.push(resp.result);
-        this.onupload.fire(resp.result);
-} else if ("error" in resp) {
-this.error(resp.error.message);
-}
+        if ("result" in resp) {
+          this.items.push(resp.result);
+          this.onupload.fire(resp.result);
+        } else if ("error" in resp) {
+          this.error(resp.error.message);
+        }
     } catch(e) {erralert(e);}
     },
     

@@ -1,26 +1,21 @@
 <?php
-/**
-* Lite Publisher
-* Copyright (C) 2010, 2011, 2012, 2013 Vladimir Yushko http://litepublisher.com/
-* Dual licensed under the MIT (mit.txt)
-* and GPL (gpl.txt) licenses.
-**/
 //db.class.php
 class tdatabase {
+  public $mysqli;
   public $result;
   public $sql;
   public $dbname;
   public $table;
   public $prefix;
   public $history;
-  public $mysqli;
+  public $debug;
   
   public static function i() {
     return getinstance(__class__);
   }
   
   public static function instance() {
-    return getinstance(__class__);
+    return self::i();
   }
   
   public function __construct() {
@@ -32,6 +27,7 @@ class tdatabase {
   }
   
   public function getconfig() {
+    $this->debug = &litepublisher::$debug;
     if (isset(litepublisher::$options->dbconfig)) {
       $result = litepublisher::$options->dbconfig;
       //decrypt db password
@@ -82,7 +78,7 @@ class tdatabase {
   
   public function query($sql) {
     $this->sql = $sql;
-    if (litepublisher::$debug) {
+    if ($this->debug) {
       $this->history[] = array(
       'sql' => $sql,
       'time' => 0
@@ -92,7 +88,7 @@ class tdatabase {
     
     if (is_object($this->result)) $this->result->close();
     $this->result = $this->mysqli->query($sql);
-    if (litepublisher::$debug) {
+    if ($this->debug) {
       $this->history[count($this->history) - 1]['time'] = microtime(true) - $microtime;
       if ($this->mysqli->warning_count && ($r = $this->mysqli->query('SHOW WARNINGS'))) {
         echo "<pre>\n";
@@ -107,21 +103,36 @@ class tdatabase {
     return $this->result;
   }
   
-  private function doerror($mesg) {
-    if (litepublisher::$debug) {
-      $log = "exception:\n$mesg\n$this->sql\n";
-      try {
-        throw new Exception();
-      } catch (Exception $e) {
-        $log .=str_replace(litepublisher::$paths->home, '', $e->getTraceAsString());
-      }
-      $man = tdbmanager::i();
-      $log .= $man->performance();
-      $log = str_replace("\n", "<br />\n", htmlspecialchars($log));
-      die($log);
-    } else {
-      litepublisher::$options->trace($this->sql . "\n" . $mesg);
+  protected function doerror($mesg) {
+    if (!$this->debug) return litepublisher::$options->trace($this->sql . "\n" . $mesg)
+    ;
+    $log = "exception:\n$mesg\n$this->sql\n";
+    try {
+      throw new Exception();
+    } catch (Exception $e) {
+      $log .=str_replace(litepublisher::$paths->home, '', $e->getTraceAsString());
     }
+    
+    $log .= $this->performance();
+    $log = str_replace("\n", "<br />\n", htmlspecialchars($log));
+    die($log);
+  }
+  
+  public function performance() {
+    $result = '';
+    $total = 0.0;
+    $max = 0.0;
+    foreach ($this->history as $i => $item) {
+  $result .= "$i: {$item['time']}\n{$item['sql']}\n\n";
+      $total += $item['time'];
+      if ($max < $item['time']) {
+        $maxsql = $item['sql'];
+        $max = $item['time'];
+      }
+    }
+    $result .= "maximum $max\n$maxsql\n";
+    $result .= sprintf("%s total time\n%d querries\n\n", $total, count($this->history));
+    return $result;
   }
   
   public function quote($s) {
@@ -371,11 +382,11 @@ class tdatabase {
 //data.class.php
 class tdata {
   const zerodate = '0000-00-00 00:00:00';
+  public $data;
   public $basename;
   public $cache;
   public $coclasses;
   public $coinstances;
-  public $data;
   public $lockcount;
   public $table;
   public static $guid = 0;
@@ -1549,7 +1560,6 @@ class tclasses extends titems {
   
   public function delete($class) {
     if (!isset($this->items[$class])) return false;
-    
     $this->lock();
     $m = $this->memcache;
     $this->memcache = false;
@@ -2018,8 +2028,6 @@ class toptions extends tevents_storage {
       default:
       return gettype($v);
     }
-    
-    
   }
   
 }//class
@@ -2995,4 +3003,3 @@ class tpullitems extends tdata {
   
 }//class
 
-?>

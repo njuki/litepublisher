@@ -1,7 +1,7 @@
 <?php
 /**
 * Lite Publisher
-* Copyright (C) 2010 - 2013 Vladimir Yushko http://litepublisher.ru/ http://litepublisher.com/
+* Copyright (C) 2010 - 2014 Vladimir Yushko http://litepublisher.ru/ http://litepublisher.com/
 * Dual licensed under the MIT (mit.txt)
 * and GPL (gpl.txt) licenses.
 **/
@@ -62,49 +62,49 @@ class tinstaller extends tdata {
   
   public function OutputResult($password) {
     if ($this->mode != 'remote') return;
-      litepublisher::$options->savemodified();
-
-      $result = array(
-      'url' => litepublisher::$site->url,
-      'email' => litepublisher::$options->email,
-      'password' => $password,
-      'name' => litepublisher::$site->name,
-      'description' => litepublisher::$site->description
-      );
-
-      switch ($this->resulttype) {
-        case 'json' :
-        $s = json_encode($result);
-    header('Content-Type: text/javascript; charset=utf-8');
-BREAK;
-
-        case 'serialized' :
-        $s = serialize($result);
-        header('Content-Type: text/plain; charset=utf-8');
-BREAK;
-        
-        case 'xmlrpc':
-        $r = new IXR_Value($result);
-        $s = '<?xml version="1.0" encoding="utf-8" ?>
-   <methodResponse><params><param><value>' .
-$r->getXml() .
-    '</value></param></params></methodResponse>';
-
-       header('Content-Type: text/xml; charset=utf-8');
-break;
-        
-default:
-die('Unknown remote method');
-      }
-
-        header('Connection: close');
+    litepublisher::$options->savemodified();
+    
+    $result = array(
+    'url' => litepublisher::$site->url,
+    'email' => litepublisher::$options->email,
+    'password' => $password,
+    'name' => litepublisher::$site->name,
+    'description' => litepublisher::$site->description
+    );
+    
+    switch ($this->resulttype) {
+      case 'json' :
+      $s = json_encode($result);
+      header('Content-Type: text/javascript; charset=utf-8');
+      BREAK;
+      
+      case 'serialized' :
+      $s = serialize($result);
+      header('Content-Type: text/plain; charset=utf-8');
+      BREAK;
+      
+      case 'xmlrpc':
+      $r = new IXR_Value($result);
+      $s = '<?xml version="1.0" encoding="utf-8" ?>
+      <methodResponse><params><param><value>' .
+      $r->getXml() .
+      '</value></param></params></methodResponse>';
+      
+      header('Content-Type: text/xml; charset=utf-8');
+      break;
+      
+      default:
+      die('Unknown remote method');
+    }
+    
+    header('Connection: close');
     header('Last-Modified: ' . date('r'));
     Header( 'Cache-Control: no-cache, must-revalidate');
     Header( 'Pragma: no-cache');
     header('Content-Length: ' . strlen($s));
-        echo $s;
-        exit();
- }
+    echo $s;
+    exit();
+  }
   
   public function CreateDefaultItems($password) {
     if ($this->mode != 'remote') {
@@ -133,7 +133,7 @@ die('Unknown remote method');
     }
     
     require_once(litepublisher::$paths->lib . 'install' . DIRECTORY_SEPARATOR . 'classes.install.php');
-  parse_classes_ini(isset($_REQUEST['classes']) ? $_REQUEST['classes'] : false);
+    parse_classes_ini(isset($_REQUEST['classes']) ? $_REQUEST['classes'] : false);
     return install_engine($_REQUEST['email'], $this->language);
   }
   

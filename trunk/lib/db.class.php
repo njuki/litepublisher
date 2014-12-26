@@ -1,7 +1,7 @@
 <?php
 /**
 * Lite Publisher
-* Copyright (C) 2010 - 2013 Vladimir Yushko http://litepublisher.ru/ http://litepublisher.com/
+* Copyright (C) 2010 - 2014 Vladimir Yushko http://litepublisher.ru/ http://litepublisher.com/
 * Dual licensed under the MIT (mit.txt)
 * and GPL (gpl.txt) licenses.
 **/
@@ -14,9 +14,9 @@ class tdatabase {
   public $table;
   public $prefix;
   public $history;
-public $debug;
-
-    public static function i() {
+  public $debug;
+  
+  public static function i() {
     return getinstance(__class__);
   }
   
@@ -33,7 +33,7 @@ public $debug;
   }
   
   public function getconfig() {
-$this->debug = &litepublisher::$debug;
+    $this->debug = &litepublisher::$debug;
     if (isset(litepublisher::$options->dbconfig)) {
       $result = litepublisher::$options->dbconfig;
       //decrypt db password
@@ -111,19 +111,19 @@ $this->debug = &litepublisher::$debug;
   
   protected function doerror($mesg) {
     if (!$this->debug) return litepublisher::$options->trace($this->sql . "\n" . $mesg)
-;
-      $log = "exception:\n$mesg\n$this->sql\n";
-      try {
-        throw new Exception();
-      } catch (Exception $e) {
-        $log .=str_replace(litepublisher::$paths->home, '', $e->getTraceAsString());
-      }
-
-      $log .= $this->performance();
-      $log = str_replace("\n", "<br />\n", htmlspecialchars($log));
-      die($log);
-        }
-
+    ;
+    $log = "exception:\n$mesg\n$this->sql\n";
+    try {
+      throw new Exception();
+    } catch (Exception $e) {
+      $log .=str_replace(litepublisher::$paths->home, '', $e->getTraceAsString());
+    }
+    
+    $log .= $this->performance();
+    $log = str_replace("\n", "<br />\n", htmlspecialchars($log));
+    die($log);
+  }
+  
   public function performance() {
     $result = '';
     $total = 0.0;

@@ -1,7 +1,7 @@
 <?php
 /**
 * Lite Publisher
-* Copyright (C) 2010 - 2013 Vladimir Yushko http://litepublisher.ru/ http://litepublisher.com/
+* Copyright (C) 2010 - 2014 Vladimir Yushko http://litepublisher.ru/ http://litepublisher.com/
 * Dual licensed under the MIT (mit.txt)
 * and GPL (gpl.txt) licenses.
 **/
@@ -166,7 +166,7 @@ class ulogin extends tplugin {
   
   public function ulogin_auth(array $args) {
     if (!isset($args['token']) || (!($token = $args['token']))) return $this->error('Invalide token', 403);
-$result = $this->auth($token);
+    $result = $this->auth($token);
     if (!$result) $this->error('Not authorized', 403);
     return $result;
   }
@@ -193,16 +193,16 @@ $result = $this->auth($token);
   }
   
   public function check_logged(array $args) {
-if (litepublisher::$options->authcookies($args['litepubl_user_id'], $args['litepubl_user'])) {
-return array(
-'logged' => true
-);
-} else {
-return array('error' => array(
-'message' => 'Not logged',
-'code' => 403
-));
-}    
+    if (litepublisher::$options->authcookies($args['litepubl_user_id'], $args['litepubl_user'])) {
+      return array(
+      'logged' => true
+      );
+    } else {
+      return array('error' => array(
+      'message' => 'Not logged',
+      'code' => 403
+      ));
+    }
   }
   
   public static function filterphone($phone) {

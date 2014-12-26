@@ -1,6 +1,6 @@
 /**
 * Lite Publisher
-* Copyright (C) 2010 - 2013 Vladimir Yushko http://litepublisher.ru/ http://litepublisher.com/
+* Copyright (C) 2010 - 2014 Vladimir Yushko http://litepublisher.ru/ http://litepublisher.com/
 * Dual licensed under the MIT (mit.txt)
 * and GPL (gpl.txt) licenses.
 **/
@@ -33,17 +33,17 @@
       });
       
       $("#ulogin-comment-button").click(function() {
-      self.onlogged({
-type: 'get',
-method: "comments_get_logged",
-params: {idpost: ltoptions.idpost},
-callback:  function(r) {
-              $("#before-commentform").html(r);
-            },
-
-error: function(message, code) {
-              $.messagebox(lang.dialog.error, message);
-}
+        self.onlogged({
+          type: 'get',
+          method: "comments_get_logged",
+        params: {idpost: ltoptions.idpost},
+          callback:  function(r) {
+            $("#before-commentform").html(r);
+          },
+          
+          error: function(message, code) {
+            $.messagebox(lang.dialog.error, message);
+          }
         });
         
         return false;
@@ -52,18 +52,18 @@ error: function(message, code) {
     
     open: function(args) {
       if (this.dialog) return false;
-args = $.extend({
-url: ltoptions.url + "/admin/login/?backurl=" + encodeURIComponent(location.href),
-calback: false,
-email: function() {
-                window.location = args.url;
-              }
-}, args);
-
+      args = $.extend({
+        url: ltoptions.url + "/admin/login/?backurl=" + encodeURIComponent(location.href),
+        calback: false,
+        email: function() {
+          window.location = args.url;
+        }
+      }, args);
+      
       var self = this;
       self.ready(function() {
         self.dialog = true;
-var lng = lang.ulogin;
+        var lng = lang.ulogin;
         var html = self.html.replace(/%%lang.emaillogin%%/gim, lng.emaillogin)
         .replace(/%%lang.subtitle%%/gim, lng.subtitle)
         .replace(/%%url%%/gim, args.url);
@@ -121,49 +121,49 @@ var lng = lang.ulogin;
     
     auth: function(token, slave, callback) {
       var self =this;
-    return $.jsonrpc({
-method: "ulogin_auth",
-params:  {token: token},
- slave: slave,
-callback:  function(r) {
-        litepubl.user = r;
-        set_cookie("litepubl_user_id", r.id);
-        set_cookie("litepubl_user", r.pass);
-        set_cookie("litepubl_regservice", r.regservice);
-        self.registered = true;
-        self.logged = true;
-        if ($.isFunction(callback)) callback();
-}
+      return $.jsonrpc({
+        method: "ulogin_auth",
+      params:  {token: token},
+        slave: slave,
+        callback:  function(r) {
+          litepubl.user = r;
+          set_cookie("litepubl_user_id", r.id);
+          set_cookie("litepubl_user", r.pass);
+          set_cookie("litepubl_regservice", r.regservice);
+          self.registered = true;
+          self.logged = true;
+          if ($.isFunction(callback)) callback();
+        }
       });
     },
     
     login: function(url, slave, callback) {
       var self = this;
       self.open({
-url: url,
-callback: function(token) {
-        self.auth(token, slave, callback);
-      }, 
-
-email: callback
-});
+        url: url,
+        callback: function(token) {
+          self.auth(token, slave, callback);
+        },
+        
+        email: callback
+      });
     },
     
     logon: function(slave, callback) {
       var self = this;
       self.open({
-url: '',
-callback: function(token) {
-        self.auth(token, slave, callback);
-      }, 
-
-email: function() {
-        if (slave) {
-          $.jsonrpc(slave);
-        } else if ($.isFunction(callback)) {
-          callback();
+        url: '',
+        callback: function(token) {
+          self.auth(token, slave, callback);
+        },
+        
+        email: function() {
+          if (slave) {
+            $.jsonrpc(slave);
+          } else if ($.isFunction(callback)) {
+            callback();
+          }
         }
-}
       });
     },
     
@@ -173,30 +173,30 @@ email: function() {
       if (this.logged) {
         if (slave) {
           $.jsonrpc(slave);
-        litepubl.stat('ulogin_checklogged');
-return false;
+          litepubl.stat('ulogin_checklogged');
+          return false;
         } else {
-if ($.isFunction(callback)) callback('logged');
+          if ($.isFunction(callback)) callback('logged');
           return true;
         }
-}
-
+      }
+      
       var self = this;
       $.jsonrpc({
-method: "check_logged",
-params:  {},
-slave: slave,
-callback:  function(r) {
-            self.logged = true;
-if ($.isFunction(calback)) callback();
-},
-
-error: function(message, code) {
-            self.logon(slave, callback);
-          }
-        });
-
-        litepubl.stat('ulogin_checklogged');
+        method: "check_logged",
+      params:  {},
+        slave: slave,
+        callback:  function(r) {
+          self.logged = true;
+          if ($.isFunction(calback)) callback();
+        },
+        
+        error: function(message, code) {
+          self.logon(slave, callback);
+        }
+      });
+      
+      litepubl.stat('ulogin_checklogged');
       return false;
     }
     
