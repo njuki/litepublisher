@@ -20,7 +20,7 @@ function uloginInstall($self) {
   <div id="uLogin" data-ulogin="display=small;fields=first_name,last_name;optional=email,phone,nickname;providers=vkontakte,odnoklassniki,mailru,yandex,facebook,google,twitter;hidden=other;redirect_uri=' .
   urlencode(litepublisher::$site->url . $self->url . '?backurl=') . ';"></div>
   <script type="text/javascript">
-  ready2(function() {
+  $.ready2(function() {
     litepubl.ulogin.ready();
   });
   </script>';

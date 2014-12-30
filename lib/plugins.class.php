@@ -99,12 +99,8 @@ class tplugins extends TItems {
     litepublisher::$classes->unlock();
     
     if ($datafile) {
-      /*
       tfilestorage::delete($datafile . '.php');
       tfilestorage::delete($datafile . '.bak.php');
-      */
-      tfiler::_delete($datafile . '.php');
-      tfiler::_delete($datafile . '.bak.php');
     }
     
     $this->deleted($name);
