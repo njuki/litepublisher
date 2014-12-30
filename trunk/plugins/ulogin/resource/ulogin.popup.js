@@ -54,7 +54,7 @@
       if (this.dialog) return false;
       args = $.extend({
         url: ltoptions.url + "/admin/login/?backurl=" + encodeURIComponent(location.href),
-        calback: false,
+        callback: false,
         email: function() {
           window.location = args.url;
         }
@@ -188,7 +188,7 @@
         slave: slave,
         callback:  function(r) {
           self.logged = true;
-          if ($.isFunction(calback)) callback();
+          if ($.isFunction(callback)) callback();
         },
         
         error: function(message, code) {

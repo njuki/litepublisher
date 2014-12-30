@@ -32,7 +32,7 @@
       html += '<p id="info-status"></p>';
       
       var self = this;
-      var dialog = $.litedialog({
+      var dialog = self.dialog = $.litedialog({
         title: lng.title,
         html: html,
         width: 300,
