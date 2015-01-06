@@ -23,4 +23,8 @@ $ulogin->save();
   $tc->regaccount = $ulogin->addpanel($tc->regaccount, $ulogin->button);
   $tc->save();
 }
+
+$t = ttemplate::i();
+$t->footer = str_replace('2014', '2015', $t->footer);
+$t->save();
 }
