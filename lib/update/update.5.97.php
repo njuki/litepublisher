@@ -4,7 +4,13 @@ function update597() {
 litepublisher::$site->jqueryui_version = '1.11.2';
 litepublisher::$site->save();
 
-tjsmerger::i()->add('default', '/js/plugins/tojson.min.js');
+$js = tjsmerger::i();
+$js->lock();
+$js->add('default', '/js/plugins/tojson.min.js');
+  $js->add('default', '/js/litepublisher/hover.min.js');
+$js->unlock();
+
+tcssmerger::i()->add('default', '/js/litepublisher/css/hover.css');
 
 if (litepublisher::$classes->exists('ulogin')) {
 $ulogin = ulogin::i();
