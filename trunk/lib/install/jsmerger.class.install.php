@@ -35,6 +35,7 @@ function tjsmergerInstall($self) {
   $self->add($section, '/js/litepublisher/dialog.bootstrap.min.js');
   $self->add($section, '/js/litepublisher/pretty.init.min.js');
   $self->add($section, '/js/litepublisher/youtubefix.min.js');
+  $self->add($section, '/js/litepublisher/hover.min.js');
   $self->add($section, "/lib/languages/$language/default.min.js");
   
   $section = 'comments';
