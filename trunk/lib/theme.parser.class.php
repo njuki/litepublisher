@@ -164,6 +164,8 @@ class tthemeparser extends tevents {
     $utf = "\xEF\xBB\xBF";
     if (strbegin($s, $utf)) $s = substr($s, strlen($utf));
     $s = str_replace(array("\r\n", "\r", "\n\n"), "\n", $s);
+//strip coments
+    $s = preg_replace('/\/\*.*?\*\//sm', '', $s);
     $s = preg_replace('/%%([a-zA-Z0-9]*+)_(\w\w*+)%%/', '\$$1.$2', $s);
     $s = strtr($s, array(
     '$options.url$url' => '$link',
