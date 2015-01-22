@@ -7,10 +7,10 @@ litepublisher::$site->save();
 $js = tjsmerger::i();
 $js->lock();
 $js->add('default', '/js/plugins/tojson.min.js');
-  $js->add('default', '/js/litepublisher/hover.min.js');
+  //$js->add('default', '/js/litepublisher/hover.min.js');
 $js->unlock();
 
-tcssmerger::i()->add('default', '/js/litepublisher/css/hover.css');
+//tcssmerger::i()->add('default', '/js/litepublisher/css/hover.css');
 
 if (litepublisher::$classes->exists('ulogin')) {
 $ulogin = ulogin::i();

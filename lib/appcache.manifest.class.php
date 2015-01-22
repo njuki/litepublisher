@@ -6,7 +6,7 @@
 * and GPL (gpl.txt) licenses.
 **/
 
-class tprefetchtxt extends titems {
+class appcache_manifest extends titems {
   
   public static function i() {
     return getinstance(__class__);
