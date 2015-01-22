@@ -279,10 +279,10 @@ class Tadminoptions extends tadminmenu {
       $html = $this->html;
       $args->formtitle = 'robots.txt';
       $args->robots = trobotstxt::i()->text;
-      $args->prefetch = tprefetchtxt::i()->text;
+      $args->appcache = appcache_manifest::i()->text;
       $tabs = new tuitabs();
       $tabs->add('robots.txt', '[editor=robots]');
-      $tabs->add('prefetch.txt', '[editor=prefetch]');
+      $tabs->add('manifest.appcache', '[editor=appcache]');
       return tuitabs::gethead() . $html->adminform($tabs->get(), $args);
       break;
       
@@ -507,9 +507,9 @@ class Tadminoptions extends tadminmenu {
       $robo->text = $robots;
       $robo->save();
       
-      $pref = tprefetchtxt::i();
-      $pref->text = $prefetch;
-      $pref->save();
+      $appcache_manifest  = appcache_manifest::i();
+      $appcache_manifest->text = $appcache;
+      $appcache_manifest->save();
       break;
       
       case 'secure':

@@ -33,4 +33,13 @@ $ulogin->save();
 $t = ttemplate::i();
 $t->footer = str_replace('2014', '2015', $t->footer);
 $t->save();
+
+$a = tprefetchtxt::i()->items;
+litepublisher::$classes->delete('tprefetchtxt');
+litepublisher::$classes->add('appcache_manifest', 'appcache.manifest.class.php');
+$c = appcache_manifest::i();
+$c->items = $a;
+$c->save();
+
+tredirector::i()->add('/prefetch.txt', $c->url);
 }
