@@ -14,8 +14,9 @@ class appcache_manifest extends titems {
   
   public function create() {
     parent::create();
-    $this->basename = 'prefetch.txt';
+    $this->basename = 'appcache.manifest';
     $this->dbversion = false;
+    $this->data['url'] = '/manifest.appcache';
     $this->data['idurl'] = 0;
   }
   
@@ -40,14 +41,13 @@ class appcache_manifest extends titems {
   
   public function request($arg) {
     $s = '<?php
-    header(\'Content-Type: text/plain\');
+    header(\'Content-Type: text/cache-manifest\');
     header(\'Last-Modified: ' . date('r') . '\');
     ?>';
     
-    $theme = ttheme::i();
-    $s .= $theme->parse($this->text);
-    
-    return  $s;
+$s .= "CACHE MANIFEST\r\n";
+    $s .= ttheme::i()->parse($this->text);
+        return  $s;
   }
   
 }//class

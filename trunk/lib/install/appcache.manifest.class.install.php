@@ -5,17 +5,16 @@
 * Dual licensed under the MIT (mit.txt)
 * and GPL (gpl.txt) licenses.
 **/
-function tprefetchtxtInstall($self) {
+
+function appcache_manifestInstall($self) {
   $self->lock();
-  $urlmap = turlmap::i();
-  $self->idurl = $urlmap->add('/prefetch.txt', get_class($self), null);
+  $self->idurl = litepublisher::$urlmap->add($self->url, get_class($self), null);
   
-  //$self->add("#" . litepublisher::$site->url . "/");
   $self->add('$template.jsmerger_default');
   $self->add('$template.cssmerger_default');
   $self->unlock();
 }
 
-function tprefetchtxtUninstall($self) {
+function appcache_manifestUninstall($self) {
   turlmap::unsub($self);
 }
