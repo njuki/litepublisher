@@ -21,8 +21,8 @@
   
   //litepublisher namespace
   window.litepubl = {
-  tml: {}, //namespace for templates
     guid: $.now(),
+  tml: {}, //namespace for templates
     adminpanel: false,
     is_adminpanel:  function() {
       if (litepubl.adminpanel !== false) return litepubl.adminpanel;
@@ -137,15 +137,15 @@
   window.erralert = function(e) {
     alert('error ' + e.message);
   };
-  
+
+    var ready2callback = false;
   $.extend({
-    r2callback: false,
     ready2: function(fn) {
-      if (!$.r2callback) {
-        $.r2callback =  $.Deferred();
+      if (!ready2callback) {
+        ready2callback =  $.Deferred();
         var ready2resolve = function() {
-          window.setTimeout(function() {
-            $.r2callback.resolve();
+          setTimeout(function() {
+            ready2callback.resolve();
           }, 0);
         };
         
@@ -157,7 +157,7 @@
         }
       }
       
-      $.r2callback.done(fn);
+      ready2callback.done(fn);
     },
     
     load_script: function( url, callback ) {
@@ -170,10 +170,6 @@
         cache: true
       });
     },
-    
-    load_css: function(url) {
-      $('<link rel="stylesheet" type="text/css" href="' + url + '" />').appendTo("head:first");
-    }  ,
     
     hasprop: function(obj, prop) {
       return (typeof obj === "object") && (prop in obj);
@@ -248,7 +244,7 @@
         if ($.isFunction(args.error)) args.error(jq.responseText, jq.status);
       });
     },
-    
+
     onEscape: function (callback) {
       $(document).off('keydown.onEscape').on('keydown.onEscape',function(e){
         if (e.keyCode == 27) {
@@ -260,32 +256,6 @@
     }
     
   });
-  
-  $.links = {
-    isready: false,
-    links: false,
-    list: false,
-    on: function(filter, fn) {
-      var self = $.links;
-      if (self.isready) {
-        self.links.filter(filter).on("click", fn);
-      } else {
-        if (!self.list) self.list = [];
-      self.list.push({filter: filter, fn: fn});
-        $(document).ready(function() {
-          var links = $("a");
-          self.links = links;
-          self.isready = true;
-          var list = self.list;
-          for (var i =0, l = list.length; i < l; i++) {
-            var item = list[i];
-            links.filter(item.filter).on("click", item.fn);
-          }
-          self.list = false;
-        });
-      }
-    }
-  };
   
   $.fn.replaceComment= function(html) {
     var result = html == undefined ? $(this.get(0).nodeValue) : $(html);
@@ -319,5 +289,53 @@
     
     return false;
   };
-  
+
+$.css_loader = {
+links: [],
+counter: 0,
+timer: false,
+
+add: function(url) {
+      var link = $('<link rel="stylesheet" type="text/css" media="only x" href="' + url + '" />').appendTo("head:first").get(0);
+
+if (!this.ready(link)) {
+this.links.push(link);
+this.counter = 20;
+if (!this.timer) this.timer = setInterval($.proxy(this.wait, this), 50);
+}
+},
+
+wait: function() {
+for (var i = this.links.length - 1; i >= 0; i--) {
+if (this.ready(this.links[i])) {
+this.links.splice(i, 1);
+} else if (!this.counter) {
+this.links[i].media = "all";
+}
+}
+
+if (!this.links.length || (this.counter-- < 0)) {
+    clearInterval(this.timer);
+this.timer = 0;
+this.counter = 0;
+}
+},
+    
+ready: function(link) {
+var url = link.href;
+	var sheets = document.styleSheets;
+		for( var i = 0, l = sheets.length; i < l; i++ ){
+			if( sheets[ i ].href && sheets[ i ].href.indexOf(url) >= 0 ){
+link.media = "all";
+return true;
+}
+}
+
+return false;
+    }  
+
+};
+
+    $.load_css = $.proxy($.css_loader.add, $.css_loader);
+
 }(jQuery, document, window));
