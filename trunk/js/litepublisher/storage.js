@@ -7,55 +7,46 @@
 
 (function ($, document, window) {
   'use strict';
-  
+
   litepubl.Storage = Class.extend({
-    type: false,
-    get: false,
-    set: false,
-    remove: false,
-    
+local: false,
+session: false,
+global: false,
+link: false,
+png: false,
+enabled: false,
+
     init: function() {
-      if ("storage" in litepubl) return;
-      var works = false;
-      
-      if("localStorage" in window){
-        try {
           var k = 'litepubl_test';
           var v = 'testvalue';
+
+            if("localStorage" in window){
+        try {
           window.localStorage.setItem(k, v);
-          works = true;
           window.localStorage.removeItem(k);
+          this.local = true;
       } catch(e) {}
-        if (works) {
-          this.type = "local";
-          this.get = $.proxy(window.localStorage.getItem, window.localStorage);
-          this.set = $.proxy(window.localStorage.setItem, window.localStorage);
-          this.remove = $.proxy(window.localStorage.removeItem, window.localStorage);
-          return;
-        }
-      }
-      
+}
+
+            if("sessionStorage" in window){
+        try {
+          window.sessionStorage.setItem(k, v);
+          window.sessionStorage.removeItem(k);
+          this.session = true;
+      } catch(e) {}
+}
+
       if("globalStorage" in window){
         try {
           if(window.globalStorage) {
-            if(window.location.hostname == "localhost"){
-              var storage = window.globalStorage["localhost.localdomain"];
-            }else{
-              var storage = window.globalStorage[window.location.hostname];
-            }
-            works = true;
+              var storage = window.globalStorage[window.location.hostname == "localhost" ? "localhost.localdomain" : window.location.hostname];
+          storage.setItem(k, v);
+          storage .removeItem(k);
+            this.global = storage;
           }
       } catch(e) {}
-        
-        if (works) {
-          this.type = "global";
-          this.get = $.proxy(storage.getItem, storage);
-          this.set = $.proxy(storage.setItem, storage);
-          this.remove = $.proxy(storage.removeItem, storage);
-          return;
         }
-      }
-      
+
       try{
         var link = document.createElement("link");
         if(link.addBehavior){
@@ -63,47 +54,112 @@
           link.addBehavior("#default#userData");
           document.getElementsByTagName("head")[0].appendChild(link);
           link.load();
-          works = true;
+          this.link = link;
         }
     } catch( e ) {}
-      
-      if (works) {
-        this.type = "link";
-        this.get =  function( key ) {
-          link.load();
-          return link.getAttribute( key );
-        };
-        
-        this.set= function( key, value ) {
-          link.setAttribute( key, value );
-          link.save();
-        };
-        
-        this.remove = function( key ) {
-          link.removeAttribute( key );
-          link.save();
-        };
-        
-        return;
-      }
-      
-      this.type = "cookie";
-      this.get =  function( key ) {
-        return $.cookie(key);
-      };
-      
-      this.set= function( key, value ) {
-        set_cookie(key, Value);
-      };
-      
-      this.remove = function( key ) {
-        $.cookie(key, false);
-      };
-      
-    }
+
+try {
+	var canvas = document.createElement('canvas');
+if (canvas.getContext) this.png = true;      
+    } catch( e ) {}
+
+
+this.enabled = this.local || this.session || !!this.global || !!this.link;
+    },
+
+get: function(name) {
+var result = false;
+if (this.local) {
+if (result = window.localStorage.getItem(name)) return result;
+}
+
+if (this.session) {
+if (result = window.sessionStorage.getItem(name)) return result;
+}
+
+if (this.global) {
+if (result = this.global.getItem(name)) return result;
+}
+
+if (this.link) {
+          this.link.load();
+          if (result = this.link.getAttribute( name)) return result;
+        }
+
+return false;
+},
+
+set: function(name, value, single) {
+if (single) {
+if (this.local) {
+window.localStorage.setItem(name, value);
+} else if (this.session) {
+window.sessionStorage.setItem(name, value);
+} else if (this.global) {
+this.global.setItem(name, value);
+} else if (this.link) {
+          this.link.setAttribute( name, value );
+          this.link.save();
+} else {
+return false;
+        }
+return true;
+}
+
+if (this.local) window.localStorage.setItem(name, value);
+if (this.session) window.sessionStorage.setItem(name, value);
+if (this.global) this.global.setItem(name, value);
+        if (this.link) {
+          this.link.setAttribute( name, value );
+          this.link.save();
+        }
+
+return this.enabled;
+},
+
+remove: function(nam) {
+if (this.local) window.localStorage.removeItem(name);
+if (this.session) window.sessionStorage.removeItem(name);
+if (this.global) this.global.removeItem(name);
+if (this.link) {
+this.link.removeAttribute( name);
+          this.link.save();
+}
+
+return this.enabled;
+}
     
   });//storage
-  
+
+  litepubl.DataStorage = Class.extend({
+
+init: function() {
+litepubl.getstorage();
+},
+
+get: function(name) {
+var result = litepubl.storage.get(name);
+if (!result) result = $.cookie(name);
+if (result) return $.parseJSON(result);
+return false;
+},
+
+set: function(name, data) {
+var value = $.toJSON(data);
+if (!litepubl.storage.set(name, value, true)) {
+    $.cookie(name, value, {
+      path: '/',
+      expires: 3650
+    });
+    }
+    },
+    
+remove: function(name) {
+if (!litepubl.storage.remove(name)) $.cookie(name, false);
+}
+
+});
+
   litepubl.getstorage = function() {
     if ("storage" in litepubl) return litepubl.storage;
     return litepubl.storage = new litepubl.Storage();

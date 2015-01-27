@@ -7,21 +7,42 @@
 
 (function( $, window, document){
   'use strict';
+
+    // regexp test image extension in url
+    var re = /\.(jpg|jpeg|png|bmp)$/i;
   
   $.fn.popimage = function(options) {
     options = $.extend({
+dataname: 'popimage',
+removedata: true,
       title: "",
       cursorclass: "cursor-loading",
       width: false,
-      height: false
+      height: false,
+trigger: "hover focus click",
+oninit: $.noop,
+onerror: $.noop
     }, options);
+
+var inittrigger = '';
+var poptrigger = '';
+if (options.trigger.indexOf('hover') >= 0) {
+inittrigger += "mouseenter.popinit";
+poptrigger += 'hover';
+}
+
+if (options.trigger.indexOf('focus') >= 0) {
+inittrigger += " focus.popinit";
+poptrigger += ' focus';
+}
+
+options.click = options.trigger.indexOf('click') >= 0;
+if (options.click) {
+inittrigger += " click.popinit";
+}
     
-    //create circle for preload
-    var prevlink = false;
-    // regexp test image extension in url
-    var re = /\.(jpg|jpeg|png|bmp)$/i;
-    // preload cache holder
-    var imgnext, imgprev;
+    var prevurl = '';
+var prevlink = false;
     
     return this.each(function(){
       var link = $(this);
@@ -30,37 +51,46 @@
         url = link.data("image");
         if (!url || !re.test(url)) return;
       }
-      
-      link.data("image", url);
-      
-      if (prevlink) {
-        link.data("prevlink", prevlink);
-        prevlink.data("nextlink", link);
-      }
-      prevlink = link;
-      
-      link.one("mouseenter.popinit focus.popinit click.popinit", function(e) {
+
+      link.data(options.dataname, {
+url: url,
+prevurl: prevurl,
+nexturl: false,
+activated: false
+});
+
+if (prevlink) prevlink.data(options.dataname).nexturl = url;
+      prevurl = url;
+prevlink = link;
+
+      link.one(inittrigger, function(e) {
         var self = $(this);
         self.off(".popinit");
         self.addClass(options.cursorclass);
+
+          var clicktrigger = "";
+if (options.click) {
         if (re.test(self.attr("href"))) {
-          var clicktrigger = " click";
+          clicktrigger = " click";
         } else {
           // follow by link if it clicked
           if (e.type == "click") return;
-          var clicktrigger = "";
         }
+}
         
-        //after load image check  is focused or inhover
-        self.data("focused", e.type).on((e.type == "mouseenter" ? "mouseleave" : "blur") + ".popinit", function() {
-          $(this).data("focused", false).off(".popinit");
+var selfdata = self.data(options.dataname);
+        //after load image open popover
+selfdata.activated = e.type;
+self.on((e.type == "mouseenter" ? "mouseleave" : "blur") + ".popinit", function() {
+          $(this).off(".popinit").data(options.dataname).activated = false;
         });
         
         var img = new Image();
         img.onload = function(){
+				this.onload = this.onerror = null;
           self.removeClass(options.cursorclass);
           //calc size
-          var ratio = img.width / img.height;
+          var ratio = this.width / this.height;
           if (options.width) {
             var w = options.width;
             var h = options.height;
@@ -78,9 +108,9 @@
             }
           }
           
-          if ((img.width <= w) && (img.height <= h)) {
-            w = img.width;
-            h = img.height;
+          if ((this.width <= w) && (this.height <= h)) {
+            w = this.width;
+            h = this.height;
           } else {
             if (w /h > ratio) {
               w = Math.floor(h *ratio);
@@ -94,7 +124,7 @@
           
           self.popover({
             container: 'body',
-            content: '<img src="' + url + '" width="' + w + '" height="' + h + '" />',
+            content: '<img src="' + selfdata.url + '" width="' + w + '" height="' + h + '" />',
             delay: 120,
             html:true,
             placement: 'auto ' + (ratio >= 1 ? 'bottom' : 'right'),
@@ -102,38 +132,50 @@
             '<h3 class="popover-title" style="max-width:' + w + 'px;"></h3>' +
             '<div class="popover-content"></div></div>',
             title: title,
-            trigger: 'hover focus' + clicktrigger
+            trigger: poptriger  + clicktrigger
           });
           
-          if (self.data("focused")) self.trigger(self.data("focused"));
+//show popover after load image if not lose focus or hover
+          if (selfdata.activated) self.trigger(selfdata.activated);
           
           //preload
-          var preload = self.data("nextlink");
-          if (preload) {
+          if (selfdata.nexturl) {
             imgnext = new Image();
-            imgnext.src = preload.data("image");
+imgnext.onload = imgnext.onerror = function() {
+				this.onload = this.onerror = null;
+};
+            imgnext.src = selfdata.nexturl;
           }
           
-          var preload = link.data("prevlink");
-          if (preload) {
+          if (selfdata.prevurl) {
             imgprev = new Image();
-            imgprev.src = preload.data("image");
+imgprev.imgprev= imgnext.onerror = function() {
+				this.onload = this.onerror = null;
+};
+            imgprev.src = selfdata.prevurl;
           }
           
-        litepubl.stat('popimage', {src: self.data("image")});
+options.oninit(selfdata.url);
+if (options.removedata) self.data(options.dataname, false);
         };
         
         img.onerror = function() {
-          //alert("Error load image");
-        };
+				this.onload = this.onerror = null;
+options.onerror(self.data(options.dataname).url);
+if (options.removedata) self.data(options.dataname, false);
+}
         
-        img.src =           self.data("image");
+        img.src =           selfdata.url;
         return false;
       });
     });
   };
   
   $.ready2(function(){
-    if ("popover" in $.fn) $("a.photo").popimage();
+    if ("popover" in $.fn) $("a.photo").popimage({
+oninit: function(url) {
+        litepubl.stat('popimage', {src: url});
+}
+});
   });
 })( jQuery, window, document);
