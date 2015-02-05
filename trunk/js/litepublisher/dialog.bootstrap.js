@@ -9,10 +9,12 @@
   'use strict';
   
   $.BootstrapDialog = Class.extend({
-    tml: '<div class="modal fade" id="dialog-%%id%%" tabindex="-1" role="dialog" aria-hidden="true">' +
+    tml: '<div class="modal fade" id="dialog-%%id%%" tabindex="-1" role="dialog" aria-hidden="true" aria-labelledby="modal-title-%%id%%">' +
     '<div class="modal-dialog center-block%%sizeclass%%"><div class="modal-content">' +
-    '<div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>' +
-    '<h4 class="modal-title">%%title%%</h4></div>' +
+'<div class="modal-header">' +
+'<button type="button" class="close" data-dismiss="modal" aria-label="%%close%%"><span aria-hidden="true">&times;</span></button>' +
+    '<h4 class="modal-title" id="modal-title-%%id%%">%%title%%</h4>' +
+'</div>' +
     '<div class="modal-body">%%body%%</div>' +
     '<div class="modal-footer">%%buttons%%</div>' +
     '</div></div></div>',
@@ -102,6 +104,7 @@
       var html = $.simpletml(this.tml, {
         id: id,
         title: options.title,
+close: lang.dialog.close,
         sizeclass: sizeclass,
         body: options.html,
         buttons: buttons
