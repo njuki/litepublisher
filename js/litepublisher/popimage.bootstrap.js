@@ -81,8 +81,8 @@ if (options.click) {
 var selfdata = self.data(options.dataname);
         //after load image open popover
 selfdata.activated = e.type;
-self.on((e.type == "mouseenter" ? "mouseleave" : "blur") + ".popinit", function() {
-          $(this).off(".popinit").data(options.dataname).activated = false;
+self.one((e.type == "mouseenter" ? "mouseleave" : "blur") + ".popinit", function() {
+          $(this).data(options.dataname).activated = false;
         });
         
         var img = new Image();
@@ -128,7 +128,7 @@ self.on((e.type == "mouseenter" ? "mouseleave" : "blur") + ".popinit", function(
             delay: 120,
             html:true,
             placement: 'auto ' + (ratio >= 1 ? 'bottom' : 'right'),
-            template: '<div class="popover popover-image"><div class="arrow"></div>' +
+            template: '<div class="popover popover-image" role="tooltip"><div class="arrow"></div>' +
             '<h3 class="popover-title" style="max-width:' + w + 'px;"></h3>' +
             '<div class="popover-content"></div></div>',
             title: title,

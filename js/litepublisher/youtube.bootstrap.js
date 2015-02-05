@@ -7,6 +7,7 @@
 
 ;(function ($, document, window) {
   'use strict';
+
   $.YoutubeBootstrap = Class.extend({
     id: 0,
     vid: '',
@@ -14,16 +15,18 @@
     height: 344,
     tml: '<div class="modal fade" id="dialog-%%id%%" tabindex="-1" role="dialog" aria-hidden="true">' +
     '<div class="modal-dialog"><div class="modal-content">' +
-    '<div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button></div>' +
     '<div class="modal-body">' +
+'<button type="button" class="close" data-dismiss="modal" aria-label="%%close%%"><span aria-hidden="true">&times;</span></button>' +
+'<div>' +
     '<iframe src=http://www.youtube.com/embed/%%vid%%?autoplay=1&html5=1" width="%%width%%" height="%%height%%" border="0"></iframe>' +
+'</div>' +
     '</div>' +
     '</div></div></div>',
     
     init: function() {
       var self = this;
       $("a[href^='http://youtu.be/'], a[href^='http://www.youtube.com/watch?v=']").on("click.youtube", function() {
-        var url = $(this).attr("href");;
+        var url = $(this).attr("href");
         var vid = get_get('v', url);
         if (!vid) {
           vid = url.split('youtu.be/').pop();
@@ -38,10 +41,16 @@
           vid: vid,
           id: litepubl.guid++,
           width: self.width,
-          height: self.height
+          height: self.height,
+close: lang.dialog.close
         });
         
-        $(html).appendTo("body").modal().on("hide.bs.modal", function() {
+        $(html).appendTo("body")
+.on('shown.bs.modal', function () {
+$(this).removeClass('in');
+})
+.modal()
+.on("hide.bs.modal", function() {
           var dialog = $(this);
           var iframe = dialog.find('iframe:first');
           iframe.attr("src", "");
@@ -51,7 +60,7 @@
           }, 100);
         });
         
-        return false
+        return false;
       });
     }
     
