@@ -166,7 +166,12 @@ class tthemeparser extends tevents {
     $s = str_replace(array("\r\n", "\r", "\n\n"), "\n", $s);
 //strip coments
     $s = preg_replace('/\/\*.*?\*\//sm', '', $s);
+    $s = preg_replace('/^\s*\/\/.*?$/m', '', $s);
+
+//normalize tags
     $s = preg_replace('/%%([a-zA-Z0-9]*+)_(\w\w*+)%%/', '\$$1.$2', $s);
+
+//fix some old tags
     $s = strtr($s, array(
     '$options.url$url' => '$link',
     '$post.categorieslinks' => '$post.catlinks',

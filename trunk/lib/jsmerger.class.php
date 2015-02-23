@@ -147,6 +147,7 @@ class tfilemerger extends titems {
     $home = rtrim(litepublisher::$paths->home, DIRECTORY_SEPARATOR);
     $theme = ttheme::i();
     $template = ttemplate::i();
+      $template->data[$this->basename] = $this->revision;
     
     foreach ($this->items as $section => $items) {
       $s = '';
