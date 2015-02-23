@@ -300,24 +300,26 @@ add: function(url) {
 
 if (!this.ready(link)) {
 this.links.push(link);
-this.counter = 20;
+this.counter = 60;
 if (!this.timer) this.timer = setInterval($.proxy(this.wait, this), 50);
 }
 },
 
 wait: function() {
-for (var i = this.links.length - 1; i >= 0; i--) {
-if (this.ready(this.links[i])) {
-this.links.splice(i, 1);
+var links = this.links;
+for (var i = links.length - 1; i >= 0; i--) {
+if (this.ready(links[i])) {
+links.splice(i, 1);
 } else if (!this.counter) {
-this.links[i].media = "all";
+links[i].media = "all";
 }
 }
 
-if (!this.links.length || (this.counter-- < 0)) {
+if (!links.length || (this.counter-- < 0)) {
     clearInterval(this.timer);
 this.timer = 0;
 this.counter = 0;
+links.length = 0;
 }
 },
     

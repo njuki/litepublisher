@@ -1,7 +1,7 @@
 <?php
 function update597() {
   litepublisher::$site->jquery_version = '1.11.2';
-litepublisher::$site->jqueryui_version = '1.11.2';
+litepublisher::$site->jqueryui_version = '1.11.3';
 litepublisher::$site->save();
 
 $js = tjsmerger::i();
@@ -10,7 +10,8 @@ $js->add('default', '/js/plugins/tojson.min.js');
   //$js->add('default', '/js/litepublisher/hover.min.js');
 $js->unlock();
 
-//tcssmerger::i()->add('default', '/js/litepublisher/css/hover.css');
+$css = tcssmerger::i();
+//$css->add('default', '/js/litepublisher/css/hover.css');
 
 if (litepublisher::$classes->exists('ulogin')) {
 $ulogin = ulogin::i();
@@ -32,9 +33,17 @@ $ulogin->save();
 
 $t = ttemplate::i();
 $t->footer = str_replace('2014', '2015', $t->footer);
+    $template = ttemplate::i();
+      $t->data[$js->basename] = $js->revision;
+      $t->data[$css->basename] = $css->revision;
 $t->save();
 
-$a = tprefetchtxt::i()->items;
+
+//$a = tprefetchtxt::i()->items;
+$data = new tdata();
+$data->basename = 'prefetch.txt';
+$data->load();
+$a = $data->data['items'];
 litepublisher::$classes->delete('tprefetchtxt');
 litepublisher::$classes->add('appcache_manifest', 'appcache.manifest.class.php');
 $c = appcache_manifest::i();

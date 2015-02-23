@@ -9,8 +9,13 @@
   'use strict';
   
   $.BootstrapDialog = Class.extend({
+    dialog: false,
+footer: false,
+    style: false,
+options: false,
+
     tml: '<div class="modal fade" id="dialog-%%id%%" tabindex="-1" role="dialog" aria-hidden="true" aria-labelledby="modal-title-%%id%%">' +
-    '<div class="modal-dialog center-block%%sizeclass%%"><div class="modal-content">' +
+    '<div class="modal-dialog center-block"><div class="modal-content">' +
 '<div class="modal-header">' +
 '<button type="button" class="close" data-dismiss="modal" aria-label="%%close%%"><span aria-hidden="true">&times;</span></button>' +
     '<h4 class="modal-title" id="modal-title-%%id%%">%%title%%</h4>' +
@@ -20,17 +25,13 @@
     '</div></div></div>',
     
     button: '<button type="button" class="btn btn-default" id="button-%%id%%-%%index%%" data-index="%%index%%">%%title%%</button>',
-    dialog: false,
-    styles: false,
-    tmlstyle:'<style type="text/css">' +
-    '.%%classname%%{' +
-      '%%prop%%:%%value%%px;' +
-    '}</style>',
     
     init: function() {
-      this.styles = [];
-      var self = this;
-      this.options = {
+var close = $.proxy(this.close, this);
+      $.closedialog = close;
+      $.litedialog = $.proxy(this.open, this);
+
+      this.default_options = {
         title: "",
         html: "",
         width: false,
@@ -40,19 +41,14 @@
         buttons: [
         {
           title: "Ok",
-          click: function() {
-            self.close();
-          }
+          click: close
         }
         ]
       };
-      
-      $.closedialog = $.proxy(this.close, this);
-      $.litedialog = $.proxy(this.open, this);
     },
-    
+
     close: function(callback) {
-      if (this.dialog) {
+      if (!this.dialog) return false;
         if ($.isFunction(callback)) {
           this.dialog.on("hidden.bs.modal", function() {
             setTimeout(function() {
@@ -62,85 +58,77 @@
         }
         
         this.dialog.modal("hide");
-        
-        this.dialog = false;
-      }
     },
+
+doclose: function() {
+if (!this.dialog) return false;
+
+        if ($.isFunction(this.options.close)) this.options.close(this.dialog);
+this.options = false;
+this.footer = false;
+this.dialog.remove();
+        this.dialog = false;
+if (this.style) {
+this.style.remove();
+this.style = false;
+}
+},
     
     open: function(o) {
       if (this.dialog) return alert('Dialog already opened');
       var id = litepubl.guid++;
-    var options = $.extend({}, this.options, o);
-      
-      var buttons = '';
-      for (var i =0, l= options.buttons.length;  i < l; i++) {
-        buttons += $.simpletml(this.button, {
+this.options = $.extend({}, this.default_options, o);
+
+var buttons = this.      options.buttons;
+      var html_buttons = '';
+      for (var i =0, l= buttons.length;  i < l; i++) {
+        html_buttons += $.simpletml(this.button, {
           index: i,
           id: id,
-          title:  options.buttons[i].title
+          title:  buttons[i].title
         });
       }
       
       //single button change class to "btn-primary"
-      if (l == 1) buttons = buttons.replace(/%%btn-default%%/g, "btn-primary");
-      
-      var sizeclass = '';
-    for (var prop in {width: 0, height: 0}) {
-        if (options[prop]) {
-          var classname = 'dialog-' + prop + '-' + options[prop];
-          sizeclass = sizeclass + ' ' + classname;
-          if ($.inArray(classname, this.styles) == -1) {
-            this.styles.push(classname);
-            $('head:first').append($.simpletml(this.tmlstyle, {
-              classname: classname,
-              prop: prop,
-              //add 50 px to width for padding and margin by default
-              value: options[prop] + (prop == "width" ? 50 : 0)
-            }));
-          }
-        }
-      }
-      
-      var html = $.simpletml(this.tml, {
+      if (buttons.length == 1) html_buttons = html_buttons.replace(/%%btn-default%%/g, "btn-primary");
+     
+            var html = $.simpletml(this.tml, {
         id: id,
-        title: options.title,
+        title: this.options.title,
 close: lang.dialog.close,
-        sizeclass: sizeclass,
-        body: options.html,
-        buttons: buttons
+        body: this.options.html,
+        buttons: html_buttons
       });
-      
-      var dialog = this.dialog = $(html).appendTo("body");
-      //assign events to buttons
-      for (var i =0, l= options.buttons.length;  i < l; i++) {
-        this.getbutton(i).on("click.dialog", options.buttons[i].click);
+
+var css = "";
+        if (this.options.width) css = css + "width:" + (this.options.width + 32) + "px;";
+        if (this.options.height) css = css + "height:" + this.options.height + "px;";
+if (css) this.style = $('<style type="text/css">.modal-dialog{' + css + '}</style>').appendTo("head:first");
+
+      this.dialog = $(html).appendTo("body");
+this.footer =       $(".modal-footer:first", this.dialog);
+      for (var i =0, l= buttons.length;  i < l; i++) {
+        this.getbutton(i).on("click.dialog", buttons[i].click);
       }
-      
-      dialog.on("shown.bs.modal", function() {
-        if ($.isFunction(options.open)) options.open(dialog);
+
+var self = this;      
+      this.dialog.on("shown.bs.modal", function() {
+        if ($.isFunction(self.options.open)) self.options.open(self.dialog);
         if ("tooltip" in $.fn) {
-          $(".tooltip-toggle", dialog).tooltip({
+          $(".tooltip-toggle", this).tooltip({
             container: 'body',
             placement: 'auto top'
           });
         }
-      });
-      
-      dialog.modal();
-      var self = this;
-      dialog.on("hidden.bs.modal", function() {
-        if ($.isFunction(options.close)) options.close(dialog);
-        self.dialog = false;
-        dialog.remove();
-      });
-      
-      return dialog;
-    },
-    
+      })
+.modal()
+      .on("hidden.bs.modal", $.proxy(this.doclose, this));
+return this.dialog;
+},
+
     getbutton: function(index) {
-      if (!this.dialog) return false;
-      var footer = $(".modal-footer:first", this.dialog);
-      return $("button[data-index=" + index + "]", footer);
+      if (!this.footer) return false;
+      return $("button[data-index=" + index + "]", this.footer);
     }
     
   });
