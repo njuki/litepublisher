@@ -118,7 +118,7 @@ if (("$tip" in popover) && popover.$tip) popover.$tip.remove();
 });
 
 this.dialog.dialog.remove();
-this.dialog.style.remove();
+if (this.dialog.style) this.dialog.style.remove();
 this.dialog = false;
 },
 
@@ -359,9 +359,9 @@ return s.replace(/%%(\w*)%%/gim, function(str, prop, offset, src) {
   },
 
 getstyle: function(curitems) {
-var width, height, css_width, css_height, maxwidth = 0, maxheight = 0;
+var width, height, ratio, dlg_width, dlg_height, body_width, body_height, maxwidth = 0, maxheight = 0;
 
-//if all images loaded then we can setmax size
+//if all images loaded then we can setmax size and define real ratio
 for (var i = curitems.length - 1; i >= 0; i--) {
 var item = curitems[i];
 if (item.ready) {
@@ -372,7 +372,6 @@ maxwidth = maxheight = 0;
 break;
 }
 }
-
 
 if (maxwidth) {
 maxwidth += this.minwidth;
@@ -406,7 +405,16 @@ css_width = css_width + ";max-width:" + maxwidth + "px";
 css_height = css_height + ";max-height:" + maxheight + "px";
 }
 
-return '.modal-galery{width:' + css_width + ';height:' + css_height + '}';
+
+return '<style type="text/css">' +
+'.modal-galery{' +
+'width:' + dlg_width + 'px;' +
+'height:' + dlg_height + 'px' +
+ '}' +
+'.modal-galery .modal-body{' +
+'width:' + body_width + 'px;' +
+'height:' + body_height + 'px' +
+'}</style>';
 },
 
 init_dialog: function(curitems) {
@@ -422,7 +430,7 @@ lang: lang.images,
 close: lang.dialog.close
 });
 	this.speed = $.fx ? $.fx.speeds[this.speed] || this.speed : this.speed;
-var style = $('<style type="text/css">' + this.getstyle(curitems) + '</style>').appendTo("head:first");
+var style = $(this.getstyle(curitems)).appendTo("head:first");
 var dialog = $(html).appendTo("body");
 this.dialog = {
 index: -1,
@@ -619,6 +627,8 @@ if (popover) popover.hide();
 
 doclosed: function() {
 if (this.hash_enabled) location.hash = "!" + this.dataname;
+this.dialog.style.remove();
+this.dialog.style = false;
 this.onclose.fire();
 },
 
@@ -637,6 +647,7 @@ dialog.images = [];
 dialog.images.length = curitems.length;
 dialog.body.empty();
 dialog.thumbnails.html(this.getthumbnails(curitems));
+dialog.style = $(this.getstyle(curitems))appendTo("head:first");
 dialog.index = -1;
 this.setindex(this.urlindex(item.url));
 dialog.dialog.modal("show");
