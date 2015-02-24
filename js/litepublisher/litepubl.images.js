@@ -2,7 +2,7 @@
   'use strict';
 
 $.LitepublImages = Class.extend({
-dataname: "modimg",
+dataname: "lpimg",
 items: false,
 activeclass: "img-galery-active",
 transclass: "img-galery-trans",
@@ -34,6 +34,7 @@ onopen
 onclose
 onindex
 onimage
+onanimated
 */
 
    html: '<div class="modal fade" id="dialog-%%id%%" tabindex="-1" role="dialog" aria-hidden="true" aria-labelledby="modal-title-%%id%%">' +
@@ -62,7 +63,10 @@ player_buttons: '<button type="button" class="btn btn-default player-button" dat
 '<button type="button" class="btn btn-default player-button" data-action="play" title="%%lang.tipplay%%"><span class="fa fa-play"></span> <span class="sr-only">%%lang.play%%</span></button> ',
 
 img_html: '<img src="%%url%%" class="img-galery" width="%%width%%" height="%%height%%" style="left:%%left%%px" alt="" />',
+loading_html: '<img src="" data-src="modal-galery-loading" class="hide img-galery" alt="" />',
+//loading_html: '<img src="/js/litepublisher/images/loader-128x/Preloader_1.gif" data-src="modal-galery-loading" class="hide img-galery" alt="" />',
 thumb_html: '<a href="#" class="thumbnail" data-index="%%index%%"><img src="%%url%%" /></a>',
+
 
 init: function(items) {  
 this.items = [];
@@ -74,6 +78,8 @@ this.default_title = $("title").text();
       this.onclose = $.Callbacks();
       this.onindex= $.Callbacks();
       this.onimage = $.Callbacks();
+      this.onanimated = $.Callbacks();
+
 
 this.additems(items);
 if (this.hash_enabled && this.items.length) this.openhash();
@@ -320,19 +326,24 @@ if (!data || !data.ready) return false;
     },
     
     sethash: 	function(index) {
-      location.hash = "!" + this.dataname + '/' + index;
+      location.hash = "!" + ((this.dialog && this.dialog.group) || this.dataname) + "/" + index;
     },
 
 openhash: function() {
 var hash = this.gethash();
       if (!hash) return false;
-
 var a = hash.split('/');
 if (a.length <= 1) return false;
+
 var index = parseInt(a[1]);
-if ((index >= 0) && (index < this.items.length)) {
-this.items[index].click();
-}
+if ((index < 0) || (index >= this.items.length))  return false;
+
+var group = a[0];
+if (group.length && group.substring(0, 1) == "!") group = group.substring(1, group.length);
+
+var curitems = this.getcuritems(group);
+if (index >= curitems.length) return false;
+return this.open(curitems[index], curitems);
 },
 
 parse: function(s, view) {
@@ -395,7 +406,7 @@ css_width = css_width + ";max-width:" + maxwidth + "px";
 css_height = css_height + ";max-height:" + maxheight + "px";
 }
 
-return '<style type="text/css">.modal-galery{width:' + css_width + ';height:' + css_height + '}</style>';
+return '.modal-galery{width:' + css_width + ';height:' + css_height + '}';
 },
 
 init_dialog: function(curitems) {
@@ -407,11 +418,11 @@ player_buttons: this.player_buttons
 
 html = this.parse(html, {
 id: $.now(),
-lang: lang.galery,
+lang: lang.images,
 close: lang.dialog.close
 });
-
-var style = $(this.getstyle(curitems)).appendTo("head:first");
+	this.speed = $.fx ? $.fx.speeds[this.speed] || this.speed : this.speed;
+var style = $('<style type="text/css">' + this.getstyle(curitems) + '</style>').appendTo("head:first");
 var dialog = $(html).appendTo("body");
 this.dialog = {
 index: -1,
@@ -422,7 +433,8 @@ title: dialog.find(".modal-title"),
 body: dialog.find(".modal-body"),
 thumbnails: dialog.find(".thumbnails"),
 footer: dialog.find(".modal-footer"),
-style: style
+style: style,
+loading: false
 };
 
 this.dialog.images.length = curitems.length;
@@ -442,7 +454,8 @@ $(".player-button", footer).tooltip({
             placement: 'top'
           })
 .on("click.galery", function() {
-switch ($(this).attr("data-action")) {
+var button = $(this);
+switch (button.attr("data-action")) {
 case "next":
 self.setindex(self.getindex() + 1);
 break;
@@ -452,10 +465,14 @@ self.setindex(self.getindex() - 1);
 break;
 
 case "play":
+button.attr("disabled", "disabled");
+button.parent().find("[data-action='stop']").removeAttr("disabled");
 self.play();
 break;
 
 case "stop":
+button.attr("disabled", "disabled");
+button.parent().find("[data-action='play']").removeAttr("disabled");
 self.stop();
 break;
 }
@@ -480,11 +497,8 @@ self.setindex(self.getindex() + 1);
 self.opened = true;
 self.onopen.fire();
 })
-.on("hidden.bs.modal", function() {
-self.opened = false;
-if (self.hash_enabled) location.hash = "!" + self.dataname;
-self.onclose.fire();
-})
+.on("hide.bs.modal", $.proxy(this.doclose, this))
+.on("hidden.bs.modal", $.proxy(this.doclosed, this))
       .modal();
 },
 
@@ -585,6 +599,14 @@ return false;
 
 close: function() {
 if (!this.dialog || !this.opened) return false;
+this.dialog.dialog.modal("hide");
+},
+
+doclose: function() {
+if (!this.dialog || !this.opened) return false;
+this.opened = false;
+this.stop();
+
 this.dialog.footer.find("button").each(function() {
 var button = $(this);
 var tooltip = button.data("bs.tooltip");
@@ -593,20 +615,21 @@ if (tooltip) tooltip.hide();
 var popover = button.data("bs.popover");
 if (popover) popover.hide();
 });
-
-this.dialog.dialog.modal("hide");
 },
 
-open: function (item) {
+doclosed: function() {
+if (this.hash_enabled) location.hash = "!" + this.dataname;
+this.onclose.fire();
+},
+
+open: function (item, curitems) {
 if (!item || item.error) return false;
 if (this.opened) return false;
 this.opened = true;
 
 if (!item.ready && !item.error) this.load(item, false);
 
-	this.speed = $.fx ? $.fx.speeds[this.speed] || this.speed : this.speed;
-
-var curitems = this.getcuritems(item.group);
+if (!curitems) curitems = this.getcuritems(item.group);
 if (this.dialog) {
 var dialog = this.dialog;
 dialog.items = curitems;
@@ -627,7 +650,8 @@ getcuritems: function(group) {
 var result = [];
 for (var i = 0, l = this.items.length; i < l; i++) {
 var item = this.items[i];
-if (item.group == group && !item.error) result.push(item);
+if (item.error) continue;
+if ((item.group == group) || (!item.group && group == this.dataname) || (!group && item.group == this.dataname)) result.push(item);
 }
 
 return result;
@@ -681,23 +705,29 @@ if (item.ready) {
 this.setimage(index, oldindex);
 } else {
 var self = this;
-self.setloading(true);
 this.load(item, function() {
-self.setloading(false);
-self.setimage(index, oldindex);
+if (self.opened) self.setimage(index, oldindex);
 });
+
+//last chance 60ms to prevent blinking loading icon
+setTimeout(function() {
+if (!item.ready && self.opened) self.showloading();
+}, 60);
 }
 },
 
 setimage: function(index, oldindex) {
+this.hideloading();
 this.dialog.title.text(this.dialog.items[index].title);
 if (oldindex >= 0) {
-this.deactivate(oldindex);
-this.setactive(index);
+this.deactivate(this.dialog.images[oldindex]);
+this.activate(this.getimage(index), $.proxy(this.animated, this));
 } else {
-this.getimage(index).addClass(this.activeclass);
+var img = this.getimage(index);
+if (img) img.removeClass("hide").addClass(this.activeclass);
 }
 
+if (this.hash_enabled) this.sethash(index);
 this.preload();
 this.onimage.fire(index);
 },
@@ -708,6 +738,8 @@ var result = this.dialog.images[index];
 if (result) return result;
 
 var item = this.dialog.items[index];
+if (!item.ready) return false;
+
 var body = this.dialog.body;
       var bodywidth = body.width();
 var width = bodywidth;
@@ -734,8 +766,7 @@ left: Math.floor((bodywidth - width) / 2)
 return this.dialog.images[index] = $(html).appendTo(body);
 },
 
-deactivate: function(index) {
-var img = this.dialog.images[index];
+deactivate: function(img, callback) {
 if (!img) return false;
 
 img.removeClass(this.activeclass);
@@ -752,16 +783,15 @@ $(this).addClass("hide");
 }
 },
 
-setactive: function(index) {
-var img = this.getimage(index);
+activate: function(img, callback) {
+if (!img) return false;
 img.removeClass("hide").addClass(this.activeclass);
-
 if ($.support.transition) {
 img.addClass(this.transclass);
-setTimeout($.proxy(this.animated, this), this.speed);
+if (callback) setTimeout(callback, this.speed);
 } else {
 img.stop(true, true)
-      .fadeIn(this.speed, $.proxy(this.animated, this));
+      .fadeIn(this.speed, callback);
 }
 },
 
@@ -785,24 +815,62 @@ break;
 },
 
 animated: function() {
-if (this.playnext) this.playnext();
 this.onanimated.fire();
+
+if (this.opened && this.playnext) {
+setTimeout(this.playnext, 60);
+}
+},
+
+playindex: function() {
+if (this.opened) this.setindex(this.getindex() + 1);
 },
 
 play: function() {
 if (this.dialog.items.length  <= 1) return false;
 this.circle = true;
-var self = this;
-this.playnext = function() {
-self.setindex(self.getindex() + 1);
-};
-
+this.playnext = $.proxy(this.playindex, this);
 this.playnext();
 },
 
 stop: function() {
 this.circle = false;
 this.playnext = false;
+},
+
+showloading: function() {
+var img = this.dialog.loading;
+if (!img) {
+var body = this.dialog.body;
+img = this.dialog.loading = $(this.loading_html).appendTo(body);
+if (img.is("img") && !img.attr("src")) {
+var src = img.attr("data-src");
+img.addClass(src);
+img.attr("src", img.css("backgroundImage"));
+var w = img.css("width");
+var h = img.css("height");
+img.removeClass(src);
+
+img.css({
+width: w,
+height: h,
+left: Math.floor((body.width() - w) / 2),
+top: Math.floor((body.height() - h) / 2)
+});
+} else {
+img.css({
+left: Math.floor((body.width() - img.width()) / 2),
+top: Math.floor((body.height() - img.height()) / 2)
+});
+}
+}
+
+if (img.hasClass("hide")) this.activate(img);
+},
+
+hideloading: function() {
+var img = this.dialog.loading;
+if (img && !img.hasClass("hide")) this.deactivate(img);
 }
 
 });
