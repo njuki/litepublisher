@@ -23,8 +23,8 @@ ratio: 4 / 3,
       width: '80%',
       height: false,
 //width beetwin dialog body and padding 15 + border
-minwidth: 32, 
-minheight: 152,
+dlg_width: 32, 
+dlg_height: 152,
 
 dialog: false,
 opened: false,
@@ -67,6 +67,15 @@ loading_html: '<img src="" data-src="modal-galery-loading" class="hide img-galer
 //loading_html: '<img src="/js/litepublisher/images/loader-128x/Preloader_1.gif" data-src="modal-galery-loading" class="hide img-galery" alt="" />',
 thumb_html: '<a href="#" class="thumbnail" data-index="%%index%%"><img src="%%url%%" /></a>',
 
+style_html:'<style type="text/css">' +
+'.modal-galery{' +
+'width:%%dlg_width%%px;' +
+'height:%%dlg_height%%px' +
+ '}' +
+'.modal-galery .modal-body{' +
+'width:%%body_width%%px;' +
+'height:%%body_height%%px' +
+'}</style>',
 
 init: function(items) {  
 this.items = [];
@@ -359,7 +368,7 @@ return s.replace(/%%(\w*)%%/gim, function(str, prop, offset, src) {
   },
 
 getstyle: function(curitems) {
-var width, height, ratio, dlg_width, dlg_height, body_width, body_height, maxwidth = 0, maxheight = 0;
+var width, height, ratio, minratio = 999, maxratio = 0, maxwidth = 0, maxheight = 0, loaded = true;
 
 //if all images loaded then we can setmax size and define real ratio
 for (var i = curitems.length - 1; i >= 0; i--) {
@@ -367,54 +376,48 @@ var item = curitems[i];
 if (item.ready) {
 maxwidth = Math.max(maxwidth, item.width);
 maxheight = Math.max(maxheight, item.height);
+ratio = item.width / item.height;
+maxratio = Math.max(maxratio, ratio);
+minratio = Math.min(minratio, ratio);
 } else {
-maxwidth = maxheight = 0;
+loaded = false;
 break;
 }
 }
 
-if (maxwidth) {
-maxwidth += this.minwidth;
-maxheight += this.minheight;
-}
-
-css_width = this.width;
-css_height = this.height;
+var win_width = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth;
+var win_height = window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight;
 
 if (typeof this.width === "number") {
 width = this.width;
-if (maxwidth && (width > maxwidth)) width = maxwidth;
-css_width = width + "px";
-if (this.height) {
-css_height =typeof this.height === "number" ? this.height + "px" : this.height;
-} else {
-var win_height = window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight;
-height = Math.min(win_height - 60, Math.floor((width  - 60) /this.ratio) + this.minheight);
-if (maxheight && (height > maxheight)) height = maxheight;
-css_height = height + "px";
-}
-} else if (typeof this.width === "string" && this.width.indexOf('%') > 0 && !this.height) {
-var win_width = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth;
-var percent = win_width / 100;
-height = Math.floor(Math.min(100 - this.minwidth / percent, (parseInt(this.width) - this.minwidth / percent) / this.ratio + this.minheight / percent));
-css_height = height + "%";
+} else if (typeof this.width === "string" && this.width.indexOf('%') > 0) {
+width = parseInt(this.width) * win_width / 100;
 }
 
-if (maxwidth) {
-css_width = css_width + ";max-width:" + maxwidth + "px";
-css_height = css_height + ";max-height:" + maxheight + "px";
+if (!this.height) {
+height = width * this.ratio;
+} else if (typeof this.height === "number") {
+height= this.height;
+} else if (typeof this.height === "string" && this.height.indexOf('%') > 0) {
+height = parseInt(this.height) * win_height / 100;
 }
 
+if (loaded) {
+if (width > maxwidth) width = maxwidth;
+if (maxratio == minratio) height = width / minratio;
+if (height > maxheight) height = maxheight;
+}
 
-return '<style type="text/css">' +
-'.modal-galery{' +
-'width:' + dlg_width + 'px;' +
-'height:' + dlg_height + 'px' +
- '}' +
-'.modal-galery .modal-body{' +
-'width:' + body_width + 'px;' +
-'height:' + body_height + 'px' +
-'}</style>';
+//30 = 2*15px bounds
+width = Math.floor(Math.min(width,  win_width - this.dlg_width  - 30));
+height = Math.floor(Math.min(height, win_height - this.dlg_height - 30));
+
+return $.simpletml(this.style_html, {
+dlg_width: width + this.dlg_width,
+dlg_height: height + this.dlg_height,
+body_width: width,
+body_height: height
+});
 },
 
 init_dialog: function(curitems) {
@@ -647,7 +650,7 @@ dialog.images = [];
 dialog.images.length = curitems.length;
 dialog.body.empty();
 dialog.thumbnails.html(this.getthumbnails(curitems));
-dialog.style = $(this.getstyle(curitems))appendTo("head:first");
+dialog.style = $(this.getstyle(curitems)).appendTo("head:first");
 dialog.index = -1;
 this.setindex(this.urlindex(item.url));
 dialog.dialog.modal("show");

@@ -73,12 +73,15 @@ class tfilemerger extends titems {
     if (!isset($this->items[$section])) return false;
     if (!($src = $this->normfilename($src))) return false;
     if (!($dst = $this->normfilename($dst))) return false;
-    if (false === ($i = array_search($src, $this->items[$section]['files']))) return false;
+    if (false === ($i = array_search($src, $this->items[$section]['files']))) {
+//simple add
+      $this->items[$section]['files'][] = $dst;
+} else {
     //insert after
     array_splice($this->items[$section]['files'], $i + 1, 0, array($dst));
+}
     $this->save();
   }
-  
   
   public function setfiles($section, $s) {
     $this->lock();

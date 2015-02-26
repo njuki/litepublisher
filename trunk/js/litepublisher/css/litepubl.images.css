@@ -58,7 +58,7 @@ text-align: center;
 .cursor-progress { cursor: progress; }
 
 .modal-galery-loading {
-width: 128px;
-height: 128px;
-background:url(/js/litepublisher/images/loader-128x/Preloader_1.gif) no-repeat 0 0;
+width: 64px;
+height: 64px;
+background:url(/js/litepublisher/icons/Preloader_2.gif) no-repeat 0 0;
 }
