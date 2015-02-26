@@ -1,7 +1,7 @@
 <?php
 /**
 * Lite Publisher
-* Copyright (C) 2010 - 2014 Vladimir Yushko http://litepublisher.ru/ http://litepublisher.com/
+* Copyright (C) 2010 - 2015 Vladimir Yushko http://litepublisher.ru/ http://litepublisher.com/
 * Dual licensed under the MIT (mit.txt)
 * and GPL (gpl.txt) licenses.
 **/
@@ -74,12 +74,12 @@ class tfilemerger extends titems {
     if (!($src = $this->normfilename($src))) return false;
     if (!($dst = $this->normfilename($dst))) return false;
     if (false === ($i = array_search($src, $this->items[$section]['files']))) {
-//simple add
+      //simple add
       $this->items[$section]['files'][] = $dst;
-} else {
-    //insert after
-    array_splice($this->items[$section]['files'], $i + 1, 0, array($dst));
-}
+    } else {
+      //insert after
+      array_splice($this->items[$section]['files'], $i + 1, 0, array($dst));
+    }
     $this->save();
   }
   
@@ -150,7 +150,7 @@ class tfilemerger extends titems {
     $home = rtrim(litepublisher::$paths->home, DIRECTORY_SEPARATOR);
     $theme = ttheme::i();
     $template = ttemplate::i();
-      $template->data[$this->basename] = $this->revision;
+    $template->data[$this->basename] = $this->revision;
     
     foreach ($this->items as $section => $items) {
       $s = '';

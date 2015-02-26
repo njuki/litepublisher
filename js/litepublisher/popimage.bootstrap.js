@@ -1,48 +1,48 @@
 /**
 * Lite Publisher
-* Copyright (C) 2010 - 2014 Vladimir Yushko http://litepublisher.ru/ http://litepublisher.com/
+* Copyright (C) 2010 - 2015 Vladimir Yushko http://litepublisher.ru/ http://litepublisher.com/
 * Dual licensed under the MIT (mit.txt)
 * and GPL (gpl.txt) licenses.
 **/
 
 (function( $, window, document){
   'use strict';
-
-    // regexp test image extension in url
-    var re = /\.(jpg|jpeg|png|bmp)$/i;
+  
+  // regexp test image extension in url
+  var re = /\.(jpg|jpeg|png|bmp)$/i;
   
   $.fn.popimage = function(options) {
     options = $.extend({
-dataname: 'popimage',
-removedata: true,
+      dataname: 'popimage',
+      removedata: true,
       title: "",
       cursorclass: "cursor-loading",
       width: false,
       height: false,
-trigger: "hover focus click",
-oninit: $.noop,
-onerror: $.noop
+      trigger: "hover focus click",
+      oninit: $.noop,
+      onerror: $.noop
     }, options);
-
-var inittrigger = '';
-var poptrigger = '';
-if (options.trigger.indexOf('hover') >= 0) {
-inittrigger += "mouseenter.popinit";
-poptrigger += 'hover';
-}
-
-if (options.trigger.indexOf('focus') >= 0) {
-inittrigger += " focus.popinit";
-poptrigger += ' focus';
-}
-
-options.click = options.trigger.indexOf('click') >= 0;
-if (options.click) {
-inittrigger += " click.popinit";
-}
+    
+    var inittrigger = '';
+    var poptrigger = '';
+    if (options.trigger.indexOf('hover') >= 0) {
+      inittrigger += "mouseenter.popinit";
+      poptrigger += 'hover';
+    }
+    
+    if (options.trigger.indexOf('focus') >= 0) {
+      inittrigger += " focus.popinit";
+      poptrigger += ' focus';
+    }
+    
+    options.click = options.trigger.indexOf('click') >= 0;
+    if (options.click) {
+      inittrigger += " click.popinit";
+    }
     
     var prevurl = '';
-var prevlink = false;
+    var prevlink = false;
     
     return this.each(function(){
       var link = $(this);
@@ -51,43 +51,43 @@ var prevlink = false;
         url = link.data("image");
         if (!url || !re.test(url)) return;
       }
-
+      
       link.data(options.dataname, {
-url: url,
-prevurl: prevurl,
-nexturl: false,
-activated: false
-});
-
-if (prevlink) prevlink.data(options.dataname).nexturl = url;
+        url: url,
+        prevurl: prevurl,
+        nexturl: false,
+        activated: false
+      });
+      
+      if (prevlink) prevlink.data(options.dataname).nexturl = url;
       prevurl = url;
-prevlink = link;
-
+      prevlink = link;
+      
       link.one(inittrigger, function(e) {
         var self = $(this);
         self.off(".popinit");
         self.addClass(options.cursorclass);
-
-          var clicktrigger = "";
-if (options.click) {
-        if (re.test(self.attr("href"))) {
-          clicktrigger = " click";
-        } else {
-          // follow by link if it clicked
-          if (e.type == "click") return;
-        }
-}
         
-var selfdata = self.data(options.dataname);
+        var clicktrigger = "";
+        if (options.click) {
+          if (re.test(self.attr("href"))) {
+            clicktrigger = " click";
+          } else {
+            // follow by link if it clicked
+            if (e.type == "click") return;
+          }
+        }
+        
+        var selfdata = self.data(options.dataname);
         //after load image open popover
-selfdata.activated = e.type;
-self.one((e.type == "mouseenter" ? "mouseleave" : "blur") + ".popinit", function() {
+        selfdata.activated = e.type;
+        self.one((e.type == "mouseenter" ? "mouseleave" : "blur") + ".popinit", function() {
           $(this).data(options.dataname).activated = false;
         });
         
         var img = new Image();
         img.onload = function(){
-				this.onload = this.onerror = null;
+          this.onload = this.onerror = null;
           self.removeClass(options.cursorclass);
           //calc size
           var ratio = this.width / this.height;
@@ -135,35 +135,35 @@ self.one((e.type == "mouseenter" ? "mouseleave" : "blur") + ".popinit", function
             trigger: poptriger  + clicktrigger
           });
           
-//show popover after load image if not lose focus or hover
+          //show popover after load image if not lose focus or hover
           if (selfdata.activated) self.trigger(selfdata.activated);
           
           //preload
           if (selfdata.nexturl) {
             imgnext = new Image();
-imgnext.onload = imgnext.onerror = function() {
-				this.onload = this.onerror = null;
-};
+            imgnext.onload = imgnext.onerror = function() {
+              this.onload = this.onerror = null;
+            };
             imgnext.src = selfdata.nexturl;
           }
           
           if (selfdata.prevurl) {
             imgprev = new Image();
-imgprev.imgprev= imgnext.onerror = function() {
-				this.onload = this.onerror = null;
-};
+            imgprev.imgprev= imgnext.onerror = function() {
+              this.onload = this.onerror = null;
+            };
             imgprev.src = selfdata.prevurl;
           }
           
-options.oninit(selfdata.url);
-if (options.removedata) self.data(options.dataname, false);
+          options.oninit(selfdata.url);
+          if (options.removedata) self.data(options.dataname, false);
         };
         
         img.onerror = function() {
-				this.onload = this.onerror = null;
-options.onerror(self.data(options.dataname).url);
-if (options.removedata) self.data(options.dataname, false);
-}
+          this.onload = this.onerror = null;
+          options.onerror(self.data(options.dataname).url);
+          if (options.removedata) self.data(options.dataname, false);
+        }
         
         img.src =           selfdata.url;
         return false;
@@ -173,9 +173,9 @@ if (options.removedata) self.data(options.dataname, false);
   
   $.ready2(function(){
     if ("popover" in $.fn) $("a.photo").popimage({
-oninit: function(url) {
-        litepubl.stat('popimage', {src: url});
-}
-});
+      oninit: function(url) {
+      litepubl.stat('popimage', {src: url});
+      }
+    });
   });
 })( jQuery, window, document);

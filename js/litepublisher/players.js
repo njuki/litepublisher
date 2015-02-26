@@ -1,6 +1,6 @@
 /**
 * Lite Publisher
-* Copyright (C) 2010, 2014 Vladimir Yushko http://litepublisher.com/
+* Copyright (C) 2010, 2015 Vladimir Yushko http://litepublisher.com/
 * Dual licensed under the MIT (mit.txt)
 * and GPL (gpl.txt) licenses.
 **/

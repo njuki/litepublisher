@@ -1,7 +1,7 @@
 <?php
 /**
 * Lite Publisher
-* Copyright (C) 2010 - 2014 Vladimir Yushko http://litepublisher.ru/ http://litepublisher.com/
+* Copyright (C) 2010 - 2015 Vladimir Yushko http://litepublisher.ru/ http://litepublisher.com/
 * Dual licensed under the MIT (mit.txt)
 * and GPL (gpl.txt) licenses.
 **/
@@ -45,9 +45,9 @@ class appcache_manifest extends titems {
     header(\'Last-Modified: ' . date('r') . '\');
     ?>';
     
-$s .= "CACHE MANIFEST\r\n";
+    $s .= "CACHE MANIFEST\r\n";
     $s .= ttheme::i()->parse($this->text);
-        return  $s;
+    return  $s;
   }
   
 }//class

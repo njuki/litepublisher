@@ -456,6 +456,8 @@ class ttemplate extends tevents_storage {
   public function assignmap() {
     parent::assignmap();
     $this->ltoptions['custom'] = &$this->custom;
+    $this->ltoptions['jsmerger'] = &$this->data['jsmerger'];
+    $this->ltoptions['cssmerger'] = &$this->data['cssmerger'];
   }
   
   public function __get($name) {

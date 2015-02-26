@@ -1,7 +1,7 @@
 <?php
 /**
 * Lite Publisher
-* Copyright (C) 2010 - 2014 Vladimir Yushko http://litepublisher.ru/ http://litepublisher.com/
+* Copyright (C) 2010 - 2015 Vladimir Yushko http://litepublisher.ru/ http://litepublisher.com/
 * Dual licensed under the MIT (mit.txt)
 * and GPL (gpl.txt) licenses.
 **/
@@ -164,14 +164,14 @@ class tthemeparser extends tevents {
     $utf = "\xEF\xBB\xBF";
     if (strbegin($s, $utf)) $s = substr($s, strlen($utf));
     $s = str_replace(array("\r\n", "\r", "\n\n"), "\n", $s);
-//strip coments
+    //strip coments
     $s = preg_replace('/\/\*.*?\*\//sm', '', $s);
     $s = preg_replace('/^\s*\/\/.*?$/m', '', $s);
-
-//normalize tags
+    
+    //normalize tags
     $s = preg_replace('/%%([a-zA-Z0-9]*+)_(\w\w*+)%%/', '\$$1.$2', $s);
-
-//fix some old tags
+    
+    //fix some old tags
     $s = strtr($s, array(
     '$options.url$url' => '$link',
     '$post.categorieslinks' => '$post.catlinks',
