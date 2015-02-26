@@ -6,8 +6,14 @@ litepublisher::$site->save();
 
 $js = tjsmerger::i();
 $js->lock();
-$js->add('default', '/js/plugins/tojson.min.js');
-  //$js->add('default', '/js/litepublisher/hover.min.js');
+$js->after('default', 
+'/js/plugins/jquery.cookie.min.js',
+'/js/plugins/tojson.min.js');
+
+  $js->after('default', 
+'/js/litepublisher/litepublisher.utils.min.js',
+'/js/litepublisher/ready2.min.js');
+
 $js->unlock();
 
 $css = tcssmerger::i();

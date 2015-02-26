@@ -138,27 +138,8 @@
     alert('error ' + e.message);
   };
 
-    var ready2callback = false;
+
   $.extend({
-    ready2: function(fn) {
-      if (!ready2callback) {
-        ready2callback =  $.Deferred();
-        var ready2resolve = function() {
-          setTimeout(function() {
-            ready2callback.resolve();
-          }, 0);
-        };
-        
-        if ($.isReady) {
-          $(document).ready(ready2resolve);
-        } else {
-          //.on('ready') call after $(document).ready
-          $(document).on('ready', ready2resolve);
-        }
-      }
-      
-      ready2callback.done(fn);
-    },
     
     load_script: function( url, callback ) {
       return $.ajax({
