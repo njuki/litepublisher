@@ -52,12 +52,12 @@
   //---------- вспомогательные методы ----------
 
   // fnTest -- регулярное выражение, 
-  // которое проверяет функцию на то, есть ли в её коде вызов parent
+  // которое проверяет функцию на то, есть ли в её коде вызов super
   // 
   // для его объявления мы проверяем, поддерживает ли функция преобразование
   // в код вызовом toString: /xyz/.test(function() {xyz})
   // в редких мобильных браузерах -- не поддерживает, поэтому регэксп будет /./
-  var fnTest = /xyz/.test(function() {xyz}) ? /\bparent\b/ : /./;
+  var fnTest = /xyz/.test(function() {xyz}) ? /\bsuper\b/ : /./;
 
 
   // копирует свойства из props в targetPropsObj
@@ -65,8 +65,8 @@
   // 
   // при копировании, если выясняется что свойство есть и в родителе тоже,
   // и является функцией -- его вызов оборачивается в обёртку,
-  // которая ставит this.parent на метод родителя, 
-  // затем вызывает его, затем возвращает this.parent
+  // которая ставит this.super на метод родителя, 
+  // затем вызывает его, затем возвращает this.super
   function copyWrappedProps(props, targetPropsObj, parentPropsObj) {
     if (!props) return;
 
@@ -83,18 +83,18 @@
 
   }
 
-  // возвращает обёртку вокруг method, которая ставит this.parent на родителя
+  // возвращает обёртку вокруг method, которая ставит this.super на родителя
   // и возвращает его потом 
   function wrap(method, parentMethod) {
     return function() {
-      var backup = this.parent;
+      var backup = this.super;
 
-      this.parent = parentMethod;
+      this.super = parentMethod;
 
       try {
         return method.apply(this, arguments);
       } finally {
-        this.parent = backup;
+        this.super = backup;
       }
     }
   }
