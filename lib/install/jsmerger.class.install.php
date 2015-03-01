@@ -24,7 +24,10 @@ function tjsmergerInstall($self) {
   $self->add($section, '/js/plugins/jquery.cookie.min.js');
   $self->add($section, '/js/plugins/tojson.min.js');
   $self->add($section, '/js/litepublisher/litepublisher.utils.min.js');
+  $self->add($section, '/js/litepublisher/classes.min.js');
   $self->add($section, '/js/litepublisher/ready2.min.js');
+  $self->add($section, '/js/litepublisher/css-loader.min.js');
+  $self->add($section, '/js/litepublisher/json-rpc.min.js');
   $self->add($section, '/js/litepublisher/widgets.min.js');
   $self->add($section, '/js/litepublisher/widgets.bootstrap.min.js');
   $self->add($section, '/js/litepublisher/simpletml.min.js');

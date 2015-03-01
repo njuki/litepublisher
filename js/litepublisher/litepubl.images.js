@@ -63,8 +63,8 @@
     '<button type="button" class="btn btn-default player-button" data-action="play" title="%%lang.tipplay%%"><span class="fa fa-play"></span> <span class="sr-only">%%lang.play%%</span></button> ',
     
     img_html: '<img src="%%url%%" class="img-galery" width="%%width%%" height="%%height%%" style="left:%%left%%px" alt="" />',
-    loading_html: '<img src="" data-src="modal-galery-loading" class="hide img-galery" alt="" />',
-    //loading_html: '<img src="/js/litepublisher/images/loader-128x/Preloader_1.gif" data-src="modal-galery-loading" class="hide img-galery" alt="" />',
+    //loading_html: '<img src="" data-src="modal-galery-loading" class="hide img-galery" alt="" />',
+    loading_html: '<img src="/js/litepublisher/icons/Preloader_4.gif" width="64" height="64" alt="" />',
     thumb_html: '<a href="#" class="thumbnail" data-index="%%index%%"><img src="%%url%%" /></a>',
     
     style_html:'<style type="text/css">' +
@@ -468,22 +468,22 @@
         var button = $(this);
         switch (button.attr("data-action")) {
           case "next":
-          self.setindex(self.getindex() + 1);
-          break;
-          
           case "back":
-          self.setindex(self.getindex() - 1);
+self.stop();
+          button.parent().find("[data-action='play']").prop("disabled", false);
+          button.parent().find("[data-action='stop']").prop("disabled", true);
+          self.setindex(self.getindex() + (button.attr("data-action") == "next" ? 1 : -1));
           break;
           
           case "play":
-          button.attr("disabled", "disabled");
-          button.parent().find("[data-action='stop']").removeAttr("disabled");
+          button.prop("disabled", true);
+          button.parent().find("[data-action='stop']").prop("disabled", false);
           self.play();
           break;
           
           case "stop":
-          button.attr("disabled", "disabled");
-          button.parent().find("[data-action='play']").removeAttr("disabled");
+          button.prop("disabled", true);
+          button.parent().find("[data-action='play']").prop("disabled", false);
           self.stop();
           break;
         }
@@ -577,8 +577,8 @@
           }
           
           if (t.is("a")) {
-            t.attr("href", href);
-            t.attr("target", "_blank");
+            t.prop("href", href);
+            t.prop("target", "_blank");
             /*
             function popclick() {
               document.getElementById("my_link").dispatchEvent((
@@ -857,34 +857,18 @@
       if (!img) {
         var body = this.dialog.body;
         img = this.dialog.loading = $(this.loading_html).appendTo(body);
-        if (img.is("img") && !img.attr("src")) {
-          var src = img.attr("data-src");
-          img.addClass(src);
-          img.attr("src", img.css("backgroundImage"));
-          var w = img.css("width");
-          var h = img.css("height");
-          img.removeClass(src);
-          
           img.css({
-            width: w,
-            height: h,
-            left: Math.floor((body.width() - w) / 2),
-            top: Math.floor((body.height() - h) / 2)
+            left: Math.floor((body.width() - img.attr("width")) / 2),
+            top: Math.floor((body.height() - img.attr("height")) / 2)
           });
-        } else {
-          img.css({
-            left: Math.floor((body.width() - img.width()) / 2),
-            top: Math.floor((body.height() - img.height()) / 2)
-          });
-        }
       }
       
-      if (img.hasClass("hide")) this.activate(img);
+      if (img.hasClass("hide")) img.removeClass("hide");
     },
     
     hideloading: function() {
       var img = this.dialog.loading;
-      if (img && !img.hasClass("hide")) this.deactivate(img);
+      if (img && !img.hasClass("hide")) img.addClass("hide");
     }
     
   });

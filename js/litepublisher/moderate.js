@@ -271,7 +271,7 @@
   
   $(document).ready(function() {
     //only logged users
-    if (litepubl.getuser().id) litepubl.newinstance('moderate', litepubl.Moderate);
+    if (litepubl.getuser().id) classes.create({moderate: litepubl.Moderate});
   });
   
 }(jQuery, document, window));
