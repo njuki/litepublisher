@@ -7,33 +7,24 @@
 
 (function ($, document, window) {
   'use strict';
+
   window.litepubl.class_confirmcomment = Class.extend({
     
-    init: function(opt) {
-      this.options= $.extend({
-        confirmcomment: true,
-        comuser: false,
-        form: "#commentform",
-        editor: "#comment"
-      }, ltoptions.theme.comments, opt);
-      
-      var form = $(this.options.form);
+    init: function() {
       //ctrl+enter
-      this.get("content").off("keydown.confirmcomment").on("keydown.confirmcomment", function (e) {
+      ltoptions.theme.comments.editor.off("keydown.confirmcomment").on("keydown.confirmcomment", function (e) {
         if (e.ctrlKey && ((e.keyCode == 13) || (e.keyCode == 10))) {
-          form.submit();
+          ltoptions.theme.comments.form.submit();
         }
       });
       
-      var self = this;
-      form.off("submit.confirmcomment").on("submit.confirmcomment", function() {
-        return self.submit();
-      });
+      ltoptions.theme.comments.form.off("submit.confirmcomment").on("submit.confirmcomment", $.proxy(this.submit, this));
     },
     
     get: function(name) {
-      if (name == 'content') return $("textarea[name='content']", this.options.form);
-      return $("input[name='" + name + "']", this.options.form);
+var comtheme = ltoptions.theme.comments;
+      if (name == 'content') return comtheme.editor;
+      return comtheme.form.find("input[name='" + name + "']");
     },
     
     error: function(mesg) {
@@ -64,7 +55,7 @@
         this.error_field("content", lang.comment.emptycontent);
         return false;
       }
-      if (!this.options.comuser) return true;
+      if (!ltoptions.theme.comments.comuser) return true;
       
       if (this.empty("name")) {
         this.error_field("name", lang.comment.emptyname);
@@ -79,11 +70,11 @@
     
     send: function() {
     var params = {};
-      var inputs = $(":input", this.options.form);
+      var inputs = $(":input", ltoptions.theme.comments.form);
       inputs.each(function() {
-        var self = $(this);
-        params[self.attr("name")] = self.val();
-        self.attr("disabled", "disabled");
+        var input = $(this);
+        params[input.attr("name")] = input.val();
+        input.prop("disabled", true);
       });
       
       var self = this;
@@ -111,7 +102,7 @@
         error: $.proxy(self.error, self)
       })
       .always(function() {
-        inputs.removeAttr("disabled");
+        inputs.prop("disabled", false);
       });
     },
     
@@ -141,7 +132,7 @@
     submit: function() {
       try {
         if (!this.validate()) return false;
-        if (this.options.confirmcomment) {
+        if (ltoptions.theme.comments.confirmcomment) {
           this.send();
           return false;
         }
@@ -151,7 +142,7 @@
   });
   
   $(document).ready(function() {
-    litepubl.confirmcomment = new litepubl.class_confirmcomment();
+if (ltoptions.theme.comments.form.length) litepubl.confirmcomment = new litepubl.class_confirmcomment();
   });
   
 }(jQuery, document, window));

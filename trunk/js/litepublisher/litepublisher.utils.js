@@ -117,10 +117,6 @@
       });
     },
     
-    hasprop: function(obj, prop) {
-      return (typeof obj === "object") && (prop in obj);
-    },
-    
     onEscape: function (callback) {
       $(document).off('keydown.onEscape').on('keydown.onEscape',function(e){
         if (e.keyCode == 27) {
