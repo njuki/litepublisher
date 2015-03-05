@@ -11,24 +11,18 @@
   litepubl.Moderate = Class.extend({
     enabled : true,
     
-    init: function(opt) {
-      this.options= $.extend({
-        comments: "#commentlist",
-        hold: "#holdcommentlist",
-        comment: "#comment-",
-        content: "#commentcontent-",
-        buttons:".moderationbuttons",
-        button: '<button type="button" class="button"><span>%%title%%</span></button>',
-        form: "#commentform"
-      }, ltoptions.theme.comments, opt);
-      
+    init: function() {
       this.onbuttons = $.Callbacks();
-      $(".loadhold").click(this.loadhold);
-      
+
       var self = this;
-      window.setTimeout(function() {
-        self.create_buttons(self.options.comments +", " + self.options.hold);
-      }, 20);
+      $(".loadhold").click(function() {
+$(this).parent().remove();
+self.loadhold();
+return false;
+});
+
+var comtheme = ltoptions.theme.comments;
+        this.create_buttons($().add(comtheme.comments).add(comtheme.holdcomments));
     },
     
     setenabled: function(value) {
@@ -41,10 +35,6 @@
       }
     },
     
-    getarea: function() {
-      return $("textarea:first", this.options.form);
-    },
-    
     error: function(mesg) {
       this.setenabled(true);
       $.messagebox(lang.dialog.error, mesg);
@@ -52,7 +42,7 @@
     
     setstatus: function (id, status) {
       var self = this;
-      var options = this.options;
+      var options = ltoptions.theme.comments;
       var idcomment = options.comment + id;
       switch (status) {
         case "delete":
@@ -124,16 +114,16 @@
     },
     
     edit: function(id, rawcontent) {
-      var area = this.getarea();
+      var area = ltoptions.theme.comments.editor;
       area.data("idcomment", id)
       .data("savedtext", area.val())
       .val(rawcontent)
       .focus();
       
-      $.onEscape(this.restore_submit);
+      $.onEscape($.proxy(this.restore_submit, this));
       
       var self = this;
-      var form = $(this.options.form);
+      var form = ltoptions.theme.comments.form;
       form.off("submit.confirmcomment").on("submit.moderate", function() {
         try {
           var content = $.trim(area.val());
@@ -144,14 +134,14 @@
             return false;
           }
           
-          $(":input", form).attr("disabled", "disabled");
+          $(":input", form).prop("disabled", true);
           $.jsonrpc({
             method: "comment_edit",
           params: {id: area.data("idcomment"), content: content},
             callback: function(r){
               try {
-                $(":input", form).removeAttr("disabled");
-                var cc = self.options.content + r.id;
+                $(":input", form).prop("disabled", false);
+                var cc = ltoptions.theme.comments.content + r.id;
                 $(cc).html(r.content);
                 self.restore_submit();
                 location.hash = cc.substring(1);
@@ -159,7 +149,7 @@
             },
             
             error: function(message, code) {
-              $(":input", form).removeAttr("disabled");
+              $(":input", form).prop("disabled", false);
               self.error(lang.comments.notedited);
               self.restore_submit();
             }
@@ -171,32 +161,33 @@
     },
     
     restore_submit: function() {
-      var area = this.getarea();
+      var area = ltoptions.theme.comments.editor;
       area.val(area.data("savedtext"));
       this.setenabled(true);
-      $(this.options.form).off("submit.moderate").on("submit.confirmcomment", function() {
+ltoptions.theme.comments.form.off("submit.moderate").on("submit.confirmcomment", function() {
         if ("confirmcomment" in litepubl) return litepubl.confirmcomment.submit();
       });
     },
     
     loadhold: function() {
-      var self = this;
-      var options = this.options;
-      $(".loadhold").parent().remove();
       $.jsonrpc({
         type: 'get',
         method: "comments_get_hold",
       params: {idpost: ltoptions.idpost},
         callback: function(r) {
           try {
-            if (options.ismoder) {
-              var approved = $(options.comments);
-              var hold = $(options.hold);
-              while (approved.next()[0] != hold[0]) approved.next().remove();
-              hold.remove();
-            }
-            $(options.comments).after(r.items);
-            self.create_buttons(options.hold);
+var comtheme = ltoptions.theme.comments;
+var hold = comtheme.holdcomments;
+            if (comtheme.ismoder && hold.length) {
+//delete nodes between comments and hold comments
+            while (comtheme.comments.next()[0] != hold[0]) comtheme.comments.next().remove();
+//delete current hold list
+hold.remove();
+}
+
+            comtheme.comments.after(r.items);
+comtheme.holdcomments = $(comtheme.hold);
+            self.create_buttons(comtheme.holdcomments);
         } catch(e) {erralert(e);}
         },
         
@@ -204,74 +195,65 @@
           self.error(lang.comments.errorrecieved);
         }
       });
-      return false;
+
     },
     
-    create_buttons: function(where) {
-      var options = this.options;
-      var buttons = {
-        approve: '',
-        hold: '',
-        del: '',
-        edit: ''
-      };
+    create_buttons: function(owner) {
+var comtheme = ltoptions.theme.comments;
+      var self = this;
+owner.on("click.moder", comtheme.buttons, function() {
+        if (!self.enabled) return false;
+var button = $(this);
+        self.setstatus(button.parent().attr("data-idcomment"), button.attr("data-moder"));
+return false;
+});
+
+var comtheme = ltoptions.theme.comments;
+        if (comtheme.ismoder) {
+var names = ['approve', 'hold', 'del', 'edit'];
+} else {
+            if (!comtheme.canedit && !comtheme.candelete) return;
+var nanes = [];
+            if (comtheme.canedit) names.push('edit');
+            if (comtheme.candelete) names.push('del');
+}
       
-      for (var name in buttons) {
-        buttons[name] = $.simpletml(options.button, {
+var html = '';      
+var tml = comtheme.button;
+if (tml.indexOf('data-moder') < 0) tml = tml.replace('class=', 'data-moder="%%name%%" class=');
+for (var i = 0; i < names.length; i++) {
+var name = names[i];
+html += $.simpletml(tml, {
           title: lang.comments[name],
           name: name
         });
-      }
-      
-      var showbutton  = $.simpletml(options.button, {
+}
+
+var containers = owner.find(comtheme.buttons + (comtheme.ismoder ? '' : '[data-idauthor="' + litepubl.getuser().id + '"]')).append(html);
+
+          if (containers.length && containers.first().is(":hidden")) {
+      var showbutton  = $.simpletml(comtheme.button, {
         title: 'E',
         name: 'show'
       });
       
-      var self = this;
-      var click = function() {
-        if (!self.enabled) return false;
-        var button = $(this);
-        self.setstatus(button.data("idcomment"), button.data("moder"));
-        return false;
-      };
-      
-      var iduser = litepubl.getuser().id;
-      $(options.buttons, where).each(function() {
-        var container = $(this);
-        var id = container.data("idcomment");
-        if (options.ismoder) {
-          for (var name in buttons) {
-            $(buttons[name]).appendTo(container).data("idcomment", id).data("moder", name).click(click);
-          }
-          
-          if (container.is(":hidden")) self.addswitcher(container, showbutton);
-        } else {
-          var idauthor = parseInt(container.data("idauthor"));
-          if (idauthor == iduser) {
-            if (options.canedit) $(buttons.edit).appendTo(container).data("idcomment", id).data("moder", "edit").click(click);
-            if (options.candelete) $(buttons.del).appendTo(container).data("idcomment", id).data("moder", "delete").click(click);
-            if ((options.canedit ||options.candelete) && container.is(":hidden")) self.addswitcher(container, showbutton);
-          }
-        }
-        
-        self.onbuttons.fire(container);
-      });
-    },
-    
-    addswitcher: function(container, button) {
-      $(button).insertBefore(container).one("click mouseenter",  function() {
+showbutton = showbutton.replace('class="', 'class="showbutton ');
+container.before(showbutton);
+owner.on("click.showbutton mouseenter.showbutton focus.showbutton", ".showbutton", function() {
         $(this).next().show();
         $(this).remove();
         return false;
       });
+}
+
+        this.onbuttons.fire(containers);
     }
     
   });//class
   
-  $(document).ready(function() {
+  $.ready2(function() {
     //only logged users
-    if (litepubl.getuser().id) classes.create({moderate: litepubl.Moderate});
+    if (litepubl.getuser().id) litepubl.moderate = new litepubl.Moderate();
   });
   
 }(jQuery, document, window));

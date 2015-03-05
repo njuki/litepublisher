@@ -86,4 +86,9 @@ jsonrpcSettings.onargs(args);
       });
     };
 
+    $.hasprop= function(obj, prop) {
+      return (typeof obj === "object") && (prop in obj);
+    };
+    
+
 }(jQuery));
