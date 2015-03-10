@@ -42,7 +42,7 @@ class ttemplatecomments extends tevents {
       
       $cm = tcommentmanager::i();
       $result .=  sprintf('<?php if (litepublisher::$options->ingroups(array(%s))) {', implode(',', $cm->idgroups));
-        //add hold list
+        //add hold list because we need container when comment will be hold
         $result .= 'if ($ismoder = litepublisher::$options->ingroup(\'moderator\')) { ?>';
           $args->comment = '';
           $result .= $theme->parsearg($theme->templates['content.post.templatecomments.holdcomments'], $args);

@@ -24,7 +24,6 @@ function tjsmergerInstall($self) {
   $self->add($section, '/js/plugins/jquery.cookie.min.js');
   $self->add($section, '/js/plugins/tojson.min.js');
   $self->add($section, '/js/litepublisher/litepublisher.utils.min.js');
-  $self->add($section, '/js/litepublisher/classes.min.js');
   $self->add($section, '/js/litepublisher/ready2.min.js');
   $self->add($section, '/js/litepublisher/css-loader.min.js');
   $self->add($section, '/js/litepublisher/json-rpc.min.js');
@@ -39,7 +38,6 @@ function tjsmergerInstall($self) {
   $self->add($section, '/js/litepublisher/dialog.bootstrap.min.js');
   $self->add($section, '/js/litepublisher/pretty.init.min.js');
   $self->add($section, '/js/litepublisher/youtubefix.min.js');
-  //$self->add($section, '/js/litepublisher/hover.min.js');
   $self->add($section, "/lib/languages/$language/default.min.js");
   
   $section = 'comments';
