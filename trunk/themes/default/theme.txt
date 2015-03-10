@@ -662,6 +662,10 @@ $comment.author - уникальный id автора
         buttons:".moderationbuttons",
         // шаблон кнопки модерирования, %%title%% будет заменен на название кнопки (одобрить, задержать, редактировать, удалить)
         button: '<button type="button" class="button"><span>%%title%%</span></button>',
+        //класс кнопки "Ответить"
+        replyclass: "replycomment",
+        //клас кнопки "Цитировать"
+quoteclass : "quotecomment",
         // селектор формы комментариев, здесь id тега form
         form: "#commentform",
         // селектор редактора, то есть textarea формы

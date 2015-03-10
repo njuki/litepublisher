@@ -12,10 +12,6 @@ $js->after('default',
 
   $js->after('default', 
 '/js/litepublisher/litepublisher.utils.min.js',
-'/js/litepublisher/classes.min.js');
-
-  $js->after('default', 
-'/js/litepublisher/classes.min.js',
 '/js/litepublisher/ready2.min.js');
 
   $js->after('default', 
