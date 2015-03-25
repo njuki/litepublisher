@@ -32,7 +32,7 @@ class turlmap extends titems {
   public function __construct() {
     parent::__construct();
     if (tfilestorage::$memcache) {
-      $this->cache = new tlitememcache($this);
+      $this->cache = new tlitememcache(tfilestorage::$memcache);
     } else {
       $this->cache = new tfilecache();
     }
@@ -44,7 +44,6 @@ class turlmap extends titems {
     $this->table = 'urlmap';
     $this->basename = 'urlmap';
     $this->addevents('beforerequest', 'afterrequest', 'onclearcache');
-    $this->data['revision'] = 0;
     $this->data['disabledcron'] = false;
     $this->data['redirdom'] = false;
     $this->is404 = false;
@@ -523,46 +522,66 @@ class turlmap extends titems {
 }//class
 
 class tlitememcache {
-  public $revision;
   public $prefix;
-  
-  public function __construct($urlmap) {
-    $this->revision = &$urlmap->data['revision'];
+public $memcache;
+public $lifetime;
+  public $revision;
+  public $revision_key;
+
+    public function __construct($urlmap, $memcache) {
+
     $this->prefix = litepublisher::$domain . ':cache:';
+$this->memcache = $memcache;
+$this->lifetime = 3600;
+    $this->revision = 0;
+    $this->revision_key = 'cache_revision';
+$this->getrevision();
   }
+
+  public function getrevision() {
+return $this->revision = intval($this->memcache->get($this->prefix . $this->revision_key)));
+}
   
   public function clear() {
     $this->revision++;
-    litepublisher::$urlmap->save();
+$this->memcache->set($this->prefix . $this->revision_key, "$this->revision", false, $this->lifetime);
   }
+
+public function serialize(&$data) {
+return serialize($data);
+}
+
+public function unserialize(&$data) {
+return unserialize($data);
+}
   
   public function set($filename, $data) {
-    tfilestorage::$memcache->set($this->prefix . $filename,
-    serialize(array(
+    $this->memcache->set($this->prefix . $filename,$this->serialize(array(
     'revision' => $this->revision,
-    'time' => time(),
+    //'time' => time(),
     'data' => $data
-    )), false, 3600);
+    )), false, $this->lifetime);
   }
   
   public function get($filename) {
-    if ($s = tfilestorage::$memcache->get($this->prefix . $filename)) {
-      $a = unserialize($s);
+    if ($s = $this->memcache->get($this->prefix . $filename)) {
+      $a = $this->unserialize($s);
       if ($a['revision'] == $this->revision) {
         return $a['data'];
       } else {
-        tfilestorage::$memcache->delete($this->prefix . $filename);
+        $this->memcache->delete($this->prefix . $filename);
       }
     }
+
     return false;
   }
   
   public function delete($filename) {
-    tfilestorage::$memcache->delete($this->prefix . $filename);
+    $this->memcache->delete($this->prefix . $filename);
   }
   
   public function exists($filename) {
-    return !!tfilestorage::$memcache->get($this->prefix . $filename);
+    return !!$this->memcache->get($this->prefix . $filename);
   }
   
 }//class

@@ -10,6 +10,7 @@ class tdatabase {
   public $mysqli;
   public $result;
   public $sql;
+  public $cache;
   public $dbname;
   public $table;
   public $prefix;
@@ -25,8 +26,9 @@ class tdatabase {
   }
   
   public function __construct() {
-    $this->table = '';
     $this->sql = '';
+    $this->cache = false;
+    $this->table = '';
     $this->history = array();
     
     $this->setconfig($this->getconfig());
@@ -64,7 +66,7 @@ class tdatabase {
     $this->query("SET time_zone = '$timezone:00'");
     */
   }
-  
+ 
   /*
   public function __destruct() {
     if (is_object($this)) {
@@ -93,7 +95,22 @@ class tdatabase {
     }
     
     if (is_object($this->result)) $this->result->close();
-    $this->result = $this->mysqli->query($sql);
+
+if ($this->cache) {
+$sql = trim($sql);
+$select = 'select ';
+$sql_select = ($select == strtolower(substr($sql, 0, strlen($select)))) && !strpos($sql, 'last_insert_id');
+if ($sql_select) {
+    if ($this->result = $this->cache->get($sql)) {
+    if ($this->debug) $this->history[count($this->history) - 1]['time'] = microtime(true) - $microtime;
+return $this->result;
+}
+} else {
+$this->cache->clear();
+}
+}
+
+    $this->result = $this->mysqli->query($sql);$this->cache) {
     if ($this->debug) {
       $this->history[count($this->history) - 1]['time'] = microtime(true) - $microtime;
       if ($this->mysqli->warning_count && ($r = $this->mysqli->query('SHOW WARNINGS'))) {
@@ -103,9 +120,13 @@ class tdatabase {
         echo "</pre>\n";
       }
     }
+
     if ($this->result == false) {
       $this->doerror($this->mysqli->error);
+} elseif ($this->cache && $sql_select) {
+$this->cache->set($sql, $this->result);
     }
+
     return $this->result;
   }
   

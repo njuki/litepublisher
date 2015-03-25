@@ -6,6 +6,11 @@
 * and GPL (gpl.txt) licenses.
 **/
 
+//fix storage include
+if (!class_exists('tstorage')) {
+include (dirname(__file__) . '/storage.class.php');
+}
+
 if (!function_exists( 'spl_autoload_register' ) ) {
   function __autoload($class) {
     litepublisher::$classes->_autoload($class);
