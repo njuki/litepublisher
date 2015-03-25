@@ -110,7 +110,7 @@ $this->cache->clear();
 }
 }
 
-    $this->result = $this->mysqli->query($sql);$this->cache) {
+    $this->result = $this->mysqli->query($sql);
     if ($this->debug) {
       $this->history[count($this->history) - 1]['time'] = microtime(true) - $microtime;
       if ($this->mysqli->warning_count && ($r = $this->mysqli->query('SHOW WARNINGS'))) {

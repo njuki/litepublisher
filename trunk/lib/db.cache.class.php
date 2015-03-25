@@ -8,15 +8,12 @@
 
 class dbcache extends tlitememcache {
   
-  public function getrevision() {
-parent::__construct();
-  }
-  
   public function set($sql, $res) {
 if (is_object($res)) {
 if ($res->num_rows > 1000) return;
-parent::set(md5($sql), $res->fetch_all(MYSQLI_ASSOC));
-$res->rewind();
+$cache_result = new dbcache_result($res);
+parent::set(md5($sql), $cache_result->data);
+$res->data_seek(0);
 }
   }
   
@@ -51,10 +48,10 @@ $this->data = array(
 'keys' => &$this->keys,
 );
 
-if (is_array($res) {
+if (is_array($res) ) {
 $this->items = $res['items'];
 $this->keys = $res['keys'];
-} elseif (is_object($data)) {
+} elseif (is_object($res)) {
 $this->items = $res->fetch_all (MYSQLI_NUM );
 
  while ($finfo = $res->fetch_field()) {
@@ -144,7 +141,7 @@ return $this->items[$this->index++];
 
 public function free () {
 $this->items = array();
-$this->keys = [];
+$this->keys = array();
 $this->index = 0;
 }
 

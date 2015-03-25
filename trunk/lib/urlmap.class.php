@@ -528,8 +528,7 @@ public $lifetime;
   public $revision;
   public $revision_key;
 
-    public function __construct($urlmap, $memcache) {
-
+    public function __construct($memcache) {
     $this->prefix = litepublisher::$domain . ':cache:';
 $this->memcache = $memcache;
 $this->lifetime = 3600;
@@ -539,7 +538,7 @@ $this->getrevision();
   }
 
   public function getrevision() {
-return $this->revision = intval($this->memcache->get($this->prefix . $this->revision_key)));
+return $this->revision = intval($this->memcache->get($this->prefix . $this->revision_key));
 }
   
   public function clear() {
@@ -547,7 +546,7 @@ return $this->revision = intval($this->memcache->get($this->prefix . $this->revi
 $this->memcache->set($this->prefix . $this->revision_key, "$this->revision", false, $this->lifetime);
   }
 
-public function serialize(&$data) {
+public function serialize($data) {
 return serialize($data);
 }
 
