@@ -116,6 +116,7 @@ litepublisher::$options->handexception($e);
 }
 litepublisher::$options->savemodified();
 litepublisher::$options->showerrors();
+
 /*
 echo "<pre>\n";
 $man = tdbmanager::i();

@@ -49,7 +49,7 @@ class tprivatefiles extends tevents {
     if (!$files->itemexists($id)) return 404;
     $item = $files->getitem($id);
     $filename = '/files/' . $item['filename'];
-    if (intval($item['idperm']) == 0) {
+    if ((int) $item['idperm'] == 0) {
       if ($filename == litepublisher::$urlmap->url) {
         header('HTTP/1.1 500 Internal Server Error', true, 500);
         exit();
@@ -90,8 +90,8 @@ class tprivatefiles extends tevents {
       list($range) = explode(',', $ranges, 2);
       list($from, $end) = explode('-', $range, 2);
       
-      $end= empty($end) ? $item['size'] - 1 : min(abs(intval($end)),$item['size'] - 1);
-      $from = empty($from) || ($end < abs(intval($from))) ? 0 : max(abs(intval($from)),0);
+      $end= empty($end) ? $item['size'] - 1 : min(abs((int) $end),$item['size'] - 1);
+      $from = empty($from) || ($end < abs((int) $from)) ? 0 : max(abs((int) $from),0);
       
       header('HTTP/1.1 206 Partial Content', true, 206);
       header("Content-Range: bytes $from-$end/" .$item['size']);

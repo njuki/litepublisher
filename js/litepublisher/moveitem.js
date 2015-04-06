@@ -23,7 +23,7 @@ var newindex = typeof options.target === "number" ? curindex + options.target : 
 if ((newindex < 0) || (newindex >= list.length) || (curindex == newindex)) return this;
 
 var h = this.height();
-var target = list.get(newindex);
+var target = list.eq(newindex);
 
 $(options.temp).insertBefore(target).animate({height: h}, options.speed, function() {
 $(this).remove();
@@ -33,16 +33,18 @@ $(options.temp).insertBefore(this).css("height", h).animate({height: 0}, options
 $(this).remove();
 });
 
+
+var pos = this.position();
 var tempprops = {
         position : "absolute",
-top: this.position().top,
-left: this.position().left,
+top: pos.top,
+left: pos.left,
 zIndex: 1200,
 backgroundColor: "rgba(255,255,255,05)"
 };
 
 var savedprops = {};
-for (var prop in newprops) {
+for (var prop in tempprops) {
 savedprops[prop] = this.css(prop);
 }
 

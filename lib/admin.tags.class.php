@@ -131,7 +131,7 @@ class tadmintags extends tadminmenu {
     $id = $this->idget();
     if ($id == 0) {
       $id = $tags->add((int) $parent, $title);
-      if (isset($order)) $tags->setvalue($id, 'customorder', intval($order));
+      if (isset($order)) $tags->setvalue($id, 'customorder', (int) $order);
       if (isset($url)) $tags->edit($id, $title, $url);
       if (isset($idview)) {
         $item =$tags->getitem($id);
@@ -145,7 +145,7 @@ class tadmintags extends tadminmenu {
       $item = $tags->getitem($id);
       $item['title'] = $title;
       if (isset($parent)) $item['parent'] = (int) $parent;
-      if (isset($order)) $item['customorder'] = intval($order);
+      if (isset($order)) $item['customorder'] = (int) $order;
       if (isset($idview)) $item = $this->set_view($item);
       $tags->items[$id] = $item;
       if (!empty($url) && ($url != $item['url'])) $tags->edit($id, $title, $url);

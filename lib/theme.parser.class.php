@@ -165,7 +165,7 @@ class tthemeparser extends tevents {
     if (strbegin($s, $utf)) $s = substr($s, strlen($utf));
     $s = str_replace(array("\r\n", "\r", "\n\n"), "\n", $s);
     //strip coments
-    $s = preg_replace('/\/\*.*?\*\//sm', '', $s);
+    $s = preg_replace('/\s*\/\*.*?\*\/\s*/sm', '', $s);
     $s = preg_replace('/^\s*\/\/.*?$/m', '', $s);
     
     //normalize tags

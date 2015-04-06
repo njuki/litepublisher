@@ -97,7 +97,7 @@ class catbread extends  tplugin {
     $showchilds = false;
     if ($this->showchilds) {
       foreach ($cats->items as $id => $item) {
-        if ($idcat == intval($item['parent'])) {
+        if ($idcat == (int) $item['parent']) {
           $showchilds = true;
           break;
         }
@@ -108,18 +108,22 @@ class catbread extends  tplugin {
     $args = new targs();
     $tml = $this->tml['item'];
     $items = '';
+$index = 1;
     if ($this->showhome) {
       $args->url = '/';
       $args->title = tlocal::i()->home;
+$args->index = $index++;
       $items .= $theme->parsearg($tml, $args);
     }
     
     foreach ($parents as $id) {
       $args->add($cats->getitem($id));
+$args->index = $index++;
       $items .= $theme->parsearg($tml, $args);
     }
     
     $args->add($cats->getitem($idcat));
+$args->index = $index++;
     $items .= $theme->parsearg($this->tml['active'], $args);
     if ($showchilds) $items .= $theme->parsearg($this->tml['child'], $args);
     

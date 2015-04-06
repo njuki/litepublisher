@@ -89,7 +89,7 @@ class tsite extends tevents_storage {
         $result = sprintf('<a href="%s">%s</a>', $item['website'], $item['name']);
       } else {
         $page = $this->getdb('userpage')->getitem($id);
-        if(intval($page['idurl'])) {
+        if((int) $page['idurl']) {
           $result = sprintf('<a href="%s%s">%s</a>', $this->url, litepublisher::$urlmap->getvalue($page['idurl'], 'url'), $item['name']);
         } else {
           $result = $item['name'];

@@ -72,7 +72,7 @@ class tcommentform extends tevents {
     
     $shortpost= $this->getshortpost(isset($values['postid']) ? (int) $values['postid'] : 0);
     if ($err = $this->invalidate($shortpost)) return $err;
-    if (intval($shortpost['idperm']) > 0) {
+    if ((int) $shortpost['idperm']) {
       $post = tpost::i((int) $shortpost['id']);
       $perm = tperm::i($post->idperm);
       if (!$perm->hasperm($post)) return 403;
@@ -197,7 +197,7 @@ class tcommentform extends tevents {
     $_SESSION['values'] = $values;
     session_write_close();
     
-    if (intval($shortpost['idperm']) > 0) {
+    if ((int) $shortpost['idperm']) {
       $header = $this->getpermheader($shortpost);
       return $header . $this->confirm($confirmid);
     }
