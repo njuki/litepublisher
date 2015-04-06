@@ -15,11 +15,11 @@ function catbreadinstall($self) {
   $self->tml = array(
   'container' => '<div id="breadcrumb-container">%s</div>',
   'items' => '<div id="breadcrumb-items">
-  <ol class="breadcrumb">
+  <ol class="breadcrumb" itemprop="breadcrumb" itemscope itemtype="https://schema.org/BreadcrumbList">
   $item
   </ol></div>',
-  'item' => '<li><a href="$link">$title</a></li>',
-  'active' => '<li class="active">$title</li>',
+  'item' => '<li itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem"><a href="$link" itemprop="url name">$title</a></li>',
+  'active' => '<li class="active" itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem">$title</li>',
   'child' => '<li><button id="breadcrumbs-toggle" class="btn btn-default" data-target="#breadcrumbs-childs" data-toggle="dropdown"><span class="caret"></span> <span class="sr-only">' . $about['showchilds'] . '</span></button></li>',
   'childitems' => '<div id="breadcrumbs-childs" class="dropdown">
   <ul class="dropdown-menu" role="menu">

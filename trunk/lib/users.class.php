@@ -78,7 +78,7 @@ class tusers extends titems {
     }
     
     if ($item = $this->db->finditem('email = '. dbquote($email))) {
-      $id = intval($item['id']);
+      $id = (int) $item['id'];
       $this->items[$id] = $item;
       return $id;
     }

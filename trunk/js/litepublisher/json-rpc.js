@@ -9,6 +9,7 @@
   'use strict';
   
 var jsonrpcSettings  = $.jsonrpcSettings = {
+guid: $.now(),
 url: ltoptions.ajaxurl + "/admin/jsonserver.php",
 onargs: function(args) {
       var user = litepubl.getuser();
@@ -68,12 +69,12 @@ jsonrpcSettings.onargs(args);
       };
       
       if (args.type == 'post') {
-        if (!args.cache) ajax.url = ajax.url + '?_=' + litepubl.guid++;
+        if (!args.cache) ajax.url = ajax.url + '?_=' + jsonrpcSettings.guid++;
         ajax.data = $.toJSON({
           jsonrpc: "2.0",
           method: args.method,
           params: params,
-          id: litepubl.guid++
+          id: jsonrpcSettings.guid++
         });
       } else {
         ajax.type = 'get';

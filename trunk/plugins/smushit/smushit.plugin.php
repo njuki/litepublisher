@@ -31,7 +31,7 @@ class tsmushitplugin extends tplugin {
     if ($s = http::get('http://www.smushit.com/ysmush.it/ws.php?img=' . urlencode($fileurl))) {
       $json = json_decode($s);
       if ( isset ( $json->error) ||
-      (-1 === intval($json->dest_size)) ||
+      (-1 === (int) $json->dest_size) ||
       !$json->dest) return;
       $div = $item['size'] - (int) $json->dest_size;
       if (($div / ($item['size'] / 100)) < 3) return;

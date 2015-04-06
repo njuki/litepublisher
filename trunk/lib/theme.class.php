@@ -455,7 +455,6 @@ class ttheme extends tevents {
   }
   
   public function getinput($type, $name, $value, $title) {
-    //if (($type == 'text') || ($type == 'editor')) $value =  self::quote(htmlspecialchars($value));
     return strtr($this->templates['content.admin.' . $type], array(
     '$lang.$name' => $title,
     '$name' => $name,

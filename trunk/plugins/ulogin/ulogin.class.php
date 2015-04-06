@@ -76,7 +76,7 @@ class ulogin extends tplugin {
       $backurl =  tusergroups::i()->gethome($user['idgroups'][0]);
     }
     
-    if (!intval(tusers::i()->db->getvalue($cookies['id'], 'phone'))) {
+    if (! (int) tusers::i()->db->getvalue($cookies['id'], 'phone')) {
       if ($url = $this->onphone($backurl))     return litepublisher::$urlmap->redir($url);
     }
     
@@ -208,7 +208,7 @@ class ulogin extends tplugin {
   public static function filterphone($phone) {
     $phone = trim(str_replace(array(' ', '+', '=', '-', '_', '(', ')', '.'), '', trim($phone)));
     if (strlen($phone) && ($phone[0] == '9')) $phone = '7' . $phone;
-    return floatval($phone);
+    return (float) $phone;
   }
   
 }//class

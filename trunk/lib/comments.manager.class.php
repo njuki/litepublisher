@@ -65,7 +65,7 @@ class tcommentmanager extends tevents_storage {
     try {
       $idauthor = $comments->getvalue($id, 'author');
       $users = tusers::i();
-      if ($this->trustlevel > intval($users->getvalue($idauthor, 'trust'))) {
+      if ($this->trustlevel > (int) $users->getvalue($idauthor, 'trust')) {
         $trust = $comments->db->getcount("author = $idauthor and status = 'approved' limit " . ($this->trustlevel + 1));
         $users->setvalue($idauthor, 'trust', $trust);
       }

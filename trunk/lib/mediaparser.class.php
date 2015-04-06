@@ -418,8 +418,8 @@ class tmediaparser extends tevents {
       $info = $getID3->info;
       
       if (!isset($info['error'])) {
-        $result['width'] =intval(round($info['swf']['header']['frame_width']  / 20));
-        $result['height'] =intval(round($info['swf']['header']['frame_height']  / 20));
+        $result['width'] =(int) round($info['swf']['header']['frame_width']  / 20);
+        $result['height'] =(int) round($info['swf']['header']['frame_height']  / 20);
         return $result;
       }
     }
@@ -530,8 +530,8 @@ class tmediaparser extends tevents {
       $y = $x /$ratio;
     }
     
-    $x = intval(round($x));
-    $y = intval(round($y));
+    $x = (int) round($x);
+    $y = (int) round($y);
     
     $dest = imagecreatetruecolor($x, $y);
     imagecopyresampled($dest, $image, 0, 0, 0, 0, $x, $y, $sourcex, $sourcey);

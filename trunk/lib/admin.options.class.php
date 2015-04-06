@@ -363,7 +363,7 @@ class Tadminoptions extends tadminmenu {
       $home->image = $image;
       $home->parsetags = isset($parsetags);
       $home->showmidle = isset($showmidle);
-      $home->midlecat = intval($midlecat);
+      $home->midlecat = (int) $midlecat;
       $home->showposts = isset($showposts);
       $home->invertorder = isset($invertorder);
       $home->includecats = tadminhtml::check2array('category-');

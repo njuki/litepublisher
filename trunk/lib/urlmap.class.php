@@ -538,7 +538,7 @@ $this->getrevision();
   }
 
   public function getrevision() {
-return $this->revision = intval($this->memcache->get($this->prefix . $this->revision_key));
+return $this->revision = (int) $this->memcache->get($this->prefix . $this->revision_key);
 }
   
   public function clear() {
