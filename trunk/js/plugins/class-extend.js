@@ -5,7 +5,7 @@
  * Class.extend([mixins], props)
  * Class.extend([mixins], props, staticProps)
 */
-!function() {
+(function (window) {
 
   window.Class = function() { /* вся магия - в Class.extend */  };
 
@@ -52,12 +52,12 @@
   //---------- вспомогательные методы ----------
 
   // fnTest -- регулярное выражение, 
-  // которое проверяет функцию на то, есть ли в её коде вызов super
+  // которое проверяет функцию на то, есть ли в её коде вызов _super
   // 
   // для его объявления мы проверяем, поддерживает ли функция преобразование
   // в код вызовом toString: /xyz/.test(function() {xyz})
   // в редких мобильных браузерах -- не поддерживает, поэтому регэксп будет /./
-  var fnTest = /xyz/.test(function() {xyz}) ? /\bsuper\b/ : /./;
+  var fnTest = /xyz/.test(function() {return xyz}) ? /\b_super\b/ : /./;
 
 
   // копирует свойства из props в targetPropsObj
@@ -65,8 +65,8 @@
   // 
   // при копировании, если выясняется что свойство есть и в родителе тоже,
   // и является функцией -- его вызов оборачивается в обёртку,
-  // которая ставит this.super на метод родителя, 
-  // затем вызывает его, затем возвращает this.super
+  // которая ставит this._super на метод родителя, 
+  // затем вызывает его, затем возвращает this._super
   function copyWrappedProps(props, targetPropsObj, parentPropsObj) {
     if (!props) return;
 
@@ -83,18 +83,18 @@
 
   }
 
-  // возвращает обёртку вокруг method, которая ставит this.super на родителя
+  // возвращает обёртку вокруг method, которая ставит this._super на родителя
   // и возвращает его потом 
   function wrap(method, parentMethod) {
     return function() {
-      var backup = this.super;
+      var backup = this._super;
 
-      this.super = parentMethod;
+      this._super = parentMethod;
 
       try {
         return method.apply(this, arguments);
       } finally {
-        this.super = backup;
+        this._super = backup;
       }
     }
   }
@@ -105,4 +105,4 @@
     F.prototype = proto;
     return new F;
   };
-}();
+}(window));
