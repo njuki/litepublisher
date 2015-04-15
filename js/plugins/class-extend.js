@@ -5,7 +5,7 @@
  * Class.extend([mixins], props)
  * Class.extend([mixins], props, staticProps)
 */
-(function (window) {
+;!(function (window) {
 
   window.Class = function() { /* вся магия - в Class.extend */  };
 
